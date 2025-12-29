@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Owner Booking Detail Page</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-dark": "#0fb863",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1c2e24",
+                        "text-main": "#111814",
+                        "text-secondary": "#618975",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem", 
+                        "lg": "1rem", 
+                        "xl": "1.5rem", 
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar hide for cleaner mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen relative text-text-main dark:text-white pb-24">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-200/50 dark:border-white/5">
+<div class="flex items-center p-4 justify-between h-16">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Booking Details</h2>
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-text-main dark:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<div class="px-4 pt-4 pb-2">
+<!-- Headline & Status -->
+<div class="flex flex-col gap-3 mb-6">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-text-secondary dark:text-gray-400 text-sm font-medium">October 12, 2023</span>
+<h1 class="text-2xl font-bold tracking-tight text-text-main dark:text-white mt-1">Booking #BKG-2948</h1>
+</div>
+<div class="flex h-8 shrink-0 items-center justify-center gap-x-1.5 rounded-full bg-primary/20 dark:bg-primary/30 pl-3 pr-4 border border-primary/20">
+<span class="material-symbols-outlined text-primary-dark dark:text-primary text-[18px] fill-1">check_circle</span>
+<p class="text-primary-dark dark:text-primary text-sm font-semibold leading-normal">Confirmed</p>
+</div>
+</div>
+</div>
+<!-- Guest Profile Card -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm mb-4 border border-gray-100 dark:border-white/5">
+<div class="flex gap-4 items-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-16 w-16 shadow-inner ring-2 ring-white dark:ring-white/10" data-alt="Portrait of Sarah Jenkins, a smiling woman with glasses" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCZeaHJeolSGyjez5kTl1hgfE3dNU892oT0RRbSFn7xulvokgkK_TsnrrDZGyWlu--jR6WvI-3m7raT7pslAXyyr2ZXOL5OAiQwM8kFU8i-RMTX5AAC9KiUeoWXH5kNeAElIpW_rVVT5_TqX0GVwfUEsie1-Zjr4Ha8FZnOrAEx6jSF2lD_dOM3oG0RZb7b_F7-TRiPvwT6pMjN66sqeJjG-5WB_9QYRgJAQTej502qj4QbevkRllvuHs26DX_aLmj84IJD1MtmEw");'>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-0.5 border-2 border-white dark:border-card-dark">
+<span class="material-symbols-outlined text-white text-[12px]">star</span>
+</div>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex items-center justify-between">
+<p class="text-lg font-bold leading-tight">Sarah Jenkins</p>
+<span class="text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-md text-text-secondary dark:text-gray-300">Repeat Guest</span>
+</div>
+<p class="text-text-secondary dark:text-gray-400 text-sm mt-0.5">+1 (555) 019-2834</p>
+<p class="text-text-secondary dark:text-gray-400 text-sm">sarah.j@example.com</p>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-100 dark:border-white/5">
+<button class="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-background-light dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-sm font-semibold text-text-main dark:text-white">
+<span class="material-symbols-outlined text-[20px]">call</span>
+                    Call
+                </button>
+<button class="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-background-light dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-sm font-semibold text-text-main dark:text-white">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+                    Message
+                </button>
+</div>
+</div>
+<!-- Stay Details Card -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-0 shadow-sm mb-4 border border-gray-100 dark:border-white/5 overflow-hidden">
+<div class="p-4 border-b border-gray-100 dark:border-white/5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">camping</span>
+<h3 class="font-bold text-text-main dark:text-white">Stay Details</h3>
+</div>
+<div class="p-4 grid gap-4">
+<!-- Check in/out -->
+<div class="flex items-center justify-between bg-background-light dark:bg-white/5 p-3 rounded-lg">
+<div class="flex flex-col">
+<span class="text-xs text-text-secondary dark:text-gray-400 font-medium uppercase tracking-wider">Check-in</span>
+<span class="font-bold text-base mt-0.5">Oct 12</span>
+<span class="text-xs text-text-secondary dark:text-gray-400">3:00 PM</span>
+</div>
+<div class="flex flex-col items-center px-4">
+<div class="h-px w-12 bg-gray-300 dark:bg-gray-600 mb-1"></div>
+<span class="text-xs font-medium text-text-secondary dark:text-gray-400 bg-white dark:bg-gray-800 px-2 rounded-full border border-gray-200 dark:border-gray-700 -mt-3">3 Nights</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="text-xs text-text-secondary dark:text-gray-400 font-medium uppercase tracking-wider">Check-out</span>
+<span class="font-bold text-base mt-0.5">Oct 15</span>
+<span class="text-xs text-text-secondary dark:text-gray-400">11:00 AM</span>
+</div>
+</div>
+<!-- Location & Guests -->
+<div class="grid grid-cols-1 gap-4">
+<div class="flex items-start gap-3">
+<div class="p-2 bg-primary/10 rounded-lg text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<div>
+<p class="font-semibold text-text-main dark:text-white">Pine Valley Camp</p>
+<p class="text-sm text-text-secondary dark:text-gray-400">Lot B-12 (Riverside)</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="p-2 bg-primary/10 rounded-lg text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div>
+<p class="font-semibold text-text-main dark:text-white">2 Adults, 1 Child</p>
+<p class="text-sm text-text-secondary dark:text-gray-400">No pets</p>
+</div>
+</div>
+</div>
+<!-- Map Thumbnail -->
+<div class="relative h-24 w-full rounded-lg bg-gray-200 mt-2 overflow-hidden group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105" data-alt="Map showing the location of the campsite in a forest area" data-location="Pine Valley Camp" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA2IKa6llcje4ahKtUWdA0l7pSaMSHlHJJ35ApxpxAejcKFHeBWeCk9LCep-jxwNTN2nGH6EFeWlI7pQB6clKkGimg_Ff2KNLKcrXyRokksVTCk5sJcv4lUTGeRKntg_iyMYp_JyC1P9ubEjxh8gr71gJ7S22UGFabXBwkrgdJcu6hsgUr1HCOFHLUM0zgMQjD-mbXmUxxIGSu-9AtUc_ojXL2k16oTyfeD0zpINwQ4ulIz370CfxH55q8wqRhy0HWRzUxfufZVLg");'></div>
+<div class="absolute inset-0 bg-black/10 flex items-center justify-center">
+<span class="bg-white/90 dark:bg-black/70 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">map</span>
+                            View on Map
+                        </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Extras & Requests -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm mb-4 border border-gray-100 dark:border-white/5">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">extension</span>
+<h3 class="font-bold text-text-main dark:text-white">Extras</h3>
+</div>
+<ul class="space-y-3">
+<li class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2 text-text-main dark:text-gray-200">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">forest</span>
+                        Firewood Bundle x2
+                    </div>
+<span class="font-medium">$20.00</span>
+</li>
+<li class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2 text-text-main dark:text-gray-200">
+<span class="material-symbols-outlined text-[18px] text-text-secondary">kayaking</span>
+                        Kayak Rental (1 Day)
+                    </div>
+<span class="font-medium">$45.00</span>
+</li>
+</ul>
+<div class="mt-4 pt-4 border-t border-gray-100 dark:border-white/5">
+<h4 class="text-xs font-bold uppercase tracking-wider text-text-secondary dark:text-gray-400 mb-2">Special Requests</h4>
+<div class="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-100 dark:border-yellow-900/30">
+<p class="text-sm text-yellow-800 dark:text-yellow-200 italic">"Late check-in requested (approx 8 PM). Please leave gate code."</p>
+</div>
+</div>
+</div>
+<!-- Payment Summary -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-4 shadow-sm mb-20 border border-gray-100 dark:border-white/5">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+<h3 class="font-bold text-text-main dark:text-white">Payment Summary</h3>
+</div>
+<div class="space-y-2 text-sm text-text-secondary dark:text-gray-400">
+<div class="flex justify-between">
+<span>Base Price (3 Nights)</span>
+<span>$180.00</span>
+</div>
+<div class="flex justify-between">
+<span>Extras</span>
+<span>$65.00</span>
+</div>
+<div class="flex justify-between border-b border-gray-100 dark:border-white/5 pb-2">
+<span>Taxes &amp; Fees</span>
+<span>$24.50</span>
+</div>
+<div class="flex justify-between items-center pt-1 text-text-main dark:text-white">
+<span class="font-bold text-lg">Total</span>
+<span class="font-bold text-lg">$269.50</span>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between bg-green-50 dark:bg-green-900/20 p-2.5 rounded-lg border border-green-100 dark:border-green-900/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-green-600 dark:text-green-400">credit_card</span>
+<span class="text-sm font-medium text-green-800 dark:text-green-200">Paid via Credit Card</span>
+</div>
+<span class="material-symbols-outlined text-green-600 dark:text-green-400 text-[18px]">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Actions -->
+<div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-card-dark border-t border-gray-200 dark:border-white/10 p-4 pb-8 safe-area-pb z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<div class="flex gap-3 max-w-2xl mx-auto">
+<button class="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl border border-gray-300 dark:border-gray-600 text-text-main dark:text-white font-bold text-base hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                Update Status
+            </button>
+<button class="flex-1 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary hover:bg-primary-dark text-background-dark font-bold text-base transition-colors shadow-lg shadow-primary/20">
+                Contact Guest
+            </button>
+</div>
+<div class="mt-4 text-center">
+<button class="text-red-500 hover:text-red-600 dark:text-red-400 text-sm font-medium transition-colors">
+                Cancel Booking
+            </button>
+</div>
+</div>
+</body></html>

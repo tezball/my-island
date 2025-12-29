@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notification Detail View</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c24",
+                        "text-main-light": "#111814",
+                        "text-main-dark": "#e0e6e3",
+                        "text-sec-light": "#618975",
+                        "text-sec-dark": "#8fa89b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit browsers if needed, though hidden usually preferred on mobile */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 20px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased selection:bg-primary/30">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 transition-colors">
+<div class="flex items-center p-4 pb-2 justify-between">
+<button aria-label="Go back" class="text-text-main-light dark:text-text-main-dark flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<h2 class="text-text-main-light dark:text-text-main-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Notification</h2>
+</div>
+</div>
+<!-- Main Content Scroll Area -->
+<div class="flex-1 overflow-y-auto px-6 py-6 pb-32">
+<!-- Header Section: Icon + Title + Meta -->
+<div class="flex flex-col gap-5 mb-8">
+<!-- Icon Badge -->
+<div class="flex items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary w-16 h-16 self-start shadow-sm border border-primary/10">
+<span class="material-symbols-outlined" style="font-size: 32px;">camping</span>
+</div>
+<div class="space-y-2">
+<h1 class="text-text-main-light dark:text-text-main-dark text-2xl font-bold leading-tight tracking-tight">
+                        Booking Confirmed: <br/> Site A4 - Pine Valley
+                    </h1>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-text-sec-light dark:text-text-sec-dark">
+<div class="flex items-center gap-1.5 bg-white dark:bg-surface-dark px-3 py-1 rounded-full border border-gray-100 dark:border-gray-800 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span>Today, 09:41 AM</span>
+</div>
+<div class="flex items-center gap-1.5 bg-white dark:bg-surface-dark px-3 py-1 rounded-full border border-gray-100 dark:border-gray-800 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span>From: Camp Admin</span>
+</div>
+</div>
+</div>
+</div>
+<hr class="border-gray-100 dark:border-gray-800 mb-8"/>
+<!-- Body Text -->
+<div class="prose prose-stone dark:prose-invert max-w-none">
+<p class="text-text-main-light dark:text-text-main-dark text-base font-normal leading-relaxed pb-4">
+                    Hi Alex,
+                </p>
+<p class="text-text-main-light dark:text-text-main-dark text-base font-normal leading-relaxed pb-4">
+                    Your registration for the <strong>'Pine Valley'</strong> campsite has been successfully processed. We are excited to host you this weekend!
+                </p>
+<p class="text-text-main-light dark:text-text-main-dark text-base font-normal leading-relaxed pb-4">
+                    Please arrive between <strong>2 PM and 6 PM</strong> for check-in at the main lodge. Don't forget to bring your ID and confirmation number <span class="bg-gray-100 dark:bg-surface-dark px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200 dark:border-gray-700">#12345</span>.
+                </p>
+<!-- Info Card in body -->
+<div class="my-6 p-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-soft flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary mt-0.5">info</span>
+<div>
+<h4 class="text-sm font-bold text-text-main-light dark:text-text-main-dark mb-1">Weather Alert</h4>
+<p class="text-sm text-text-sec-light dark:text-text-sec-dark">There is a slight chance of rain in the evening. We recommend bringing waterproof gear for your tent.</p>
+</div>
+</div>
+<p class="text-text-main-light dark:text-text-main-dark text-base font-normal leading-relaxed">
+                    We look forward to seeing you! <br/>
+<span class="text-text-sec-light dark:text-text-sec-dark text-sm mt-2 block">- My Island Team</span>
+</p>
+</div>
+<!-- Map/Image Preview (Visual Flair) -->
+<div class="mt-8 rounded-2xl overflow-hidden h-48 w-full relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+<!-- Image placeholder -->
+<div class="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400" data-alt="Scenic view of Pine Valley campsite with trees and mountains" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDj-aLZAv13R4ZPg72pVPE8Dhyls_wzJWd8nl-tUCbpjxW_Jbz4myjIr2utqMNF8ORbHr_zj2zbM54JmehS6kOKLaVLwDRmaA6Jms7HLOiwMGMAhkGCr-PBDOp5W7xxfCCMyOq-kD0_fjtUEgmHNZ9pHiffhpstIxvx5qQLB9tZqeIyGmIVvVafh0W3w1YheKbW3ioJ6N1QGC69zk0rnXETtQyYKnFomDWy8kdDe-3waC9hnickNaN7Dyhw3PwtiGXaZJhbUt6A9g'); background-size: cover; background-position: center;">
+</div>
+<div class="absolute bottom-4 left-4 z-20 text-white">
+<p class="text-xs font-medium uppercase tracking-wider opacity-80">Location</p>
+<p class="font-bold text-lg">Pine Valley, Site A4</p>
+</div>
+<div class="absolute bottom-4 right-4 z-20">
+<button class="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">map</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Actions -->
+<div class="absolute bottom-0 left-0 w-full bg-background-light dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 p-4 pb-8 flex flex-col gap-3 backdrop-blur-xl bg-opacity-90 dark:bg-opacity-90">
+<!-- Primary Action -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary hover:bg-[#0fd673] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 text-[#111814] text-base font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined mr-2">confirmation_number</span>
+<span class="truncate">View Booking Details</span>
+</button>
+<!-- Secondary Action -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-transparent border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-white/5 text-text-sec-light dark:text-text-sec-dark text-sm font-bold leading-normal tracking-[0.015em] transition-colors">
+<span class="truncate">Dismiss Notification</span>
+</button>
+</div>
+</div>
+</body></html>

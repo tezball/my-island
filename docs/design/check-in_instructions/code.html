@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Check-In Instructions - My Island</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13ec80",
+              "background-light": "#f6f8f7",
+              "background-dark": "#102219",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#1a2c24",
+              "text-main": "#111814",
+              "text-subtle": "#618975",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {
+                "DEFAULT": "0.5rem", 
+                "lg": "1rem", 
+                "xl": "1.5rem", 
+                "2xl": "2rem",
+                "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar hide for horizontal scrolling if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-gray-100 font-display transition-colors duration-200 antialiased selection:bg-primary selection:text-text-main">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-xl">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-800">
+<div class="text-text-main dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer transition-opacity hover:opacity-70">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</div>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Check-In Guide</h2>
+<div class="flex w-12 items-center justify-end">
+<p class="text-text-subtle dark:text-primary text-base font-bold leading-normal tracking-[0.015em] shrink-0 cursor-pointer hover:text-primary transition-colors">Help</p>
+</div>
+</div>
+<!-- Content Container -->
+<div class="flex flex-col gap-6 pb-24">
+<!-- HeaderImage & Context -->
+<div class="@container">
+<div class="@[480px]:px-4 @[480px]:py-3 pt-2 px-4">
+<div class="relative w-full h-[220px] rounded-2xl overflow-hidden shadow-sm group">
+<div class="absolute inset-0 bg-gray-200 animate-pulse"></div>
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transition-transform duration-700 group-hover:scale-105" data-alt="Scenic view of a lush green campsite with pine trees and morning sunlight" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBU6AeEVmCnEHC7jcVKFYTl9eWozfNSPIwStNDJHk68EWgawXCWtEWf6xWFE4Vbj4l_BjxeRBEBWh2ZQ1D_UWasytbE_FfXInSerXXHm-45Q2_mEM_eLPjqWfBv77BIK-PRdXJUnBYIwE8301d0QI_M2XaXxjxcdVCOjd7p2q-cs2nd0eWhLuf5_ScP_mrYnFTH8Bew3KevemKqju3ysWgauUixfZfFNzdHGmLoImihc7qYQiMWd1ujtFhCqlwvqp6xRNU1NWjNSw");'>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-5">
+<span class="inline-flex items-center rounded-full bg-primary/90 px-2.5 py-0.5 text-xs font-semibold text-text-main mb-2 backdrop-blur-sm">
+                                Confirmed
+                            </span>
+<h1 class="text-white text-2xl font-bold leading-tight shadow-sm">Pine Valley Camp</h1>
+<p class="text-gray-200 text-sm font-medium mt-1">Booking #8392-A</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Arrival Times (Split Cards) -->
+<div class="px-4">
+<h3 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] mb-3">Arrival Times</h3>
+<div class="grid grid-cols-2 gap-3">
+<!-- Check-in Card -->
+<div class="flex flex-col p-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-4xl text-text-subtle">login</span>
+</div>
+<p class="text-text-subtle dark:text-gray-400 text-sm font-medium mb-1">Check-in</p>
+<p class="text-text-main dark:text-white text-xl font-bold">2:00 PM</p>
+<p class="text-text-subtle text-xs mt-1">Onwards</p>
+</div>
+<!-- Check-out Card -->
+<div class="flex flex-col p-4 rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-4xl text-text-subtle">logout</span>
+</div>
+<p class="text-text-subtle dark:text-gray-400 text-sm font-medium mb-1">Check-out</p>
+<p class="text-text-main dark:text-white text-xl font-bold">11:00 AM</p>
+<p class="text-text-subtle text-xs mt-1">Latest</p>
+</div>
+</div>
+</div>
+<!-- Access/Keybox (ActionPanel) -->
+<div class="px-4">
+<h3 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] mb-3">Access Instructions</h3>
+<div class="flex flex-col rounded-2xl border border-[#dbe6e0] dark:border-gray-700 bg-surface-light dark:bg-surface-dark p-5 shadow-sm">
+<div class="flex items-start justify-between gap-4 mb-4">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary">lock_open</span>
+<p class="text-text-main dark:text-white text-base font-bold leading-tight">Keybox Access</p>
+</div>
+<p class="text-text-subtle dark:text-gray-400 text-sm font-normal leading-normal">
+                                The keybox is located on the wooden post right of the main gate.
+                            </p>
+</div>
+</div>
+<div class="flex items-center justify-between bg-background-light dark:bg-black/30 p-3 rounded-xl border border-gray-100 dark:border-gray-700/50">
+<div class="flex flex-col">
+<span class="text-xs text-text-subtle uppercase tracking-wider font-semibold">Entry Code</span>
+<span class="text-xl font-mono font-bold text-text-main dark:text-primary tracking-widest">8940#</span>
+</div>
+<button class="flex items-center justify-center gap-2 rounded-lg h-9 px-4 bg-primary hover:bg-[#0fdc75] active:scale-95 transition-all text-text-main text-sm font-semibold leading-normal shadow-sm group">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<span>Copy</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Essentials (Wifi & Rules) -->
+<div class="px-4">
+<h3 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] mb-3">Site Essentials</h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-0 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
+<!-- Wifi -->
+<div class="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">wifi</span>
+</div>
+<div>
+<p class="text-sm font-bold text-text-main dark:text-white">Island_Guest_Wi-Fi</p>
+<p class="text-xs text-text-subtle">Password: <span class="font-mono text-text-main dark:text-gray-300">CampLife2024</span></p>
+</div>
+</div>
+<button class="text-text-subtle hover:text-primary transition-colors">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+<!-- Rules List -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-subtle text-xl">volume_off</span>
+<p class="text-sm text-text-main dark:text-gray-300">Quiet hours: 10:00 PM - 7:00 AM</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-subtle text-xl">pets</span>
+<p class="text-sm text-text-main dark:text-gray-300">Pets must be on leash at all times</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-subtle text-xl">fire_extinguisher</span>
+<p class="text-sm text-text-main dark:text-gray-300">No open fires near tents</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Location -->
+<div class="px-4">
+<h3 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] mb-3">Getting There</h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="h-32 w-full bg-gray-200 relative">
+<!-- Map Placeholder -->
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Map showing location of Pine Valley Camp" data-location="Pine Valley Camp, California" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCjOGT-VSNdVvSj5XQbo07ObE5zQuu-8YP0nv48_bJlqGEdZt7gNwigveqmP7G7mb-sXYp5AIB3cvLiiTZ_xs1bQ63HF4ISvBZi5FPU7_Vii2KWl3aU5_UJbOE2Hyoyn7KHRoZlh7LwzY1jVoi0U_ssDbdOd0bHD9M98hYXLxt2CTfsx8d3EJdN65aT8KPe8j_f_RW7hEE_Neq83Oeh9k1ONGyWmOZ-igtBD25BDTVSzJujDV8ML5PkGLELAM375aXtYss7Mi2yKQ");'>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-10 h-10 rounded-full bg-primary border-4 border-white dark:border-gray-800 shadow-lg flex items-center justify-center animate-bounce">
+<span class="material-symbols-outlined text-text-main text-xl">location_on</span>
+</div>
+</div>
+</div>
+<div class="p-4 flex items-center justify-between">
+<div class="flex-1">
+<p class="text-sm text-text-main dark:text-white font-semibold">124 Pine Cone Way</p>
+<p class="text-xs text-text-subtle">Santa Cruz, CA 95060</p>
+</div>
+<button class="flex items-center justify-center rounded-lg h-9 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-text-main dark:text-white text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px] mr-1.5">directions</span>
+                             Directions
+                         </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Action -->
+<div class="fixed bottom-0 left-0 w-full max-w-md mx-auto bg-white/80 dark:bg-background-dark/80 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 p-4 pb-8 z-40">
+<button class="w-full flex items-center justify-center gap-2 rounded-xl h-12 bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 transition-colors font-semibold">
+<span class="material-symbols-outlined">call</span>
+<span>Call Host for Help</span>
+</button>
+</div>
+</div>
+</body></html>

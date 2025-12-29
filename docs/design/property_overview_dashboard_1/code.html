@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Property Overview Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-dark": "#0bb862",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1A2C23",
+                        "text-main-light": "#111814",
+                        "text-main-dark": "#ffffff",
+                        "text-sub-light": "#618975",
+                        "text-sub-dark": "#a3b8ad",
+                        "border-light": "#dbe6e0",
+                        "border-dark": "#2A4034",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-2xl">
+<!-- Top Navigation / Header -->
+<header class="absolute top-0 w-full z-10 p-4 flex justify-between items-center text-white">
+<button class="p-2 rounded-full bg-black/20 backdrop-blur-md">
+<span class="material-symbols-outlined text-white">arrow_back_ios_new</span>
+</button>
+<div class="flex gap-2">
+<button class="p-2 rounded-full bg-black/20 backdrop-blur-md">
+<span class="material-symbols-outlined text-white">notifications</span>
+</button>
+<button class="p-2 rounded-full bg-black/20 backdrop-blur-md">
+<span class="material-symbols-outlined text-white">settings</span>
+</button>
+</div>
+</header>
+<!-- Hero Section -->
+<div class="relative w-full h-80 shrink-0 rounded-b-[2rem] overflow-hidden group/hero">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover/hero:scale-105" data-alt="Scenic view of Sunny Valley Campsite with lush greenery and mountains" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCR4UpcTzh5mIREWUnqcL_hsDuj2X_VavbhCOLM8WFqI94BX-MOk8RHk2k34pRkF_V72BlNBq8W7dvxjSXIggPQtm8dY8SdiJgdl0cCQQpjWcG6XH9J7dN3mj6BkFYQqkXRKo0WhUvnuw0iinrgtJvOedMA0fDSz2iggYXqBipIdxSs5cBBDa3KfpOcp8xg---uM8OUErLOOhi3Zz9g8Gcc4ZaG95CAXbQV-daImUc1AJDhiRDrpF8qGPJ9dQmbsZyfstMM6Ml2ow");'>
+</div>
+<!-- Gradient Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-background-dark/20 to-transparent"></div>
+<div class="absolute bottom-0 w-full p-6 flex flex-col gap-2">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-3 py-1 bg-primary text-background-dark text-xs font-bold uppercase tracking-wider rounded-full shadow-lg shadow-primary/20">Live</span>
+<span class="flex items-center gap-1 text-gray-200 text-xs font-medium bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full border border-white/10">
+<span class="material-symbols-outlined text-[14px]">star</span> 4.8 Superhost
+                    </span>
+</div>
+<h1 class="text-3xl font-bold text-white leading-tight">Sunny Valley Campsite</h1>
+<p class="text-gray-300 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> 
+                    Maui, Hawaii
+                </p>
+</div>
+</div>
+<!-- Quick Stats -->
+<div class="px-4 -mt-8 relative z-10">
+<div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+<!-- Stat 1 -->
+<div class="flex min-w-[140px] flex-1 flex-col gap-3 rounded-2xl p-5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined">pie_chart</span>
+</div>
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">+5%</span>
+</div>
+<div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium uppercase tracking-wide">Occupancy</p>
+<p class="text-text-main-light dark:text-text-main-dark text-2xl font-bold tracking-tight mt-1">85%</p>
+</div>
+</div>
+<!-- Stat 2 -->
+<div class="flex min-w-[140px] flex-1 flex-col gap-3 rounded-2xl p-5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">
+<span class="material-symbols-outlined filled">star</span>
+</div>
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">+0.2</span>
+</div>
+<div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium uppercase tracking-wide">Rating</p>
+<p class="text-text-main-light dark:text-text-main-dark text-2xl font-bold tracking-tight mt-1">4.8</p>
+</div>
+</div>
+<!-- Stat 3 -->
+<div class="flex min-w-[140px] flex-1 flex-col gap-3 rounded-2xl p-5 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined">camping</span>
+</div>
+</div>
+<div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium uppercase tracking-wide">Total Lots</p>
+<p class="text-text-main-light dark:text-text-main-dark text-2xl font-bold tracking-tight mt-1">24</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Alerts Section -->
+<div class="px-4 mt-2">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-4 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-6xl text-primary">thunderstorm</span>
+</div>
+<div class="flex gap-3 items-start relative z-10">
+<div class="h-10 w-10 shrink-0 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-bold">Weather Alert</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium leading-relaxed max-w-[240px]">Heavy rain predicted for this weekend. Send guest update?</p>
+</div>
+</div>
+<button class="relative z-10 shrink-0 rounded-xl bg-primary px-4 py-2 text-background-dark text-xs font-bold hover:bg-primary-dark transition-colors">
+                    Send Alert
+                </button>
+</div>
+</div>
+<!-- Quick Actions Header -->
+<div class="px-6 pt-6 pb-2">
+<h3 class="text-text-main-light dark:text-text-main-dark text-lg font-bold leading-tight">Quick Actions</h3>
+</div>
+<!-- Quick Actions Grid -->
+<div class="grid grid-cols-2 gap-3 px-4 pb-4">
+<!-- Action 1 -->
+<button class="group flex flex-col gap-3 p-4 bg-surface-light dark:bg-surface-dark rounded-2xl border border-border-light dark:border-border-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all text-left shadow-sm hover:shadow-md">
+<div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Camping tent setup in forest" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZKNtAO7-c5bDeFjmQ_2nvqWlcP4GHoMPvjDJQpZvGcq-uJjfk_ZXAMsI8eEAt9osGeTFWqctrHfVbChwpEnb-pqfIICy-nuhzlr9a1pG4eA0HGNkXBibHWN4DkY8K_9m9ozE26x7QnGiV6poo18nXSlaog5d5ya2i2rqJgZjhi3XAymXQtEgRo4YbZZurQS8ADrQMoBAslobUmCDLFtYqJhDS0mRwtwR5niyHdCfo2Ega1cWs5R2hNvvN4qLKs24uOH80tQ05HQ");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<div class="bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
+<span class="material-symbols-outlined">edit_square</span>
+</div>
+</div>
+</div>
+<div>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-bold">Edit Details</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs mt-0.5">Update info &amp; photos</p>
+</div>
+</button>
+<!-- Action 2 -->
+<button class="group flex flex-col gap-3 p-4 bg-surface-light dark:bg-surface-dark rounded-2xl border border-border-light dark:border-border-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all text-left shadow-sm hover:shadow-md">
+<div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Wooden cabin lots in forest" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAHJF9psfvpHf8L0K4vw-9x89qwDIZ2Lbf2Nl788xFL_o4YPMR5NpA516sJ4lRmksEinN3gwaLK5DEREjMyT7Sof6R7XkRlxY9qqYF9jCMK0FO0Q5B61yVdfnfzv2DADYG_9sUmkSrSaKWoBhKRAFEwRCk4oZHMTleemnE8nKpQTNebHhEgb1068o5FkhNCarY0qteQQbI3FJ55a4Xkx4yyYPI02leAtAiZD9-rv02rUomIdUL1YAtlw2QI84b4jkqdt_LP0Q0QBQ");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<div class="bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
+<span class="material-symbols-outlined">grid_view</span>
+</div>
+</div>
+</div>
+<div>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-bold">Manage Lots</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs mt-0.5">Availability &amp; pricing</p>
+</div>
+</button>
+<!-- Action 3 -->
+<button class="group flex flex-col gap-3 p-4 bg-surface-light dark:bg-surface-dark rounded-2xl border border-border-light dark:border-border-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all text-left shadow-sm hover:shadow-md">
+<div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Person checking calendar on phone" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdUy6x74XsTStLL6pdqIhKBt1OoEhqXE-Ar5pQgAOI5LqgJ7ZpwnwxJb962ZNLdoiYvadvS_grzaL86PK1eyZ0jcFeTvx3jj8C8140zTwtuIpZrvM4kbO-AbOp3pSTSvS0lpODvNfofiaeutvR-m0Y761uPIeoSt07iwHgVAs-_QnoGHUY3ERDCnRc_YaXTa_cvZHQzQC7M78tro7dJSFMMVSs50wIqbmGSQaaGMrf52CBLuS6EEDSXQe_oLLVKoRFPYfDZXfIww");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<div class="bg-white/20 backdrop-blur-md p-2 rounded-full text-white relative">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white/20"></span>
+</div>
+</div>
+</div>
+<div>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-bold">View Bookings</p>
+<p class="text-primary text-xs font-medium mt-0.5">3 New requests</p>
+</div>
+</button>
+<!-- Action 4 -->
+<button class="group flex flex-col gap-3 p-4 bg-surface-light dark:bg-surface-dark rounded-2xl border border-border-light dark:border-border-dark hover:border-primary/50 dark:hover:border-primary/50 transition-all text-left shadow-sm hover:shadow-md">
+<div class="w-full aspect-[4/3] rounded-xl overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" data-alt="Happy campers laughing" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBl5gPJCrDcFK73uYr0TEcua_mL35N4l4KXufVBCLEN9yvJq1N3hEkNmxkA2rOYsYaaWBQID50v-dL0QI4iFZmUuhqdfbFl4La0xVG_1Z_0qZKvoe5NkxpPU74wamCUqVtH7sm3Hjvu3leEhrVLKPq56QMoh63aMpL2-eDz4kgxfxiItoJ9DSH-Zw_iUWGpQve2GeiMCylK6NU3q0SJbFoYCDSxPE_lLxzlW5gfWRSsmlZXRGf7irw6DifbuJxMsjUH4ItrUvuKIA");'></div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<div class="bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
+<span class="material-symbols-outlined">forum</span>
+</div>
+</div>
+</div>
+<div>
+<p class="text-text-main-light dark:text-text-main-dark text-sm font-bold">Manage Reviews</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs mt-0.5">See feedback</p>
+</div>
+</button>
+</div>
+<!-- Recent Activity Feed (Bonus as per plan) -->
+<div class="px-6 py-2">
+<h3 class="text-text-main-light dark:text-text-main-dark text-lg font-bold leading-tight mb-3">Recent Activity</h3>
+<div class="flex items-center gap-4 py-3 border-b border-border-light dark:border-border-dark/30">
+<div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm">person_add</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-text-main-light dark:text-text-main-dark">New Booking: Sarah J.</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Lot 4 • Oct 12-14</p>
+</div>
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark">2m ago</span>
+</div>
+<div class="flex items-center gap-4 py-3">
+<div class="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm">inventory_2</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Inventory Low</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Firewood bundles running low</p>
+</div>
+<span class="text-xs text-text-sub-light dark:text-text-sub-dark">1h ago</span>
+</div>
+</div>
+<!-- Spacer for Bottom Nav -->
+<div class="h-12"></div>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full max-w-md bg-surface-light/80 dark:bg-surface-dark/90 backdrop-blur-lg border-t border-border-light dark:border-border-dark pb-6 pt-3 px-6 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined filled">dashboard</span>
+<span class="text-[10px] font-medium">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[10px] font-medium">Calendar</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<div class="relative">
+<span class="material-symbols-outlined">mail</span>
+<span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border border-surface-light dark:border-surface-dark"></span>
+</div>
+<span class="text-[10px] font-medium">Messages</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notification Preferences - my-island</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-hover": "#0ebf65",
+                        "background-light": "#f0f4f2", 
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2e25",
+                        "text-main": "#111814",
+                        "text-muted": "#6b7280",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #13ec80;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #13ec80;
+        }
+        
+        /* Hide scrollbar for clean look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white antialiased transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col max-w-md mx-auto overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-10 flex items-center bg-surface-light dark:bg-surface-dark px-4 py-3 justify-between shadow-sm/5">
+<button class="text-text-main dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Notifications</h2>
+</header>
+<!-- Main Content Scroll Area -->
+<main class="flex-1 overflow-y-auto no-scrollbar pb-8 px-4 pt-4">
+<!-- Master Toggle Card -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm mb-6">
+<div class="flex items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
+<span class="material-symbols-outlined">do_not_disturb_on</span>
+</div>
+<div class="flex flex-col">
+<p class="text-text-main dark:text-white text-base font-semibold leading-normal">Pause All</p>
+<p class="text-text-muted text-xs leading-tight">Temporarily mute all non-essential alerts</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Section: Essentials (Transactional) -->
+<div class="mb-6">
+<h3 class="text-text-muted dark:text-gray-400 text-sm font-semibold uppercase tracking-wider px-2 pb-2">Essentials</h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+<!-- Booking Confirmations -->
+<div class="flex items-center gap-4 p-4 justify-between hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex-1">
+<p class="text-text-main dark:text-white text-base font-medium leading-normal">Booking Confirmations</p>
+<p class="text-text-muted text-xs mt-0.5">Instant alerts for your campsite reservations</p>
+</div>
+<div class="shrink-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- System Alerts (Locked) -->
+<div class="flex items-center gap-4 p-4 justify-between bg-gray-50/50 dark:bg-white/5 opacity-80 cursor-not-allowed">
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<p class="text-text-main dark:text-white text-base font-medium leading-normal">System &amp; Security</p>
+<span class="material-symbols-outlined text-text-muted text-[16px]">lock</span>
+</div>
+<p class="text-text-muted text-xs mt-0.5">Required for account safety</p>
+</div>
+<div class="shrink-0 opacity-50">
+<label class="relative inline-flex items-center">
+<input checked="" class="sr-only peer" disabled="" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-300 rounded-full peer dark:bg-gray-600 after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Engagement (Marketing/Social) -->
+<div class="mb-6">
+<h3 class="text-text-muted dark:text-gray-400 text-sm font-semibold uppercase tracking-wider px-2 pb-2">Community &amp; Offers</h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+<!-- New Campsite Alerts -->
+<div class="flex items-center gap-4 p-4 justify-between hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex-1">
+<p class="text-text-main dark:text-white text-base font-medium leading-normal">New Campsite Alerts</p>
+</div>
+<div class="shrink-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Review Replies -->
+<div class="flex items-center gap-4 p-4 justify-between hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex-1">
+<p class="text-text-main dark:text-white text-base font-medium leading-normal">Review Replies</p>
+<p class="text-text-muted text-xs mt-0.5">When suppliers respond to your feedback</p>
+</div>
+<div class="shrink-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Supplier Offers -->
+<div class="flex items-center gap-4 p-4 justify-between hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex-1">
+<p class="text-text-main dark:text-white text-base font-medium leading-normal">Supplier Offers</p>
+<p class="text-text-muted text-xs mt-0.5">Discounts and seasonal promotions</p>
+</div>
+<div class="shrink-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Delivery Methods -->
+<div class="mb-8">
+<h3 class="text-text-muted dark:text-gray-400 text-sm font-semibold uppercase tracking-wider px-2 pb-2">Delivery Channels</h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm p-4 space-y-4">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">smartphone</span>
+<span class="text-text-main dark:text-white font-medium">Push Notifications</span>
+</div>
+<div class="relative flex items-center">
+<input checked="" class="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/20 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:checked:bg-primary dark:checked:border-primary transition-all duration-200" type="checkbox"/>
+</div>
+</label>
+<div class="h-px bg-gray-100 dark:bg-gray-800 w-full"></div>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">mail</span>
+<span class="text-text-main dark:text-white font-medium">Email Digests</span>
+</div>
+<div class="relative flex items-center">
+<input checked="" class="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/20 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:checked:bg-primary dark:checked:border-primary transition-all duration-200" type="checkbox"/>
+</div>
+</label>
+<div class="h-px bg-gray-100 dark:bg-gray-800 w-full"></div>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors">sms</span>
+<span class="text-text-main dark:text-white font-medium">SMS Alerts</span>
+</div>
+<div class="relative flex items-center">
+<input class="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/20 bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:checked:bg-primary dark:checked:border-primary transition-all duration-200" type="checkbox"/>
+</div>
+</label>
+</div>
+</div>
+<!-- Footer Link -->
+<div class="mb-10 text-center">
+<a class="inline-flex items-center text-primary text-sm font-medium hover:text-primary-hover transition-colors" href="#">
+                    Manage system-level permissions in Settings
+                    <span class="material-symbols-outlined text-sm ml-1">open_in_new</span>
+</a>
+</div>
+</main>
+</div>
+</body></html>

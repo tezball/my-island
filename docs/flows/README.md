@@ -2,21 +2,26 @@
 
 This directory contains documentation for all major user flows in the my-island camping/glamping booking application. Each flow includes screens, user stories, and flow diagrams.
 
+**See also:** [user-flows.md](./user-flows.md) - Comprehensive visual flow guide with ASCII diagrams
+
 ## Flow Overview
 
-| Flow | Description | User Stories |
-|------|-------------|--------------|
-| [Onboarding](./onboarding/) | First-time user introduction and app benefits | 5 stories |
-| [Auth](./auth/) | Login, signup, password reset, email verification | 8 stories |
-| [Discovery](./discovery/) | Map, search, filters, campsite browsing | 10 stories |
-| [Booking](./booking/) | Date selection, lot choice, extras, payment | 11 stories |
-| [My Bookings](./my-bookings/) | View, modify, and cancel reservations | 12 stories |
-| [Profile](./profile/) | User profile, settings, preferences | 13 stories |
-| [Favorites](./favorites/) | Save and manage favorite campsites | 6 stories |
-| [Reviews](./reviews/) | Submit and browse campsite reviews | 9 stories |
-| [Offers](./offers/) | Local supplier deals and promotions | 8 stories |
-| [Owner/Admin](./owner-admin/) | Campsite management for owners | 15 stories |
-| [Errors](./errors/) | Error handling and empty states | 8 stories |
+| Flow | Description | User Stories | Screens |
+|------|-------------|--------------|---------|
+| [Onboarding](./onboarding/) | First-time user introduction and app benefits | 5 stories | 8 |
+| [Auth](./auth/) | Login, signup, password reset, email verification | 8 stories | 8 |
+| [Discovery](./discovery/) | Map, search, filters, campsite browsing | 10 stories | 5 |
+| [Booking](./booking/) | Date selection, lot choice, extras, payment | 11 stories | 11 |
+| [My Bookings](./my-bookings/) | View, modify, and cancel reservations | 12 stories | 10 |
+| [Profile](./profile/) | User profile, settings, preferences | 13 stories | 11 |
+| [Notifications](./notifications/) | Alerts, updates, and preferences | 8 stories | 4 |
+| [Favorites](./favorites/) | Save and manage favorite campsites | 6 stories | 1 |
+| [Reviews](./reviews/) | Submit and browse campsite reviews | 9 stories | 1 |
+| [Offers](./offers/) | Local supplier deals and promotions | 8 stories | 2 |
+| [Owner/Admin](./owner-admin/) | Campsite management for owners | 15 stories | 23 |
+| [Errors](./errors/) | Error handling and empty states | 8 stories | 0* |
+
+*Error screens need design
 
 ## User Journey Map
 

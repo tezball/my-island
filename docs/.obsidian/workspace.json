@@ -11,17 +11,14 @@
             "id": "e8d3b3f45e3d70b8",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "user-flows.canvas",
-                "viewState": {
-                  "x": -2140,
-                  "y": -6501.176523702032,
-                  "zoom": -2.7592632623028717
-                }
+                "file": "flows/missing-screens.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "user-flows"
+              "icon": "lucide-file",
+              "title": "missing-screens"
             }
           }
         ]
@@ -97,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "user-flows.canvas",
+                "file": "flows/missing-screens.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -107,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for user-flows"
+              "title": "Backlinks for missing-screens"
             }
           },
           {
@@ -116,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "user-flows.canvas",
+                "file": "flows/missing-screens.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from user-flows"
+              "title": "Outgoing links from missing-screens"
             }
           },
           {
@@ -159,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "user-flows.canvas",
+                "file": "flows/missing-screens.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of user-flows"
+              "title": "Outline of missing-screens"
             }
           }
         ]
@@ -188,41 +185,45 @@
   },
   "active": "e8d3b3f45e3d70b8",
   "lastOpenFiles": [
-    "flows/README.md",
-    "flows/README.md.tmp.24260.1767019740589",
-    "flows/errors/README.md",
-    "flows/errors/README.md.tmp.24260.1767019740509",
-    "flows/owner-admin/README.md",
-    "flows/owner-admin/README.md.tmp.24260.1767019692044",
-    "flows/offers/README.md",
-    "flows/offers/README.md.tmp.24260.1767019691939",
-    "flows/reviews/README.md",
-    "flows/reviews/README.md.tmp.24260.1767019691840",
-    "flows/favorites/README.md",
-    "flows/favorites/README.md.tmp.24260.1767019691759",
-    "flows/profile/README.md",
-    "flows/profile/README.md.tmp.24260.1767019572480",
-    "flows/my-bookings/README.md",
-    "flows/my-bookings/README.md.tmp.24260.1767019572384",
-    "flows/booking/README.md",
-    "flows/booking/README.md.tmp.24260.1767019572296",
-    "flows/discovery/README.md",
-    "flows/discovery/README.md.tmp.24260.1767019456088",
-    "flows/auth/README.md",
-    "flows/onboarding/README.md",
-    "flows/owner-admin/11-edit-offer.png",
-    "flows/owner-admin/10-offer-mgmt-2.png",
-    "flows/owner-admin/09-offer-mgmt-1.png",
-    "flows/owner-admin/08-edit-campsite-2.png",
-    "flows/owner-admin/07-edit-campsite-1.png",
-    "flows/owner-admin/06-edit-lot-2.png",
-    "flows/owner-admin/05-edit-lot-1.png",
-    "flows/owner-admin/04-add-lot.png",
-    "flows/owner-admin/03-manage-lots.png",
-    "flows/owner-admin/02-statistics.png",
-    "Missing Features Analysis.md",
+    "flows/README.md.tmp.24260.1767022101197",
+    "flows/missing-screens.md.tmp.24260.1767022079210",
+    "flows/user-flows.md",
+    "flows/user-flows.md.tmp.24260.1767022048898",
+    "flows/notifications/README.md",
+    "flows/notifications/README.md.tmp.24260.1767021860086",
+    "flows/owner-admin/23-property-overview-5.png",
+    "flows/owner-admin/22-property-overview-4.png",
+    "flows/owner-admin/21-property-overview-3.png",
+    "flows/owner-admin/20-property-overview-2.png",
+    "flows/owner-admin/19-property-overview-1.png",
+    "flows/owner-admin/06b-edit-lot-individual.png",
+    "flows/owner-admin/18-create-ticket.png",
+    "flows/owner-admin/17-owner-support.png",
+    "flows/owner-admin/16-add-payout.png",
+    "flows/owner-admin/15-revenue-dashboard.png",
+    "flows/notifications",
+    "design/welcome_to_my-island!/code.html",
+    "design/welcome_to_my-island!",
+    "design/welcome_to_my-island/code.html",
+    "design/welcome_to_my-island",
+    "design/verify_your_email/code.html",
+    "design/verify_your_email",
     "Design Snag List.md",
     "user-flows.canvas",
+    "Missing Features Analysis.md",
+    "flows/missing-screens.md",
+    "flows/README.md",
+    "flows/errors/README.md",
+    "flows/owner-admin/README.md",
+    "flows/offers/README.md",
+    "flows/reviews/README.md",
+    "flows/favorites/README.md",
+    "flows/profile/README.md",
+    "flows/my-bookings/README.md",
+    "flows/booking/README.md",
+    "flows/discovery/README.md",
+    "flows/auth/README.md",
+    "flows/onboarding/README.md",
     "design/user-flows.canvas"
   ]
 }

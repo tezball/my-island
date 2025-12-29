@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Password Reset Successful</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar to keep it clean if content overflows */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111814] dark:text-white antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden">
+<!-- Background Pattern/Decoration -->
+<div class="absolute top-0 left-0 w-full h-[40vh] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none z-0"></div>
+<!-- Header / Nav -->
+<div class="relative z-10 flex items-center p-4 justify-between">
+<!-- Close button could be here, but usually success screens force the primary action -->
+<div class="w-10"></div> <!-- Spacer for balance if needed -->
+<div class="w-10"></div>
+</div>
+<!-- Main Content Area - Centered -->
+<div class="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-20 pt-10 w-full max-w-md mx-auto">
+<!-- Success Image / Icon -->
+<div class="mb-8 relative">
+<div class="w-40 h-40 bg-primary/20 rounded-full flex items-center justify-center animate-pulse">
+<div class="w-32 h-32 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/40">
+<span class="material-symbols-outlined text-background-dark text-[64px] font-bold">check</span>
+</div>
+</div>
+<!-- Decorative elements for nature theme -->
+<div class="absolute -bottom-2 -right-4 text-primary opacity-80 rotate-12">
+<span class="material-symbols-outlined text-[40px]">spa</span>
+</div>
+</div>
+<!-- Headline -->
+<h1 class="text-[#111814] dark:text-white tracking-tight text-3xl font-bold leading-tight text-center mb-4">
+                Password Reset Successful!
+            </h1>
+<!-- Body Text -->
+<p class="text-[#111814]/70 dark:text-white/70 text-base font-normal leading-relaxed text-center max-w-xs mb-10">
+                You’re all set! Your new password has been updated. Please log in to continue booking your campsite.
+            </p>
+<!-- Decorative Image (Subtle) -->
+<div class="w-full h-32 mb-8 rounded-xl overflow-hidden relative opacity-90">
+<div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent z-10"></div>
+<div class="w-full h-full bg-center bg-cover" data-alt="Peaceful forest landscape with sunlight filtering through trees" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA1Wwy_TlEl6FeCsOOjU0WZRklHMHA3oQYvFXPoBEJGhT0DRDxcT3qnxdTu7YmXrS1C-eCM6TGmxq8SX8skY5wOLSnuKrNYLNAG5YwL0SwWSAVN_el-GTA7VMkwBCAlvuU1R5WuqvkICfTo1_bZOqxQhbI3GTYWl7T2eRPFxqQ9OzPuyOeCF6EeHd3J-TDfByYTrwQlkPQqQ-El9btyLRDhGIq9FvhjhIj4ryVRUWaVMJ4c2Kt8ZWUNyPBo4adZ8IgCfaQqD0G-dg");'>
+</div>
+</div>
+<!-- Action Button -->
+<div class="w-full mt-auto">
+<button class="w-full cursor-pointer flex items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary hover:bg-[#0fdc75] transition-colors shadow-lg shadow-primary/25 text-[#102219] text-lg font-bold leading-normal tracking-wide">
+<span class="truncate">Log In Now</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

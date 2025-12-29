@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notifications List - My-Island</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1A2E25",
+                        "text-main": "#111814",
+                        "text-secondary": "#618975",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for clean UI in horizontal scroll elements if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 group/design-root">
+<!-- Header -->
+<header class="sticky top-0 z-20 w-full bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-black/5 dark:border-white/10">
+<div class="flex items-center p-4 pb-2 justify-between">
+<h2 class="text-text-main dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em] flex-1">Notifications</h2>
+<button class="flex items-center justify-end active:opacity-70 transition-opacity">
+<p class="text-primary text-sm font-bold leading-normal tracking-[0.015em] shrink-0">Mark all read</p>
+</button>
+</div>
+<!-- Segmented Control / Filters -->
+<div class="px-4 py-3 w-full">
+<div class="flex h-10 w-full items-center justify-center rounded-xl bg-[#e8edeb] dark:bg-[#1A2E25] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-[#2A4034] has-[:checked]:shadow-sm text-text-secondary dark:text-gray-400 has-[:checked]:text-text-main dark:has-[:checked]:text-primary text-sm font-bold transition-all">
+<span class="truncate">All</span>
+<input checked="" class="invisible w-0 absolute" name="filter" type="radio" value="All"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-[#2A4034] has-[:checked]:shadow-sm text-text-secondary dark:text-gray-400 has-[:checked]:text-text-main dark:has-[:checked]:text-primary text-sm font-bold transition-all">
+<span class="truncate">Unread</span>
+<input class="invisible w-0 absolute" name="filter" type="radio" value="Unread"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-[#2A4034] has-[:checked]:shadow-sm text-text-secondary dark:text-gray-400 has-[:checked]:text-text-main dark:has-[:checked]:text-primary text-sm font-bold transition-all">
+<span class="truncate">Alerts</span>
+<input class="invisible w-0 absolute" name="filter" type="radio" value="Alerts"/>
+</label>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col gap-2 pt-2">
+<!-- Section: Today -->
+<div class="flex flex-col">
+<h3 class="text-text-main dark:text-gray-200 text-sm font-bold uppercase tracking-wider px-6 py-2 opacity-60">Today</h3>
+<!-- Unread Item 1 -->
+<div class="group relative flex flex-col bg-card-light dark:bg-card-dark mx-4 mb-3 rounded-2xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden active:scale-[0.99] transition-all duration-200">
+<div class="absolute top-4 right-4 w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(19,236,128,0.6)]"></div>
+<div class="flex items-start gap-4 p-4">
+<div class="flex items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 shrink-0 size-12 text-primary">
+<span class="material-symbols-outlined text-[24px]">camping</span>
+</div>
+<div class="flex flex-col justify-center flex-1 pr-4">
+<div class="flex justify-between items-start w-full">
+<p class="text-text-main dark:text-white text-base font-bold leading-tight mb-1">Registration Confirmed</p>
+<p class="text-text-secondary dark:text-gray-400 text-xs font-medium leading-normal whitespace-nowrap pt-0.5">10m ago</p>
+</div>
+<p class="text-text-secondary dark:text-gray-300 text-sm font-normal leading-normal line-clamp-2">Your booking for <span class="text-text-main dark:text-white font-medium">Emerald Bay Campsite</span> has been successfully confirmed for this weekend.</p>
+</div>
+</div>
+</div>
+<!-- Unread Item 2 -->
+<div class="group relative flex flex-col bg-card-light dark:bg-card-dark mx-4 mb-3 rounded-2xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden active:scale-[0.99] transition-all duration-200">
+<div class="absolute top-4 right-4 w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(19,236,128,0.6)]"></div>
+<div class="flex items-start gap-4 p-4">
+<div class="flex items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 shrink-0 size-12 text-amber-600 dark:text-amber-400">
+<span class="material-symbols-outlined text-[24px]">local_shipping</span>
+</div>
+<div class="flex flex-col justify-center flex-1 pr-4">
+<div class="flex justify-between items-start w-full">
+<p class="text-text-main dark:text-white text-base font-bold leading-tight mb-1">Supplier Alert</p>
+<p class="text-text-secondary dark:text-gray-400 text-xs font-medium leading-normal whitespace-nowrap pt-0.5">1h ago</p>
+</div>
+<p class="text-text-secondary dark:text-gray-300 text-sm font-normal leading-normal line-clamp-2">Fresh water delivery scheduled for 2:00 PM today. Please ensure the loading bay is clear.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Yesterday -->
+<div class="flex flex-col mt-2">
+<h3 class="text-text-main dark:text-gray-200 text-sm font-bold uppercase tracking-wider px-6 py-2 opacity-60">Yesterday</h3>
+<!-- Read Item 1 -->
+<div class="group relative flex flex-col bg-card-light dark:bg-card-dark mx-4 mb-3 rounded-2xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden opacity-80 active:opacity-100 active:scale-[0.99] transition-all duration-200">
+<div class="flex items-start gap-4 p-4">
+<div class="flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 shrink-0 size-12 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[24px]">notifications_active</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-text-main dark:text-white text-base font-medium leading-tight mb-1">Check-out Reminder</p>
+<p class="text-text-secondary dark:text-gray-500 text-xs font-normal leading-normal whitespace-nowrap pt-0.5">1d ago</p>
+</div>
+<p class="text-text-secondary dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">Don't forget to clear your pitch by 11:00 AM tomorrow.</p>
+</div>
+</div>
+</div>
+<!-- Read Item 2 -->
+<div class="group relative flex flex-col bg-card-light dark:bg-card-dark mx-4 mb-3 rounded-2xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden opacity-80 active:opacity-100 active:scale-[0.99] transition-all duration-200">
+<div class="flex items-start gap-4 p-4">
+<div class="flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/20 shrink-0 size-12 text-blue-500 dark:text-blue-400">
+<span class="material-symbols-outlined text-[24px]">cloud</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-text-main dark:text-white text-base font-medium leading-tight mb-1">Weather Update</p>
+<p class="text-text-secondary dark:text-gray-500 text-xs font-normal leading-normal whitespace-nowrap pt-0.5">1d ago</p>
+</div>
+<p class="text-text-secondary dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">Heavy rain expected tomorrow afternoon. Secure your tent and gear.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Earlier -->
+<div class="flex flex-col mt-2">
+<h3 class="text-text-main dark:text-gray-200 text-sm font-bold uppercase tracking-wider px-6 py-2 opacity-60">Earlier</h3>
+<!-- Read Item 3 -->
+<div class="group relative flex flex-col bg-card-light dark:bg-card-dark mx-4 mb-3 rounded-2xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden opacity-60 active:opacity-100 active:scale-[0.99] transition-all duration-200">
+<div class="flex items-start gap-4 p-4">
+<div class="flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 shrink-0 size-12 text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[24px]">person</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-text-main dark:text-white text-base font-medium leading-tight mb-1">Profile Updated</p>
+<p class="text-text-secondary dark:text-gray-500 text-xs font-normal leading-normal whitespace-nowrap pt-0.5">5d ago</p>
+</div>
+<p class="text-text-secondary dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">Your contact preferences have been updated successfully.</p>
+</div>
+</div>
+</div>
+<!-- Read Item 4 (Community) -->
+<div class="group relative flex flex-col bg-card-light dark:bg-card-dark mx-4 mb-3 rounded-2xl shadow-sm border border-transparent dark:border-white/5 overflow-hidden opacity-60 active:opacity-100 active:scale-[0.99] transition-all duration-200">
+<div class="flex items-start gap-4 p-4">
+<div class="flex items-center justify-center rounded-xl bg-purple-50 dark:bg-purple-900/20 shrink-0 size-12 text-purple-500 dark:text-purple-400">
+<span class="material-symbols-outlined text-[24px]">groups</span>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<div class="flex justify-between items-start w-full">
+<p class="text-text-main dark:text-white text-base font-medium leading-tight mb-1">New Event Nearby</p>
+<p class="text-text-secondary dark:text-gray-500 text-xs font-normal leading-normal whitespace-nowrap pt-0.5">1w ago</p>
+</div>
+<p class="text-text-secondary dark:text-gray-400 text-sm font-normal leading-normal line-clamp-2">"Island Cleanup Drive" is happening near your location this Sunday.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="h-10"></div> <!-- Spacer -->
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-30 bg-card-light dark:bg-card-dark border-t border-black/5 dark:border-white/10 pb-safe">
+<div class="flex items-center justify-around px-2 h-20 pb-4"> <!-- Added height and padding-bottom for safe area simulation -->
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-16 rounded-xl text-text-secondary dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-16 rounded-xl text-text-secondary dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">search</span>
+<span class="text-[10px] font-medium">Explore</span>
+</a>
+<!-- Active Item -->
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-16 rounded-xl text-primary relative" href="#">
+<!-- Indicator for active tab -->
+<span class="material-symbols-outlined text-[24px] fill-1" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="text-[10px] font-bold">Alerts</span>
+<span class="absolute top-3 right-4 w-2 h-2 rounded-full bg-primary border-2 border-white dark:border-card-dark"></span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-16 rounded-xl text-text-secondary dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">calendar_month</span>
+<span class="text-[10px] font-medium">Bookings</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-16 h-16 rounded-xl text-text-secondary dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

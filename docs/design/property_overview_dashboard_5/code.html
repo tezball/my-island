@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manage Campsite Lots</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-dark": "#0bb862",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1A2C23",
+                        "text-main-light": "#111814",
+                        "text-main-dark": "#ffffff",
+                        "text-sub-light": "#618975",
+                        "text-sub-dark": "#a3b8ad",
+                        "border-light": "#dbe6e0",
+                        "border-dark": "#2A4034",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: max(884px, 100dvh);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-2xl">
+<div class="relative w-full h-56 shrink-0 rounded-b-[2rem] overflow-hidden group/hero">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCR4UpcTzh5mIREWUnqcL_hsDuj2X_VavbhCOLM8WFqI94BX-MOk8RHk2k34pRkF_V72BlNBq8W7dvxjSXIggPQtm8dY8SdiJgdl0cCQQpjWcG6XH9J7dN3mj6BkFYQqkXRKo0WhUvnuw0iinrgtJvOedMA0fDSz2iggYXqBipIdxSs5cBBDa3KfpOcp8xg---uM8OUErLOOhi3Zz9g8Gcc4ZaG95CAXbQV-daImUc1AJDhiRDrpF8qGPJ9dQmbsZyfstMM6Ml2ow");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/95 via-background-dark/40 to-black/30"></div>
+<header class="absolute top-0 w-full z-10 p-4 flex justify-between items-center text-white">
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-white">arrow_back_ios_new</span>
+</button>
+<div class="flex gap-2">
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-white">tune</span>
+</button>
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-white">search</span>
+</button>
+</div>
+</header>
+<div class="absolute bottom-0 w-full p-6 flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1 opacity-90">
+<span class="material-symbols-outlined text-primary text-lg">camping</span>
+<span class="text-xs font-semibold uppercase tracking-wider text-primary">Property Management</span>
+</div>
+<h1 class="text-3xl font-bold text-white leading-tight">Manage Lots</h1>
+<p class="text-gray-300 text-sm">Sunny Valley Campsite</p>
+</div>
+</div>
+<main class="px-4 -mt-6 relative z-10 flex flex-col gap-5">
+<button class="w-full bg-primary hover:bg-primary-dark text-background-dark font-bold rounded-2xl p-4 shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all group active:scale-[0.98]">
+<span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add_circle</span>
+<span class="text-base">Add New Lot</span>
+</button>
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide px-1">
+<button class="px-4 py-2 bg-surface-dark text-white text-xs font-semibold rounded-full border border-surface-dark shadow-sm whitespace-nowrap">All Lots (24)</button>
+<button class="px-4 py-2 bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium rounded-full border border-border-light dark:border-border-dark whitespace-nowrap hover:border-primary transition-colors">Available (12)</button>
+<button class="px-4 py-2 bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium rounded-full border border-border-light dark:border-border-dark whitespace-nowrap hover:border-primary transition-colors">Booked (8)</button>
+<button class="px-4 py-2 bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium rounded-full border border-border-light dark:border-border-dark whitespace-nowrap hover:border-primary transition-colors">Maintenance (4)</button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow">
+<div class="flex gap-4">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center text-green-700 dark:text-green-400">
+<span class="material-symbols-outlined text-[32px]">camping</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h3 class="text-text-main-light dark:text-text-main-dark font-bold text-base truncate">Lot 1</h3>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase tracking-wide border border-green-100 dark:border-green-800">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                    Available
+                                </span>
+</div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs">Tent Spot • Forest View</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-text-sub-light">attach_money</span>
+<span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold">$45<span class="text-text-sub-light dark:text-text-sub-dark text-xs font-normal">/night</span></span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                            Edit Lot
+                        </button>
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background-light dark:bg-background-dark/50 text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                            View Calendar
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow">
+<div class="flex gap-4">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-700 dark:text-blue-400">
+<span class="material-symbols-outlined text-[32px]">rv_hookup</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h3 class="text-text-main-light dark:text-text-main-dark font-bold text-base truncate">Lot 2</h3>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wide border border-blue-100 dark:border-blue-800">
+                                    Booked
+                                </span>
+</div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs">RV Site • 30 Amp Hookup</p>
+<div class="flex items-center gap-1 mt-1 text-xs text-text-sub-light dark:text-text-sub-dark bg-background-light dark:bg-background-dark/50 px-2 py-1 rounded-md w-fit">
+<span class="material-symbols-outlined text-[14px]">event_available</span>
+                                Oct 12 - Oct 14
+                            </div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                            Edit Lot
+                        </button>
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background-light dark:bg-background-dark/50 text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                            View Calendar
+                        </button>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-[linear-gradient(135deg,transparent_45%,rgba(249,115,22,0.1)_45%,rgba(249,115,22,0.1)_55%,transparent_55%)] pointer-events-none"></div>
+<div class="flex gap-4">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-700 dark:text-orange-400">
+<span class="material-symbols-outlined text-[32px]">cottage</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h3 class="text-text-main-light dark:text-text-main-dark font-bold text-base truncate">Lot 3</h3>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-[10px] font-bold uppercase tracking-wide border border-orange-100 dark:border-orange-800">
+<span class="material-symbols-outlined text-[10px]">build</span>
+                                    Maint.
+                                </span>
+</div>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs">Glamping Pod • Riverside</p>
+<div class="flex items-center gap-1 mt-1 text-xs text-orange-700 dark:text-orange-400 font-medium">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                Until Oct 17
+                            </div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                            Edit Lot
+                        </button>
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background-light dark:bg-background-dark/50 text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                            View Calendar
+                        </button>
+</div>
+</div>
+</div>
+<div class="h-8"></div>
+</main>
+<nav class="fixed bottom-0 w-full max-w-md bg-surface-light/80 dark:bg-surface-dark/90 backdrop-blur-lg border-t border-border-light dark:border-border-dark pb-6 pt-3 px-6 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined filled">dashboard</span>
+<span class="text-[10px] font-medium">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-[10px] font-medium">Calendar</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">
+<div class="relative">
+<span class="material-symbols-outlined">mail</span>
+<span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border border-surface-light dark:border-surface-dark"></span>
+</div>
+<span class="text-[10px] font-medium">Messages</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</nav>
+</div>
+</body></html>

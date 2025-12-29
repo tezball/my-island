@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Payout Method</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-dark": "#1c2e26", 
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit to keep it clean */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-[#111814] dark:text-white antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-10 flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between backdrop-blur-md bg-opacity-90 dark:bg-opacity-90">
+<div class="text-[#111814] dark:text-white flex size-12 shrink-0 items-center justify-center cursor-pointer rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</div>
+<h2 class="text-[#111814] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">
+                Add Payout Method
+            </h2>
+</div>
+<!-- Security Badge / Intro -->
+<div class="flex flex-col items-center justify-center px-6 pt-2 pb-6">
+<div class="flex items-center gap-2 bg-[#e0f7ea] dark:bg-[#13ec80]/10 px-3 py-1.5 rounded-full mb-3">
+<span class="material-symbols-outlined text-primary text-sm">lock</span>
+<span class="text-xs font-semibold text-[#102219] dark:text-primary tracking-wide uppercase">Bank-grade Security</span>
+</div>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-relaxed text-center px-4">
+                Receive earnings directly to your preferred account. Your data is encrypted and stored securely.
+            </p>
+</div>
+<!-- Form Container -->
+<div class="flex-1 flex flex-col px-4 gap-4 pb-32">
+<!-- Country / Region Select -->
+<label class="flex flex-col w-full">
+<p class="text-[#111814] dark:text-white text-sm font-medium leading-normal pb-2 ml-1">Country / Region</p>
+<div class="relative">
+<select class="form-select w-full appearance-none rounded-xl border border-[#dbe6e0] dark:border-neutral-700 bg-white dark:bg-surface-dark text-[#111814] dark:text-white h-14 pl-4 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+<option value="us">United States</option>
+<option value="ca">Canada</option>
+<option value="uk">United Kingdom</option>
+<option value="au">Australia</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+<span class="material-symbols-outlined text-[#618975]">expand_more</span>
+</div>
+</div>
+</label>
+<!-- Payout Type Select -->
+<label class="flex flex-col w-full">
+<p class="text-[#111814] dark:text-white text-sm font-medium leading-normal pb-2 ml-1">Payout Type</p>
+<div class="relative">
+<select class="form-select w-full appearance-none rounded-xl border border-[#dbe6e0] dark:border-neutral-700 bg-white dark:bg-surface-dark text-[#111814] dark:text-white h-14 pl-4 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+<option value="bank">Direct Bank Transfer</option>
+<option value="stripe">Stripe Connect</option>
+<option value="paypal">PayPal</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+<span class="material-symbols-outlined text-[#618975]">expand_more</span>
+</div>
+</div>
+</label>
+<!-- Name on Account -->
+<label class="flex flex-col w-full">
+<p class="text-[#111814] dark:text-white text-sm font-medium leading-normal pb-2 ml-1">Name on Account</p>
+<input class="form-input w-full rounded-xl border border-[#dbe6e0] dark:border-neutral-700 bg-white dark:bg-surface-dark text-[#111814] dark:text-white h-14 px-4 text-base placeholder:text-[#618975] dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="e.g. John Doe" type="text"/>
+</label>
+<!-- Bank Name -->
+<label class="flex flex-col w-full">
+<p class="text-[#111814] dark:text-white text-sm font-medium leading-normal pb-2 ml-1">Bank Name</p>
+<input class="form-input w-full rounded-xl border border-[#dbe6e0] dark:border-neutral-700 bg-white dark:bg-surface-dark text-[#111814] dark:text-white h-14 px-4 text-base placeholder:text-[#618975] dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="e.g. Chase Bank" type="text"/>
+</label>
+<!-- Account Details Group -->
+<div class="grid grid-cols-1 gap-4">
+<!-- IBAN / Account Number -->
+<label class="flex flex-col w-full">
+<p class="text-[#111814] dark:text-white text-sm font-medium leading-normal pb-2 ml-1">IBAN / Account Number</p>
+<div class="relative">
+<input class="form-input w-full rounded-xl border border-[#dbe6e0] dark:border-neutral-700 bg-white dark:bg-surface-dark text-[#111814] dark:text-white h-14 pl-12 pr-4 text-base placeholder:text-[#618975] dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all font-mono" placeholder="**** **** **** 1234" type="text"/>
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+<span class="material-symbols-outlined text-[#618975]">credit_card</span>
+</div>
+</div>
+</label>
+<!-- SWIFT / BIC -->
+<label class="flex flex-col w-full">
+<p class="text-[#111814] dark:text-white text-sm font-medium leading-normal pb-2 ml-1">SWIFT / BIC Code</p>
+<input class="form-input w-full rounded-xl border border-[#dbe6e0] dark:border-neutral-700 bg-white dark:bg-surface-dark text-[#111814] dark:text-white h-14 px-4 text-base placeholder:text-[#618975] dark:placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all uppercase" placeholder="ABCDEF12" type="text"/>
+</label>
+</div>
+<!-- Disclaimer -->
+<p class="text-xs text-neutral-400 dark:text-neutral-500 text-center mt-4">
+                By tapping Save &amp; Continue, you agree to our <a class="text-primary underline" href="#">Payments Terms of Service</a>.
+            </p>
+</div>
+<!-- Sticky Footer Actions -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-[#dbe6e0] dark:border-neutral-800 flex flex-col gap-3 max-w-md mx-auto">
+<button class="flex w-full items-center justify-center rounded-xl bg-primary h-14 px-5 cursor-pointer shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow active:scale-[0.98]">
+<span class="text-[#102219] text-base font-bold leading-tight tracking-[-0.015em]">Save &amp; Continue</span>
+</button>
+<button class="flex w-full items-center justify-center rounded-xl h-10 px-5 cursor-pointer text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-white transition-colors">
+<span class="text-sm font-semibold">Cancel</span>
+</button>
+</div>
+</div>
+</body></html>

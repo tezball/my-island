@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sunny Valley Photo Gallery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "text-main": "#111814",
+                        "text-muted": "#618975",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hide for chips */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white font-display overflow-x-hidden min-h-screen relative flex flex-col">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-black/5 dark:border-white/5">
+<div class="flex items-center px-4 py-3 justify-between">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-text-main dark:text-white">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center truncate px-2">Sunny Valley</h1>
+<div class="flex items-center justify-end">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-text-main dark:text-white">ios_share</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 pb-24">
+<!-- Hero Section -->
+<div class="px-4 pt-4 pb-2">
+<div class="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-sm group">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Panoramic view of Sunny Valley campsite with green hills and bright sky" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDhMlkCIp9yVq8eXVfLG-YW5NQQOopXRYLmn5IOsNA2ieZBLPagh-SYAWaJT5HHX29F3KUbfG2YFMm2wjXXNWv7stg4CX3D27ABFbeGyLS8NAvuuVhzS-W6m2I71GSRezS9bLx8WVTtS_j3KTqG8WrCoD88vgKxPn-WRFFSUWnTUWSvGc4r_rfgIRS9PFkGm-b2Q8bAHlvzT4OTWICxrP7rEhsqhtxAGKmX34wJoeRM1JvuyYV6b2aFBcCPxViblYyFHczPyYicrQ");'>
+</div>
+<!-- Overlay Gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4 text-white">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-1 rounded-md bg-white/20 backdrop-blur-sm text-xs font-medium border border-white/10">Featured</span>
+<span class="flex items-center text-xs font-medium text-white/90">
+<span class="material-symbols-outlined text-[16px] mr-1">visibility</span> 1.2k views
+                        </span>
+</div>
+<h2 class="text-2xl font-bold tracking-tight">Campsite Overview</h2>
+</div>
+</div>
+</div>
+<!-- Headline & Meta -->
+<div class="px-4 py-2">
+<h2 class="text-2xl font-bold text-text-main dark:text-white leading-tight">Photo Gallery</h2>
+<p class="text-text-muted dark:text-gray-400 text-sm mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">photo_library</span>
+                24 Photos • Sunny Valley Campsite
+            </p>
+</div>
+<!-- Filter Chips -->
+<div class="sticky top-[60px] z-40 bg-background-light dark:bg-background-dark py-2">
+<div class="flex gap-3 px-4 overflow-x-auto no-scrollbar pb-2">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-text-main dark:bg-white text-white dark:text-background-dark px-5 shadow-sm transition-transform active:scale-95">
+<span class="text-sm font-semibold">All</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 px-5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+<span class="text-sm font-medium text-text-main dark:text-white">Exterior</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 px-5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+<span class="text-sm font-medium text-text-main dark:text-white">Interior</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 px-5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+<span class="text-sm font-medium text-text-main dark:text-white">Activities</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 px-5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+<span class="text-sm font-medium text-text-main dark:text-white">Dining</span>
+</button>
+</div>
+</div>
+<!-- Masonry Grid -->
+<div class="px-4 mt-2">
+<div class="grid grid-cols-2 gap-3">
+<!-- Left Column -->
+<div class="flex flex-col gap-3">
+<div class="relative group rounded-xl overflow-hidden aspect-[3/4]">
+<img alt="Tent Interior" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Detail shot of a cozy glamping tent interior with comfortable bedding" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCclKx7d4tfREBFs6gxxG9iVmw-vYVzdoX8uFo6tUCy0j87UoW8fkLpt95inanIldg403eNcppB4fnMtJwM-676y3J07d97dJElcYVerCXfg3gQkOd_ssijSYKnVyg9eUeQP8pOGAdTqCMfhhjHQf2pvwyS4oUp5OhVaxblFIi7QJSkv71Wo__dcewcAuFtOgB_LAeFqkoxRbjWsh46GKX79obEX797l6Of7nUpiQBueFWxKOdZfYDcYidIGgPD6WBabuioGTTSuw"/>
+<div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
+</div>
+<div class="relative group rounded-xl overflow-hidden aspect-square">
+<img alt="Campfire" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="People sitting around a campfire at night roasting marshmallows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8c11O4rVYQQhdgisZPHgCSpWEQAsO4w3_q7YUzzMOW8Op8ffjg7c1Nd61scjLK-xnp41cpHwh8unqHEpl_mfV-fQAaq-CwtaTRoma96X2umEqYP6--BKnbJxciZfd144AmduKbTYibS5UgLwvco-hOM4PU_5rptVwSn2_T3glAZgve1OHGBrIUyndvU_MkH9wEB9mu-9ewf9Ed-ngBPdflTABe_LRn1hD7oPmwsY0Pa0Cwc0TaMfXhTg0hh0tiNPxc9U9HS-NYw"/>
+</div>
+<div class="relative group rounded-xl overflow-hidden aspect-[4/3]">
+<img alt="Forest Trail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Dense green forest trail with sunlight filtering through leaves" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuPIUWj7z8kI6iz51s_IhUZOt5QQEI6xBiaZjCVakR2ljr-_5zbXSyc6orSmdnu_MYutyfPAWHhe8eKu_PQ_NrrBoszdJTLwYpVoZLGS5uNfnCuahdPkwdCupdvMs1bD-PlYcPq1-0Jj6wSf9MMhNPlmGjS7PEADiDJWe_gC27f2L3eZ7qqBN-6dLFBE6kNDEnz3-I-GVnHy-scUIfVF1joLjZCgW9uJbwjYvxCUBBMBoLy_uK31vyxJTt_4o4zjW824EL3k-M0Q"/>
+</div>
+</div>
+<!-- Right Column -->
+<div class="flex flex-col gap-3">
+<div class="relative group rounded-xl overflow-hidden aspect-square">
+<img alt="Camping Gear" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Close up of camping gear and a vintage lantern on a wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlm7kd0vIMctnK-KYLseq7GetyDe18sSqLtX1CwpmplEoLkohcGUcHOOR-NdbeFhZKdAZ5Nc9FTHyQKRQ3oaazbI4ym1pP5EZ9VgdA4Zg8OpHrRU5QnUnFLQJ1R5AAR3Lu177WxOhXCVYfwL8-0luEJggHQkke7e8qOWdpdRX3FoF5fiTgpmTPOpCstc8kPhGANkishhXXtsZpP3Huh5c9FVIm9xNjLTl1-umZsjULlqhhjlyMRa0aeot6P-tuPqfPw-58qL9RjA"/>
+</div>
+<div class="relative group rounded-xl overflow-hidden aspect-[3/5]">
+<img alt="Lake View" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Woman looking out from a tent towards a stunning mountain lake view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiEqMyT6lALeGyEEHCqsYMlyOHPhhFE_GVStK0svKFcC-sBnsvK7zmqfWCpfPZwoxxlHTUbuRBPTTZ1NjPUeALLary5iJenu0QEdJNZ4Mf5ObdSFlClLdgWgNB61RKwYJZHIc-vHlLyTaiTCz1_sGDL1LpMr8KuXHXeA8ItWqHA2jHTfWm-KyhQJq4yqEEd12lROr3MdThtlHbkQAjjWwDAssxGR6ign9QShDMe80PnHrvrhOy0GW4rutgd1nxmtBRoHSZasTIIg"/>
+<!-- Video Indicator Example -->
+<div class="absolute top-2 right-2 size-6 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[14px]">play_arrow</span>
+</div>
+</div>
+<div class="relative group rounded-xl overflow-hidden aspect-square">
+<img alt="Breakfast" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Gourmet outdoor breakfast spread on a picnic table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkZ8JkTrd6ZjAVU35sXXl3N-9NITVmgPohok7j61vgmD33wgW08b5d9NAybdA0u3IMMTAHA5bdlesFF8L3gyWKZcnqv_SLh38R-RJ1lEEvlu_GCuomXIB4QVPTLu8Xh9zMNcad15-KOcIlyyQsYrjMKqzkEoOB6LqVxzbyIqvVnJyJVCdLiYLh9jQiXTr3YfvHQIIDivghdFdbFuDvu6Rcz-9P4koe2nYp-4KCxouKdxl-SGBVOtKrndJNM312m7yoK0yoyuY-IA"/>
+</div>
+</div>
+</div>
+</div>
+<!-- See More Button -->
+<div class="mt-6 flex justify-center pb-8">
+<button class="flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 text-sm font-semibold text-text-main dark:text-white shadow-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+                Load more photos
+                <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</main>
+<!-- Floating Action Button / Sticky Footer -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark pt-12 z-50 pointer-events-none">
+<div class="pointer-events-auto flex items-center justify-between gap-4 max-w-md mx-auto bg-text-main dark:bg-white text-white dark:text-background-dark p-2 pl-5 pr-2 rounded-2xl shadow-xl shadow-black/10">
+<div class="flex flex-col">
+<span class="text-xs opacity-80 font-medium">From $120/night</span>
+<span class="text-sm font-bold">Sunny Valley</span>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-black font-bold h-10 px-6 rounded-xl transition-colors flex items-center gap-2">
+                Check Availability
+                <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+</button>
+</div>
+</div>
+</body></html>
