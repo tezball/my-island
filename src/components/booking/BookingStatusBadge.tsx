@@ -6,9 +6,8 @@ interface BookingStatusBadgeProps {
   className?: string
 }
 
-const statusConfig: Record<Booking['status'], { variant: 'success' | 'warning' | 'danger' | 'info'; label: string }> = {
+const statusConfig: Record<Booking['status'], { variant: 'success' | 'danger' | 'info'; label: string }> = {
   confirmed: { variant: 'success', label: 'Confirmed' },
-  pending: { variant: 'warning', label: 'Pending' },
   completed: { variant: 'info', label: 'Completed' },
   cancelled: { variant: 'danger', label: 'Cancelled' },
 }

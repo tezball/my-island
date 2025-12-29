@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Welcome to my-island</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13ec80",
+              "background-light": "#f6f8f7",
+              "background-dark": "#102219",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display overflow-x-hidden transition-colors duration-200">
+<!-- Main Content Container -->
+<div class="flex-1 flex flex-col max-w-md mx-auto w-full bg-white dark:bg-[#152a20] shadow-xl min-h-screen sm:min-h-0 sm:my-auto sm:h-auto sm:rounded-2xl overflow-hidden relative">
+<!-- Header Image Section with Overlay -->
+<div class="relative w-full h-[45vh] min-h-[320px] group/design-root">
+<div class="absolute inset-0 w-full h-full bg-center bg-no-repeat bg-cover transition-transform duration-700 hover:scale-105" data-alt="Cozy illuminated tent in a dark green forest at twilight" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCSozvMU8OcSZaDERsxHnPRpqEXxbugyv7wQO-kJQbl4okXSVKqc0h2IxaAwTJhNzigYCZ76mKJIZVFTVjxl9z04_y0GzHzRHVeIKXPx9T53ApcQ4hae2fPkb_jXdRfhqdCIygFnC6k8dE0m4wTo1Xn_Ch2X9QfJ-wc_YFAyzFOQSpiYscYMX46bAxPC4DPwsLleRpdqGtUVP6TyREqhcBBc6rS4Rx5ypwMCiczKDmHF6v-ze8LToKfzypPjnhe-pgaDpyM1It68w");'>
+</div>
+<!-- Gradient Overlay for text readability/blending -->
+<div class="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-white dark:to-[#152a20]"></div>
+<!-- Success/Celebration Badge -->
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 flex justify-center z-10">
+<div class="bg-primary h-20 w-20 rounded-full border-[6px] border-white dark:border-[#152a20] flex items-center justify-center shadow-lg transform transition-transform hover:scale-110">
+<span class="material-symbols-outlined text-background-dark !text-[40px]" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</div>
+</div>
+<!-- Content Body -->
+<div class="flex flex-col items-center px-6 pt-14 pb-8 text-center flex-1">
+<!-- Headline Text -->
+<h1 class="text-background-dark dark:text-white tracking-tight text-[32px] font-extrabold leading-tight mb-3">
+                Welcome to my-island!
+            </h1>
+<!-- Body Text -->
+<p class="text-gray-600 dark:text-gray-300 text-base font-normal leading-relaxed pb-8 max-w-[300px]">
+                Your account has been successfully created. We're excited to help you find your next adventure.
+            </p>
+<!-- Feature/Benefit Pills (Visual Context) -->
+<div class="flex flex-wrap justify-center gap-3 mb-8 w-full">
+<div class="flex items-center gap-2 px-4 py-2 bg-background-light dark:bg-background-dark rounded-full border border-gray-100 dark:border-gray-800">
+<span class="material-symbols-outlined text-primary !text-[20px]">camping</span>
+<span class="text-sm font-semibold text-background-dark dark:text-gray-200">Camping</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-background-light dark:bg-background-dark rounded-full border border-gray-100 dark:border-gray-800">
+<span class="material-symbols-outlined text-primary !text-[20px]">notifications_active</span>
+<span class="text-sm font-semibold text-background-dark dark:text-gray-200">Alerts</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-background-light dark:bg-background-dark rounded-full border border-gray-100 dark:border-gray-800">
+<span class="material-symbols-outlined text-primary !text-[20px]">map</span>
+<span class="text-sm font-semibold text-background-dark dark:text-gray-200">Maps</span>
+</div>
+</div>
+<!-- Spacer to push buttons to bottom if needed -->
+<div class="flex-grow"></div>
+<!-- Action Buttons -->
+<div class="w-full flex flex-col gap-3 mt-4">
+<!-- Primary Button -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-background-dark text-lg font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 active:scale-[0.98] transition-all shadow-md shadow-primary/25">
+<span class="truncate">Start Exploring</span>
+</button>
+<!-- Secondary Button -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-transparent text-gray-500 dark:text-gray-400 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+<span class="truncate">Complete Profile Later</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

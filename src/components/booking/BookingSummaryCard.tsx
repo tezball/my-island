@@ -58,7 +58,7 @@ export function BookingSummaryCard({ booking, showActions = true }: BookingSumma
       </div>
 
       {/* Actions */}
-      {showActions && (booking.status === 'confirmed' || booking.status === 'pending') && (
+      {showActions && booking.status === 'confirmed' && (
         <div className="flex border-t border-slate-100 dark:border-slate-800">
           <Link
             to={`/bookings/${booking.id}/dates`}

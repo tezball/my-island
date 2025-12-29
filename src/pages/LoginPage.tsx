@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { Button, Input, Icon } from '@/components/ui'
 import { TopAppBar } from '@/components/layout'
@@ -80,12 +80,12 @@ export function LoginPage() {
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                 Password
               </label>
-              <a
-                href="#"
+              <Link
+                to="/forgot-password"
                 className="text-sm font-medium text-primary hover:text-primary-dark hover:underline transition-colors"
               >
                 Forgot Password?
-              </a>
+              </Link>
             </div>
             <Input
               type={showPassword ? 'text' : 'password'}
@@ -162,12 +162,12 @@ export function LoginPage() {
           <span className="text-slate-500 dark:text-slate-400">
             Don't have an account?
           </span>
-          <a
-            href="#"
+          <Link
+            to="/signup"
             className="font-bold text-primary hover:text-primary-dark hover:underline transition-colors"
           >
             Sign Up
-          </a>
+          </Link>
         </div>
       </footer>
     </div>

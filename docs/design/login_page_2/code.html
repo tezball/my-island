@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>my-island Login</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13ec80",
+              "primary-dark": "#0eb562",
+              "background-light": "#f6f8f7",
+              "background-dark": "#102219",
+              "surface-light": "#ffffff",
+              "surface-dark": "#1a2e24",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"],
+              "body": ["Noto Sans", "sans-serif"],
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem", 
+              "lg": "0.5rem", 
+              "xl": "0.75rem", 
+              "2xl": "1rem",
+              "full": "9999px"
+            },
+            boxShadow: {
+                "soft": "0 4px 20px -2px rgba(19, 236, 128, 0.1)",
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col antialiased selection:bg-primary selection:text-background-dark overflow-x-hidden">
+<header class="sticky top-0 z-10 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">my-island</h2>
+<div class="w-10"></div> 
+</header>
+<main class="flex-1 flex flex-col w-full max-w-md mx-auto px-4 pb-8">
+<div class="mt-2 mb-6 relative group overflow-hidden rounded-2xl aspect-[16/9] shadow-soft">
+<div class="absolute inset-0 bg-black/10 z-10"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Scenic view of a campsite with tents in a misty forest morning" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUmgQBQRhzfLdYPl_FmfBiU2pglrTSW5h2paLOhYuawA-piZxGINfR9nD8vp1GKfbM_YSbydhnkKBCIRvu7MZKm6yNPqUU-EEBYAIk_wnlMiU1yQywTMg9GvRh-uecdDAkbFzbdtdvdjqg95JWqft46klcAm25qMpfFuTSNERYZ7wtZ4kk7uKlDeM3nwEoh9tsvVXKdnal1qM3uuf0Hr_VCZXzbgr3LPdGb5tfxT3XgnTUw3VvMEWuhCetOVQbInxGK4Mf3-dxbg');">
+</div>
+<div class="absolute bottom-3 left-3 z-20 flex items-center gap-1.5 bg-background-dark/60 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/10">
+<span class="material-symbols-outlined text-primary text-[16px]">location_on</span>
+<span class="text-xs font-medium text-white tracking-wide">Pine Valley, OR</span>
+</div>
+</div>
+<div class="mb-8 text-center space-y-2">
+<h1 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+                Welcome back<br/>to camp.
+            </h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm">
+                Enter your details to access your dashboard.
+            </p>
+</div>
+<form class="space-y-5" onsubmit="event.preventDefault()">
+<div class="space-y-1.5">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 ml-1" for="email">
+                    Email Address
+                </label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">mail</span>
+</div>
+<input class="block w-full h-14 pl-11 pr-4 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary transition-all text-base shadow-sm" id="email" placeholder="camp@my-island.com" type="email"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex items-center justify-between ml-1">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-200" for="password">
+                        Password
+                    </label>
+<a class="text-sm font-medium text-primary hover:text-primary-dark hover:underline transition-colors" href="#">
+                        Forgot Password?
+                    </a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
+</div>
+<input class="block w-full h-14 pl-11 pr-12 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-primary focus:ring-1 focus:ring-primary transition-all text-base shadow-sm" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<button class="w-full h-14 mt-4 bg-primary hover:bg-emerald-400 active:scale-[0.98] transition-all rounded-full flex items-center justify-center gap-2 shadow-lg shadow-primary/25 group" type="submit">
+<span class="text-background-dark font-bold text-lg">Log In</span>
+<span class="material-symbols-outlined text-background-dark group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="flex justify-center pt-2">
+<button class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors group" type="button">
+<span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">face</span>
+<span class="text-xs font-medium">Face ID</span>
+</button>
+</div>
+</form>
+<div class="relative my-8">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-4 bg-background-light dark:bg-background-dark text-slate-500 font-medium">Or</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<button class="flex items-center justify-center gap-3 h-14 px-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.99] transition-all text-slate-700 dark:text-slate-200 font-bold text-base shadow-sm group">
+<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12.0003 20.45c-2.43 0-4.66-.96-6.27-2.52l-2.07 2.07c2.18 2.18 5.25 3.55 8.34 3.55 6.09 0 11.23-4.52 11.91-10.45H12.0003v4.09h7.02c-1.14 3.29-4.31 5.26-7.02 5.26z" fill="#34A853"></path>
+<path d="M23.9103 12.09c0-.68-.06-1.34-.17-1.98h-11.74v3.74h6.73c-.29 1.54-1.17 2.85-2.48 3.73l2.03 2.03c2.72-2.5 4.38-6.19 3.63-7.52z" fill="#4285F4"></path>
+<path d="M5.7302 6.57L3.6602 4.5C1.4802 6.68.1002 9.75.1002 13c0 1.25.21 2.45.58 3.58l2.95-1.46C3.2102 14.15 3.1002 13.09 3.1002 12c0-2.31.84-4.42 2.63-5.43z" fill="#FBBC05"></path>
+<path d="M12.0003 3.55c1.55 0 2.95.53 4.05 1.58l3.05-3.05C17.3403.74 14.8103 0 12.0003 0 6.6203 0 1.9903 3.09.5803 7.58l2.95 1.46c.86-3.23 3.82-5.49 8.47-5.49z" fill="#EA4335"></path>
+</svg>
+                Continue with Google
+            </button>
+<button class="flex items-center justify-center gap-3 h-14 px-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.99] transition-all text-slate-700 dark:text-slate-200 font-bold text-base shadow-sm group">
+<svg class="w-6 h-6 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
+<path d="M17.05 20.28c-.98.95-2.05.88-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.78 1.18-.19 2.31-.89 3.51-.84 1.54.06 2.68.75 3.37 1.74-2.92 1.63-2.38 5.76.54 7.02-.37 1.48-1.02 2.87-2.5 4.27zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"></path>
+</svg>
+                Continue with Apple
+            </button>
+</div>
+</main>
+<footer class="mt-auto px-6 py-6 bg-white dark:bg-surface-dark/50 border-t border-slate-100 dark:border-slate-800 backdrop-blur-sm">
+<div class="flex items-center justify-center gap-1.5 text-sm">
+<span class="text-slate-500 dark:text-slate-400">Don't have an account?</span>
+<a class="font-bold text-primary hover:text-primary-dark hover:underline transition-colors" href="#">Sign Up</a>
+</div>
+</footer>
+
+</body></html>

@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply bg-background-light dark:bg-background-dark text-text-main antialiased;
+    @apply bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark antialiased;
   }
 }
 

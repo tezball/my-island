@@ -12,7 +12,7 @@ export const bookingHandlers = [
     let results = [...mockBookings]
 
     if (status === 'upcoming') {
-      results = results.filter(b => b.status === 'confirmed' || b.status === 'pending')
+      results = results.filter(b => b.status === 'confirmed')
     } else if (status === 'past') {
       results = results.filter(b => b.status === 'completed' || b.status === 'cancelled')
     }

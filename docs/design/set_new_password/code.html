@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Set New Password - my-island</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-content": "#0d1b14", // Dark text for contrast on primary
+                        "background-light": "#f8fcfa",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2e25",
+                        "text-main": "#0d1b14",
+                        "text-muted": "#4c9a73",
+                        "border-color": "#cfe7db",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-main dark:text-white antialiased selection:bg-primary selection:text-primary-content">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Top App Bar -->
+<div class="flex items-center px-4 py-4 pt-12 pb-2 justify-between sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+<button class="text-text-main dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<div class="flex-1 flex justify-center">
+<!-- Small Logo Placeholder -->
+<div class="flex items-center gap-2">
+<div class="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-content text-sm">forest</span>
+</div>
+<span class="font-bold text-sm tracking-widest uppercase text-text-muted">my-island</span>
+</div>
+</div>
+<div class="size-10"></div> <!-- Spacer for balance -->
+</div>
+<!-- Scrollable Content -->
+<main class="flex-1 flex flex-col px-6 pb-8">
+<!-- Headline -->
+<div class="mt-4 mb-2">
+<h1 class="text-text-main dark:text-white tracking-tight text-[32px] font-bold leading-tight text-left">
+                    Set New Password
+                </h1>
+</div>
+<!-- Description -->
+<div class="mb-8">
+<p class="text-text-muted dark:text-gray-400 text-base font-normal leading-relaxed">
+                    Create a strong password to secure your account. Your new password must be different from previously used passwords.
+                </p>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-6" onsubmit="event.preventDefault();">
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-text-main dark:text-gray-200 text-sm font-semibold leading-normal ml-1">
+                        New Password
+                    </label>
+<div class="relative flex w-full items-center rounded-xl bg-surface-light dark:bg-surface-dark shadow-sm ring-1 ring-border-color dark:ring-gray-700 focus-within:ring-2 focus-within:ring-primary transition-all">
+<div class="pl-4 text-text-muted dark:text-gray-500">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<input class="flex w-full min-w-0 flex-1 resize-none bg-transparent border-none focus:outline-0 focus:ring-0 h-14 placeholder:text-text-muted/50 dark:placeholder:text-gray-600 px-3 text-text-main dark:text-white text-base font-normal" placeholder="Enter new password" type="password" value=""/>
+<button class="text-text-muted dark:text-gray-500 hover:text-primary dark:hover:text-primary transition-colors flex items-center justify-center px-4 rounded-r-xl" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="flex flex-col gap-2">
+<label class="text-text-main dark:text-gray-200 text-sm font-semibold leading-normal ml-1">
+                        Confirm New Password
+                    </label>
+<div class="relative flex w-full items-center rounded-xl bg-surface-light dark:bg-surface-dark shadow-sm ring-1 ring-border-color dark:ring-gray-700 focus-within:ring-2 focus-within:ring-primary transition-all">
+<div class="pl-4 text-text-muted dark:text-gray-500">
+<span class="material-symbols-outlined">lock_reset</span>
+</div>
+<input class="flex w-full min-w-0 flex-1 resize-none bg-transparent border-none focus:outline-0 focus:ring-0 h-14 placeholder:text-text-muted/50 dark:placeholder:text-gray-600 px-3 text-text-main dark:text-white text-base font-normal" placeholder="Re-enter new password" type="password" value=""/>
+<button class="text-text-muted dark:text-gray-500 hover:text-primary dark:hover:text-primary transition-colors flex items-center justify-center px-4 rounded-r-xl" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Password Requirements & Strength -->
+<div class="bg-surface-light dark:bg-surface-dark border border-border-color dark:border-gray-700 rounded-xl p-4 mt-2">
+<p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Password Strength</p>
+<!-- Strength Meter -->
+<div class="flex gap-1 h-1.5 mb-4">
+<div class="w-1/4 bg-primary rounded-full"></div>
+<div class="w-1/4 bg-primary/30 dark:bg-gray-700 rounded-full"></div>
+<div class="w-1/4 bg-primary/30 dark:bg-gray-700 rounded-full"></div>
+<div class="w-1/4 bg-primary/30 dark:bg-gray-700 rounded-full"></div>
+</div>
+<!-- Checklist -->
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-text-muted dark:text-gray-400">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="text-sm">At least 8 characters</span>
+</div>
+<div class="flex items-center gap-2 text-text-muted/70 dark:text-gray-500">
+<span class="material-symbols-outlined text-[18px]">radio_button_unchecked</span>
+<span class="text-sm">Contains a special character</span>
+</div>
+<div class="flex items-center gap-2 text-text-muted/70 dark:text-gray-500">
+<span class="material-symbols-outlined text-[18px]">radio_button_unchecked</span>
+<span class="text-sm">Passwords match</span>
+</div>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="mt-4">
+<button class="w-full flex items-center justify-center gap-2 h-14 rounded-xl bg-primary hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+<span class="text-primary-content text-base font-bold">Reset Password</span>
+<span class="material-symbols-outlined text-primary-content">arrow_forward</span>
+</button>
+</div>
+</form>
+</main>
+<!-- Decorative Background Element (Bottom) -->
+<div class="fixed bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none -z-10" data-alt="Subtle green gradient fading from bottom up"></div>
+</div>
+</body></html>

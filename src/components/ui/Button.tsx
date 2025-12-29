@@ -3,11 +3,12 @@ import { cn } from '@/utils/cn'
 import { Icon } from './Icon'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
   leftIcon?: string
   rightIcon?: string
+  glow?: boolean
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -21,6 +22,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       rightIcon,
       disabled,
       children,
+      glow,
       ...props
     },
     ref
@@ -37,6 +39,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'bg-transparent hover:bg-black/5 dark:hover:bg-white/10 text-slate-900 dark:text-white rounded-full',
       danger:
         'bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg shadow-red-500/25',
+      outline:
+        'bg-transparent border-2 border-primary text-primary hover:bg-primary/10 rounded-full',
     }
 
     const sizes = {
@@ -48,7 +52,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={cn(baseStyles, variants[variant], sizes[size], className)}
+        className={cn(baseStyles, variants[variant], sizes[size], glow && 'shadow-glow', className)}
         disabled={disabled || isLoading}
         {...props}
       >

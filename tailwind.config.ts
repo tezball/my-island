@@ -19,7 +19,14 @@ export default {
           light: '#ffffff',
           dark: '#1a2e24',
         },
-        'text-main': '#0d1b14',
+        'text-main': {
+          light: '#0d1b14',
+          dark: '#e8f5ee',
+        },
+        'text-sec': {
+          light: '#4c9a73',
+          dark: '#8bc4a6',
+        },
         'text-secondary': '#4c9a73',
       },
       fontFamily: {
@@ -36,6 +43,7 @@ export default {
         soft: '0 4px 20px -2px rgba(19, 236, 128, 0.1)',
         float: '0 8px 24px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.08)',
         card: '0 2px 8px rgba(0, 0, 0, 0.04)',
+        glow: '0 0 20px rgba(19, 236, 128, 0.4)',
       },
       animation: {
         'pulse-green': 'pulse-green 2s infinite',

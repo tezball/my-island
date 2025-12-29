@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lot Availability Calendar</title>
+<!-- Google Fonts: Plus Jakarta Sans & Noto Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2e25",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-100 dark:bg-gray-900 flex justify-center items-center min-h-screen p-0 sm:p-4 font-display">
+<!-- Mobile Container -->
+<div class="relative flex flex-col h-screen w-full max-w-[430px] bg-background-light dark:bg-background-dark sm:rounded-[32px] sm:h-[90vh] overflow-hidden shadow-2xl group/design-root">
+<!-- Header Section -->
+<header class="flex-none bg-background-light dark:bg-background-dark pt-4 px-4 pb-2 z-20">
+<!-- Top Nav -->
+<div class="flex items-center justify-between mb-4">
+<button class="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[#0d1b14] dark:text-white">arrow_back</span>
+</button>
+<h2 class="text-[#0d1b14] dark:text-white text-lg font-bold leading-tight">Availability</h2>
+<button class="p-2 -mr-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[#0d1b14] dark:text-white">tune</span>
+</button>
+</div>
+<!-- Lot Selector -->
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-emerald-600 dark:text-primary">camping</span>
+</div>
+<select class="w-full appearance-none bg-white dark:bg-surface-dark border-0 rounded-xl py-3.5 pl-12 pr-10 text-[#0d1b14] dark:text-white font-semibold shadow-sm focus:ring-2 focus:ring-primary/50 cursor-pointer">
+<option>Lot A - Riverside Spot 04</option>
+<option>Lot A - Riverside Spot 05</option>
+<option>Lot B - Forest View 12</option>
+</select>
+<div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Scrollable Content -->
+<main class="flex-1 overflow-y-auto no-scrollbar pb-40">
+<!-- Month Stats Summary -->
+<div class="px-4 mt-4">
+<div class="flex items-center justify-between bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-black/5 dark:border-white/5">
+<div class="flex flex-col">
+<span class="text-sm text-gray-500 dark:text-gray-400 font-medium">Occupancy</span>
+<span class="text-xl font-bold text-[#0d1b14] dark:text-white">74%</span>
+</div>
+<div class="h-8 w-[1px] bg-gray-200 dark:bg-white/10"></div>
+<div class="flex flex-col">
+<span class="text-sm text-gray-500 dark:text-gray-400 font-medium">Booked</span>
+<span class="text-xl font-bold text-[#0d1b14] dark:text-white">23 Days</span>
+</div>
+<div class="h-8 w-[1px] bg-gray-200 dark:bg-white/10"></div>
+<div class="flex flex-col">
+<span class="text-sm text-gray-500 dark:text-gray-400 font-medium">Revenue</span>
+<span class="text-xl font-bold text-primary">$1,240</span>
+</div>
+</div>
+</div>
+<!-- Month Navigation -->
+<div class="flex items-center justify-between px-6 py-6">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-[#0d1b14] dark:text-white">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h2 class="text-2xl font-bold text-[#0d1b14] dark:text-white tracking-tight">October 2023</h2>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-[#0d1b14] dark:text-white">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<!-- Calendar Grid -->
+<div class="px-4 pb-4">
+<!-- Days of Week -->
+<div class="grid grid-cols-7 mb-2">
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Mon</div>
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Tue</div>
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Wed</div>
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Thu</div>
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Fri</div>
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Sat</div>
+<div class="text-center text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wide py-2">Sun</div>
+</div>
+<!-- Dates -->
+<div class="grid grid-cols-7 gap-y-3 gap-x-2">
+<!-- Previous Month -->
+<button class="h-12 w-full flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-700 font-medium">28</button>
+<button class="h-12 w-full flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-700 font-medium">29</button>
+<button class="h-12 w-full flex items-center justify-center rounded-lg text-gray-300 dark:text-gray-700 font-medium">30</button>
+<!-- Current Month -->
+<!-- Available: Green bg, dark green text -->
+<button class="h-12 w-full bg-primary/20 hover:bg-primary/30 text-green-800 dark:text-primary rounded-lg font-bold transition-colors">1</button>
+<button class="h-12 w-full bg-primary/20 hover:bg-primary/30 text-green-800 dark:text-primary rounded-lg font-bold transition-colors">2</button>
+<button class="h-12 w-full bg-primary/20 hover:bg-primary/30 text-green-800 dark:text-primary rounded-lg font-bold transition-colors">3</button>
+<button class="h-12 w-full bg-primary/20 hover:bg-primary/30 text-green-800 dark:text-primary rounded-lg font-bold transition-colors">4</button>
+<!-- Booked: Light Red bg, Red text -->
+<button class="h-12 w-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg font-medium transition-colors relative overflow-hidden">
+<span class="relative z-10">5</span>
+<div class="absolute bottom-1 right-0 left-0 flex justify-center"><div class="w-1 h-1 bg-red-500 rounded-full"></div></div>
+</button>
+<button class="h-12 w-full bg-red-100 hover:bg-red-200 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg font-medium transition-colors relative">
+<span class="relative z-10">6</span>
+<div class="absolute bottom-1 right-0 left-0 flex justify-center"><div class="w-1 h-1 bg-red-500 rounded-full"></div></div>
+</button>
+<!-- Selected: Ring Primary -->
+<button class="h-12 w-full bg-white dark:bg-surface-dark border-2 border-primary text-[#0d1b14] dark:text-white rounded-lg font-bold shadow-md transform scale-105 z-10">7</button>
+<button class="h-12 w-full bg-primary/20 hover:bg-primary/30 text-green-800 dark:text-primary rounded-lg font-bold transition-colors">8</button>
+<!-- Maintenance: Orange Striped -->
+<button class="h-12 w-full bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 rounded-lg font-medium transition-colors flex flex-col items-center justify-center gap-0.5">
+<span class="text-sm">9</span>
+<span class="material-symbols-outlined text-[10px] leading-none">build</span>
+</button>
+<button class="h-12 w-full bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 rounded-lg font-medium transition-colors flex flex-col items-center justify-center gap-0.5">
+<span class="text-sm">10</span>
+<span class="material-symbols-outlined text-[10px] leading-none">build</span>
+</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">11</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">12</button>
+<!-- Range Selection Start -->
+<button class="h-12 w-full bg-primary text-black rounded-l-lg rounded-r-none font-bold relative z-0">13</button>
+<!-- Range Selection Middle -->
+<button class="h-12 w-full bg-primary/40 text-black rounded-none font-medium relative z-0">14</button>
+<!-- Range Selection End -->
+<button class="h-12 w-full bg-primary text-black rounded-r-lg rounded-l-none font-bold relative z-0">15</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">16</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">17</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">18</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">19</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">20</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">21</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">22</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">23</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">24</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">25</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">26</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">27</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">28</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">29</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">30</button>
+<button class="h-12 w-full text-[#0d1b14] dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg font-medium">31</button>
+</div>
+</div>
+<!-- Legend -->
+<div class="flex flex-wrap gap-2 px-4 justify-center opacity-80 mb-6">
+<div class="flex items-center gap-1.5 bg-white dark:bg-surface-dark px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-white/5">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="text-xs font-medium text-[#0d1b14] dark:text-white">Available</span>
+</div>
+<div class="flex items-center gap-1.5 bg-white dark:bg-surface-dark px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-white/5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+<span class="text-xs font-medium text-[#0d1b14] dark:text-white">Booked</span>
+</div>
+<div class="flex items-center gap-1.5 bg-white dark:bg-surface-dark px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-white/5">
+<div class="w-2.5 h-2.5 rounded-full bg-orange-400"></div>
+<span class="text-xs font-medium text-[#0d1b14] dark:text-white">Maint.</span>
+</div>
+<div class="flex items-center gap-1.5 bg-white dark:bg-surface-dark px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-white/5">
+<div class="w-2.5 h-2.5 rounded-full border border-[#0d1b14] dark:border-white"></div>
+<span class="text-xs font-medium text-[#0d1b14] dark:text-white">Empty</span>
+</div>
+</div>
+</main>
+<!-- Sticky Action Footer -->
+<div class="absolute bottom-0 left-0 w-full bg-surface-light dark:bg-surface-dark border-t border-gray-100 dark:border-white/5 shadow-[0_-8px_30px_rgba(0,0,0,0.05)] rounded-t-2xl z-30">
+<div class="flex flex-col p-5 gap-4">
+<div class="flex items-center justify-between">
+<p class="text-sm font-semibold text-[#0d1b14] dark:text-white">Selected: <span class="text-primary">Oct 7, 13-15</span></p>
+<button class="text-xs font-medium text-gray-500 underline">Clear selection</button>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-primary/10 hover:border-primary/50 border border-transparent transition-all group">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-300 group-hover:text-primary transition-colors text-2xl">check_circle</span>
+<span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-primary transition-colors">Available</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-red-50 hover:border-red-200 border border-transparent transition-all group">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-300 group-hover:text-red-500 transition-colors text-2xl">block</span>
+<span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-red-500 transition-colors">Block</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-orange-50 hover:border-orange-200 border border-transparent transition-all group">
+<span class="material-symbols-outlined text-gray-600 dark:text-gray-300 group-hover:text-orange-500 transition-colors text-2xl">build</span>
+<span class="text-[11px] font-bold text-gray-600 dark:text-gray-300 group-hover:text-orange-500 transition-colors">Maintenance</span>
+</button>
+</div>
+<button class="w-full h-12 bg-[#0d1b14] dark:bg-primary text-white dark:text-[#0d1b14] rounded-xl font-bold text-base shadow-lg hover:opacity-90 transition-opacity">
+                    Update Availability
+                </button>
+</div>
+<!-- Safe Area Spacer for iOS Home Indicator -->
+<div class="h-4 w-full bg-surface-light dark:bg-surface-dark"></div>
+</div>
+</div>
+</body></html>

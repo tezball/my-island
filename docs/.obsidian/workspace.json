@@ -13,11 +13,11 @@
             "state": {
               "type": "canvas",
               "state": {
-                "file": "design/user-flows.canvas",
+                "file": "user-flows.canvas",
                 "viewState": {
-                  "x": 1943.252828768942,
-                  "y": 1716.7447193955397,
-                  "zoom": 1
+                  "x": -2140,
+                  "y": -6501.176523702032,
+                  "zoom": -2.7592632623028717
                 }
               },
               "icon": "lucide-layout-dashboard",
@@ -97,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "design/user-flows.canvas",
+                "file": "user-flows.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -116,7 +116,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "design/user-flows.canvas",
+                "file": "user-flows.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -159,7 +159,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "design/user-flows.canvas",
+                "file": "user-flows.canvas",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -188,27 +188,41 @@
   },
   "active": "e8d3b3f45e3d70b8",
   "lastOpenFiles": [
+    "flows/README.md",
+    "flows/README.md.tmp.24260.1767019740589",
+    "flows/errors/README.md",
+    "flows/errors/README.md.tmp.24260.1767019740509",
+    "flows/owner-admin/README.md",
+    "flows/owner-admin/README.md.tmp.24260.1767019692044",
+    "flows/offers/README.md",
+    "flows/offers/README.md.tmp.24260.1767019691939",
+    "flows/reviews/README.md",
+    "flows/reviews/README.md.tmp.24260.1767019691840",
+    "flows/favorites/README.md",
+    "flows/favorites/README.md.tmp.24260.1767019691759",
+    "flows/profile/README.md",
+    "flows/profile/README.md.tmp.24260.1767019572480",
+    "flows/my-bookings/README.md",
+    "flows/my-bookings/README.md.tmp.24260.1767019572384",
+    "flows/booking/README.md",
+    "flows/booking/README.md.tmp.24260.1767019572296",
+    "flows/discovery/README.md",
+    "flows/discovery/README.md.tmp.24260.1767019456088",
+    "flows/auth/README.md",
+    "flows/onboarding/README.md",
+    "flows/owner-admin/11-edit-offer.png",
+    "flows/owner-admin/10-offer-mgmt-2.png",
+    "flows/owner-admin/09-offer-mgmt-1.png",
+    "flows/owner-admin/08-edit-campsite-2.png",
+    "flows/owner-admin/07-edit-campsite-1.png",
+    "flows/owner-admin/06-edit-lot-2.png",
+    "flows/owner-admin/05-edit-lot-1.png",
+    "flows/owner-admin/04-add-lot.png",
+    "flows/owner-admin/03-manage-lots.png",
+    "flows/owner-admin/02-statistics.png",
+    "Missing Features Analysis.md",
     "Design Snag List.md",
-    "Design Snag List.md.tmp.8640.1767009534885",
-    "design/home_/_map_view/screen.png",
-    "design/home_/_map_view/code.html",
-    "design/get_started_/_explore/screen.png",
-    "design/get_started_/_explore/code.html",
-    "design/campsite_listing/edit_form_2/screen.png",
-    "design/campsite_listing/edit_form_2/code.html",
-    "design/campsite_listing/edit_form_1/screen.png",
-    "design/campsite_listing/edit_form_1/code.html",
-    "design/welcome_to_my-island/screen.png",
-    "design/welcome_to_my-island/code.html",
-    "design/user_profile_screen/screen.png",
-    "design/user_profile_screen/code.html",
-    "design/supplier_offers_feed/screen.png",
-    "design/supplier_offers_feed/code.html",
-    "design/supplier_offer_management_2/screen.png",
-    "design/supplier_offer_management_2/code.html",
-    "design/supplier_offer_management_1/screen.png",
-    "design/supplier_offer_management_1/code.html",
-    "design/select_booking_dates/screen.png",
+    "user-flows.canvas",
     "design/user-flows.canvas"
   ]
 }

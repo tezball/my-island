@@ -35,12 +35,10 @@ priority: high
 
 ## Priority Legend
 
-| Priority | Meaning | Count |
-|:--------:|:--------|------:|
-| 🔴 P0 | Blocks core user journey | 3 |
-| 🟠 P1 | Required for MVP | 24 |
-| 🟡 P2 | Important, can follow | 14 |
-| 🟢 P3 | Nice to have | 3 |
+- ⏫ **P0** — Blocks core user journey (Critical)
+- 🔺 **P1** — Required for MVP (High)
+- 🔼 **P2** — Important, can follow (Medium)
+- 🔽 **P3** — Nice to have (Low)
 
 ---
 
@@ -51,95 +49,77 @@ priority: high
 > [!danger] Critical Gap
 > No sign-up flow exists - cannot acquire new users
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M01 | **Sign Up / Registration** | 🔴 P0 | Login has "Sign Up" link but no flow |
-| ⬜ | M02 | Forgot Password | 🟠 P1 | Link exists, no reset screens |
-| ⬜ | M03 | Email Verification | 🟠 P1 | No OTP/confirmation screen |
-| ⬜ | M04 | Password Reset Confirmation | 🟠 P1 | Success state after reset |
-| ⬜ | M05 | Onboarding Permissions | 🟡 P2 | Location/notification requests |
+- [ ] ⏫ M01 **Sign Up / Registration** — Login has "Sign Up" link but no flow #design/auth
+- [x] 🔺 M02 Forgot Password — Link exists, no reset screens #design/auth
+- [ ] 🔺 M03 Email Verification — No OTP/confirmation screen #design/auth
+- [ ] 🔺 M04 Password Reset Confirmation — Success state after reset #design/auth
+- [ ] 🔼 M05 Onboarding Permissions — Location/notification requests #design/onboarding
 
 ### 🔍 Discovery & Search
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M06 | **List View** | 🟠 P1 | Toggle exists but no design |
-| ⬜ | M07 | Search Results | 🟠 P1 | No results state shown |
-| ⬜ | M08 | Empty Search State | 🟡 P2 | No results handling |
-| ⬜ | M09 | **Filter Modal/Sheet** | 🟠 P1 | Buttons shown, no expanded UI |
-| ⬜ | M10 | Map Cluster Drill-down | 🟡 P2 | Cluster pins need expansion |
+- [ ] 🔺 M06 **List View** — Toggle exists but no design #design/discovery
+- [ ] 🔺 M07 Search Results — No results state shown #design/search
+- [ ] 🔼 M08 Empty Search State — No results handling #design/search
+- [ ] 🔺 M09 **Filter Modal/Sheet** — Buttons shown, no expanded UI #design/search
+- [ ] 🔼 M10 Map Cluster Drill-down — Cluster pins need expansion #design/map
 
 ### 🏕️ Campsite Details
 
 > [!warning] Booking Flow Blocked
 > Users cannot select specific lots (tent/RV/cabin) - core booking incomplete
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M11 | **Reviews List** | 🟠 P1 | "See all reviews" link exists |
-| ⬜ | M12 | Photo Gallery | 🟠 P1 | No full gallery view |
-| ⬜ | M13 | All Suppliers View | 🟡 P2 | "View All" link exists |
-| ⬜ | M14 | Supplier Detail | 🟡 P2 | Cards shown, no detail |
-| ⬜ | M15 | **Lot Selection** | 🔴 P0 | How do users pick lots? |
-| ⬜ | M16 | Availability Calendar | 🟠 P1 | No calendar UI designed |
+- [ ] 🔺 M11 **Reviews List** — "See all reviews" link exists #design/campsite
+- [ ] 🔺 M12 Photo Gallery — No full gallery view #design/campsite
+- [ ] 🔼 M13 All Suppliers View — "View All" link exists #design/suppliers
+- [ ] 🔼 M14 Supplier Detail — Cards shown, no detail #design/suppliers
+- [ ] ⏫ M15 **Lot Selection** — How do users pick lots? #design/booking
+- [ ] 🔺 M16 Availability Calendar — No calendar UI designed #design/booking
 
 ### 💳 Booking & Payment
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M17 | Payment Method Selection | 🟠 P1 | "Change" link exists |
-| ⬜ | M18 | Add Payment Method | 🟠 P1 | How to add new cards? |
-| ⬜ | M19 | **Payment Failed** | 🔴 P0 | No error state |
-| ⬜ | M20 | Booking Failed | 🟠 P1 | Completion failure state |
-| ⬜ | M21 | Promo Code Entry | 🟡 P2 | No discount functionality |
+- [ ] 🔺 M17 Payment Method Selection — "Change" link exists #design/payment
+- [ ] 🔺 M18 Add Payment Method — How to add new cards? #design/payment
+- [ ] ⏫ M19 **Payment Failed** — No error state #design/payment
+- [ ] 🔺 M20 Booking Failed — Completion failure state #design/booking
+- [ ] 🔼 M21 Promo Code Entry — No discount functionality #design/booking
 
 ### 📋 Booking Management
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M22 | Booking Detail View | 🟠 P1 | No expanded booking detail |
-| ⬜ | M23 | Modification Success | 🟠 P1 | No final success state |
-| ⬜ | M24 | Check-in Instructions | 🟠 P1 | Arrival details missing |
-| ⬜ | M25 | Contact Host | 🟠 P1 | No messaging feature |
-| ⬜ | M26 | Booking Receipt | 🟡 P2 | No downloadable invoice |
+- [ ] 🔺 M22 Booking Detail View — No expanded booking detail #design/bookings
+- [ ] 🔺 M23 Modification Success — No final success state #design/bookings
+- [ ] 🔺 M24 Check-in Instructions — Arrival details missing #design/bookings
+- [ ] 🔺 M25 Contact Host — No messaging feature #design/bookings
+- [ ] 🔼 M26 Booking Receipt — No downloadable invoice #design/bookings
 
 ### 👤 User Profile
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M27 | Edit Profile Form | 🟠 P1 | Button exists, no form |
-| ⬜ | M28 | Personal Info | 🟠 P1 | Listed but no screen |
-| ⬜ | M29 | Payment Methods List | 🟠 P1 | Listed but no screen |
-| ⬜ | M30 | Linked Accounts | 🟡 P2 | Listed but no screen |
-| ⬜ | M31 | Support & Help | 🟡 P2 | Listed but no screen |
-| ⬜ | M32 | Language Selection | 🟢 P3 | Listed but no screen |
+- [ ] 🔺 M27 Edit Profile Form — Button exists, no form #design/profile
+- [ ] 🔺 M28 Personal Info — Listed but no screen #design/profile
+- [ ] 🔺 M29 Payment Methods List — Listed but no screen #design/profile
+- [ ] 🔼 M30 Linked Accounts — Listed but no screen #design/profile
+- [ ] 🔼 M31 Support & Help — Listed but no screen #design/profile
+- [ ] 🔽 M32 Language Selection — Listed but no screen #design/profile
 
 ### 🔔 Notifications
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M33 | **Notifications List** | 🟠 P1 | Bell icon but no screen |
-| ⬜ | M34 | Notification Detail | 🟡 P2 | Tap action undefined |
-| ⬜ | M35 | Supplier Alert Detail | 🟡 P2 | Alert content undefined |
+- [ ] 🔺 M33 **Notifications List** — Bell icon but no screen #design/notifications
+- [ ] 🔼 M34 Notification Detail — Tap action undefined #design/notifications
+- [ ] 🔼 M35 Supplier Alert Detail — Alert content undefined #design/notifications
 
 ### 🏠 Owner/Admin
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M36 | Owner Bookings List | 🟠 P1 | Nav shows but no screen |
-| ⬜ | M37 | Owner Booking Detail | 🟠 P1 | How owner manages booking |
-| ⬜ | M38 | Broadcast Confirmation | 🟡 P2 | Post-send state |
-| ⬜ | M39 | Owner Settings | 🟡 P2 | Button exists, no screen |
-| ⬜ | M40 | Revenue Dashboard | 🟡 P2 | No detailed financials |
+- [ ] 🔺 M36 Owner Bookings List — Nav shows but no screen #design/owner
+- [ ] 🔺 M37 Owner Booking Detail — How owner manages booking #design/owner
+- [ ] 🔼 M38 Broadcast Confirmation — Post-send state #design/owner
+- [ ] 🔼 M39 Owner Settings — Button exists, no screen #design/owner
+- [ ] 🔼 M40 Revenue Dashboard — No detailed financials #design/owner
 
 ### ⚠️ Error & Edge States
 
-| Status | ID | Screen | Priority | Notes |
-|:------:|:---|:-------|:--------:|:------|
-| ⬜ | M41 | Network Error | 🟠 P1 | No offline state |
-| ⬜ | M42 | Generic Error (500) | 🟠 P1 | Server error handling |
-| ⬜ | M43 | Session Expired | 🟡 P2 | Token expiry handling |
-| ⬜ | M44 | Maintenance Mode | 🟢 P3 | Scheduled downtime |
+- [ ] 🔺 M41 Network Error — No offline state #design/errors
+- [ ] 🔺 M42 Generic Error (500) — Server error handling #design/errors
+- [ ] 🔼 M43 Session Expired — Token expiry handling #design/errors
+- [ ] 🔽 M44 Maintenance Mode — Scheduled downtime #design/errors
 
 ---
 
@@ -148,16 +128,14 @@ priority: high
 > [!question] Critical Flows Missing
 > Several major user journeys have no design coverage
 
-| Status | ID | Gap | Impact | Recommendation |
-|:------:|:---|:----|:------:|:---------------|
-| ⬜ | G01 | **Guest → Owner transition** | 🔴 High | No campsite listing onboarding |
-| ⬜ | G02 | **Supplier onboarding** | 🔴 High | Suppliers shown, can't register |
-| ⬜ | G03 | First-time empty states | 🟠 Medium | No favorites/bookings empty UI |
-| ⬜ | G04 | Deep linking | 🟠 Medium | Shared links behavior undefined |
-| ⬜ | G05 | Push → Screen mapping | 🟠 Medium | Notification destinations |
-| ⬜ | G06 | Modification rules | 🟠 Medium | What can/can't be modified? |
-| ⬜ | G07 | Multi-lot booking | 🟢 Low | Single transaction for multiple |
-| ⬜ | G08 | Group booking | 🟢 Low | Large reservation support |
+- [ ] ⏫ G01 **Guest → Owner transition** — No campsite listing onboarding #design/flows
+- [ ] ⏫ G02 **Supplier onboarding** — Suppliers shown, can't register #design/flows
+- [ ] 🔺 G03 First-time empty states — No favorites/bookings empty UI #design/flows
+- [ ] 🔺 G04 Deep linking — Shared links behavior undefined #design/flows
+- [ ] 🔺 G05 Push → Screen mapping — Notification destinations #design/flows
+- [ ] 🔺 G06 Modification rules — What can/can't be modified? #design/flows
+- [ ] 🔽 G07 Multi-lot booking — Single transaction for multiple #design/flows
+- [ ] 🔽 G08 Group booking — Large reservation support #design/flows
 
 ---
 
@@ -201,14 +179,12 @@ priority: high
 > [!warning] WCAG Compliance
 > These issues may affect accessibility compliance
 
-| Status | ID | Issue | Screen(s) | Severity |
-|:------:|:---|:------|:----------|:--------:|
-| ⬜ | A01 | Green badge color contrast | Multiple | 🟠 Medium |
-| ⬜ | A02 | Map keyboard navigation | Home Map | 🔴 High |
-| ⬜ | A03 | Toggle focus states | Profile, Detail | 🟠 Medium |
-| ⬜ | A04 | Filter chip touch targets | Home Map | 🟠 Medium |
-| ⬜ | A05 | Skip navigation links | All | 🟢 Low |
-| ⬜ | A06 | Image alt text strategy | All | 🟠 Medium |
+- [ ] ⏫ A01 Map keyboard navigation — Home Map #design/a11y
+- [ ] 🔺 A02 Green badge color contrast — Multiple screens #design/a11y
+- [ ] 🔺 A03 Toggle focus states — Profile, Detail #design/a11y
+- [ ] 🔺 A04 Filter chip touch targets — Home Map (min 44px) #design/a11y
+- [ ] 🔼 A05 Image alt text strategy — All screens #design/a11y
+- [ ] 🔽 A06 Skip navigation links — All screens #design/a11y
 
 ---
 
@@ -217,14 +193,12 @@ priority: high
 > [!note] Design System Gaps
 > Inconsistencies that should be standardized
 
-| Status | ID | Issue | Examples |
-|:------:|:---|:------|:---------|
-| ⬜ | C01 | Bottom nav differs guest vs owner | Home vs Dashboard |
-| ⬜ | C02 | "Alerts" vs "Notifications" | Terminology |
-| ⬜ | C03 | Rating format varies | `4.8` vs `4.8★` |
-| ⬜ | C04 | Date format inconsistent | `Oct 12` vs `Oct 12, 2023` |
-| ⬜ | C05 | Currency format varies | `€25` vs `$45.00` |
-| ⬜ | C06 | Back button style | Arrow vs X |
+- [ ] 🔺 C01 Bottom nav differs guest vs owner — Home vs Dashboard #design/consistency
+- [ ] 🔺 C02 "Alerts" vs "Notifications" — Terminology #design/consistency
+- [ ] 🔺 C03 Rating format varies — `4.8` vs `4.8★` #design/consistency
+- [ ] 🔺 C04 Date format inconsistent — `Oct 12` vs `Oct 12, 2023` #design/consistency
+- [ ] 🔺 C05 Currency format varies — `€25` vs `$45.00` #design/consistency
+- [ ] 🔼 C06 Back button style — Arrow vs X #design/consistency
 
 ---
 
@@ -233,48 +207,77 @@ priority: high
 > [!abstract] Missing States
 > These patterns should be designed before development
 
-| Status | ID | Missing Pattern | Impact |
-|:------:|:---|:----------------|:-------|
-| ⬜ | T01 | Loading/skeleton states | Poor perceived performance |
-| ⬜ | T02 | Pull-to-refresh indicator | Mobile UX expectation |
-| ⬜ | T03 | Pagination/infinite scroll | Large list handling |
-| ⬜ | T04 | Image placeholder/broken | Error resilience |
-| ⬜ | T05 | Form validation errors | Input handling |
-| ⬜ | T06 | Toast/snackbar notifications | Feedback system |
+- [ ] 🔺 T01 Loading/skeleton states — Poor perceived performance #design/states
+- [ ] 🔺 T02 Pull-to-refresh indicator — Mobile UX expectation #design/states
+- [ ] 🔺 T03 Pagination/infinite scroll — Large list handling #design/states
+- [ ] 🔺 T04 Image placeholder/broken — Error resilience #design/states
+- [ ] 🔺 T05 Form validation errors — Input handling #design/states
+- [ ] 🔺 T06 Toast/snackbar notifications — Feedback system #design/states
 
 ---
 
-## 7. Recommended Actions
+## 7. Task Queries
+
+### All Critical Tasks (P0)
+
+```tasks
+not done
+description includes ⏫
+path includes Design Snag List
+```
+
+### All High Priority (P1)
+
+```tasks
+not done
+description includes 🔺
+path includes Design Snag List
+limit 10
+```
+
+### Completed Tasks
+
+```tasks
+done
+path includes Design Snag List
+```
+
+---
+
+## 8. Recommended Actions
 
 > [!success] Immediate Priorities
 > Address these before development sprint begins
 
 ### Week 1 - Critical Path
-- [ ] Design **Sign Up flow** (M01) — Cannot acquire users
-- [ ] Design **Lot Selection** (M15) — Booking flow blocked
-- [ ] Design **Payment Failed** (M19) — Error handling required
-- [ ] Design **List View** (M06) — Accessibility alternative
+
+- [ ] 📅 2025-01-05 Design **Sign Up flow** (M01) — Cannot acquire users #sprint/week1
+- [ ] 📅 2025-01-05 Design **Lot Selection** (M15) — Booking flow blocked #sprint/week1
+- [ ] 📅 2025-01-05 Design **Payment Failed** (M19) — Error handling required #sprint/week1
+- [ ] 📅 2025-01-05 Design **List View** (M06) — Accessibility alternative #sprint/week1
 
 ### Week 2 - Core Experience
-- [ ] Design **Filter Modal** (M09) — Search unusable
-- [ ] Design **Reviews Screen** (M11) — Social proof needed
-- [ ] Design **Notifications List** (M33) — Bell icon non-functional
-- [ ] Design **Forgot Password** (M02) — Auth flow complete
+
+- [ ] 📅 2025-01-12 Design **Filter Modal** (M09) — Search unusable #sprint/week2
+- [ ] 📅 2025-01-12 Design **Reviews Screen** (M11) — Social proof needed #sprint/week2
+- [ ] 📅 2025-01-12 Design **Notifications List** (M33) — Bell icon non-functional #sprint/week2
+- [ ] 📅 2025-01-12 Design **Forgot Password** (M02) — Auth flow complete #sprint/week2
 
 ### Week 3 - Polish
-- [ ] Design **Empty States** (G03) — First-time user experience
-- [ ] Design **Loading States** (T01) — Performance perception
-- [ ] Resolve **Consistency Issues** (C01-C06) — Design system
-- [ ] Complete **Owner Flow** (M36-M40) — B2B experience
+
+- [ ] 📅 2025-01-19 Design **Empty States** (G03) — First-time user experience #sprint/week3
+- [ ] 📅 2025-01-19 Design **Loading States** (T01) — Performance perception #sprint/week3
+- [ ] 📅 2025-01-19 Resolve **Consistency Issues** (C01-C06) — Design system #sprint/week3
+- [ ] 📅 2025-01-19 Complete **Owner Flow** (M36-M40) — B2B experience #sprint/week3
 
 ---
 
-## 8. Sign-off Checklist
+## 9. Sign-off Checklist
 
 ### MVP Launch Requirements
 
-- [ ] All 🔴 P0 items addressed
-- [ ] All 🟠 P1 items addressed
+- [ ] All ⏫ P0 items addressed
+- [ ] All 🔺 P1 items addressed
 - [ ] Accessibility audit passed
 - [ ] Consistency issues resolved
 - [ ] Empty states designed

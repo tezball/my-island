@@ -51,7 +51,7 @@ export const mockBookings: Booking[] = [
     nights: 3,
     guests: { adults: 4, children: 2 },
     extras: [mockExtras[2], mockExtras[8]],
-    status: 'pending',
+    status: 'confirmed',
     totalPrice: 302,
     createdAt: '2024-12-22T09:15:00Z',
   },

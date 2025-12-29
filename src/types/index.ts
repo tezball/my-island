@@ -69,7 +69,7 @@ export interface Booking {
   nights: number
   guests: BookingGuests
   extras: Extra[]
-  status: 'confirmed' | 'pending' | 'completed' | 'cancelled'
+  status: 'confirmed' | 'completed' | 'cancelled'
   totalPrice: number
   createdAt: string
 }
