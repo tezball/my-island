@@ -1,0 +1,87 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+target/
+*.jar
+*.war
+*.class
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test & coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# Vite
+*.local
+
+# Java / Maven
+.mvn/repository/
+!.mvn/wrapper/
+hs_err_pid*
+
+# Spring Boot
+spring-shell.log
+
+# CLI pid files
+cli/.api.pid
+cli/.frontend.pid
+cli/*.log
+
+# Playwright
+.playwright-mcp/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Package manager locks (optional - uncomment if not wanted)
+# package-lock.json
+# yarn.lock
+
+# Generated documentation
+docs/.obsidian/
