@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Lot Details - my-island</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#162b1f",
+                        "border-light": "#cfe7d7",
+                        "border-dark": "#2a4030",
+                        "text-main": "#0d1b12",
+                        "text-secondary": "#4c9a66",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white font-display antialiased selection:bg-primary selection:text-black">
+<div class="relative flex min-h-screen w-full flex-col overflow-hidden">
+<div class="sticky top-0 z-20 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 pb-2 justify-between border-b border-transparent dark:border-border-dark transition-colors">
+<button class="flex size-12 shrink-0 items-center justify-start text-text-main dark:text-white hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-[24px]">arrow_back_ios_new</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Edit Lot Details</h2>
+</div>
+<div class="flex-1 flex flex-col pb-24">
+<div class="@container w-full mb-2">
+<div class="@[480px]:px-4 @[480px]:py-3 p-4">
+<div class="relative bg-cover bg-center flex flex-col justify-end overflow-hidden bg-background-light rounded-xl min-h-[180px] shadow-sm" data-alt="Scenic view of a campsite lot near a lake with trees in the background" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAUQ0kDfQFInOdtMkO53rGe7ZEQv8O6UQaF4mJ8ydlEcfCe_qq4XdeZMGVwX2-68R6YnzKPVnOEcmBjPVMFu7EyaWWutGFch0VJ4ZYJOxISaAX78zEJ978425k7v4ftow_uDuLYWZ2pmCdFN7pDHImwKuny9dfR-joW30Vq78lFZ4oDt5FeaegLAKfeFPihnU-FrHZp_RdjI8iN6nnQQqYVuk8-24j3uCoF6LQMstVKNNbZWMu-8OwvLxFCGS-bgA5Uuxu4XoL1yw");'>
+<div class="flex flex-col p-5">
+<span class="text-primary text-xs font-bold uppercase tracking-wider mb-1">Current Lot</span>
+<p class="text-white tracking-tight text-2xl font-bold leading-tight">Lot A-14 (Lakeview)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 py-2">
+<h3 class="text-text-main dark:text-white text-lg font-bold mb-4 px-1">Basic Information</h3>
+<div class="flex flex-col gap-1 mb-5">
+<label class="text-text-main dark:text-gray-300 text-sm font-medium leading-normal pl-1">Lot Number/Name</label>
+<div class="relative">
+<input class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-14 placeholder:text-text-secondary p-[15px] text-base font-normal leading-normal transition-all shadow-sm" type="text" value="A-14"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none">
+<span class="material-symbols-outlined">edit</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-1 mb-5" style="--select-button-svg: url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2724px%27 height=%2724px%27 fill=%27rgb(19, 236, 91)%27 viewBox=%270 0 256 256%27%3e%3cpath d=%27M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z%27%3e%3c/path%3e%3c/svg%3e');">
+<label class="text-text-main dark:text-gray-300 text-sm font-medium leading-normal pl-1">Lot Type</label>
+<select class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-14 bg-[image:--select-button-svg] bg-[position:right_1rem_center] bg-no-repeat appearance-none placeholder:text-text-secondary p-[15px] pr-12 text-base font-normal leading-normal transition-all shadow-sm">
+<option value="rv">RV Spot</option>
+<option value="tent">Tent Site</option>
+<option value="cabin">Cabin</option>
+<option value="glamping">Glamping Pod</option>
+</select>
+</div>
+<div class="flex flex-col gap-1 mb-5">
+<label class="text-text-main dark:text-gray-300 text-sm font-medium leading-normal pl-1">Lot-Specific Pricing <span class="text-text-secondary text-xs font-normal ml-1">(per night)</span></label>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none font-bold">
+                            $
+                        </div>
+<input class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-text-main dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark focus:border-primary h-14 placeholder:text-text-secondary pl-9 p-[15px] text-base font-normal leading-normal transition-all shadow-sm" step="0.01" type="number" value="45.00"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl px-4 h-16 justify-between mb-2 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<p class="text-text-main dark:text-white text-base font-medium leading-normal">Max Capacity</p>
+</div>
+<div class="shrink-0">
+<div class="flex items-center gap-3 text-text-main dark:text-white">
+<button class="flex size-9 items-center justify-center rounded-full bg-background-light dark:bg-[#2A4234] text-text-main dark:text-white hover:bg-primary hover:text-black transition-colors cursor-pointer border border-border-light dark:border-transparent">
+<span class="material-symbols-outlined text-lg">remove</span>
+</button>
+<input class="text-lg font-bold w-6 p-0 text-center bg-transparent focus:outline-0 border-none [appearance:textfield] [&amp;::-webkit-inner-spin-button]:appearance-none [&amp;::-webkit-outer-spin-button]:appearance-none" type="number" value="6"/>
+<button class="flex size-9 items-center justify-center rounded-full bg-background-light dark:bg-[#2A4234] text-text-main dark:text-white hover:bg-primary hover:text-black transition-colors cursor-pointer border border-border-light dark:border-transparent">
+<span class="material-symbols-outlined text-lg">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="h-px bg-border-light dark:bg-border-dark w-[90%] mx-auto my-4"></div>
+<div class="px-4 py-2">
+<div class="flex justify-between items-end mb-4 px-1">
+<h3 class="text-text-main dark:text-white text-lg font-bold">Amenities</h3>
+<span class="text-xs text-text-secondary dark:text-gray-400 font-medium">Select all that apply</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<label class="cursor-pointer group relative">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="flex items-center gap-3 p-3 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-[0_0_0_1px_rgba(19,236,91,1)]">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-gray-500 peer-checked:bg-primary peer-checked:text-black transition-colors">
+<span class="material-symbols-outlined">deck</span>
+</div>
+<span class="text-sm font-medium text-text-main dark:text-white peer-checked:text-text-main dark:peer-checked:text-white">Picnic Table</span>
+<span class="material-symbols-outlined absolute right-3 text-primary opacity-0 peer-checked:opacity-100 transition-opacity text-xl">check_circle</span>
+</div>
+</label>
+<label class="cursor-pointer group relative">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="flex items-center gap-3 p-3 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-[0_0_0_1px_rgba(19,236,91,1)]">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-gray-500 peer-checked:bg-primary peer-checked:text-black transition-colors">
+<span class="material-symbols-outlined">local_fire_department</span>
+</div>
+<span class="text-sm font-medium text-text-main dark:text-white peer-checked:text-text-main dark:peer-checked:text-white">Fire Pit</span>
+<span class="material-symbols-outlined absolute right-3 text-primary opacity-0 peer-checked:opacity-100 transition-opacity text-xl">check_circle</span>
+</div>
+</label>
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center gap-3 p-3 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-[0_0_0_1px_rgba(19,236,91,1)]">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-gray-500 peer-checked:bg-primary peer-checked:text-black transition-colors">
+<span class="material-symbols-outlined">electrical_services</span>
+</div>
+<span class="text-sm font-medium text-text-main dark:text-white peer-checked:text-text-main dark:peer-checked:text-white">Electric</span>
+<span class="material-symbols-outlined absolute right-3 text-primary opacity-0 peer-checked:opacity-100 transition-opacity text-xl">check_circle</span>
+</div>
+</label>
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center gap-3 p-3 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-[0_0_0_1px_rgba(19,236,91,1)]">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-gray-500 peer-checked:bg-primary peer-checked:text-black transition-colors">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<span class="text-sm font-medium text-text-main dark:text-white peer-checked:text-text-main dark:peer-checked:text-white">Water</span>
+<span class="material-symbols-outlined absolute right-3 text-primary opacity-0 peer-checked:opacity-100 transition-opacity text-xl">check_circle</span>
+</div>
+</label>
+<label class="cursor-pointer group relative">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="flex items-center gap-3 p-3 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-[0_0_0_1px_rgba(19,236,91,1)]">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-gray-500 peer-checked:bg-primary peer-checked:text-black transition-colors">
+<span class="material-symbols-outlined">wifi</span>
+</div>
+<span class="text-sm font-medium text-text-main dark:text-white peer-checked:text-text-main dark:peer-checked:text-white">Wifi</span>
+<span class="material-symbols-outlined absolute right-3 text-primary opacity-0 peer-checked:opacity-100 transition-opacity text-xl">check_circle</span>
+</div>
+</label>
+<label class="cursor-pointer group relative">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center gap-3 p-3 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark transition-all duration-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:shadow-[0_0_0_1px_rgba(19,236,91,1)]">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-gray-500 peer-checked:bg-primary peer-checked:text-black transition-colors">
+<span class="material-symbols-outlined">pets</span>
+</div>
+<span class="text-sm font-medium text-text-main dark:text-white peer-checked:text-text-main dark:peer-checked:text-white">Pets</span>
+<span class="material-symbols-outlined absolute right-3 text-primary opacity-0 peer-checked:opacity-100 transition-opacity text-xl">check_circle</span>
+</div>
+</label>
+</div>
+</div>
+<div class="h-px bg-border-light dark:bg-border-dark w-[90%] mx-auto my-4"></div>
+<div class="px-4 py-2 mb-4">
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+<p class="text-text-main dark:text-white text-base font-bold">Currently Available</p>
+</div>
+<p class="text-text-secondary dark:text-gray-400 text-sm pl-8">Make this lot visible for bookings</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-12 h-7 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-primary shadow-inner"></div>
+</label>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full p-4 pb-6 bg-white/95 dark:bg-[#102216]/95 backdrop-blur-md border-t border-border-light dark:border-border-dark z-30">
+<div class="flex gap-3 max-w-xl mx-auto">
+<button class="flex-1 h-14 rounded-full bg-transparent border border-border-light dark:border-border-dark text-text-main dark:text-white font-bold text-base hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    Cancel
+                </button>
+<button class="flex-1 h-14 rounded-full bg-primary text-black font-bold text-base shadow-lg shadow-green-500/20 hover:bg-[#0fdc53] hover:shadow-green-500/30 transition-all transform active:scale-[0.98]">
+                    Save Changes
+                </button>
+</div>
+</div>
+</div>
+
+</body></html>

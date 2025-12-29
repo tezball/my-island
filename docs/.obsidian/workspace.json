@@ -1,0 +1,214 @@
+{
+  "main": {
+    "id": "7b41707e9f154c55",
+    "type": "split",
+    "children": [
+      {
+        "id": "235516939687b524",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e8d3b3f45e3d70b8",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "design/user-flows.canvas",
+                "viewState": {
+                  "x": 1943.252828768942,
+                  "y": 1716.7447193955397,
+                  "zoom": 1
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "user-flows"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "31932b119fa470b5",
+    "type": "split",
+    "children": [
+      {
+        "id": "c7c90c27af710718",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fa52abc0471d0032",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "551f63e6d079d6e0",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "60d977c3d197bf48",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "62f417dc1f6f45ad",
+    "type": "split",
+    "children": [
+      {
+        "id": "0df65a8c7e56cc5e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d257bb442bb98617",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "design/user-flows.canvas",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for user-flows"
+            }
+          },
+          {
+            "id": "3f371515baf1e60e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "design/user-flows.canvas",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from user-flows"
+            }
+          },
+          {
+            "id": "3b00493b46bd1201",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "1cc9b8777ade5d05",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "4bfacca73f2bc141",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "design/user-flows.canvas",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of user-flows"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "e8d3b3f45e3d70b8",
+  "lastOpenFiles": [
+    "Design Snag List.md",
+    "Design Snag List.md.tmp.8640.1767009534885",
+    "design/home_/_map_view/screen.png",
+    "design/home_/_map_view/code.html",
+    "design/get_started_/_explore/screen.png",
+    "design/get_started_/_explore/code.html",
+    "design/campsite_listing/edit_form_2/screen.png",
+    "design/campsite_listing/edit_form_2/code.html",
+    "design/campsite_listing/edit_form_1/screen.png",
+    "design/campsite_listing/edit_form_1/code.html",
+    "design/welcome_to_my-island/screen.png",
+    "design/welcome_to_my-island/code.html",
+    "design/user_profile_screen/screen.png",
+    "design/user_profile_screen/code.html",
+    "design/supplier_offers_feed/screen.png",
+    "design/supplier_offers_feed/code.html",
+    "design/supplier_offer_management_2/screen.png",
+    "design/supplier_offer_management_2/code.html",
+    "design/supplier_offer_management_1/screen.png",
+    "design/supplier_offer_management_1/code.html",
+    "design/select_booking_dates/screen.png",
+    "design/user-flows.canvas"
+  ]
+}

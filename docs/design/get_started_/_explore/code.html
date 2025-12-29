@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My-Island Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#19e65e",
+              "background-light": "#f6f8f6",
+              "background-dark": "#112116",
+              "surface-light": "#ffffff",
+              "surface-dark": "#1a2c20",
+              "text-main-light": "#111813",
+              "text-main-dark": "#f0f4f2",
+              "text-sub-light": "#4b5563",
+              "text-sub-dark": "#9ca3af"
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+          },
+        },
+      }
+    </script>
+<style>body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-surface-light dark:bg-background-dark">
+<div class="relative h-[55%] w-full">
+<div class="absolute inset-0 w-full h-full bg-surface-light dark:bg-background-dark">
+<div class="w-full h-full bg-center bg-cover bg-no-repeat relative rounded-b-[3rem] overflow-hidden" data-alt="Peaceful campsite near a lake with trees and mountains in soft morning light" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5oYlhseCNL2oRMiQhqxkV-o4vshQfQLGURZ_M4zJuAl6QzMv1pF9KrGVD7e3-xxRxcYOcmbRU_Q5kZ2Z5b1K7TKsvWjVtPxtNppzJdMJX6KzaqudzGhfE58qsFZhap71oIz0lbuCexyBzm1u2iBIS66_FOOhJ4ztsE5yKgL1AHWVYIEjQi4mg9B9X8xEp1uVajgpPzmLgb3MKDbPnZUhUY5aA9r_dyiobSWDtC-LMgl3dSC6VU0ISZlSC-NYed1OGQUA44dHYrA");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+</div>
+</div>
+<div class="absolute top-0 left-0 right-0 h-12 flex items-end justify-between px-6 pb-2 text-white/90 font-medium text-sm z-10">
+<span>9:41</span>
+<div class="flex gap-1.5">
+<span class="material-symbols-outlined text-[18px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[18px]">wifi</span>
+<span class="material-symbols-outlined text-[18px]">battery_full</span>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col justify-between px-6 pt-8 pb-4 safe-area-bottom bg-surface-light dark:bg-background-dark relative z-10">
+<div class="flex justify-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+<div class="w-8 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex flex-col items-center text-center space-y-4">
+<h1 class="text-text-main-light dark:text-text-main-dark text-[32px] font-extrabold leading-[1.1] tracking-tight">
+                    Start Your <br/>
+<span class="text-primary">Adventure</span>
+</h1>
+<p class="text-text-sub-light dark:text-text-sub-dark text-base font-medium leading-relaxed max-w-[280px]">
+                    Join the my-island community to book exclusive stays—from campsites to glamping, RV parks, mobile homes, and B&amp;Bs—and stay connected with local suppliers.
+                </p>
+</div>
+<div class="flex flex-col gap-3 w-full mt-auto pt-6">
+<button class="relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-[#052e13] hover:bg-[#15d655] transition-colors shadow-lg shadow-primary/25 group">
+<span class="absolute inset-0 w-full h-full bg-white/20 scale-0 group-active:scale-100 transition-transform rounded-full"></span>
+<span class="text-base font-bold tracking-wide">Create Account</span>
+</button>
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-gray-100 dark:bg-surface-dark text-text-main-light dark:text-text-main-dark hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors border border-transparent dark:border-gray-700">
+<span class="text-base font-semibold tracking-wide">I already have an account</span>
+</button>
+<button class="flex w-full cursor-pointer items-center justify-center h-10 px-6 mt-1 text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors">
+<span class="text-sm font-semibold">Skip &amp; Explore as Guest</span>
+</button>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full filter blur-3xl pointer-events-none -z-0 translate-y-1/2 -translate-x-1/4"></div>
+</div>
+</body></html>

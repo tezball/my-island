@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My-Island App Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e65e",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#112116",
+                        "text-main": "#111813",
+                        "text-secondary": "#63886f",
+                    },
+                    fontFamily: {
+                        "display": ["Rubik", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200">
+<div class="relative flex h-screen max-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-white dark:bg-[#112116]">
+<div class="flex items-center p-6 pb-2 justify-end z-10">
+<button class="flex items-center justify-end hover:opacity-70 active:scale-95 transition-all">
+<p class="text-text-secondary dark:text-[#a0c4ac] text-sm font-bold leading-normal tracking-wide shrink-0">Skip</p>
+</button>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center w-full px-6 relative">
+<div class="flex flex-col items-center gap-8 w-full max-w-xs animate-in fade-in zoom-in duration-500">
+<div class="relative w-full aspect-[4/5] max-h-[400px] rounded-xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="Scenic camping tent overlooking a misty green valley at sunrise" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC18ABEGL3nFNRyWwwq07g3R1MiXgsgH5VPtsbVpF_304EvF61mfdAOqiOU33R_zBC_UBSNhsHq_KcfdeH06maukWwTMapbsu4_xcBrQFsEjOVLMTTGgQdKMfSTZkYM8f1CkYpSPJJzNcIvuCRnUlNl77NespigzRJ88-f02pBPRn4v25h-GwnbUvqfVMtddSoemr6fqX-qSO9YXj6hpNIAJJpT29blmBCLS7ZeXABwkUSLEOKExr_dBzfR9lVBWZyFZY1yXk5hrQ");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+<div class="absolute top-4 right-4 bg-white/90 dark:bg-black/60 backdrop-blur-md p-3 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-primary text-2xl">landscape</span>
+</div>
+</div>
+<div class="text-center space-y-3">
+<h1 class="text-3xl font-extrabold tracking-tight text-[#111813] dark:text-white leading-tight">
+                        Discover Ireland's <span class="text-primary">Best Stays</span>
+</h1>
+<p class="text-text-secondary dark:text-[#a0c4ac] text-base font-medium leading-relaxed">
+                        Explore hidden gems and top-rated camping spots, glamping, RV parks, mobile homes, and B&amp;Bs across the island.
+                    </p>
+</div>
+</div>
+</div>
+<div class="w-full pb-8 pt-4 px-6 flex flex-col gap-6 bg-white dark:bg-[#112116]">
+<div class="flex w-full flex-row items-center justify-center gap-2">
+<div class="h-2.5 w-8 rounded-full bg-primary transition-all duration-300"></div>
+<div class="h-2.5 w-2.5 rounded-full bg-[#dce5df] dark:bg-white/20"></div>
+<div class="h-2.5 w-2.5 rounded-full bg-[#dce5df] dark:bg-white/20"></div>
+</div>
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary hover:bg-[#14d154] active:bg-[#10b84a] text-[#111813] text-lg font-bold leading-normal tracking-wide transition-colors shadow-[0_4px_14px_rgba(25,230,94,0.4)]">
+<span class="truncate">Next</span>
+<span class="material-symbols-outlined ml-2 text-xl font-bold">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

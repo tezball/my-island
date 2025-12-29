@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>my-island - Home / Map View</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-dark": "#0eb562",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a382a",
+                        "text-main": "#0d1b14",
+                        "text-secondary": "#4c9a73",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'float': '0 8px 24px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.08)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Map specific styles */
+        .map-pin-pulse {
+            animation: pulse-green 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(19, 236, 128, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(19, 236, 128, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(19, 236, 128, 0);
+            }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main antialiased overflow-hidden h-screen w-full flex flex-col relative">
+<!-- Full Screen Map Container -->
+<div class="absolute inset-0 z-0 w-full h-full bg-slate-200">
+<!-- Mock Map Image Background -->
+<div class="w-full h-full bg-cover bg-center relative" data-alt="Abstract map background showing Ireland coastline" data-location="Ireland" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDT0nQRGaM3gE4Ah5jQJTopBmkD8xETcOtulSjZnW_Qf7sNC75dt5JjTAv8RJ5krLymbAmMqXfjNbtmJ8XC-6VvMsyf-p7t4Hpt-cM8ZI45Q18_bUdFL_Aaqy5kTP1ngu28RLQSBgiUa-vjGPXdVV7GuFyjjKwt5hl7UavSZoUM5b2cy59i4oWfz6s6vjR8PTWOql8FopYWri1EsfmWFuILyntrS-RJi98oTRXVX3J_vo8GclS125qQTx_MJcKz4_WF3x2cQguocw");'>
+<!-- Fake Map Tiles / Elements for realism -->
+<div class="absolute inset-0 opacity-10 bg-[url('https://placeholder.pics/svg/100')] bg-repeat" data-alt="Map terrain pattern"></div>
+<!-- Map Pins -->
+<!-- Pin 1: Active -->
+<div class="absolute top-[45%] left-[30%] flex flex-col items-center group cursor-pointer z-20">
+<div class="relative flex items-center justify-center">
+<div class="w-4 h-4 bg-primary rounded-full map-pin-pulse"></div>
+<div class="absolute w-12 h-12 bg-primary/20 rounded-full animate-ping opacity-75"></div>
+</div>
+<!-- Info Window (Active) -->
+<div class="absolute bottom-6 mb-2 w-64 bg-surface-light dark:bg-surface-dark rounded-xl shadow-float p-3 transform transition-all duration-300 origin-bottom scale-100">
+<div class="flex gap-3">
+<div class="w-16 h-16 rounded-lg bg-gray-200 bg-cover bg-center shrink-0" data-alt="Tent near a lake with mountains" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAr7fXwsTB93NZe-HWkTvd1gSoLldCcQhnia7IxfiSr0ibDrpSeoVBIWm7kIY5J_KAwP1A3FF1jvmtxW8NQQgFaVl0OJTYmubO3cPNRNgFfHkqBLE_t4xyH2PrgosE-ZmKWEWowCFtKtO2EaIzXKgApQGlzhgH4HuvbwODQE48Wk7R8CUHOtxY_2yFoJO3CW_1jt9IzPCgHY19IJBsbUpKAF54yt_KgrhZ9oIRLTaSrRKmfJQ0Vs9LlQOVH8fiZPD32r23Z6mAdZg");'></div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<h3 class="font-bold text-sm text-text-main dark:text-white truncate">Eagle Point Camping</h3>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-yellow-400 text-[14px]">star</span>
+<span class="text-xs font-medium text-text-main dark:text-gray-200">4.8</span>
+<span class="text-xs text-text-secondary dark:text-gray-400">(124)</span>
+</div>
+<p class="text-xs font-semibold text-primary mt-1">€25 <span class="font-normal text-gray-400">/ night</span></p>
+</div>
+</div>
+<!-- Triangle Pointer -->
+<div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-surface-light dark:bg-surface-dark rotate-45"></div>
+</div>
+</div>
+<!-- Pin 2: Inactive -->
+<div class="absolute top-[30%] left-[60%] flex flex-col items-center cursor-pointer hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary drop-shadow-md text-4xl fill-current">location_on</span>
+</div>
+<!-- Pin 3: Inactive -->
+<div class="absolute top-[55%] left-[75%] flex flex-col items-center cursor-pointer hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-gray-500 dark:text-gray-400 drop-shadow-md text-4xl fill-current opacity-80">location_on</span>
+</div>
+<!-- Cluster Pin -->
+<div class="absolute top-[40%] right-[15%] flex flex-col items-center cursor-pointer hover:scale-110 transition-transform">
+<div class="w-10 h-10 bg-primary text-text-main rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-white dark:border-background-dark">
+                    5
+                </div>
+</div>
+</div>
+</div>
+<!-- UI Overlay Layer -->
+<div class="relative z-10 flex flex-col h-full pointer-events-none">
+<!-- Top Search Area -->
+<div class="pt-12 px-4 pb-2 w-full pointer-events-auto">
+<div class="w-full max-w-md mx-auto relative group">
+<div class="absolute inset-0 bg-white/60 dark:bg-black/40 backdrop-blur-xl rounded-full shadow-sm"></div>
+<div class="relative flex items-center h-12 w-full bg-surface-light/90 dark:bg-surface-dark/90 backdrop-blur-md rounded-full shadow-float border border-white/20 dark:border-white/5 transition-all focus-within:ring-2 focus-within:ring-primary/50">
+<div class="pl-4 pr-2 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">search</span>
+</div>
+<input class="w-full bg-transparent border-none focus:ring-0 text-text-main dark:text-white placeholder:text-text-secondary dark:placeholder:text-gray-500 text-sm font-medium h-full rounded-r-full" placeholder="Search by County or Campsite Name" type="text"/>
+<button class="mr-1 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 text-text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+</div>
+<!-- Filter Chips (Optional Quick Filters) -->
+<div class="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-2 mask-linear">
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-full shadow-sm border border-gray-100 dark:border-gray-800 whitespace-nowrap active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[16px] text-primary">camping</span>
+<span class="text-xs font-semibold text-text-main dark:text-gray-200">Campsites</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-full shadow-sm border border-gray-100 dark:border-gray-800 whitespace-nowrap active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[16px] text-primary">rv_hookup</span>
+<span class="text-xs font-semibold text-text-main dark:text-gray-200">RV Parks</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-full shadow-sm border border-gray-100 dark:border-gray-800 whitespace-nowrap active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[16px] text-primary">wifi</span>
+<span class="text-xs font-semibold text-text-main dark:text-gray-200">WiFi</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-light dark:bg-surface-dark rounded-full shadow-sm border border-gray-100 dark:border-gray-800 whitespace-nowrap active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[16px] text-primary">pets</span>
+<span class="text-xs font-semibold text-text-main dark:text-gray-200">Pet Friendly</span>
+</button>
+</div>
+</div>
+<!-- Spacer to push content to sides/bottom -->
+<div class="flex-1 flex flex-col justify-end pb-24 px-4 pointer-events-none">
+<!-- Map Controls (Right Side) -->
+<div class="flex flex-col items-end gap-3 mb-4 pointer-events-auto">
+<button class="w-10 h-10 bg-surface-light dark:bg-surface-dark rounded-lg shadow-float flex items-center justify-center text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[24px]">my_location</span>
+</button>
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark rounded-lg shadow-float divide-y divide-gray-100 dark:divide-gray-700 overflow-hidden">
+<button class="w-10 h-10 flex items-center justify-center text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100">
+<span class="material-symbols-outlined text-[24px]">remove</span>
+</button>
+</div>
+</div>
+<!-- List View Toggle (Centered) -->
+<div class="flex justify-center pointer-events-auto mb-4">
+<button class="group relative flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-text-main font-bold rounded-full shadow-float transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+<span>List View</span>
+<!-- Decorative ripple effect container -->
+<div class="absolute inset-0 rounded-full overflow-hidden">
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-50 pointer-events-auto">
+<!-- Frosted Glass Background -->
+<div class="absolute inset-0 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-lg border-t border-white/20 dark:border-white/5"></div>
+<div class="relative flex justify-around items-end pb-8 pt-4 px-2">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center gap-1 min-w-[64px] group" href="#">
+<div class="relative p-1">
+<span class="material-symbols-outlined text-[28px] text-primary filled font-variation-settings-'FILL':1">map</span>
+<!-- Active Indicator Dot -->
+<div class="absolute -top-1 right-0 w-2 h-2 bg-primary rounded-full ring-2 ring-white dark:ring-surface-dark"></div>
+</div>
+<span class="text-[10px] font-bold text-primary tracking-wide">Explore</span>
+</a>
+<!-- Saved -->
+<a class="flex flex-col items-center gap-1 min-w-[64px] group hover:opacity-80 transition-opacity" href="#">
+<div class="p-1">
+<span class="material-symbols-outlined text-[28px] text-text-secondary dark:text-gray-400 group-hover:text-text-main dark:group-hover:text-white transition-colors">favorite</span>
+</div>
+<span class="text-[10px] font-medium text-text-secondary dark:text-gray-400 group-hover:text-text-main dark:group-hover:text-white transition-colors">Saved</span>
+</a>
+<!-- Alerts -->
+<a class="flex flex-col items-center gap-1 min-w-[64px] group hover:opacity-80 transition-opacity" href="#">
+<div class="p-1 relative">
+<span class="material-symbols-outlined text-[28px] text-text-secondary dark:text-gray-400 group-hover:text-text-main dark:group-hover:text-white transition-colors">notifications</span>
+<div class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-surface-light dark:border-surface-dark"></div>
+</div>
+<span class="text-[10px] font-medium text-text-secondary dark:text-gray-400 group-hover:text-text-main dark:group-hover:text-white transition-colors">Alerts</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center gap-1 min-w-[64px] group hover:opacity-80 transition-opacity" href="#">
+<div class="p-1">
+<span class="material-symbols-outlined text-[28px] text-text-secondary dark:text-gray-400 group-hover:text-text-main dark:group-hover:text-white transition-colors">person</span>
+</div>
+<span class="text-[10px] font-medium text-text-secondary dark:text-gray-400 group-hover:text-text-main dark:group-hover:text-white transition-colors">Profile</span>
+</a>
+</div>
+</div>
+</body></html>

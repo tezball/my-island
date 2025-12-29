@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create New Offer - my-island</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-content": "#00381e",
+                        "secondary": "#4c9a73",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a3326",
+                        "text-main-light": "#0d1b14",
+                        "text-main-dark": "#e0f2e9",
+                        "text-sub-light": "#4c9a73",
+                        "text-sub-dark": "#8bc4a8",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main-light dark:text-text-main-dark antialiased transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-xl overflow-hidden">
+<header class="sticky top-0 z-30 flex items-center justify-between p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-text-main-light dark:text-text-main-dark" style="font-size: 24px;">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold leading-tight tracking-tight">Create New Offer</h1>
+<div class="size-10 shrink-0"></div> 
+</header>
+<main class="flex-1 overflow-y-auto pb-32 px-4 pt-6">
+<form class="flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-text-main-light dark:text-text-main-dark ml-1">Offer Graphic</label>
+<div class="relative group cursor-pointer">
+<input accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" type="file"/>
+<div class="flex flex-col items-center justify-center w-full h-52 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl bg-surface-light dark:bg-surface-dark group-hover:bg-gray-50 dark:group-hover:bg-surface-dark/80 group-hover:border-primary transition-all duration-200">
+<div class="flex size-14 items-center justify-center rounded-full bg-background-light dark:bg-background-dark mb-3 shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">add_photo_alternate</span>
+</div>
+<p class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Upload Image</p>
+<p class="text-xs text-text-sub-light dark:text-text-sub-dark mt-1">Recommended size: 800x600px</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<div class="space-y-1.5">
+<label class="text-sm font-bold text-text-main-light dark:text-text-main-dark ml-1" for="title">Offer Title</label>
+<input class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark px-4 py-3.5 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:border-primary focus:ring-primary shadow-sm outline-none transition-shadow" id="title" placeholder="e.g. Weekend Glamping Special" type="text"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-bold text-text-main-light dark:text-text-main-dark ml-1" for="description">Description</label>
+<textarea class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark px-4 py-3.5 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:border-primary focus:ring-primary shadow-sm outline-none transition-shadow resize-none" id="description" placeholder="Describe what makes this offer special..." rows="4"></textarea>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-sm font-bold text-text-main-light dark:text-text-main-dark ml-1" for="original-price">Original Price</label>
+<div class="relative">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+<span class="text-gray-500 font-medium">$</span>
+</div>
+<input class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark pl-8 pr-4 py-3.5 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:border-primary focus:ring-primary shadow-sm outline-none transition-shadow" id="original-price" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-bold text-text-main-light dark:text-text-main-dark ml-1" for="discount-price">Discount Price</label>
+<div class="relative">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+<span class="text-primary font-medium">$</span>
+</div>
+<input class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark pl-8 pr-4 py-3.5 text-primary font-semibold placeholder-gray-400 focus:border-primary focus:ring-primary shadow-sm outline-none transition-shadow" id="discount-price" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-bold text-text-main-light dark:text-text-main-dark ml-1" for="expiration">Expiration Date</label>
+<div class="relative">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 z-10">
+<span class="material-symbols-outlined text-gray-500 text-lg">calendar_today</span>
+</div>
+<input class="relative w-full rounded-xl border-gray-200 dark:border-gray-700 bg-surface-light dark:bg-surface-dark pl-11 pr-4 py-3.5 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:border-primary focus:ring-primary shadow-sm outline-none transition-shadow [color-scheme:light] dark:[color-scheme:dark]" id="expiration" type="date"/>
+</div>
+</div>
+<div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 p-4 border border-blue-100 dark:border-blue-800/30">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" style="font-size: 20px;">info</span>
+<p class="text-xs text-blue-800 dark:text-blue-200 leading-relaxed">
+                            New offers are reviewed within 24 hours. Ensure your image is high quality to attract more customers.
+                        </p>
+</div>
+</div>
+</form>
+</main>
+<div class="fixed bottom-6 right-0 left-0 flex justify-center px-4 pointer-events-none z-20">
+<button class="pointer-events-auto shadow-lg shadow-primary/30 flex items-center justify-center gap-2 rounded-xl bg-primary h-14 px-8 text-primary-content font-bold text-base transition-all active:scale-95 hover:brightness-105 w-full max-w-[320px]">
+<span class="material-symbols-outlined">check_circle</span>
+                Save Offer
+            </button>
+</div>
+<div class="fixed bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent pointer-events-none z-10"></div>
+</div>
+
+</body></html>

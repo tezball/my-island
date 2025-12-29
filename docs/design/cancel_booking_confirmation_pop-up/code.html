@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cancel Booking Confirmation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221010",
+                        "emerald-dark": "#064e3b", // Adding context color for background
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<!-- Main Container mimicking the mobile screen -->
+<div class="relative flex h-screen w-full flex-col overflow-hidden bg-gray-900 font-display">
+<!-- App Background Context (Blurred to focus on modal) -->
+<div class="absolute inset-0 z-0">
+<!-- Simulated App Content Behind Modal -->
+<div class="relative h-full w-full bg-emerald-dark">
+<div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&amp;w=2070&amp;auto=format&amp;fit=crop')] bg-cover bg-center opacity-40" data-alt="Dark moody forest camping background"></div>
+<!-- Top Nav Simulation -->
+<div class="relative z-10 flex items-center justify-between px-6 pt-12 pb-4 text-white/80">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="text-sm font-semibold tracking-wide uppercase">Booking Details</span>
+<span class="material-symbols-outlined">more_vert</span>
+</div>
+</div>
+</div>
+<!-- Dark Overlay / Backdrop -->
+<div class="absolute inset-0 z-10 bg-black/60 backdrop-blur-sm transition-all duration-300"></div>
+<!-- Modal Wrapper -->
+<div class="relative z-20 flex h-full w-full items-end justify-center sm:items-center px-4 pb-6 pt-4 sm:p-4">
+<!-- Modal Card -->
+<div class="w-full max-w-[360px] animate-in slide-in-from-bottom-8 fade-in duration-300 sm:max-w-[400px]">
+<div class="relative flex flex-col gap-0 overflow-hidden rounded-xl bg-background-light dark:bg-background-dark shadow-2xl">
+<!-- Modal Header / Icon -->
+<div class="flex flex-col items-center px-6 pt-8 pb-2 text-center">
+<div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+<span class="material-symbols-outlined text-[32px] text-primary">warning</span>
+</div>
+<h2 class="text-gray-900 dark:text-white text-2xl font-bold leading-tight">Cancel Booking?</h2>
+<p class="text-gray-600 dark:text-gray-300 text-sm font-normal leading-relaxed mt-2">
+                            Are you sure you want to cancel your stay at <span class="font-bold text-gray-900 dark:text-white">Whispering Pines</span>?
+                        </p>
+</div>
+<!-- Booking Summary Card (Condensed) -->
+<div class="px-5 py-3">
+<div class="flex items-center gap-3 rounded-lg bg-white dark:bg-[#2f1a1a] p-3 shadow-sm border border-gray-100 dark:border-white/5">
+<div class="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+<div class="h-full w-full bg-cover bg-center" data-alt="Sunny campsite view with trees" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1JKdcwfBtgwG2ovP2HYnNP50ULOUh95kcICx3dVmO6wG3Le7MvRKD8ymmHUCVgu5fX9Tf7WNxqHjrLve6OBrDpRy0ojZNp3m92sLlUuSphmB69LvO3QTUCzbPl_7R5LMh8aXot0_xLOR7kM2Rqmy6w-kSq3wPlyu8yY19aGQrpm0wiYn0hMPeBNjqqo86HctuZNFAMeSSSle-0VhN7835WHoDbAghhO6IawNJyfmRQS392B34dL_TlXQvfcpmr-xDN7B1MD1rTQ");'></div>
+</div>
+<div class="flex flex-col gap-0.5">
+<p class="text-gray-900 dark:text-white text-sm font-bold leading-tight">Whispering Pines Campsite</p>
+<div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[14px]">calendar_month</span>
+<span>Oct 12 - Oct 14 (2 Nights)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fee Warning -->
+<div class="px-5 pb-2">
+<div class="flex gap-2.5 rounded-lg bg-primary/5 p-3">
+<span class="material-symbols-outlined shrink-0 text-sm text-primary mt-0.5">info</span>
+<p class="text-xs font-medium leading-snug text-primary">
+                                Note: Canceling less than 48 hours in advance will incur a <span class="font-bold">50% fee ($45.00)</span>.
+                            </p>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-3 px-5 pt-4 pb-6">
+<!-- Primary Action: Yes, Cancel -->
+<button class="flex w-full cursor-pointer items-center justify-center rounded-xl bg-primary h-12 px-5 text-white shadow-md shadow-primary/20 transition-transform active:scale-[0.98] hover:bg-red-700">
+<span class="text-base font-bold tracking-wide">Yes, Cancel Booking</span>
+</button>
+<!-- Secondary Action: No, Keep -->
+<button class="flex w-full cursor-pointer items-center justify-center rounded-xl h-12 px-5 text-gray-600 dark:text-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+<span class="text-base font-semibold">No, Keep Booking</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
