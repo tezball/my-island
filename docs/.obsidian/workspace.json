@@ -11,14 +11,12 @@
             "id": "e8d3b3f45e3d70b8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "flows/missing-screens.md",
-                "mode": "source",
-                "source": false
+                "file": "flows/my-bookings/08-check-in-instructions.png"
               },
-              "icon": "lucide-file",
-              "title": "missing-screens"
+              "icon": "lucide-image",
+              "title": "08-check-in-instructions"
             }
           }
         ]
@@ -94,7 +92,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "flows/missing-screens.md",
+                "file": "flows/my-bookings/08-check-in-instructions.png",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +102,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for missing-screens"
+              "title": "Backlinks for 08-check-in-instructions"
             }
           },
           {
@@ -113,12 +111,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "flows/missing-screens.md",
+                "file": "flows/my-bookings/08-check-in-instructions.png",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from missing-screens"
+              "title": "Outgoing links from 08-check-in-instructions"
             }
           },
           {
@@ -156,13 +154,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "flows/missing-screens.md",
+                "file": "flows/my-bookings/08-check-in-instructions.png",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of missing-screens"
+              "title": "Outline of 08-check-in-instructions"
             }
           }
         ]
@@ -185,6 +183,13 @@
   },
   "active": "e8d3b3f45e3d70b8",
   "lastOpenFiles": [
+    "flows/my-bookings/07-cancellation-success.png",
+    "flows/favorites/01-favorites.png",
+    "flows/favorites/README.md",
+    "flows/errors/README.md",
+    "flows/booking/README.md",
+    "flows/auth/README.md",
+    "flows/missing-screens.md",
     "flows/README.md.tmp.24260.1767022101197",
     "flows/missing-screens.md.tmp.24260.1767022079210",
     "flows/user-flows.md",
@@ -200,29 +205,22 @@
     "flows/owner-admin/18-create-ticket.png",
     "flows/owner-admin/17-owner-support.png",
     "flows/owner-admin/16-add-payout.png",
-    "flows/owner-admin/15-revenue-dashboard.png",
     "flows/notifications",
     "design/welcome_to_my-island!/code.html",
     "design/welcome_to_my-island!",
     "design/welcome_to_my-island/code.html",
     "design/welcome_to_my-island",
     "design/verify_your_email/code.html",
-    "design/verify_your_email",
     "Design Snag List.md",
     "user-flows.canvas",
     "Missing Features Analysis.md",
-    "flows/missing-screens.md",
     "flows/README.md",
-    "flows/errors/README.md",
     "flows/owner-admin/README.md",
     "flows/offers/README.md",
     "flows/reviews/README.md",
-    "flows/favorites/README.md",
     "flows/profile/README.md",
     "flows/my-bookings/README.md",
-    "flows/booking/README.md",
     "flows/discovery/README.md",
-    "flows/auth/README.md",
     "flows/onboarding/README.md",
     "design/user-flows.canvas"
   ]

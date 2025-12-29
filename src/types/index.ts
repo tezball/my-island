@@ -80,6 +80,7 @@ export interface User {
   name: string
   avatar?: string
   savedCampsites: string[]
+  role: 'visitor' | 'owner'
 }
 
 export interface SupplierOffer {
