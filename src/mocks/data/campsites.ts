@@ -1,6 +1,6 @@
 import type { Campsite, Extra } from '@/types'
 
-export const mockCampsites: Campsite[] = [
+const handCraftedCampsites: Campsite[] = [
   // CONNEMARA & GALWAY
   {
     id: '1',
@@ -653,4 +653,331 @@ export const mockExtras: Extra[] = [
   { id: 'picnic', name: 'Gourmet Picnic', description: 'Local cheeses, meats, bread, and wine', price: 45, icon: 'lunch_dining' },
   { id: 'marshmallow', name: 'S\'mores Pack', description: 'Marshmallows, chocolate, and biscuits', price: 8, icon: 'cookie' },
   { id: 'games', name: 'Games Bundle', description: 'Frisbee, football, and card games', price: 10, icon: 'sports_soccer' },
+]
+
+// ============================================
+// CAMPSITE GENERATOR - 100 Additional Sites
+// ============================================
+
+// Seeded random number generator for reproducible results
+function seededRandom(seed: number): () => number {
+  return () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff
+    return seed / 0x7fffffff
+  }
+}
+
+// Data pools for generation
+const locationData = [
+  { town: 'Letterfrack', county: 'Galway', lat: 53.5521, lng: -9.9468 },
+  { town: 'Leenane', county: 'Galway', lat: 53.5969, lng: -9.7281 },
+  { town: 'Oughterard', county: 'Galway', lat: 53.4333, lng: -9.3167 },
+  { town: 'Carna', county: 'Galway', lat: 53.3167, lng: -9.8500 },
+  { town: 'Spiddal', county: 'Galway', lat: 53.2439, lng: -9.3056 },
+  { town: 'Waterville', county: 'Kerry', lat: 51.8292, lng: -10.1747 },
+  { town: 'Cahersiveen', county: 'Kerry', lat: 51.9489, lng: -10.2222 },
+  { town: 'Sneem', county: 'Kerry', lat: 51.8306, lng: -9.8972 },
+  { town: 'Portmagee', county: 'Kerry', lat: 51.8847, lng: -10.3597 },
+  { town: 'Ballybunion', county: 'Kerry', lat: 52.5103, lng: -9.6728 },
+  { town: 'Lahinch', county: 'Clare', lat: 52.9333, lng: -9.3500 },
+  { town: 'Kilkee', county: 'Clare', lat: 52.6833, lng: -9.6500 },
+  { town: 'Fanore', county: 'Clare', lat: 53.1167, lng: -9.2833 },
+  { town: 'Miltown Malbay', county: 'Clare', lat: 52.8500, lng: -9.4000 },
+  { town: 'Laragh', county: 'Wicklow', lat: 53.0103, lng: -6.3267 },
+  { town: 'Avoca', county: 'Wicklow', lat: 52.8500, lng: -6.2167 },
+  { town: 'Rathdrum', county: 'Wicklow', lat: 52.9333, lng: -6.2333 },
+  { town: 'Roundwood', county: 'Wicklow', lat: 53.0667, lng: -6.2333 },
+  { town: 'Arklow', county: 'Wicklow', lat: 52.7979, lng: -6.1620 },
+  { town: 'Schull', county: 'Cork', lat: 51.5281, lng: -9.5428 },
+  { town: 'Baltimore', county: 'Cork', lat: 51.4833, lng: -9.3667 },
+  { town: 'Glengarriff', county: 'Cork', lat: 51.7500, lng: -9.5500 },
+  { town: 'Clonakilty', county: 'Cork', lat: 51.6236, lng: -8.8711 },
+  { town: 'Youghal', county: 'Cork', lat: 51.9547, lng: -7.8508 },
+  { town: 'Dunfanaghy', county: 'Donegal', lat: 55.1833, lng: -7.9667 },
+  { town: 'Ardara', county: 'Donegal', lat: 54.7667, lng: -8.4167 },
+  { town: 'Glencolmcille', county: 'Donegal', lat: 54.7167, lng: -8.7333 },
+  { town: 'Downings', county: 'Donegal', lat: 55.1833, lng: -7.8333 },
+  { town: 'Malin Head', county: 'Donegal', lat: 55.3833, lng: -7.3667 },
+  { town: 'Belmullet', county: 'Mayo', lat: 54.2250, lng: -10.0000 },
+  { town: 'Louisburgh', county: 'Mayo', lat: 53.7667, lng: -9.8167 },
+  { town: 'Cong', county: 'Mayo', lat: 53.5333, lng: -9.2833 },
+  { town: 'Ballina', county: 'Mayo', lat: 54.1167, lng: -9.1500 },
+  { town: 'Strandhill', county: 'Sligo', lat: 54.2708, lng: -8.5931 },
+  { town: 'Rosses Point', county: 'Sligo', lat: 54.3000, lng: -8.5667 },
+  { town: 'Easkey', county: 'Sligo', lat: 54.2833, lng: -8.9500 },
+  { town: 'Dunmore East', county: 'Waterford', lat: 52.1500, lng: -6.9833 },
+  { town: 'Tramore', county: 'Waterford', lat: 52.1606, lng: -7.1500 },
+  { town: 'Ardmore', county: 'Waterford', lat: 51.9500, lng: -7.7167 },
+  { town: 'Courtown', county: 'Wexford', lat: 52.6439, lng: -6.2281 },
+  { town: 'Rosslare', county: 'Wexford', lat: 52.2667, lng: -6.3833 },
+  { town: 'Kilmore Quay', county: 'Wexford', lat: 52.1725, lng: -6.5856 },
+  { town: 'Carlingford', county: 'Louth', lat: 54.0417, lng: -6.1883 },
+  { town: 'Bettystown', county: 'Meath', lat: 53.6939, lng: -6.2458 },
+  { town: 'Trim', county: 'Meath', lat: 53.5550, lng: -6.7917 },
+  { town: 'Athlone', county: 'Westmeath', lat: 53.4239, lng: -7.9403 },
+  { town: 'Portumna', county: 'Galway', lat: 53.0911, lng: -8.2172 },
+  { town: 'Kinvara', county: 'Galway', lat: 53.1383, lng: -8.9350 },
+  { town: 'Clarinbridge', county: 'Galway', lat: 53.2250, lng: -8.8583 },
+  { town: 'Kilrush', county: 'Clare', lat: 52.6403, lng: -9.4844 },
+]
+
+const namePrefixes = [
+  'Wild', 'Atlantic', 'Emerald', 'Celtic', 'Coastal', 'Lakeside', 'Mountain',
+  'Forest', 'Harbour', 'Bay', 'Valley', 'Clifftop', 'Riverside', 'Sunset',
+  'Wilderness', 'Hidden', 'Ancient', 'Golden', 'Silver', 'Misty', 'Tranquil',
+  'Serene', 'Peaceful', 'Adventure', 'Discovery', 'Heritage', 'Nature',
+]
+
+const nameSuffixes = [
+  'Camping', 'Camp', 'Retreat', 'Hideaway', 'Haven', 'Escape', 'Oasis',
+  'Basecamp', 'Lodge', 'Grounds', 'Park', 'Site', 'Spot', 'Corner',
+  'Meadows', 'Woods', 'Fields', 'Acres', 'Point', 'View', 'Rest',
+]
+
+const campingImages = [
+  'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800',
+  'https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=800',
+  'https://images.unsplash.com/photo-1533873984035-25970ab07461?w=800',
+  'https://images.unsplash.com/photo-1517824806704-9040b037703b?w=800',
+  'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800',
+  'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800',
+  'https://images.unsplash.com/photo-1487730116445-500c8a39a746?w=800',
+  'https://images.unsplash.com/photo-1532339142463-fd0a8979791a?w=800',
+  'https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=800',
+  'https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?w=800',
+  'https://images.unsplash.com/photo-1534187886935-1e1236e856c3?w=800',
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
+  'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=800',
+  'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800',
+  'https://images.unsplash.com/photo-1414609245224-afa02bfb3fda?w=800',
+  'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800',
+  'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
+  'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
+  'https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=800',
+  'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800',
+  'https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=800',
+  'https://images.unsplash.com/photo-1445308394109-4ec2920981b1?w=800',
+  'https://images.unsplash.com/photo-1537905569824-f89f14cceb68?w=800',
+  'https://images.unsplash.com/photo-1496545672447-f699b503d270?w=800',
+  'https://images.unsplash.com/photo-1533575770077-052fa2c609fc?w=800',
+]
+
+const allFacilities = [
+  { id: 'wifi', name: 'Free WiFi', icon: 'wifi' },
+  { id: 'shower', name: 'Hot Showers', icon: 'shower' },
+  { id: 'pets', name: 'Pet Friendly', icon: 'pets' },
+  { id: 'power', name: 'Electric Hookup', icon: 'bolt' },
+  { id: 'fire', name: 'Fire Pits', icon: 'local_fire_department' },
+  { id: 'parking', name: 'Free Parking', icon: 'local_parking' },
+  { id: 'shop', name: 'Camp Shop', icon: 'store' },
+  { id: 'laundry', name: 'Laundry', icon: 'local_laundry_service' },
+  { id: 'kitchen', name: 'Camp Kitchen', icon: 'kitchen' },
+  { id: 'bbq', name: 'BBQ Area', icon: 'outdoor_grill' },
+  { id: 'eco', name: 'Eco Certified', icon: 'eco' },
+  { id: 'swim', name: 'Wild Swimming', icon: 'pool' },
+  { id: 'dark', name: 'Dark Sky Site', icon: 'nights_stay' },
+  { id: 'bikes', name: 'Bike Rental', icon: 'directions_bike' },
+  { id: 'kayak', name: 'Kayak Hire', icon: 'kayaking' },
+  { id: 'restaurant', name: 'Restaurant', icon: 'restaurant' },
+  { id: 'cafe', name: 'On-site Café', icon: 'local_cafe' },
+  { id: 'playground', name: 'Playground', icon: 'sports_soccer' },
+  { id: 'fishing', name: 'Fishing Nearby', icon: 'phishing' },
+  { id: 'hiking', name: 'Hiking Trails', icon: 'hiking' },
+]
+
+const supplierTemplates = {
+  food: [
+    "O'Brien's Farm Shop", "The Local Butcher", "Seafood Shack", "Village Bakery",
+    "Farmers Market", "Organic Greens", "The Cheese Maker", "Harbor Fish Co",
+    "Mountain Deli", "Celtic Kitchen", "Artisan Foods", "Fresh Catch",
+  ],
+  activity: [
+    "Adventure Tours", "Sea Kayaking", "Horse Trekking", "Surf School",
+    "Fishing Charters", "Walking Tours", "Cycling Adventures", "Boat Trips",
+    "Rock Climbing", "Wildlife Safaris", "Heritage Walks", "Dive Centre",
+  ],
+  gear: [
+    "Outdoor Outfitters", "Camp Supplies", "Gear Rental", "Adventure Kit",
+    "The Camping Store", "Trail Essentials", "Explore More", "Basecamp Gear",
+  ],
+}
+
+const descriptions = [
+  'A hidden gem in the heart of the Irish countryside. Wake to birdsong, fall asleep under the stars. Perfect for families and adventurers alike.',
+  'Experience authentic Irish hospitality in this family-run campsite. Traditional music sessions, local produce, and breathtaking scenery.',
+  'Eco-friendly camping with minimal footprint. Solar power, composting facilities, and pristine natural surroundings.',
+  'Adventure awaits at every turn. Hiking, kayaking, and cycling all within reach. The perfect basecamp for outdoor enthusiasts.',
+  'Peaceful retreat offering stunning coastal views and direct beach access. Watch dolphins at sunset.',
+  'Nestled in ancient woodland, this magical site offers tranquility and connection with nature.',
+  'Award-winning campsite with excellent facilities and warm Irish welcome. Return visitors year after year.',
+  'Wild Atlantic Way camping at its finest. Rugged cliffs, dramatic seascapes, and unforgettable sunsets.',
+  'Family-friendly site with something for everyone. Playground, games room, and nearby attractions.',
+  'Romantic getaway in luxurious glamping accommodation. Hot tubs, wood stoves, and champagne on arrival.',
+  'Budget-friendly camping without compromising on views or experience. Backpackers welcome.',
+  'Historic site with Iron Age fort and medieval ruins nearby. Step back in time while enjoying modern comforts.',
+  'Surfer\'s paradise with consistent waves and vibrant beach culture. Lessons available for all levels.',
+  'Mountain retreat with panoramic views. Ideal for hikers tackling nearby peaks and trails.',
+  'Lakeside camping with fishing, boating, and waterside walks. Complete peace and quiet.',
+  'Dark sky certified site perfect for stargazing. Telescopes available, astronomy nights weekly.',
+  'Gateway to some of Ireland\'s most spectacular scenery. National park on your doorstep.',
+  'Traditional Irish farm experience. Feed the animals, collect eggs, and enjoy farm-fresh breakfasts.',
+  'Coastal path camping with clifftop views. Watch seabirds, seals, and occasional whales.',
+  'Wellness retreat with yoga classes, meditation spaces, and healthy cuisine options.',
+]
+
+const lotTypes: Array<'tent' | 'rv' | 'cabin' | 'glamping'> = ['tent', 'rv', 'cabin', 'glamping']
+
+const lotNamesByType = {
+  tent: ['Standard Pitch', 'Premium Pitch', 'Family Zone', 'Solo Spot', 'Scenic View', 'Sheltered Pitch', 'Woodland Pitch', 'Meadow Pitch'],
+  rv: ['Full Hookup Bay', 'Standard RV Spot', 'Premium Motorhome', 'Campervan Corner', 'Large Vehicle Bay'],
+  cabin: ['Cosy Cabin', 'Forest Lodge', 'Woodland Hut', 'Ranger Station', 'Mountain Cabin', 'Lakeside Cabin'],
+  glamping: ['Bell Tent', 'Safari Tent', 'Yurt', 'Shepherd\'s Hut', 'Pod', 'Treehouse', 'Geodome', 'Tipi'],
+}
+
+function generateCampsite(id: number, random: () => number): Campsite {
+  const location = locationData[Math.floor(random() * locationData.length)]
+  const prefix = namePrefixes[Math.floor(random() * namePrefixes.length)]
+  const suffix = nameSuffixes[Math.floor(random() * nameSuffixes.length)]
+
+  // Determine primary type with weighted distribution
+  const typeRoll = random()
+  let primaryType: 'tent' | 'rv' | 'cabin' | 'glamping'
+  if (typeRoll < 0.40) primaryType = 'tent'
+  else if (typeRoll < 0.65) primaryType = 'glamping'
+  else if (typeRoll < 0.85) primaryType = 'rv'
+  else primaryType = 'cabin'
+
+  // Generate base price based on type
+  let basePrice: number
+  switch (primaryType) {
+    case 'tent': basePrice = 20 + Math.floor(random() * 25); break
+    case 'rv': basePrice = 30 + Math.floor(random() * 25); break
+    case 'glamping': basePrice = 65 + Math.floor(random() * 80); break
+    case 'cabin': basePrice = 80 + Math.floor(random() * 70); break
+  }
+
+  // Generate rating (weighted toward higher ratings)
+  const ratingBase = 3.8 + random() * 1.2
+  const rating = Math.round(ratingBase * 10) / 10
+
+  // Select random facilities (4-8)
+  const numFacilities = 4 + Math.floor(random() * 5)
+  const shuffledFacilities = [...allFacilities].sort(() => random() - 0.5)
+  const facilities = shuffledFacilities.slice(0, numFacilities)
+
+  // Select random images (1-3)
+  const numImages = 1 + Math.floor(random() * 3)
+  const shuffledImages = [...campingImages].sort(() => random() - 0.5)
+  const images = shuffledImages.slice(0, numImages)
+
+  // Generate lots (2-5)
+  const numLots = 2 + Math.floor(random() * 4)
+  const lots = []
+  const usedLotNames = new Set<string>()
+
+  // Always include primary type
+  const primaryLotNames = lotNamesByType[primaryType]
+  const primaryLotName = primaryLotNames[Math.floor(random() * primaryLotNames.length)]
+  usedLotNames.add(primaryLotName)
+
+  lots.push({
+    id: `lot1`,
+    name: primaryLotName,
+    type: primaryType,
+    maxGuests: primaryType === 'tent' ? 2 + Math.floor(random() * 6) : 2 + Math.floor(random() * 4),
+    size: primaryType === 'tent' ? `${5 + Math.floor(random() * 4)}m x ${5 + Math.floor(random() * 4)}m` :
+          primaryType === 'rv' ? `${8 + Math.floor(random() * 4)}m x ${3 + Math.floor(random() * 2)}m` :
+          `${20 + Math.floor(random() * 30)}sqm`,
+    pricePerNight: basePrice + Math.floor(random() * 20) - 10,
+  })
+
+  // Add additional lots
+  for (let i = 1; i < numLots; i++) {
+    const lotType = lotTypes[Math.floor(random() * lotTypes.length)]
+    const lotNames = lotNamesByType[lotType]
+    let lotName = lotNames[Math.floor(random() * lotNames.length)]
+
+    // Ensure unique names
+    let attempts = 0
+    while (usedLotNames.has(lotName) && attempts < 10) {
+      lotName = lotNames[Math.floor(random() * lotNames.length)]
+      attempts++
+    }
+    if (usedLotNames.has(lotName)) {
+      lotName = `${lotName} ${i + 1}`
+    }
+    usedLotNames.add(lotName)
+
+    const lotPrice = lotType === 'tent' ? 18 + Math.floor(random() * 30) :
+                     lotType === 'rv' ? 28 + Math.floor(random() * 30) :
+                     lotType === 'glamping' ? 60 + Math.floor(random() * 90) :
+                     75 + Math.floor(random() * 80)
+
+    lots.push({
+      id: `lot${i + 1}`,
+      name: lotName,
+      type: lotType,
+      maxGuests: lotType === 'tent' ? 2 + Math.floor(random() * 6) : 2 + Math.floor(random() * 4),
+      size: lotType === 'tent' ? `${4 + Math.floor(random() * 5)}m x ${4 + Math.floor(random() * 5)}m` :
+            lotType === 'rv' ? `${8 + Math.floor(random() * 5)}m x ${3 + Math.floor(random() * 2)}m` :
+            `${15 + Math.floor(random() * 35)}sqm`,
+      pricePerNight: lotPrice,
+    })
+  }
+
+  // Generate suppliers (0-4)
+  const numSuppliers = Math.floor(random() * 5)
+  const suppliers = []
+  const categories: Array<'food' | 'activity' | 'gear'> = ['food', 'activity', 'gear']
+
+  for (let i = 0; i < numSuppliers; i++) {
+    const category = categories[Math.floor(random() * categories.length)]
+    const names = supplierTemplates[category]
+    const name = names[Math.floor(random() * names.length)]
+
+    suppliers.push({
+      id: `s${id}-${i + 1}`,
+      name: `${location.town} ${name}`,
+      category: category as 'food' | 'activity' | 'gear',
+      distance: `${(0.3 + random() * 4.7).toFixed(1)} km`,
+      alertsEnabled: random() > 0.5,
+    })
+  }
+
+  // Add small random offset to coordinates
+  const latOffset = (random() - 0.5) * 0.05
+  const lngOffset = (random() - 0.5) * 0.05
+
+  return {
+    id: String(id),
+    name: `${prefix} ${suffix}`,
+    location: `${location.town}, Co. ${location.county}`,
+    coordinates: {
+      lat: location.lat + latOffset,
+      lng: location.lng + lngOffset,
+    },
+    pricePerNight: basePrice,
+    rating,
+    reviewCount: 50 + Math.floor(random() * 500),
+    description: descriptions[Math.floor(random() * descriptions.length)],
+    imageUrl: images[0],
+    images,
+    facilities,
+    lots,
+    suppliers,
+    isSuperhost: random() > 0.4,
+    type: primaryType,
+  }
+}
+
+// Generate 100 additional campsites with seed for reproducibility
+const random = seededRandom(12345)
+const generatedCampsites: Campsite[] = Array.from({ length: 100 }, (_, i) =>
+  generateCampsite(21 + i, random)
+)
+
+// Export combined array: 20 hand-crafted + 100 generated = 120 total
+export const mockCampsites: Campsite[] = [
+  ...handCraftedCampsites,
+  ...generatedCampsites,
 ]
