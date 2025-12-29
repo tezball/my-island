@@ -1,0 +1,34 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Authentication Flow\n\nUser registration, login, password recovery, and email verification.","x":0,"y":-280,"width":500,"height":120,"color":"6"},
+		{"id":"login","type":"file","file":"flows/auth/01-login.png","x":0,"y":0,"width":194,"height":500},
+		{"id":"login-event","type":"text","text":"**Events:**\n- `onSubmit`: Validate credentials\n- `onForgotPassword`: Navigate to reset\n- `onSocialLogin`: OAuth flow\n- `onSignUp`: Navigate to signup","x":0,"y":540,"width":360,"height":180,"color":"4"},
+		{"id":"login-filled","type":"file","file":"flows/auth/02-login-filled.png","x":450,"y":0,"width":180,"height":499},
+		{"id":"signup","type":"file","file":"flows/auth/03-signup.png","x":900,"y":0,"width":215,"height":500},
+		{"id":"signup-event","type":"text","text":"**Events:**\n- `onSubmit`: Create account\n- `onValidation`: Check email/password\n- `onTermsClick`: Show T&C\n- `onSuccess`: Navigate to verify email","x":900,"y":540,"width":380,"height":180,"color":"4"},
+		{"id":"verify-email","type":"file","file":"flows/auth/04-verify-email.png","x":1350,"y":0,"width":221,"height":500},
+		{"id":"verify-email-event","type":"text","text":"**Events:**\n- `onResendEmail`: Resend verification\n- `onDeepLink`: Email link clicked\n- `onVerified`: Navigate to Home","x":1350,"y":540,"width":370,"height":140,"color":"4"},
+		{"id":"forgot-password","type":"file","file":"flows/auth/05-forgot-password.png","x":0,"y":850,"width":221,"height":500},
+		{"id":"forgot-password-event","type":"text","text":"**Events:**\n- `onSubmit`: Send reset email\n- `onValidation`: Validate email format\n- `onSuccess`: Navigate to reset sent\n- `onBack`: Return to login","x":0,"y":1390,"width":300,"height":140,"color":"4"},
+		{"id":"reset-sent","type":"file","file":"flows/auth/06-reset-sent.png","x":450,"y":850,"width":221,"height":500},
+		{"id":"reset-sent-event","type":"text","text":"**Events:**\n- `onOpenEmail`: Open email app\n- `onResend`: Resend reset email\n- `onBack`: Return to login","x":450,"y":1390,"width":330,"height":150,"color":"4"},
+		{"id":"set-new-password","type":"file","file":"flows/auth/07-set-new-password.png","x":900,"y":850,"width":221,"height":500},
+		{"id":"set-new-password-event","type":"text","text":"**Events:**\n- `onSubmit`: Update password\n- `onValidation`: Check strength & match\n- `onSuccess`: Navigate to success\n- `onTokenExpired`: Show error","x":900,"y":1390,"width":380,"height":170,"color":"4"},
+		{"id":"reset-success","type":"file","file":"flows/auth/08-reset-success.png","x":1350,"y":850,"width":221,"height":500},
+		{"id":"reset-success-event","type":"text","text":"**Events:**\n- `onLogin`: Navigate to login\n- `onAutoRedirect`: Auto-redirect after 3s","x":1350,"y":1390,"width":390,"height":110,"color":"4"},
+		{"id":"home-destination","type":"text","text":"## Home Screen\n\nAll successful auth paths lead here","x":675,"y":1650,"width":300,"height":100,"color":"5"},
+		{"id":"login-filled-event","type":"text","text":"**Events:**\n- `onLoginSuccess`: Navigate to Home\n- `onLoginError`: Show error message\n- `onLoading`: Show spinner","x":386,"y":520,"width":350,"height":140,"color":"4"}
+	],
+	"edges":[
+		{"id":"login-to-filled","fromNode":"login","fromSide":"right","toNode":"login-filled","toSide":"left","color":"4","label":"fill form"},
+		{"id":"login-to-signup","fromNode":"login","fromSide":"right","toNode":"signup","toSide":"left","color":"3","label":"sign up"},
+		{"id":"signup-to-verify","fromNode":"signup","fromSide":"right","toNode":"verify-email","toSide":"left","color":"4","label":"account created"},
+		{"id":"login-to-forgot","fromNode":"login","fromSide":"bottom","toNode":"forgot-password","toSide":"top","color":"2","label":"forgot password"},
+		{"id":"forgot-to-sent","fromNode":"forgot-password","fromSide":"right","toNode":"reset-sent","toSide":"left","color":"4","label":"email sent"},
+		{"id":"sent-to-set","fromNode":"reset-sent","fromSide":"right","toNode":"set-new-password","toSide":"left","color":"4","label":"click email link"},
+		{"id":"set-to-success","fromNode":"set-new-password","fromSide":"right","toNode":"reset-success","toSide":"left","color":"4","label":"password updated"},
+		{"id":"filled-to-home","fromNode":"login-filled","fromSide":"bottom","toNode":"home-destination","toSide":"top","color":"5","label":"login success"},
+		{"id":"verify-to-home","fromNode":"verify-email","fromSide":"bottom","toNode":"home-destination","toSide":"top","color":"5","label":"verified"},
+		{"id":"success-to-login","fromNode":"reset-success","fromSide":"left","toNode":"login","toSide":"right","color":"6","label":"back to login"}
+	]
+}

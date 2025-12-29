@@ -1,0 +1,40 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# Booking Flow\n\nComplete campsite reservation process from date selection to confirmation.","x":0,"y":-280,"width":550,"height":120,"color":"6"},
+		{"id":"select-dates","type":"file","file":"flows/booking/01-select-dates.png","x":0,"y":0,"width":221,"height":500},
+		{"id":"select-dates-event","type":"text","text":"**Events:**\n- `onDateSelect`: Update date range\n- `onCheckAvailability`: Verify lot availability\n- `onContinue`: Navigate to lot selection\n- `onBack`: Return to campsite detail","x":0,"y":540,"width":400,"height":180,"color":"4"},
+		{"id":"lot-calendar","type":"file","file":"flows/booking/02-lot-calendar.png","x":450,"y":0,"width":221,"height":500},
+		{"id":"lot-calendar-event","type":"text","text":"**Events:**\n- `onLotSelect`: Choose specific lot\n- `onDateChange`: Modify dates\n- `onViewDetails`: Show lot info","x":450,"y":540,"width":390,"height":140,"color":"4"},
+		{"id":"lot-selection","type":"file","file":"flows/booking/02b-lot-selection.png","x":900,"y":0,"width":221,"height":500},
+		{"id":"lot-selection-event","type":"text","text":"**Events:**\n- `onLotSelect`: Choose lot type\n- `onCompare`: Compare lot options\n- `onContinue`: Navigate to guests","x":900,"y":540,"width":380,"height":140,"color":"4"},
+		{"id":"guest-extras","type":"file","file":"flows/booking/03-guest-extras.png","x":1350,"y":0,"width":221,"height":500},
+		{"id":"guest-extras-event","type":"text","text":"**Events:**\n- `onGuestCountChange`: Update adults/children/pets\n- `onExtraToggle`: Add/remove extras\n- `onSpecialRequests`: Add notes\n- `onContinue`: Navigate to summary","x":1350,"y":540,"width":450,"height":220,"color":"4"},
+		{"id":"summary-payment","type":"file","file":"flows/booking/04-summary-payment.png","x":0,"y":850,"width":187,"height":500},
+		{"id":"payment-methods","type":"file","file":"flows/booking/04b-payment-methods.png","x":450,"y":850,"width":221,"height":500},
+		{"id":"payment-methods-event","type":"text","text":"**Events:**\n- `onSelectCard`: Choose saved card\n- `onAddNew`: Add new payment\n- `onApplePay`: Use Apple Pay\n- `onGooglePay`: Use Google Pay","x":400,"y":1390,"width":440,"height":210,"color":"4"},
+		{"id":"add-payment","type":"file","file":"flows/booking/04c-add-payment.png","x":900,"y":850,"width":208,"height":500},
+		{"id":"add-payment-event","type":"text","text":"**Events:**\n- `onCardInput`: Enter card details\n- `onSaveCard`: Save for future use\n- `onValidate`: Validate card number\n- `onSubmit`: Add payment method","x":900,"y":1390,"width":380,"height":210,"color":"4"},
+		{"id":"payment-processing","type":"file","file":"flows/booking/05-payment-processing.png","x":1350,"y":850,"width":168,"height":500},
+		{"id":"payment-processing-event","type":"text","text":"**Events:**\n- `onPaymentSuccess`: Navigate to confirmation\n- `onPaymentFailed`: Navigate to failed\n- `on3DSecure`: Handle 3DS challenge\n- `onTimeout`: Show error","x":1350,"y":1390,"width":450,"height":160,"color":"3"},
+		{"id":"confirmation","type":"file","file":"flows/booking/06-confirmation.png","x":0,"y":1700,"width":213,"height":500},
+		{"id":"confirmation-event","type":"text","text":"**Events:**\n- `onViewBooking`: Go to booking details\n- `onAddToCalendar`: Add to device calendar\n- `onShareBooking`: Share confirmation\n- `onBackToHome`: Return to explore","x":0,"y":2240,"width":400,"height":200,"color":"5"},
+		{"id":"payment-failed","type":"file","file":"flows/booking/07-payment-failed.png","x":450,"y":1700,"width":220,"height":500},
+		{"id":"payment-failed-event","type":"text","text":"**Events:**\n- `onRetry`: Try payment again\n- `onChangePayment`: Use different method\n- `onContactSupport`: Get help\n- `onCancel`: Abandon booking","x":450,"y":2240,"width":390,"height":200,"color":"1"},
+		{"id":"booking-failed","type":"file","file":"flows/booking/08-booking-failed.png","x":900,"y":1700,"width":221,"height":500},
+		{"id":"booking-failed-event","type":"text","text":"**Events:**\n- `onTryAgain`: Restart booking\n- `onChangeDates`: Select new dates\n- `onBrowseOther`: Find other campsites\n- `onContactSupport`: Get help","x":900,"y":2240,"width":380,"height":200,"color":"1"},
+		{"id":"summary-payment-event","type":"text","text":"**Events:**\n- `onEditDates`: Modify dates\n- `onEditGuests`: Modify guests\n- `onSelectPayment`: Choose payment method\n- `onApplyPromo`: Apply discount code\n- `onConfirm`: Process payment","x":-114,"y":1390,"width":434,"height":210,"color":"4"}
+	],
+	"edges":[
+		{"id":"dates-to-calendar","fromNode":"select-dates","fromSide":"right","toNode":"lot-calendar","toSide":"left","color":"4","label":"dates selected"},
+		{"id":"calendar-to-selection","fromNode":"lot-calendar","fromSide":"right","toNode":"lot-selection","toSide":"left","color":"4","label":"view lots"},
+		{"id":"selection-to-guests","fromNode":"lot-selection","fromSide":"right","toNode":"guest-extras","toSide":"left","color":"4","label":"lot selected"},
+		{"id":"guests-to-summary","fromNode":"guest-extras","fromSide":"bottom","toNode":"summary-payment","toSide":"top","color":"4","label":"continue"},
+		{"id":"summary-to-methods","fromNode":"summary-payment","fromSide":"right","toNode":"payment-methods","toSide":"left","color":"3","label":"select payment"},
+		{"id":"methods-to-add","fromNode":"payment-methods","fromSide":"right","toNode":"add-payment","toSide":"left","color":"3","label":"add new card"},
+		{"id":"summary-to-processing","fromNode":"summary-payment","fromSide":"bottom","toNode":"payment-processing","toSide":"top","color":"4","label":"confirm & pay"},
+		{"id":"processing-to-confirmation","fromNode":"payment-processing","fromSide":"bottom","toNode":"confirmation","toSide":"top","color":"5","label":"success"},
+		{"id":"processing-to-failed","fromNode":"payment-processing","fromSide":"bottom","toNode":"payment-failed","toSide":"top","color":"1","label":"payment error"},
+		{"id":"processing-to-booking-failed","fromNode":"payment-processing","fromSide":"bottom","toNode":"booking-failed","toSide":"top","color":"1","label":"booking error"},
+		{"id":"failed-to-summary","fromNode":"payment-failed","fromSide":"left","toNode":"summary-payment","toSide":"right","color":"2","label":"retry"}
+	]
+}

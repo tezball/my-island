@@ -1,0 +1,138 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Notifications Flow\n\nViewing and managing app notifications and preferences.",
+      "x": 0,
+      "y": -280,
+      "width": 500,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "notification-center",
+      "type": "file",
+      "file": "flows/notifications/01-notification-center.png",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "notification-center-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNotificationTap`: View detail\n- `onMarkAllRead`: Clear unread badge\n- `onSettings`: Open preferences\n- `onPullRefresh`: Reload notifications",
+      "x": 0,
+      "y": 540,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "notifications-list",
+      "type": "file",
+      "file": "flows/notifications/02-notifications-list.png",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "notifications-list-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNotificationTap`: View detail\n- `onSwipeDelete`: Remove notification\n- `onFilter`: Filter by type\n- `onLoadMore`: Pagination",
+      "x": 450,
+      "y": 540,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "notification-detail",
+      "type": "file",
+      "file": "flows/notifications/03-notification-detail.png",
+      "x": 900,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "notification-detail-event",
+      "type": "text",
+      "text": "**Events:**\n- `onAction`: Perform CTA action\n- `onDismiss`: Mark as read\n- `onNavigate`: Go to related content\n- `onBack`: Return to list",
+      "x": 900,
+      "y": 540,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "notification-settings",
+      "type": "file",
+      "file": "flows/notifications/04-notification-settings.png",
+      "x": 0,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "notification-settings-event",
+      "type": "text",
+      "text": "**Events:**\n- `onToggle`: Enable/disable type\n- `onEmailToggle`: Email preferences\n- `onPushToggle`: Push preferences\n- `onSMSToggle`: SMS preferences\n- `onSave`: Save preferences",
+      "x": 0,
+      "y": 1390,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "related-content",
+      "type": "text",
+      "text": "## Related Content\n\nNotifications link to:\n- Booking details\n- Offers\n- Reviews\n- Messages",
+      "x": 900,
+      "y": 850,
+      "width": 300,
+      "height": 140,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "center-to-list",
+      "fromNode": "notification-center",
+      "toNode": "notifications-list",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "view all",
+      "color": "4"
+    },
+    {
+      "id": "list-to-detail",
+      "fromNode": "notifications-list",
+      "toNode": "notification-detail",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "tap notification",
+      "color": "4"
+    },
+    {
+      "id": "center-to-settings",
+      "fromNode": "notification-center",
+      "toNode": "notification-settings",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "settings",
+      "color": "3"
+    },
+    {
+      "id": "detail-to-content",
+      "fromNode": "notification-detail",
+      "toNode": "related-content",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "view details",
+      "color": "5"
+    }
+  ]
+}

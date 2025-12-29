@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '@/components/ui'
-import { TopAppBar } from '@/components/layout'
+import { TopAppBar, AppShell } from '@/components/layout'
 import { cn } from '@/utils/cn'
 
 // Mock M36: Owner Bookings Page
@@ -196,7 +196,7 @@ export function OwnerBookingsPage() {
           </div>
           <div className="flex-1 bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-gray-800">
             <p className="text-2xl font-bold text-primary">
-              ${stats.revenue}
+              €{stats.revenue}
             </p>
             <p className="text-xs text-gray-500">This Week</p>
           </div>
@@ -375,7 +375,7 @@ export function OwnerBookingsPage() {
                     </span>
                   </div>
                   <p className="font-bold text-primary">
-                    ${booking.totalAmount}
+                    €{booking.totalAmount}
                   </p>
                 </div>
               </button>

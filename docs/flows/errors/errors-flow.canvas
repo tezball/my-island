@@ -1,0 +1,118 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Error States Flow\n\nHandling error conditions and recovery paths.",
+      "x": 0,
+      "y": -280,
+      "width": 500,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "network-error",
+      "type": "text",
+      "text": "## Network Error\n\n**Screen:** NetworkErrorPage\n\n**Events:**\n- `onRetry`: Attempt reconnection\n- `onOfflineMode`: Continue offline\n- `onSettings`: Check network settings",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 200,
+      "color": "1"
+    },
+    {
+      "id": "server-error",
+      "type": "text",
+      "text": "## Server Error (500)\n\n**Screen:** ServerErrorPage\n\n**Events:**\n- `onRetry`: Retry request\n- `onHome`: Return to home\n- `onReport`: Report issue\n- `onContactSupport`: Get help",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 200,
+      "color": "1"
+    },
+    {
+      "id": "not-found",
+      "type": "text",
+      "text": "## Not Found (404)\n\n**Screen:** NotFoundPage\n\n**Events:**\n- `onHome`: Return to home\n- `onSearch`: Search for content\n- `onBack`: Go back",
+      "x": 900,
+      "y": 0,
+      "width": 300,
+      "height": 180,
+      "color": "2"
+    },
+    {
+      "id": "session-expired",
+      "type": "text",
+      "text": "## Session Expired\n\n**Screen:** SessionExpiredPage\n\n**Events:**\n- `onLogin`: Re-authenticate\n- `onHome`: Continue as guest",
+      "x": 0,
+      "y": 350,
+      "width": 300,
+      "height": 160,
+      "color": "2"
+    },
+    {
+      "id": "maintenance",
+      "type": "text",
+      "text": "## Maintenance Mode\n\n**Screen:** MaintenancePage\n\n**Events:**\n- `onRefresh`: Check status\n- `onNotify`: Get notified when back",
+      "x": 450,
+      "y": 350,
+      "width": 300,
+      "height": 160,
+      "color": "3"
+    },
+    {
+      "id": "payment-error",
+      "type": "text",
+      "text": "## Payment Failed\n\n**Screen:** PaymentFailedPage\n\n**Events:**\n- `onRetry`: Try again\n- `onChangeMethod`: Use different payment\n- `onCancel`: Abandon booking",
+      "x": 900,
+      "y": 350,
+      "width": 300,
+      "height": 180,
+      "color": "1"
+    },
+    {
+      "id": "recovery-paths",
+      "type": "text",
+      "text": "## Recovery Paths\n\n1. **Retry** - Attempt same action again\n2. **Navigate Away** - Go to safe screen\n3. **Re-authenticate** - Login again\n4. **Contact Support** - Get human help\n5. **Offline Mode** - Limited functionality",
+      "x": 350,
+      "y": 650,
+      "width": 400,
+      "height": 180,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "network-to-recovery",
+      "fromNode": "network-error",
+      "toNode": "recovery-paths",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "4"
+    },
+    {
+      "id": "server-to-recovery",
+      "fromNode": "server-error",
+      "toNode": "recovery-paths",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "4"
+    },
+    {
+      "id": "session-to-recovery",
+      "fromNode": "session-expired",
+      "toNode": "recovery-paths",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "4"
+    },
+    {
+      "id": "payment-to-recovery",
+      "fromNode": "payment-error",
+      "toNode": "recovery-paths",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "color": "4"
+    }
+  ]
+}

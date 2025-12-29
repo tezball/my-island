@@ -1,0 +1,399 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Owner/Admin Flow\n\nCampsite owner dashboard, property management, and business tools.",
+      "x": 450,
+      "y": -380,
+      "width": 550,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "dashboard",
+      "type": "file",
+      "file": "flows/owner-admin/01-dashboard.png",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "dashboard-event",
+      "type": "text",
+      "text": "**Events:**\n- `onViewStatistics`: See detailed stats\n- `onViewBookings`: Manage bookings\n- `onManageLots`: Edit lots\n- `onViewRevenue`: See earnings\n- `onQuickAction`: Common tasks",
+      "x": 0,
+      "y": 540,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "statistics",
+      "type": "file",
+      "file": "flows/owner-admin/02-statistics.png",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "statistics-event",
+      "type": "text",
+      "text": "**Events:**\n- `onDateRangeChange`: Filter by period\n- `onExport`: Download report\n- `onMetricDrill`: View metric detail",
+      "x": 450,
+      "y": 540,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "manage-lots",
+      "type": "file",
+      "file": "flows/owner-admin/03-manage-lots.png",
+      "x": 900,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "manage-lots-event",
+      "type": "text",
+      "text": "**Events:**\n- `onAddLot`: Create new lot\n- `onEditLot`: Modify existing\n- `onToggleAvailability`: Enable/disable\n- `onReorder`: Change display order",
+      "x": 900,
+      "y": 540,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "add-lot",
+      "type": "file",
+      "file": "flows/owner-admin/04-add-lot.png",
+      "x": 1350,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "add-lot-event",
+      "type": "text",
+      "text": "**Events:**\n- `onTypeSelect`: Choose lot type\n- `onDetailsInput`: Enter lot info\n- `onPriceSet`: Set pricing\n- `onPhotosAdd`: Upload images\n- `onSave`: Create lot",
+      "x": 1350,
+      "y": 540,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "edit-lot-1",
+      "type": "file",
+      "file": "flows/owner-admin/05-edit-lot-1.png",
+      "x": 0,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "edit-lot-1-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNameChange`: Edit name\n- `onDescriptionChange`: Edit description\n- `onCapacityChange`: Update guests\n- `onAmenitiesChange`: Toggle amenities",
+      "x": 0,
+      "y": 1390,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "edit-lot-2",
+      "type": "file",
+      "file": "flows/owner-admin/06-edit-lot-2.png",
+      "x": 450,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "edit-lot-2-event",
+      "type": "text",
+      "text": "**Events:**\n- `onPriceChange`: Update pricing\n- `onSeasonalPricing`: Set seasonal rates\n- `onMinStay`: Set minimum nights\n- `onSave`: Apply changes",
+      "x": 450,
+      "y": 1390,
+      "width": 300,
+      "height": 140,
+      "color": "3"
+    },
+    {
+      "id": "edit-campsite-1",
+      "type": "file",
+      "file": "flows/owner-admin/07-edit-campsite-1.png",
+      "x": 900,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "edit-campsite-1-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNameChange`: Edit campsite name\n- `onLocationChange`: Update address\n- `onDescriptionChange`: Edit description\n- `onPhotosManage`: Manage gallery",
+      "x": 900,
+      "y": 1390,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "edit-campsite-2",
+      "type": "file",
+      "file": "flows/owner-admin/08-edit-campsite-2.png",
+      "x": 1350,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "edit-campsite-2-event",
+      "type": "text",
+      "text": "**Events:**\n- `onFacilitiesChange`: Toggle facilities\n- `onRulesChange`: Update rules\n- `onCheckInOutChange`: Set times\n- `onSave`: Apply changes",
+      "x": 1350,
+      "y": 1390,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "offer-mgmt-1",
+      "type": "file",
+      "file": "flows/owner-admin/09-offer-mgmt-1.png",
+      "x": 0,
+      "y": 1700,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "offer-mgmt-1-event",
+      "type": "text",
+      "text": "**Events:**\n- `onAddOffer`: Create new offer\n- `onEditOffer`: Modify offer\n- `onToggleActive`: Enable/disable\n- `onViewStats`: See performance",
+      "x": 0,
+      "y": 2240,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "edit-offer",
+      "type": "file",
+      "file": "flows/owner-admin/11-edit-offer.png",
+      "x": 450,
+      "y": 1700,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "edit-offer-event",
+      "type": "text",
+      "text": "**Events:**\n- `onTitleChange`: Edit title\n- `onDiscountChange`: Set discount\n- `onValidityChange`: Set dates\n- `onTermsChange`: Edit terms\n- `onSave`: Save offer",
+      "x": 450,
+      "y": 2240,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "owner-bookings",
+      "type": "file",
+      "file": "flows/owner-admin/12-owner-bookings.png",
+      "x": 900,
+      "y": 1700,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "owner-bookings-event",
+      "type": "text",
+      "text": "**Events:**\n- `onBookingSelect`: View details\n- `onFilter`: Filter by status\n- `onDateFilter`: Filter by date\n- `onExport`: Download list",
+      "x": 900,
+      "y": 2240,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    },
+    {
+      "id": "owner-booking-detail",
+      "type": "file",
+      "file": "flows/owner-admin/13-owner-booking-detail.png",
+      "x": 1350,
+      "y": 1700,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "owner-booking-detail-event",
+      "type": "text",
+      "text": "**Events:**\n- `onContactGuest`: Message guest\n- `onModify`: Change booking\n- `onCancel`: Cancel booking\n- `onCheckIn`: Mark arrived\n- `onCheckOut`: Mark departed",
+      "x": 1350,
+      "y": 2240,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "revenue-dashboard",
+      "type": "file",
+      "file": "flows/owner-admin/15-revenue-dashboard.png",
+      "x": 0,
+      "y": 2550,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "revenue-dashboard-event",
+      "type": "text",
+      "text": "**Events:**\n- `onDateRangeChange`: Filter period\n- `onViewTransactions`: See all payments\n- `onRequestPayout`: Withdraw funds\n- `onExport`: Download report",
+      "x": 0,
+      "y": 3090,
+      "width": 300,
+      "height": 140,
+      "color": "5"
+    },
+    {
+      "id": "owner-settings",
+      "type": "file",
+      "file": "flows/owner-admin/14-owner-settings.png",
+      "x": 450,
+      "y": 2550,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "owner-settings-event",
+      "type": "text",
+      "text": "**Events:**\n- `onPayoutSettings`: Manage payouts\n- `onNotifications`: Alert preferences\n- `onCalendarSync`: Connect calendar\n- `onTeamManage`: Add/remove team",
+      "x": 450,
+      "y": 3090,
+      "width": 300,
+      "height": 140,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "dashboard-to-stats",
+      "fromNode": "dashboard",
+      "toNode": "statistics",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "view stats",
+      "color": "4"
+    },
+    {
+      "id": "dashboard-to-lots",
+      "fromNode": "dashboard",
+      "toNode": "manage-lots",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "manage lots",
+      "color": "4"
+    },
+    {
+      "id": "lots-to-add",
+      "fromNode": "manage-lots",
+      "toNode": "add-lot",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "add lot",
+      "color": "5"
+    },
+    {
+      "id": "lots-to-edit1",
+      "fromNode": "manage-lots",
+      "toNode": "edit-lot-1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "edit lot",
+      "color": "3"
+    },
+    {
+      "id": "edit1-to-edit2",
+      "fromNode": "edit-lot-1",
+      "toNode": "edit-lot-2",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "pricing",
+      "color": "4"
+    },
+    {
+      "id": "dashboard-to-campsite1",
+      "fromNode": "dashboard",
+      "toNode": "edit-campsite-1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "edit campsite",
+      "color": "3"
+    },
+    {
+      "id": "campsite1-to-campsite2",
+      "fromNode": "edit-campsite-1",
+      "toNode": "edit-campsite-2",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "facilities",
+      "color": "4"
+    },
+    {
+      "id": "dashboard-to-offers",
+      "fromNode": "dashboard",
+      "toNode": "offer-mgmt-1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "offers",
+      "color": "4"
+    },
+    {
+      "id": "offers-to-edit",
+      "fromNode": "offer-mgmt-1",
+      "toNode": "edit-offer",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "edit offer",
+      "color": "4"
+    },
+    {
+      "id": "dashboard-to-bookings",
+      "fromNode": "dashboard",
+      "toNode": "owner-bookings",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "bookings",
+      "color": "4"
+    },
+    {
+      "id": "bookings-to-detail",
+      "fromNode": "owner-bookings",
+      "toNode": "owner-booking-detail",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "view booking",
+      "color": "4"
+    },
+    {
+      "id": "dashboard-to-revenue",
+      "fromNode": "dashboard",
+      "toNode": "revenue-dashboard",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "revenue",
+      "color": "5"
+    },
+    {
+      "id": "dashboard-to-settings",
+      "fromNode": "dashboard",
+      "toNode": "owner-settings",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "settings",
+      "color": "3"
+    }
+  ]
+}

@@ -123,7 +123,7 @@ export function RevenueDashboardPage() {
           <div className="relative z-10">
             <p className="text-sm font-medium text-black/70 mb-1">Total Revenue</p>
             <p className="text-4xl font-bold mb-4">
-              ${stats.totalRevenue.toLocaleString()}
+              €{stats.totalRevenue.toLocaleString()}
             </p>
             <div className="flex items-center gap-2 text-sm">
               <span className="bg-black/20 px-2 py-0.5 rounded-full font-semibold">
@@ -141,7 +141,7 @@ export function RevenueDashboardPage() {
               <Icon name="schedule" className="text-lg" />
               <span className="text-xs font-medium uppercase">Pending</span>
             </div>
-            <p className="text-2xl font-bold">${stats.pendingPayout.toLocaleString()}</p>
+            <p className="text-2xl font-bold">€{stats.pendingPayout.toLocaleString()}</p>
             <p className="text-xs text-gray-500 mt-1">Next payout in 3 days</p>
           </div>
 
@@ -150,9 +150,9 @@ export function RevenueDashboardPage() {
               <Icon name="calendar_month" className="text-lg" />
               <span className="text-xs font-medium uppercase">This Month</span>
             </div>
-            <p className="text-2xl font-bold">${stats.thisMonth.toLocaleString()}</p>
+            <p className="text-2xl font-bold">€{stats.thisMonth.toLocaleString()}</p>
             <p className="text-xs text-primary mt-1">
-              vs ${stats.lastMonth.toLocaleString()} last month
+              vs €{stats.lastMonth.toLocaleString()} last month
             </p>
           </div>
         </div>
@@ -214,7 +214,7 @@ export function RevenueDashboardPage() {
                       tx.amount > 0 ? 'text-green-600' : 'text-gray-600'
                     )}
                   >
-                    {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                    {tx.amount > 0 ? '+' : ''}€{Math.abs(tx.amount).toFixed(2)}
                   </p>
                 </div>
               )

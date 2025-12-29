@@ -1,0 +1,42 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# My Bookings Flow\n\nViewing, modifying, and managing user reservations.","x":0,"y":-280,"width":550,"height":120,"color":"6"},
+		{"id":"bookings-list","type":"file","file":"flows/my-bookings/01-bookings-list.png","x":0,"y":0,"width":300,"height":500},
+		{"id":"bookings-list-event","type":"text","text":"**Events:**\n- `onBookingSelect`: View booking detail\n- `onTabChange`: Switch upcoming/past\n- `onPullRefresh`: Reload bookings\n- `onEmptyState`: Show explore CTA","x":0,"y":540,"width":300,"height":140,"color":"4"},
+		{"id":"bookings-past","type":"file","file":"flows/my-bookings/02-bookings-past.png","x":450,"y":0,"width":300,"height":500},
+		{"id":"bookings-past-event","type":"text","text":"**Events:**\n- `onBookingSelect`: View past booking\n- `onWriteReview`: Submit review\n- `onRebook`: Book same campsite again","x":450,"y":540,"width":300,"height":120,"color":"4"},
+		{"id":"booking-detail","type":"file","file":"flows/my-bookings/02b-booking-detail.png","x":900,"y":0,"width":300,"height":500},
+		{"id":"booking-detail-event","type":"text","text":"**Events:**\n- `onModifyDates`: Change dates\n- `onModifyGuests`: Change guests/extras\n- `onCancel`: Cancel booking\n- `onContactHost`: Message host\n- `onViewReceipt`: See payment receipt\n- `onGetDirections`: Open maps\n- `onCheckIn`: View check-in info","x":900,"y":540,"width":300,"height":200,"color":"4"},
+		{"id":"modify-dates","type":"file","file":"flows/my-bookings/03-modify-dates.png","x":0,"y":900,"width":300,"height":500},
+		{"id":"modify-dates-event","type":"text","text":"**Events:**\n- `onDateSelect`: Choose new dates\n- `onCheckAvailability`: Verify availability\n- `onContinue`: Go to summary\n- `onCancel`: Discard changes","x":0,"y":1440,"width":300,"height":140,"color":"4"},
+		{"id":"modify-guests","type":"file","file":"flows/my-bookings/04-modify-guests.png","x":450,"y":900,"width":300,"height":500},
+		{"id":"modify-guests-event","type":"text","text":"**Events:**\n- `onGuestChange`: Update count\n- `onExtraToggle`: Add/remove extras\n- `onContinue`: Go to summary\n- `onCancel`: Discard changes","x":450,"y":1440,"width":300,"height":140,"color":"4"},
+		{"id":"modify-summary","type":"file","file":"flows/my-bookings/05-modify-summary.png","x":900,"y":900,"width":300,"height":500},
+		{"id":"modify-summary-event","type":"text","text":"**Events:**\n- `onConfirm`: Apply changes\n- `onPayDifference`: Process payment if more\n- `onRefund`: Process refund if less\n- `onCancel`: Discard changes","x":900,"y":1440,"width":300,"height":140,"color":"3"},
+		{"id":"cancel-confirm","type":"file","file":"flows/my-bookings/06-cancel-confirm.png","x":1350,"y":0,"width":300,"height":500},
+		{"id":"cancel-confirm-event","type":"text","text":"**Events:**\n- `onConfirmCancel`: Process cancellation\n- `onKeepBooking`: Return to detail\n- `onViewPolicy`: Show cancellation policy","x":1350,"y":540,"width":300,"height":120,"color":"1"},
+		{"id":"cancellation-success","type":"file","file":"flows/my-bookings/07-cancellation-success.png","x":1350,"y":900,"width":300,"height":500},
+		{"id":"cancellation-success-event","type":"text","text":"**Events:**\n- `onDone`: Return to bookings\n- `onViewRefund`: See refund details\n- `onBrowse`: Find new campsite","x":1350,"y":1440,"width":300,"height":120,"color":"2"},
+		{"id":"check-in","type":"file","file":"flows/my-bookings/08-check-in-instructions.png","x":0,"y":1750,"width":300,"height":500},
+		{"id":"check-in-event","type":"text","text":"**Events:**\n- `onGetDirections`: Open maps\n- `onCallHost`: Phone call\n- `onCopyCode`: Copy access code\n- `onBack`: Return to detail","x":0,"y":2290,"width":300,"height":140,"color":"5"},
+		{"id":"contact-host","type":"file","file":"flows/my-bookings/09-contact-host.png","x":450,"y":1750,"width":300,"height":500},
+		{"id":"contact-host-event","type":"text","text":"**Events:**\n- `onSendMessage`: Send to host\n- `onCall`: Phone host\n- `onViewHistory`: See past messages","x":450,"y":2290,"width":300,"height":120,"color":"4"},
+		{"id":"booking-receipt","type":"file","file":"flows/my-bookings/10-booking-receipt.png","x":900,"y":1750,"width":300,"height":500},
+		{"id":"booking-receipt-event","type":"text","text":"**Events:**\n- `onDownload`: Download PDF\n- `onEmail`: Email receipt\n- `onShare`: Share receipt\n- `onBack`: Return to detail","x":900,"y":2290,"width":300,"height":140,"color":"4"}
+	],
+	"edges":[
+		{"id":"list-to-past","fromNode":"bookings-list","toNode":"bookings-past","fromSide":"right","toSide":"left","label":"past tab","color":"4"},
+		{"id":"list-to-detail","fromNode":"bookings-list","toNode":"booking-detail","fromSide":"right","toSide":"left","label":"select booking","color":"4"},
+		{"id":"past-to-detail","fromNode":"bookings-past","toNode":"booking-detail","fromSide":"right","toSide":"left","label":"select booking","color":"4"},
+		{"id":"detail-to-modify-dates","fromNode":"booking-detail","toNode":"modify-dates","fromSide":"bottom","toSide":"top","label":"modify dates","color":"3"},
+		{"id":"detail-to-modify-guests","fromNode":"booking-detail","toNode":"modify-guests","fromSide":"bottom","toSide":"top","label":"modify guests","color":"3"},
+		{"id":"modify-dates-to-summary","fromNode":"modify-dates","toNode":"modify-summary","fromSide":"right","toSide":"left","label":"continue","color":"4"},
+		{"id":"modify-guests-to-summary","fromNode":"modify-guests","toNode":"modify-summary","fromSide":"right","toSide":"left","label":"continue","color":"4"},
+		{"id":"detail-to-cancel","fromNode":"booking-detail","toNode":"cancel-confirm","fromSide":"right","toSide":"left","label":"cancel booking","color":"1"},
+		{"id":"cancel-to-success","fromNode":"cancel-confirm","toNode":"cancellation-success","fromSide":"bottom","toSide":"top","label":"confirm","color":"1"},
+		{"id":"detail-to-checkin","fromNode":"booking-detail","toNode":"check-in","fromSide":"bottom","toSide":"top","label":"check-in info","color":"5"},
+		{"id":"detail-to-contact","fromNode":"booking-detail","toNode":"contact-host","fromSide":"bottom","toSide":"top","label":"contact host","color":"4"},
+		{"id":"detail-to-receipt","fromNode":"booking-detail","toNode":"booking-receipt","fromSide":"bottom","toSide":"top","label":"view receipt","color":"4"},
+		{"id":"summary-to-detail","fromNode":"modify-summary","toNode":"booking-detail","fromSide":"top","toSide":"bottom","label":"confirmed","color":"5"}
+	]
+}

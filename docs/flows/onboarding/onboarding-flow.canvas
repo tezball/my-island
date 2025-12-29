@@ -1,0 +1,231 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Onboarding Flow\n\nFirst-time user introduction to app features and value proposition.",
+      "x": 0,
+      "y": -280,
+      "width": 500,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "welcome",
+      "type": "file",
+      "file": "flows/onboarding/01-welcome.png",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "welcome-event",
+      "type": "text",
+      "text": "**Events:**\n- `onGetStarted`: Begin onboarding\n- `onSkip`: Skip to home\n- `onLogin`: Go to login",
+      "x": 0,
+      "y": 540,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "benefits-1",
+      "type": "file",
+      "file": "flows/onboarding/02-benefits-1.png",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "benefits-1-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNext`: Continue to next slide\n- `onSkip`: Skip to home\n- `onSwipe`: Navigate slides",
+      "x": 450,
+      "y": 540,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "benefits-2",
+      "type": "file",
+      "file": "flows/onboarding/03-benefits-2.png",
+      "x": 900,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "benefits-2-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNext`: Continue\n- `onBack`: Previous slide\n- `onSkip`: Skip to home",
+      "x": 900,
+      "y": 540,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "benefits-3",
+      "type": "file",
+      "file": "flows/onboarding/04-benefits-3.png",
+      "x": 1350,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "benefits-3-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNext`: Continue\n- `onBack`: Previous slide\n- `onSkip`: Skip to home",
+      "x": 1350,
+      "y": 540,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "benefits-4",
+      "type": "file",
+      "file": "flows/onboarding/05-benefits-4.png",
+      "x": 0,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "benefits-4-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNext`: Continue\n- `onBack`: Previous slide",
+      "x": 0,
+      "y": 1390,
+      "width": 300,
+      "height": 100,
+      "color": "4"
+    },
+    {
+      "id": "benefits-heatmap",
+      "type": "file",
+      "file": "flows/onboarding/06-benefits-heatmap.png",
+      "x": 450,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "benefits-heatmap-event",
+      "type": "text",
+      "text": "**Events:**\n- `onNext`: Continue\n- `onInteract`: Explore heatmap\n- `onBack`: Previous slide",
+      "x": 450,
+      "y": 1390,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "get-started",
+      "type": "file",
+      "file": "flows/onboarding/07-get-started.png",
+      "x": 900,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "get-started-event",
+      "type": "text",
+      "text": "**Events:**\n- `onExplore`: Go to home (guest)\n- `onSignUp`: Go to registration\n- `onLogin`: Go to login",
+      "x": 900,
+      "y": 1390,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "home-destination",
+      "type": "text",
+      "text": "## Home Screen\n\nUser can now explore campsites",
+      "x": 1350,
+      "y": 850,
+      "width": 300,
+      "height": 100,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "welcome-to-benefits1",
+      "fromNode": "welcome",
+      "toNode": "benefits-1",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "get started",
+      "color": "4"
+    },
+    {
+      "id": "benefits1-to-benefits2",
+      "fromNode": "benefits-1",
+      "toNode": "benefits-2",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "next",
+      "color": "4"
+    },
+    {
+      "id": "benefits2-to-benefits3",
+      "fromNode": "benefits-2",
+      "toNode": "benefits-3",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "next",
+      "color": "4"
+    },
+    {
+      "id": "benefits3-to-benefits4",
+      "fromNode": "benefits-3",
+      "toNode": "benefits-4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "next",
+      "color": "4"
+    },
+    {
+      "id": "benefits4-to-heatmap",
+      "fromNode": "benefits-4",
+      "toNode": "benefits-heatmap",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "next",
+      "color": "4"
+    },
+    {
+      "id": "heatmap-to-getstarted",
+      "fromNode": "benefits-heatmap",
+      "toNode": "get-started",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "next",
+      "color": "4"
+    },
+    {
+      "id": "getstarted-to-home",
+      "fromNode": "get-started",
+      "toNode": "home-destination",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "explore",
+      "color": "5"
+    },
+    {
+      "id": "welcome-skip",
+      "fromNode": "welcome",
+      "toNode": "home-destination",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "skip",
+      "color": "2"
+    }
+  ]
+}

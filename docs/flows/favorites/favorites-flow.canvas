@@ -1,0 +1,92 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Favorites Flow\n\nManaging saved/favorited campsites.",
+      "x": 0,
+      "y": -280,
+      "width": 450,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "favorites",
+      "type": "file",
+      "file": "flows/favorites/01-favorites.png",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "favorites-event",
+      "type": "text",
+      "text": "**Events:**\n- `onCampsiteSelect`: View campsite detail\n- `onRemoveFavorite`: Unfavorite campsite\n- `onSearch`: Filter favorites\n- `onSort`: Change sort order\n- `onEmptyState`: Show when no favorites\n- `onBookNow`: Start booking from card",
+      "x": 0,
+      "y": 540,
+      "width": 300,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "empty-state",
+      "type": "text",
+      "text": "## Empty State\n\n**Events:**\n- `onExplore`: Navigate to search\n- Shows when user has no saved campsites",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 140,
+      "color": "2"
+    },
+    {
+      "id": "campsite-detail",
+      "type": "text",
+      "text": "## Campsite Detail\n\nNavigates to discovery flow campsite detail page",
+      "x": 450,
+      "y": 220,
+      "width": 300,
+      "height": 100,
+      "color": "5"
+    },
+    {
+      "id": "booking-flow",
+      "type": "text",
+      "text": "## Booking Flow\n\nStarts booking process for selected campsite",
+      "x": 450,
+      "y": 400,
+      "width": 300,
+      "height": 100,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "favorites-to-detail",
+      "fromNode": "favorites",
+      "toNode": "campsite-detail",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "tap campsite",
+      "color": "4"
+    },
+    {
+      "id": "favorites-to-booking",
+      "fromNode": "favorites",
+      "toNode": "booking-flow",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "book now",
+      "color": "5"
+    },
+    {
+      "id": "empty-to-explore",
+      "fromNode": "empty-state",
+      "toNode": "campsite-detail",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "explore",
+      "color": "3"
+    }
+  ]
+}

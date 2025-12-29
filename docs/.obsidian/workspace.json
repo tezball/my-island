@@ -4,21 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "235516939687b524",
+        "id": "c3d6243cc690011a",
         "type": "tabs",
         "children": [
           {
-            "id": "e8d3b3f45e3d70b8",
+            "id": "2ecbb185a6359afd",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "flows/reviews/README.md",
-                "mode": "source",
-                "source": false
+                "file": "flows/auth/auth-flow.canvas",
+                "viewState": {
+                  "x": 870,
+                  "y": 735,
+                  "zoom": -1.0320103949026211
+                }
               },
-              "icon": "lucide-file",
-              "title": "README"
+              "icon": "lucide-layout-dashboard",
+              "title": "auth-flow"
             }
           }
         ]
@@ -94,7 +97,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "flows/reviews/README.md",
+                "file": "flows/auth/auth-flow.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +107,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for README"
+              "title": "Backlinks for auth-flow"
             }
           },
           {
@@ -113,12 +116,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "flows/reviews/README.md",
+                "file": "flows/auth/auth-flow.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from README"
+              "title": "Outgoing links from auth-flow"
             }
           },
           {
@@ -156,13 +159,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "flows/reviews/README.md",
+                "file": "flows/auth/auth-flow.canvas",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of README"
+              "title": "Outline of auth-flow"
             }
           }
         ]
@@ -183,8 +186,31 @@
       "bases:Create new base": false
     }
   },
-  "active": "e8d3b3f45e3d70b8",
+  "active": "2ecbb185a6359afd",
   "lastOpenFiles": [
+    "flows/booking/booking-flow.canvas",
+    "flows/auth/auth-flow.canvas",
+    "flows/my-bookings/my-bookings-flow.canvas",
+    "flows/owner-admin/owner-admin-flow.canvas.tmp.42481.1767032591227",
+    "flows/profile/profile-flow.canvas.tmp.42481.1767032585713",
+    "flows/reviews/reviews-flow.canvas.tmp.42481.1767032477351",
+    "flows/errors/errors-flow.canvas.tmp.42481.1767032471980",
+    "flows/offers/offers-flow.canvas.tmp.42481.1767032466683",
+    "flows/my-bookings/my-bookings-flow.canvas.tmp.42481.1767032386627",
+    "flows/notifications/notifications-flow.canvas.tmp.42481.1767032381268",
+    "flows/favorites/favorites-flow.canvas.tmp.42481.1767032376025",
+    "flows/onboarding/onboarding-flow.canvas.tmp.42481.1767032275040",
+    "flows/discovery/discovery-flow.canvas.tmp.42481.1767032269304",
+    "flows/reviews/reviews-flow.canvas",
+    "flows/auth/README.md",
+    "flows/owner-admin/owner-admin-flow.canvas",
+    "flows/profile/profile-flow.canvas",
+    "flows/errors/errors-flow.canvas",
+    "flows/offers/offers-flow.canvas",
+    "flows/notifications/notifications-flow.canvas",
+    "flows/favorites/favorites-flow.canvas",
+    "MVP_ROADMAP.md",
+    "flows/reviews/README.md",
     "flows/missing-screens.md",
     "flows/my-bookings/08-check-in-instructions.png",
     "flows/my-bookings/07-cancellation-success.png",
@@ -192,13 +218,8 @@
     "flows/favorites/README.md",
     "flows/errors/README.md",
     "flows/booking/README.md",
-    "flows/auth/README.md",
-    "flows/README.md.tmp.24260.1767022101197",
-    "flows/missing-screens.md.tmp.24260.1767022079210",
     "flows/user-flows.md",
-    "flows/user-flows.md.tmp.24260.1767022048898",
     "flows/notifications/README.md",
-    "flows/notifications/README.md.tmp.24260.1767021860086",
     "flows/owner-admin/23-property-overview-5.png",
     "flows/owner-admin/22-property-overview-4.png",
     "flows/owner-admin/21-property-overview-3.png",
@@ -206,23 +227,14 @@
     "flows/owner-admin/19-property-overview-1.png",
     "flows/owner-admin/06b-edit-lot-individual.png",
     "flows/owner-admin/18-create-ticket.png",
-    "flows/notifications",
-    "design/welcome_to_my-island!/code.html",
-    "design/welcome_to_my-island!",
-    "design/welcome_to_my-island/code.html",
-    "design/welcome_to_my-island",
-    "design/verify_your_email/code.html",
     "Design Snag List.md",
-    "user-flows.canvas",
     "Missing Features Analysis.md",
     "flows/README.md",
     "flows/owner-admin/README.md",
     "flows/offers/README.md",
-    "flows/reviews/README.md",
     "flows/profile/README.md",
     "flows/my-bookings/README.md",
     "flows/discovery/README.md",
-    "flows/onboarding/README.md",
-    "design/user-flows.canvas"
+    "flows/onboarding/README.md"
   ]
 }

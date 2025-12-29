@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeContext'
 import { Icon, Toggle } from '@/components/ui'
-import { TopAppBar } from '@/components/layout'
+import { TopAppBar, AppShell } from '@/components/layout'
 import { cn } from '@/utils/cn'
 
 export function SettingsPage() {
@@ -16,12 +16,12 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
+    <AppShell>
       <TopAppBar
         showHome
         title="Settings" />
 
-      <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 pb-28 space-y-6">
         {/* Profile Section */}
         <section
           onClick={() => navigate('/profile/edit')}
@@ -208,6 +208,6 @@ export function SettingsPage() {
           <p className="text-xs text-gray-400">Version 1.0.2 Build 2045</p>
         </div>
       </div>
-    </div>
+    </AppShell>
   )
 }

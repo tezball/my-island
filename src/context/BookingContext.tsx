@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import type { Campsite, CampsiteLot, Extra, BookingGuests } from '@/types'
 
 interface BookingState {
@@ -23,6 +23,8 @@ interface BookingContextType {
   nights: number
 }
 
+const STORAGE_KEY = 'booking_state'
+
 const initialState: BookingState = {
   campsite: null,
   lot: null,
@@ -32,10 +34,37 @@ const initialState: BookingState = {
   extras: [],
 }
 
+// Load state from sessionStorage
+const loadState = (): BookingState => {
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      return JSON.parse(stored)
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return initialState
+}
+
+// Save state to sessionStorage
+const saveState = (state: BookingState) => {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 const BookingContext = createContext<BookingContextType | null>(null)
 
 export function BookingProvider({ children }: { children: ReactNode }) {
-  const [booking, setBooking] = useState<BookingState>(initialState)
+  const [booking, setBooking] = useState<BookingState>(loadState)
+
+  // Persist booking state to sessionStorage
+  useEffect(() => {
+    saveState(booking)
+  }, [booking])
 
   const setCampsite = (campsite: Campsite) => {
     setBooking(prev => ({ ...prev, campsite, lot: campsite.lots[0] }))
@@ -69,6 +98,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
 
   const reset = () => {
     setBooking(initialState)
+    sessionStorage.removeItem(STORAGE_KEY)
   }
 
   const nights = booking.checkIn && booking.checkOut

@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Discovery Flow\n\nBrowsing and searching for campsites, viewing details and photos.",
+      "x": 0,
+      "y": -280,
+      "width": 500,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "home-map",
+      "type": "file",
+      "file": "flows/discovery/01-home-map.png",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "home-map-event",
+      "type": "text",
+      "text": "**Events:**\n- `onMapMove`: Update visible campsites\n- `onMarkerTap`: Show campsite preview\n- `onSearch`: Open search screen\n- `onFilter`: Open filter modal\n- `onListView`: Switch to list view\n- `onLocationRequest`: Get user location",
+      "x": 0,
+      "y": 540,
+      "width": 300,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "search",
+      "type": "file",
+      "file": "flows/discovery/02-search.png",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "search-event",
+      "type": "text",
+      "text": "**Events:**\n- `onSearchInput`: Filter results\n- `onFilterChange`: Apply filters\n- `onSort`: Change sort order\n- `onCampsiteSelect`: View details\n- `onFavorite`: Toggle saved\n- `onMapView`: Switch to map",
+      "x": 450,
+      "y": 540,
+      "width": 300,
+      "height": 180,
+      "color": "4"
+    },
+    {
+      "id": "campsite-detail-1",
+      "type": "file",
+      "file": "flows/discovery/03-campsite-detail-1.png",
+      "x": 900,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "campsite-detail-1-event",
+      "type": "text",
+      "text": "**Events:**\n- `onImageTap`: Open photo gallery\n- `onFavorite`: Toggle saved\n- `onShare`: Share campsite\n- `onScroll`: Load more content\n- `onBookNow`: Start booking flow",
+      "x": 900,
+      "y": 540,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "campsite-detail-2",
+      "type": "file",
+      "file": "flows/discovery/04-campsite-detail-2.png",
+      "x": 1350,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "campsite-detail-2-event",
+      "type": "text",
+      "text": "**Events:**\n- `onViewAllReviews`: See all reviews\n- `onSupplierTap`: View supplier\n- `onFacilityTap`: Show facility info\n- `onMapTap`: Open in maps app\n- `onCheckAvailability`: Select dates",
+      "x": 1350,
+      "y": 540,
+      "width": 300,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "photo-gallery",
+      "type": "file",
+      "file": "flows/discovery/05-photo-gallery.png",
+      "x": 900,
+      "y": 850,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "photo-gallery-event",
+      "type": "text",
+      "text": "**Events:**\n- `onSwipe`: Navigate photos\n- `onZoom`: Pinch to zoom\n- `onClose`: Return to detail\n- `onShare`: Share photo",
+      "x": 900,
+      "y": 1390,
+      "width": 300,
+      "height": 120,
+      "color": "4"
+    },
+    {
+      "id": "booking-entry",
+      "type": "text",
+      "text": "## Booking Flow\n\nContinues to date selection and booking process",
+      "x": 1350,
+      "y": 850,
+      "width": 300,
+      "height": 100,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "map-to-search",
+      "fromNode": "home-map",
+      "toNode": "search",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "search/list view",
+      "color": "4"
+    },
+    {
+      "id": "search-to-detail",
+      "fromNode": "search",
+      "toNode": "campsite-detail-1",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "select campsite",
+      "color": "4"
+    },
+    {
+      "id": "map-to-detail",
+      "fromNode": "home-map",
+      "toNode": "campsite-detail-1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "tap marker",
+      "color": "3"
+    },
+    {
+      "id": "detail1-to-detail2",
+      "fromNode": "campsite-detail-1",
+      "toNode": "campsite-detail-2",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "scroll down",
+      "color": "4"
+    },
+    {
+      "id": "detail1-to-gallery",
+      "fromNode": "campsite-detail-1",
+      "toNode": "photo-gallery",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "tap image",
+      "color": "3"
+    },
+    {
+      "id": "detail2-to-booking",
+      "fromNode": "campsite-detail-2",
+      "toNode": "booking-entry",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "book now",
+      "color": "5"
+    }
+  ]
+}

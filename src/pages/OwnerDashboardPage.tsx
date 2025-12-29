@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon, Button, Toggle } from '@/components/ui'
+import { TopAppBar, AppShell } from '@/components/layout'
 
 // Owner Admin Dashboard - from design
 export function OwnerDashboardPage() {
@@ -25,28 +26,18 @@ export function OwnerDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      {/* Header */}
-      <header className="flex items-center px-4 pt-6 pb-2 justify-between bg-background-light dark:bg-background-dark sticky top-0 z-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-        >
-          <Icon name="arrow_back" className="text-2xl" />
-        </button>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">
-          Admin Dashboard
-        </h2>
-        <button
-          onClick={() => navigate('/owner/settings')}
-          className="flex size-10 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-        >
-          <Icon name="settings" className="text-2xl" />
-        </button>
-      </header>
+    <AppShell>
+      <TopAppBar
+        showHome
+        title="Admin Dashboard"
+        rightAction={{
+          icon: 'settings',
+          onClick: () => navigate('/owner/settings'),
+        }}
+      />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto px-4 pb-24">
+      <main className="flex-1 overflow-y-auto px-4 pb-28">
         <div className="h-4" />
 
         {/* Stats Section */}
@@ -217,50 +208,6 @@ export function OwnerDashboardPage() {
           </div>
         </section>
       </main>
-
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 w-full max-w-md bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 px-6 pb-6 pt-3 z-50">
-        <div className="flex justify-between items-center">
-          <button className="flex flex-col items-center gap-1 text-primary">
-            <Icon name="grid_view" className="text-2xl" filled />
-            <span className="text-[10px] font-bold tracking-wide">
-              Dashboard
-            </span>
-          </button>
-          <button
-            onClick={() => navigate('/owner/bookings')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors"
-          >
-            <Icon name="calendar_month" className="text-2xl" />
-            <span className="text-[10px] font-medium tracking-wide">
-              Bookings
-            </span>
-          </button>
-          <div className="relative -top-6">
-            <button className="flex items-center justify-center size-14 rounded-full bg-slate-900 dark:bg-white text-primary shadow-lg hover:scale-105 transition-all">
-              <Icon name="add" className="text-3xl" />
-            </button>
-          </div>
-          <button
-            onClick={() => navigate('/owner/campsite/edit')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors"
-          >
-            <Icon name="camping" className="text-2xl" />
-            <span className="text-[10px] font-medium tracking-wide">
-              My Site
-            </span>
-          </button>
-          <button
-            onClick={() => navigate('/profile')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors"
-          >
-            <Icon name="person" className="text-2xl" />
-            <span className="text-[10px] font-medium tracking-wide">
-              Profile
-            </span>
-          </button>
-        </div>
-      </nav>
-    </div>
+    </AppShell>
   )
 }

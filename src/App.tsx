@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/context/AuthContext'
 import { ThemeProvider } from '@/context/ThemeContext'
 import { BookingProvider } from '@/context/BookingContext'
+import { ProtectedRoute } from '@/components/auth'
 import {
   // Auth & Onboarding
   LoginPage,
@@ -131,9 +132,9 @@ export default function App() {
               <Route path="/booking/:id/contact" element={<ContactHostPage />} />
               <Route path="/booking/:id/receipt" element={<BookingReceiptPage />} />
 
-              {/* User Features */}
-              <Route path="/bookings" element={<MyBookingsPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
+              {/* User Features (Protected) */}
+              <Route path="/bookings" element={<ProtectedRoute><MyBookingsPage /></ProtectedRoute>} />
+              <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
               <Route path="/offers" element={<OffersPage />} />
               <Route path="/profile" element={<ProfilePage />} />
 
@@ -142,35 +143,35 @@ export default function App() {
               <Route path="/campsite/:id/reviews" element={<ReviewsListPage />} />
               <Route path="/review/:id" element={<ReviewDetailPage />} />
 
-              {/* Profile & Settings */}
-              <Route path="/profile/edit" element={<EditProfilePage />} />
-              <Route path="/profile/personal" element={<PersonalInfoPage />} />
-              <Route path="/profile/linked" element={<LinkedAccountsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/settings/language" element={<LanguageSelectionPage />} />
+              {/* Profile & Settings (Protected) */}
+              <Route path="/profile/edit" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
+              <Route path="/profile/personal" element={<ProtectedRoute><PersonalInfoPage /></ProtectedRoute>} />
+              <Route path="/profile/linked" element={<ProtectedRoute><LinkedAccountsPage /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+              <Route path="/settings/language" element={<ProtectedRoute><LanguageSelectionPage /></ProtectedRoute>} />
               <Route path="/support" element={<SupportPage />} />
 
-              {/* Notifications */}
-              <Route path="/notifications" element={<NotificationsListPage />} />
-              <Route path="/notification/:id" element={<NotificationDetailPage />} />
-              <Route path="/settings/notifications" element={<NotificationSettingsPage />} />
+              {/* Notifications (Protected) */}
+              <Route path="/notifications" element={<ProtectedRoute><NotificationsListPage /></ProtectedRoute>} />
+              <Route path="/notification/:id" element={<ProtectedRoute><NotificationDetailPage /></ProtectedRoute>} />
+              <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
 
               {/* Suppliers */}
               <Route path="/supplier/:id" element={<SupplierDetailPage />} />
 
-              {/* Owner/Admin */}
-              <Route path="/owner" element={<OwnerDashboardPage />} />
-              <Route path="/owner/bookings" element={<OwnerBookingsPage />} />
-              <Route path="/owner/booking/:id" element={<OwnerBookingDetailPage />} />
-              <Route path="/owner/lots" element={<ManageLotsPage />} />
-              <Route path="/owner/lots/add" element={<AddLotPage />} />
-              <Route path="/owner/lots/:id/edit" element={<EditLotPage />} />
-              <Route path="/owner/campsite/edit" element={<EditCampsitePage />} />
-              <Route path="/owner/statistics" element={<CampsiteStatisticsPage />} />
-              <Route path="/owner/offers" element={<SupplierOfferManagementPage />} />
-              <Route path="/owner/offers/:id/edit" element={<EditOfferPage />} />
-              <Route path="/owner/revenue" element={<RevenueDashboardPage />} />
-              <Route path="/owner/settings" element={<OwnerSettingsPage />} />
+              {/* Owner/Admin (Protected + Owner Role) */}
+              <Route path="/owner" element={<ProtectedRoute requireOwner><OwnerDashboardPage /></ProtectedRoute>} />
+              <Route path="/owner/bookings" element={<ProtectedRoute requireOwner><OwnerBookingsPage /></ProtectedRoute>} />
+              <Route path="/owner/booking/:id" element={<ProtectedRoute requireOwner><OwnerBookingDetailPage /></ProtectedRoute>} />
+              <Route path="/owner/lots" element={<ProtectedRoute requireOwner><ManageLotsPage /></ProtectedRoute>} />
+              <Route path="/owner/lots/add" element={<ProtectedRoute requireOwner><AddLotPage /></ProtectedRoute>} />
+              <Route path="/owner/lots/:id/edit" element={<ProtectedRoute requireOwner><EditLotPage /></ProtectedRoute>} />
+              <Route path="/owner/campsite/edit" element={<ProtectedRoute requireOwner><EditCampsitePage /></ProtectedRoute>} />
+              <Route path="/owner/statistics" element={<ProtectedRoute requireOwner><CampsiteStatisticsPage /></ProtectedRoute>} />
+              <Route path="/owner/offers" element={<ProtectedRoute requireOwner><SupplierOfferManagementPage /></ProtectedRoute>} />
+              <Route path="/owner/offers/:id/edit" element={<ProtectedRoute requireOwner><EditOfferPage /></ProtectedRoute>} />
+              <Route path="/owner/revenue" element={<ProtectedRoute requireOwner><RevenueDashboardPage /></ProtectedRoute>} />
+              <Route path="/owner/settings" element={<ProtectedRoute requireOwner><OwnerSettingsPage /></ProtectedRoute>} />
 
               {/* Error States */}
               <Route path="/error" element={<NetworkErrorPage />} />

@@ -219,13 +219,13 @@ export function OwnerBookingDetailPage() {
               <span className="text-gray-600 dark:text-gray-400">
                 {booking.lotName} x {nights} nights
               </span>
-              <span>${basePrice.toFixed(2)}</span>
+              <span>€{basePrice.toFixed(2)}</span>
             </div>
 
             {booking.extras.map((extra) => (
               <div key={extra.name} className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">{extra.name}</span>
-                <span>${extra.price.toFixed(2)}</span>
+                <span>€{extra.price.toFixed(2)}</span>
               </div>
             ))}
 
@@ -233,7 +233,7 @@ export function OwnerBookingDetailPage() {
 
             <div className="flex justify-between font-bold">
               <span>Total Earned</span>
-              <span className="text-primary">${booking.totalAmount.toFixed(2)}</span>
+              <span className="text-primary">€{booking.totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </section>

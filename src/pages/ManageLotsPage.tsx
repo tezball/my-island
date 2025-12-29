@@ -140,7 +140,7 @@ export function ManageLotsPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-primary">
-                        ${lot.price}
+                        €{lot.price}
                         <span className="text-xs text-gray-500 font-normal">
                           /night
                         </span>

@@ -172,10 +172,10 @@ export function SupplierOfferManagementPage() {
                       </div>
                     </div>
                     <p className="mt-1 text-sm font-medium text-primary">
-                      ${offer.price.toFixed(2)}
+                      €{offer.price.toFixed(2)}
                       {offer.originalPrice && (
                         <span className="text-xs text-gray-400 line-through font-normal ml-1">
-                          ${offer.originalPrice.toFixed(2)}
+                          €{offer.originalPrice.toFixed(2)}
                         </span>
                       )}
                     </p>

@@ -1,0 +1,121 @@
+{
+  "nodes": [
+    {
+      "id": "title",
+      "type": "text",
+      "text": "# Reviews Flow\n\nSubmitting and viewing campsite reviews.",
+      "x": 0,
+      "y": -280,
+      "width": 450,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "entry-points",
+      "type": "text",
+      "text": "## Entry Points\n\n1. **Post-stay email** - Review reminder\n2. **My Bookings** - Past booking card\n3. **Campsite Detail** - All reviews section\n4. **Push notification** - Review prompt",
+      "x": -450,
+      "y": 0,
+      "width": 300,
+      "height": 180,
+      "color": "3"
+    },
+    {
+      "id": "submit-review",
+      "type": "file",
+      "file": "flows/reviews/01-submit-review.png",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 500
+    },
+    {
+      "id": "submit-review-event",
+      "type": "text",
+      "text": "**Events:**\n- `onRatingSelect`: Choose star rating\n- `onCategoryRate`: Rate specific aspects\n- `onTextInput`: Write review text\n- `onAddPhoto`: Upload photos\n- `onSubmit`: Post review\n- `onSaveDraft`: Save for later\n- `onCancel`: Discard review",
+      "x": 0,
+      "y": 540,
+      "width": 300,
+      "height": 200,
+      "color": "4"
+    },
+    {
+      "id": "review-submitted",
+      "type": "text",
+      "text": "## Review Submitted\n\n**Events:**\n- `onDone`: Return to bookings\n- `onViewReview`: See published review\n- `onShare`: Share review\n\n*Thank you message with confirmation*",
+      "x": 450,
+      "y": 0,
+      "width": 300,
+      "height": 180,
+      "color": "5"
+    },
+    {
+      "id": "reviews-list",
+      "type": "text",
+      "text": "## Reviews List\n\n**Screen:** ReviewsListPage\n\n**Events:**\n- `onReviewSelect`: View full review\n- `onSort`: Sort by date/rating\n- `onFilter`: Filter by rating\n- `onLoadMore`: Pagination\n- `onWriteReview`: Add your review",
+      "x": 450,
+      "y": 260,
+      "width": 300,
+      "height": 200,
+      "color": "4"
+    },
+    {
+      "id": "review-detail",
+      "type": "text",
+      "text": "## Review Detail\n\n**Screen:** ReviewDetailPage\n\n**Events:**\n- `onHelpful`: Mark as helpful\n- `onReport`: Report inappropriate\n- `onViewPhotos`: See review photos\n- `onViewProfile`: See reviewer profile\n- `onBack`: Return to list",
+      "x": 900,
+      "y": 260,
+      "width": 300,
+      "height": 200,
+      "color": "4"
+    },
+    {
+      "id": "review-guidelines",
+      "type": "text",
+      "text": "## Review Guidelines\n\n- Minimum 20 characters\n- Maximum 5 photos\n- Rate: 1-5 stars\n- Categories: Cleanliness, Location, Value, Facilities\n- Moderation before publish",
+      "x": 450,
+      "y": 540,
+      "width": 300,
+      "height": 180,
+      "color": "2"
+    }
+  ],
+  "edges": [
+    {
+      "id": "entry-to-submit",
+      "fromNode": "entry-points",
+      "toNode": "submit-review",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "write review",
+      "color": "4"
+    },
+    {
+      "id": "submit-to-submitted",
+      "fromNode": "submit-review",
+      "toNode": "review-submitted",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "submit",
+      "color": "5"
+    },
+    {
+      "id": "submitted-to-list",
+      "fromNode": "review-submitted",
+      "toNode": "reviews-list",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "label": "view review",
+      "color": "4"
+    },
+    {
+      "id": "list-to-detail",
+      "fromNode": "reviews-list",
+      "toNode": "review-detail",
+      "fromSide": "right",
+      "toSide": "left",
+      "label": "select review",
+      "color": "4"
+    }
+  ]
+}

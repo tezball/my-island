@@ -24,8 +24,31 @@ export function BookingSummaryPage() {
     navigate(`/book/${id}/payment`)
   }
 
+  // Show expired booking state if context is missing
   if (!booking.campsite || !booking.lot) {
-    return null
+    return (
+      <div className="min-h-screen bg-background-light dark:bg-background-dark">
+        <TopAppBar showHome title="Booking Summary" />
+        <div className="px-4 py-12 max-w-md mx-auto text-center">
+          <div className="w-20 h-20 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Icon name="event_busy" className="text-4xl text-orange-500" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+            Booking Session Expired
+          </h2>
+          <p className="text-slate-500 mb-8">
+            Your booking session has expired or was not started properly. Please start a new booking from the campsite page.
+          </p>
+          <Button
+            size="lg"
+            onClick={() => navigate(id ? `/campsite/${id}` : '/')}
+            leftIcon="refresh"
+          >
+            Start New Booking
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
