@@ -118,6 +118,7 @@ export function NotificationsListPage() {
   return (
     <AppShell>
       <TopAppBar
+        showHome
         title="Notifications"
         rightAction={
           unreadCount > 0 ? (

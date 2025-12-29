@@ -2,30 +2,37 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Campsite } from '@/types'
-import { Icon, Chip, CampsiteCardSkeleton } from '@/components/ui'
+import { Icon, Chip, CampsiteCardSkeleton, FilterModal, defaultFilterState } from '@/components/ui'
+import type { FilterState } from '@/components/ui'
 import { TopAppBar, AppShell } from '@/components/layout'
 import { CampsiteCard } from '@/components/campsite'
 import { apiFetch } from '@/utils/api'
-
-const filterChips = [
-  { id: 'dates', label: 'Dates', icon: 'calendar_today' },
-  { id: 'guests', label: 'Guests', icon: 'person' },
-  { id: 'price', label: 'Price', icon: 'payments' },
-  { id: 'type', label: 'Type', icon: 'camping' },
-  { id: 'amenities', label: 'Amenities', icon: 'wifi' },
-]
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const queryClient = useQueryClient()
   const initialQuery = searchParams.get('q') || ''
   const [searchQuery, setSearchQuery] = useState(initialQuery)
+  const [showFilterModal, setShowFilterModal] = useState(false)
+  const [filters, setFilters] = useState<FilterState>(defaultFilterState)
+
+  // Count active filters for badge
+  const activeFilterCount =
+    filters.campsiteTypes.length +
+    filters.amenities.length +
+    (filters.rating ? 1 : 0) +
+    (filters.priceRange[0] > 0 || filters.priceRange[1] < 200 ? 1 : 0)
 
   const { data, isLoading } = useQuery({
-    queryKey: ['campsites', searchQuery],
+    queryKey: ['campsites', searchQuery, filters],
     queryFn: async () => {
       const params = new URLSearchParams()
       if (searchQuery) params.set('q', searchQuery)
+      if (filters.priceRange[0] > 0) params.set('minPrice', String(filters.priceRange[0]))
+      if (filters.priceRange[1] < 200) params.set('maxPrice', String(filters.priceRange[1]))
+      if (filters.campsiteTypes.length) params.set('types', filters.campsiteTypes.join(','))
+      if (filters.amenities.length) params.set('amenities', filters.amenities.join(','))
+      if (filters.rating) params.set('rating', String(filters.rating))
       const res = await apiFetch(`/api/campsites?${params}`)
       return res.json()
     },
@@ -61,9 +68,18 @@ export function SearchPage() {
     <AppShell>
       <TopAppBar
         title="Search"
+        showHome
         rightAction={
-          <button className="w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center">
-            <Icon name="filter_list" className="text-slate-900 dark:text-white" />
+          <button
+            onClick={() => setShowFilterModal(true)}
+            className="relative w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center"
+          >
+            <Icon name="tune" className="text-slate-900 dark:text-white" />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-background-dark text-xs font-bold rounded-full flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
         }
       />
@@ -85,13 +101,7 @@ export function SearchPage() {
           </div>
         </form>
 
-        {/* Filter Chips */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-4">
-          {filterChips.map((chip) => (
-            <Chip key={chip.id} label={chip.label} icon={chip.icon} />
-          ))}
-        </div>
-
+        
         {/* Results Count */}
         <p className="text-sm text-slate-500 mb-4">
           {isLoading ? 'Searching...' : `${campsites.length} stays found`}
@@ -123,6 +133,13 @@ export function SearchPage() {
           )}
         </div>
       </div>
+
+      <FilterModal
+        isOpen={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        onApply={setFilters}
+        initialFilters={filters}
+      />
     </AppShell>
   )
 }

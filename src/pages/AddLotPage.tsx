@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Icon, Button, Toggle } from '@/components/ui'
 import { cn } from '@/utils/cn'
+import { apiFetch } from '@/utils/api'
 
 // Add Campsite Lot Page - from design
 type LotType = 'tent' | 'rv' | 'cabin' | 'glamping'
@@ -24,12 +26,36 @@ const AMENITIES = [
 
 export function AddLotPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [lotName, setLotName] = useState('')
   const [selectedType, setSelectedType] = useState<LotType>('tent')
   const [maxGuests, setMaxGuests] = useState(4)
+  const [price, setPrice] = useState(50)
   const [size, setSize] = useState('')
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(['Electric'])
   const [isAvailable, setIsAvailable] = useState(true)
+
+  const createLotMutation = useMutation({
+    mutationFn: async (newLot: {
+      name: string
+      type: LotType
+      capacity: number
+      price: number
+      status: 'available' | 'maintenance'
+      size?: string
+      amenities: string[]
+    }) => {
+      const res = await apiFetch('/api/lots', {
+        method: 'POST',
+        body: JSON.stringify(newLot),
+      })
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['lots'] })
+      navigate('/owner/lots')
+    },
+  })
 
   const toggleAmenity = (label: string) => {
     setSelectedAmenities((prev) =>
@@ -40,8 +66,18 @@ export function AddLotPage() {
   }
 
   const handleSave = () => {
-    // Would save via API
-    navigate('/owner/lots')
+    if (!lotName.trim()) {
+      return
+    }
+    createLotMutation.mutate({
+      name: lotName,
+      type: selectedType,
+      capacity: maxGuests,
+      price: price,
+      status: isAvailable ? 'available' : 'maintenance',
+      size: size || undefined,
+      amenities: selectedAmenities,
+    })
   }
 
   return (
@@ -178,6 +214,37 @@ export function AddLotPage() {
           </div>
         </section>
 
+        {/* Pricing */}
+        <section>
+          <div className="h-px bg-gray-200 dark:bg-gray-800 w-full my-2" />
+          <h3 className="text-xl font-bold mt-6 mb-4 px-1">Pricing</h3>
+          <div className="rounded-xl bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 p-4">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2 block">
+              Price per Night ($)
+            </span>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setPrice(Math.max(10, price - 10))}
+                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 flex items-center justify-center text-gray-600 dark:text-gray-300"
+              >
+                <Icon name="remove" className="text-lg" />
+              </button>
+              <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(Math.max(0, parseInt(e.target.value) || 0))}
+                className="flex-1 text-center text-2xl font-bold bg-transparent border-0 focus:ring-0"
+              />
+              <button
+                onClick={() => setPrice(price + 10)}
+                className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:opacity-90"
+              >
+                <Icon name="add" className="text-lg text-black" />
+              </button>
+            </div>
+          </div>
+        </section>
+
         {/* Amenities */}
         <section>
           <div className="h-px bg-gray-200 dark:bg-gray-800 w-full my-2" />
@@ -258,6 +325,8 @@ export function AddLotPage() {
             size="lg"
             onClick={handleSave}
             leftIcon="save"
+            isLoading={createLotMutation.isPending}
+            disabled={!lotName.trim() || createLotMutation.isPending}
           >
             Save Lot
           </Button>

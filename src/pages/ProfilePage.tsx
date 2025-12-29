@@ -63,7 +63,9 @@ export function ProfilePage() {
   if (!isAuthenticated) {
     return (
       <AppShell>
-        <TopAppBar title="Profile" showBack={false} />
+        <TopAppBar
+        showHome
+        title="Profile" showBack={false} />
         <div className="px-4 py-12 text-center">
           <Icon
             name="account_circle"
@@ -86,7 +88,9 @@ export function ProfilePage() {
 
   return (
     <AppShell>
-      <TopAppBar title="Profile" showBack={false} />
+      <TopAppBar
+        showHome
+        title="Profile" showBack={false} />
 
       <div className="px-4 pb-28">
         {/* Profile Header */}

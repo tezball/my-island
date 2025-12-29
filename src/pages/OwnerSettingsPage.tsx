@@ -15,7 +15,9 @@ export function OwnerSettingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Settings" />
+      <TopAppBar
+        showHome
+        title="Settings" />
 
       <div className="flex-1 px-4 pb-8">
         {/* Campsite Settings */}

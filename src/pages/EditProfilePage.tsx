@@ -23,7 +23,9 @@ export function EditProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Edit Profile" />
+      <TopAppBar
+        showHome
+        title="Edit Profile" />
 
       <div className="flex-1 flex flex-col items-center w-full px-4 pb-8">
         {/* Profile Avatar Section */}

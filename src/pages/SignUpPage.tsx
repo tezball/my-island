@@ -27,7 +27,9 @@ export function SignUpPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark relative">
-      <TopAppBar showBack onBack={() => navigate(-1)} />
+      <TopAppBar
+        showHome
+        showBack onBack={() => navigate(-1)} />
 
       <main className="flex-1 px-6 pb-8 pt-2">
         {/* Headline */}

@@ -4,6 +4,7 @@ import { apiFetch } from '@/utils/api'
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>
+  loginWithGoogle: () => Promise<void>
   logout: () => Promise<void>
   isLoading: boolean
 }
@@ -51,6 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user)
   }, [])
 
+  const loginWithGoogle = useCallback(async () => {
+    const res = await apiFetch('/api/auth/google', {
+      method: 'POST',
+    })
+
+    if (!res.ok) {
+      throw new Error('Google login failed')
+    }
+
+    const data = await res.json()
+    localStorage.setItem('auth_token', data.token)
+    setUser(data.user)
+  }, [])
+
   const logout = useCallback(async () => {
     await apiFetch('/api/auth/logout', { method: 'POST' })
     localStorage.removeItem('auth_token')
@@ -63,6 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated: !!user,
         login,
+        loginWithGoogle,
         logout,
         isLoading,
       }}

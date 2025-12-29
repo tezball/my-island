@@ -5,7 +5,7 @@ import type { Booking } from '@/types'
 import { cn } from '@/utils/cn'
 import { Icon, BookingCardSkeleton, SegmentedControl, ConfirmationModal } from '@/components/ui'
 import { apiFetch } from '@/utils/api'
-import { TopAppBar, AppShell } from '@/components/layout'
+import { AppShell } from '@/components/layout'
 import { BookingStatusBadge } from '@/components/booking'
 
 type Tab = 'upcoming' | 'past'
@@ -101,6 +101,15 @@ export function MyBookingsPage() {
                 onModify={() => navigate(`/booking/${booking.id}/modify/dates`)}
                 onRebook={() => navigate(`/book/${booking.campsiteId}/dates`)}
                 onRate={() => navigate(`/booking/${booking.id}/review`)}
+                onViewTicket={() => navigate(`/booking/${booking.id}/receipt`)}
+                onViewMap={() => {
+                  const coords = booking.campsite?.coordinates
+                  if (coords) {
+                    window.open(`https://www.google.com/maps?q=${coords.lat},${coords.lng}`, '_blank')
+                  } else {
+                    navigate(`/campsite/${booking.campsiteId}`)
+                  }
+                }}
               />
             ))
           )}
@@ -121,7 +130,7 @@ export function MyBookingsPage() {
       >
         {selectedBooking && (
           <div className="bg-gray-50 dark:bg-surface-dark rounded-xl p-3 text-left">
-            <p className="font-semibold text-sm">{selectedBooking.campsiteName}</p>
+            <p className="font-semibold text-sm">{selectedBooking.campsite?.name}</p>
             <p className="text-xs text-slate-500">
               {new Date(selectedBooking.checkIn).toLocaleDateString()} - {new Date(selectedBooking.checkOut).toLocaleDateString()}
             </p>
@@ -139,11 +148,35 @@ interface BookingCardProps {
   onModify: () => void
   onRebook: () => void
   onRate: () => void
+  onViewTicket: () => void
+  onViewMap: () => void
 }
 
-function BookingCard({ booking, isUpcoming, onCancel, onModify, onRebook, onRate }: BookingCardProps) {
-  const isPending = booking.status === 'pending'
+interface MenuOption {
+  label: string
+  icon: string
+  action: () => void
+  danger?: boolean
+}
+
+function BookingCard({ booking, isUpcoming, onCancel, onModify, onRebook, onRate, onViewTicket, onViewMap }: BookingCardProps) {
+  const [showOptions, setShowOptions] = useState(false)
+  const navigate = useNavigate()
   const isCompleted = booking.status === 'completed'
+
+  const menuOptions: MenuOption[] = isUpcoming
+    ? [
+        { label: 'View Details', icon: 'visibility', action: () => navigate(`/booking/${booking.id}`) },
+        { label: 'Check-in Instructions', icon: 'info', action: () => navigate(`/booking/${booking.id}/check-in`) },
+        { label: 'Contact Host', icon: 'chat', action: () => navigate(`/booking/${booking.id}/contact`) },
+        { label: 'Modify Booking', icon: 'edit', action: onModify },
+        { label: 'Cancel Booking', icon: 'cancel', action: onCancel, danger: true },
+      ]
+    : [
+        { label: 'View Details', icon: 'visibility', action: () => navigate(`/booking/${booking.id}`) },
+        { label: 'View Receipt', icon: 'receipt', action: () => navigate(`/booking/${booking.id}/receipt`) },
+        { label: 'Rebook', icon: 'history', action: onRebook },
+      ]
 
   return (
     <div
@@ -160,12 +193,12 @@ function BookingCard({ booking, isUpcoming, onCancel, onModify, onRebook, onRate
         )}>
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-            style={{ backgroundImage: `url('${booking.campsiteImage}')` }}
+            style={{ backgroundImage: `url('${booking.campsite?.imageUrl || ''}')` }}
           />
-          {booking.rating && (
+          {booking.campsite?.rating && (
             <div className="absolute top-1 left-1 bg-white/90 dark:bg-black/60 backdrop-blur-sm rounded-md px-1.5 py-0.5 flex items-center gap-0.5">
               <Icon name="star" filled className="text-yellow-500 text-[10px]" />
-              <span className="text-[10px] font-bold">{booking.rating}</span>
+              <span className="text-[10px] font-bold">{booking.campsite.rating}</span>
             </div>
           )}
         </div>
@@ -175,11 +208,44 @@ function BookingCard({ booking, isUpcoming, onCancel, onModify, onRebook, onRate
           <div>
             <div className="flex items-start justify-between">
               <h3 className="text-base font-bold leading-tight line-clamp-1">
-                {booking.campsiteName}
+                {booking.campsite?.name || 'Campsite'}
               </h3>
-              <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                <Icon name="more_vert" className="text-[20px]" />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowOptions(!showOptions)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <Icon name="more_vert" className="text-[20px]" />
+                </button>
+
+                {/* Options Dropdown */}
+                {showOptions && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowOptions(false)}
+                    />
+                    <div className="absolute right-0 top-8 z-20 w-48 bg-white dark:bg-surface-dark rounded-xl shadow-float border border-gray-100 dark:border-gray-700 overflow-hidden">
+                      {menuOptions.map((option) => (
+                        <button
+                          key={option.label}
+                          onClick={() => {
+                            setShowOptions(false)
+                            option.action()
+                          }}
+                          className={cn(
+                            'w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors',
+                            option.danger && 'text-red-600 dark:text-red-400'
+                          )}
+                        >
+                          <Icon name={option.icon} className="text-base" />
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-text-secondary">
               <Icon name="calendar_month" className="text-[14px]" />
@@ -189,7 +255,7 @@ function BookingCard({ booking, isUpcoming, onCancel, onModify, onRebook, onRate
             </div>
             <div className="mt-0.5 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
               <Icon name="location_on" className="text-[14px]" />
-              <span>{booking.campsiteLocation || 'Location'}</span>
+              <span>{booking.campsite?.location || 'Location'}</span>
             </div>
           </div>
 
@@ -202,31 +268,20 @@ function BookingCard({ booking, isUpcoming, onCancel, onModify, onRebook, onRate
 
       {/* Action Row */}
       <div className="border-t border-gray-100 dark:border-gray-700/50 pt-3 mt-1 flex gap-3">
-        {isUpcoming && !isPending && (
+        {isUpcoming && (
           <>
-            <button className="flex-1 h-9 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary-dark dark:text-primary text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+            <button
+              onClick={onViewTicket}
+              className="flex-1 h-9 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary-dark dark:text-primary text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+            >
               <Icon name="airplane_ticket" className="text-[18px]" />
               View Ticket
             </button>
-            <button className="h-9 w-9 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors">
+            <button
+              onClick={onViewMap}
+              className="h-9 w-9 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors"
+            >
               <Icon name="map" className="text-[18px]" />
-            </button>
-          </>
-        )}
-
-        {isUpcoming && isPending && (
-          <>
-            <button
-              onClick={onModify}
-              className="flex-1 h-9 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Edit Request
-            </button>
-            <button
-              onClick={onCancel}
-              className="flex-1 h-9 rounded-lg border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            >
-              Cancel
             </button>
           </>
         )}

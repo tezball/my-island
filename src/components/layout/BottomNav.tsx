@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from '@/utils/cn'
 import { Icon } from '../ui'
+import { useAuth } from '@/context/AuthContext'
 
 interface NavItem {
   path: string
@@ -9,15 +10,25 @@ interface NavItem {
   badge?: number
 }
 
-const navItems: NavItem[] = [
-  { path: '/', label: 'Explore', icon: 'map' },
+const visitorNavItems: NavItem[] = [
+  { path: '/', label: 'Explore', icon: 'search' },
   { path: '/favorites', label: 'Saved', icon: 'favorite' },
   { path: '/bookings', label: 'Bookings', icon: 'calendar_today' },
   { path: '/profile', label: 'Profile', icon: 'person' },
 ]
 
+const ownerNavItems: NavItem[] = [
+  { path: '/owner', label: 'Dashboard', icon: 'dashboard' },
+  { path: '/owner/bookings', label: 'Bookings', icon: 'calendar_today' },
+  { path: '/owner/offers', label: 'Offers', icon: 'local_offer' },
+  { path: '/profile', label: 'Profile', icon: 'person' },
+]
+
 export function BottomNav() {
   const location = useLocation()
+  const { user } = useAuth()
+
+  const navItems = user?.role === 'owner' ? ownerNavItems : visitorNavItems
 
   // Don't show on login or during booking flow
   const hideOn = ['/login', '/book']

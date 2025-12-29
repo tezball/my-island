@@ -153,7 +153,7 @@ export function ListViewPage() {
 
           {/* Quick Filters */}
           <div className="flex-1 flex gap-2 overflow-x-auto no-scrollbar">
-            <Chip label="Dates" icon="calendar_today" />
+            <Chip label="Dates" icon="calendar_month" />
             <Chip label="Guests" icon="person" />
           </div>
         </div>

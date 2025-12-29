@@ -18,7 +18,9 @@ export function GuestExtrasPage() {
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark pb-32">
-      <TopAppBar title="Guests & Extras" />
+      <TopAppBar
+        showHome
+        title="Guests & Extras" />
 
       <div className="px-4 py-6 max-w-md mx-auto space-y-6">
         {/* Guests Section */}

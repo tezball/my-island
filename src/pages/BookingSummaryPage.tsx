@@ -30,7 +30,9 @@ export function BookingSummaryPage() {
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark pb-32">
-      <TopAppBar title="Booking Summary" />
+      <TopAppBar
+        showHome
+        title="Booking Summary" />
 
       <div className="px-4 py-6 max-w-md mx-auto space-y-6">
         {/* Campsite Card */}

@@ -92,6 +92,7 @@ export function OwnerBookingDetailPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
       <TopAppBar
+        showHome
         title="Booking Details"
         rightAction={
           <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10">

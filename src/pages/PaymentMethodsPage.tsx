@@ -68,7 +68,9 @@ export function PaymentMethodsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Payment Methods" />
+      <TopAppBar
+        showHome
+        title="Payment Methods" />
 
       <div className="flex-1 px-4 py-6 max-w-md mx-auto space-y-6">
         {/* Saved Payment Methods */}

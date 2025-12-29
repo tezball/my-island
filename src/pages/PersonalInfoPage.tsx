@@ -24,7 +24,9 @@ export function PersonalInfoPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Personal Information" />
+      <TopAppBar
+        showHome
+        title="Personal Information" />
 
       <div className="flex-1 px-4 pb-8">
         {/* Basic Info */}

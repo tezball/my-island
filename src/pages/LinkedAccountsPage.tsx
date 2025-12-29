@@ -51,7 +51,9 @@ export function LinkedAccountsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Linked Accounts" />
+      <TopAppBar
+        showHome
+        title="Linked Accounts" />
 
       <div className="flex-1 px-4 pb-8">
         {/* Info Banner */}

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Icon } from '@/components/ui'
 import { TopAppBar } from '@/components/layout'
 import { cn } from '@/utils/cn'
@@ -66,13 +65,13 @@ const POPULAR_DATES = [
 ]
 
 export function CampsiteStatisticsPage() {
-  const navigate = useNavigate()
   const [dateRange, setDateRange] = useState<DateRange>('month')
   const [selectedCampsite, setSelectedCampsite] = useState('1')
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
       <TopAppBar
+        showHome
         title="Performance"
         rightAction={
           <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/10">
@@ -81,7 +80,7 @@ export function CampsiteStatisticsPage() {
         }
       />
 
-      <div className="flex-1 overflow-y-auto pb-20">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden pb-20">
         {/* Campsite Selector */}
         <div className="px-4 py-2">
           <label className="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -124,11 +123,11 @@ export function CampsiteStatisticsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="flex overflow-x-auto gap-4 px-4 pb-2 snap-x no-scrollbar">
+        <div className="grid grid-cols-3 gap-3 px-4 pb-2">
           {KPI_CARDS.map((card) => (
             <div
               key={card.label}
-              className="snap-center shrink-0 w-[160px] p-5 rounded-2xl bg-white dark:bg-surface-dark shadow-sm ring-1 ring-black/5 dark:ring-white/5 flex flex-col gap-3"
+              className="p-4 rounded-2xl bg-white dark:bg-surface-dark shadow-sm ring-1 ring-black/5 dark:ring-white/5 flex flex-col gap-2"
             >
               <div
                 className={cn(
@@ -136,18 +135,18 @@ export function CampsiteStatisticsPage() {
                   card.iconColor
                 )}
               >
-                <Icon name={card.icon} className="text-xl" />
+                <Icon name={card.icon} className="text-lg" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
                   {card.label}
                 </p>
-                <p className="text-2xl font-bold tracking-tight">
+                <p className="text-xl font-bold tracking-tight">
                   {card.value}
                 </p>
               </div>
-              <div className="flex items-center gap-1 text-primary text-xs font-bold bg-primary/10 w-fit px-2 py-1 rounded-lg">
-                <Icon name="trending_up" className="text-sm" />
+              <div className="flex items-center gap-1 text-primary text-[10px] font-bold bg-primary/10 w-fit px-1.5 py-0.5 rounded-md">
+                <Icon name="trending_up" className="text-xs" />
                 <span>{card.change}</span>
               </div>
             </div>

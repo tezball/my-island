@@ -17,7 +17,9 @@ export function SettingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Settings" />
+      <TopAppBar
+        showHome
+        title="Settings" />
 
       <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-6">
         {/* Profile Section */}

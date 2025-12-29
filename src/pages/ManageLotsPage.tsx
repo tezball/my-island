@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { Icon, Button } from '@/components/ui'
 import { TopAppBar } from '@/components/layout'
 import { cn } from '@/utils/cn'
+import { apiFetch } from '@/utils/api'
 
-// Mock: Manage Campsite Lots Page
 interface Lot {
   id: string
   name: string
@@ -14,45 +14,6 @@ interface Lot {
   status: 'available' | 'booked' | 'maintenance'
   image: string
 }
-
-const MOCK_LOTS: Lot[] = [
-  {
-    id: '1',
-    name: 'Riverside Tent Site #1',
-    type: 'tent',
-    capacity: 4,
-    price: 45,
-    status: 'available',
-    image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=200',
-  },
-  {
-    id: '2',
-    name: 'Forest Cabin #3',
-    type: 'cabin',
-    capacity: 6,
-    price: 150,
-    status: 'booked',
-    image: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=200',
-  },
-  {
-    id: '3',
-    name: 'Lakeside Glamping Pod',
-    type: 'glamping',
-    capacity: 2,
-    price: 180,
-    status: 'available',
-    image: 'https://images.unsplash.com/photo-1533873984035-25970ab07461?w=200',
-  },
-  {
-    id: '4',
-    name: 'RV Hookup Spot #5',
-    type: 'rv',
-    capacity: 8,
-    price: 65,
-    status: 'maintenance',
-    image: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=200',
-  },
-]
 
 const TYPE_ICONS: Record<Lot['type'], string> = {
   tent: 'camping',
@@ -78,7 +39,16 @@ const STATUS_STYLES: Record<Lot['status'], { label: string; className: string }>
 
 export function ManageLotsPage() {
   const navigate = useNavigate()
-  const [lots] = useState(MOCK_LOTS)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['lots'],
+    queryFn: async () => {
+      const res = await apiFetch('/api/lots')
+      return res.json()
+    },
+  })
+
+  const lots: Lot[] = data?.lots || []
 
   const stats = {
     total: lots.length,
@@ -89,6 +59,7 @@ export function ManageLotsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
       <TopAppBar
+        showHome
         title="Manage Lots"
         rightAction={
           <button
@@ -121,7 +92,22 @@ export function ManageLotsPage() {
 
         {/* Lots List */}
         <div className="space-y-3">
-          {lots.map((lot) => {
+          {isLoading ? (
+            <>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="w-full bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 animate-pulse">
+                  <div className="flex">
+                    <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700" />
+                    <div className="flex-1 p-3 space-y-2">
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : lots.map((lot) => {
             const status = STATUS_STYLES[lot.status]
             return (
               <button

@@ -1,19 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Icon, Button } from '@/components/ui'
 import { cn } from '@/utils/cn'
 
 // Mock M09: Filter Modal Component
-interface FilterModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onApply: (filters: FilterState) => void
-}
-
-interface FilterState {
+export interface FilterState {
   priceRange: [number, number]
   campsiteTypes: string[]
   amenities: string[]
   rating: number | null
+}
+
+export const defaultFilterState: FilterState = {
+  priceRange: [0, 200],
+  campsiteTypes: [],
+  amenities: [],
+  rating: null,
+}
+
+interface FilterModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onApply: (filters: FilterState) => void
+  initialFilters?: FilterState
 }
 
 const CAMPSITE_TYPES = [
@@ -34,13 +42,15 @@ const AMENITIES = [
   { id: 'playground', label: 'Playground', icon: 'attractions' },
 ]
 
-export function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
-  const [filters, setFilters] = useState<FilterState>({
-    priceRange: [0, 200],
-    campsiteTypes: [],
-    amenities: [],
-    rating: null,
-  })
+export function FilterModal({ isOpen, onClose, onApply, initialFilters }: FilterModalProps) {
+  const [filters, setFilters] = useState<FilterState>(initialFilters ?? defaultFilterState)
+
+  // Sync with initialFilters when modal opens
+  useEffect(() => {
+    if (isOpen && initialFilters) {
+      setFilters(initialFilters)
+    }
+  }, [isOpen, initialFilters])
 
   if (!isOpen) return null
 
@@ -63,12 +73,7 @@ export function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
   }
 
   const handleReset = () => {
-    setFilters({
-      priceRange: [0, 200],
-      campsiteTypes: [],
-      amenities: [],
-      rating: null,
-    })
+    setFilters(defaultFilterState)
   }
 
   const handleApply = () => {
@@ -83,7 +88,7 @@ export function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
     (filters.priceRange[0] > 0 || filters.priceRange[1] < 200 ? 1 : 0)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center pb-32">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -91,7 +96,7 @@ export function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-background-light dark:bg-background-dark rounded-t-3xl max-h-[90vh] flex flex-col animate-slide-up">
+      <div className="relative w-full max-w-md mx-4 bg-background-light dark:bg-background-dark rounded-3xl max-h-[80vh] flex flex-col animate-slide-up">
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-2">
           <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
@@ -235,7 +240,7 @@ export function FilterModal({ isOpen, onClose, onApply }: FilterModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 pb-8 border-t border-gray-100 dark:border-gray-800 bg-background-light dark:bg-background-dark">
+        <div className="p-4 pb-6 border-t border-gray-100 dark:border-gray-800 bg-background-light dark:bg-background-dark safe-area-bottom">
           <Button className="w-full" size="lg" onClick={handleApply}>
             Show Results {activeCount > 0 && `(${activeCount} filters)`}
           </Button>

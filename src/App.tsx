@@ -102,8 +102,8 @@ export default function App() {
               <Route path="/verify-email" element={<VerifyEmailPage />} />
 
               {/* Discovery */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/search" element={<SearchPage />} />
+              <Route path="/" element={<SearchPage />} />
+              <Route path="/map" element={<HomePage />} />
               <Route path="/list" element={<ListViewPage />} />
               <Route path="/campsite/:id" element={<CampsiteDetailPage />} />
               <Route path="/campsite/:id/calendar" element={<LotCalendarPage />} />

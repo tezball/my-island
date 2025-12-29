@@ -88,7 +88,9 @@ export function ReviewsListPage() {
 
   return (
     <AppShell>
-      <TopAppBar title="Reviews" />
+      <TopAppBar
+        showHome
+        title="Reviews" />
 
       <div className="pb-28">
         {/* Rating Summary */}

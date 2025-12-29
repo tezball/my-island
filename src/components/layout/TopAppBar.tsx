@@ -5,6 +5,7 @@ import { Icon } from '../ui'
 interface TopAppBarProps {
   title?: string
   showBack?: boolean
+  showHome?: boolean
   rightAction?: React.ReactNode
   transparent?: boolean
   className?: string
@@ -13,6 +14,7 @@ interface TopAppBarProps {
 export function TopAppBar({
   title,
   showBack = true,
+  showHome = false,
   rightAction,
   transparent = false,
   className,
@@ -29,16 +31,25 @@ export function TopAppBar({
         className
       )}
     >
-      {showBack ? (
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white"
-        >
-          <Icon name="arrow_back" />
-        </button>
-      ) : (
-        <div className="w-10" />
-      )}
+      <div className="flex items-center gap-1">
+        {showHome && (
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white"
+          >
+            <Icon name="home" />
+          </button>
+        )}
+        {showBack && !showHome && (
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white"
+          >
+            <Icon name="arrow_back" />
+          </button>
+        )}
+        {!showBack && !showHome && <div className="w-10" />}
+      </div>
 
       {title && (
         <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">

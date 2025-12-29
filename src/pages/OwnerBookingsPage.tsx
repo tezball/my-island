@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Icon } from '@/components/ui'
 import { TopAppBar } from '@/components/layout'
@@ -17,46 +17,106 @@ interface OwnerBooking {
   totalAmount: number
 }
 
+type DateFilter = 'all' | 'today' | 'week' | 'month' | 'custom'
+
+function getDateRange(filter: DateFilter, customStart?: string, customEnd?: string): { start: Date; end: Date } | null {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  switch (filter) {
+    case 'today':
+      const endOfToday = new Date(today)
+      endOfToday.setHours(23, 59, 59, 999)
+      return { start: today, end: endOfToday }
+    case 'week': {
+      const endOfWeek = new Date(today)
+      endOfWeek.setDate(today.getDate() + 7)
+      return { start: today, end: endOfWeek }
+    }
+    case 'month': {
+      const endOfMonth = new Date(today)
+      endOfMonth.setMonth(today.getMonth() + 1)
+      return { start: today, end: endOfMonth }
+    }
+    case 'custom':
+      if (customStart && customEnd) {
+        return { start: new Date(customStart), end: new Date(customEnd) }
+      }
+      return null
+    default:
+      return null
+  }
+}
+
+// Generate dates relative to today for realistic filtering
+const today = new Date()
+const formatDate = (d: Date) => d.toISOString().split('T')[0]
+const addDays = (d: Date, days: number) => {
+  const result = new Date(d)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
 const MOCK_BOOKINGS: OwnerBooking[] = [
   {
     id: '1',
     guestName: 'Sarah Jenkins',
-    checkIn: '2024-12-20',
-    checkOut: '2024-12-22',
+    checkIn: formatDate(today),
+    checkOut: formatDate(addDays(today, 2)),
     lotName: 'Riverside Tent #7',
     guests: 2,
-    status: 'upcoming',
+    status: 'active',
     totalAmount: 180,
   },
   {
     id: '2',
     guestName: 'Mike Peterson',
-    checkIn: '2024-12-18',
-    checkOut: '2024-12-21',
+    checkIn: formatDate(addDays(today, 3)),
+    checkOut: formatDate(addDays(today, 6)),
     lotName: 'Forest Cabin #3',
     guests: 4,
-    status: 'active',
+    status: 'upcoming',
     totalAmount: 450,
   },
   {
     id: '3',
     guestName: 'Emma Wilson',
-    checkIn: '2024-12-15',
-    checkOut: '2024-12-17',
+    checkIn: formatDate(addDays(today, 10)),
+    checkOut: formatDate(addDays(today, 12)),
     lotName: 'Lakeside Glamping #1',
     guests: 2,
-    status: 'completed',
+    status: 'upcoming',
     totalAmount: 320,
   },
   {
     id: '4',
     guestName: 'James Brown',
-    checkIn: '2024-12-14',
-    checkOut: '2024-12-16',
+    checkIn: formatDate(addDays(today, -5)),
+    checkOut: formatDate(addDays(today, -3)),
     lotName: 'Mountain View RV Spot',
     guests: 3,
-    status: 'cancelled',
+    status: 'completed',
     totalAmount: 200,
+  },
+  {
+    id: '5',
+    guestName: 'Lisa Chen',
+    checkIn: formatDate(addDays(today, 20)),
+    checkOut: formatDate(addDays(today, 23)),
+    lotName: 'Sunset Glamping #2',
+    guests: 2,
+    status: 'upcoming',
+    totalAmount: 380,
+  },
+  {
+    id: '6',
+    guestName: 'Tom Richards',
+    checkIn: formatDate(addDays(today, -10)),
+    checkOut: formatDate(addDays(today, -8)),
+    lotName: 'Forest Cabin #1',
+    guests: 5,
+    status: 'cancelled',
+    totalAmount: 520,
   },
 ]
 
@@ -83,12 +143,31 @@ const STATUS_STYLES: Record<OwnerBooking['status'], { label: string; className: 
 
 export function OwnerBookingsPage() {
   const navigate = useNavigate()
-  const [filter, setFilter] = useState<FilterType>('all')
+  const [statusFilter, setStatusFilter] = useState<FilterType>('all')
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all')
+  const [customStartDate, setCustomStartDate] = useState('')
+  const [customEndDate, setCustomEndDate] = useState('')
+  const [showDatePicker, setShowDatePicker] = useState(false)
 
-  const filteredBookings =
-    filter === 'all'
-      ? MOCK_BOOKINGS
-      : MOCK_BOOKINGS.filter((b) => b.status === filter)
+  const filteredBookings = useMemo(() => {
+    let results = MOCK_BOOKINGS
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      results = results.filter((b) => b.status === statusFilter)
+    }
+
+    // Apply date filter
+    const dateRange = getDateRange(dateFilter, customStartDate, customEndDate)
+    if (dateRange) {
+      results = results.filter((b) => {
+        const checkIn = new Date(b.checkIn)
+        return checkIn >= dateRange.start && checkIn <= dateRange.end
+      })
+    }
+
+    return results
+  }, [statusFilter, dateFilter, customStartDate, customEndDate])
 
   const stats = {
     upcoming: MOCK_BOOKINGS.filter((b) => b.status === 'upcoming').length,
@@ -100,9 +179,11 @@ export function OwnerBookingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Bookings" />
+      <TopAppBar
+        showHome
+        title="Bookings" />
 
-      <div className="flex-1 px-4 pb-8">
+      <div className="flex-1 px-4 pb-28">
         {/* Stats */}
         <div className="flex gap-3 mt-4 mb-6">
           <div className="flex-1 bg-white dark:bg-surface-dark rounded-2xl p-4 border border-gray-100 dark:border-gray-800">
@@ -121,16 +202,111 @@ export function OwnerBookingsPage() {
           </div>
         </div>
 
-        {/* Filter Tabs */}
+        {/* Date Filter */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Date Range</p>
+            {dateFilter !== 'all' && (
+              <button
+                onClick={() => {
+                  setDateFilter('all')
+                  setCustomStartDate('')
+                  setCustomEndDate('')
+                }}
+                className="text-xs text-primary font-medium"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar">
+            {([
+              { value: 'all', label: 'All Dates', icon: 'date_range' },
+              { value: 'today', label: 'Today', icon: 'today' },
+              { value: 'week', label: 'This Week', icon: 'view_week' },
+              { value: 'month', label: 'This Month', icon: 'calendar_month' },
+              { value: 'custom', label: 'Custom', icon: 'edit_calendar' },
+            ] as const).map((f) => (
+              <button
+                key={f.value}
+                onClick={() => {
+                  if (f.value === 'custom') {
+                    setShowDatePicker(true)
+                  } else {
+                    setDateFilter(f.value)
+                    setShowDatePicker(false)
+                  }
+                }}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors border',
+                  dateFilter === f.value
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'bg-white dark:bg-surface-dark border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'
+                )}
+              >
+                <Icon name={f.icon} className="text-base" />
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Custom Date Picker */}
+          {showDatePicker && (
+            <div className="mt-3 p-4 bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-700">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">From</label>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-background-dark focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">To</label>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-background-dark focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => setShowDatePicker(false)}
+                  className="flex-1 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (customStartDate && customEndDate) {
+                      setDateFilter('custom')
+                      setShowDatePicker(false)
+                    }
+                  }}
+                  disabled={!customStartDate || !customEndDate}
+                  className="flex-1 py-2 text-sm font-medium bg-primary text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Status Filter Tabs */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4">
           {(['all', 'upcoming', 'active', 'completed', 'cancelled'] as FilterType[]).map(
             (f) => (
               <button
                 key={f}
-                onClick={() => setFilter(f)}
+                onClick={() => setStatusFilter(f)}
                 className={cn(
                   'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors capitalize',
-                  filter === f
+                  statusFilter === f
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 dark:bg-surface-dark text-gray-600 dark:text-gray-400'
                 )}

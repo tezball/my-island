@@ -43,7 +43,9 @@ export function AddPaymentPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Add Card" />
+      <TopAppBar
+        showHome
+        title="Add Card" />
 
       <div className="flex-1 px-4 py-6 max-w-md mx-auto space-y-6">
         {/* Card Preview */}

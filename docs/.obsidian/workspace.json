@@ -11,12 +11,14 @@
             "id": "e8d3b3f45e3d70b8",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "flows/my-bookings/08-check-in-instructions.png"
+                "file": "flows/reviews/README.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "08-check-in-instructions"
+              "icon": "lucide-file",
+              "title": "README"
             }
           }
         ]
@@ -92,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "flows/my-bookings/08-check-in-instructions.png",
+                "file": "flows/reviews/README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 08-check-in-instructions"
+              "title": "Backlinks for README"
             }
           },
           {
@@ -111,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "flows/my-bookings/08-check-in-instructions.png",
+                "file": "flows/reviews/README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 08-check-in-instructions"
+              "title": "Outgoing links from README"
             }
           },
           {
@@ -154,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "flows/my-bookings/08-check-in-instructions.png",
+                "file": "flows/reviews/README.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 08-check-in-instructions"
+              "title": "Outline of README"
             }
           }
         ]
@@ -183,13 +185,14 @@
   },
   "active": "e8d3b3f45e3d70b8",
   "lastOpenFiles": [
+    "flows/missing-screens.md",
+    "flows/my-bookings/08-check-in-instructions.png",
     "flows/my-bookings/07-cancellation-success.png",
     "flows/favorites/01-favorites.png",
     "flows/favorites/README.md",
     "flows/errors/README.md",
     "flows/booking/README.md",
     "flows/auth/README.md",
-    "flows/missing-screens.md",
     "flows/README.md.tmp.24260.1767022101197",
     "flows/missing-screens.md.tmp.24260.1767022079210",
     "flows/user-flows.md",
@@ -203,8 +206,6 @@
     "flows/owner-admin/19-property-overview-1.png",
     "flows/owner-admin/06b-edit-lot-individual.png",
     "flows/owner-admin/18-create-ticket.png",
-    "flows/owner-admin/17-owner-support.png",
-    "flows/owner-admin/16-add-payout.png",
     "flows/notifications",
     "design/welcome_to_my-island!/code.html",
     "design/welcome_to_my-island!",

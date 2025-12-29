@@ -6,11 +6,12 @@ import { TopAppBar } from '@/components/layout'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, loginWithGoogle } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingDemo, setIsLoadingDemo] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,9 +29,29 @@ export function LoginPage() {
     }
   }
 
+  const handleDemoLogin = async (type: 'visitor' | 'owner') => {
+    setError('')
+    setIsLoadingDemo(type)
+
+    try {
+      if (type === 'visitor') {
+        await login('visitor@my-island.com', 'visitor123')
+      } else {
+        await loginWithGoogle()
+      }
+      navigate('/')
+    } catch {
+      setError('Demo login failed')
+    } finally {
+      setIsLoadingDemo(null)
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="my-island" showBack={false} />
+      <TopAppBar
+        showHome
+        title="my-island" showBack={false} />
 
       <main className="flex-1 flex flex-col w-full max-w-md mx-auto px-4 pb-8">
         {/* Hero Image */}
@@ -153,6 +174,47 @@ export function LoginPage() {
             </svg>
             Apple
           </Button>
+        </div>
+
+        {/* Demo Login Section */}
+        <div className="mt-8 p-4 rounded-2xl bg-slate-50 dark:bg-surface-dark border border-dashed border-slate-300 dark:border-slate-700">
+          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 text-center">
+            Quick Demo Login
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => handleDemoLogin('visitor')}
+              disabled={isLoadingDemo !== null}
+              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white dark:bg-background-dark border-2 border-primary/20 hover:border-primary hover:bg-primary/5 transition-all disabled:opacity-50"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon name="person" className="text-primary text-2xl" />
+              </div>
+              <div className="text-center">
+                <p className="font-bold text-sm">Visitor</p>
+                <p className="text-xs text-slate-500">Browse & Book</p>
+              </div>
+              {isLoadingDemo === 'visitor' && (
+                <Icon name="progress_activity" className="animate-spin text-primary" />
+              )}
+            </button>
+            <button
+              onClick={() => handleDemoLogin('owner')}
+              disabled={isLoadingDemo !== null}
+              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white dark:bg-background-dark border-2 border-amber-500/20 hover:border-amber-500 hover:bg-amber-500/5 transition-all disabled:opacity-50"
+            >
+              <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center">
+                <Icon name="admin_panel_settings" className="text-amber-500 text-2xl" />
+              </div>
+              <div className="text-center">
+                <p className="font-bold text-sm">Owner</p>
+                <p className="text-xs text-slate-500">Manage Campsite</p>
+              </div>
+              {isLoadingDemo === 'owner' && (
+                <Icon name="progress_activity" className="animate-spin text-amber-500" />
+              )}
+            </button>
+          </div>
         </div>
       </main>
 

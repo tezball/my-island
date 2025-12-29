@@ -51,6 +51,7 @@ export function BookingReceiptPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
       <TopAppBar
+        showHome
         title="Receipt"
         rightAction={
           <button

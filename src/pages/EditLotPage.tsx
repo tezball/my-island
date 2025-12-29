@@ -40,7 +40,9 @@ export function EditLotPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Edit Lot Details" />
+      <TopAppBar
+        showHome
+        title="Edit Lot Details" />
 
       <div className="flex-1 flex flex-col pb-24">
         {/* Hero Image */}

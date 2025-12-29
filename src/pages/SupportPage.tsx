@@ -75,7 +75,9 @@ export function SupportPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
-      <TopAppBar title="Help Center" />
+      <TopAppBar
+        showHome
+        title="Help Center" />
 
       <div className="flex-1 px-4 pb-8">
         {/* Search */}

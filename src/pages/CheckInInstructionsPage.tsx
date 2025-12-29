@@ -57,6 +57,7 @@ export function CheckInInstructionsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background-light dark:bg-background-dark">
       <TopAppBar
+        showHome
         title="Check-in Info"
         rightAction={
           <button className="w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center">

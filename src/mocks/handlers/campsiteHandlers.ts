@@ -8,8 +8,11 @@ export const campsiteHandlers = [
     const url = new URL(request.url)
     const query = url.searchParams.get('q')?.toLowerCase()
     const type = url.searchParams.get('type')
+    const types = url.searchParams.get('types')?.split(',')
     const minPrice = url.searchParams.get('minPrice')
     const maxPrice = url.searchParams.get('maxPrice')
+    const rating = url.searchParams.get('rating')
+    const amenities = url.searchParams.get('amenities')?.split(',')
 
     let results = [...mockCampsites]
 
@@ -20,8 +23,14 @@ export const campsiteHandlers = [
       )
     }
 
+    // Single type filter (legacy)
     if (type) {
       results = results.filter(c => c.type === type)
+    }
+
+    // Multiple types filter
+    if (types?.length) {
+      results = results.filter(c => types.includes(c.type))
     }
 
     if (minPrice) {
@@ -30,6 +39,22 @@ export const campsiteHandlers = [
 
     if (maxPrice) {
       results = results.filter(c => c.pricePerNight <= Number(maxPrice))
+    }
+
+    // Rating filter
+    if (rating) {
+      results = results.filter(c => c.rating >= Number(rating))
+    }
+
+    // Amenities filter (match any)
+    if (amenities?.length) {
+      results = results.filter(c =>
+        amenities.some(amenity =>
+          c.facilities.some(f =>
+            f.id === amenity || f.name.toLowerCase().includes(amenity.toLowerCase())
+          )
+        )
+      )
     }
 
     return HttpResponse.json({
