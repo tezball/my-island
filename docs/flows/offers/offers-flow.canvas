@@ -1,101 +1,28 @@
 {
-  "nodes": [
-    {
-      "id": "title",
-      "type": "text",
-      "text": "# Offers Flow\n\nBrowsing local supplier offers and deals near campsites.",
-      "x": 0,
-      "y": -280,
-      "width": 500,
-      "height": 120,
-      "color": "6"
-    },
-    {
-      "id": "offers-feed",
-      "type": "file",
-      "file": "flows/offers/01-offers-feed.png",
-      "x": 0,
-      "y": 0,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "offers-feed-event",
-      "type": "text",
-      "text": "**Events:**\n- `onOfferSelect`: View supplier detail\n- `onCategoryFilter`: Filter by type\n- `onLocationFilter`: Filter by area\n- `onSearch`: Search offers\n- `onSaveOffer`: Bookmark offer\n- `onPullRefresh`: Reload offers",
-      "x": 0,
-      "y": 540,
-      "width": 300,
-      "height": 180,
-      "color": "4"
-    },
-    {
-      "id": "supplier-detail",
-      "type": "file",
-      "file": "flows/offers/02-supplier-detail.png",
-      "x": 450,
-      "y": 0,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "supplier-detail-event",
-      "type": "text",
-      "text": "**Events:**\n- `onClaimOffer`: Redeem offer\n- `onGetDirections`: Open maps\n- `onCall`: Phone supplier\n- `onWebsite`: Open website\n- `onShare`: Share offer\n- `onToggleAlert`: Enable notifications\n- `onBack`: Return to feed",
-      "x": 450,
-      "y": 540,
-      "width": 300,
-      "height": 200,
-      "color": "4"
-    },
-    {
-      "id": "offer-claimed",
-      "type": "text",
-      "text": "## Offer Claimed\n\n**Events:**\n- `onShowCode`: Display redemption code\n- `onAddToWallet`: Save to wallet\n- `onShare`: Share with friends",
-      "x": 900,
-      "y": 0,
-      "width": 300,
-      "height": 140,
-      "color": "5"
-    },
-    {
-      "id": "maps-app",
-      "type": "text",
-      "text": "## Maps App\n\nOpens native maps with supplier location",
-      "x": 900,
-      "y": 220,
-      "width": 300,
-      "height": 100,
-      "color": "5"
-    }
-  ],
-  "edges": [
-    {
-      "id": "feed-to-detail",
-      "fromNode": "offers-feed",
-      "toNode": "supplier-detail",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "tap offer",
-      "color": "4"
-    },
-    {
-      "id": "detail-to-claimed",
-      "fromNode": "supplier-detail",
-      "toNode": "offer-claimed",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "claim offer",
-      "color": "5"
-    },
-    {
-      "id": "detail-to-maps",
-      "fromNode": "supplier-detail",
-      "toNode": "maps-app",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "directions",
-      "color": "3"
-    }
-  ]
+	"nodes":[
+		{"id":"group","x":-200,"y":-400,"width":1500,"height":900,"color":"4","type":"group","label":"Offers"},
+		{"id":"title","type":"text","text":"# Offers Flow\n\nBrowsing local supplier offers and deals near campsites.","x":0,"y":-280,"width":500,"height":120,"color":"6"},
+		{"id":"legend","type":"text","text":"## Event Legend\n\n**Green (5)**: Kafka Domain Events\n**Blue (4)**: UI-Only Events\n**Red (1)**: Kafka Error Events","x":600,"y":-280,"width":280,"height":140,"color":"6"},
+
+		{"id":"offers-feed","type":"file","file":"flows/offers/01-offers-feed.png","x":0,"y":0,"width":300,"height":500},
+		{"id":"offers-feed-kafka","type":"text","text":"**Kafka Events:**\n- `onSaveOffer` → `offer.saved`\n  - Recommendations, Analytics","x":-50,"y":540,"width":320,"height":80,"color":"5"},
+		{"id":"offers-feed-ui","type":"text","text":"**UI Events:**\n- `onOfferSelect`: View supplier detail\n- `onCategoryFilter`: Filter by type\n- `onLocationFilter`: Filter by area\n- `onSearch`: Search offers\n- `onPullRefresh`: Reload offers","x":-50,"y":640,"width":320,"height":140,"color":"4"},
+
+		{"id":"supplier-detail","type":"file","file":"flows/offers/02-supplier-detail.png","x":500,"y":0,"width":300,"height":500},
+		{"id":"supplier-detail-kafka","type":"text","text":"**Kafka Events:**\n- `onClaimOffer` → `offer.claimed`\n  - Redemption tracking, Analytics, Supplier notification","x":450,"y":540,"width":400,"height":100,"color":"5"},
+		{"id":"supplier-detail-ui","type":"text","text":"**UI Events:**\n- `onGetDirections`: Open maps\n- `onCall`: Phone supplier\n- `onWebsite`: Open website\n- `onShare`: Share offer\n- `onToggleAlert`: Enable notifications\n- `onBack`: Return to feed","x":450,"y":660,"width":320,"height":160,"color":"4"},
+
+		{"id":"offer-claimed","type":"text","text":"## Offer Claimed\n\n**UI Events:**\n- `onShowCode`: Display redemption code\n- `onAddToWallet`: Save to wallet\n- `onShare`: Share with friends","x":1000,"y":0,"width":300,"height":160,"color":"5"},
+
+		{"id":"maps-app","type":"text","text":"## Maps App\n\nOpens native maps with supplier location","x":1000,"y":240,"width":300,"height":100,"color":"5"}
+	],
+	"edges":[
+		{"id":"feed-to-detail","fromNode":"offers-feed","toNode":"supplier-detail","fromSide":"right","toSide":"left","label":"tap offer","color":"4"},
+		{"id":"detail-to-claimed","fromNode":"supplier-detail","toNode":"offer-claimed","fromSide":"right","toSide":"left","label":"claim offer","color":"5"},
+		{"id":"detail-to-maps","fromNode":"supplier-detail","toNode":"maps-app","fromSide":"right","toSide":"left","label":"directions","color":"3"},
+		{"id":"offers-feed-kafka-edge","fromNode":"offers-feed-kafka","fromSide":"top","toNode":"offers-feed","toSide":"bottom"},
+		{"id":"offers-feed-ui-edge","fromNode":"offers-feed-ui","fromSide":"top","toNode":"offers-feed","toSide":"bottom"},
+		{"id":"supplier-detail-kafka-edge","fromNode":"supplier-detail-kafka","fromSide":"top","toNode":"supplier-detail","toSide":"bottom"},
+		{"id":"supplier-detail-ui-edge","fromNode":"supplier-detail-ui","fromSide":"top","toNode":"supplier-detail","toSide":"bottom"}
+	]
 }

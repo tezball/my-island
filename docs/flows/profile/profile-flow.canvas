@@ -1,315 +1,54 @@
 {
-  "nodes": [
-    {
-      "id": "title",
-      "type": "text",
-      "text": "# Profile Flow\n\nUser profile management, settings, and support.",
-      "x": 0,
-      "y": -280,
-      "width": 500,
-      "height": 120,
-      "color": "6"
-    },
-    {
-      "id": "profile",
-      "type": "file",
-      "file": "flows/profile/01-profile.png",
-      "x": 0,
-      "y": 0,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "profile-event",
-      "type": "text",
-      "text": "**Events:**\n- `onEditProfile`: Edit profile info\n- `onSettings`: Open settings\n- `onSupport`: Get help\n- `onLogout`: Sign out\n- `onSwitchRole`: Owner/visitor toggle",
-      "x": 0,
-      "y": 540,
-      "width": 300,
-      "height": 160,
-      "color": "4"
-    },
-    {
-      "id": "edit-profile-1",
-      "type": "file",
-      "file": "flows/profile/02-edit-profile-1.png",
-      "x": 450,
-      "y": 0,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "edit-profile-1-event",
-      "type": "text",
-      "text": "**Events:**\n- `onChangePhoto`: Update avatar\n- `onNameChange`: Edit name\n- `onBioChange`: Edit bio\n- `onSave`: Save changes",
-      "x": 450,
-      "y": 540,
-      "width": 300,
-      "height": 140,
-      "color": "4"
-    },
-    {
-      "id": "edit-profile-2",
-      "type": "file",
-      "file": "flows/profile/03-edit-profile-2.png",
-      "x": 900,
-      "y": 0,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "edit-profile-2-event",
-      "type": "text",
-      "text": "**Events:**\n- `onPhoneChange`: Update phone\n- `onAddressChange`: Update address\n- `onPreferencesChange`: Update prefs",
-      "x": 900,
-      "y": 540,
-      "width": 300,
-      "height": 120,
-      "color": "4"
-    },
-    {
-      "id": "settings",
-      "type": "file",
-      "file": "flows/profile/04-settings.png",
-      "x": 0,
-      "y": 850,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "settings-event",
-      "type": "text",
-      "text": "**Events:**\n- `onPersonalInfo`: View/edit personal\n- `onLinkedAccounts`: Manage OAuth\n- `onNotifications`: Notification prefs\n- `onLanguage`: Change language\n- `onPrivacy`: Privacy settings\n- `onDeleteAccount`: Delete account",
-      "x": 0,
-      "y": 1390,
-      "width": 300,
-      "height": 180,
-      "color": "4"
-    },
-    {
-      "id": "personal-info",
-      "type": "file",
-      "file": "flows/profile/05-personal-info.png",
-      "x": 450,
-      "y": 850,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "personal-info-event",
-      "type": "text",
-      "text": "**Events:**\n- `onEmailChange`: Update email\n- `onPasswordChange`: Change password\n- `onPhoneVerify`: Verify phone\n- `onSave`: Save changes",
-      "x": 450,
-      "y": 1390,
-      "width": 300,
-      "height": 140,
-      "color": "4"
-    },
-    {
-      "id": "linked-accounts",
-      "type": "file",
-      "file": "flows/profile/06-linked-accounts.png",
-      "x": 900,
-      "y": 850,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "linked-accounts-event",
-      "type": "text",
-      "text": "**Events:**\n- `onLinkGoogle`: Connect Google\n- `onLinkApple`: Connect Apple\n- `onUnlink`: Disconnect account",
-      "x": 900,
-      "y": 1390,
-      "width": 300,
-      "height": 120,
-      "color": "4"
-    },
-    {
-      "id": "language",
-      "type": "file",
-      "file": "flows/profile/07-language.png",
-      "x": 1350,
-      "y": 850,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "language-event",
-      "type": "text",
-      "text": "**Events:**\n- `onLanguageSelect`: Change language\n- `onConfirm`: Apply change\n- `onBack`: Cancel",
-      "x": 1350,
-      "y": 1390,
-      "width": 300,
-      "height": 120,
-      "color": "4"
-    },
-    {
-      "id": "support",
-      "type": "file",
-      "file": "flows/profile/08-support.png",
-      "x": 0,
-      "y": 1700,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "support-event",
-      "type": "text",
-      "text": "**Events:**\n- `onFAQSelect`: View FAQ item\n- `onContactUs`: Open contact form\n- `onChat`: Start live chat\n- `onCall`: Phone support",
-      "x": 0,
-      "y": 2240,
-      "width": 300,
-      "height": 140,
-      "color": "4"
-    },
-    {
-      "id": "faq-detail",
-      "type": "file",
-      "file": "flows/profile/09-faq-detail.png",
-      "x": 450,
-      "y": 1700,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "faq-detail-event",
-      "type": "text",
-      "text": "**Events:**\n- `onHelpful`: Mark as helpful\n- `onContactSupport`: Still need help\n- `onBack`: Return to FAQs",
-      "x": 450,
-      "y": 2240,
-      "width": 300,
-      "height": 120,
-      "color": "4"
-    },
-    {
-      "id": "contact-us",
-      "type": "file",
-      "file": "flows/profile/10-contact-us.png",
-      "x": 900,
-      "y": 1700,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "contact-us-event",
-      "type": "text",
-      "text": "**Events:**\n- `onCategorySelect`: Choose topic\n- `onMessageInput`: Type message\n- `onAttach`: Add attachment\n- `onSubmit`: Send message",
-      "x": 900,
-      "y": 2240,
-      "width": 300,
-      "height": 140,
-      "color": "4"
-    },
-    {
-      "id": "support-ticket",
-      "type": "file",
-      "file": "flows/profile/11-support-ticket.png",
-      "x": 1350,
-      "y": 1700,
-      "width": 300,
-      "height": 500
-    },
-    {
-      "id": "support-ticket-event",
-      "type": "text",
-      "text": "**Events:**\n- `onReply`: Add reply\n- `onClose`: Close ticket\n- `onEscalate`: Request escalation",
-      "x": 1350,
-      "y": 2240,
-      "width": 300,
-      "height": 120,
-      "color": "5"
-    }
-  ],
-  "edges": [
-    {
-      "id": "profile-to-edit1",
-      "fromNode": "profile",
-      "toNode": "edit-profile-1",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "edit profile",
-      "color": "4"
-    },
-    {
-      "id": "edit1-to-edit2",
-      "fromNode": "edit-profile-1",
-      "toNode": "edit-profile-2",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "more info",
-      "color": "4"
-    },
-    {
-      "id": "profile-to-settings",
-      "fromNode": "profile",
-      "toNode": "settings",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "label": "settings",
-      "color": "3"
-    },
-    {
-      "id": "settings-to-personal",
-      "fromNode": "settings",
-      "toNode": "personal-info",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "personal info",
-      "color": "4"
-    },
-    {
-      "id": "settings-to-linked",
-      "fromNode": "settings",
-      "toNode": "linked-accounts",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "linked accounts",
-      "color": "4"
-    },
-    {
-      "id": "settings-to-language",
-      "fromNode": "settings",
-      "toNode": "language",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "language",
-      "color": "4"
-    },
-    {
-      "id": "profile-to-support",
-      "fromNode": "profile",
-      "toNode": "support",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "label": "support",
-      "color": "5"
-    },
-    {
-      "id": "support-to-faq",
-      "fromNode": "support",
-      "toNode": "faq-detail",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "view FAQ",
-      "color": "4"
-    },
-    {
-      "id": "support-to-contact",
-      "fromNode": "support",
-      "toNode": "contact-us",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "contact us",
-      "color": "4"
-    },
-    {
-      "id": "contact-to-ticket",
-      "fromNode": "contact-us",
-      "toNode": "support-ticket",
-      "fromSide": "right",
-      "toSide": "left",
-      "label": "ticket created",
-      "color": "5"
-    }
-  ]
+	"nodes":[
+		{"id":"group","type":"group","x":-720,"y":-400,"width":2520,"height":2900,"color":"4","label":"Profile"},
+		{"id":"title","type":"text","text":"# Profile Flow\n\nUser profile management, settings, and support.","x":0,"y":-280,"width":500,"height":120,"color":"6"},
+		{"id":"profile","type":"file","file":"flows/profile/01-profile.png","x":0,"y":0,"width":136,"height":500},
+		{"id":"legend","type":"text","text":"## Event Legend\n\n**Green (5)**: Kafka Domain Events\n**Blue (4)**: UI-Only Events\n**Red (1)**: Kafka Error Events","x":600,"y":-280,"width":280,"height":140,"color":"6"},
+		{"id":"personal-info-kafka","type":"text","text":"**Kafka Events:**\n- `onEmailChange` → `user.email_changed`\n  - Verification flow, Notifications\n- `onPasswordChange` → `user.password_changed`\n  - Security notifications, Session invalidation\n- `onPhoneVerify` → `user.phone_verified`\n  - 2FA enablement","x":450,"y":1440,"width":380,"height":160,"color":"5"},
+		{"id":"personal-info-ui","type":"text","text":"**UI Events:**\n- `onSave`: Save changes","x":450,"y":1620,"width":280,"height":60,"color":"4"},
+		{"id":"language-kafka","type":"text","text":"**Kafka Events:**\n- `onConfirm` → `user.language_changed`\n  - Preference sync, Content localization","x":1450,"y":1440,"width":340,"height":80,"color":"5"},
+		{"id":"language","type":"file","file":"flows/profile/07-language.png","x":1500,"y":900,"width":221,"height":500},
+		{"id":"language-ui","type":"text","text":"**UI Events:**\n- `onLanguageSelect`: Change language\n- `onBack`: Cancel","x":1450,"y":1540,"width":280,"height":80,"color":"4"},
+		{"id":"support","type":"file","file":"flows/profile/08-support.png","x":0,"y":1800,"width":159,"height":500},
+		{"id":"support-ui","type":"text","text":"**UI Events:**\n- `onFAQSelect`: View FAQ item\n- `onContactUs`: Open contact form\n- `onChat`: Start live chat\n- `onCall`: Phone support","x":-50,"y":2340,"width":300,"height":120,"color":"4"},
+		{"id":"faq-detail","type":"file","file":"flows/profile/09-faq-detail.png","x":500,"y":1800,"width":154,"height":500},
+		{"id":"faq-detail-ui","type":"text","text":"**UI Events:**\n- `onHelpful`: Mark as helpful\n- `onContactSupport`: Still need help\n- `onBack`: Return to FAQs","x":450,"y":2340,"width":300,"height":100,"color":"4"},
+		{"id":"contact-us","type":"file","file":"flows/profile/10-contact-us.png","x":1000,"y":1800,"width":200,"height":500},
+		{"id":"contact-us-kafka","type":"text","text":"**Kafka Events:**\n- `onSubmit` → `support.ticket_created`\n  - Support queue, Notifications, SLA tracking","x":950,"y":2340,"width":360,"height":80,"color":"5"},
+		{"id":"contact-us-ui","type":"text","text":"**UI Events:**\n- `onCategorySelect`: Choose topic\n- `onMessageInput`: Type message\n- `onAttach`: Add attachment","x":950,"y":2440,"width":300,"height":100,"color":"4"},
+		{"id":"support-ticket","type":"file","file":"flows/profile/11-support-ticket.png","x":1500,"y":1800,"width":175,"height":500},
+		{"id":"support-ticket-kafka","type":"text","text":"**Kafka Events:**\n- `onReply` → `support.ticket_replied`\n  - Agent notification, SLA update\n- `onClose` → `support.ticket_closed`\n  - CSAT survey, Analytics\n- `onEscalate` → `support.ticket_escalated`\n  - Priority queue, Manager alert","x":1450,"y":2340,"width":360,"height":160,"color":"5"},
+		{"id":"profile-ui","type":"text","text":"**UI Events:**\n- `onEditProfile`: Edit profile info\n- `onSettings`: Open settings\n- `onSupport`: Get help","x":136,"y":680,"width":280,"height":100,"color":"4"},
+		{"id":"settings","type":"file","file":"flows/profile/04-settings.png","x":-220,"y":720,"width":172,"height":500},
+		{"id":"settings-kafka","type":"text","text":"**Kafka Events:**\n- `onDeleteAccount` → `user.account_deleted`\n  - GDPR compliance, Data cleanup, Notifications","x":-500,"y":1320,"width":380,"height":100,"color":"1"},
+		{"id":"settings-ui","type":"text","text":"**UI Events:**\n- `onPersonalInfo`: View/edit personal\n- `onLinkedAccounts`: Manage OAuth\n- `onNotifications`: Notification prefs\n- `onLanguage`: Change language\n- `onPrivacy`: Privacy settings","x":-760,"y":680,"width":400,"height":220,"color":"4"},
+		{"id":"personal-info","type":"file","file":"flows/profile/05-personal-info.png","x":530,"y":780,"width":221,"height":500},
+		{"id":"edit-profile-1","type":"file","file":"flows/profile/02-edit-profile-1.png","x":700,"y":-80,"width":221,"height":500},
+		{"id":"edit-profile-1-ui","type":"text","text":"**UI Events:**\n- `onNameChange`: Edit name\n- `onBioChange`: Edit bio","x":1000,"y":0,"width":280,"height":80,"color":"4"},
+		{"id":"edit-profile-1-kafka","type":"text","text":"**Kafka Events:**\n- `onSave` → `user.profile_updated`\n  - Sync services, Analytics\n- `onChangePhoto` → `user.avatar_updated`\n  - CDN, Cache invalidation","x":1000,"y":200,"width":360,"height":220,"color":"5"},
+		{"id":"linked-accounts","type":"file","file":"flows/profile/06-linked-accounts.png","x":-581,"y":-220,"width":221,"height":500},
+		{"id":"linked-accounts-kafka","type":"text","text":"**Kafka Events:**\n- `onLinkGoogle` → `user.account_linked`\n  - OAuth sync, Security audit\n- `onLinkApple` → `user.account_linked`\n  - OAuth sync, Security audit\n- `onUnlink` → `user.account_unlinked`\n  - OAuth cleanup, Security audit","x":-650,"y":390,"width":360,"height":160,"color":"5"},
+		{"id":"profile-kafka","type":"text","text":"**Kafka Events:**\n- `onLogout` → `user.logged_out`\n  - Session invalidation, Analytics\n- `onSwitchRole` → `user.role_switched`\n  - Dashboard context switch","x":340,"y":500,"width":380,"height":180,"color":"5"}
+	],
+	"edges":[
+		{"id":"profile-to-edit1","fromNode":"profile","fromSide":"top","toNode":"edit-profile-1","toSide":"left","color":"4","label":"edit profile"},
+		{"id":"profile-to-settings","fromNode":"profile","fromSide":"bottom","toNode":"settings","toSide":"top","color":"3","label":"settings"},
+		{"id":"settings-to-linked","fromNode":"profile","fromSide":"left","toNode":"linked-accounts","toSide":"right","color":"4","label":"linked accounts"},
+		{"id":"settings-to-language","fromNode":"group","fromSide":"left","toNode":"language","toSide":"left","color":"4","label":"language"},
+		{"id":"profile-to-support","fromNode":"profile","fromSide":"bottom","toNode":"support","toSide":"top","color":"5","label":"support"},
+		{"id":"support-to-faq","fromNode":"support","fromSide":"right","toNode":"faq-detail","toSide":"left","color":"4","label":"view FAQ"},
+		{"id":"support-to-contact","fromNode":"support","fromSide":"right","toNode":"contact-us","toSide":"left","color":"4","label":"contact us"},
+		{"id":"contact-to-ticket","fromNode":"contact-us","fromSide":"right","toNode":"support-ticket","toSide":"left","color":"5","label":"ticket created"},
+		{"id":"profile-kafka-edge","fromNode":"profile-kafka","fromSide":"left","toNode":"profile","toSide":"bottom"},
+		{"id":"profile-ui-edge","fromNode":"profile-ui","fromSide":"top","toNode":"profile","toSide":"bottom"},
+		{"id":"edit-profile-1-kafka-edge","fromNode":"edit-profile-1-kafka","fromSide":"left","toNode":"edit-profile-1","toSide":"right"},
+		{"id":"settings-kafka-edge","fromNode":"settings-kafka","fromSide":"top","toNode":"settings","toSide":"bottom"},
+		{"id":"settings-ui-edge","fromNode":"settings-ui","fromSide":"top","toNode":"settings","toSide":"left"},
+		{"id":"personal-info-kafka-edge","fromNode":"personal-info-kafka","fromSide":"top","toNode":"personal-info","toSide":"bottom"},
+		{"id":"linked-accounts-kafka-edge","fromNode":"linked-accounts-kafka","fromSide":"top","toNode":"linked-accounts","toSide":"bottom"},
+		{"id":"language-kafka-edge","fromNode":"language-kafka","fromSide":"top","toNode":"language","toSide":"bottom"},
+		{"id":"contact-us-kafka-edge","fromNode":"contact-us-kafka","fromSide":"top","toNode":"contact-us","toSide":"bottom"},
+		{"id":"support-ticket-kafka-edge","fromNode":"support-ticket-kafka","fromSide":"top","toNode":"support-ticket","toSide":"bottom"},
+		{"id":"012dc7d79cd797b4","fromNode":"edit-profile-1-ui","fromSide":"left","toNode":"edit-profile-1","toSide":"right"}
+	]
 }

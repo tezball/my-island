@@ -13,15 +13,15 @@
             "state": {
               "type": "canvas",
               "state": {
-                "file": "flows/auth/auth-flow.canvas",
+                "file": "flows/reviews/reviews-flow.canvas",
                 "viewState": {
-                  "x": 870,
-                  "y": 735,
-                  "zoom": -1.0320103949026211
+                  "x": -391.8929226038775,
+                  "y": 126.44989074409023,
+                  "zoom": -0.6000000000000001
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "auth-flow"
+              "title": "reviews-flow"
             }
           }
         ]
@@ -188,27 +188,29 @@
   },
   "active": "2ecbb185a6359afd",
   "lastOpenFiles": [
-    "flows/booking/booking-flow.canvas",
     "flows/auth/auth-flow.canvas",
     "flows/my-bookings/my-bookings-flow.canvas",
-    "flows/owner-admin/owner-admin-flow.canvas.tmp.42481.1767032591227",
-    "flows/profile/profile-flow.canvas.tmp.42481.1767032585713",
-    "flows/reviews/reviews-flow.canvas.tmp.42481.1767032477351",
-    "flows/errors/errors-flow.canvas.tmp.42481.1767032471980",
-    "flows/offers/offers-flow.canvas.tmp.42481.1767032466683",
-    "flows/my-bookings/my-bookings-flow.canvas.tmp.42481.1767032386627",
-    "flows/notifications/notifications-flow.canvas.tmp.42481.1767032381268",
-    "flows/favorites/favorites-flow.canvas.tmp.42481.1767032376025",
-    "flows/onboarding/onboarding-flow.canvas.tmp.42481.1767032275040",
-    "flows/discovery/discovery-flow.canvas.tmp.42481.1767032269304",
-    "flows/reviews/reviews-flow.canvas",
-    "flows/auth/README.md",
-    "flows/owner-admin/owner-admin-flow.canvas",
-    "flows/profile/profile-flow.canvas",
-    "flows/errors/errors-flow.canvas",
-    "flows/offers/offers-flow.canvas",
-    "flows/notifications/notifications-flow.canvas",
     "flows/favorites/favorites-flow.canvas",
+    "flows/errors/errors-flow.canvas",
+    "flows/discovery/discovery-flow.canvas",
+    "flows/auth/README.md",
+    "user-flows.canvas",
+    "flows/user-flows.md",
+    "flows/reviews/reviews-flow.canvas",
+    "flows/profile/profile-flow.canvas",
+    "flows/booking/booking-flow.canvas",
+    "flows/onboarding/onboarding-flow.canvas.tmp.6206.1767179013869",
+    "flows/owner-admin/owner-admin-flow.canvas.tmp.6206.1767179012816",
+    "flows/profile/profile-flow.canvas.tmp.6206.1767179012324",
+    "flows/reviews/reviews-flow.canvas.tmp.6206.1767178874457",
+    "flows/errors/errors-flow.canvas.tmp.6206.1767178874053",
+    "flows/offers/offers-flow.canvas.tmp.6206.1767178873829",
+    "flows/notifications/notifications-flow.canvas.tmp.6206.1767178805912",
+    "flows/favorites/favorites-flow.canvas.tmp.6206.1767178805576",
+    "flows/my-bookings/my-bookings-flow.canvas.tmp.6206.1767178805371",
+    "flows/booking/booking-flow.canvas.tmp.6206.1767178694141",
+    "flows/owner-admin/owner-admin-flow.canvas",
+    "flows/offers/offers-flow.canvas",
     "MVP_ROADMAP.md",
     "flows/reviews/README.md",
     "flows/missing-screens.md",
@@ -218,7 +220,6 @@
     "flows/favorites/README.md",
     "flows/errors/README.md",
     "flows/booking/README.md",
-    "flows/user-flows.md",
     "flows/notifications/README.md",
     "flows/owner-admin/23-property-overview-5.png",
     "flows/owner-admin/22-property-overview-4.png",
