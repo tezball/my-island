@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verify Email - Link Expired</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1c2e24",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<div class="relative flex h-full min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden font-display transition-colors duration-200">
+<!-- TopAppBar -->
+<div class="flex items-center p-4 pb-2 justify-between">
+<button class="text-slate-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full flex size-12 shrink-0 items-center justify-center transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back</span>
+</button>
+</div>
+<!-- Main Content Area -->
+<div class="flex flex-1 flex-col items-center justify-center px-6 py-6 mt-[-40px]"> <!-- Negative margin to visually center better accounting for top bar -->
+<div class="flex flex-col items-center gap-8 w-full max-w-md">
+<!-- Icon Illustration -->
+<div class="relative flex items-center justify-center">
+<!-- Decorative background blob -->
+<div class="absolute w-32 h-32 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
+<!-- Icon Container -->
+<div class="relative flex items-center justify-center w-24 h-24 bg-surface-light dark:bg-surface-dark rounded-full shadow-sm ring-1 ring-black/5 dark:ring-white/10" data-alt="Icon indicating time has run out">
+<span class="material-symbols-outlined text-primary" style="font-size: 48px;">timer_off</span>
+</div>
+</div>
+<!-- Text Content -->
+<div class="flex flex-col items-center gap-3 text-center">
+<h1 class="text-slate-900 dark:text-white text-2xl md:text-3xl font-bold leading-tight tracking-tight">
+                        Link Expired
+                    </h1>
+<p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-relaxed max-w-xs">
+                        The verification link you clicked is no longer valid. To protect your account, links expire after 24 hours.
+                    </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col w-full gap-3 mt-4">
+<!-- Primary Button -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary hover:bg-primary/90 transition-colors text-slate-900 text-base font-bold leading-normal tracking-[0.015em] shadow-sm shadow-primary/20">
+<span class="truncate">Resend Verification Email</span>
+</button>
+<!-- Secondary Button -->
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-4 bg-transparent hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-slate-600 dark:text-slate-300 text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Return to Login</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Spacer if needed -->
+<div class="h-5"></div>
+</div>
+</body></html>

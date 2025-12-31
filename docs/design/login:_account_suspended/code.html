@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account Suspended - my-island</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-dark": "#0ea659", // Darker shade for text on primary
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a3328",
+                        "text-main-light": "#111814",
+                        "text-main-dark": "#e0e7e3",
+                        "text-muted-light": "#5f7168",
+                        "text-muted-dark": "#9aaead",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+                    backgroundImage: {
+                      'nature-pattern': "url('https://placeholder.pics/svg/300')", // Placeholder for a subtle pattern
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for the subtle background pattern */
+        .bg-pattern {
+            background-color: transparent;
+            background-image: radial-gradient(#13ec80 0.5px, transparent 0.5px), radial-gradient(#13ec80 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            opacity: 0.05;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased h-screen w-full overflow-hidden flex flex-col relative selection:bg-primary selection:text-black">
+<!-- Background Pattern Layer -->
+<div class="absolute inset-0 z-0 bg-pattern pointer-events-none"></div>
+<!-- Main Container -->
+<div class="relative z-10 flex flex-col h-full w-full max-w-md mx-auto p-6">
+<!-- Top Navigation / Header (Minimal) -->
+<div class="flex justify-center items-center py-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl">landscape</span>
+<span class="text-lg font-bold text-text-main-light dark:text-text-main-dark tracking-tight">my-island</span>
+</div>
+</div>
+<!-- Central Content Area -->
+<div class="flex-1 flex flex-col justify-center items-center gap-8 w-full">
+<!-- Illustration / Icon Area -->
+<div class="relative group">
+<!-- Decorative blurred glow behind the icon -->
+<div class="absolute -inset-4 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/30 transition-all duration-500"></div>
+<div class="relative bg-surface-light dark:bg-surface-dark p-8 rounded-full shadow-lg border border-primary/10">
+<span class="material-symbols-outlined text-6xl text-primary block text-center" style="font-variation-settings: 'FILL' 0, 'wght' 300;">
+                        gpp_bad
+                    </span>
+</div>
+</div>
+<!-- Text Content -->
+<div class="flex flex-col items-center gap-3 text-center max-w-[320px]">
+<h1 class="text-text-main-light dark:text-text-main-dark text-2xl font-bold leading-tight tracking-[-0.015em]">
+                    Account Suspended
+                </h1>
+<p class="text-text-muted-light dark:text-text-muted-dark text-sm font-normal leading-relaxed">
+                    Your account has been suspended due to a violation of our terms. Please contact our support team for more details regarding this action.
+                </p>
+</div>
+<!-- Additional Details Card (Optional - adds context without clutter) -->
+<div class="w-full bg-surface-light dark:bg-surface-dark rounded-xl p-4 border border-gray-100 dark:border-gray-800 shadow-sm flex items-start gap-3">
+<span class="material-symbols-outlined text-orange-400 mt-0.5 shrink-0 text-xl">info</span>
+<div class="flex flex-col gap-1">
+<span class="text-xs font-bold text-text-main-light dark:text-text-main-dark uppercase tracking-wider">Status Code</span>
+<span class="text-xs text-text-muted-light dark:text-text-muted-dark">ERR-SUS-403: Supplier Verification Failed</span>
+</div>
+</div>
+</div>
+<!-- Bottom Action Area -->
+<div class="flex flex-col gap-4 mt-auto pb-8 w-full">
+<!-- Primary Action -->
+<button class="group w-full cursor-pointer flex items-center justify-center gap-2 overflow-hidden rounded-xl h-14 px-6 bg-primary hover:bg-primary-dark transition-colors duration-200 text-[#102219] text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span>Contact Support</span>
+</button>
+<!-- Secondary Action -->
+<button class="w-full cursor-pointer flex items-center justify-center rounded-xl h-12 px-6 bg-transparent text-text-muted-light dark:text-text-muted-dark hover:text-text-main-light dark:hover:text-text-main-dark hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-200 text-sm font-medium">
+                Back to Login
+            </button>
+<p class="text-center text-xs text-text-muted-light/60 dark:text-text-muted-dark/40 mt-2">
+                © 2024 my-island Inc.
+            </p>
+</div>
+</div>
+</body></html>

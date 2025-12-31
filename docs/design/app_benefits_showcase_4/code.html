@@ -3,7 +3,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>My-Island App Onboarding</title>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -19,7 +19,8 @@
                         "text-secondary": "#63886f",
                     },
                     fontFamily: {
-                        "display": ["Rubik", "sans-serif"]
+                        // Changed font family to Inter
+                        "sans": ["Inter", "sans-serif"]
                     },
                     borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
                 },
@@ -36,8 +37,13 @@
       min-height: max(884px, 100dvh);
     }
   </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
   </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200">
+<body class="bg-background-light dark:bg-background-dark font-sans text-text-main dark:text-white transition-colors duration-200">
 <div class="relative flex h-screen max-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-white dark:bg-[#112116]">
 <div class="flex items-center p-6 pb-2 justify-end z-10">
 <button class="flex items-center justify-end hover:opacity-70 active:scale-95 transition-all">

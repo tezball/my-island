@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Read Reviews for Emerald Bay</title>
+<title>Campsite Detail Screen</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
       tailwind.config = {
@@ -41,233 +43,220 @@
     body {
       min-height: max(884px, 100dvh);
     }
-</style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
   </style>
   </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-gray-100 antialiased selection:bg-primary selection:text-black pb-10">
-<nav class="sticky top-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
-<button class="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-text-main dark:text-white">
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-gray-100 antialiased selection:bg-primary selection:text-black pb-24">
+<!-- Top Navigation Overlay -->
+<nav class="absolute top-0 left-0 w-full z-20 p-4 pt-8 flex items-center justify-between pointer-events-none">
+<button class="pointer-events-auto flex items-center justify-center size-10 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors border border-white/10">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </button>
-<div class="flex flex-col items-center">
-<h1 class="text-base font-bold text-text-main dark:text-white leading-tight">Emerald Bay Camping</h1>
-<span class="text-[10px] text-text-sub font-medium tracking-wide uppercase">Reviews</span>
-</div>
-<button class="flex items-center justify-center size-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-text-main dark:text-white">
-<span class="material-symbols-outlined text-[24px]">search</span>
+<button class="pointer-events-auto flex items-center justify-center size-10 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-colors border border-white/10 group">
+<span class="material-symbols-outlined text-[24px] group-active:scale-90 transition-transform">favorite</span>
 </button>
 </nav>
-<main class="max-w-md mx-auto w-full">
-<section class="px-5 py-6 border-b border-gray-100 dark:border-gray-800/50">
-<div class="flex items-center gap-6">
-<div class="flex flex-col items-center justify-center">
-<span class="text-6xl font-black text-text-main dark:text-white tracking-tighter">4.8</span>
-<div class="flex text-primary my-1.5 gap-0.5">
+<!-- Hero Image -->
+<header class="relative w-full h-[45vh] min-h-[350px]">
+<div class="absolute inset-0 w-full h-full bg-cover bg-center" data-alt="Camping tent set up in a lush green forest clearing near water" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDyntAwmP-xLT8awb4k9qhlo9qsfE1XSar9_Fz9-nKD2ZI2Ry_XWZZQ72AgamePAsu8PEtjjy194hGLuAhvu66YNfaQjFX_auRySBglooKu4_gFmO5gwIddYE4y86JXUF_8CX_0wWESdmPx2_Gaej31r-D_wJt0P8VXwJOxwyZ_o0LUuX0j0s6QY2JunQQggP4BNEKFg4fyxK8s5HWLccXAq-ifC7TES0i03x_9pfUl4OuBeI3SsT8gk9-pYhr6epcMcnROqrd0Zg');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60"></div>
+<!-- Hero Text -->
+<div class="absolute bottom-10 left-0 w-full px-5 z-10">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-primary text-background-dark mb-3 uppercase tracking-wider">
+                Superhost
+            </span>
+<h1 class="text-3xl font-bold text-white leading-tight drop-shadow-md mb-1">Emerald Bay Camping</h1>
+<div class="flex items-center gap-2 text-white/90 text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span>Vancouver Island, BC</span>
+</div>
+</div>
+</header>
+<!-- Content Sheet -->
+<main class="relative z-10 -mt-6 rounded-t-[32px] bg-background-light dark:bg-background-dark w-full flex flex-col overflow-hidden shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+<!-- Drag Handle Indicator -->
+<div class="w-full flex justify-center pt-3 pb-1">
+<div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+</div>
+<!-- Rating Section -->
+<div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800/50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-3xl font-black text-text-main dark:text-white">4.8</span>
+<div class="flex flex-col">
+<div class="flex text-primary text-sm">
 <span class="material-symbols-outlined text-[18px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined text-[18px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined text-[18px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined text-[18px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
 <span class="material-symbols-outlined text-[18px] fill-current" style="font-variation-settings: 'FILL' 1;">star_half</span>
 </div>
-<span class="text-xs text-text-sub dark:text-gray-400 font-medium">120 Reviews</span>
-</div>
-<div class="flex-1 flex flex-col gap-1.5 pt-1">
-<div class="flex items-center gap-3 text-xs">
-<span class="font-bold w-3 text-text-main dark:text-gray-300">5</span>
-<div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[85%] rounded-full"></div>
+<a class="text-xs text-text-sub dark:text-gray-400 font-medium underline decoration-text-sub/30" href="#">See all 120 reviews</a>
 </div>
 </div>
-<div class="flex items-center gap-3 text-xs">
-<span class="font-bold w-3 text-text-main dark:text-gray-300">4</span>
-<div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[10%] rounded-full"></div>
-</div>
-</div>
-<div class="flex items-center gap-3 text-xs">
-<span class="font-bold w-3 text-text-main dark:text-gray-300">3</span>
-<div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[3%] rounded-full"></div>
-</div>
-</div>
-<div class="flex items-center gap-3 text-xs">
-<span class="font-bold w-3 text-text-main dark:text-gray-300">2</span>
-<div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[1%] rounded-full"></div>
-</div>
-</div>
-<div class="flex items-center gap-3 text-xs">
-<span class="font-bold w-3 text-text-main dark:text-gray-300">1</span>
-<div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-<div class="h-full bg-gray-300 dark:bg-gray-700 w-[1%] rounded-full"></div>
+<div class="flex flex-col items-end">
+<span class="text-text-sub dark:text-gray-400 text-xs font-medium uppercase tracking-wide">Price per night</span>
+<span class="text-xl font-bold text-primary">$45.00</span>
 </div>
 </div>
 </div>
-</div>
-</section>
-<section class="sticky top-[65px] z-30 bg-background-light dark:bg-background-dark py-4 border-b border-gray-100 dark:border-gray-800 shadow-sm">
-<div class="flex overflow-x-auto gap-3 px-5 no-scrollbar snap-x">
-<button class="snap-start flex-shrink-0 px-5 py-2 rounded-full bg-text-main text-white text-sm font-bold border border-transparent shadow-md">
-                    All Reviews
-                </button>
-<button class="snap-start flex-shrink-0 px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-text-main dark:text-gray-200 text-sm font-medium border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-colors">
-                    5 Stars <span class="text-text-sub dark:text-gray-500 ml-1 text-xs">(98)</span>
-</button>
-<button class="snap-start flex-shrink-0 px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-text-main dark:text-gray-200 text-sm font-medium border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-colors">
-                    With Photos
-                </button>
-<button class="snap-start flex-shrink-0 px-5 py-2 rounded-full bg-white dark:bg-gray-800 text-text-main dark:text-gray-200 text-sm font-medium border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-colors">
-                    Lowest
-                </button>
-</div>
-</section>
-<section class="p-5 flex flex-col gap-6">
-<article class="flex flex-col gap-3">
-<div class="flex justify-between items-start">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-primary-dark dark:text-primary font-bold shadow-sm">
-                            JD
-                        </div>
+<!-- Local Suppliers Section -->
+<div class="py-6">
+<div class="px-5 mb-4 flex justify-between items-end">
 <div>
-<h3 class="font-bold text-sm text-text-main dark:text-white">Jane Doe</h3>
-<span class="text-xs text-text-sub dark:text-gray-500">2 days ago</span>
+<h2 class="text-lg font-bold text-text-main dark:text-white">Local Suppliers</h2>
+<p class="text-sm text-text-sub dark:text-gray-400">Support local &amp; get exclusive deals</p>
 </div>
+<button class="text-xs font-bold text-primary hover:text-primary-dark transition-colors">View All</button>
 </div>
-<button class="text-gray-400 hover:text-text-main dark:hover:text-white transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_horiz</span>
-</button>
-</div>
-<div class="flex text-primary gap-0.5">
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="text-sm text-text-main dark:text-gray-300 leading-relaxed font-body">
-                    Absolutely stunning location! The trees provide great shade, and the beach is just a short walk away. The facilities were cleaner than I expected. Will definitely come back next summer.
-                </p>
-<div class="flex items-center gap-4 mt-1 border-b border-gray-100 dark:border-gray-800/50 pb-5">
-<button class="flex items-center gap-1.5 text-xs font-bold text-text-sub hover:text-primary transition-colors py-1 px-2 rounded hover:bg-emerald-50 dark:hover:bg-emerald-900/20 -ml-2">
-<span class="material-symbols-outlined text-[18px]">thumb_up</span>
-                        Helpful (12)
-                   </button>
-</div>
-</article>
-<article class="flex flex-col gap-3">
-<div class="flex justify-between items-start">
+<div class="flex overflow-x-auto gap-4 px-5 pb-4 no-scrollbar snap-x snap-mandatory">
+<!-- Supplier Card 1 -->
+<div class="snap-start shrink-0 w-64 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col gap-3">
 <div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center overflow-hidden shadow-sm">
-<img alt="Mike" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA-NLWRo_m3Vg6eCJ3vESg3pEAhVnOmKlWEISl53FFlvSGwxhL7mS3DsS_qi1tEz4tGQrJ81vxe7JpWEb8NqgpBFr5uI7kMKasn7z97BJJY8VnLPUk-I27kkkGp4-3NdtEQrScpQiRQckbncTgdJa4C9lURcAHw6PmimFGu15GghPH-G0sjciL91J-esAcsQRTWuyDUiYfWmiFsWXxJnfzqFUntaVcyZwXrB9pkxD9FsRbk6sd8PILbLd2qE1byuIOC0W2yl5ICA"/>
+<div class="size-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
 </div>
 <div>
-<h3 class="font-bold text-sm text-text-main dark:text-white">Mike K.</h3>
-<span class="text-xs text-text-sub dark:text-gray-500">1 week ago</span>
+<h3 class="font-bold text-sm text-text-main dark:text-white leading-tight">Joe's Organic Butcher</h3>
+<span class="text-[10px] text-text-sub dark:text-gray-400 font-medium">2.3km away</span>
 </div>
 </div>
-<button class="text-gray-400 hover:text-text-main dark:hover:text-white transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_horiz</span>
-</button>
+<div class="flex items-center justify-between pt-2 border-t border-gray-50 dark:border-gray-700">
+<span class="text-xs font-medium text-text-sub dark:text-gray-400">Alerts</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
 </div>
-<div class="flex text-primary gap-0.5">
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] text-gray-200 dark:text-gray-700" style="font-variation-settings: 'FILL' 1;">star</span>
 </div>
-<p class="text-sm text-text-main dark:text-gray-300 leading-relaxed font-body">
-                    Great spot for families. The kids loved the nearby trails. Only giving 4 stars because the WiFi was a bit spotty near the far end of the camp, but honestly, it was good to disconnect!
-                </p>
-<div class="flex gap-2.5 overflow-hidden mt-1">
-<div class="w-28 h-20 bg-gray-200 dark:bg-gray-700 rounded-xl bg-cover bg-center shadow-sm" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCWSzX1d9CWHFh4qW1yBwOIF1A8bZuMGaEeOAB5nWE_1mgWuAGklg4hnvBxyO6TJGzachAr8z10_rXDMZkrPVDOOLNmof3LbrY_zL2NBpt1YB9sfSyFDEHsT0MPdTG5V5nlFsHJgsOMd6PDcY0aa-7Wb60_aPVu7kVPmM1Bohorous5KVzn8ijrnBz8ZX9t8fFP2SOrorrs6sNPbSEVr58f3DMUJJ8AcngGTi3LrKJHDz147W-pVOuvn6pzDuRUeN0x0wBc06ucwg');"></div>
-<div class="w-28 h-20 bg-gray-200 dark:bg-gray-700 rounded-xl bg-cover bg-center shadow-sm" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCQuh9sTrE683ejL5vdJEH0G9XW7m1qiN52Wfztmu-cnzajOVbithKvgf6FB_BeEUaccHTMRe9-T_OE3iFXoIS05GhkxH4P8uNEUpOLGMIoYe7edf4VFlbJMuvj2-tsOJy_teo2S_HTC3kNMLaZyunuSQRsr1lLeNg2IASnOxrcQFVsr5-wdB5_Xe-IA78L_pzRY8n1OoYyhKFQDZLUyudh_PZOS31ADTMTs3zei2w-7UtDXax6Ny843yxNtpqqzBOLrf4cyW2cFQ');"></div>
-</div>
-<div class="flex items-center gap-4 mt-1 border-b border-gray-100 dark:border-gray-800/50 pb-5">
-<button class="flex items-center gap-1.5 text-xs font-bold text-text-sub hover:text-primary transition-colors py-1 px-2 rounded hover:bg-emerald-50 dark:hover:bg-emerald-900/20 -ml-2">
-<span class="material-symbols-outlined text-[18px]">thumb_up</span>
-                        Helpful (5)
-                   </button>
-</div>
-</article>
-<article class="flex flex-col gap-3">
-<div class="flex justify-between items-start">
+<!-- Supplier Card 2 -->
+<div class="snap-start shrink-0 w-64 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col gap-3">
 <div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 font-bold shadow-sm">
-                            S
-                        </div>
-<div>
-<h3 class="font-bold text-sm text-text-main dark:text-white">Sarah Jenkins</h3>
-<span class="text-xs text-text-sub dark:text-gray-500">2 weeks ago</span>
-</div>
-</div>
-<button class="text-gray-400 hover:text-text-main dark:hover:text-white transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_horiz</span>
-</button>
-</div>
-<div class="flex text-primary gap-0.5">
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="text-sm text-text-main dark:text-gray-300 leading-relaxed font-body">
-                    We booked a last-minute weekend here and it was perfect. The staff is super friendly (shoutout to Dave!). The local butcher nearby has amazing sausages for the grill. 
-                </p>
-<div class="flex items-center gap-4 mt-1 border-b border-gray-100 dark:border-gray-800/50 pb-5">
-<button class="flex items-center gap-1.5 text-xs font-bold text-text-sub hover:text-primary transition-colors py-1 px-2 rounded hover:bg-emerald-50 dark:hover:bg-emerald-900/20 -ml-2">
-<span class="material-symbols-outlined text-[18px]">thumb_up</span>
-                        Helpful (24)
-                   </button>
-</div>
-</article>
-<article class="flex flex-col gap-3">
-<div class="flex justify-between items-start">
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center overflow-hidden shadow-sm">
-<img alt="Alex" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS8mvwaj-SkSlQFntxnXue82NYY3PQcTP-ozI87ow114RWH3AVgKpalYMeoAjm2jNxiWUYjv19vas2Ar180cpUbQvsgTx4vYxUcILS3JtYBEbwU11yqY0lRMvFd11HdCc611o0VFXV4K1e--rDSNwD9kAV21qurU1mt36XoI8ZVh0zxMycbTlODUHu7l3FIATXHron6Kz56ahWp8gLskcIHfHvz9BTVzlsKyIlNNjv1NtyLEIFKgzKlj8lM4HSA0umEQT7ZbwHcg"/>
+<div class="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined text-[20px]">camping</span>
 </div>
 <div>
-<h3 class="font-bold text-sm text-text-main dark:text-white">Alex T.</h3>
-<span class="text-xs text-text-sub dark:text-gray-500">1 month ago</span>
+<h3 class="font-bold text-sm text-text-main dark:text-white leading-tight">Island Trekking Gear</h3>
+<span class="text-[10px] text-text-sub dark:text-gray-400 font-medium">5.1km away</span>
 </div>
 </div>
-<button class="text-gray-400 hover:text-text-main dark:hover:text-white transition-colors">
-<span class="material-symbols-outlined text-[20px]">more_horiz</span>
-</button>
+<div class="flex items-center justify-between pt-2 border-t border-gray-50 dark:border-gray-700">
+<span class="text-xs font-medium text-text-sub dark:text-gray-400">Alerts</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
 </div>
-<div class="flex text-primary gap-0.5">
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] fill-current" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] text-gray-200 dark:text-gray-700" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined text-[16px] text-gray-200 dark:text-gray-700" style="font-variation-settings: 'FILL' 1;">star</span>
 </div>
-<p class="text-sm text-text-main dark:text-gray-300 leading-relaxed font-body">
-                    It was okay. A bit crowded for my taste during the long weekend. Facilities were busy.
+<!-- Supplier Card 3 -->
+<div class="snap-start shrink-0 w-64 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col gap-3">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+<span class="material-symbols-outlined text-[20px]">set_meal</span>
+</div>
+<div>
+<h3 class="font-bold text-sm text-text-main dark:text-white leading-tight">Fresh Catch Seafood</h3>
+<span class="text-[10px] text-text-sub dark:text-gray-400 font-medium">0.8km away</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-gray-50 dark:border-gray-700">
+<span class="text-xs font-medium text-text-sub dark:text-gray-400">Alerts</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Facilities Grid -->
+<div class="px-5 mb-8">
+<h2 class="text-lg font-bold text-text-main dark:text-white mb-4">Campsite Facilities</h2>
+<div class="grid grid-cols-4 gap-4">
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">wifi</span>
+</div>
+<span class="text-xs font-medium text-text-main dark:text-gray-300 text-center">Free WiFi</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">shower</span>
+</div>
+<span class="text-xs font-medium text-text-main dark:text-gray-300 text-center">Showers</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">pets</span>
+</div>
+<span class="text-xs font-medium text-text-main dark:text-gray-300 text-center">Pets OK</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">power</span>
+</div>
+<span class="text-xs font-medium text-text-main dark:text-gray-300 text-center">Hookup</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
+<span class="material-symbols-outlined text-[24px]">local_laundry_service</span>
+</div>
+<span class="text-xs font-medium text-gray-400 dark:text-gray-500 text-center">Laundry</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">local_fire_department</span>
+</div>
+<span class="text-xs font-medium text-text-main dark:text-gray-300 text-center">Fire Pit</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center text-primary-dark dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">directions_car</span>
+</div>
+<span class="text-xs font-medium text-text-main dark:text-gray-300 text-center">Parking</span>
+</div>
+<!-- Facility Item -->
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-2xl bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center text-gray-400 dark:text-gray-600 border border-dashed border-gray-300 dark:border-gray-700">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+<span class="text-xs font-medium text-gray-400 dark:text-gray-500 text-center">More</span>
+</div>
+</div>
+</div>
+<!-- Description Section -->
+<div class="px-5 mb-24">
+<h2 class="text-lg font-bold text-text-main dark:text-white mb-2">About the Site</h2>
+<div class="relative">
+<p class="text-text-main/80 dark:text-gray-300 text-base leading-relaxed font-body">
+                    Experience the best of island life at Emerald Bay. Nestled between towering cedar trees and the pristine coastline, our campsite offers a tranquil escape for nature lovers. 
+                    <br/><br/>
+                    Just a 5-minute walk from the famous Sunset Beach, you'll have access to kayaking, hiking trails, and breathtaking views.
                 </p>
-<div class="flex items-center gap-4 mt-1 pb-2">
-<button class="flex items-center gap-1.5 text-xs font-bold text-text-sub hover:text-primary transition-colors py-1 px-2 rounded hover:bg-emerald-50 dark:hover:bg-emerald-900/20 -ml-2">
-<span class="material-symbols-outlined text-[18px]">thumb_up</span>
-                        Helpful (1)
-                   </button>
+<div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent"></div>
 </div>
-</article>
-</section>
-<div class="px-5 pb-16">
-<button class="w-full py-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-bold text-text-main dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 group">
-                Load More
-                <span class="material-symbols-outlined text-[18px] group-hover:translate-y-0.5 transition-transform">expand_more</span>
+<button class="mt-2 text-primary font-bold text-sm flex items-center gap-1">
+                Read more <span class="material-symbols-outlined text-sm">expand_more</span>
 </button>
 </div>
 </main>
-<button class="fixed bottom-6 right-6 size-14 bg-text-main dark:bg-primary text-white dark:text-text-main rounded-full shadow-lg shadow-black/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40 group">
-<span class="material-symbols-outlined text-[28px] group-hover:rotate-12 transition-transform">edit</span>
-</button>
-
+<!-- Sticky Bottom CTA -->
+<div class="fixed bottom-0 left-0 w-full bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-gray-200/50 dark:border-gray-700/50 p-4 pb-8 z-30">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-xs text-text-sub dark:text-gray-400 font-medium">Total for 3 nights</span>
+<span class="text-xl font-bold text-text-main dark:text-white">$135.00</span>
+</div>
+<button class="flex-1 bg-primary hover:bg-primary-dark text-text-main dark:text-black font-bold text-lg h-14 rounded-xl flex items-center justify-center shadow-[0_4px_14px_rgba(19,236,128,0.4)] transition-all active:scale-[0.98]">
+                Check Availability
+            </button>
+</div>
+</div>
 </body></html>

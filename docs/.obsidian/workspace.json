@@ -4,24 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "c3d6243cc690011a",
+        "id": "9f2a2f67219ac151",
         "type": "tabs",
         "children": [
           {
-            "id": "2ecbb185a6359afd",
+            "id": "2cd6ba3fd7738262",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
-                "file": "flows/reviews/reviews-flow.canvas",
+                "file": "flows/notifications/notifications-flow.canvas",
                 "viewState": {
-                  "x": -391.8929226038775,
-                  "y": 126.44989074409023,
-                  "zoom": -0.6000000000000001
+                  "x": 142.0671995196771,
+                  "y": 363.59061873107623,
+                  "zoom": 0.06564207945994871
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "reviews-flow"
+              "title": "notifications-flow"
             }
           }
         ]
@@ -81,7 +81,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 407.5
   },
   "right": {
     "id": "62f417dc1f6f45ad",
@@ -186,9 +186,31 @@
       "bases:Create new base": false
     }
   },
-  "active": "2ecbb185a6359afd",
+  "active": "2cd6ba3fd7738262",
   "lastOpenFiles": [
+    "flows/notifications/04-notification-settings.png",
+    "flows/notifications/03-notification-detail.png",
+    "flows/notifications/02-notifications-list.png",
+    "flows/notifications/01-notification-center.png",
     "flows/auth/auth-flow.canvas",
+    "design/welcome_to_my-island!/screen.png",
+    "design/welcome_to_my-island!/code.html",
+    "design/welcome_to_my-island!",
+    "design/welcome_to_my-island/screen.png",
+    "design/welcome_to_my-island/code.html",
+    "design/welcome_to_my-island",
+    "design/verify_your_email/screen.png",
+    "design/verify_your_email/code.html",
+    "design/verify_your_email",
+    "design/verify_email:_link_expired/screen.png",
+    "design/verify_email:_link_expired/code.html",
+    "design/verify_email:_link_expired",
+    "design/user_profile_screen/screen.png",
+    "design/user_profile_screen/code.html",
+    "design/user_profile_screen",
+    "design/support_ticket_conversation/screen.png",
+    "design/support_page/screen.png",
+    "flows/reviews/reviews-flow.canvas",
     "flows/my-bookings/my-bookings-flow.canvas",
     "flows/favorites/favorites-flow.canvas",
     "flows/errors/errors-flow.canvas",
@@ -196,38 +218,16 @@
     "flows/auth/README.md",
     "user-flows.canvas",
     "flows/user-flows.md",
-    "flows/reviews/reviews-flow.canvas",
     "flows/profile/profile-flow.canvas",
     "flows/booking/booking-flow.canvas",
-    "flows/onboarding/onboarding-flow.canvas.tmp.6206.1767179013869",
-    "flows/owner-admin/owner-admin-flow.canvas.tmp.6206.1767179012816",
-    "flows/profile/profile-flow.canvas.tmp.6206.1767179012324",
-    "flows/reviews/reviews-flow.canvas.tmp.6206.1767178874457",
-    "flows/errors/errors-flow.canvas.tmp.6206.1767178874053",
-    "flows/offers/offers-flow.canvas.tmp.6206.1767178873829",
-    "flows/notifications/notifications-flow.canvas.tmp.6206.1767178805912",
-    "flows/favorites/favorites-flow.canvas.tmp.6206.1767178805576",
-    "flows/my-bookings/my-bookings-flow.canvas.tmp.6206.1767178805371",
-    "flows/booking/booking-flow.canvas.tmp.6206.1767178694141",
     "flows/owner-admin/owner-admin-flow.canvas",
-    "flows/offers/offers-flow.canvas",
     "MVP_ROADMAP.md",
     "flows/reviews/README.md",
     "flows/missing-screens.md",
-    "flows/my-bookings/08-check-in-instructions.png",
-    "flows/my-bookings/07-cancellation-success.png",
-    "flows/favorites/01-favorites.png",
     "flows/favorites/README.md",
     "flows/errors/README.md",
     "flows/booking/README.md",
     "flows/notifications/README.md",
-    "flows/owner-admin/23-property-overview-5.png",
-    "flows/owner-admin/22-property-overview-4.png",
-    "flows/owner-admin/21-property-overview-3.png",
-    "flows/owner-admin/20-property-overview-2.png",
-    "flows/owner-admin/19-property-overview-1.png",
-    "flows/owner-admin/06b-edit-lot-individual.png",
-    "flows/owner-admin/18-create-ticket.png",
     "Design Snag List.md",
     "Missing Features Analysis.md",
     "flows/README.md",

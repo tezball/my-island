@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Not Found - my-island</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#152e22",
+                        "input-light": "#f0f4f2",
+                        "input-dark": "#1c3a2b",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#111814] dark:text-gray-100 font-display transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="flex items-center px-4 py-3 justify-between sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[#111814] dark:text-white">arrow_back</span>
+</button>
+<h2 class="text-[#111814] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Not Found</h2>
+<div class="w-10"></div> <!-- Spacer for visual balance -->
+</div>
+<!-- Main Content Area -->
+<div class="flex flex-1 flex-col items-center justify-center px-6 py-4 w-full max-w-md mx-auto">
+<!-- Illustration -->
+<div class="w-full mb-8 relative group">
+<div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full transform scale-75 translate-y-4"></div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-2xl w-full shadow-sm relative overflow-hidden" data-alt="Minimalist illustration of a camping tent in a foggy forest with emerald green tones" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCWA6gLtKvDd5ZCslv3ZznAyiX3YwPDL7YJxExkHbnG8a8iFCwmVlNh2IIVyhDuYLRNuiW34ZqUP1eTrAdgHKZPiWlRQETkJkDSc70K02ZqljE3pBke97p5HhmF37i7DdX5tkMSQg7xa-NIFTC305oJ3XPl2W36AIj2BhuxpxhXfiJezZpAfwvuyvayHQxHIg5yrEmWn5H6s-yx7h-L-nq6jRFlT-HgtTJ6JPZnQMbjNQ4XsqFHNXr1yhNzjF04fVQzBfo9wE7YAw");'>
+<div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent opacity-30"></div>
+</div>
+</div>
+<!-- Error Message -->
+<div class="flex flex-col items-center gap-3 mb-8 text-center">
+<h1 class="text-[#111814] dark:text-white text-3xl font-extrabold leading-tight tracking-tight">
+                    404 - Off the Map
+                </h1>
+<p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-relaxed max-w-[320px]">
+                    Looks like this spot hasn't been discovered yet. Let's get you back to civilization.
+                </p>
+</div>
+<!-- Search Bar -->
+<div class="w-full mb-6">
+<label class="flex flex-col w-full group">
+<div class="flex w-full items-center rounded-xl bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-800 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20 transition-all shadow-sm h-12 overflow-hidden">
+<div class="flex items-center justify-center pl-4 pr-2 text-gray-400 dark:text-gray-500">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="flex-1 bg-transparent border-none text-[#111814] dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:ring-0 text-sm font-medium h-full" placeholder="Search for campsites..." type="text" value=""/>
+</div>
+</label>
+</div>
+<!-- Primary Action -->
+<button class="w-full flex cursor-pointer items-center justify-center rounded-xl h-12 px-6 bg-primary hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/25">
+<span class="text-[#102219] text-base font-bold leading-normal tracking-[0.015em]">Return Home</span>
+</button>
+</div>
+<!-- Spacer for Bottom Nav -->
+<div class="h-4 w-full"></div>
+<!-- Bottom Navigation -->
+<div class="sticky bottom-0 w-full border-t border-[#f0f4f2] dark:border-white/5 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md pb-safe pt-2">
+<div class="flex justify-around items-center px-2 pb-2">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">map</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Map</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Alerts</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 p-2 rounded-xl text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Profile</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

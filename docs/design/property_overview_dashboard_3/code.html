@@ -2,7 +2,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Property Bookings List</title>
+<title>Manage Campsite Lots</title>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -45,34 +45,20 @@
 <style>
         body {
             font-family: 'Inter', sans-serif;
+            min-height: max(884px, 100dvh);
         }
         .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24
         }
         .material-symbols-outlined.filled {
-            font-variation-settings:
-            'FILL' 1,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24
         }
     </style>
 <style>
     body {
       min-height: max(884px, 100dvh);
     }
-    </style>
+  </style>
 <style>
     body {
       min-height: max(884px, 100dvh);
@@ -80,201 +66,147 @@
   </style>
   </head>
 <body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-200">
-<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-2xl">
-<header class="sticky top-0 z-30 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-border-light dark:border-border-dark px-4 py-3 shadow-sm">
-<div class="flex items-center justify-between">
-<button class="p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-text-main-light dark:text-text-main-dark">
-<span class="material-symbols-outlined">arrow_back_ios_new</span>
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-2xl">
+<div class="relative w-full h-56 shrink-0 rounded-b-[2rem] overflow-hidden group/hero">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCR4UpcTzh5mIREWUnqcL_hsDuj2X_VavbhCOLM8WFqI94BX-MOk8RHk2k34pRkF_V72BlNBq8W7dvxjSXIggPQtm8dY8SdiJgdl0cCQQpjWcG6XH9J7dN3mj6BkFYQqkXRKo0WhUvnuw0iinrgtJvOedMA0fDSz2iggYXqBipIdxSs5cBBDa3KfpOcp8xg---uM8OUErLOOhi3Zz9g8Gcc4ZaG95CAXbQV-daImUc1AJDhiRDrpF8qGPJ9dQmbsZyfstMM6Ml2ow");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/95 via-background-dark/40 to-black/30"></div>
+<header class="absolute top-0 w-full z-10 p-4 flex justify-between items-center text-white">
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-white">arrow_back_ios_new</span>
 </button>
-<div class="flex flex-col items-center">
-<span class="text-[10px] uppercase tracking-wider font-semibold text-text-sub-light dark:text-text-sub-dark">Sunny Valley Campsite</span>
-<h1 class="text-lg font-bold text-text-main-light dark:text-text-main-dark leading-none mt-0.5">Bookings List</h1>
-</div>
-<button class="p-2 -mr-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-text-main-light dark:text-text-main-dark">
-<span class="material-symbols-outlined">more_vert</span>
+<div class="flex gap-2">
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-white">tune</span>
+</button>
+<button class="p-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-white">search</span>
 </button>
 </div>
 </header>
-<main class="flex-1 px-4 pt-4 pb-28 space-y-5">
-<div class="relative group">
-<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-<span class="material-symbols-outlined text-text-sub-light group-focus-within:text-primary transition-colors">search</span>
+<div class="absolute bottom-0 w-full p-6 flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1 opacity-90">
+<span class="material-symbols-outlined text-primary text-lg">camping</span>
+<span class="text-xs font-semibold uppercase tracking-wider text-primary">Property Management</span>
 </div>
-<input class="block w-full pl-10 pr-3 py-3 rounded-xl border-none bg-surface-light dark:bg-surface-dark text-text-main-light dark:text-text-main-dark placeholder-text-sub-light/70 shadow-sm ring-1 ring-border-light dark:ring-border-dark focus:ring-2 focus:ring-primary text-sm transition-all" placeholder="Search guest name, lot number..." type="text"/>
+<h1 class="text-3xl font-bold text-white leading-tight">Manage Lots</h1>
+<p class="text-gray-300 text-sm">Sunny Valley Campsite</p>
 </div>
-<div>
-<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 snap-x">
-<button class="snap-start shrink-0 px-5 py-2 rounded-full bg-primary text-background-dark text-xs font-bold shadow-lg shadow-primary/20 transition-transform active:scale-95">
-                        All Bookings
-                    </button>
-<button class="snap-start shrink-0 px-5 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-semibold hover:border-primary hover:text-primary transition-colors active:scale-95">
-<span class="flex items-center gap-1">
-                            Pending Requests
-                            <span class="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 text-[10px] px-1.5 py-0.5 rounded-full">2</span>
-</span>
+</div>
+<main class="px-4 -mt-6 relative z-10 flex flex-col gap-5">
+<button class="w-full bg-primary hover:bg-primary-dark text-background-dark font-bold rounded-2xl p-4 shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all group active:scale-[0.98]">
+<span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform">add_circle</span>
+<span class="text-base">Add New Lot</span>
 </button>
-<button class="snap-start shrink-0 px-5 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-semibold hover:border-primary hover:text-primary transition-colors active:scale-95">
-                        Upcoming
-                    </button>
-<button class="snap-start shrink-0 px-5 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-semibold hover:border-primary hover:text-primary transition-colors active:scale-95">
-                        Past
-                    </button>
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide px-1">
+<button class="px-4 py-2 bg-surface-dark text-white text-xs font-semibold rounded-full border border-surface-dark shadow-sm whitespace-nowrap">All Lots (24)</button>
+<button class="px-4 py-2 bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium rounded-full border border-border-light dark:border-border-dark whitespace-nowrap hover:border-primary transition-colors">Available (12)</button>
+<button class="px-4 py-2 bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium rounded-full border border-border-light dark:border-border-dark whitespace-nowrap hover:border-primary transition-colors">Booked (8)</button>
+<button class="px-4 py-2 bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium rounded-full border border-border-light dark:border-border-dark whitespace-nowrap hover:border-primary transition-colors">Maintenance (4)</button>
 </div>
+<div class="flex flex-col gap-4">
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow">
+<div class="flex gap-4">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center text-green-700 dark:text-green-400">
+<span class="material-symbols-outlined text-[32px]">camping</span>
 </div>
-<div class="space-y-4">
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-orange-200 dark:border-orange-900/50 relative overflow-hidden">
-<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-400"></div>
-<div class="flex justify-between items-start mb-3 pl-2">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800 flex items-center justify-center text-orange-600 dark:text-orange-300 shadow-inner">
-<span class="material-symbols-outlined">person_add</span>
+<div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h3 class="text-text-main-light dark:text-text-main-dark font-bold text-base truncate">Lot 1</h3>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase tracking-wide border border-green-100 dark:border-green-800">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                    Available
+                                </span>
 </div>
-<div>
-<h3 class="font-bold text-text-main-light dark:text-text-main-dark text-sm">Mike T.</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Requested 2h ago</p>
-</div>
-</div>
-<span class="px-2.5 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300 text-[10px] font-bold uppercase tracking-wide border border-orange-100 dark:border-orange-800">
-                            Pending
-                        </span>
-</div>
-<div class="grid grid-cols-2 gap-2 pl-2 mb-4">
-<div class="bg-background-light dark:bg-background-dark/50 p-2 rounded-lg flex items-center gap-2">
-<span class="material-symbols-outlined text-text-sub-light text-[18px]">calendar_month</span>
-<div>
-<p class="text-[10px] text-text-sub-light uppercase font-bold">Dates</p>
-<p class="text-xs font-semibold text-text-main-light dark:text-text-main-dark">Oct 24-26</p>
-</div>
-</div>
-<div class="bg-background-light dark:bg-background-dark/50 p-2 rounded-lg flex items-center gap-2">
-<span class="material-symbols-outlined text-text-sub-light text-[18px]">camping</span>
-<div>
-<p class="text-[10px] text-text-sub-light uppercase font-bold">Lot</p>
-<p class="text-xs font-semibold text-text-main-light dark:text-text-main-dark">Lot 8 (Cabin)</p>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs">Tent Spot • Forest View</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px] text-text-sub-light">attach_money</span>
+<span class="text-text-main-light dark:text-text-main-dark text-sm font-semibold">$45<span class="text-text-sub-light dark:text-text-sub-dark text-xs font-normal">/night</span></span>
 </div>
 </div>
 </div>
-<div class="flex gap-2 pl-2">
-<button class="flex-1 py-2 rounded-xl bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            Decline
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                            Edit Lot
                         </button>
-<button class="flex-1 py-2 rounded-xl bg-orange-500 text-white text-xs font-bold shadow-md shadow-orange-500/20 hover:bg-orange-600 transition-colors">
-                            Approve
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background-light dark:bg-background-dark/50 text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                            View Calendar
                         </button>
 </div>
 </div>
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-border-light dark:border-border-dark relative overflow-hidden group">
-<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-<div class="flex justify-between items-start mb-3 pl-2">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
-<span class="text-sm font-bold">SJ</span>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow">
+<div class="flex gap-4">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-700 dark:text-blue-400">
+<span class="material-symbols-outlined text-[32px]">rv_hookup</span>
 </div>
-<div>
-<h3 class="font-bold text-text-main-light dark:text-text-main-dark text-sm">Sarah J.</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Booking #8392</p>
+<div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h3 class="text-text-main-light dark:text-text-main-dark font-bold text-base truncate">Lot 2</h3>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wide border border-blue-100 dark:border-blue-800">
+                                    Booked
+                                </span>
 </div>
-</div>
-<span class="px-2.5 py-1 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 text-[10px] font-bold uppercase tracking-wide border border-green-100 dark:border-green-800">
-                            Confirmed
-                        </span>
-</div>
-<div class="grid grid-cols-2 gap-2 pl-2 mb-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
-<span class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Oct 12-14</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-[20px]">location_on</span>
-<span class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Lot 4</span>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs">RV Site • 30 Amp Hookup</p>
+<div class="flex items-center gap-1 mt-1 text-xs text-text-sub-light dark:text-text-sub-dark bg-background-light dark:bg-background-dark/50 px-2 py-1 rounded-md w-fit">
+<span class="material-symbols-outlined text-[14px]">event_available</span>
+                                Oct 12 - Oct 14
+                            </div>
 </div>
 </div>
-<div class="pl-2">
-<button class="w-full py-2.5 rounded-xl border border-primary/30 text-primary-dark dark:text-primary font-semibold text-xs hover:bg-primary/5 transition-colors flex items-center justify-center gap-1 group-hover:border-primary">
-                            View Details
-                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-</button>
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                            Edit Lot
+                        </button>
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background-light dark:bg-background-dark/50 text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                            View Calendar
+                        </button>
 </div>
 </div>
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-border-light dark:border-border-dark relative overflow-hidden group">
-<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-<div class="flex justify-between items-start mb-3 pl-2">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-<span class="material-symbols-outlined">family_restroom</span>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-[linear-gradient(135deg,transparent_45%,rgba(249,115,22,0.1)_45%,rgba(249,115,22,0.1)_55%,transparent_55%)] pointer-events-none"></div>
+<div class="flex gap-4">
+<div class="w-20 h-20 shrink-0 rounded-xl bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center text-orange-700 dark:text-orange-400">
+<span class="material-symbols-outlined text-[32px]">cottage</span>
 </div>
-<div>
-<h3 class="font-bold text-text-main-light dark:text-text-main-dark text-sm">The Smiths</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Booking #8401</p>
+<div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h3 class="text-text-main-light dark:text-text-main-dark font-bold text-base truncate">Lot 3</h3>
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-[10px] font-bold uppercase tracking-wide border border-orange-100 dark:border-orange-800">
+<span class="material-symbols-outlined text-[10px]">build</span>
+                                    Maint.
+                                </span>
 </div>
-</div>
-<span class="px-2.5 py-1 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-300 text-[10px] font-bold uppercase tracking-wide border border-green-100 dark:border-green-800">
-                            Confirmed
-                        </span>
-</div>
-<div class="grid grid-cols-2 gap-2 pl-2 mb-4">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
-<span class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Oct 15-18</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-primary text-[20px]">location_on</span>
-<span class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Lot 12</span>
+<p class="text-text-sub-light dark:text-text-sub-dark text-xs">Glamping Pod • Riverside</p>
+<div class="flex items-center gap-1 mt-1 text-xs text-orange-700 dark:text-orange-400 font-medium">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                Until Oct 17
+                            </div>
 </div>
 </div>
-<div class="pl-2">
-<button class="w-full py-2.5 rounded-xl border border-primary/30 text-primary-dark dark:text-primary font-semibold text-xs hover:bg-primary/5 transition-colors flex items-center justify-center gap-1 group-hover:border-primary">
-                            View Details
-                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-</button>
-</div>
-</div>
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-4 shadow-sm border border-border-light dark:border-border-dark relative overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
-<div class="absolute left-0 top-0 bottom-0 w-1 bg-gray-300 dark:bg-gray-600"></div>
-<div class="flex justify-between items-start mb-3 pl-2">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
-<span class="text-sm font-bold">AR</span>
-</div>
-<div>
-<h3 class="font-bold text-text-main-light dark:text-text-main-dark text-sm">Alex R.</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Booking #8210</p>
-</div>
-</div>
-<span class="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wide border border-gray-200 dark:border-gray-700">
-                            Completed
-                        </span>
-</div>
-<div class="grid grid-cols-2 gap-2 pl-2 mb-4 grayscale">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-text-sub-light text-[20px]">event_available</span>
-<span class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Sep 28-30</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-text-sub-light text-[20px]">location_on</span>
-<span class="text-sm font-medium text-text-main-light dark:text-text-main-dark">Lot 2</span>
-</div>
-</div>
-<div class="pl-2">
-<button class="w-full py-2.5 rounded-xl border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark font-semibold text-xs hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                            View Receipt
+<div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-light dark:border-border-dark">
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                            Edit Lot
+                        </button>
+<button class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-background-light dark:bg-background-dark/50 text-text-main-light dark:text-text-main-dark text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                            View Calendar
                         </button>
 </div>
 </div>
 </div>
-<div class="flex items-center justify-center gap-2 py-4">
-<span class="h-1 w-1 rounded-full bg-border-light dark:bg-border-dark"></span>
-<span class="h-1 w-1 rounded-full bg-border-light dark:bg-border-dark"></span>
-<span class="h-1 w-1 rounded-full bg-border-light dark:bg-border-dark"></span>
-</div>
+<div class="h-8"></div>
 </main>
-<nav class="fixed bottom-0 w-full max-w-md bg-surface-light/90 dark:bg-surface-dark/95 backdrop-blur-lg border-t border-border-light dark:border-border-dark pb-6 pt-3 px-6 flex justify-between items-center z-50">
-<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">
-<span class="material-symbols-outlined">dashboard</span>
+<nav class="fixed bottom-0 w-full max-w-md bg-surface-light/80 dark:bg-surface-dark/90 backdrop-blur-lg border-t border-border-light dark:border-border-dark pb-6 pt-3 px-6 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined filled">dashboard</span>
 <span class="text-[10px] font-medium">Dashboard</span>
 </button>
-<button class="flex flex-col items-center gap-1 text-primary">
-<span class="material-symbols-outlined filled">calendar_today</span>
+<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">
+<span class="material-symbols-outlined">calendar_today</span>
 <span class="text-[10px] font-medium">Calendar</span>
 </button>
 <button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">
@@ -290,5 +222,4 @@
 </button>
 </nav>
 </div>
-
 </body></html>

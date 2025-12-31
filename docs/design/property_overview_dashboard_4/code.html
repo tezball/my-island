@@ -2,12 +2,11 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Property Reviews Management</title>
+<title>Edit Property Details</title>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
         tailwind.config = {
@@ -60,8 +59,7 @@
             'wght' 400,
             'GRAD' 0,
             'opsz' 24
-        }
-        .scrollbar-hide::-webkit-scrollbar {
+        }.scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
         .scrollbar-hide {
@@ -82,205 +80,143 @@
   </head>
 <body class="bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark transition-colors duration-200">
 <div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-2xl">
-<header class="sticky top-0 w-full z-30 px-4 py-4 flex justify-between items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-border-light dark:border-border-dark">
+<header class="sticky top-0 w-full z-20 px-4 py-4 flex justify-between items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark">
 <button class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
-<span class="material-symbols-outlined">arrow_back_ios_new</span>
+<span class="material-symbols-outlined text-text-main-light dark:text-text-main-dark">arrow_back_ios_new</span>
 </button>
-<div class="text-center">
-<h1 class="text-base font-bold text-text-main-light dark:text-text-main-dark">Reviews</h1>
-<p class="text-[10px] font-medium uppercase tracking-wider text-text-sub-light dark:text-text-sub-dark">Sunny Valley Campsite</p>
-</div>
-<button class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative">
-<span class="material-symbols-outlined">notifications</span>
-<span class="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full border border-background-light dark:border-background-dark"></span>
-</button>
+<h1 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Edit Property</h1>
+<div class="w-10"></div> 
 </header>
-<div class="px-4 pt-6 pb-2">
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 border border-border-light dark:border-border-dark shadow-sm flex items-center gap-6">
-<div class="flex flex-col items-center justify-center min-w-[80px]">
-<h2 class="text-4xl font-bold text-text-main-light dark:text-text-main-dark tracking-tight">4.8</h2>
-<div class="flex gap-0.5 my-1 text-yellow-400">
-<span class="material-symbols-outlined filled text-[14px]">star</span>
-<span class="material-symbols-outlined filled text-[14px]">star</span>
-<span class="material-symbols-outlined filled text-[14px]">star</span>
-<span class="material-symbols-outlined filled text-[14px]">star</span>
-<span class="material-symbols-outlined filled text-[14px]">star_half</span>
+<div class="flex-1 overflow-y-auto">
+<section class="py-6 border-b border-border-light dark:border-border-dark">
+<div class="px-6 mb-3 flex justify-between items-center">
+<h3 class="text-sm font-bold uppercase tracking-wide text-text-sub-light dark:text-text-sub-dark">Property Photos</h3>
+<button class="text-primary text-sm font-medium hover:text-primary-dark">Manage</button>
 </div>
-<p class="text-[10px] text-text-sub-light dark:text-text-sub-dark font-medium">120 Reviews</p>
-</div>
-<div class="flex-1 flex flex-col gap-1.5 justify-center">
-<div class="flex items-center gap-2 text-xs">
-<span class="w-3 font-medium text-text-sub-light dark:text-text-sub-dark text-[10px]">5</span>
-<div class="flex-1 h-1.5 bg-border-light dark:bg-border-dark rounded-full overflow-hidden">
-<div class="h-full bg-primary rounded-full" style="width: 85%"></div>
-</div>
-</div>
-<div class="flex items-center gap-2 text-xs">
-<span class="w-3 font-medium text-text-sub-light dark:text-text-sub-dark text-[10px]">4</span>
-<div class="flex-1 h-1.5 bg-border-light dark:bg-border-dark rounded-full overflow-hidden">
-<div class="h-full bg-primary/60 rounded-full" style="width: 10%"></div>
-</div>
-</div>
-<div class="flex items-center gap-2 text-xs">
-<span class="w-3 font-medium text-text-sub-light dark:text-text-sub-dark text-[10px]">3</span>
-<div class="flex-1 h-1.5 bg-border-light dark:bg-border-dark rounded-full overflow-hidden">
-<div class="h-full bg-primary/40 rounded-full" style="width: 3%"></div>
-</div>
-</div>
-<div class="flex items-center gap-2 text-xs">
-<span class="w-3 font-medium text-text-sub-light dark:text-text-sub-dark text-[10px]">2</span>
-<div class="flex-1 h-1.5 bg-border-light dark:bg-border-dark rounded-full overflow-hidden">
-<div class="h-full bg-primary/30 rounded-full" style="width: 1%"></div>
-</div>
-</div>
-<div class="flex items-center gap-2 text-xs">
-<span class="w-3 font-medium text-text-sub-light dark:text-text-sub-dark text-[10px]">1</span>
-<div class="flex-1 h-1.5 bg-border-light dark:bg-border-dark rounded-full overflow-hidden">
-<div class="h-full bg-primary/20 rounded-full" style="width: 1%"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="px-4 py-2">
-<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-<button class="px-4 py-2 rounded-full bg-primary text-background-dark text-xs font-bold whitespace-nowrap shadow-sm shadow-primary/20 hover:bg-primary-dark transition-colors">All Reviews</button>
-<button class="px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium whitespace-nowrap hover:border-primary/50 hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">5 Stars</button>
-<button class="px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium whitespace-nowrap hover:border-primary/50 hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">4 Stars</button>
-<button class="px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium whitespace-nowrap hover:border-primary/50 hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">Lower than 4</button>
-<button class="px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark text-text-sub-light dark:text-text-sub-dark text-xs font-medium whitespace-nowrap hover:border-primary/50 hover:text-text-main-light dark:hover:text-text-main-dark transition-colors">Unreplied</button>
-</div>
-</div>
-<div class="px-4 py-2 flex flex-col gap-4">
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 border border-border-light dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start mb-3">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold text-sm shadow-inner">
-                        JD
-                    </div>
-<div>
-<h3 class="text-sm font-bold text-text-main-light dark:text-text-main-dark">John D.</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Oct 10, 2023</p>
-</div>
-</div>
-<div class="flex gap-0.5 text-yellow-400">
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-</div>
-</div>
-<p class="text-sm text-text-main-light dark:text-text-main-dark leading-relaxed mb-4">
-                Great spot, lovely views! The location was perfect for our hiking trip. Will definitely come back.
-            </p>
-<div class="flex items-center justify-between pt-3 border-t border-border-light dark:border-border-dark">
-<button class="group flex items-center gap-2 text-xs font-bold text-primary hover:text-primary-dark transition-colors px-3 py-2 rounded-lg bg-primary/5 hover:bg-primary/10">
-<span class="material-symbols-outlined text-[18px]">reply</span>
-                    Reply
-                </button>
-<button class="flex items-center gap-1.5 text-xs font-medium text-text-sub-light dark:text-text-sub-dark hover:text-red-500 transition-colors px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
-<span class="material-symbols-outlined text-[18px]">flag</span>
-                    Report
-                </button>
-</div>
-</div>
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 border border-border-light dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start mb-3">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center font-bold text-sm shadow-inner">
-                        ER
-                    </div>
-<div>
-<h3 class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Emily R.</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Oct 9, 2023</p>
-</div>
-</div>
-<div class="flex gap-0.5 text-yellow-400">
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined text-[16px] text-gray-300 dark:text-gray-600">star</span>
-</div>
-</div>
-<p class="text-sm text-text-main-light dark:text-text-main-dark leading-relaxed mb-4">
-                Clean facilities, a bit noisy due to the road nearby. Otherwise, a pleasant stay.
-            </p>
-<div class="flex items-center justify-between pt-3 border-t border-border-light dark:border-border-dark">
-<button class="group flex items-center gap-2 text-xs font-bold text-primary hover:text-primary-dark transition-colors px-3 py-2 rounded-lg bg-primary/5 hover:bg-primary/10">
-<span class="material-symbols-outlined text-[18px]">reply</span>
-                    Reply
-                </button>
-<button class="flex items-center gap-1.5 text-xs font-medium text-text-sub-light dark:text-text-sub-dark hover:text-red-500 transition-colors px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
-<span class="material-symbols-outlined text-[18px]">flag</span>
-                    Report
-                </button>
-</div>
-</div>
-<div class="bg-surface-light dark:bg-surface-dark rounded-2xl p-5 border border-border-light dark:border-border-dark shadow-sm">
-<div class="flex justify-between items-start mb-3">
-<div class="flex items-center gap-3">
-<div class="h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 flex items-center justify-center font-bold text-sm shadow-inner">
-                        SM
-                    </div>
-<div>
-<h3 class="text-sm font-bold text-text-main-light dark:text-text-main-dark">Sarah M.</h3>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark">Sep 28, 2023</p>
-</div>
-</div>
-<div class="flex gap-0.5 text-yellow-400">
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-<span class="material-symbols-outlined filled text-[16px]">star</span>
-</div>
-</div>
-<p class="text-sm text-text-main-light dark:text-text-main-dark leading-relaxed mb-4">
-                Absolutely magical experience! The staff was incredibly helpful with setting up our tent.
-            </p>
-<div class="ml-4 mb-4 pl-4 border-l-2 border-primary/30 py-1 bg-background-light dark:bg-background-dark/50 rounded-r-lg p-2">
-<p class="text-xs font-bold text-primary mb-1 flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">subdirectory_arrow_right</span>
-                    You replied:
-                </p>
-<p class="text-xs text-text-sub-light dark:text-text-sub-dark italic">"Thank you Sarah! We're glad we could help make your stay easier."</p>
-</div>
-<div class="flex items-center justify-between pt-3 border-t border-border-light dark:border-border-dark">
-<button class="flex items-center gap-1.5 text-xs font-semibold text-text-sub-light dark:text-text-sub-dark hover:text-primary transition-colors px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
-<span class="material-symbols-outlined text-[18px]">edit_note</span>
-                    Edit Reply
-                </button>
-<button class="flex items-center gap-1.5 text-xs font-medium text-text-sub-light dark:text-text-sub-dark hover:text-red-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
-<span class="material-symbols-outlined text-[18px]">flag</span>
-                    Report
-                </button>
-</div>
-</div>
-</div>
-<div class="h-12"></div>
-<nav class="fixed bottom-0 w-full max-w-md bg-surface-light/80 dark:bg-surface-dark/90 backdrop-blur-lg border-t border-border-light dark:border-border-dark pb-6 pt-3 px-6 flex justify-between items-center z-50">
-<button class="flex flex-col items-center gap-1 text-primary">
-<span class="material-symbols-outlined filled">dashboard</span>
-<span class="text-[10px] font-medium">Dashboard</span>
+<div class="flex gap-4 overflow-x-auto px-6 pb-2 scrollbar-hide snap-x">
+<button class="shrink-0 w-28 aspect-[4/5] rounded-xl border-2 border-dashed border-border-light dark:border-border-dark flex flex-col items-center justify-center gap-2 text-text-sub-light hover:border-primary hover:text-primary transition-colors snap-start bg-surface-light dark:bg-surface-dark">
+<span class="material-symbols-outlined text-3xl">add_photo_alternate</span>
+<span class="text-xs font-bold">Add Photo</span>
 </button>
-<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
-<span class="material-symbols-outlined">calendar_today</span>
-<span class="text-[10px] font-medium">Calendar</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
+<div class="shrink-0 w-60 aspect-[4/3] rounded-xl overflow-hidden relative group snap-start shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCR4UpcTzh5mIREWUnqcL_hsDuj2X_VavbhCOLM8WFqI94BX-MOk8RHk2k34pRkF_V72BlNBq8W7dvxjSXIggPQtm8dY8SdiJgdl0cCQQpjWcG6XH9J7dN3mj6BkFYQqkXRKo0WhUvnuw0iinrgtJvOedMA0fDSz2iggYXqBipIdxSs5cBBDa3KfpOcp8xg---uM8OUErLOOhi3Zz9g8Gcc4ZaG95CAXbQV-daImUc1AJDhiRDrpF8qGPJ9dQmbsZyfstMM6Ml2ow");'></div>
+<div class="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500">
+<span class="material-symbols-outlined text-sm">delete</span>
+</div>
+<div class="absolute bottom-2 left-2 px-2 py-1 rounded-md bg-primary/90 text-background-dark text-[10px] font-bold uppercase">Cover</div>
+</div>
+<div class="shrink-0 w-40 aspect-[4/3] rounded-xl overflow-hidden relative group snap-start shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZKNtAO7-c5bDeFjmQ_2nvqWlcP4GHoMPvjDJQpZvGcq-uJjfk_ZXAMsI8eEAt9osGeTFWqctrHfVbChwpEnb-pqfIICy-nuhzlr9a1pG4eA0HGNkXBibHWN4DkY8K_9m9ozE26x7QnGiV6poo18nXSlaog5d5ya2i2rqJgZjhi3XAymXQtEgRo4YbZZurQS8ADrQMoBAslobUmCDLFtYqJhDS0mRwtwR5niyHdCfo2Ega1cWs5R2hNvvN4qLKs24uOH80tQ05HQ");'></div>
+<div class="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500">
+<span class="material-symbols-outlined text-sm">delete</span>
+</div>
+</div>
+<div class="shrink-0 w-40 aspect-[4/3] rounded-xl overflow-hidden relative group snap-start shadow-sm">
+<div class="absolute inset-0 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAHJF9psfvpHf8L0K4vw-9x89qwDIZ2Lbf2Nl788xFL_o4YPMR5NpA516sJ4lRmksEinN3gwaLK5DEREjMyT7Sof6R7XkRlxY9qqYF9jCMK0FO0Q5B61yVdfnfzv2DADYG_9sUmkSrSaKWoBhKRAFEwRCk4oZHMTleemnE8nKpQTNebHhEgb1068o5FkhNCarY0qteQQbI3FJ55a4Xkx4yyYPI02leAtAiZD9-rv02rUomIdUL1YAtlw2QI84b4jkqdt_LP0Q0QBQ");'></div>
+<div class="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500">
+<span class="material-symbols-outlined text-sm">delete</span>
+</div>
+</div>
+</div>
+</section>
+<section class="p-6 flex flex-col gap-6">
+<div class="space-y-4">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide ml-1">Campsite Name</label>
+<input class="w-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl px-4 py-3.5 text-text-main-light dark:text-text-main-dark font-medium focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm" type="text" value="Sunny Valley Campsite"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide ml-1">Description</label>
+<textarea class="w-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl px-4 py-3 text-text-main-light dark:text-text-main-dark text-sm leading-relaxed focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm resize-none" rows="4">Nestled in the lush valleys of Maui, Sunny Valley Campsite offers a serene escape into nature. Surrounded by emerald peaks and native flora, our site provides eco-friendly amenities and breathtaking views.</textarea>
+<p class="text-right text-[10px] text-text-sub-light">180/500 characters</p>
+</div>
+</div>
+</section>
+<section class="px-6 pb-6">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide ml-1">Location</label>
 <div class="relative">
-<span class="material-symbols-outlined">mail</span>
-<span class="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border border-surface-light dark:border-surface-dark"></span>
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-sub-light">location_on</span>
+<input class="w-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl pl-12 pr-4 py-3.5 text-text-main-light dark:text-text-main-dark font-medium focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm" type="text" value="Maui, Hawaii"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xs font-bold hover:text-primary-dark uppercase">Edit Map</button>
 </div>
-<span class="text-[10px] font-medium">Messages</span>
+<div class="mt-3 w-full h-40 rounded-xl overflow-hidden border border-border-light dark:border-border-dark relative group cursor-pointer">
+<div class="absolute inset-0 bg-slate-100 dark:bg-slate-800">
+<div class="absolute top-0 left-1/3 w-8 h-full bg-white dark:bg-gray-700 -skew-x-12 opacity-50"></div>
+<div class="absolute top-1/2 left-0 w-full h-6 bg-white dark:bg-gray-700 -rotate-3 opacity-50"></div>
+<div class="absolute top-1/4 right-1/4 w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30"></div>
+</div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+<span class="material-symbols-outlined filled text-4xl text-red-500 drop-shadow-lg transform -translate-y-2 group-hover:-translate-y-4 transition-transform">location_on</span>
+<div class="w-3 h-1.5 bg-black/20 rounded-full blur-[2px]"></div>
+</div>
+<div class="absolute bottom-2 right-2 bg-surface-light/90 dark:bg-surface-dark/90 px-2 py-1 rounded text-[10px] font-mono border border-border-light shadow-sm">Leaflet | © OpenStreetMap</div>
+</div>
+</div>
+</section>
+<section class="px-6 pb-6 border-b border-border-light dark:border-border-dark">
+<label class="text-xs font-bold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide ml-1 block mb-3">General Amenities</label>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-background-dark font-semibold text-xs border border-transparent shadow-sm hover:shadow-md transition-all">
+<span class="material-symbols-outlined text-[16px]">kitchen</span>
+                    Communal Kitchen
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-background-dark font-semibold text-xs border border-transparent shadow-sm hover:shadow-md transition-all">
+<span class="material-symbols-outlined text-[16px]">toys</span>
+                    Playground
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-background-dark font-semibold text-xs border border-transparent shadow-sm hover:shadow-md transition-all">
+<span class="material-symbols-outlined text-[16px]">local_fire_department</span>
+                    Fire Pit
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark font-medium text-xs border border-border-light dark:border-border-dark hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-[16px]">wifi</span>
+                    WiFi
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark font-medium text-xs border border-border-light dark:border-border-dark hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-[16px]">shower</span>
+                    Hot Shower
+                </button>
+<button class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-light dark:bg-surface-dark text-text-sub-light dark:text-text-sub-dark border border-dashed border-border-dark/30 hover:text-primary hover:border-primary transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
 </button>
-<button class="flex flex-col items-center gap-1 text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark">
-<span class="material-symbols-outlined">person</span>
-<span class="text-[10px] font-medium">Profile</span>
-</button>
-</nav>
+</div>
+</section>
+<section class="p-6">
+<label class="text-xs font-bold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide ml-1 block mb-3">Contact Information</label>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark flex items-center justify-center text-text-sub-light shrink-0">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</div>
+<input class="flex-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl px-4 py-2.5 text-text-main-light dark:text-text-main-dark text-sm font-medium focus:ring-2 focus:ring-primary focus:border-transparent outline-none" type="tel" value="+1 (808) 555-0123"/>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark flex items-center justify-center text-text-sub-light shrink-0">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<input class="flex-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl px-4 py-2.5 text-text-main-light dark:text-text-main-dark text-sm font-medium focus:ring-2 focus:ring-primary focus:border-transparent outline-none" type="email" value="hello@sunnyvalley.com"/>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark flex items-center justify-center text-text-sub-light shrink-0">
+<span class="material-symbols-outlined text-[20px]">language</span>
+</div>
+<input class="flex-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl px-4 py-2.5 text-text-main-light dark:text-text-main-dark text-sm font-medium focus:ring-2 focus:ring-primary focus:border-transparent outline-none" type="url" value="www.sunnyvalleycampsite.com"/>
+</div>
+</div>
+</section>
+<div class="h-28"></div>
+</div>
+<div class="fixed bottom-0 w-full max-w-md bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark p-6 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+<div class="flex gap-4">
+<button class="flex-1 py-3.5 rounded-xl border border-border-light dark:border-border-dark text-text-main-light dark:text-text-main-dark font-bold text-sm hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                Cancel
+            </button>
+<button class="flex-1 py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-background-dark font-bold text-sm shadow-lg shadow-primary/25 transition-colors">
+                Save Changes
+            </button>
+</div>
+</div>
 </div>
 
 </body></html>
