@@ -9,6 +9,7 @@ This document outlines the technologies used and planned for the My Island proje
   - RESTful API development
   - Dependency injection
   - Auto-configuration
+  - 
 
 ### Database
 - **PostgreSQL** - Primary relational database
