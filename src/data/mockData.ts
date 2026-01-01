@@ -1,7 +1,8 @@
 import type {
   User, Campsite, Lot, Booking, Review, Offer,
   Notification, FAQ, SupportTicket, OwnerStats, RevenueData,
-  LotAvailability, CheckInInstructions, Message, OwnerBooking, OwnerCampsite, BroadcastAlert
+  LotAvailability, CheckInInstructions, Message, OwnerBooking, OwnerCampsite, BroadcastAlert,
+  Facility
 } from './types'
 
 // Helper to generate dates relative to today
@@ -850,13 +851,21 @@ export function getFeaturedCampsites(): Campsite[] {
   return campsites.filter(c => c.featured)
 }
 
-export function searchCampsites(query: string): Campsite[] {
+export function searchCampsites(query: string, facilities?: Facility[]): Campsite[] {
   const q = query.toLowerCase()
-  return campsites.filter(c =>
+  let results = campsites.filter(c =>
     c.name.toLowerCase().includes(q) ||
     c.location.county.toLowerCase().includes(q) ||
     c.description.toLowerCase().includes(q)
   )
+
+  if (facilities && facilities.length > 0) {
+    results = results.filter(c =>
+      facilities.every(f => c.facilities.includes(f))
+    )
+  }
+
+  return results
 }
 
 export function getLotAvailability(lotId: string): LotAvailability[] {

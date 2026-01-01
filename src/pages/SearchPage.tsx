@@ -78,12 +78,12 @@ export default function SearchPage() {
             console.error('Search failed:', err)
             setError('Failed to search campsites. Please try again.')
             // Fallback to mock data on error
-            setResults(searchCampsites(query) as unknown as CampsiteResponse[])
+            setResults(searchCampsites(query, selectedFilters) as unknown as CampsiteResponse[])
           } finally {
             setIsSearching(false)
           }
         } else {
-          setResults(searchCampsites(query) as unknown as CampsiteResponse[])
+          setResults(searchCampsites(query, selectedFilters) as unknown as CampsiteResponse[])
           setIsSearching(false)
         }
       }, 300)
@@ -201,11 +201,10 @@ export default function SearchPage() {
                   <button
                     key={filter.id}
                     onClick={() => toggleFilter(filter.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                      selectedFilters.includes(filter.id)
-                        ? 'bg-primary text-slate-900'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                    }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedFilters.includes(filter.id)
+                      ? 'bg-primary text-slate-900'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                      }`}
                   >
                     <Icon name={filter.icon} size={16} />
                     {filter.label}
@@ -285,7 +284,7 @@ export default function SearchPage() {
                 </h2>
                 <div className="space-y-4">
                   {featured.slice(0, 4).map((campsite) => (
-                    <CampsiteCard key={campsite.id} campsite={campsite} />
+                    <CampsiteCard key={campsite.id} campsite={campsite as unknown as any} />
                   ))}
                 </div>
               </section>
@@ -321,7 +320,7 @@ export default function SearchPage() {
                 {filteredResults.length} campsite{filteredResults.length !== 1 ? 's' : ''} found
               </p>
               {filteredResults.map((campsite) => (
-                <CampsiteCard key={campsite.id} campsite={campsite} />
+                <CampsiteCard key={campsite.id} campsite={campsite as unknown as any} />
               ))}
             </div>
           )}
