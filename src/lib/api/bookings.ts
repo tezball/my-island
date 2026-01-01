@@ -11,6 +11,13 @@
 
 import api from '../api'
 
+// Helper to build query string from params object
+function buildQueryString<T extends object>(params: T): string {
+  const entries = Object.entries(params).filter(([, v]) => v !== undefined)
+  if (entries.length === 0) return ''
+  return '?' + entries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`).join('&')
+}
+
 // Request types
 export interface CreateBookingRequest {
   lotId: string
@@ -42,7 +49,7 @@ export interface BookingResponse {
   nights: number
   pricePerNight: number
   totalPrice: number
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
+  status: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
   extras?: {
     breakfast?: boolean
     parking?: boolean
@@ -63,7 +70,7 @@ export interface AvailabilityResponse {
 }
 
 export interface BookingListParams {
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'UPCOMING' | 'PAST'
+  status?: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'UPCOMING' | 'PAST'
   page?: number
   size?: number
 }
@@ -81,7 +88,7 @@ export const bookingsApi = {
 
   // Get user's bookings
   list: (params?: BookingListParams) =>
-    api.get<BookingResponse[]>('/bookings', params),
+    api.get<BookingResponse[]>(`/bookings${params ? buildQueryString(params) : ''}`),
 
   // Get booking details
   getById: (id: string) =>
@@ -97,7 +104,7 @@ export const bookingsApi = {
 
   // Check lot availability
   checkAvailability: (lotId: string, params: AvailabilityParams) =>
-    api.get<AvailabilityResponse>(`/lots/${lotId}/availability`, params),
+    api.get<AvailabilityResponse>(`/lots/${lotId}/availability${buildQueryString(params)}`),
 
   // Modify booking (not yet implemented in backend)
   // modify: (id: string, data: Partial<CreateBookingRequest>) =>

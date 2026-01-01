@@ -166,9 +166,9 @@ export default function ProfilePage() {
                 {section.title}
               </h2>
               <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
-                {section.items.map((item) => (
+                {section.items.map((item, index) => (
                   <Link
-                    key={item.path}
+                    key={`${section.title}-${index}`}
                     to={item.path}
                     className="flex items-center gap-3 px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                   >

@@ -6,12 +6,21 @@ import Input from '../../components/ui/Input'
 import Toggle from '../../components/ui/Toggle'
 import Icon from '../../components/ui/Icon'
 import { getLotById } from '../../data/mockData'
+import type { LotType } from '../../data/types'
 
-const lotTypes = [
+const lotTypes: { id: LotType; label: string; icon: string }[] = [
   { id: 'tent', label: 'Tent Site', icon: 'camping' },
-  { id: 'campervan', label: 'RV Spot', icon: 'directions_car' },
-  { id: 'cabin', label: 'Cabin', icon: 'cabin' },
+  { id: 'caravan', label: 'Caravan', icon: 'rv_hookup' },
+  { id: 'campervan', label: 'Campervan', icon: 'directions_car' },
+  { id: 'rv', label: 'RV Spot', icon: 'rv_hookup' },
   { id: 'glamping', label: 'Glamping', icon: 'cottage' },
+  { id: 'cabin', label: 'Cabin', icon: 'cabin' },
+  { id: 'treehouse', label: 'Treehouse', icon: 'park' },
+  { id: 'yurt', label: 'Yurt', icon: 'home' },
+  { id: 'pod', label: 'Pod', icon: 'circle' },
+  { id: 'apartment', label: 'Apartment', icon: 'apartment' },
+  { id: 'cottage', label: 'Cottage', icon: 'house' },
+  { id: 'safari_tent', label: 'Safari Tent', icon: 'holiday_village' },
 ]
 
 const amenities = [
@@ -27,7 +36,7 @@ export default function LotFormPage() {
   const existingLot = lotId ? getLotById(lotId) : null
 
   const [name, setName] = useState(existingLot?.name || '')
-  const [type, setType] = useState<'tent' | 'caravan' | 'campervan' | 'glamping' | 'cabin'>(existingLot?.type || 'tent')
+  const [type, setType] = useState<LotType>(existingLot?.type || 'tent')
   const [capacity, setCapacity] = useState(existingLot?.capacity || 4)
   const [price, setPrice] = useState(existingLot?.pricePerNight.toString() || '')
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
@@ -102,12 +111,12 @@ export default function LotFormPage() {
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Lot Type
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {lotTypes.map(t => (
                 <button
                   key={t.id}
                   type="button"
-                  onClick={() => setType(t.id as 'tent' | 'caravan' | 'campervan' | 'glamping' | 'cabin')}
+                  onClick={() => setType(t.id)}
                   className={`p-3 rounded-xl border-2 flex items-center gap-2 transition-colors ${
                     type === t.id
                       ? 'border-primary bg-primary/5'

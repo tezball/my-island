@@ -47,12 +47,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const AUTH_STORAGE_KEY = 'my-island-auth'
 
 // Mock user for development - will be replaced with API response
-const createMockUser = (email: string, firstName: string, lastName: string): User => ({
+const createMockUser = (
+  email: string,
+  firstName: string,
+  lastName: string,
+  options?: { isOwner?: boolean; isSupplier?: boolean }
+): User => ({
   id: crypto.randomUUID(),
   email,
   name: `${firstName} ${lastName}`,
   memberSince: new Date().toISOString(),
-  isOwner: email.includes('owner'),
+  isOwner: options?.isOwner ?? email.includes('owner'),
+  isSupplier: options?.isSupplier ?? false,
   linkedAccounts: [],
   notificationPreferences: {
     email: true,
@@ -164,18 +170,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // const response = await api.post(`/auth/${provider}`)
 
       // Simulate OAuth
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise(resolve => setTimeout(resolve, 1500))
 
-      // Random failure for demo (20% chance)
-      if (Math.random() < 0.2) {
-        throw new Error('OAuth connection failed')
-      }
-
-      const user = createMockUser(
-        `user@${provider}.com`,
-        provider === 'google' ? 'Google' : 'Apple',
-        'User'
-      )
+      // Google SSO creates Owner account, Apple SSO creates Supplier account
+      const user = provider === 'google'
+        ? createMockUser('owner@gmail.com', 'Sarah', "O'Brien", { isOwner: true, isSupplier: false })
+        : createMockUser('supplier@icloud.com', 'Michael', "O'Brien", { isOwner: false, isSupplier: true })
       persistSession(user)
 
       setState({

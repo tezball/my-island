@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
@@ -6,6 +6,8 @@ import Icon from '../components/ui/Icon'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { ownerApi } from '../lib/api/owner'
+
+const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
 
 const benefits = [
   {
@@ -38,8 +40,14 @@ export default function BecomeOwnerPage() {
   const [agreed, setAgreed] = useState(false)
 
   // If already an owner, redirect to owner dashboard
+  useEffect(() => {
+    if (user?.isOwner) {
+      navigate('/owner', { replace: true })
+    }
+  }, [user?.isOwner, navigate])
+
+  // Don't render content if user is already an owner (will redirect)
   if (user?.isOwner) {
-    navigate('/owner', { replace: true })
     return null
   }
 
@@ -51,7 +59,12 @@ export default function BecomeOwnerPage() {
 
     setIsLoading(true)
     try {
-      await ownerApi.becomeOwner()
+      if (USE_REAL_API) {
+        await ownerApi.becomeOwner()
+      } else {
+        // Mock mode: simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
       updateUser({ ...user, isOwner: true })
       toast.success('Welcome!', 'You are now registered as a campsite owner.')
       navigate('/owner/campsites/new')

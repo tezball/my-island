@@ -9,7 +9,19 @@
  */
 
 import api from '../api'
-import type { Campsite, Facility } from '../../data/types'
+import type { Facility } from '../../data/types'
+
+// Helper to build query string from params object
+function buildQueryString<T extends object>(params: T): string {
+  const entries = Object.entries(params).filter(([, v]) => v !== undefined)
+  if (entries.length === 0) return ''
+  return '?' + entries.map(([k, v]) => {
+    if (Array.isArray(v)) {
+      return v.map(item => `${encodeURIComponent(k)}=${encodeURIComponent(String(item))}`).join('&')
+    }
+    return `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`
+  }).join('&')
+}
 
 // Response types
 export interface CampsiteResponse {
@@ -78,7 +90,7 @@ export interface MapBoundsParams {
 export const campsitesApi = {
   // Search and filter campsites
   search: (params: SearchParams) =>
-    api.get<CampsiteResponse[]>('/campsites', params),
+    api.get<CampsiteResponse[]>(`/campsites${buildQueryString(params)}`),
 
   // Get campsite details
   getById: (id: string) =>
@@ -90,7 +102,7 @@ export const campsitesApi = {
 
   // Get campsites for map view
   getMapMarkers: (bounds: MapBoundsParams) =>
-    api.get<MapMarkerResponse[]>('/campsites/map', bounds),
+    api.get<MapMarkerResponse[]>(`/campsites/map${buildQueryString(bounds)}`),
 
   // Get campsite reviews (delegated to reviews service)
   getReviews: (campsiteId: string) =>

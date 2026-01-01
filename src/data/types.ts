@@ -9,8 +9,23 @@ export interface User {
   bio?: string
   memberSince: string
   isOwner: boolean
+  isSupplier: boolean
   linkedAccounts: LinkedAccount[]
   notificationPreferences: NotificationPreferences
+}
+
+// Supplier business profile
+export interface SupplierProfile {
+  id: string
+  userId: string
+  businessName: string
+  description: string
+  location: string
+  contactEmail: string
+  phoneNumber: string
+  logoUrl?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface LinkedAccount {
@@ -51,16 +66,31 @@ export type Facility =
   | 'laundry' | 'shop' | 'restaurant' | 'playground'
   | 'beach' | 'fishing' | 'hiking' | 'cycling' | 'pets'
 
+export type LotType =
+  | 'tent'
+  | 'caravan'
+  | 'campervan'
+  | 'rv'
+  | 'glamping'
+  | 'cabin'
+  | 'treehouse'
+  | 'yurt'
+  | 'pod'
+  | 'apartment'
+  | 'cottage'
+  | 'safari_tent'
+
 export interface Lot {
   id: string
   campsiteId: string
   name: string
-  type: 'tent' | 'caravan' | 'campervan' | 'glamping' | 'cabin'
+  type: LotType
   capacity: number
   pricePerNight: number
   images: string[]
   amenities: string[]
   available: boolean
+  description?: string
 }
 
 export interface Booking {
@@ -71,7 +101,7 @@ export interface Booking {
   checkIn: string
   checkOut: string
   guests: number
-  status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled'
+  status: 'confirmed' | 'checked_in' | 'completed' | 'cancelled'
   totalPrice: number
   extras: BookingExtra[]
   createdAt: string

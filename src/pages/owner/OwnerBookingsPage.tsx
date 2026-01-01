@@ -4,11 +4,10 @@ import AppShell from '../../components/layout/AppShell'
 import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
 import Badge from '../../components/ui/Badge'
-import Button from '../../components/ui/Button'
 import { ownerBookings } from '../../data/mockData'
 import type { Booking } from '../../data/types'
 
-type FilterStatus = 'all' | 'confirmed' | 'pending' | 'cancelled'
+type FilterStatus = 'all' | 'confirmed' | 'cancelled'
 
 export default function OwnerBookingsPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -29,7 +28,6 @@ export default function OwnerBookingsPage() {
   const filters: { value: FilterStatus; label: string; icon: string }[] = [
     { value: 'all', label: 'All', icon: '' },
     { value: 'confirmed', label: 'Confirmed', icon: 'check' },
-    { value: 'pending', label: 'Pending', icon: 'schedule' },
     { value: 'cancelled', label: 'Cancelled', icon: 'close' },
   ]
 
@@ -37,8 +35,6 @@ export default function OwnerBookingsPage() {
     switch (status) {
       case 'confirmed':
         return <Badge variant="success">Confirmed</Badge>
-      case 'pending':
-        return <Badge variant="warning">Pending</Badge>
       case 'cancelled':
         return <Badge variant="error">Cancelled</Badge>
       case 'completed':
@@ -64,7 +60,7 @@ export default function OwnerBookingsPage() {
   }
 
   const activeBookings = ownerBookings.filter(b =>
-    ['confirmed', 'pending', 'checked_in'].includes(b.status)
+    ['confirmed', 'checked_in'].includes(b.status)
   ).length
 
   const totalRevenue = ownerBookings
@@ -194,19 +190,12 @@ export default function OwnerBookingsPage() {
                   <p className="font-bold text-lg text-slate-900 dark:text-white">
                     €{booking.totalPrice.toFixed(2)}
                   </p>
-                  <div className="flex items-center gap-2">
-                    {booking.status === 'pending' && (
-                      <Button size="sm" variant="primary">
-                        Approve
-                      </Button>
-                    )}
-                    <Link
-                      to={`/bookings/${booking.id}`}
-                      className="size-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center"
-                    >
-                      <Icon name="chevron_right" size={20} className="text-slate-600 dark:text-slate-400" />
-                    </Link>
-                  </div>
+                  <Link
+                    to={`/bookings/${booking.id}`}
+                    className="size-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center"
+                  >
+                    <Icon name="chevron_right" size={20} className="text-slate-600 dark:text-slate-400" />
+                  </Link>
                 </div>
               </div>
             ))}

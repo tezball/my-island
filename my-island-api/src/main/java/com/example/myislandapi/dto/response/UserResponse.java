@@ -14,6 +14,7 @@ public record UserResponse(
         String phone,
         String bio,
         boolean isOwner,
+        boolean isSupplier,
         Instant memberSince,
         NotificationPreferencesResponse notificationPreferences,
         List<LinkedAccountResponse> linkedAccounts

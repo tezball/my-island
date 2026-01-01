@@ -41,6 +41,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean isOwner = false;
 
+    @Column(nullable = false)
+    private boolean isSupplier = false;
+
     @Embedded
     private NotificationPreferences notificationPreferences = new NotificationPreferences();
 
@@ -104,6 +107,14 @@ public class User extends BaseEntity {
 
     public void setOwner(boolean owner) {
         isOwner = owner;
+    }
+
+    public boolean isSupplier() {
+        return isSupplier;
+    }
+
+    public void setSupplier(boolean supplier) {
+        isSupplier = supplier;
     }
 
     public NotificationPreferences getNotificationPreferences() {

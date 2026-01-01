@@ -1,0 +1,78 @@
+package com.example.myislandapi.service;
+
+import com.example.myislandapi.dto.request.UpdateSupplierProfileRequest;
+import com.example.myislandapi.dto.response.SupplierProfileResponse;
+import com.example.myislandapi.entity.Supplier;
+import com.example.myislandapi.entity.User;
+import com.example.myislandapi.exception.ResourceNotFoundException;
+import com.example.myislandapi.repository.SupplierRepository;
+import com.example.myislandapi.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+@Service
+public class SupplierService {
+
+    private final SupplierRepository supplierRepository;
+    private final UserRepository userRepository;
+
+    public SupplierService(SupplierRepository supplierRepository, UserRepository userRepository) {
+        this.supplierRepository = supplierRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public SupplierProfileResponse getProfile(UUID userId) {
+        Supplier supplier = supplierRepository.findByUserId(userId)
+                .orElseGet(() -> createSupplierProfile(userId));
+        return SupplierProfileResponse.from(supplier);
+    }
+
+    @Transactional
+    public SupplierProfileResponse updateProfile(UUID userId, UpdateSupplierProfileRequest request) {
+        Supplier supplier = supplierRepository.findByUserId(userId)
+                .orElseGet(() -> createSupplierProfile(userId));
+
+        if (request.businessName() != null) {
+            supplier.setBusinessName(request.businessName());
+        }
+        if (request.description() != null) {
+            supplier.setDescription(request.description());
+        }
+        if (request.location() != null) {
+            supplier.setLocation(request.location());
+        }
+        if (request.contactEmail() != null) {
+            supplier.setContactEmail(request.contactEmail());
+        }
+        if (request.phoneNumber() != null) {
+            supplier.setPhoneNumber(request.phoneNumber());
+        }
+
+        supplier = supplierRepository.save(supplier);
+        return SupplierProfileResponse.from(supplier);
+    }
+
+    @Transactional
+    public SupplierProfileResponse updateLogoUrl(UUID userId, String logoUrl) {
+        Supplier supplier = supplierRepository.findByUserId(userId)
+                .orElseGet(() -> createSupplierProfile(userId));
+
+        supplier.setLogoUrl(logoUrl);
+        supplier = supplierRepository.save(supplier);
+        return SupplierProfileResponse.from(supplier);
+    }
+
+    private Supplier createSupplierProfile(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        Supplier supplier = new Supplier();
+        supplier.setUser(user);
+        supplier.setContactEmail(user.getEmail());
+        supplier.setPhoneNumber(user.getPhone());
+        return supplierRepository.save(supplier);
+    }
+}

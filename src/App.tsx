@@ -67,7 +67,9 @@ import ProfilePage from './pages/ProfilePage'
 import ProfileEditPage from './pages/ProfileEditPage'
 import PersonalInfoPage from './pages/PersonalInfoPage'
 import LinkedAccountsPage from './pages/LinkedAccountsPage'
+import ProfilePaymentMethodsPage from './pages/ProfilePaymentMethodsPage'
 import SettingsPage from './pages/SettingsPage'
+import BecomeOwnerPage from './pages/BecomeOwnerPage'
 
 // Support Pages
 import SupportPage from './pages/SupportPage'
@@ -87,6 +89,11 @@ import ReviewsPage from './pages/ReviewsPage'
 import WriteReviewPage from './pages/WriteReviewPage'
 import OffersPage from './pages/OffersPage'
 import SupplierDetailPage from './pages/SupplierDetailPage'
+
+// Supplier Admin Pages
+import SupplierDashboardPage from './pages/supplier/SupplierDashboardPage'
+import BusinessProfilePage from './pages/supplier/BusinessProfilePage'
+import SupplierOffersPage from './pages/supplier/SupplierOffersPage'
 
 // Owner Admin Pages
 import OwnerDashboardPage from './pages/owner/OwnerDashboardPage'
@@ -183,9 +190,13 @@ function App() {
       <Route path="/profile/personal-info" element={<ProtectedRoute><PersonalInfoPage /></ProtectedRoute>} />
       <Route path="/profile/linked-accounts" element={<ProtectedRoute><LinkedAccountsPage /></ProtectedRoute>} />
       <Route path="/profile/notifications" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
+      <Route path="/payment-methods" element={<ProtectedRoute><ProfilePaymentMethodsPage /></ProtectedRoute>} />
 
       {/* Settings - Protected */}
       <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+
+      {/* Become Owner - Protected */}
+      <Route path="/become-owner" element={<ProtectedRoute><BecomeOwnerPage /></ProtectedRoute>} />
 
       {/* Support */}
       <Route path="/support" element={<SupportPage />} />
@@ -198,6 +209,13 @@ function App() {
       <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
       <Route path="/notifications/center" element={<ProtectedRoute><NotificationCenterPage /></ProtectedRoute>} />
       <Route path="/notifications/:id" element={<ProtectedRoute><NotificationDetailPage /></ProtectedRoute>} />
+
+      {/* Supplier Admin - Protected + Supplier Role Required */}
+      <Route path="/supplier" element={<ProtectedRoute requireSupplier><SupplierDashboardPage /></ProtectedRoute>} />
+      <Route path="/supplier/profile" element={<ProtectedRoute requireSupplier><BusinessProfilePage /></ProtectedRoute>} />
+      <Route path="/supplier/offers" element={<ProtectedRoute requireSupplier><SupplierOffersPage /></ProtectedRoute>} />
+      <Route path="/supplier/offers/new" element={<ProtectedRoute requireSupplier><OfferFormPage /></ProtectedRoute>} />
+      <Route path="/supplier/offers/:id/edit" element={<ProtectedRoute requireSupplier><OfferFormPage /></ProtectedRoute>} />
 
       {/* Owner Admin - Protected + Owner Role Required */}
       <Route path="/owner" element={<ProtectedRoute requireOwner><OwnerDashboardPage /></ProtectedRoute>} />

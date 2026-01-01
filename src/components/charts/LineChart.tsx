@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   LineChart as RechartsLineChart,
   Line,
@@ -28,8 +29,18 @@ export default function LineChart({
   showGrid = true,
   className = '',
 }: LineChartProps) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <div className={`w-full ${className}`} style={{ height }} />
+  }
+
   return (
-    <div className={`w-full ${className}`} style={{ height }}>
+    <div className={`w-full min-w-0 ${className}`} style={{ height }}>
       <ResponsiveContainer width="100%" height="100%">
         <RechartsLineChart
           data={data}

@@ -107,6 +107,7 @@ public class AuthService {
                 user.getPhone(),
                 user.getBio(),
                 user.isOwner(),
+                user.isSupplier(),
                 user.getCreatedAt(),
                 UserResponse.NotificationPreferencesResponse.from(user.getNotificationPreferences()),
                 linkedAccounts

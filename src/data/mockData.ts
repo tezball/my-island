@@ -22,6 +22,7 @@ export const currentUser: User = {
   bio: 'Outdoor enthusiast who loves exploring Ireland\'s beautiful campsites.',
   memberSince: '2023-06-15',
   isOwner: false,
+  isSupplier: false,
   linkedAccounts: [
     { provider: 'google', email: 'john.murphy@gmail.com', connected: true },
     { provider: 'apple', email: 'john@icloud.com', connected: false },
@@ -177,9 +178,11 @@ export const campsites: Campsite[] = [
   },
 ]
 
-// Lots for each campsite
+// Lots for each campsite - diverse accommodation types
 export const lots: Lot[] = [
-  // Clifden Eco Beach lots
+  // ============================================
+  // Clifden Eco Beach (camp-1) - Mixed types
+  // ============================================
   {
     id: 'lot-1-1',
     campsiteId: 'camp-1',
@@ -190,6 +193,7 @@ export const lots: Lot[] = [
     images: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400'],
     amenities: ['Electric hookup', 'Sea view', 'Fire pit'],
     available: true,
+    description: 'Classic tent pitch with stunning Atlantic views',
   },
   {
     id: 'lot-1-2',
@@ -201,8 +205,36 @@ export const lots: Lot[] = [
     images: ['https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=400'],
     amenities: ['Electric hookup', 'Water hookup', 'Beach access'],
     available: true,
+    description: 'Level hardstanding perfect for campervans',
   },
-  // Ring of Kerry lots
+  {
+    id: 'lot-1-3',
+    campsiteId: 'camp-1',
+    name: 'Luxury Safari Tent',
+    type: 'safari_tent',
+    capacity: 6,
+    pricePerNight: 125,
+    images: ['https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=400'],
+    amenities: ['King bed', 'En-suite bathroom', 'Deck', 'Ocean view', 'Wood burner'],
+    available: true,
+    description: 'Canvas luxury with proper beds and stunning sea views',
+  },
+  {
+    id: 'lot-1-4',
+    campsiteId: 'camp-1',
+    name: 'The Nest Treehouse',
+    type: 'treehouse',
+    capacity: 2,
+    pricePerNight: 175,
+    images: ['https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400'],
+    amenities: ['Queen bed', 'Kitchenette', 'Wrap-around deck', 'Hot tub', 'WiFi'],
+    available: true,
+    description: 'Elevated hideaway nestled in ancient oaks',
+  },
+
+  // ============================================
+  // Ring of Kerry (camp-2) - Premium glamping
+  // ============================================
   {
     id: 'lot-2-1',
     campsiteId: 'camp-2',
@@ -213,19 +245,60 @@ export const lots: Lot[] = [
     images: ['https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=400'],
     amenities: ['King bed', 'Wood stove', 'Private deck', 'Breakfast included'],
     available: true,
+    description: 'Romantic bell tent with MacGillycuddy Reeks backdrop',
   },
   {
     id: 'lot-2-2',
     campsiteId: 'camp-2',
-    name: 'Lakeside Cabin',
+    name: 'Lakeside Log Cabin',
     type: 'cabin',
     capacity: 4,
-    pricePerNight: 145,
+    pricePerNight: 185,
     images: ['https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=400'],
-    amenities: ['Full kitchen', 'Bathroom', 'Fireplace', 'Lake view'],
+    amenities: ['Full kitchen', 'Bathroom', 'Fireplace', 'Lake view', 'BBQ'],
     available: false,
+    description: 'Traditional Irish cabin overlooking Lough Leane',
   },
-  // Wicklow lots
+  {
+    id: 'lot-2-3',
+    campsiteId: 'camp-2',
+    name: 'Hobbit Pod',
+    type: 'pod',
+    capacity: 2,
+    pricePerNight: 110,
+    images: ['https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=400'],
+    amenities: ['Double bed', 'Mini kitchen', 'Heating', 'Skylight'],
+    available: true,
+    description: 'Cosy curved pod inspired by Irish folklore',
+  },
+  {
+    id: 'lot-2-4',
+    campsiteId: 'camp-2',
+    name: 'Mongolian Yurt',
+    type: 'yurt',
+    capacity: 5,
+    pricePerNight: 135,
+    images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'],
+    amenities: ['Traditional decor', 'Wood burner', 'Futon beds', 'Lanterns', 'Fire pit'],
+    available: true,
+    description: 'Authentic yurt experience with modern comforts',
+  },
+  {
+    id: 'lot-2-5',
+    campsiteId: 'camp-2',
+    name: 'The Cottage Suite',
+    type: 'cottage',
+    capacity: 6,
+    pricePerNight: 225,
+    images: ['https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400'],
+    amenities: ['2 bedrooms', 'Full kitchen', 'Living room', 'Garden', 'Parking'],
+    available: true,
+    description: 'Restored stone cottage with all modern amenities',
+  },
+
+  // ============================================
+  // Wicklow Mountains (camp-3) - Nature focused
+  // ============================================
   {
     id: 'lot-3-1',
     campsiteId: 'camp-3',
@@ -236,6 +309,175 @@ export const lots: Lot[] = [
     images: ['https://images.unsplash.com/photo-1487730116445-e52727a1fdae?w=400'],
     amenities: ['Shaded', 'Near facilities', 'Fire pit'],
     available: true,
+    description: 'Secluded woodland pitch perfect for families',
+  },
+  {
+    id: 'lot-3-2',
+    campsiteId: 'camp-3',
+    name: 'RV Deluxe Bay',
+    type: 'rv',
+    capacity: 6,
+    pricePerNight: 55,
+    images: ['https://images.unsplash.com/photo-1543039625-14cbd3802e7d?w=400'],
+    amenities: ['Full hookups', 'Paved pad', 'Picnic table', 'Fire ring', 'WiFi'],
+    available: true,
+    description: 'Premium pull-through site for large RVs',
+  },
+  {
+    id: 'lot-3-3',
+    campsiteId: 'camp-3',
+    name: 'Shepherd\'s Hut',
+    type: 'glamping',
+    capacity: 2,
+    pricePerNight: 89,
+    images: ['https://images.unsplash.com/photo-1595521624992-48a59aef95e3?w=400'],
+    amenities: ['Double bed', 'Wood stove', 'Kitchenette', 'Private meadow'],
+    available: true,
+    description: 'Charming traditional hut in wildflower meadow',
+  },
+
+  // ============================================
+  // Dingle Peninsula (camp-4) - Coastal variety
+  // ============================================
+  {
+    id: 'lot-4-1',
+    campsiteId: 'camp-4',
+    name: 'Cliff Edge Pitch',
+    type: 'tent',
+    capacity: 3,
+    pricePerNight: 32,
+    images: ['https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=400'],
+    amenities: ['Ocean view', 'Wind shelter', 'Sunrise spot'],
+    available: true,
+    description: 'Dramatic clifftop location for experienced campers',
+  },
+  {
+    id: 'lot-4-2',
+    campsiteId: 'camp-4',
+    name: 'Fisherman\'s Apartment',
+    type: 'apartment',
+    capacity: 4,
+    pricePerNight: 165,
+    images: ['https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400'],
+    amenities: ['Full kitchen', 'Living area', 'Balcony', 'Sea view', 'Parking'],
+    available: true,
+    description: 'Modern apartment above the harbour with stunning views',
+  },
+  {
+    id: 'lot-4-3',
+    campsiteId: 'camp-4',
+    name: 'Geodesic Dome',
+    type: 'glamping',
+    capacity: 4,
+    pricePerNight: 155,
+    images: ['https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=400'],
+    amenities: ['Transparent panels', 'King bed', 'Telescope', 'Hot tub', 'Stargazing'],
+    available: true,
+    description: 'Stargazing dome on the Wild Atlantic Way',
+  },
+  {
+    id: 'lot-4-4',
+    campsiteId: 'camp-4',
+    name: 'Caravan Pitch Premium',
+    type: 'caravan',
+    capacity: 4,
+    pricePerNight: 42,
+    images: ['https://images.unsplash.com/photo-1578894381163-e72c17f2d45f?w=400'],
+    amenities: ['Electric hookup', 'Water point', 'Grey waste', 'Hardstanding'],
+    available: true,
+    description: 'Level hardstanding with all services',
+  },
+
+  // ============================================
+  // Burren Wild Camp (camp-5) - Eco options
+  // ============================================
+  {
+    id: 'lot-5-1',
+    campsiteId: 'camp-5',
+    name: 'Wild Pitch',
+    type: 'tent',
+    capacity: 2,
+    pricePerNight: 18,
+    images: ['https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?w=400'],
+    amenities: ['Basic', 'Composting toilet nearby', 'Stream access'],
+    available: true,
+    description: 'Back-to-basics wild camping in the Burren',
+  },
+  {
+    id: 'lot-5-2',
+    campsiteId: 'camp-5',
+    name: 'Eco Pod',
+    type: 'pod',
+    capacity: 2,
+    pricePerNight: 75,
+    images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400'],
+    amenities: ['Solar powered', 'Composting toilet', 'Rainwater shower', 'Off-grid'],
+    available: true,
+    description: 'Sustainable pod with minimal environmental impact',
+  },
+
+  // ============================================
+  // Giants Causeway (camp-6) - Premium variety
+  // ============================================
+  {
+    id: 'lot-6-1',
+    campsiteId: 'camp-6',
+    name: 'Causeway View RV Site',
+    type: 'rv',
+    capacity: 6,
+    pricePerNight: 65,
+    images: ['https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400'],
+    amenities: ['Full hookups', 'WiFi', 'TV connection', 'Laundry access'],
+    available: true,
+    description: 'Premium motorhome bay near Giants Causeway',
+  },
+  {
+    id: 'lot-6-2',
+    campsiteId: 'camp-6',
+    name: 'Stone Cottage',
+    type: 'cottage',
+    capacity: 8,
+    pricePerNight: 275,
+    images: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400'],
+    amenities: ['3 bedrooms', 'Full kitchen', 'Living room', 'Garden', 'Hot tub'],
+    available: true,
+    description: '200-year-old restored cottage with modern luxury',
+  },
+  {
+    id: 'lot-6-3',
+    campsiteId: 'camp-6',
+    name: 'Causeway Cabin',
+    type: 'cabin',
+    capacity: 4,
+    pricePerNight: 145,
+    images: ['https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400'],
+    amenities: ['En-suite', 'Kitchenette', 'Heating', 'Parking', 'Views'],
+    available: true,
+    description: 'Modern cabin with views of the Antrim coast',
+  },
+  {
+    id: 'lot-6-4',
+    campsiteId: 'camp-6',
+    name: 'Luxury Safari Lodge',
+    type: 'safari_tent',
+    capacity: 4,
+    pricePerNight: 195,
+    images: ['https://images.unsplash.com/photo-1537905569824-f89f14cceb68?w=400'],
+    amenities: ['King bed', 'Bunk room', 'En-suite', 'Deck', 'BBQ', 'Fire pit'],
+    available: false,
+    description: 'Canvas luxury with hotel-quality amenities',
+  },
+  {
+    id: 'lot-6-5',
+    campsiteId: 'camp-6',
+    name: 'Hillside Yurt',
+    type: 'yurt',
+    capacity: 4,
+    pricePerNight: 125,
+    images: ['https://images.unsplash.com/photo-1534787238916-9ba6764efd4f?w=400'],
+    amenities: ['Mongolian design', 'Wood stove', 'Outdoor kitchen', 'Star roof'],
+    available: true,
+    description: 'Traditional yurt on a hillside with valley views',
   },
 ]
 
@@ -265,7 +507,7 @@ export const bookings: Booking[] = [
     checkIn: getRelativeDate(45), // 6 weeks from now
     checkOut: getRelativeDate(47),
     guests: 2,
-    status: 'pending',
+    status: 'confirmed',
     totalPrice: 190,
     extras: [],
     createdAt: getRelativeDate(-2),
@@ -706,7 +948,7 @@ export const ownerBookings: OwnerBooking[] = [
     checkIn: getRelativeDate(21), // 3 weeks from now
     checkOut: getRelativeDate(23),
     guests: 2,
-    status: 'pending',
+    status: 'confirmed',
     totalPrice: 76,
     extras: [{ id: 'ext-1', name: 'Firewood', price: 10, quantity: 1 }],
     createdAt: getRelativeDate(-1),

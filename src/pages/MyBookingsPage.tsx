@@ -16,7 +16,6 @@ const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
 type TabType = 'upcoming' | 'past'
 
 const statusColors: Record<Booking['status'], 'success' | 'warning' | 'info' | 'default' | 'error'> = {
-  pending: 'warning',
   confirmed: 'success',
   checked_in: 'info',
   completed: 'default',
@@ -24,11 +23,15 @@ const statusColors: Record<Booking['status'], 'success' | 'warning' | 'info' | '
 }
 
 const statusLabels: Record<Booking['status'], string> = {
-  pending: 'Pending',
   confirmed: 'Confirmed',
   checked_in: 'Checked In',
   completed: 'Completed',
   cancelled: 'Cancelled',
+}
+
+// Normalize API status (uppercase) to local status (lowercase)
+const normalizeStatus = (status: string): Booking['status'] => {
+  return status.toLowerCase() as Booking['status']
 }
 
 export default function MyBookingsPage() {
@@ -36,7 +39,7 @@ export default function MyBookingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('upcoming')
   const [isLoading, setIsLoading] = useState(true)
   const [apiBookings, setApiBookings] = useState<BookingResponse[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [_error, setError] = useState<string | null>(null)
 
   // Fetch bookings from API
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function MyBookingsPage() {
           // Fallback to mock data on error
           const mockBookings = bookings.filter((b) =>
             activeTab === 'upcoming'
-              ? b.status === 'pending' || b.status === 'confirmed' || b.status === 'checked_in'
+              ? b.status === 'confirmed' || b.status === 'checked_in'
               : b.status === 'completed' || b.status === 'cancelled'
           ) as unknown as BookingResponse[]
           setApiBookings(mockBookings)
@@ -67,7 +70,7 @@ export default function MyBookingsPage() {
         // Use mock data
         const mockBookings = bookings.filter((b) =>
           activeTab === 'upcoming'
-            ? b.status === 'pending' || b.status === 'confirmed' || b.status === 'checked_in'
+            ? b.status === 'confirmed' || b.status === 'checked_in'
             : b.status === 'completed' || b.status === 'cancelled'
         ) as unknown as BookingResponse[]
         setApiBookings(mockBookings)
@@ -79,6 +82,14 @@ export default function MyBookingsPage() {
   }, [activeTab])
 
   const displayedBookings = apiBookings
+
+  // Derive booking counts for tab labels
+  const upcomingBookings = bookings.filter(b =>
+    b.status === 'confirmed' || b.status === 'checked_in'
+  )
+  const pastBookings = bookings.filter(b =>
+    b.status === 'completed' || b.status === 'cancelled'
+  )
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IE', {
@@ -156,10 +167,10 @@ export default function MyBookingsPage() {
                         className="w-full h-32 object-cover"
                       />
                       <Badge
-                        variant={statusColors[booking.status]}
+                        variant={statusColors[normalizeStatus(booking.status)]}
                         className="absolute top-3 right-3"
                       >
-                        {statusLabels[booking.status]}
+                        {statusLabels[normalizeStatus(booking.status)]}
                       </Badge>
                     </div>
                     <div className="p-4">
@@ -188,7 +199,7 @@ export default function MyBookingsPage() {
                       </div>
 
                       {/* Write Review button for completed bookings */}
-                      {booking.status === 'completed' && (
+                      {normalizeStatus(booking.status) === 'completed' && (
                         <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                           <Button
                             variant="outline"

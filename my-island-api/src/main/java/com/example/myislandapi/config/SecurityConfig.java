@@ -49,9 +49,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/support/faqs").permitAll()
                         // Static resources (React frontend)
                         .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.svg").permitAll()
+                        // SPA routes - allow all non-API paths for React Router to handle
+                        .requestMatchers(request -> {
+                            String path = request.getServletPath();
+                            return !path.startsWith("/api/") && !path.startsWith("/actuator/");
+                        }).permitAll()
                         // Owner endpoints require OWNER role
                         .requestMatchers("/api/owner/**").hasRole("OWNER")
-                        // All other endpoints require authentication
+                        // Supplier endpoints require SUPPLIER role
+                        .requestMatchers("/api/supplier/**").hasRole("SUPPLIER")
+                        // All other API endpoints require authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -6,7 +6,6 @@ import { bookings, getCampsiteById } from '../data/mockData'
 import type { Booking } from '../data/types'
 
 const statusLabels: Record<Booking['status'], string> = {
-  pending: 'Pending Confirmation',
   confirmed: 'Confirmed',
   checked_in: 'Checked In',
   completed: 'Completed',
@@ -39,7 +38,7 @@ export default function BookingDetailPage() {
     })
   }
 
-  const isUpcoming = booking.status === 'pending' || booking.status === 'confirmed'
+  const isUpcoming = booking.status === 'confirmed' || booking.status === 'checked_in'
 
   return (
     <AppShell showBack headerTitle="Booking Details" showNotifications={false}>
@@ -48,18 +47,14 @@ export default function BookingDetailPage() {
         <div className={`px-4 py-3 flex items-center gap-3 ${
           booking.status === 'confirmed' || booking.status === 'checked_in'
             ? 'bg-emerald-50 dark:bg-emerald-900/20'
-            : booking.status === 'pending'
-            ? 'bg-amber-50 dark:bg-amber-900/20'
             : 'bg-slate-50 dark:bg-slate-800'
         }`}>
           <Icon
-            name={booking.status === 'confirmed' ? 'check_circle' : 'schedule'}
+            name={booking.status === 'confirmed' || booking.status === 'checked_in' ? 'check_circle' : 'schedule'}
             size={24}
             className={
               booking.status === 'confirmed' || booking.status === 'checked_in'
                 ? 'text-emerald-600'
-                : booking.status === 'pending'
-                ? 'text-amber-600'
                 : 'text-slate-600'
             }
             filled
