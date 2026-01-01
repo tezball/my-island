@@ -1,0 +1,29 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  flyway:
+    enabled: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+jwt:
+  secret: test-secret-key-for-testing-purposes-only-min-256-bits-required
+  expiration: 86400000
+  refresh-expiration: 2592000000
+
+aws:
+  region: eu-west-1
+  endpoint: http://localhost:4566
+  s3:
+    bucket: test-bucket
+  ses:
+    from-email: test@myisland.local
+
+logging:
+  level:
+    root: WARN
+    com.example.myislandapi: DEBUG

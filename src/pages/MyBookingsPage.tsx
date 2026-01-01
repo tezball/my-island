@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
+import { SkeletonBookingCard } from '../components/ui/Skeleton'
 import { bookings, getCampsiteById } from '../data/mockData'
 import type { Booking } from '../data/types'
 
@@ -29,6 +30,13 @@ const statusLabels: Record<Booking['status'], string> = {
 export default function MyBookingsPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<TabType>('upcoming')
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Simulate loading bookings from API
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const upcomingBookings = bookings.filter(
     (b) => b.status === 'pending' || b.status === 'confirmed' || b.status === 'checked_in'
@@ -75,7 +83,13 @@ export default function MyBookingsPage() {
 
         {/* Bookings List */}
         <div className="flex-1 overflow-auto">
-          {displayedBookings.length === 0 ? (
+          {isLoading ? (
+            <div className="p-4 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <SkeletonBookingCard key={i} />
+              ))}
+            </div>
+          ) : displayedBookings.length === 0 ? (
             <EmptyState
               icon={activeTab === 'upcoming' ? 'calendar_month' : 'history'}
               title={activeTab === 'upcoming' ? 'No upcoming bookings' : 'No past bookings'}

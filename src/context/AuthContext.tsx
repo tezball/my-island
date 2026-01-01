@@ -1,0 +1,262 @@
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import type { User } from '../data/types'
+
+interface AuthState {
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
+}
+
+interface LoginCredentials {
+  email: string
+  password: string
+}
+
+interface SignUpData {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  phone?: string
+  acceptMarketing: boolean
+}
+
+interface AuthContextType extends AuthState {
+  login: (credentials: LoginCredentials) => Promise<void>
+  loginWithProvider: (provider: 'google' | 'apple') => Promise<void>
+  signup: (data: SignUpData) => Promise<void>
+  logout: () => void
+  clearError: () => void
+  updateUser: (updates: Partial<User>) => void
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const AUTH_STORAGE_KEY = 'my-island-auth'
+
+// Mock user for development - will be replaced with API response
+const createMockUser = (email: string, firstName: string, lastName: string): User => ({
+  id: crypto.randomUUID(),
+  email,
+  name: `${firstName} ${lastName}`,
+  memberSince: new Date().toISOString(),
+  isOwner: email.includes('owner'),
+  linkedAccounts: [],
+  notificationPreferences: {
+    email: true,
+    push: true,
+    sms: false,
+    marketing: false,
+  },
+})
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    isAuthenticated: false,
+    isLoading: true,
+    error: null,
+  })
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const stored = localStorage.getItem(AUTH_STORAGE_KEY)
+        if (stored) {
+          const { user, expiresAt } = JSON.parse(stored)
+          if (new Date(expiresAt) > new Date()) {
+            setState({
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            })
+            return
+          }
+          // Session expired, clear it
+          localStorage.removeItem(AUTH_STORAGE_KEY)
+        }
+      } catch {
+        localStorage.removeItem(AUTH_STORAGE_KEY)
+      }
+      setState(prev => ({ ...prev, isLoading: false }))
+    }
+
+    checkAuth()
+  }, [])
+
+  const persistSession = (user: User) => {
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + 30) // 30 days
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ user, expiresAt: expiresAt.toISOString() }))
+  }
+
+  const login = useCallback(async (credentials: LoginCredentials) => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      // TODO: Replace with actual API call
+      // const response = await api.post('/auth/login', credentials)
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Mock validation
+      if (credentials.email === 'locked@test.com') {
+        throw new Error('ACCOUNT_LOCKED')
+      }
+      if (credentials.email === 'suspended@test.com') {
+        throw new Error('ACCOUNT_SUSPENDED')
+      }
+      if (credentials.email === 'unverified@test.com') {
+        throw new Error('EMAIL_UNVERIFIED')
+      }
+
+      const user = createMockUser(credentials.email, 'Alex', 'Walker')
+      persistSession(user)
+
+      setState({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Login failed'
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: message,
+      }))
+      throw error
+    }
+  }, [])
+
+  const loginWithProvider = useCallback(async (provider: 'google' | 'apple') => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      // TODO: Replace with actual OAuth flow
+      // const response = await api.post(`/auth/${provider}`)
+
+      // Simulate OAuth
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
+      // Random failure for demo (20% chance)
+      if (Math.random() < 0.2) {
+        throw new Error('OAuth connection failed')
+      }
+
+      const user = createMockUser(
+        `user@${provider}.com`,
+        provider === 'google' ? 'Google' : 'Apple',
+        'User'
+      )
+      persistSession(user)
+
+      setState({
+        user,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null,
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'SSO login failed'
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: message,
+      }))
+      throw error
+    }
+  }, [])
+
+  const signup = useCallback(async (data: SignUpData) => {
+    setState(prev => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      // TODO: Replace with actual API call
+      // const response = await api.post('/auth/register', data)
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
+      // Mock: check if email exists
+      if (data.email === 'exists@test.com') {
+        throw new Error('EMAIL_EXISTS')
+      }
+
+      const user = createMockUser(data.email, data.firstName, data.lastName)
+      user.phone = data.phone
+      user.notificationPreferences.marketing = data.acceptMarketing
+
+      // For signup, we don't persist session until email is verified
+      // But we store the user temporarily for the verification flow
+      setState({
+        user,
+        isAuthenticated: false, // Not authenticated until email verified
+        isLoading: false,
+        error: null,
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Signup failed'
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: message,
+      }))
+      throw error
+    }
+  }, [])
+
+  const logout = useCallback(() => {
+    localStorage.removeItem(AUTH_STORAGE_KEY)
+    setState({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null,
+    })
+  }, [])
+
+  const clearError = useCallback(() => {
+    setState(prev => ({ ...prev, error: null }))
+  }, [])
+
+  const updateUser = useCallback((updates: Partial<User>) => {
+    setState(prev => {
+      if (!prev.user) return prev
+      const updatedUser = { ...prev.user, ...updates }
+      persistSession(updatedUser)
+      return { ...prev, user: updatedUser }
+    })
+  }, [])
+
+  return (
+    <AuthContext.Provider
+      value={{
+        ...state,
+        login,
+        loginWithProvider,
+        signup,
+        logout,
+        clearError,
+        updateUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}
+
+export default AuthContext

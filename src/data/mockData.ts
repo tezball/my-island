@@ -4,6 +4,13 @@ import type {
   LotAvailability, CheckInInstructions, Message, OwnerBooking, OwnerCampsite, BroadcastAlert
 } from './types'
 
+// Helper to generate dates relative to today
+function getRelativeDate(daysFromNow: number): string {
+  const date = new Date()
+  date.setDate(date.getDate() + daysFromNow)
+  return date.toISOString().split('T')[0]
+}
+
 // Current logged-in user
 export const currentUser: User = {
   id: 'user-1',
@@ -231,22 +238,22 @@ export const lots: Lot[] = [
   },
 ]
 
-// User bookings
+// User bookings - using relative dates for realistic display
 export const bookings: Booking[] = [
   {
     id: 'book-1',
     campsiteId: 'camp-1',
     lotId: 'lot-1-1',
     userId: 'user-1',
-    checkIn: '2025-01-15',
-    checkOut: '2025-01-18',
+    checkIn: getRelativeDate(14), // 2 weeks from now
+    checkOut: getRelativeDate(17),
     guests: 2,
     status: 'confirmed',
     totalPrice: 84,
     extras: [
       { id: 'ext-1', name: 'Firewood Bundle', price: 8, quantity: 2 },
     ],
-    createdAt: '2024-12-28',
+    createdAt: getRelativeDate(-7),
     paymentMethod: { type: 'card', last4: '4242', brand: 'Visa' },
   },
   {
@@ -254,13 +261,13 @@ export const bookings: Booking[] = [
     campsiteId: 'camp-2',
     lotId: 'lot-2-1',
     userId: 'user-1',
-    checkIn: '2025-02-14',
-    checkOut: '2025-02-16',
+    checkIn: getRelativeDate(45), // 6 weeks from now
+    checkOut: getRelativeDate(47),
     guests: 2,
     status: 'pending',
     totalPrice: 190,
     extras: [],
-    createdAt: '2025-01-02',
+    createdAt: getRelativeDate(-2),
     paymentMethod: { type: 'apple_pay' },
   },
   {
@@ -268,15 +275,15 @@ export const bookings: Booking[] = [
     campsiteId: 'camp-4',
     lotId: 'lot-1-1',
     userId: 'user-1',
-    checkIn: '2024-08-10',
-    checkOut: '2024-08-15',
+    checkIn: getRelativeDate(-60), // 2 months ago
+    checkOut: getRelativeDate(-55),
     guests: 4,
     status: 'completed',
     totalPrice: 160,
     extras: [
       { id: 'ext-2', name: 'Kayak Rental', price: 25, quantity: 1 },
     ],
-    createdAt: '2024-07-20',
+    createdAt: getRelativeDate(-90),
     paymentMethod: { type: 'card', last4: '1234', brand: 'Mastercard' },
   },
 ]
@@ -675,13 +682,13 @@ export const ownerBookings: OwnerBooking[] = [
     campsiteId: 'camp-1',
     lotId: 'lot-1-1',
     userId: 'user-2',
-    checkIn: '2025-01-20',
-    checkOut: '2025-01-23',
+    checkIn: getRelativeDate(7), // Next week
+    checkOut: getRelativeDate(10),
     guests: 3,
     status: 'confirmed',
     totalPrice: 84,
     extras: [],
-    createdAt: '2025-01-05',
+    createdAt: getRelativeDate(-5),
     paymentMethod: { type: 'card', last4: '5678', brand: 'Visa' },
     guestName: 'Sarah O\'Connor',
     guestEmail: 'sarah@email.com',
@@ -695,13 +702,13 @@ export const ownerBookings: OwnerBooking[] = [
     campsiteId: 'camp-1',
     lotId: 'lot-1-2',
     userId: 'user-3',
-    checkIn: '2025-01-25',
-    checkOut: '2025-01-27',
+    checkIn: getRelativeDate(21), // 3 weeks from now
+    checkOut: getRelativeDate(23),
     guests: 2,
     status: 'pending',
     totalPrice: 76,
     extras: [{ id: 'ext-1', name: 'Firewood', price: 10, quantity: 1 }],
-    createdAt: '2025-01-08',
+    createdAt: getRelativeDate(-1),
     guestName: 'Michael Kelly',
     guestEmail: 'michael.k@email.com',
     guestAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
@@ -713,13 +720,13 @@ export const ownerBookings: OwnerBooking[] = [
     campsiteId: 'camp-1',
     lotId: 'lot-1-1',
     userId: 'user-4',
-    checkIn: '2024-12-20',
-    checkOut: '2024-12-24',
+    checkIn: getRelativeDate(-30), // 1 month ago
+    checkOut: getRelativeDate(-26),
     guests: 4,
     status: 'completed',
     totalPrice: 112,
     extras: [],
-    createdAt: '2024-12-01',
+    createdAt: getRelativeDate(-45),
     paymentMethod: { type: 'card', last4: '9012', brand: 'Mastercard' },
     guestName: 'Emma Walsh',
     guestEmail: 'emma.walsh@email.com',
@@ -732,13 +739,13 @@ export const ownerBookings: OwnerBooking[] = [
     campsiteId: 'camp-1',
     lotId: 'lot-1-1',
     userId: 'user-5',
-    checkIn: '2024-11-15',
-    checkOut: '2024-11-17',
+    checkIn: getRelativeDate(-45), // 1.5 months ago
+    checkOut: getRelativeDate(-43),
     guests: 2,
     status: 'cancelled',
     totalPrice: 0,
     extras: [],
-    createdAt: '2024-11-01',
+    createdAt: getRelativeDate(-60),
     guestName: 'David Murphy',
     guestEmail: 'david.m@email.com',
     lotName: 'Ocean View Pitch 1',

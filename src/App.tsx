@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import ProtectedRoute from './components/auth/ProtectedRoute'
 
 // Auth Pages
 import LoginPage from './pages/LoginPage'
@@ -157,34 +158,34 @@ function App() {
       <Route path="/book/:id/payment-failed" element={<PaymentFailedPage />} />
       <Route path="/book/:id/booking-failed" element={<BookingFailedPage />} />
 
-      {/* My Bookings */}
-      <Route path="/bookings" element={<MyBookingsPage />} />
-      <Route path="/bookings/:bookingId" element={<BookingDetailPage />} />
-      <Route path="/bookings/:bookingId/modify-dates" element={<ModifyDatesPage />} />
-      <Route path="/bookings/:bookingId/modify-guests" element={<ModifyGuestsPage />} />
-      <Route path="/bookings/:bookingId/modify-summary" element={<ModifySummaryPage />} />
-      <Route path="/bookings/:bookingId/cancel" element={<CancelConfirmPage />} />
-      <Route path="/bookings/:bookingId/cancelled" element={<CancellationSuccessPage />} />
-      <Route path="/bookings/:bookingId/receipt" element={<BookingReceiptPage />} />
-      <Route path="/bookings/:bookingId/check-in" element={<CheckInInstructionsPage />} />
-      <Route path="/bookings/:bookingId/contact-host" element={<ContactHostPage />} />
+      {/* My Bookings - Protected */}
+      <Route path="/bookings" element={<ProtectedRoute><MyBookingsPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId" element={<ProtectedRoute><BookingDetailPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/modify-dates" element={<ProtectedRoute><ModifyDatesPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/modify-guests" element={<ProtectedRoute><ModifyGuestsPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/modify-summary" element={<ProtectedRoute><ModifySummaryPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/cancel" element={<ProtectedRoute><CancelConfirmPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/cancelled" element={<ProtectedRoute><CancellationSuccessPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/receipt" element={<ProtectedRoute><BookingReceiptPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/check-in" element={<ProtectedRoute><CheckInInstructionsPage /></ProtectedRoute>} />
+      <Route path="/bookings/:bookingId/contact-host" element={<ProtectedRoute><ContactHostPage /></ProtectedRoute>} />
 
-      {/* Favorites */}
-      <Route path="/favorites" element={<FavoritesPage />} />
+      {/* Favorites - Protected */}
+      <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
 
       {/* Offers */}
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/offers/:id" element={<SupplierDetailPage />} />
 
-      {/* Profile */}
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/profile/edit" element={<ProfileEditPage />} />
-      <Route path="/profile/personal-info" element={<PersonalInfoPage />} />
-      <Route path="/profile/linked-accounts" element={<LinkedAccountsPage />} />
-      <Route path="/profile/notifications" element={<NotificationSettingsPage />} />
+      {/* Profile - Protected */}
+      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/profile/edit" element={<ProtectedRoute><ProfileEditPage /></ProtectedRoute>} />
+      <Route path="/profile/personal-info" element={<ProtectedRoute><PersonalInfoPage /></ProtectedRoute>} />
+      <Route path="/profile/linked-accounts" element={<ProtectedRoute><LinkedAccountsPage /></ProtectedRoute>} />
+      <Route path="/profile/notifications" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
 
-      {/* Settings */}
-      <Route path="/settings" element={<SettingsPage />} />
+      {/* Settings - Protected */}
+      <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
 
       {/* Support */}
       <Route path="/support" element={<SupportPage />} />
@@ -193,30 +194,30 @@ function App() {
       <Route path="/support/tickets" element={<SupportTicketsPage />} />
       <Route path="/support/tickets/:ticketId" element={<SupportTicketDetailPage />} />
 
-      {/* Notifications */}
-      <Route path="/notifications" element={<NotificationsPage />} />
-      <Route path="/notifications/center" element={<NotificationCenterPage />} />
-      <Route path="/notifications/:id" element={<NotificationDetailPage />} />
+      {/* Notifications - Protected */}
+      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+      <Route path="/notifications/center" element={<ProtectedRoute><NotificationCenterPage /></ProtectedRoute>} />
+      <Route path="/notifications/:id" element={<ProtectedRoute><NotificationDetailPage /></ProtectedRoute>} />
 
-      {/* Owner Admin */}
-      <Route path="/owner" element={<OwnerDashboardPage />} />
-      <Route path="/owner/stats" element={<OwnerStatsPage />} />
-      <Route path="/owner/lots" element={<ManageLotsPage />} />
-      <Route path="/owner/lots/new" element={<LotFormPage />} />
-      <Route path="/owner/lots/:lotId/edit" element={<LotFormPage />} />
-      <Route path="/owner/campsites/:id/edit" element={<CampsiteFormPage />} />
-      <Route path="/owner/bookings" element={<OwnerBookingsPage />} />
-      <Route path="/owner/offers" element={<OfferManagementPage />} />
-      <Route path="/owner/offers/new" element={<OfferFormPage />} />
-      <Route path="/owner/offers/:offerId/edit" element={<OfferFormPage />} />
-      <Route path="/owner/revenue" element={<RevenueDashboardPage />} />
-      <Route path="/owner/settings" element={<OwnerSettingsPage />} />
-      <Route path="/owner/settings/calendar" element={<OwnerCalendarSettingsPage />} />
-      <Route path="/owner/settings/pricing" element={<OwnerPricingSettingsPage />} />
-      <Route path="/owner/settings/bank" element={<OwnerBankSettingsPage />} />
-      <Route path="/owner/settings/payout-schedule" element={<OwnerPayoutSchedulePage />} />
-      <Route path="/owner/settings/tax" element={<OwnerTaxSettingsPage />} />
-      <Route path="/owner/settings/team" element={<OwnerTeamSettingsPage />} />
+      {/* Owner Admin - Protected + Owner Role Required */}
+      <Route path="/owner" element={<ProtectedRoute requireOwner><OwnerDashboardPage /></ProtectedRoute>} />
+      <Route path="/owner/stats" element={<ProtectedRoute requireOwner><OwnerStatsPage /></ProtectedRoute>} />
+      <Route path="/owner/lots" element={<ProtectedRoute requireOwner><ManageLotsPage /></ProtectedRoute>} />
+      <Route path="/owner/lots/new" element={<ProtectedRoute requireOwner><LotFormPage /></ProtectedRoute>} />
+      <Route path="/owner/lots/:lotId/edit" element={<ProtectedRoute requireOwner><LotFormPage /></ProtectedRoute>} />
+      <Route path="/owner/campsites/:id/edit" element={<ProtectedRoute requireOwner><CampsiteFormPage /></ProtectedRoute>} />
+      <Route path="/owner/bookings" element={<ProtectedRoute requireOwner><OwnerBookingsPage /></ProtectedRoute>} />
+      <Route path="/owner/offers" element={<ProtectedRoute requireOwner><OfferManagementPage /></ProtectedRoute>} />
+      <Route path="/owner/offers/new" element={<ProtectedRoute requireOwner><OfferFormPage /></ProtectedRoute>} />
+      <Route path="/owner/offers/:offerId/edit" element={<ProtectedRoute requireOwner><OfferFormPage /></ProtectedRoute>} />
+      <Route path="/owner/revenue" element={<ProtectedRoute requireOwner><RevenueDashboardPage /></ProtectedRoute>} />
+      <Route path="/owner/settings" element={<ProtectedRoute requireOwner><OwnerSettingsPage /></ProtectedRoute>} />
+      <Route path="/owner/settings/calendar" element={<ProtectedRoute requireOwner><OwnerCalendarSettingsPage /></ProtectedRoute>} />
+      <Route path="/owner/settings/pricing" element={<ProtectedRoute requireOwner><OwnerPricingSettingsPage /></ProtectedRoute>} />
+      <Route path="/owner/settings/bank" element={<ProtectedRoute requireOwner><OwnerBankSettingsPage /></ProtectedRoute>} />
+      <Route path="/owner/settings/payout-schedule" element={<ProtectedRoute requireOwner><OwnerPayoutSchedulePage /></ProtectedRoute>} />
+      <Route path="/owner/settings/tax" element={<ProtectedRoute requireOwner><OwnerTaxSettingsPage /></ProtectedRoute>} />
+      <Route path="/owner/settings/team" element={<ProtectedRoute requireOwner><OwnerTeamSettingsPage /></ProtectedRoute>} />
 
       {/* 404 Catch-all */}
       <Route path="*" element={<NotFoundPage />} />

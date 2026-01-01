@@ -11,17 +11,14 @@
             "id": "2cd6ba3fd7738262",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "flows/reviews/reviews-flow.canvas",
-                "viewState": {
-                  "x": 1563.8792325056434,
-                  "y": 1686.774403922122,
-                  "zoom": -1
-                }
+                "file": "MVP_ROADMAP.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "reviews-flow"
+              "icon": "lucide-file",
+              "title": "MVP_ROADMAP"
             }
           }
         ]
@@ -81,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 407.5
+    "width": 407.5,
+    "collapsed": true
   },
   "right": {
     "id": "62f417dc1f6f45ad",
@@ -188,8 +186,8 @@
   },
   "active": "2cd6ba3fd7738262",
   "lastOpenFiles": [
-    "SNAG_LIST.md",
     "flows/reviews/reviews-flow.canvas",
+    "SNAG_LIST.md",
     "SNAG_LIST.md.tmp.44632.1767195404780",
     "flows/profile/profile-flow.canvas",
     "flows/owner-admin/owner-admin-flow.canvas",

@@ -1,17 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import CampsiteCard from '../components/ui/CampsiteCard'
 import Icon from '../components/ui/Icon'
 import MapView from '../components/ui/MapView'
+import Skeleton, { SkeletonCard } from '../components/ui/Skeleton'
 import { campsites, getFeaturedCampsites } from '../data/mockData'
 
 type ViewMode = 'list' | 'map'
 
 export default function DiscoverPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [isLoading, setIsLoading] = useState(true)
   const featured = getFeaturedCampsites()
   const navigate = useNavigate()
+
+  // Simulate initial data loading (useful for future API integration)
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Prepare markers for map view
   const mapMarkers = campsites.map(campsite => ({
@@ -90,6 +98,36 @@ export default function DiscoverPage() {
               onMarkerClick={(id) => navigate(`/campsite/${id}`)}
               height="100%"
             />
+          </div>
+        ) : isLoading ? (
+          /* Loading State */
+          <div className="px-4 py-4 space-y-6">
+            {/* Featured Section Skeleton */}
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <Skeleton variant="text" className="w-40 h-6" />
+                <Skeleton variant="text" className="w-16 h-4" />
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex-shrink-0 w-64">
+                    <Skeleton variant="rectangular" height={160} className="rounded-xl mb-2" />
+                    <Skeleton variant="text" className="w-3/4 h-5 mb-1" />
+                    <Skeleton variant="text" className="w-1/2 h-4" />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* All Campsites Skeleton */}
+            <section>
+              <Skeleton variant="text" className="w-36 h-6 mb-3" />
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            </section>
           </div>
         ) : (
           /* List View */

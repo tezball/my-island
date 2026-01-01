@@ -1,16 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import Button from '../../components/ui/Button'
 import StatCard from '../../components/ui/StatCard'
 import Icon from '../../components/ui/Icon'
 import Toggle from '../../components/ui/Toggle'
+import Skeleton from '../../components/ui/Skeleton'
 import { ownerStats, ownerCampsites, broadcastAlerts } from '../../data/mockData'
 
 export default function OwnerDashboardPage() {
   const navigate = useNavigate()
   const [campsiteVisible, setCampsiteVisible] = useState(true)
   const [broadcastMessage, setBroadcastMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Simulate loading from API
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const campsite = ownerCampsites[0]
   const activeGuests = 45 // Mock number
@@ -21,6 +29,30 @@ export default function OwnerDashboardPage() {
       alert(`Broadcast sent to ${activeGuests} guests!`)
       setBroadcastMessage('')
     }
+  }
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Admin Dashboard" showNav={false}>
+        <div className="flex-1 overflow-auto p-4 space-y-4">
+          {/* Stats Skeleton */}
+          <div className="grid grid-cols-2 gap-3">
+            <Skeleton variant="rectangular" height={100} className="rounded-2xl" />
+            <Skeleton variant="rectangular" height={100} className="rounded-2xl" />
+          </div>
+          {/* Campsite Status Skeleton */}
+          <Skeleton variant="rectangular" height={120} className="rounded-2xl" />
+          {/* Broadcast Skeleton */}
+          <Skeleton variant="rectangular" height={180} className="rounded-2xl" />
+          {/* Quick Actions Skeleton */}
+          <div className="grid grid-cols-2 gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} variant="rectangular" height={120} className="rounded-2xl" />
+            ))}
+          </div>
+        </div>
+      </AppShell>
+    )
   }
 
   return (

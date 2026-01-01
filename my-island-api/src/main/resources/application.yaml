@@ -1,0 +1,114 @@
+spring:
+  application:
+    name: my-island-api
+
+  # Database
+  datasource:
+    url: jdbc:postgresql://localhost:5432/myisland
+    username: myisland
+    password: myisland
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Flyway migrations - disabled for now, using Hibernate ddl-auto
+  flyway:
+    enabled: false
+
+  # Kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: my-island-api
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.example.myislandapi.event
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  # Security - permit Swagger UI
+  security:
+    filter:
+      dispatcher-types: request
+
+# Server
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:my-island-dev-secret-key-change-in-production-min-256-bits}
+  expiration: 86400000  # 24 hours in milliseconds
+  refresh-expiration: 2592000000  # 30 days in milliseconds
+
+# AWS / LocalStack Configuration
+aws:
+  region: eu-west-1
+  endpoint: http://localhost:4566
+  s3:
+    bucket: my-island-images
+  ses:
+    from-email: noreply@myisland.local
+
+# OpenAPI / Swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.example.myislandapi: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.flywaydb: DEBUG
+
+---
+# Test profile
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:tc:postgresql:17-alpine:///myisland
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  flyway:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    com.example.myislandapi: INFO

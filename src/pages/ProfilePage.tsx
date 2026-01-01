@@ -1,8 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Icon from '../components/ui/Icon'
-import { currentUser } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import { APP_VERSION } from '../constants'
+import { getInitials } from '../lib/utils'
 
 interface MenuItem {
   icon: string
@@ -40,10 +43,38 @@ const menuSections: { title: string; items: MenuItem[] }[] = [
 ]
 
 export default function ProfilePage() {
-  const memberSince = new Date(currentUser.memberSince).toLocaleDateString('en-IE', {
-    month: 'long',
-    year: 'numeric',
-  })
+  const navigate = useNavigate()
+  const { user, logout, isLoading } = useAuth()
+  const toast = useToast()
+
+  const memberSince = user?.memberSince
+    ? new Date(user.memberSince).toLocaleDateString('en-IE', {
+        month: 'long',
+        year: 'numeric',
+      })
+    : ''
+
+  const handleLogout = () => {
+    logout()
+    toast.success('Logged out', 'You have been logged out successfully.')
+    navigate('/login')
+  }
+
+  if (isLoading) {
+    return (
+      <AppShell headerTitle="Profile" showLogo>
+        <div className="flex-1 p-4 space-y-4">
+          <div className="flex items-center gap-4">
+            <Skeleton variant="circular" width={80} height={80} />
+            <div className="space-y-2">
+              <Skeleton variant="text" className="w-32 h-5" />
+              <Skeleton variant="text" className="w-48" />
+            </div>
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell headerTitle="Profile" showLogo>
@@ -51,17 +82,25 @@ export default function ProfilePage() {
         {/* Profile Header */}
         <div className="px-4 py-6 bg-gradient-to-br from-primary/10 to-emerald-50 dark:from-primary/5 dark:to-slate-900">
           <div className="flex items-center gap-4">
-            <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="size-20 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-lg"
-            />
+            {user?.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="size-20 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-lg"
+              />
+            ) : (
+              <div className="size-20 rounded-full bg-primary/20 border-4 border-white dark:border-slate-800 shadow-lg flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary">
+                  {getInitials(user?.name || '')}
+                </span>
+              </div>
+            )}
             <div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                {currentUser.name}
+                {user?.name}
               </h1>
               <p className="text-slate-500 dark:text-slate-400">
-                {currentUser.email}
+                {user?.email}
               </p>
               <p className="text-sm text-slate-400 mt-1">
                 Member since {memberSince}
@@ -106,7 +145,10 @@ export default function ProfilePage() {
           ))}
 
           {/* Logout */}
-          <button className="w-full flex items-center justify-center gap-2 py-3 text-red-500 font-medium">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-3 text-red-500 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+          >
             <Icon name="logout" size={20} />
             Log Out
           </button>

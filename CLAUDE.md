@@ -18,16 +18,50 @@ npm run preview      # Preview production build
 
 ### Backend (my-island-api/)
 ```bash
-mvn spring-boot:run  # Run Spring Boot application
-docker-compose up    # Start Grafana LGTM monitoring stack
+docker compose up -d              # Start PostgreSQL, LocalStack, Kafka, Grafana
+mvn spring-boot:run               # Run Spring Boot application
+mvn test                          # Run tests (requires Docker for Testcontainers)
+mvn test -Dtest=ClassName         # Run specific test class
 ```
 
 ## Tech Stack
 
 - **Frontend**: React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS 4 + React Router 7
-- **Backend**: Spring Boot 4.0.1 + Java 25 (early stage, not connected to frontend)
+- **Backend**: Spring Boot 4.0.1 + Java 25 + PostgreSQL 17 + Spring Security (JWT)
+- **AWS (LocalStack)**: S3 (images), SES (email), Kafka (events)
+- **Testing**: JUnit 5 + Testcontainers + MockMvc
 - **Mapping**: Leaflet 1.9.4 + react-leaflet
 - **Charts**: Recharts 3.6.0
+
+## Backend Architecture
+
+```
+my-island-api/src/main/java/com/example/myislandapi/
+├── config/           # SecurityConfig, JpaConfig
+├── controller/       # REST controllers (AuthController, UserController)
+├── dto/              # Request/Response DTOs
+│   ├── request/      # LoginRequest, SignupRequest, etc.
+│   └── response/     # AuthResponse, UserResponse, etc.
+├── entity/           # JPA entities (User, Campsite, Booking)
+├── enums/            # Facility, LotType, BookingStatus, etc.
+├── exception/        # Custom exceptions + GlobalExceptionHandler
+├── repository/       # Spring Data JPA repositories
+├── security/         # JWT provider, filter, UserDetailsService
+└── service/          # Business logic (AuthService, UserService)
+```
+
+### API Endpoints (Implemented)
+- `POST /api/auth/register` - Create account
+- `POST /api/auth/login` - Login (returns JWT)
+- `POST /api/auth/refresh` - Refresh token
+- `GET /api/users/me` - Get current user
+- `PUT /api/users/me` - Update profile
+- `DELETE /api/users/me` - Delete account
+
+### Database Migrations
+Located in `my-island-api/src/main/resources/db/migration/`
+- V1: Init schema (UUID extension)
+- V2: Users and linked_accounts tables
 
 ## Architecture
 

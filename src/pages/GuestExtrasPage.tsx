@@ -4,6 +4,7 @@ import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import GuestCounter from '../components/ui/GuestCounter'
 import Icon from '../components/ui/Icon'
+import BookingExpiredState from '../components/booking/BookingExpiredState'
 import { getCampsiteById, extras } from '../data/mockData'
 
 export default function GuestExtrasPage() {
@@ -14,6 +15,17 @@ export default function GuestExtrasPage() {
   const { checkIn, checkOut } = (location.state as { checkIn?: string; checkOut?: string }) || {}
 
   const campsite = getCampsiteById(id || '')
+
+  // If dates are missing, show expired state
+  if (!checkIn || !checkOut) {
+    return (
+      <BookingExpiredState
+        campsiteId={id}
+        title="Booking dates missing"
+        message="Please select your check-in and check-out dates to continue."
+      />
+    )
+  }
 
   const [adults, setAdults] = useState(2)
   const [children, setChildren] = useState(0)

@@ -1,16 +1,35 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Icon from '../components/ui/Icon'
+import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login, loginWithProvider, isAuthenticated, isLoading: authLoading, error: authError, clearError } = useAuth()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
+
+  // Redirect if already authenticated
+  const from = (location.state as { from?: string })?.from || '/'
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true })
+    }
+  }, [isAuthenticated, navigate, from])
+
+  // Clear auth errors when component mounts or inputs change
+  useEffect(() => {
+    if (authError) {
+      clearError()
+    }
+  }, [email, password])
 
   const validateEmail = (value: string) => {
     if (!value) return 'Email is required'
@@ -35,6 +54,7 @@ export default function LoginPage() {
   }
 
   const isFormValid = email && password && !validateEmail(email) && !validatePassword(password)
+  const isLoading = isSubmitting || authLoading
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,25 +67,33 @@ export default function LoginPage() {
 
     if (emailError || passwordError) return
 
-    setIsLoading(true)
-    // Mock login - simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      // Simulate different responses
-      if (email === 'locked@test.com') {
+    setIsSubmitting(true)
+    try {
+      await login({ email, password })
+      // Navigation handled by useEffect when isAuthenticated changes
+    } catch (error) {
+      // Handle specific error types
+      const errorMessage = error instanceof Error ? error.message : 'Login failed'
+      if (errorMessage === 'ACCOUNT_LOCKED') {
         navigate('/account-locked')
-      } else if (email === 'suspended@test.com') {
+      } else if (errorMessage === 'ACCOUNT_SUSPENDED') {
         navigate('/account-suspended')
-      } else if (email === 'unverified@test.com') {
+      } else if (errorMessage === 'EMAIL_UNVERIFIED') {
         navigate('/unverified-email')
-      } else {
-        navigate('/')
       }
-    }, 1500)
+      // Other errors are handled by AuthContext and shown via authError
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleSocialLogin = (provider: 'google' | 'apple') => {
-    navigate(`/auth/${provider}`)
+  const handleSocialLogin = async (provider: 'google' | 'apple') => {
+    try {
+      await loginWithProvider(provider)
+      // Navigation handled by useEffect when isAuthenticated changes
+    } catch {
+      // Errors handled by AuthContext
+    }
   }
 
   return (
@@ -111,6 +139,21 @@ export default function LoginPage() {
 
         {/* Login Form */}
         <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Auth Error Display */}
+          {authError && !['ACCOUNT_LOCKED', 'ACCOUNT_SUSPENDED', 'EMAIL_UNVERIFIED'].includes(authError) && (
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3">
+              <Icon name="error" size={20} className="text-red-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-red-800 dark:text-red-200">Login failed</p>
+                <p className="text-sm text-red-600 dark:text-red-300">
+                  {authError === 'INVALID_CREDENTIALS'
+                    ? 'Invalid email or password. Please try again.'
+                    : 'An error occurred. Please try again.'}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div>
             <Input
               label="Email Address"
@@ -180,23 +223,18 @@ export default function LoginPage() {
             {isLoading ? 'Logging in...' : 'Log In'}
           </Button>
 
-          {/* Biometric Login */}
+          {/* Biometric Login - Hidden on web, only shown on native apps
+          TODO: Implement with WebAuthn or native biometrics
           <div className="flex justify-center pt-2">
             <button
               type="button"
               className="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors group"
-              onClick={() => {
-                setIsLoading(true)
-                setTimeout(() => {
-                  setIsLoading(false)
-                  navigate('/')
-                }, 1000)
-              }}
             >
               <Icon name="face" size={32} className="group-hover:scale-110 transition-transform" />
               <span className="text-xs font-medium">Face ID</span>
             </button>
           </div>
+          */}
         </form>
 
         {/* Divider */}

@@ -1,13 +1,16 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Icon from '../components/ui/Icon'
+import { useAuth } from '../context/AuthContext'
 
 type Step = 1 | 2
 
 export default function SignUpPage() {
   const navigate = useNavigate()
+  const { signup, loginWithProvider, isAuthenticated, isLoading: authLoading, error: authError, clearError } = useAuth()
+
   const [step, setStep] = useState<Step>(1)
 
   // Step 1: Account
@@ -22,8 +25,24 @@ export default function SignUpPage() {
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [acceptMarketing, setAcceptMarketing] = useState(false)
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
+
+  // Clear auth errors when inputs change
+  useEffect(() => {
+    if (authError) {
+      clearError()
+    }
+  }, [email, password, firstName, lastName])
+
+  const isLoading = isSubmitting || authLoading
 
   const passwordStrength = useMemo(() => {
     if (!password) return { level: 0, text: '', color: '' }
@@ -98,16 +117,36 @@ export default function SignUpPage() {
 
     if (!validateStep2()) return
 
-    setIsLoading(true)
-    // Mock signup - simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    setIsSubmitting(true)
+    try {
+      await signup({
+        email,
+        password,
+        firstName,
+        lastName,
+        phone: phone || undefined,
+        acceptMarketing,
+      })
+      // Navigate to email verification
       navigate('/verify-email', { state: { email } })
-    }, 1500)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Signup failed'
+      if (errorMessage === 'EMAIL_EXISTS') {
+        navigate('/email-exists', { state: { email } })
+      }
+      // Other errors are handled via authError state
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleSocialSignup = (provider: 'google' | 'apple') => {
-    navigate(`/auth/${provider}`)
+  const handleSocialSignup = async (provider: 'google' | 'apple') => {
+    try {
+      await loginWithProvider(provider)
+      // Navigation handled by useEffect when isAuthenticated changes
+    } catch {
+      // Errors handled by AuthContext
+    }
   }
 
   const handleBack = () => {

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
@@ -6,7 +6,9 @@ import Icon from '../components/ui/Icon'
 import Badge from '../components/ui/Badge'
 import StarRating from '../components/ui/StarRating'
 import MapView from '../components/ui/MapView'
-import { getCampsiteById, getLotsByCampsite, getReviewsByCampsite, favorites } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { getCampsiteById, getLotsByCampsite, getReviewsByCampsite } from '../data/mockData'
+import { useFavorites } from '../context/FavoritesContext'
 
 const facilityIcons: Record<string, string> = {
   wifi: 'wifi',
@@ -31,8 +33,9 @@ export default function CampsiteDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [currentImage, setCurrentImage] = useState(0)
-  const [isFavorite, setIsFavorite] = useState(favorites.includes(id || ''))
   const [activeSection, setActiveSection] = useState<Section>('overview')
+  const [isLoading, setIsLoading] = useState(true)
+  const { isFavorite, toggleFavorite } = useFavorites()
 
   const overviewRef = useRef<HTMLDivElement>(null)
   const pitchesRef = useRef<HTMLDivElement>(null)
@@ -42,6 +45,14 @@ export default function CampsiteDetailPage() {
   const campsite = getCampsiteById(id || '')
   const lots = getLotsByCampsite(id || '')
   const reviews = getReviewsByCampsite(id || '')
+
+  const isFav = isFavorite(id || '')
+
+  // Simulate loading data from API
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 400)
+    return () => clearTimeout(timer)
+  }, [id])
 
   const scrollToSection = (section: Section) => {
     setActiveSection(section)
@@ -59,6 +70,41 @@ export default function CampsiteDetailPage() {
       <AppShell showBack headerTitle="Campsite">
         <div className="flex-1 flex items-center justify-center">
           <p className="text-slate-500">Campsite not found</p>
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <AppShell showHeader={false} showNav={false}>
+        <div className="flex-1 flex flex-col">
+          {/* Image Skeleton */}
+          <Skeleton variant="rectangular" className="w-full aspect-[4/3]" />
+
+          {/* Content Skeleton */}
+          <div className="flex-1 bg-background-light dark:bg-background-dark -mt-4 rounded-t-3xl p-5">
+            <Skeleton variant="text" className="w-3/4 h-8 mb-2" />
+            <Skeleton variant="text" className="w-1/2 h-5 mb-6" />
+
+            {/* Quick Stats Skeleton */}
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} variant="rectangular" height={80} className="rounded-xl" />
+              ))}
+            </div>
+
+            <Skeleton variant="text" className="w-full h-4 mb-2" />
+            <Skeleton variant="text" className="w-full h-4 mb-2" />
+            <Skeleton variant="text" className="w-3/4 h-4 mb-6" />
+
+            {/* Facilities Skeleton */}
+            <div className="grid grid-cols-4 gap-3">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <Skeleton key={i} variant="rectangular" height={60} className="rounded-xl" />
+              ))}
+            </div>
+          </div>
         </div>
       </AppShell>
     )
@@ -102,14 +148,14 @@ export default function CampsiteDetailPage() {
           {/* Favorite & Share */}
           <div className="absolute top-4 right-4 flex gap-2">
             <button
-              onClick={() => setIsFavorite(!isFavorite)}
+              onClick={() => toggleFavorite(id || '')}
               className="size-10 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-lg flex items-center justify-center"
             >
               <Icon
                 name="favorite"
                 size={20}
-                filled={isFavorite}
-                className={isFavorite ? 'text-red-500' : ''}
+                filled={isFav}
+                className={isFav ? 'text-red-500' : ''}
               />
             </button>
             <button className="size-10 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-lg flex items-center justify-center">

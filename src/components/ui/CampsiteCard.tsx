@@ -1,20 +1,27 @@
 import { Link } from 'react-router-dom'
 import type { Campsite } from '../../data/types'
 import Icon from './Icon'
-import { favorites } from '../../data/mockData'
+import { useFavorites } from '../../context/FavoritesContext'
 
 interface CampsiteCardProps {
   campsite: Campsite
   variant?: 'default' | 'compact' | 'featured'
-  onFavoriteToggle?: (id: string) => void
+  showFavoriteButton?: boolean
 }
 
 export default function CampsiteCard({
   campsite,
   variant = 'default',
-  onFavoriteToggle,
+  showFavoriteButton = true,
 }: CampsiteCardProps) {
-  const isFavorite = favorites.includes(campsite.id)
+  const { isFavorite, toggleFavorite } = useFavorites()
+  const isFav = isFavorite(campsite.id)
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleFavorite(campsite.id)
+  }
 
   if (variant === 'compact') {
     return (
@@ -62,20 +69,19 @@ export default function CampsiteCard({
           className="w-full h-48 object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            onFavoriteToggle?.(campsite.id)
-          }}
-          className="absolute top-3 right-3 size-8 rounded-full bg-white/90 flex items-center justify-center"
-        >
-          <Icon
-            name="favorite"
-            size={18}
-            filled={isFavorite}
-            className={isFavorite ? 'text-red-500' : 'text-slate-600'}
-          />
-        </button>
+        {showFavoriteButton && (
+          <button
+            onClick={handleFavoriteClick}
+            className="absolute top-3 right-3 size-8 rounded-full bg-white/90 flex items-center justify-center"
+          >
+            <Icon
+              name="favorite"
+              size={18}
+              filled={isFav}
+              className={isFav ? 'text-red-500' : 'text-slate-600'}
+            />
+          </button>
+        )}
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <h3 className="font-bold text-white text-lg">{campsite.name}</h3>
           <p className="text-white/80 text-sm flex items-center gap-1">
@@ -109,20 +115,19 @@ export default function CampsiteCard({
           alt={campsite.name}
           className="w-full h-44 object-cover"
         />
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            onFavoriteToggle?.(campsite.id)
-          }}
-          className="absolute top-3 right-3 size-9 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center shadow-sm"
-        >
-          <Icon
-            name="favorite"
-            size={20}
-            filled={isFavorite}
-            className={isFavorite ? 'text-red-500' : 'text-slate-600 dark:text-slate-400'}
-          />
-        </button>
+        {showFavoriteButton && (
+          <button
+            onClick={handleFavoriteClick}
+            className="absolute top-3 right-3 size-9 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center shadow-sm"
+          >
+            <Icon
+              name="favorite"
+              size={20}
+              filled={isFav}
+              className={isFav ? 'text-red-500' : 'text-slate-600 dark:text-slate-400'}
+            />
+          </button>
+        )}
         {campsite.featured && (
           <div className="absolute top-3 left-3 px-2 py-1 bg-primary rounded-full">
             <span className="text-xs font-bold text-slate-900">Featured</span>

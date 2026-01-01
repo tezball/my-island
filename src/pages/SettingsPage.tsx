@@ -1,18 +1,80 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Toggle from '../components/ui/Toggle'
 import Icon from '../components/ui/Icon'
+import Skeleton from '../components/ui/Skeleton'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import { APP_VERSION } from '../constants'
+import { getInitials } from '../lib/utils'
 
 export default function SettingsPage() {
+  const navigate = useNavigate()
+  const { user, logout, isLoading } = useAuth()
+  const toast = useToast()
+
   const [darkMode, setDarkMode] = useState(false)
   const [biometricLogin, setBiometricLogin] = useState(true)
   const [locationServices, setLocationServices] = useState(true)
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true)
 
+  const handleLogout = () => {
+    logout()
+    toast.success('Logged out', 'You have been logged out successfully.')
+    navigate('/login')
+  }
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Settings" showNav={false}>
+        <div className="p-4 space-y-4">
+          <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <Skeleton variant="circular" width={48} height={48} />
+            <div className="space-y-2">
+              <Skeleton variant="text" className="w-32 h-4" />
+              <Skeleton variant="text" className="w-48 h-3" />
+            </div>
+          </div>
+          <Skeleton variant="rectangular" height={120} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={180} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
   return (
     <AppShell showBack headerTitle="Settings" showNav={false}>
       <div className="flex-1 overflow-auto">
+        {/* User Info */}
+        {user && (
+          <div className="p-4">
+            <Link
+              to="/profile"
+              className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              {user.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="size-12 rounded-full object-cover"
+                />
+              ) : (
+                <div className="size-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <span className="text-lg font-bold text-primary">
+                    {getInitials(user.name)}
+                  </span>
+                </div>
+              )}
+              <div className="flex-1">
+                <p className="font-medium text-slate-900 dark:text-white">{user.name}</p>
+                <p className="text-sm text-slate-500">{user.email}</p>
+              </div>
+              <Icon name="chevron_right" size={20} className="text-slate-400" />
+            </Link>
+          </div>
+        )}
+
         {/* Appearance */}
         <div className="p-4">
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-4">
@@ -130,12 +192,23 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Account Actions */}
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-red-500 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+          >
+            <Icon name="logout" size={20} />
+            Log Out
+          </button>
+        </div>
+
         {/* Danger Zone */}
         <div className="p-4 border-t border-slate-100 dark:border-slate-800">
           <h3 className="text-xs font-medium text-red-500 uppercase tracking-wider mb-4">
             Danger Zone
           </h3>
-          <button className="w-full p-3 border border-red-200 dark:border-red-900 rounded-xl text-red-600 font-medium">
+          <button className="w-full p-3 border border-red-200 dark:border-red-900 rounded-xl text-red-600 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
             Delete Account
           </button>
         </div>

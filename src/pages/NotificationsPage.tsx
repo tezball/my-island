@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
+import Skeleton from '../components/ui/Skeleton'
 import { notifications } from '../data/mockData'
 import type { Notification } from '../data/types'
 
@@ -24,6 +25,13 @@ const iconBgColors: Record<Notification['type'], string> = {
 
 export default function NotificationsPage() {
   const [notifs, setNotifs] = useState(notifications)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Simulate loading from API
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 400)
+    return () => clearTimeout(timer)
+  }, [])
 
   const formatTime = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -71,7 +79,19 @@ export default function NotificationsPage() {
 
         {/* Notifications List */}
         <div className="flex-1 overflow-auto">
-          {notifs.length === 0 ? (
+          {isLoading ? (
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex gap-3 px-4 py-4">
+                  <Skeleton variant="circular" width={48} height={48} />
+                  <div className="flex-1">
+                    <Skeleton variant="text" className="w-3/4 h-5 mb-2" />
+                    <Skeleton variant="text" className="w-full h-4" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : notifs.length === 0 ? (
             <EmptyState
               icon="notifications"
               title="No notifications"

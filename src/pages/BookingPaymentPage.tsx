@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
+import BookingExpiredState from '../components/booking/BookingExpiredState'
 import { getCampsiteById } from '../data/mockData'
 
 type PaymentMethod = 'card' | 'apple_pay' | 'google_pay'
@@ -18,7 +19,7 @@ export default function BookingPaymentPage() {
     lotId: string
     extras: string[]
     totalPrice: number
-  }
+  } | null
 
   const campsite = getCampsiteById(id || '')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
@@ -30,11 +31,22 @@ export default function BookingPaymentPage() {
   const [cardCvc, setCardCvc] = useState('')
   const [cardName, setCardName] = useState('')
 
-  if (!campsite || !bookingState) {
+  // If booking state is missing, show expired state
+  if (!bookingState || !bookingState.checkIn || !bookingState.checkOut) {
+    return (
+      <BookingExpiredState
+        campsiteId={id}
+        title="Booking details missing"
+        message="Your booking session has expired. Please start a new booking to continue."
+      />
+    )
+  }
+
+  if (!campsite) {
     return (
       <AppShell showBack headerTitle="Payment" showNav={false}>
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500">Booking details not found</p>
+          <p className="text-slate-500">Campsite not found</p>
         </div>
       </AppShell>
     )
