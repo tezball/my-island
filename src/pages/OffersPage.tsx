@@ -1,0 +1,129 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import AppShell from '../components/layout/AppShell'
+import Icon from '../components/ui/Icon'
+import Badge from '../components/ui/Badge'
+import { offers } from '../data/mockData'
+import type { Offer } from '../data/types'
+
+const categoryIcons: Record<Offer['category'], string> = {
+  food: 'restaurant',
+  activities: 'hiking',
+  gear: 'backpack',
+  attractions: 'attractions',
+  transport: 'directions_car',
+}
+
+const categoryLabels: Record<Offer['category'], string> = {
+  food: 'Food & Drink',
+  activities: 'Activities',
+  gear: 'Camping Gear',
+  attractions: 'Attractions',
+  transport: 'Transport',
+}
+
+export default function OffersPage() {
+  const navigate = useNavigate()
+  const [selectedCategory, setSelectedCategory] = useState<Offer['category'] | 'all'>('all')
+
+  const categories: (Offer['category'] | 'all')[] = ['all', 'food', 'activities', 'gear', 'attractions', 'transport']
+
+  const filteredOffers = selectedCategory === 'all'
+    ? offers
+    : offers.filter((o) => o.category === selectedCategory)
+
+  const handleGetDirections = (e: React.MouseEvent, address: string) => {
+    e.stopPropagation()
+    const encodedAddress = encodeURIComponent(address)
+    window.open(`https://maps.google.com/?q=${encodedAddress}`, '_blank')
+  }
+
+  return (
+    <AppShell headerTitle="Local Offers" showLogo>
+      <div className="flex-1 flex flex-col">
+        {/* Category Filter */}
+        <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategory === cat
+                    ? 'bg-primary text-slate-900'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+              >
+                {cat === 'all' ? 'All Offers' : categoryLabels[cat]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Offers List */}
+        <div className="flex-1 overflow-auto p-4">
+          {filteredOffers.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Icon name="local_offer" size={48} className="text-slate-300 dark:text-slate-600 mb-3" />
+              <p className="text-slate-500 dark:text-slate-400">No offers in this category</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {filteredOffers.map((offer) => (
+                <div
+                  key={offer.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/offers/${offer.id}`)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/offers/${offer.id}`) }}
+                  className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800 text-left hover:border-primary/50 transition-colors cursor-pointer"
+                >
+                  <div className="flex gap-4">
+                    <img
+                      src={offer.supplierLogo}
+                      alt={offer.supplierName}
+                      className="size-16 rounded-xl object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-slate-900 dark:text-white truncate">
+                            {offer.title}
+                          </h3>
+                          <p className="text-sm text-slate-500 truncate">{offer.supplierName}</p>
+                        </div>
+                        <Badge variant="success" className="flex-shrink-0">{offer.discount}</Badge>
+                      </div>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">
+                        {offer.description}
+                      </p>
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1 text-xs text-slate-500">
+                            <Icon name={categoryIcons[offer.category]} size={14} />
+                            {categoryLabels[offer.category]}
+                          </span>
+                          <span className="flex items-center gap-1 text-xs text-slate-500">
+                            <Icon name="schedule" size={14} />
+                            {new Date(offer.validUntil).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => handleGetDirections(e, offer.location.address)}
+                          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                        >
+                          <Icon name="directions" size={14} />
+                          Directions
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </AppShell>
+  )
+}

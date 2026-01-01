@@ -1,30 +1,27 @@
 {
 	"nodes":[
-		{"id":"group","type":"group","x":-760,"y":-400,"width":2520,"height":2400,"color":"4","label":"Notifications"},
-		{"id":"title","type":"text","text":"# Notifications Flow\n\nViewing and managing app notifications and preferences.","x":0,"y":-280,"width":500,"height":120,"color":"6"},
-		{"id":"legend","type":"text","text":"## Event Legend\n\n**Green (5)**: Kafka Domain Events\n**Blue (4)**: UI-Only Events\n**Red (1)**: Kafka Error Events","x":600,"y":-280,"width":280,"height":140,"color":"6"},
-		{"id":"notification-center","type":"file","file":"flows/notifications/01-notification-center.png","x":0,"y":0,"width":194,"height":500},
-		{"id":"notifications-list","type":"file","file":"flows/notifications/02-notifications-list.png","x":500,"y":0,"width":180,"height":500},
-		{"id":"notification-detail","type":"file","file":"flows/notifications/03-notification-detail.png","x":1000,"y":0,"width":170,"height":500},
-		{"id":"notification-settings","type":"file","file":"flows/notifications/04-notification-settings.png","x":0,"y":850,"width":199,"height":500},
-		{"id":"notification-settings-ui","type":"text","text":"**UI Events:**\n- `onToggle`: Enable/disable type\n- `onEmailToggle`: Email preferences\n- `onPushToggle`: Push preferences\n- `onSMSToggle`: SMS preferences","x":-50,"y":1490,"width":320,"height":204,"color":"4"},
-		{"id":"notification-settings-kafka","type":"text","text":"**Kafka Events:**\n- `onSave` → `user.notification_preferences_updated`\n  - Preference sync, Email service","x":370,"y":1510,"width":400,"height":141,"color":"5"},
-		{"id":"notification-center-kafka","type":"text","text":"**Kafka Events:**\n- `onMarkAllRead` → `notifications.marked_read`\n  - Badge sync, Analytics","x":-560,"y":550,"width":360,"height":180,"color":"5"},
-		{"id":"notification-center-ui","type":"text","text":"**UI Events:**\n- `onNotificationTap`: View detail\n- `onSettings`: Open preferences\n- `onPullRefresh`: Reload notifications","x":-580,"y":250,"width":340,"height":210,"color":"4"},
-		{"id":"notifications-list-ui","type":"text","text":"**UI Events:**\n- `onNotificationTap`: View detail\n- `onSwipeDelete`: Remove notification\n- `onFilter`: Filter by type\n- `onLoadMore`: Pagination","x":430,"y":640,"width":320,"height":210,"color":"4"},
-		{"id":"related-content","type":"text","text":"## Related Content\n\nNotifications link to:\n- Booking details\n- Offers\n- Reviews\n- Messages","x":920,"y":850,"width":300,"height":224,"color":"5"},
-		{"id":"notification-detail-ui","type":"text","text":"**UI Events:**\n- `onAction`: Perform CTA action\n- `onDismiss`: Mark as read\n- `onNavigate`: Go to related content\n- `onBack`: Return to list","x":1400,"y":380,"width":320,"height":120,"color":"4"}
+		{"id":"grp-view-notifications","type":"group","x":0,"y":0,"width":1600,"height":800,"color":"5","label":"1. Notifications - View Center"},
+		{"id":"grp-notification-detail","type":"group","x":0,"y":900,"width":1200,"height":700,"color":"5","label":"2. Notifications - View Detail"},
+		{"id":"grp-notification-settings","type":"group","x":1300,"y":900,"width":1200,"height":700,"color":"4","label":"3. Notifications - Manage Settings"},
+		{"id":"title","type":"text","text":"# Notifications Flows\n\nAll notification journeys organized by flow type.\n\n**Legend:**\n- Green (5): Success/Kafka Events\n- Blue (4): UI Events\n- Red (1): Error States","x":-300,"y":-200,"width":400,"height":160,"color":"6"},
+		{"id":"lbl-view-notifications","type":"text","text":"## View Notification Center\nUser views and manages notifications","x":20,"y":20,"width":450,"height":80},
+		{"id":"lbl-notification-detail","type":"text","text":"## Notification Detail\nUser views notification and takes action","x":20,"y":920,"width":400,"height":80},
+		{"id":"flow2-detail","type":"file","file":"flows/notifications/03-notification-detail.png","x":20,"y":1040,"width":170,"height":499},
+		{"id":"lbl-notification-settings","type":"text","text":"## Notification Settings\nUser configures notification preferences","x":1320,"y":920,"width":400,"height":80},
+		{"id":"flow1-events","type":"text","text":"**Kafka Events:**\n- `notifications.marked_read`\n  - Badge sync, Analytics","x":1200,"y":20,"width":360,"height":160,"color":"5"},
+		{"id":"flow1-ui","type":"text","text":"**UI Events:**\n- `onNotificationTap`: View detail\n- `onSettings`: Open preferences\n- `onPullRefresh`: Reload\n- `onMarkAllRead`: Clear badge","x":1199,"y":230,"width":361,"height":190,"color":"4"},
+		{"id":"flow1-detail","type":"file","file":"flows/notifications/03-notification-detail.png","x":1000,"y":260,"width":170,"height":499},
+		{"id":"flow1-list","type":"file","file":"flows/notifications/02-notifications-list.png","x":600,"y":75,"width":180,"height":500},
+		{"id":"flow1-center","type":"file","file":"flows/notifications/01-notification-center.png","x":51,"y":230,"width":194,"height":500},
+		{"id":"flow3-events","type":"text","text":"**Kafka Events:**\n- `user.notification_preferences_updated`\n  - Preference sync\n  - Email service","x":2060,"y":920,"width":420,"height":160,"color":"5"},
+		{"id":"flow3-ui","type":"text","text":"**UI Events:**\n- `onToggle`: Enable/disable type\n- `onEmailToggle`: Email preferences\n- `onPushToggle`: Push preferences\n- `onSMSToggle`: SMS preferences","x":2060,"y":1120,"width":420,"height":200,"color":"4"},
+		{"id":"flow3-settings","type":"file","file":"flows/notifications/04-notification-settings.png","x":1361,"y":1040,"width":199,"height":500},
+		{"id":"flow2-related","type":"text","text":"## Related Content\n\nNotifications link to:\n- Booking details\n- Offers\n- Reviews\n- Messages","x":470,"y":1320,"width":430,"height":220,"color":"5"},
+		{"id":"flow2-ui","type":"text","text":"**UI Events:**\n- `onAction`: Perform CTA action\n- `onDismiss`: Mark as read\n- `onNavigate`: Go to related content\n- `onBack`: Return to list","x":800,"y":940,"width":370,"height":200,"color":"4"}
 	],
 	"edges":[
-		{"id":"center-to-list","fromNode":"notification-center","fromSide":"right","toNode":"notifications-list","toSide":"left","color":"4","label":"view all"},
-		{"id":"list-to-detail","fromNode":"notifications-list","fromSide":"right","toNode":"notification-detail","toSide":"left","color":"4","label":"tap notification"},
-		{"id":"center-to-settings","fromNode":"notification-center","fromSide":"bottom","toNode":"notification-settings","toSide":"top","color":"3","label":"settings"},
-		{"id":"detail-to-content","fromNode":"notification-detail","fromSide":"bottom","toNode":"related-content","toSide":"top","color":"5","label":"view details"},
-		{"id":"notification-center-kafka-edge","fromNode":"notification-center-kafka","fromSide":"right","toNode":"notification-center","toSide":"bottom"},
-		{"id":"notification-center-ui-edge","fromNode":"notification-center-ui","fromSide":"right","toNode":"notification-center","toSide":"bottom"},
-		{"id":"notifications-list-ui-edge","fromNode":"notifications-list-ui","fromSide":"top","toNode":"notifications-list","toSide":"bottom"},
-		{"id":"notification-detail-ui-edge","fromNode":"notification-detail-ui","fromSide":"top","toNode":"notification-detail","toSide":"right"},
-		{"id":"notification-settings-kafka-edge","fromNode":"notification-settings-kafka","fromSide":"top","toNode":"notification-settings","toSide":"bottom"},
-		{"id":"notification-settings-ui-edge","fromNode":"notification-settings-ui","fromSide":"top","toNode":"notification-settings","toSide":"bottom"}
+		{"id":"e1-1","fromNode":"flow1-center","fromSide":"right","toNode":"flow1-list","toSide":"left","color":"4","label":"view all"},
+		{"id":"e1-2","fromNode":"flow1-list","fromSide":"right","toNode":"flow1-detail","toSide":"left","color":"4","label":"tap notification"},
+		{"id":"e2-1","fromNode":"flow2-detail","fromSide":"right","toNode":"flow2-related","toSide":"left","color":"5","label":"view details"}
 	]
 }

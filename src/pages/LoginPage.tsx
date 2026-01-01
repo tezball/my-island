@@ -9,28 +9,73 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+
+  const validateEmail = (value: string) => {
+    if (!value) return 'Email is required'
+    if (!/\S+@\S+\.\S+/.test(value)) return 'Please enter a valid email'
+    return ''
+  }
+
+  const validatePassword = (value: string) => {
+    if (!value) return 'Password is required'
+    if (value.length < 6) return 'Password must be at least 6 characters'
+    return ''
+  }
+
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }))
+    if (field === 'email') {
+      setErrors(prev => ({ ...prev, email: validateEmail(email) }))
+    }
+    if (field === 'password') {
+      setErrors(prev => ({ ...prev, password: validatePassword(password) }))
+    }
+  }
+
+  const isFormValid = email && password && !validateEmail(email) && !validatePassword(password)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate all fields
+    const emailError = validateEmail(email)
+    const passwordError = validatePassword(password)
+    setErrors({ email: emailError, password: passwordError })
+    setTouched({ email: true, password: true })
+
+    if (emailError || passwordError) return
+
     setIsLoading(true)
     // Mock login - simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      navigate('/')
+      // Simulate different responses
+      if (email === 'locked@test.com') {
+        navigate('/account-locked')
+      } else if (email === 'suspended@test.com') {
+        navigate('/account-suspended')
+      } else if (email === 'unverified@test.com') {
+        navigate('/unverified-email')
+      } else {
+        navigate('/')
+      }
     }, 1500)
   }
 
   const handleSocialLogin = (provider: 'google' | 'apple') => {
-    console.log(`Login with ${provider}`)
-    // Mock social login
-    navigate('/')
+    navigate(`/auth/${provider}`)
   }
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md px-4 py-3 flex items-center justify-between">
-        <button className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white"
+        >
           <Icon name="arrow_back" />
         </button>
         <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">my-island</h2>
@@ -66,16 +111,32 @@ export default function LoginPage() {
 
         {/* Login Form */}
         <form className="space-y-5" onSubmit={handleSubmit}>
-          <Input
-            label="Email Address"
-            type="email"
-            leftIcon="mail"
-            placeholder="camp@my-island.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            size="lg"
-            required
-          />
+          <div>
+            <Input
+              label="Email Address"
+              type="email"
+              leftIcon="mail"
+              placeholder="camp@my-island.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (touched.email) {
+                  setErrors(prev => ({ ...prev, email: validateEmail(e.target.value) }))
+                }
+              }}
+              onBlur={() => handleBlur('email')}
+              size="lg"
+              error={touched.email ? errors.email : undefined}
+              required
+            />
+            {/* Valid indicator */}
+            {email && !errors.email && touched.email && (
+              <div className="flex items-center gap-1 mt-1 text-emerald-500 text-sm">
+                <Icon name="check_circle" size={16} />
+                <span>Valid email</span>
+              </div>
+            )}
+          </div>
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between ml-1">
@@ -94,8 +155,15 @@ export default function LoginPage() {
               leftIcon="lock"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                if (touched.password) {
+                  setErrors(prev => ({ ...prev, password: validatePassword(e.target.value) }))
+                }
+              }}
+              onBlur={() => handleBlur('password')}
               size="lg"
+              error={touched.password ? errors.password : undefined}
               required
             />
           </div>
@@ -105,10 +173,11 @@ export default function LoginPage() {
             variant="primary"
             size="lg"
             className="w-full mt-4"
-            rightIcon="arrow_forward"
+            rightIcon={isLoading ? undefined : "arrow_forward"}
             isLoading={isLoading}
+            disabled={!isFormValid && (touched.email || touched.password)}
           >
-            Log In
+            {isLoading ? 'Logging in...' : 'Log In'}
           </Button>
 
           {/* Biometric Login */}
@@ -116,6 +185,13 @@ export default function LoginPage() {
             <button
               type="button"
               className="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors group"
+              onClick={() => {
+                setIsLoading(true)
+                setTimeout(() => {
+                  setIsLoading(false)
+                  navigate('/')
+                }, 1000)
+              }}
             >
               <Icon name="face" size={32} className="group-hover:scale-110 transition-transform" />
               <span className="text-xs font-medium">Face ID</span>

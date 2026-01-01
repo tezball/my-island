@@ -1,20 +1,28 @@
 {
 	"nodes":[
-		{"id":"group","type":"group","x":-700,"y":-400,"width":1600,"height":1660,"color":"4","label":"Favorites"},
-		{"id":"title","type":"text","text":"# Favorites Flow\n\nManaging saved/favorited campsites.","x":0,"y":-280,"width":450,"height":120,"color":"6"},
-		{"id":"legend","type":"text","text":"## Event Legend\n\n**Green (5)**: Kafka Domain Events\n**Blue (4)**: UI-Only Events\n**Red (1)**: Kafka Error Events","x":500,"y":-280,"width":280,"height":140,"color":"6"},
-		{"id":"favorites","type":"file","file":"flows/favorites/01-favorites.png","x":0,"y":0,"width":203,"height":500},
-		{"id":"campsite-detail","type":"text","text":"## Campsite Detail\n\nNavigates to discovery flow campsite detail page","x":500,"y":240,"width":300,"height":140,"color":"5"},
-		{"id":"favorites-ui","type":"text","text":"**UI Events:**\n- `onCampsiteSelect`: View campsite detail\n- `onSearch`: Filter favorites\n- `onSort`: Change sort order\n- `onEmptyState`: Show when no favorites","x":-300,"y":620,"width":320,"height":120,"color":"4"},
-		{"id":"favorites-kafka","type":"text","text":"**Kafka Events:**\n- `onRemoveFavorite` → `campsite.unfavorited`\n  - Recommendations update, Analytics\n- `onBookNow` → triggers booking flow\n  - Booking events handled there","x":203,"y":620,"width":380,"height":120,"color":"5"},
-		{"id":"empty-state","type":"text","text":"## Empty State\n\n**UI Events:**\n- `onExplore`: Navigate to search\n\nShows when user has no saved campsites","x":500,"y":-80,"width":300,"height":220,"color":"2"},
-		{"id":"booking-flow","type":"text","text":"## Booking Flow\n\nStarts booking process for selected campsite","x":490,"y":430,"width":300,"height":140,"color":"5"}
+		{"id":"grp-view-favorites","type":"group","x":0,"y":0,"width":1400,"height":800,"color":"5","label":"1. Favorites - View & Browse"},
+		{"id":"grp-to-detail","type":"group","x":0,"y":900,"width":1000,"height":700,"color":"5","label":"2. Favorites - View Campsite Detail"},
+		{"id":"grp-to-booking","type":"group","x":1100,"y":900,"width":1000,"height":700,"color":"5","label":"3. Favorites - Start Booking"},
+		{"id":"grp-empty-state","type":"group","x":1500,"y":0,"width":700,"height":800,"color":"4","label":"4. Favorites - Empty State"},
+		{"id":"title","type":"text","text":"# Favorites Flows\n\nAll possible favorites journeys organized by flow type.\n\n**Legend:**\n- Green (5): Success/Kafka Events\n- Blue (4): UI Events\n- Red (1): Error States","x":-300,"y":-200,"width":400,"height":160,"color":"6"},
+		{"id":"lbl-view-favorites","type":"text","text":"## View Favorites\nUser browses their saved campsites","x":20,"y":20,"width":380,"height":80},
+		{"id":"flow1-favorites","type":"file","file":"flows/favorites/01-favorites.png","x":20,"y":140,"width":203,"height":500},
+		{"id":"flow1-events","type":"text","text":"**Kafka Events:**\n- `campsite.unfavorited`\n  - Recommendations update\n  - Analytics","x":340,"y":140,"width":320,"height":140,"color":"5"},
+		{"id":"flow1-ui","type":"text","text":"**UI Events:**\n- `onCampsiteSelect`: View detail\n- `onSearch`: Filter favorites\n- `onSort`: Change sort order\n- `onRemove`: Unfavorite campsite","x":340,"y":320,"width":320,"height":160,"color":"4"},
+		{"id":"lbl-to-detail","type":"text","text":"## View Campsite Detail\nUser views details of favorited campsite","x":20,"y":920,"width":400,"height":80},
+		{"id":"flow2-favorites","type":"file","file":"flows/favorites/01-favorites.png","x":20,"y":1040,"width":203,"height":500},
+		{"id":"flow2-detail","type":"text","text":"## Campsite Detail\n\nNavigates to discovery flow campsite detail page","x":440,"y":1120,"width":300,"height":160,"color":"5"},
+		{"id":"lbl-to-booking","type":"text","text":"## Start Booking\nUser initiates booking from favorites","x":1120,"y":920,"width":380,"height":80},
+		{"id":"flow3-favorites","type":"file","file":"flows/favorites/01-favorites.png","x":1120,"y":1040,"width":203,"height":500},
+		{"id":"flow3-booking","type":"text","text":"## Booking Flow\n\nStarts booking process for selected campsite","x":1540,"y":1120,"width":300,"height":160,"color":"5"},
+		{"id":"lbl-empty-state","type":"text","text":"## Empty State\nUser has no saved campsites","x":1520,"y":20,"width":300,"height":80},
+		{"id":"flow4-empty","type":"text","text":"## Empty Favorites\n\n*You haven't saved any campsites yet*\n\nShows CTA to explore","x":1520,"y":140,"width":300,"height":180,"color":"4"},
+		{"id":"flow4-ui","type":"text","text":"**UI Events:**\n- `onExplore`: Navigate to discovery","x":1520,"y":360,"width":300,"height":100,"color":"4"},
+		{"id":"flow4-explore","type":"text","text":"## Discovery Flow\n\nUser starts browsing campsites","x":1520,"y":500,"width":300,"height":120,"color":"5"}
 	],
 	"edges":[
-		{"id":"favorites-to-detail","fromNode":"favorites","fromSide":"right","toNode":"campsite-detail","toSide":"left","color":"4","label":"tap campsite"},
-		{"id":"favorites-to-booking","fromNode":"favorites","fromSide":"right","toNode":"booking-flow","toSide":"left","color":"5","label":"book now"},
-		{"id":"empty-to-explore","fromNode":"empty-state","fromSide":"bottom","toNode":"campsite-detail","toSide":"top","color":"3","label":"explore"},
-		{"id":"favorites-kafka-edge","fromNode":"favorites-kafka","fromSide":"top","toNode":"favorites","toSide":"bottom"},
-		{"id":"favorites-ui-edge","fromNode":"favorites-ui","fromSide":"top","toNode":"favorites","toSide":"bottom"}
+		{"id":"e2-1","fromNode":"flow2-favorites","fromSide":"right","toNode":"flow2-detail","toSide":"left","color":"4","label":"tap campsite"},
+		{"id":"e3-1","fromNode":"flow3-favorites","fromSide":"right","toNode":"flow3-booking","toSide":"left","color":"5","label":"book now"},
+		{"id":"e4-1","fromNode":"flow4-empty","fromSide":"bottom","toNode":"flow4-explore","toSide":"top","color":"5","label":"explore"}
 	]
 }
