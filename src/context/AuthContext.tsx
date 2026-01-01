@@ -1,5 +1,16 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import type { User } from '../data/types'
+import api, { setAuthTokens, clearAuthTokens } from '../lib/api'
+
+// API Response types
+interface AuthResponse {
+  accessToken: string
+  refreshToken: string
+  user: User
+}
+
+// Feature flag for API mode
+const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
 
 interface AuthState {
   user: User | null
@@ -97,32 +108,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.post('/auth/login', credentials)
+      if (USE_REAL_API) {
+        // Real API call
+        const response = await api.post<AuthResponse>('/auth/login', credentials, { skipAuth: true })
+        setAuthTokens(response.accessToken, response.refreshToken)
+        persistSession(response.user)
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+        setState({
+          user: response.user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        })
+      } else {
+        // Mock mode for development
+        await new Promise(resolve => setTimeout(resolve, 1000))
 
-      // Mock validation
-      if (credentials.email === 'locked@test.com') {
-        throw new Error('ACCOUNT_LOCKED')
+        // Mock validation
+        if (credentials.email === 'locked@test.com') {
+          throw new Error('ACCOUNT_LOCKED')
+        }
+        if (credentials.email === 'suspended@test.com') {
+          throw new Error('ACCOUNT_SUSPENDED')
+        }
+        if (credentials.email === 'unverified@test.com') {
+          throw new Error('EMAIL_UNVERIFIED')
+        }
+
+        const user = createMockUser(credentials.email, 'Alex', 'Walker')
+        persistSession(user)
+
+        setState({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        })
       }
-      if (credentials.email === 'suspended@test.com') {
-        throw new Error('ACCOUNT_SUSPENDED')
-      }
-      if (credentials.email === 'unverified@test.com') {
-        throw new Error('EMAIL_UNVERIFIED')
-      }
-
-      const user = createMockUser(credentials.email, 'Alex', 'Walker')
-      persistSession(user)
-
-      setState({
-        user,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null,
-      })
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed'
       setState(prev => ({
@@ -177,29 +199,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.post('/auth/register', data)
+      if (USE_REAL_API) {
+        // Real API call
+        const response = await api.post<AuthResponse>('/auth/register', {
+          email: data.email,
+          password: data.password,
+          name: `${data.firstName} ${data.lastName}`,
+          phone: data.phone,
+        }, { skipAuth: true })
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
+        setAuthTokens(response.accessToken, response.refreshToken)
+        persistSession(response.user)
 
-      // Mock: check if email exists
-      if (data.email === 'exists@test.com') {
-        throw new Error('EMAIL_EXISTS')
+        setState({
+          user: response.user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        })
+      } else {
+        // Mock mode for development
+        await new Promise(resolve => setTimeout(resolve, 1500))
+
+        // Mock: check if email exists
+        if (data.email === 'exists@test.com') {
+          throw new Error('EMAIL_EXISTS')
+        }
+
+        const user = createMockUser(data.email, data.firstName, data.lastName)
+        user.phone = data.phone
+        user.notificationPreferences.marketing = data.acceptMarketing
+
+        // For signup, we don't persist session until email is verified
+        // But we store the user temporarily for the verification flow
+        setState({
+          user,
+          isAuthenticated: false, // Not authenticated until email verified
+          isLoading: false,
+          error: null,
+        })
       }
-
-      const user = createMockUser(data.email, data.firstName, data.lastName)
-      user.phone = data.phone
-      user.notificationPreferences.marketing = data.acceptMarketing
-
-      // For signup, we don't persist session until email is verified
-      // But we store the user temporarily for the verification flow
-      setState({
-        user,
-        isAuthenticated: false, // Not authenticated until email verified
-        isLoading: false,
-        error: null,
-      })
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Signup failed'
       setState(prev => ({
@@ -212,7 +251,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const logout = useCallback(() => {
-    localStorage.removeItem(AUTH_STORAGE_KEY)
+    clearAuthTokens()
     setState({
       user: null,
       isAuthenticated: false,

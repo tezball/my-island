@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MVP_ROADMAP.md",
+                "file": "flows/user-flows.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MVP_ROADMAP"
+              "title": "user-flows"
             }
           }
         ]
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 407.5,
-    "collapsed": true
+    "width": 407.5
   },
   "right": {
     "id": "62f417dc1f6f45ad",
@@ -186,6 +185,11 @@
   },
   "active": "2cd6ba3fd7738262",
   "lastOpenFiles": [
+    "user-flows.canvas",
+    "OUTSTANDING_WORK.md",
+    "roadmap.md",
+    "MVP_ROADMAP.md",
+    "OUTSTANDING_WORK.md.tmp.88733.1767281608386",
     "flows/reviews/reviews-flow.canvas",
     "SNAG_LIST.md",
     "SNAG_LIST.md.tmp.44632.1767195404780",
@@ -208,7 +212,6 @@
     "flows/notifications/notifications-flow.canvas.tmp.44632.1767192876042",
     "flows/my-bookings/my-bookings-flow.canvas.tmp.44632.1767192840942",
     "flows/favorites/favorites-flow.canvas.tmp.44632.1767192791322",
-    "flows/errors/errors-flow.canvas.tmp.44632.1767192755450",
     "flows/auth/01-login.png",
     "flows/auth/README.md",
     "design/verify_email:_link_expired/screen.png",
@@ -237,9 +240,6 @@
     "design/welcome_to_my-island/screen.png",
     "design/verify_your_email/screen.png",
     "design/user_profile_screen/screen.png",
-    "flows/user-flows.md",
-    "MVP_ROADMAP.md",
-    "flows/reviews/README.md",
-    "flows/errors/README.md"
+    "flows/user-flows.md"
   ]
 }

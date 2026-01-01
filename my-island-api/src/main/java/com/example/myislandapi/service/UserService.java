@@ -5,6 +5,7 @@ import com.example.myislandapi.dto.request.UpdateUserRequest;
 import com.example.myislandapi.dto.response.UserResponse;
 import com.example.myislandapi.entity.NotificationPreferences;
 import com.example.myislandapi.entity.User;
+import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,20 @@ public class UserService {
             throw new ResourceNotFoundException("User", "id", userId);
         }
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public UserResponse becomeOwner(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        if (user.isOwner()) {
+            throw new BadRequestException("User is already registered as an owner");
+        }
+
+        user.setOwner(true);
+        user = userRepository.save(user);
+        return mapToUserResponse(user);
     }
 
     private UserResponse mapToUserResponse(User user) {

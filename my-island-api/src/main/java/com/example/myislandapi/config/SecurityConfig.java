@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/campsites/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/offers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/support/faqs").permitAll()
+                        // Static resources (React frontend)
+                        .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.svg").permitAll()
                         // Owner endpoints require OWNER role
                         .requestMatchers("/api/owner/**").hasRole("OWNER")
                         // All other endpoints require authentication

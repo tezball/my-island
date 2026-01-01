@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +56,13 @@ public class UserController {
             @Valid @RequestBody UpdateNotificationPreferencesRequest request) {
         UUID userId = UUID.fromString(userDetails.getUsername());
         return ResponseEntity.ok(userService.updateNotificationPreferences(userId, request));
+    }
+
+    @PostMapping("/me/become-owner")
+    @Operation(summary = "Convert current user to campsite owner")
+    public ResponseEntity<UserResponse> becomeOwner(@AuthenticationPrincipal UserDetails userDetails) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(userService.becomeOwner(userId));
     }
 
     @DeleteMapping("/me")

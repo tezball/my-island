@@ -32,7 +32,7 @@ public interface CampsiteRepository extends JpaRepository<Campsite, UUID> {
     @EntityGraph(attributePaths = {"images", "facilities", "owner"})
     @Query("SELECT c FROM Campsite c WHERE c.active = true AND " +
            "(:county IS NULL OR c.location.county = :county) AND " +
-           "(:search IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "(:search IS NULL OR LOWER(c.name) LIKE %:search%)")
     Page<Campsite> search(@Param("county") String county, @Param("search") String search, Pageable pageable);
 
     @EntityGraph(attributePaths = {"images", "facilities", "owner"})

@@ -9,4 +9,8 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  build: {
+    outDir: 'my-island-api/src/main/resources/static',
+    emptyOutDir: true,
+  },
 })

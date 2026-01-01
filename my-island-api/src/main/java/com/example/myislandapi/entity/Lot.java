@@ -41,12 +41,12 @@ public class Lot extends BaseEntity {
     @Column(name = "price_per_night", precision = 10, scale = 2, nullable = false)
     private BigDecimal pricePerNight;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lot_images", joinColumns = @JoinColumn(name = "lot_id"))
     @Column(name = "image_url")
     private List<String> images = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lot_amenities", joinColumns = @JoinColumn(name = "lot_id"))
     @Column(name = "amenity")
     private List<String> amenities = new ArrayList<>();

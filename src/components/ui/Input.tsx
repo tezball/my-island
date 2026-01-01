@@ -5,6 +5,7 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>
   label?: string
   leftIcon?: string
   error?: string
+  helperText?: string
   size?: 'sm' | 'md' | 'lg'
 }
 
@@ -12,6 +13,7 @@ export default function Input({
   label,
   leftIcon,
   error,
+  helperText,
   type = 'text',
   size = 'md',
   className = '',
@@ -71,6 +73,9 @@ export default function Input({
       </div>
       {error && (
         <span className="text-sm text-red-500 ml-1">{error}</span>
+      )}
+      {helperText && !error && (
+        <span className="text-sm text-slate-500 ml-1">{helperText}</span>
       )}
     </div>
   )

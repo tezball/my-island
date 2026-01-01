@@ -10,6 +10,10 @@ import com.example.myislandapi.entity.User;
 import com.example.myislandapi.enums.BookingStatus;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
+import com.example.myislandapi.enums.NotificationType;
+import com.example.myislandapi.event.BookingEvent;
+import com.example.myislandapi.event.EmailEvent;
+import com.example.myislandapi.event.NotificationEvent;
 import com.example.myislandapi.repository.BookingRepository;
 import com.example.myislandapi.repository.ExtraRepository;
 import com.example.myislandapi.repository.LotRepository;
@@ -36,17 +40,20 @@ public class BookingService {
     private final ExtraRepository extraRepository;
     private final UserRepository userRepository;
     private final AvailabilityService availabilityService;
+    private final EventPublisher eventPublisher;
 
     public BookingService(BookingRepository bookingRepository,
                          LotRepository lotRepository,
                          ExtraRepository extraRepository,
                          UserRepository userRepository,
-                         AvailabilityService availabilityService) {
+                         AvailabilityService availabilityService,
+                         EventPublisher eventPublisher) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.extraRepository = extraRepository;
         this.userRepository = userRepository;
         this.availabilityService = availabilityService;
+        this.eventPublisher = eventPublisher;
     }
 
     public BookingResponse createBooking(UUID userId, CreateBookingRequest request) {
@@ -117,6 +124,9 @@ public class BookingService {
         // Block availability
         availabilityService.blockDates(lot.getId(), request.checkIn(), request.checkOut(), booking);
 
+        // Publish events
+        publishBookingCreatedEvents(booking);
+
         return toBookingResponse(booking);
     }
 
@@ -160,6 +170,9 @@ public class BookingService {
         booking.setStatus(BookingStatus.CONFIRMED);
         booking = bookingRepository.save(booking);
 
+        // Publish confirmation events
+        publishBookingConfirmedEvents(booking);
+
         return toBookingResponse(booking);
     }
 
@@ -186,7 +199,97 @@ public class BookingService {
         // Release availability
         availabilityService.releaseDates(bookingId);
 
+        // Publish cancellation events
+        publishBookingCancelledEvents(booking);
+
         return toBookingResponse(booking);
+    }
+
+    private void publishBookingCreatedEvents(Booking booking) {
+        var lot = booking.getLot();
+        var campsite = lot.getCampsite();
+
+        // Booking event
+        eventPublisher.publishBookingEvent(BookingEvent.created(
+                booking.getId(),
+                booking.getUser().getId(),
+                campsite.getId(),
+                lot.getId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalPrice()
+        ));
+
+        // Notification to owner
+        eventPublisher.publishNotificationEvent(NotificationEvent.create(
+                campsite.getOwner().getId(),
+                NotificationType.BOOKING,
+                "New Booking Request",
+                "You have a new booking request for " + campsite.getName(),
+                booking.getId()
+        ));
+    }
+
+    private void publishBookingConfirmedEvents(Booking booking) {
+        var lot = booking.getLot();
+        var campsite = lot.getCampsite();
+
+        // Booking event
+        eventPublisher.publishBookingEvent(BookingEvent.confirmed(
+                booking.getId(),
+                booking.getUser().getId(),
+                campsite.getId(),
+                lot.getId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalPrice()
+        ));
+
+        // Notification to guest
+        eventPublisher.publishNotificationEvent(NotificationEvent.create(
+                booking.getUser().getId(),
+                NotificationType.BOOKING,
+                "Booking Confirmed",
+                "Your booking at " + campsite.getName() + " has been confirmed!",
+                booking.getId()
+        ));
+
+        // Email to guest
+        eventPublisher.publishEmailEvent(EmailEvent.bookingConfirmation(
+                booking.getUser().getId(),
+                booking.getId()
+        ));
+    }
+
+    private void publishBookingCancelledEvents(Booking booking) {
+        var lot = booking.getLot();
+        var campsite = lot.getCampsite();
+
+        // Booking event
+        eventPublisher.publishBookingEvent(BookingEvent.cancelled(
+                booking.getId(),
+                booking.getUser().getId(),
+                campsite.getId(),
+                lot.getId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalPrice()
+        ));
+
+        // Notification to guest
+        eventPublisher.publishNotificationEvent(NotificationEvent.create(
+                booking.getUser().getId(),
+                NotificationType.BOOKING,
+                "Booking Cancelled",
+                "Your booking at " + campsite.getName() + " has been cancelled.",
+                booking.getId()
+        ));
+
+        // Email to guest
+        eventPublisher.publishEmailEvent(EmailEvent.bookingCancellation(
+                booking.getUser().getId(),
+                booking.getId()
+        ));
     }
 
     private BookingResponse toBookingResponse(Booking booking) {

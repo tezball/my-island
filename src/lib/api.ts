@@ -26,14 +26,22 @@ function createApiError(message: string, status: number, code?: string): ApiErro
   return error
 }
 
+const ACCESS_TOKEN_KEY = 'access_token'
+const REFRESH_TOKEN_KEY = 'refresh_token'
+
 function getAuthToken(): string | null {
   try {
+    // First, try to get actual JWT token (for real API integration)
+    const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+    if (accessToken) {
+      return accessToken
+    }
+
+    // Fallback to legacy auth storage (for mock data compatibility)
     const stored = localStorage.getItem(AUTH_STORAGE_KEY)
     if (stored) {
       const { user, expiresAt } = JSON.parse(stored)
       if (new Date(expiresAt) > new Date() && user) {
-        // In a real app, we'd store and return the actual JWT token
-        // For now, we'll use user.id as a mock token
         return user.id
       }
     }
@@ -41,6 +49,23 @@ function getAuthToken(): string | null {
     // Invalid stored data
   }
   return null
+}
+
+export function setAuthTokens(accessToken: string, refreshToken?: string): void {
+  localStorage.setItem(ACCESS_TOKEN_KEY, accessToken)
+  if (refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
+  }
+}
+
+export function clearAuthTokens(): void {
+  localStorage.removeItem(ACCESS_TOKEN_KEY)
+  localStorage.removeItem(REFRESH_TOKEN_KEY)
+  localStorage.removeItem(AUTH_STORAGE_KEY)
+}
+
+export function getRefreshToken(): string | null {
+  return localStorage.getItem(REFRESH_TOKEN_KEY)
 }
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {

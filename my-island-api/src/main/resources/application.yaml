@@ -2,6 +2,11 @@ spring:
   application:
     name: my-island-api
 
+  # Disable Docker Compose integration (managed externally)
+  docker:
+    compose:
+      enabled: false
+
   # Database
   datasource:
     url: jdbc:postgresql://localhost:5432/myisland
