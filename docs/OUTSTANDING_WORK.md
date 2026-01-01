@@ -1,10 +1,18 @@
 # my-island Outstanding Work
 
-**Last Updated:** January 1, 2026 (Comprehensive Codebase Analysis)
+**Last Updated:** January 1, 2026 (Comprehensive Codebase Analysis + Corrections)
 **Current Status:** ~75-80% MVP Complete
-**Document Status:** ✅ VERIFIED AGAINST CODEBASE
+**Document Status:** ✅ VERIFIED AGAINST CODEBASE - ALL ISSUES FIXED
 
 > **Note:** This document has been fully audited against the actual codebase. Previous version significantly underestimated implementation progress.
+
+### Issues Fixed in This Update:
+1. ✅ Corrected all file path references (App.tsx line numbers: 162, 174, 181)
+2. ✅ Fixed endpoint documentation (removed non-existent `/api/owner/revenue`)
+3. ✅ Corrected frontend file name (`RevenueDashboardPage.tsx` not `OwnerFinancialsPage.tsx`)
+4. ✅ Added missing owner endpoints (confirm/cancel bookings)
+5. ✅ Added "Missing Backend Endpoints" section documenting gaps
+6. ✅ Updated milestone progress with accurate task counts
 
 ---
 
@@ -125,7 +133,7 @@ VITE_USE_REAL_API=true
 |---------|-----------------|---------------|--------|
 | Dashboard stats | ✅ `GET /api/owner/stats` | `src/pages/owner/OwnerDashboardPage.tsx` | ❌ Not connected |
 | Owner bookings | ✅ `GET /api/owner/bookings` | `src/pages/owner/OwnerBookingsPage.tsx` | ❌ Not connected |
-| Revenue reports | ✅ `GET /api/owner/revenue` | `src/pages/owner/OwnerFinancialsPage.tsx` | ❌ Not connected |
+| Revenue dashboard | ✅ Uses `/api/owner/stats` | `src/pages/owner/RevenueDashboardPage.tsx` | ❌ Not connected |
 
 ### Search & Discovery Integration
 
@@ -285,9 +293,9 @@ VITE_USE_REAL_API=true
 | `src/pages/BookingSummaryPage.tsx` | ❌ "Blank page bug" | ❌ **FILE NOT FOUND** |
 | `src/pages/owner/OwnerBookingsPage.tsx` | ❌ "Shows $" | ✅ **Already uses €** |
 | `src/pages/owner/ManageLotsPage.tsx` | ❌ "Shows $" | ✅ **Already uses €** |
-| `src/pages/MyBookingsPage.tsx` | ❌ "No auth guard" | ✅ **Protected** (App.tsx:165) |
-| `src/pages/FavoritesPage.tsx` | ❌ "No auth guard" | ✅ **Protected** (App.tsx:170) |
-| `src/pages/ProfilePage.tsx` | ❌ "No auth guard" | ✅ **Protected** (App.tsx:175) |
+| `src/pages/MyBookingsPage.tsx` | ❌ "No auth guard" | ✅ **Protected** (App.tsx:162) |
+| `src/pages/FavoritesPage.tsx` | ❌ "No auth guard" | ✅ **Protected** (App.tsx:174) |
+| `src/pages/ProfilePage.tsx` | ❌ "No auth guard" | ✅ **Protected** (App.tsx:181) |
 
 ---
 
@@ -323,18 +331,23 @@ VITE_USE_REAL_API=true
 - ✅ Currency correct on owner pages
 
 ### Milestone 5: MVP Launch Ready
-- 🚧 4/5 P0 tasks need work
-- 🚧 0/15 P1 tasks connected
-- 🚧 Error boundary missing
-- 🚧 Loading states partial
-- ❌ Search/filter needs connection
-- 🚧 Bottom nav partial
+- ❌ 5/5 P0 tasks need completion
+  - Create `.env.example`
+  - Create API service files
+  - Connect Search to backend
+  - Connect My Bookings to backend
+  - Add ErrorBoundary component
+- ❌ 0/15 P1 backend integrations complete
+- ❌ Payment provider integration
+- 🚧 Loading states on some pages
+- ❌ Search/filter backend connection
+- 🚧 Bottom nav consistency improvements needed
 
 ---
 
 ## Backend API Reference
 
-### Implemented Endpoints (50+)
+### Implemented Endpoints (55 endpoints across 12 controllers)
 
 **Authentication (AuthController)**
 - `POST /api/auth/register` - Create account
@@ -390,10 +403,11 @@ VITE_USE_REAL_API=true
 - `PUT /api/notifications/read-all` - Mark all as read
 
 **Owner Dashboard (OwnerController)**
-- `GET /api/owner/stats` - Get owner statistics
+- `GET /api/owner/stats` - Get owner statistics (includes revenue data)
 - `GET /api/owner/campsites` - List owner's campsites
-- `GET /api/owner/bookings` - List owner's bookings
-- `GET /api/owner/revenue` - Revenue reports
+- `GET /api/owner/bookings` - List owner's bookings (supports status filter & pagination)
+- `POST /api/owner/bookings/{id}/confirm` - Confirm booking as owner
+- `POST /api/owner/bookings/{id}/cancel` - Cancel booking as owner
 
 **Images (ImageController)**
 - `POST /api/images/presigned-url` - Get S3 upload URL
@@ -407,6 +421,26 @@ VITE_USE_REAL_API=true
 **Offers (OfferController)**
 - `GET /api/offers` - List active offers
 - `GET /api/offers/{id}` - Get offer details
+
+### Missing Backend Endpoints
+
+These endpoints are referenced in the frontend but **do not exist** in the backend:
+
+- ❌ `PATCH /api/bookings/{id}` - Modify booking (dates/guests)
+  - Frontend files: `ModifyDatesPage.tsx`, `ModifyGuestsPage.tsx`
+  - Workaround: Currently requires cancel + rebook
+
+- ❌ `POST /api/auth/forgot-password` - Initiate password reset
+  - Frontend file: `ForgotPasswordPage.tsx`
+
+- ❌ `POST /api/auth/reset-password` - Complete password reset
+  - Frontend file: `SetNewPasswordPage.tsx`
+
+- ❌ `POST /api/auth/verify-email` - Email verification
+  - Frontend file: `EmailVerificationPage.tsx`
+
+- ❌ `POST /api/auth/resend-verification` - Resend verification email
+  - Frontend file: `EmailVerificationPage.tsx`
 
 ---
 

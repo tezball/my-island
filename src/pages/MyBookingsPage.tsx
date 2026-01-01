@@ -7,7 +7,11 @@ import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
 import { SkeletonBookingCard } from '../components/ui/Skeleton'
 import { bookings, getCampsiteById } from '../data/mockData'
+import bookingsApi from '../lib/api/bookings'
 import type { Booking } from '../data/types'
+import type { BookingResponse } from '../lib/api/bookings'
+
+const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
 
 type TabType = 'upcoming' | 'past'
 
@@ -31,21 +35,50 @@ export default function MyBookingsPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<TabType>('upcoming')
   const [isLoading, setIsLoading] = useState(true)
+  const [apiBookings, setApiBookings] = useState<BookingResponse[]>([])
+  const [error, setError] = useState<string | null>(null)
 
-  // Simulate loading bookings from API
+  // Fetch bookings from API
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 500)
-    return () => clearTimeout(timer)
-  }, [])
+    const fetchBookings = async () => {
+      setIsLoading(true)
+      setError(null)
 
-  const upcomingBookings = bookings.filter(
-    (b) => b.status === 'pending' || b.status === 'confirmed' || b.status === 'checked_in'
-  )
-  const pastBookings = bookings.filter(
-    (b) => b.status === 'completed' || b.status === 'cancelled'
-  )
+      if (USE_REAL_API) {
+        try {
+          const data = await bookingsApi.list({
+            status: activeTab === 'upcoming' ? 'UPCOMING' : 'PAST'
+          })
+          setApiBookings(data)
+        } catch (err) {
+          console.error('Failed to fetch bookings:', err)
+          setError('Failed to load bookings. Please try again.')
+          // Fallback to mock data on error
+          const mockBookings = bookings.filter((b) =>
+            activeTab === 'upcoming'
+              ? b.status === 'pending' || b.status === 'confirmed' || b.status === 'checked_in'
+              : b.status === 'completed' || b.status === 'cancelled'
+          ) as unknown as BookingResponse[]
+          setApiBookings(mockBookings)
+        } finally {
+          setIsLoading(false)
+        }
+      } else {
+        // Use mock data
+        const mockBookings = bookings.filter((b) =>
+          activeTab === 'upcoming'
+            ? b.status === 'pending' || b.status === 'confirmed' || b.status === 'checked_in'
+            : b.status === 'completed' || b.status === 'cancelled'
+        ) as unknown as BookingResponse[]
+        setApiBookings(mockBookings)
+        setIsLoading(false)
+      }
+    }
 
-  const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings
+    fetchBookings()
+  }, [activeTab])
+
+  const displayedBookings = apiBookings
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IE', {

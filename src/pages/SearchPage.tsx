@@ -7,7 +7,11 @@ import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
 import { SkeletonCard } from '../components/ui/Skeleton'
 import { searchCampsites, getFeaturedCampsites } from '../data/mockData'
+import campsitesApi from '../lib/api/campsites'
 import type { Facility } from '../data/types'
+import type { CampsiteResponse } from '../lib/api/campsites'
+
+const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
 
 const facilityFilters: { id: Facility; label: string; icon: string }[] = [
   { id: 'wifi', label: 'WiFi', icon: 'wifi' },
@@ -18,12 +22,12 @@ const facilityFilters: { id: Facility; label: string; icon: string }[] = [
   { id: 'shower', label: 'Showers', icon: 'shower' },
 ]
 
-const popularSearches = [
-  { query: 'Glamping', icon: 'auto_awesome' },
-  { query: 'Beach camping', icon: 'beach_access' },
-  { query: 'Pet friendly', icon: 'pets' },
-  { query: 'Wild Atlantic Way', icon: 'route' },
-  { query: 'Near Dublin', icon: 'location_city' },
+const popularSearches: Array<{ query: string; icon: string; filters?: Facility[] }> = [
+  { query: 'Glamping', icon: 'auto_awesome', filters: [] },
+  { query: 'Beach camping', icon: 'beach_access', filters: ['beach'] },
+  { query: 'Pet friendly', icon: 'pets', filters: ['pets'] },
+  { query: 'Wild Atlantic Way', icon: 'route', filters: [] },
+  { query: 'Near Dublin', icon: 'location_city', filters: [] },
 ]
 
 export default function SearchPage() {
@@ -31,28 +35,132 @@ export default function SearchPage() {
   const [selectedFilters, setSelectedFilters] = useState<Facility[]>([])
   const [showFilters, setShowFilters] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
+  const [results, setResults] = useState<CampsiteResponse[]>([])
+  const [featured, setFeatured] = useState<CampsiteResponse[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [isLocating, setIsLocating] = useState(false)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
 
-  // Simulate search delay (useful for future API integration)
+  // Fetch featured campsites on mount
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      if (USE_REAL_API) {
+        try {
+          const data = await campsitesApi.getFeatured()
+          setFeatured(data)
+        } catch (err) {
+          console.error('Failed to fetch featured campsites:', err)
+          // Fallback to mock data on error
+          setFeatured(getFeaturedCampsites() as unknown as CampsiteResponse[])
+        }
+      } else {
+        setFeatured(getFeaturedCampsites() as unknown as CampsiteResponse[])
+      }
+    }
+    fetchFeatured()
+  }, [])
+
+  // Search with debounce
   useEffect(() => {
     if (query) {
       setIsSearching(true)
-      const timer = setTimeout(() => setIsSearching(false), 300)
+      setError(null)
+
+      const timer = setTimeout(async () => {
+        if (USE_REAL_API) {
+          try {
+            const data = await campsitesApi.search({
+              search: query,
+              facilities: selectedFilters.length > 0 ? selectedFilters : undefined
+            })
+            setResults(data)
+          } catch (err) {
+            console.error('Search failed:', err)
+            setError('Failed to search campsites. Please try again.')
+            // Fallback to mock data on error
+            setResults(searchCampsites(query) as unknown as CampsiteResponse[])
+          } finally {
+            setIsSearching(false)
+          }
+        } else {
+          setResults(searchCampsites(query) as unknown as CampsiteResponse[])
+          setIsSearching(false)
+        }
+      }, 300)
+
       return () => clearTimeout(timer)
+    } else {
+      setResults([])
+      setIsSearching(false)
     }
-  }, [query])
+  }, [query, selectedFilters])
 
-  const results = query ? searchCampsites(query) : []
-  const featured = getFeaturedCampsites()
-
-  const filteredResults = selectedFilters.length > 0
-    ? results.filter((c) => selectedFilters.every((f) => c.facilities.includes(f)))
-    : results
+  const filteredResults = results
 
   const toggleFilter = (facility: Facility) => {
     setSelectedFilters((prev) =>
       prev.includes(facility)
         ? prev.filter((f) => f !== facility)
         : [...prev, facility]
+    )
+  }
+
+  const handlePopularSearch = (search: typeof popularSearches[0]) => {
+    setQuery(search.query)
+    if (search.filters && search.filters.length > 0) {
+      setSelectedFilters(search.filters)
+      setShowFilters(true) // Show filters to make it clear they're applied
+    }
+  }
+
+  const handleNearMe = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser')
+      return
+    }
+
+    setIsLocating(true)
+    setError(null)
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+        setUserLocation(location)
+        setIsLocating(false)
+
+        // Set query to indicate near me search
+        setQuery('Near me')
+
+        // If using real API, we could search by coordinates
+        // For now, show a message that location was detected
+        console.log('User location:', location)
+      },
+      (error) => {
+        setIsLocating(false)
+        let errorMessage = 'Unable to get your location'
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied. Please enable location permissions.'
+            break
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information unavailable'
+            break
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out'
+            break
+        }
+
+        setError(errorMessage)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
     )
   }
 
@@ -108,6 +216,26 @@ export default function SearchPage() {
           )}
         </div>
 
+        {/* Error Display */}
+        {error && (
+          <div className="mx-4 mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="flex items-start gap-3">
+              <Icon name="error" size={20} className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-900 dark:text-red-200">
+                  {error}
+                </p>
+              </div>
+              <button
+                onClick={() => setError(null)}
+                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+              >
+                <Icon name="close" size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Results */}
         <div className="flex-1 overflow-auto">
           {!query ? (
@@ -119,10 +247,20 @@ export default function SearchPage() {
                   Popular Searches
                 </h2>
                 <div className="flex flex-wrap gap-2">
+                  {/* Near Me Button */}
+                  <button
+                    onClick={handleNearMe}
+                    disabled={isLocating}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 border-2 border-primary rounded-full text-sm font-medium text-primary hover:bg-primary hover:text-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Icon name={isLocating ? 'hourglass_empty' : 'near_me'} size={16} />
+                    {isLocating ? 'Locating...' : 'Near me'}
+                  </button>
+
                   {popularSearches.map((item) => (
                     <button
                       key={item.query}
-                      onClick={() => setQuery(item.query)}
+                      onClick={() => handlePopularSearch(item)}
                       className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-colors"
                     >
                       <Icon name={item.icon} size={16} />
@@ -130,6 +268,14 @@ export default function SearchPage() {
                     </button>
                   ))}
                 </div>
+
+                {/* Location Status */}
+                {userLocation && (
+                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                    <Icon name="location_on" size={14} />
+                    Location detected: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+                  </p>
+                )}
               </section>
 
               {/* Featured Campsites */}
