@@ -8,7 +8,7 @@ node_modules/*
 dist/
 build/
 target/
-*.jar
+*.jarDB kafka for
 *.war
 *.class
 

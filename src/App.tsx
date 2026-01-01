@@ -73,6 +73,7 @@ import SupportPage from './pages/SupportPage'
 import FAQPage from './pages/FAQPage'
 import ContactSupportPage from './pages/ContactSupportPage'
 import SupportTicketsPage from './pages/SupportTicketsPage'
+import SupportTicketDetailPage from './pages/SupportTicketDetailPage'
 
 // Notification Pages
 import NotificationsPage from './pages/NotificationsPage'
@@ -94,8 +95,15 @@ import LotFormPage from './pages/owner/LotFormPage'
 import CampsiteFormPage from './pages/owner/CampsiteFormPage'
 import OwnerBookingsPage from './pages/owner/OwnerBookingsPage'
 import OfferManagementPage from './pages/owner/OfferManagementPage'
+import OfferFormPage from './pages/owner/OfferFormPage'
 import RevenueDashboardPage from './pages/owner/RevenueDashboardPage'
 import OwnerSettingsPage from './pages/owner/OwnerSettingsPage'
+import OwnerCalendarSettingsPage from './pages/owner/OwnerCalendarSettingsPage'
+import OwnerPricingSettingsPage from './pages/owner/OwnerPricingSettingsPage'
+import OwnerBankSettingsPage from './pages/owner/OwnerBankSettingsPage'
+import OwnerPayoutSchedulePage from './pages/owner/OwnerPayoutSchedulePage'
+import OwnerTaxSettingsPage from './pages/owner/OwnerTaxSettingsPage'
+import OwnerTeamSettingsPage from './pages/owner/OwnerTeamSettingsPage'
 
 function App() {
   return (
@@ -142,12 +150,12 @@ function App() {
       <Route path="/book/:id/calendar" element={<LotCalendarPage />} />
       <Route path="/book/:id/guests" element={<GuestExtrasPage />} />
       <Route path="/book/:id/payment" element={<BookingPaymentPage />} />
+      <Route path="/book/:id/payment-methods" element={<PaymentMethodsPage />} />
+      <Route path="/book/:id/add-payment" element={<AddPaymentMethodPage />} />
       <Route path="/book/:id/processing" element={<PaymentProcessingPage />} />
       <Route path="/book/:id/confirmation" element={<BookingConfirmationPage />} />
       <Route path="/book/:id/payment-failed" element={<PaymentFailedPage />} />
       <Route path="/book/:id/booking-failed" element={<BookingFailedPage />} />
-      <Route path="/payment-methods" element={<PaymentMethodsPage />} />
-      <Route path="/payment-methods/add" element={<AddPaymentMethodPage />} />
 
       {/* My Bookings */}
       <Route path="/bookings" element={<MyBookingsPage />} />
@@ -183,6 +191,7 @@ function App() {
       <Route path="/support/faq" element={<FAQPage />} />
       <Route path="/support/contact" element={<ContactSupportPage />} />
       <Route path="/support/tickets" element={<SupportTicketsPage />} />
+      <Route path="/support/tickets/:ticketId" element={<SupportTicketDetailPage />} />
 
       {/* Notifications */}
       <Route path="/notifications" element={<NotificationsPage />} />
@@ -198,8 +207,16 @@ function App() {
       <Route path="/owner/campsites/:id/edit" element={<CampsiteFormPage />} />
       <Route path="/owner/bookings" element={<OwnerBookingsPage />} />
       <Route path="/owner/offers" element={<OfferManagementPage />} />
+      <Route path="/owner/offers/new" element={<OfferFormPage />} />
+      <Route path="/owner/offers/:offerId/edit" element={<OfferFormPage />} />
       <Route path="/owner/revenue" element={<RevenueDashboardPage />} />
       <Route path="/owner/settings" element={<OwnerSettingsPage />} />
+      <Route path="/owner/settings/calendar" element={<OwnerCalendarSettingsPage />} />
+      <Route path="/owner/settings/pricing" element={<OwnerPricingSettingsPage />} />
+      <Route path="/owner/settings/bank" element={<OwnerBankSettingsPage />} />
+      <Route path="/owner/settings/payout-schedule" element={<OwnerPayoutSchedulePage />} />
+      <Route path="/owner/settings/tax" element={<OwnerTaxSettingsPage />} />
+      <Route path="/owner/settings/team" element={<OwnerTeamSettingsPage />} />
 
       {/* 404 Catch-all */}
       <Route path="*" element={<NotFoundPage />} />

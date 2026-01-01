@@ -35,7 +35,7 @@ export default function AddPaymentMethodPage() {
     setIsSaving(true)
     await new Promise(resolve => setTimeout(resolve, 1500))
     setIsSaving(false)
-    navigate(`/book/${id}/payment-methods`)
+    navigate(`/book/${id}/payment`)
   }
 
   const isValid = cardNumber.replace(/\s/g, '').length === 16 &&
