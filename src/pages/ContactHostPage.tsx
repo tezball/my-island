@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getBookingById, getCampsiteById, getCheckInInstructions, getMessagesByBooking } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi from '../lib/api/bookings'
 
 const quickMessages = [
   'Running late - will arrive after check-in time',
@@ -12,20 +13,73 @@ const quickMessages = [
   'Question about amenities',
 ]
 
+interface BookingData {
+  id: string
+  campsiteName: string
+  campsiteImage?: string
+  checkIn: string
+  checkOut: string
+  guests: number
+}
+
+interface Message {
+  id: string
+  senderId: string
+  senderName: string
+  senderAvatar?: string
+  content: string
+  createdAt: string
+}
+
 export default function ContactHostPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
   const navigate = useNavigate()
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
-  const instructions = campsite ? getCheckInInstructions(campsite.id) : null
-  const existingMessages = getMessagesByBooking(bookingId || '')
-
+  const [booking, setBooking] = useState<BookingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [existingMessages, setExistingMessages] = useState<Message[]>([])
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
 
-  if (!booking || !campsite) {
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
+
+      try {
+        setIsLoading(true)
+        const data = await bookingsApi.getById(bookingId)
+        setBooking({
+          id: data.id,
+          campsiteName: data.campsiteName,
+          campsiteImage: data.campsiteImage,
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          guests: data.guests,
+        })
+        // In production, would also fetch messages from API
+      } catch (error) {
+        console.error('Failed to fetch booking:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBooking()
+  }, [bookingId])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Contact Host" showNav={false}>
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={80} className="rounded-xl mb-4" />
+          <Skeleton variant="rectangular" height={100} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!booking) {
     return (
       <AppShell showBack headerTitle="Contact Host">
         <div className="flex-1 flex items-center justify-center">
@@ -35,11 +89,11 @@ export default function ContactHostPage() {
     )
   }
 
-  const hostInfo = instructions?.hostContact || {
+  const hostInfo = {
     name: 'Host',
     phone: '',
     email: '',
-    avatar: undefined,
+    avatar: undefined as string | undefined,
     responseTime: 'Usually responds within a few hours',
   }
 
@@ -105,14 +159,20 @@ export default function ContactHostPage() {
             Current Booking
           </p>
           <div className="flex items-center gap-3">
-            <img
-              src={campsite.images[0]}
-              alt={campsite.name}
-              className="w-16 h-12 rounded-lg object-cover"
-            />
+            {booking.campsiteImage ? (
+              <img
+                src={booking.campsiteImage}
+                alt={booking.campsiteName}
+                className="w-16 h-12 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-16 h-12 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                <Icon name="camping" size={20} className="text-slate-400" />
+              </div>
+            )}
             <div>
               <p className="font-medium text-slate-900 dark:text-white">
-                {campsite.name}
+                {booking.campsiteName}
               </p>
               <p className="text-sm text-slate-500">
                 {formatDate(booking.checkIn)} - {formatDate(booking.checkOut)} • {booking.guests} guests

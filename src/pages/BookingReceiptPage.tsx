@@ -1,20 +1,87 @@
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getBookingById, getCampsiteById } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi from '../lib/api/bookings'
+import { campsitesApi } from '../lib/api/campsites'
+
+interface BookingData {
+  id: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  totalPrice: number
+  campsiteId: string
+  campsiteName: string
+  campsiteImage?: string
+  campsiteAddress?: string
+}
 
 export default function BookingReceiptPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
+  const [booking, setBooking] = useState<BookingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
 
-  if (!booking || !campsite) {
+      try {
+        setIsLoading(true)
+        const bookingData = await bookingsApi.getById(bookingId)
+
+        // If booking doesn't have campsite address, fetch it
+        let campsiteAddress = ''
+        if (!bookingData.campsiteLocation) {
+          try {
+            const campsiteData = await campsitesApi.getById(bookingData.campsiteId)
+            campsiteAddress = campsiteData.location.address
+          } catch {
+            // Use location from booking if available
+            campsiteAddress = bookingData.campsiteLocation || ''
+          }
+        }
+
+        setBooking({
+          id: bookingData.id,
+          checkIn: bookingData.checkIn,
+          checkOut: bookingData.checkOut,
+          guests: bookingData.guests,
+          totalPrice: bookingData.totalPrice,
+          campsiteId: bookingData.campsiteId,
+          campsiteName: bookingData.campsiteName,
+          campsiteImage: bookingData.campsiteImage,
+          campsiteAddress: campsiteAddress || bookingData.campsiteLocation,
+        })
+      } catch (err) {
+        console.error('Failed to fetch booking:', err)
+        setError('Booking not found')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBooking()
+  }, [bookingId])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Receipt">
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={400} className="rounded-2xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (error || !booking) {
     return (
       <AppShell showBack headerTitle="Receipt">
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500">Booking not found</p>
+          <p className="text-slate-500">{error || 'Booking not found'}</p>
         </div>
       </AppShell>
     )
@@ -47,7 +114,7 @@ export default function BookingReceiptPage() {
     if (navigator.share) {
       navigator.share({
         title: 'Booking Receipt',
-        text: `My Island Booking - ${campsite.name}`,
+        text: `My Island Booking - ${booking.campsiteName}`,
       })
     }
   }
@@ -92,16 +159,22 @@ export default function BookingReceiptPage() {
                   Accommodation
                 </p>
                 <div className="flex items-center gap-3">
-                  <img
-                    src={campsite.images[0]}
-                    alt={campsite.name}
-                    className="w-16 h-12 rounded-lg object-cover"
-                  />
+                  {booking.campsiteImage ? (
+                    <img
+                      src={booking.campsiteImage}
+                      alt={booking.campsiteName}
+                      className="w-16 h-12 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="w-16 h-12 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                      <Icon name="camping" size={20} className="text-slate-400" />
+                    </div>
+                  )}
                   <div>
                     <p className="font-medium text-slate-900 dark:text-white">
-                      {campsite.name}
+                      {booking.campsiteName}
                     </p>
-                    <p className="text-sm text-slate-500">{campsite.location.address}</p>
+                    <p className="text-sm text-slate-500">{booking.campsiteAddress}</p>
                   </div>
                 </div>
               </div>

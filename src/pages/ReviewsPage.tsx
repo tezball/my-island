@@ -1,15 +1,91 @@
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import StarRating from '../components/ui/StarRating'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById, getReviewsByCampsite } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { campsitesApi } from '../lib/api/campsites'
+import { reviewsApi, type ReviewResponse } from '../lib/api/reviews'
+
+interface ReviewDisplay {
+  id: string
+  userName: string
+  userAvatar?: string
+  rating: number
+  title: string
+  content: string
+  createdAt: string
+  helpfulCount: number
+  categories: {
+    cleanliness: number
+    location: number
+    value: number
+    facilities: number
+  }
+}
+
+function mapToReviewDisplay(r: ReviewResponse): ReviewDisplay {
+  return {
+    id: r.id,
+    userName: r.user.name,
+    userAvatar: r.user.avatar,
+    rating: r.rating,
+    title: '',
+    content: r.comment,
+    createdAt: r.createdAt,
+    helpfulCount: r.helpfulCount,
+    categories: {
+      cleanliness: r.categories?.cleanliness ?? r.rating,
+      location: r.categories?.location ?? r.rating,
+      value: r.categories?.value ?? r.rating,
+      facilities: r.categories?.facilities ?? r.rating,
+    },
+  }
+}
 
 export default function ReviewsPage() {
   const { id } = useParams<{ id: string }>()
-  const campsite = getCampsiteById(id || '')
-  const reviews = getReviewsByCampsite(id || '')
+  const [isLoading, setIsLoading] = useState(true)
+  const [campsiteName, setCampsiteName] = useState('')
+  const [campsiteRating, setCampsiteRating] = useState(0)
+  const [reviews, setReviews] = useState<ReviewDisplay[]>([])
 
-  if (!campsite) {
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+
+      try {
+        setIsLoading(true)
+        const [campsiteData, reviewsData] = await Promise.all([
+          campsitesApi.getById(id),
+          reviewsApi.getByCampsite(id).catch(() => []),
+        ])
+        setCampsiteName(campsiteData.name)
+        setCampsiteRating(campsiteData.rating)
+        setReviews(reviewsData.map(mapToReviewDisplay))
+      } catch (error) {
+        console.error('Failed to fetch reviews:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Reviews" showNotifications={false}>
+        <div className="flex-1 overflow-auto p-4 space-y-4">
+          <Skeleton variant="rectangular" height={120} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={150} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={150} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!campsiteName) {
     return (
       <AppShell showBack headerTitle="Reviews">
         <div className="flex-1 flex items-center justify-center">
@@ -19,12 +95,12 @@ export default function ReviewsPage() {
     )
   }
 
-  const avgRatings = {
-    cleanliness: reviews.reduce((sum, r) => sum + r.categories.cleanliness, 0) / reviews.length || 0,
-    location: reviews.reduce((sum, r) => sum + r.categories.location, 0) / reviews.length || 0,
-    value: reviews.reduce((sum, r) => sum + r.categories.value, 0) / reviews.length || 0,
-    facilities: reviews.reduce((sum, r) => sum + r.categories.facilities, 0) / reviews.length || 0,
-  }
+  const avgRatings = reviews.length > 0 ? {
+    cleanliness: reviews.reduce((sum, r) => sum + r.categories.cleanliness, 0) / reviews.length,
+    location: reviews.reduce((sum, r) => sum + r.categories.location, 0) / reviews.length,
+    value: reviews.reduce((sum, r) => sum + r.categories.value, 0) / reviews.length,
+    facilities: reviews.reduce((sum, r) => sum + r.categories.facilities, 0) / reviews.length,
+  } : { cleanliness: 0, location: 0, value: 0, facilities: 0 }
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IE', {
@@ -42,11 +118,11 @@ export default function ReviewsPage() {
           <div className="flex items-center gap-4 mb-4">
             <div className="text-center">
               <p className="text-4xl font-bold text-slate-900 dark:text-white">
-                {campsite.rating}
+                {campsiteRating}
               </p>
-              <StarRating rating={campsite.rating} size={16} />
+              <StarRating rating={campsiteRating} size={16} />
               <p className="text-sm text-slate-500 mt-1">
-                {reviews.length} reviews
+                {reviews.length} review{reviews.length !== 1 ? 's' : ''}
               </p>
             </div>
             <div className="flex-1 space-y-2">
@@ -76,11 +152,17 @@ export default function ReviewsPage() {
               className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800"
             >
               <div className="flex items-start gap-3 mb-3">
-                <img
-                  src={review.userAvatar}
-                  alt={review.userName}
-                  className="size-12 rounded-full object-cover"
-                />
+                {review.userAvatar ? (
+                  <img
+                    src={review.userAvatar}
+                    alt={review.userName}
+                    className="size-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="size-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                    <Icon name="person" size={24} className="text-slate-400" />
+                  </div>
+                )}
                 <div className="flex-1">
                   <h3 className="font-semibold text-slate-900 dark:text-white">
                     {review.userName}
@@ -90,25 +172,14 @@ export default function ReviewsPage() {
                 <StarRating rating={review.rating} size={16} />
               </div>
 
-              <h4 className="font-medium text-slate-900 dark:text-white mb-1">
-                {review.title}
-              </h4>
+              {review.title && (
+                <h4 className="font-medium text-slate-900 dark:text-white mb-1">
+                  {review.title}
+                </h4>
+              )}
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                 {review.content}
               </p>
-
-              {review.photos.length > 0 && (
-                <div className="flex gap-2 mt-3 overflow-x-auto">
-                  {review.photos.map((photo, i) => (
-                    <img
-                      key={i}
-                      src={photo}
-                      alt={`Review photo ${i + 1}`}
-                      className="size-20 rounded-lg object-cover flex-shrink-0"
-                    />
-                  ))}
-                </div>
-              )}
 
               <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-primary transition-colors">

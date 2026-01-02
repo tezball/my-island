@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
 import Icon from '../ui/Icon'
-import { getUnreadNotificationCount } from '../../data/mockData'
 
 interface HeaderProps {
   title?: string
@@ -9,6 +8,7 @@ interface HeaderProps {
   showNotifications?: boolean
   rightAction?: React.ReactNode
   transparent?: boolean
+  unreadCount?: number
 }
 
 export default function Header({
@@ -18,19 +18,20 @@ export default function Header({
   showNotifications = true,
   rightAction,
   transparent = false,
+  unreadCount = 0,
 }: HeaderProps) {
   const navigate = useNavigate()
-  const unreadCount = getUnreadNotificationCount()
 
   return (
     <header
-      className={`sticky top-0 z-40 px-4 py-3 flex items-center justify-between ${
+      className={`sticky top-0 z-40 ${
         transparent
           ? 'bg-transparent'
           : 'bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-slate-100 dark:border-slate-800'
       }`}
     >
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="w-full max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
         {showBack && (
           <button
             onClick={() => navigate(-1)}
@@ -72,6 +73,7 @@ export default function Header({
             )}
           </Link>
         )}
+      </div>
       </div>
     </header>
   )

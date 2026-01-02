@@ -1,39 +1,85 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Calendar from '../components/ui/Calendar'
 import Icon from '../components/ui/Icon'
-import { getBookingById, getCampsiteById, getLotById, getLotAvailability } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi, { type BookingResponse } from '../lib/api/bookings'
+
+interface BookingData {
+  id: string
+  lotId: string
+  lotName: string
+  campsiteName: string
+  campsiteImage?: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  pricePerNight: number
+}
 
 export default function ModifyDatesPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
   const navigate = useNavigate()
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
-  const lot = booking ? getLotById(booking.lotId) : null
+  const [booking, setBooking] = useState<BookingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [selectedDates, setSelectedDates] = useState<string[]>([])
+  const [availableDates, setAvailableDates] = useState<string[]>([])
+  const [bookedDates, setBookedDates] = useState<string[]>([])
 
-  const [selectedDates, setSelectedDates] = useState<string[]>(
-    booking ? [booking.checkIn, booking.checkOut] : []
-  )
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
 
-  const availability = useMemo(() => {
-    if (!booking) return []
-    return getLotAvailability(booking.lotId)
-  }, [booking])
+      try {
+        setIsLoading(true)
+        const data = await bookingsApi.getById(bookingId)
+        setBooking({
+          id: data.id,
+          lotId: data.lotId,
+          lotName: data.lotName,
+          campsiteName: data.campsiteName,
+          campsiteImage: data.campsiteImage,
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          guests: data.guests,
+          pricePerNight: data.pricePerNight,
+        })
+        setSelectedDates([data.checkIn, data.checkOut])
 
-  const availableDates = availability
-    .filter(a => a.status === 'available')
-    .map(a => a.date)
+        // Generate available dates (next 90 days)
+        const dates: string[] = []
+        const today = new Date()
+        for (let i = 0; i < 90; i++) {
+          const date = new Date(today)
+          date.setDate(today.getDate() + i)
+          dates.push(date.toISOString().split('T')[0])
+        }
+        setAvailableDates(dates)
+      } catch (error) {
+        console.error('Failed to fetch booking:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-  const bookedDates = availability
-    .filter(a => a.status === 'booked')
-    .map(a => a.date)
-    // Exclude current booking dates
-    .filter(d => !selectedDates.includes(d))
+    fetchBooking()
+  }, [bookingId])
 
-  if (!booking || !campsite || !lot) {
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Modify Dates">
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={80} className="rounded-xl mb-4" />
+          <Skeleton variant="rectangular" height={300} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!booking) {
     return (
       <AppShell showBack headerTitle="Modify Dates">
         <div className="flex-1 flex items-center justify-center">
@@ -53,8 +99,8 @@ export default function ModifyDatesPage() {
       )
     : 0
 
-  const originalPrice = originalNights * lot.pricePerNight
-  const newPrice = newNights * lot.pricePerNight
+  const originalPrice = originalNights * booking.pricePerNight
+  const newPrice = newNights * booking.pricePerNight
   const priceDifference = newPrice - originalPrice
 
   const hasChanges =
@@ -87,17 +133,23 @@ export default function ModifyDatesPage() {
         {/* Current booking info */}
         <div className="p-4 bg-primary/10">
           <div className="flex items-center gap-3">
-            <img
-              src={campsite.images[0]}
-              alt={campsite.name}
-              className="w-16 h-16 rounded-xl object-cover"
-            />
+            {booking.campsiteImage ? (
+              <img
+                src={booking.campsiteImage}
+                alt={booking.campsiteName}
+                className="w-16 h-16 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                <Icon name="camping" size={24} className="text-slate-400" />
+              </div>
+            )}
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white">
-                {lot.name}
+                {booking.lotName}
               </h3>
               <p className="text-sm text-slate-500">
-                {campsite.name} • {booking.guests} guests
+                {booking.campsiteName} • {booking.guests} guests
               </p>
             </div>
           </div>

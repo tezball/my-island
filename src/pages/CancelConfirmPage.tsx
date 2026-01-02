@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getBookingById, getCampsiteById } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi from '../lib/api/bookings'
 
 const cancellationReasons = [
   'Change of plans',
@@ -14,18 +15,62 @@ const cancellationReasons = [
   'Other',
 ]
 
+interface BookingData {
+  id: string
+  campsiteName: string
+  campsiteImage?: string
+  checkIn: string
+  checkOut: string
+  totalPrice: number
+}
+
 export default function CancelConfirmPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
   const navigate = useNavigate()
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
-
+  const [booking, setBooking] = useState<BookingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedReason, setSelectedReason] = useState('')
   const [additionalInfo, setAdditionalInfo] = useState('')
   const [isCancelling, setIsCancelling] = useState(false)
 
-  if (!booking || !campsite) {
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
+
+      try {
+        setIsLoading(true)
+        const data = await bookingsApi.getById(bookingId)
+        setBooking({
+          id: data.id,
+          campsiteName: data.campsiteName,
+          campsiteImage: data.campsiteImage,
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          totalPrice: data.totalPrice,
+        })
+      } catch (error) {
+        console.error('Failed to fetch booking:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBooking()
+  }, [bookingId])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Cancel Booking" showNav={false}>
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={100} className="rounded-xl mb-4" />
+          <Skeleton variant="rectangular" height={150} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!booking) {
     return (
       <AppShell showBack headerTitle="Cancel Booking">
         <div className="flex-1 flex items-center justify-center">
@@ -47,12 +92,17 @@ export default function CancelConfirmPage() {
   const refundAmount = booking.totalPrice * 0.8 // 80% refund for demo
 
   const handleCancel = async () => {
-    if (!selectedReason) return
+    if (!selectedReason || !bookingId) return
 
     setIsCancelling(true)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setIsCancelling(false)
-    navigate(`/bookings/${bookingId}/cancelled`)
+    try {
+      await bookingsApi.cancel(bookingId, { reason: selectedReason })
+      navigate(`/bookings/${bookingId}/cancelled`)
+    } catch (error) {
+      console.error('Failed to cancel booking:', error)
+    } finally {
+      setIsCancelling(false)
+    }
   }
 
   return (
@@ -79,13 +129,19 @@ export default function CancelConfirmPage() {
         <div className="p-4 pt-0">
           <div className="bg-white dark:bg-surface-dark rounded-xl p-4 border border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3 mb-3">
-              <img
-                src={campsite.images[0]}
-                alt={campsite.name}
-                className="w-16 h-12 rounded-lg object-cover"
-              />
+              {booking.campsiteImage ? (
+                <img
+                  src={booking.campsiteImage}
+                  alt={booking.campsiteName}
+                  className="w-16 h-12 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="w-16 h-12 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                  <Icon name="camping" size={20} className="text-slate-400" />
+                </div>
+              )}
               <div>
-                <p className="font-medium text-slate-900 dark:text-white">{campsite.name}</p>
+                <p className="font-medium text-slate-900 dark:text-white">{booking.campsiteName}</p>
                 <p className="text-sm text-slate-500">
                   {formatDate(booking.checkIn)} - {formatDate(booking.checkOut)}
                 </p>

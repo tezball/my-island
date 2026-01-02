@@ -1,11 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import GuestCounter from '../components/ui/GuestCounter'
 import Icon from '../components/ui/Icon'
 import BookingExpiredState from '../components/booking/BookingExpiredState'
-import { getCampsiteById, extras } from '../data/mockData'
+import { campsitesApi } from '../lib/api/campsites'
+
+// Extras catalog - would come from API in production
+const extras = [
+  { id: 'breakfast', name: 'Breakfast', description: 'Full Irish breakfast', price: 15, icon: 'restaurant' },
+  { id: 'firewood', name: 'Firewood Bundle', description: 'Enough for one evening', price: 10, icon: 'local_fire_department' },
+  { id: 'marshmallows', name: 'Marshmallow Kit', description: 'For campfire treats', price: 5, icon: 'cake' },
+  { id: 'bike', name: 'Bike Rental', description: 'Per day', price: 20, icon: 'pedal_bike' },
+  { id: 'kayak', name: 'Kayak Rental', description: 'Per day', price: 35, icon: 'kayaking' },
+]
+
+interface CampsiteInfo {
+  name: string
+  image: string
+  pricePerNight: number
+}
 
 export default function GuestExtrasPage() {
   const { id } = useParams<{ id: string }>()
@@ -14,7 +29,29 @@ export default function GuestExtrasPage() {
 
   const { checkIn, checkOut } = (location.state as { checkIn?: string; checkOut?: string }) || {}
 
-  const campsite = getCampsiteById(id || '')
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) return
+
+      try {
+        const data = await campsitesApi.getById(id)
+        setCampsite({
+          name: data.name,
+          image: data.images[0] || '',
+          pricePerNight: data.priceFrom,
+        })
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCampsite()
+  }, [id])
 
   // If dates are missing, show expired state
   if (!checkIn || !checkOut) {
@@ -58,6 +95,16 @@ export default function GuestExtrasPage() {
 
   const totalPrice = basePrice + extrasTotal
 
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Guests & Extras" showNav={false}>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
+        </div>
+      </AppShell>
+    )
+  }
+
   if (!campsite) {
     return (
       <AppShell showBack headerTitle="Guests & Extras">
@@ -75,7 +122,7 @@ export default function GuestExtrasPage() {
         <div className="p-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <img
-              src={campsite.images[0]}
+              src={campsite.image}
               alt={campsite.name}
               className="w-16 h-12 rounded-lg object-cover"
             />

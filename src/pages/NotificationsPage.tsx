@@ -4,33 +4,79 @@ import AppShell from '../components/layout/AppShell'
 import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
 import Skeleton from '../components/ui/Skeleton'
-import { notifications } from '../data/mockData'
-import type { Notification } from '../data/types'
+import { notificationsApi, type NotificationResponse } from '../lib/api/notifications'
 
-const iconColors: Record<Notification['type'], string> = {
+type NotificationType = 'booking' | 'review' | 'offer' | 'system' | 'reminder' | 'message'
+
+const iconColors: Record<NotificationType, string> = {
   booking: 'text-emerald-500',
   review: 'text-amber-500',
   offer: 'text-purple-500',
   system: 'text-blue-500',
   reminder: 'text-orange-500',
+  message: 'text-blue-500',
 }
 
-const iconBgColors: Record<Notification['type'], string> = {
+const iconBgColors: Record<NotificationType, string> = {
   booking: 'bg-emerald-100 dark:bg-emerald-900/30',
   review: 'bg-amber-100 dark:bg-amber-900/30',
   offer: 'bg-purple-100 dark:bg-purple-900/30',
   system: 'bg-blue-100 dark:bg-blue-900/30',
   reminder: 'bg-orange-100 dark:bg-orange-900/30',
+  message: 'bg-blue-100 dark:bg-blue-900/30',
+}
+
+const typeIcons: Record<NotificationType, string> = {
+  booking: 'calendar_today',
+  review: 'star',
+  offer: 'local_offer',
+  system: 'info',
+  reminder: 'schedule',
+  message: 'chat',
+}
+
+interface DisplayNotification {
+  id: string
+  type: NotificationType
+  icon: string
+  title: string
+  message: string
+  read: boolean
+  actionUrl?: string
+  createdAt: string
+}
+
+function mapNotification(n: NotificationResponse): DisplayNotification {
+  const type = n.type.toLowerCase() as NotificationType
+  return {
+    id: n.id,
+    type,
+    icon: typeIcons[type] || 'notifications',
+    title: n.title,
+    message: n.message,
+    read: n.read,
+    actionUrl: n.actionUrl,
+    createdAt: n.createdAt,
+  }
 }
 
 export default function NotificationsPage() {
-  const [notifs, setNotifs] = useState(notifications)
+  const [notifs, setNotifs] = useState<DisplayNotification[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  // Simulate loading from API
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 400)
-    return () => clearTimeout(timer)
+    async function fetchNotifications() {
+      try {
+        const data = await notificationsApi.list()
+        setNotifs(data.map(mapNotification))
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchNotifications()
   }, [])
 
   const formatTime = (dateStr: string) => {
@@ -47,14 +93,24 @@ export default function NotificationsPage() {
     return date.toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })
   }
 
-  const markAsRead = (id: string) => {
-    setNotifs((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    )
+  const markAsRead = async (id: string) => {
+    try {
+      await notificationsApi.markAsRead(id)
+      setNotifs((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      )
+    } catch (error) {
+      console.error('Failed to mark as read:', error)
+    }
   }
 
-  const markAllAsRead = () => {
-    setNotifs((prev) => prev.map((n) => ({ ...n, read: true })))
+  const markAllAsRead = async () => {
+    try {
+      await notificationsApi.markAllAsRead()
+      setNotifs((prev) => prev.map((n) => ({ ...n, read: true })))
+    } catch (error) {
+      console.error('Failed to mark all as read:', error)
+    }
   }
 
   const unreadCount = notifs.filter((n) => !n.read).length

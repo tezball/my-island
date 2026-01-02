@@ -1,8 +1,15 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById } from '../data/mockData'
+import { campsitesApi } from '../lib/api/campsites'
+
+interface CampsiteInfo {
+  name: string
+  image: string
+  address: string
+}
 
 export default function BookingConfirmationPage() {
   const { id } = useParams<{ id: string }>()
@@ -14,15 +21,51 @@ export default function BookingConfirmationPage() {
     guests: number
     totalPrice: number
     bookingId: string
+    campsiteName?: string
+    campsiteImage?: string
+    campsiteAddress?: string
   }
 
-  const campsite = getCampsiteById(id || '')
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(
+    bookingState?.campsiteName
+      ? {
+          name: bookingState.campsiteName,
+          image: bookingState.campsiteImage || '',
+          address: bookingState.campsiteAddress || '',
+        }
+      : null
+  )
+  const [isLoading, setIsLoading] = useState(!bookingState?.campsiteName)
 
-  if (!campsite || !bookingState) {
+  useEffect(() => {
+    if (!campsite && id) {
+      setIsLoading(true)
+      campsitesApi.getById(id).then((data) => {
+        setCampsite({
+          name: data.name,
+          image: data.images[0] || '',
+          address: data.location.address,
+        })
+        setIsLoading(false)
+      }).catch(() => setIsLoading(false))
+    }
+  }, [id, campsite])
+
+  if (!bookingState) {
     return (
       <AppShell showNav={false} showHeader={false}>
         <div className="flex-1 flex items-center justify-center">
           <p className="text-slate-500">Booking not found</p>
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (isLoading || !campsite) {
+    return (
+      <AppShell showNav={false} showHeader={false}>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
         </div>
       </AppShell>
     )
@@ -56,7 +99,7 @@ export default function BookingConfirmationPage() {
           {/* Booking Card */}
           <div className="w-full bg-white dark:bg-surface-dark rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 overflow-hidden">
             <img
-              src={campsite.images[0]}
+              src={campsite.image}
               alt={campsite.name}
               className="w-full h-40 object-cover"
             />
@@ -66,7 +109,7 @@ export default function BookingConfirmationPage() {
                   <h2 className="font-bold text-slate-900 dark:text-white">
                     {campsite.name}
                   </h2>
-                  <p className="text-sm text-slate-500">{campsite.location.address}</p>
+                  <p className="text-sm text-slate-500">{campsite.address}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-slate-400">Confirmation #</p>

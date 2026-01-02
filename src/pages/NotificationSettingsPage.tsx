@@ -2,7 +2,7 @@ import { useState } from 'react'
 import AppShell from '../components/layout/AppShell'
 import Toggle from '../components/ui/Toggle'
 import Icon from '../components/ui/Icon'
-import { currentUser } from '../data/mockData'
+import { useAuth } from '../context/AuthContext'
 
 interface NotificationSetting {
   id: string
@@ -13,6 +13,7 @@ interface NotificationSetting {
 }
 
 export default function NotificationSettingsPage() {
+  const { user } = useAuth()
   const [pauseAll, setPauseAll] = useState(false)
 
   const [essentials, setEssentials] = useState<NotificationSetting[]>([
@@ -53,9 +54,9 @@ export default function NotificationSettingsPage() {
   ])
 
   const [channels, setChannels] = useState({
-    push: currentUser.notificationPreferences.push,
-    email: currentUser.notificationPreferences.email,
-    sms: currentUser.notificationPreferences.sms,
+    push: user?.notificationPreferences?.push ?? true,
+    email: user?.notificationPreferences?.email ?? true,
+    sms: user?.notificationPreferences?.sms ?? false,
   })
 
   const toggleEssential = (id: string) => {

@@ -1,13 +1,47 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Icon from '../components/ui/Icon'
-import { notifications } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { notificationsApi, type NotificationResponse } from '../lib/api/notifications'
 
 type NotificationCategory = 'all' | 'bookings' | 'offers' | 'system'
 
+interface DisplayNotification {
+  id: string
+  type: string
+  title: string
+  message: string
+  read: boolean
+  createdAt: string
+}
+
 export default function NotificationCenterPage() {
   const [category, setCategory] = useState<NotificationCategory>('all')
+  const [notifications, setNotifications] = useState<DisplayNotification[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const data = await notificationsApi.list()
+        setNotifications(data.map((n: NotificationResponse) => ({
+          id: n.id,
+          type: n.type.toLowerCase(),
+          title: n.title,
+          message: n.message,
+          read: n.read,
+          createdAt: n.createdAt,
+        })))
+      } catch (error) {
+        console.error('Failed to fetch notifications:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchNotifications()
+  }, [])
 
   const categories: { value: NotificationCategory; label: string; icon: string }[] = [
     { value: 'all', label: 'All', icon: 'notifications' },
@@ -37,7 +71,7 @@ export default function NotificationCenterPage() {
     }
     groups[groupKey].push(notification)
     return groups
-  }, {} as Record<string, typeof notifications>)
+  }, {} as Record<string, DisplayNotification[]>)
 
   const filteredGroups = Object.entries(groupedNotifications).reduce((acc, [date, items]) => {
     const filtered = items.filter(n => {
@@ -51,7 +85,7 @@ export default function NotificationCenterPage() {
       acc[date] = filtered
     }
     return acc
-  }, {} as Record<string, typeof notifications>)
+  }, {} as Record<string, DisplayNotification[]>)
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -111,7 +145,19 @@ export default function NotificationCenterPage() {
 
         {/* Notification Groups */}
         <div className="pb-6">
-          {Object.entries(filteredGroups).map(([date, items]) => (
+          {isLoading ? (
+            <div className="p-4 space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex gap-3">
+                  <Skeleton variant="circular" width={40} height={40} />
+                  <div className="flex-1">
+                    <Skeleton variant="text" className="w-3/4 h-4 mb-2" />
+                    <Skeleton variant="text" className="w-full h-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : Object.entries(filteredGroups).map(([date, items]) => (
             <div key={date}>
               <div className="px-4 py-3">
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
@@ -159,7 +205,7 @@ export default function NotificationCenterPage() {
             </div>
           ))}
 
-          {Object.keys(filteredGroups).length === 0 && (
+          {!isLoading && Object.keys(filteredGroups).length === 0 && (
             <div className="text-center py-12">
               <Icon name="notifications_off" size={48} className="text-slate-300 mx-auto mb-3" />
               <p className="text-slate-500">No notifications in this category</p>

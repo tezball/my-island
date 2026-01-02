@@ -1,13 +1,68 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { notifications } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { notificationsApi, type NotificationResponse } from '../lib/api/notifications'
+
+interface DisplayNotification {
+  id: string
+  type: string
+  title: string
+  message: string
+  actionUrl?: string
+  createdAt: string
+}
 
 export default function NotificationDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const [notification, setNotification] = useState<DisplayNotification | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  const notification = notifications.find(n => n.id === id)
+  useEffect(() => {
+    async function fetchNotification() {
+      if (!id) return
+
+      try {
+        const data = await notificationsApi.list()
+        const notif = data.find((n: NotificationResponse) => n.id === id)
+        if (notif) {
+          setNotification({
+            id: notif.id,
+            type: notif.type.toLowerCase(),
+            title: notif.title,
+            message: notif.message,
+            actionUrl: notif.actionUrl,
+            createdAt: notif.createdAt,
+          })
+          // Mark as read when viewing
+          await notificationsApi.markAsRead(id)
+        }
+      } catch (error) {
+        console.error('Failed to fetch notification:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchNotification()
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Notification">
+        <div className="flex-1 overflow-auto p-6">
+          <div className="flex justify-center mb-6">
+            <Skeleton variant="circular" width={64} height={64} />
+          </div>
+          <Skeleton variant="text" className="h-6 w-3/4 mx-auto mb-2" />
+          <Skeleton variant="text" className="h-4 w-1/2 mx-auto mb-6" />
+          <Skeleton variant="rectangular" height={100} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
 
   if (!notification) {
     return (

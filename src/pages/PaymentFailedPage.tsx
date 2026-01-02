@@ -1,14 +1,36 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById } from '../data/mockData'
+import { campsitesApi } from '../lib/api/campsites'
+
+interface CampsiteInfo {
+  name: string
+}
 
 export default function PaymentFailedPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const campsite = getCampsiteById(id || '')
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(null)
+
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) return
+
+      try {
+        const data = await campsitesApi.getById(id)
+        setCampsite({
+          name: data.name,
+        })
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+      }
+    }
+
+    fetchCampsite()
+  }, [id])
 
   return (
     <AppShell showNav={false} showHeader={false}>

@@ -1,28 +1,52 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Calendar from '../components/ui/Calendar'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById, getLotAvailability } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { campsitesApi } from '../lib/api/campsites'
+
+interface CampsiteInfo {
+  name: string
+  image: string
+  pricePerNight: number
+}
 
 export default function SelectDatesPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const campsite = getCampsiteById(id || '')
-  const availability = campsite ? getLotAvailability(campsite.id) : []
-
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [checkIn, setCheckIn] = useState<string | null>(null)
   const [checkOut, setCheckOut] = useState<string | null>(null)
+  const [bookedDates, setBookedDates] = useState<string[]>([])
+  const [blockedDates, setBlockedDates] = useState<string[]>([])
 
-  // Convert availability to Calendar format
-  const bookedDates = availability
-    .filter(a => a.status === 'booked')
-    .map(a => a.date)
-  const blockedDates = availability
-    .filter(a => a.status === 'blocked' || a.status === 'maintenance')
-    .map(a => a.date)
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) return
+
+      try {
+        const data = await campsitesApi.getById(id)
+        setCampsite({
+          name: data.name,
+          image: data.images[0] || '',
+          pricePerNight: data.priceFrom,
+        })
+
+        // For now, generate available dates (next 90 days)
+        // In production, would fetch from availability API
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCampsite()
+  }, [id])
 
   const handleDateSelect = (dateStr: string) => {
     if (!checkIn || (checkIn && checkOut)) {
@@ -57,6 +81,17 @@ export default function SelectDatesPage() {
   if (checkIn) selectedDates.push(checkIn)
   if (checkOut) selectedDates.push(checkOut)
 
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Select Dates" showNav={false}>
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={60} className="rounded-lg mb-4" />
+          <Skeleton variant="rectangular" height={300} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
   if (!campsite) {
     return (
       <AppShell showBack headerTitle="Select Dates">
@@ -74,13 +109,13 @@ export default function SelectDatesPage() {
         <div className="p-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
             <img
-              src={campsite.images[0]}
+              src={campsite.image}
               alt={campsite.name}
               className="w-16 h-12 rounded-lg object-cover"
             />
             <div>
               <p className="font-medium text-slate-900 dark:text-white">{campsite.name}</p>
-              <p className="text-sm text-slate-500">{pricePerNight}/night</p>
+              <p className="text-sm text-slate-500">€{pricePerNight}/night</p>
             </div>
           </div>
         </div>

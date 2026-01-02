@@ -1,16 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import StarRating from '../components/ui/StarRating'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { campsitesApi } from '../lib/api/campsites'
+import { reviewsApi } from '../lib/api/reviews'
+
+interface CampsiteInfo {
+  name: string
+  image: string
+  location: string
+}
 
 export default function WriteReviewPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const campsite = getCampsiteById(id || '')
 
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [overallRating, setOverallRating] = useState(0)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -21,6 +30,44 @@ export default function WriteReviewPage() {
     facilities: 0,
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) return
+
+      try {
+        const data = await campsitesApi.getById(id)
+        setCampsite({
+          name: data.name,
+          image: data.images[0] || '',
+          location: data.location.county,
+        })
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCampsite()
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Write Review" showNav={false}>
+        <div className="flex-1 overflow-auto p-4">
+          <div className="flex gap-3 mb-6">
+            <Skeleton variant="rectangular" width={64} height={64} className="rounded-xl" />
+            <div>
+              <Skeleton variant="text" className="w-32 h-5 mb-2" />
+              <Skeleton variant="text" className="w-20 h-4" />
+            </div>
+          </div>
+          <Skeleton variant="rectangular" height={150} className="rounded-2xl" />
+        </div>
+      </AppShell>
+    )
+  }
 
   if (!campsite) {
     return (
@@ -33,9 +80,21 @@ export default function WriteReviewPage() {
   }
 
   const handleSubmit = async () => {
+    if (!id) return
+
     setIsSubmitting(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    navigate(`/campsite/${id}`, { replace: true })
+    try {
+      await reviewsApi.create(id, {
+        rating: overallRating,
+        comment: content,
+        categories: ratings,
+      })
+      navigate(`/campsite/${id}`, { replace: true })
+    } catch (error) {
+      console.error('Failed to submit review:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const isValid = overallRating > 0 && title.length >= 5 && content.length >= 20
@@ -47,7 +106,7 @@ export default function WriteReviewPage() {
           {/* Campsite Preview */}
           <div className="flex gap-3">
             <img
-              src={campsite.images[0]}
+              src={campsite.image}
               alt={campsite.name}
               className="size-16 rounded-xl object-cover"
             />
@@ -55,7 +114,7 @@ export default function WriteReviewPage() {
               <h2 className="font-bold text-slate-900 dark:text-white">
                 {campsite.name}
               </h2>
-              <p className="text-sm text-slate-500">{campsite.location.county}</p>
+              <p className="text-sm text-slate-500">{campsite.location}</p>
             </div>
           </div>
 

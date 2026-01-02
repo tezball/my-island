@@ -1,9 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getBookingById, getCampsiteById } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi from '../lib/api/bookings'
+
+interface BookingData {
+  id: string
+  campsiteName: string
+  campsiteImage?: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  totalPrice: number
+}
 
 export default function ModifySummaryPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
@@ -12,12 +23,48 @@ export default function ModifySummaryPage() {
 
   const { changes } = (location.state as { changes?: any }) || {}
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
-
+  const [booking, setBooking] = useState<BookingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [isConfirming, setIsConfirming] = useState(false)
 
-  if (!booking || !campsite) {
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
+
+      try {
+        setIsLoading(true)
+        const data = await bookingsApi.getById(bookingId)
+        setBooking({
+          id: data.id,
+          campsiteName: data.campsiteName,
+          campsiteImage: data.campsiteImage,
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          guests: data.guests,
+          totalPrice: data.totalPrice,
+        })
+      } catch (error) {
+        console.error('Failed to fetch booking:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBooking()
+  }, [bookingId])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Review Changes" showNav={false}>
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={100} className="rounded-xl mb-4" />
+          <Skeleton variant="rectangular" height={200} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!booking) {
     return (
       <AppShell showBack headerTitle="Modify Summary">
         <div className="flex-1 flex items-center justify-center">
@@ -54,13 +101,19 @@ export default function ModifySummaryPage() {
         <div className="p-4">
           <div className="bg-white dark:bg-surface-dark rounded-xl p-4 border border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3 mb-4">
-              <img
-                src={campsite.images[0]}
-                alt={campsite.name}
-                className="w-16 h-12 rounded-lg object-cover"
-              />
+              {booking.campsiteImage ? (
+                <img
+                  src={booking.campsiteImage}
+                  alt={booking.campsiteName}
+                  className="w-16 h-12 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="w-16 h-12 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                  <Icon name="camping" size={20} className="text-slate-400" />
+                </div>
+              )}
               <div>
-                <p className="font-medium text-slate-900 dark:text-white">{campsite.name}</p>
+                <p className="font-medium text-slate-900 dark:text-white">{booking.campsiteName}</p>
                 <p className="text-sm text-slate-500">Booking #{bookingId?.slice(-8).toUpperCase()}</p>
               </div>
             </div>

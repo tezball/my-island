@@ -1,8 +1,15 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById } from '../data/mockData'
+import { campsitesApi } from '../lib/api/campsites'
+
+interface CampsiteInfo {
+  name: string
+  image: string
+  location: string
+}
 
 export default function BookingFailedPage() {
   const { id } = useParams<{ id: string }>()
@@ -10,7 +17,26 @@ export default function BookingFailedPage() {
   const [searchParams] = useSearchParams()
   const errorCode = searchParams.get('error') || '502-LOT'
 
-  const campsite = getCampsiteById(id || '')
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(null)
+
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) return
+
+      try {
+        const data = await campsitesApi.getById(id)
+        setCampsite({
+          name: data.name,
+          image: data.images[0] || '',
+          location: data.location.county,
+        })
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+      }
+    }
+
+    fetchCampsite()
+  }, [id])
 
   const getErrorMessage = () => {
     switch (errorCode) {
@@ -57,7 +83,7 @@ export default function BookingFailedPage() {
         {campsite && (
           <div className="w-full flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl mb-8">
             <img
-              src={campsite.images[0]}
+              src={campsite.image}
               alt={campsite.name}
               className="w-16 h-16 rounded-lg object-cover"
             />
@@ -66,7 +92,7 @@ export default function BookingFailedPage() {
                 {campsite.name}
               </p>
               <p className="text-sm text-slate-500">
-                {campsite.location.county}
+                {campsite.location}
               </p>
             </div>
           </div>

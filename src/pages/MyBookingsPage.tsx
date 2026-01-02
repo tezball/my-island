@@ -47,17 +47,25 @@ export default function MyBookingsPage() {
       setError(null)
 
       try {
-        const data = await bookingsApi.list({
-          status: activeTab === 'upcoming' ? 'UPCOMING' : 'PAST'
-        })
-        setBookings(data)
+        // Fetch all bookings and filter on frontend
+        const data = await bookingsApi.list({})
 
-        // Update counts when data is fetched
-        if (activeTab === 'upcoming') {
-          setUpcomingCount(data.length)
-        } else {
-          setPastCount(data.length)
-        }
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        const upcoming = data.filter(b => {
+          const checkIn = new Date(b.checkIn)
+          return checkIn >= today && b.status !== 'CANCELLED'
+        })
+
+        const past = data.filter(b => {
+          const checkIn = new Date(b.checkIn)
+          return checkIn < today || b.status === 'CANCELLED'
+        })
+
+        setUpcomingCount(upcoming.length)
+        setPastCount(past.length)
+        setBookings(activeTab === 'upcoming' ? upcoming : past)
       } catch (err) {
         console.error('Failed to fetch bookings:', err)
         setError('Failed to load bookings. Please try again.')

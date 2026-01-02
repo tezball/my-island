@@ -72,9 +72,18 @@ export interface AvailabilityResponse {
 }
 
 export interface BookingListParams {
-  status?: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'UPCOMING' | 'PAST'
+  status?: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
   page?: number
   size?: number
+}
+
+// Paginated response wrapper
+interface PagedResponse<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
 }
 
 export interface AvailabilityParams {
@@ -89,8 +98,10 @@ export const bookingsApi = {
     api.post<BookingResponse>('/bookings', data),
 
   // Get user's bookings
-  list: (params?: BookingListParams) =>
-    api.get<BookingResponse[]>(`/bookings${params ? buildQueryString(params) : ''}`),
+  list: async (params?: BookingListParams): Promise<BookingResponse[]> => {
+    const response = await api.get<PagedResponse<BookingResponse>>(`/bookings${params ? buildQueryString(params) : ''}`)
+    return response.content
+  },
 
   // Get booking details
   getById: (id: string) =>

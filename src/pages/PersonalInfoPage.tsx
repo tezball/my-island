@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
-import { currentUser } from '../data/mockData'
+import { useAuth } from '../context/AuthContext'
 
 export default function PersonalInfoPage() {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
-  const [firstName, setFirstName] = useState(currentUser.name.split(' ')[0])
-  const [lastName, setLastName] = useState(currentUser.name.split(' ').slice(1).join(' '))
-  const [email, setEmail] = useState(currentUser.email)
-  const [phone, setPhone] = useState(currentUser.phone || '')
+  const [firstName, setFirstName] = useState(user?.name?.split(' ')[0] || '')
+  const [lastName, setLastName] = useState(user?.name?.split(' ').slice(1).join(' ') || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [phone, setPhone] = useState(user?.phone || '')
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 

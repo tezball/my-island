@@ -38,7 +38,11 @@ export default function AppShell({
         />
       )}
 
-      <main className="flex-1 flex flex-col">{children}</main>
+      <main className="flex-1 flex flex-col">
+        <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col">
+          {children}
+        </div>
+      </main>
 
       {showNav && <BottomNav />}
     </div>

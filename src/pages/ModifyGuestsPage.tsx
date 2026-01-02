@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import GuestCounter from '../components/ui/GuestCounter'
 import Toggle from '../components/ui/Toggle'
 import Icon from '../components/ui/Icon'
-import { getBookingById, getCampsiteById, getLotById } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi from '../lib/api/bookings'
 
 interface Extra {
   id: string
@@ -22,25 +23,69 @@ const availableExtras: Extra[] = [
   { id: 'firewood', name: 'Firewood Bundle', price: 8, quantity: 0 },
 ]
 
+interface BookingData {
+  id: string
+  lotName: string
+  campsiteName: string
+  campsiteImage?: string
+  checkIn: string
+  checkOut: string
+  guests: number
+  pricePerNight: number
+  capacity: number
+}
+
 export default function ModifyGuestsPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
   const navigate = useNavigate()
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
-  const lot = booking ? getLotById(booking.lotId) : null
-
-  const [adults, setAdults] = useState(booking?.guests || 2)
+  const [booking, setBooking] = useState<BookingData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [adults, setAdults] = useState(2)
   const [children, setChildren] = useState(0)
-  const [extras, setExtras] = useState<Extra[]>(() => {
-    // Merge with booking extras
-    return availableExtras.map(extra => {
-      const bookingExtra = booking?.extras.find(e => e.id === extra.id)
-      return bookingExtra ? { ...extra, quantity: bookingExtra.quantity } : extra
-    })
-  })
+  const [extras, setExtras] = useState<Extra[]>(availableExtras)
 
-  if (!booking || !campsite || !lot) {
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
+
+      try {
+        setIsLoading(true)
+        const data = await bookingsApi.getById(bookingId)
+        setBooking({
+          id: data.id,
+          lotName: data.lotName,
+          campsiteName: data.campsiteName,
+          campsiteImage: data.campsiteImage,
+          checkIn: data.checkIn,
+          checkOut: data.checkOut,
+          guests: data.guests,
+          pricePerNight: data.pricePerNight,
+          capacity: 6, // Default capacity, would come from lot data
+        })
+        setAdults(data.guests)
+      } catch (error) {
+        console.error('Failed to fetch booking:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBooking()
+  }, [bookingId])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Modify Booking">
+        <div className="flex-1 overflow-auto p-4">
+          <Skeleton variant="rectangular" height={100} className="rounded-xl mb-4" />
+          <Skeleton variant="rectangular" height={200} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!booking) {
     return (
       <AppShell showBack headerTitle="Modify Booking">
         <div className="flex-1 flex items-center justify-center">
@@ -73,11 +118,11 @@ export default function ModifyGuestsPage() {
   const totalGuests = adults + children
   const hasGuestChange = totalGuests !== booking.guests
 
-  const originalExtrasTotal = booking.extras.reduce((sum, e) => sum + e.price * e.quantity, 0)
+  const originalExtrasTotal = 0 // Would track from booking extras
   const newExtrasTotal = extras.reduce((sum, e) => sum + e.price * e.quantity * nights, 0)
   const extrasChange = newExtrasTotal - originalExtrasTotal
 
-  const basePrice = lot.pricePerNight * nights
+  const basePrice = booking.pricePerNight * nights
   const totalPrice = basePrice + newExtrasTotal
 
   const hasChanges = hasGuestChange || extrasChange !== 0
@@ -90,10 +135,7 @@ export default function ModifyGuestsPage() {
   const handleReset = () => {
     setAdults(booking.guests)
     setChildren(0)
-    setExtras(availableExtras.map(extra => {
-      const bookingExtra = booking.extras.find(e => e.id === extra.id)
-      return bookingExtra ? { ...extra, quantity: bookingExtra.quantity } : extra
-    }))
+    setExtras(availableExtras)
   }
 
   return (
@@ -113,15 +155,21 @@ export default function ModifyGuestsPage() {
         {/* Booking info */}
         <div className="p-4">
           <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-            <img
-              src={campsite.images[0]}
-              alt={campsite.name}
-              className="w-20 h-20 rounded-xl object-cover"
-            />
+            {booking.campsiteImage ? (
+              <img
+                src={booking.campsiteImage}
+                alt={booking.campsiteName}
+                className="w-20 h-20 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                <Icon name="camping" size={32} className="text-slate-400" />
+              </div>
+            )}
             <div>
-              <p className="text-xs text-slate-500 mb-1">{lot.name}</p>
+              <p className="text-xs text-slate-500 mb-1">{booking.lotName}</p>
               <h3 className="font-semibold text-slate-900 dark:text-white">
-                {campsite.name}
+                {booking.campsiteName}
               </h3>
               <p className="text-sm text-slate-500">
                 {formatDate(booking.checkIn)} - {formatDate(booking.checkOut)}
@@ -144,7 +192,7 @@ export default function ModifyGuestsPage() {
             value={adults}
             onChange={setAdults}
             min={1}
-            max={lot.capacity}
+            max={booking.capacity}
           />
           <GuestCounter
             label="Children"
@@ -152,9 +200,9 @@ export default function ModifyGuestsPage() {
             value={children}
             onChange={setChildren}
             min={0}
-            max={Math.max(0, lot.capacity - adults)}
+            max={Math.max(0, booking.capacity - adults)}
           />
-          {totalGuests >= lot.capacity && (
+          {totalGuests >= booking.capacity && (
             <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
               <Icon name="info" size={16} />
               Maximum capacity reached

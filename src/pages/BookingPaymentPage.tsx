@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import BookingExpiredState from '../components/booking/BookingExpiredState'
-import { getCampsiteById } from '../data/mockData'
+import { campsitesApi } from '../lib/api/campsites'
 
 type PaymentMethod = 'card' | 'apple_pay' | 'google_pay'
+
+interface CampsiteInfo {
+  name: string
+  image: string
+  location: string
+}
 
 export default function BookingPaymentPage() {
   const { id } = useParams<{ id: string }>()
@@ -19,9 +25,32 @@ export default function BookingPaymentPage() {
     lotId: string
     extras: string[]
     totalPrice: number
+    campsiteName?: string
+    campsiteImage?: string
+    campsiteLocation?: string
   } | null
 
-  const campsite = getCampsiteById(id || '')
+  const [campsite, setCampsite] = useState<CampsiteInfo | null>(
+    bookingState?.campsiteName
+      ? {
+          name: bookingState.campsiteName,
+          image: bookingState.campsiteImage || '',
+          location: bookingState.campsiteLocation || '',
+        }
+      : null
+  )
+
+  useEffect(() => {
+    if (!campsite && id) {
+      campsitesApi.getById(id).then((data) => {
+        setCampsite({
+          name: data.name,
+          image: data.images[0] || '',
+          location: data.location.county,
+        })
+      })
+    }
+  }, [id, campsite])
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -84,7 +113,7 @@ export default function BookingPaymentPage() {
             </h3>
             <div className="flex gap-3">
               <img
-                src={campsite.images[0]}
+                src={campsite.image}
                 alt={campsite.name}
                 className="size-16 rounded-xl object-cover"
               />
@@ -92,7 +121,7 @@ export default function BookingPaymentPage() {
                 <h4 className="font-semibold text-slate-900 dark:text-white">
                   {campsite.name}
                 </h4>
-                <p className="text-sm text-slate-500">{campsite.location.county}</p>
+                <p className="text-sm text-slate-500">{campsite.location}</p>
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">

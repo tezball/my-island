@@ -16,6 +16,24 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
 
+  // Demo accounts for testing
+  const demoAccounts = [
+    { label: 'Guest User', email: 'guest@my-island.com', password: 'demo1234', type: 'guest' },
+    { label: 'Registered User', email: 'user@my-island.com', password: 'demo1234', type: 'user' },
+    { label: 'Campsite Owner', email: 'owner@my-island.com', password: 'demo1234', type: 'owner' },
+    { label: 'Supplier', email: 'supplier@my-island.com', password: 'demo1234', type: 'supplier' },
+  ]
+
+  const handleDemoSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const account = demoAccounts.find(a => a.email === e.target.value)
+    if (account) {
+      setEmail(account.email)
+      setPassword(account.password)
+      setErrors({})
+      setTouched({ email: true, password: true })
+    }
+  }
+
   // Redirect if already authenticated
   const from = (location.state as { from?: string })?.from || '/'
   useEffect(() => {
@@ -139,6 +157,26 @@ export default function LoginPage() {
 
         {/* Login Form */}
         <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Demo Account Selector */}
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+            <div className="flex items-center gap-2 mb-3">
+              <Icon name="science" size={18} className="text-amber-600 dark:text-amber-400" />
+              <span className="text-sm font-semibold text-amber-800 dark:text-amber-200">Demo Mode</span>
+            </div>
+            <select
+              onChange={handleDemoSelect}
+              value={email || ''}
+              className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-700 rounded-lg text-slate-900 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            >
+              <option value="">Select a demo account...</option>
+              {demoAccounts.map((account) => (
+                <option key={account.email} value={account.email}>
+                  {account.label} ({account.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Auth Error Display */}
           {authError && !['ACCOUNT_LOCKED', 'ACCOUNT_SUSPENDED', 'EMAIL_UNVERIFIED'].includes(authError) && (
             <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3">
