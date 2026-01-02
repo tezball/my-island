@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import { favoritesApi, type FavoriteResponse } from '../lib/api/favorites'
+import { campsitesApi } from '../lib/api/campsites'
 import { useAuth } from './AuthContext'
 import type { Campsite } from '../data/types'
 
@@ -47,6 +48,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
   const [favoritesData, setFavoritesData] = useState<FavoriteResponse[]>([])
+  const [localCampsites, setLocalCampsites] = useState<Campsite[]>([]) // Campsites fetched by ID when API unavailable
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -99,12 +101,48 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     }
   }, [favoriteIds, isLoading])
 
+  // Fetch campsite details when we have IDs but no API data (localStorage fallback)
+  useEffect(() => {
+    async function fetchCampsiteDetails() {
+      if (isLoading || favoriteIds.length === 0) return
+      if (favoritesData.length > 0) return // Already have API data
+
+      // Fetch campsite details for IDs we have in localStorage
+      const campsites: Campsite[] = []
+      for (const id of favoriteIds) {
+        try {
+          const data = await campsitesApi.getById(id)
+          campsites.push({
+            id: data.id,
+            name: data.name,
+            description: data.description,
+            location: data.location,
+            images: data.images,
+            rating: data.rating,
+            reviewCount: data.reviewCount,
+            pricePerNight: data.priceFrom,
+            facilities: data.facilities.map(f => f.toLowerCase() as Campsite['facilities'][number]),
+            ownerId: data.ownerId,
+            lots: [],
+            featured: data.featured,
+          })
+        } catch (err) {
+          console.error(`Failed to fetch campsite ${id}:`, err)
+        }
+      }
+      setLocalCampsites(campsites)
+    }
+    fetchCampsiteDetails()
+  }, [favoriteIds, favoritesData.length, isLoading])
+
   const clearError = useCallback(() => {
     setError(null)
   }, [])
 
-  // Get full campsite objects for favorites
-  const favorites = favoritesData.map(mapFavoriteToCompsite)
+  // Get full campsite objects for favorites - prefer API data, fall back to locally fetched
+  const favorites = favoritesData.length > 0
+    ? favoritesData.map(mapFavoriteToCompsite)
+    : localCampsites
 
   const isFavorite = useCallback(
     (campsiteId: string) => favoriteIds.includes(campsiteId),
@@ -114,7 +152,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const addFavorite = useCallback(async (campsiteId: string) => {
     if (favoriteIds.includes(campsiteId)) return
 
-    // Optimistic update
+    // Optimistic update - this also saves to localStorage via the useEffect
     setFavoriteIds((prev) => [...prev, campsiteId])
 
     if (user) {
@@ -124,15 +162,15 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         const data = await favoritesApi.list()
         setFavoritesData(data)
       } catch (err) {
-        console.error('Failed to add favorite:', err)
-        // Revert on error
-        setFavoriteIds((prev) => prev.filter((id) => id !== campsiteId))
+        // Don't revert - localStorage backup keeps working
+        // This allows favorites to work even when API is unavailable
+        console.error('Failed to sync favorite to server:', err)
       }
     }
   }, [favoriteIds, user])
 
   const removeFavorite = useCallback(async (campsiteId: string) => {
-    // Optimistic update
+    // Optimistic update - this also saves to localStorage via the useEffect
     setFavoriteIds((prev) => prev.filter((id) => id !== campsiteId))
     setFavoritesData((prev) => prev.filter((f) => f.campsiteId !== campsiteId))
 
@@ -140,11 +178,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       try {
         await favoritesApi.remove(campsiteId)
       } catch (err) {
-        console.error('Failed to remove favorite:', err)
-        // Revert on error - refetch the list
-        const data = await favoritesApi.list()
-        setFavoritesData(data)
-        setFavoriteIds(data.map(f => f.campsiteId))
+        // Don't revert - localStorage backup keeps working
+        // This allows favorites to work even when API is unavailable
+        console.error('Failed to sync favorite removal to server:', err)
       }
     }
   }, [user])

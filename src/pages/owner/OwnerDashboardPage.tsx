@@ -251,20 +251,37 @@ export default function OwnerDashboardPage() {
                 €{(stats?.revenue || 0).toLocaleString()}
               </span>
             </Link>
-            <Link
-              to={`/owner/campsites/${campsite?.id}/edit`}
-              className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
-            >
-              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Icon name="edit" size={24} className="text-primary" />
-              </div>
-              <span className="font-medium text-slate-900 dark:text-white text-sm">
-                Edit Campsite
-              </span>
-              <span className="text-xs text-slate-500">
-                Update details
-              </span>
-            </Link>
+            {campsite ? (
+              <Link
+                to={`/owner/campsites/${campsite.id}/edit`}
+                className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
+              >
+                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Icon name="edit" size={24} className="text-primary" />
+                </div>
+                <span className="font-medium text-slate-900 dark:text-white text-sm">
+                  Edit Campsite
+                </span>
+                <span className="text-xs text-slate-500">
+                  Update details
+                </span>
+              </Link>
+            ) : (
+              <Link
+                to="/owner/campsites/new"
+                className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
+              >
+                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Icon name="add" size={24} className="text-primary" />
+                </div>
+                <span className="font-medium text-slate-900 dark:text-white text-sm">
+                  Add Campsite
+                </span>
+                <span className="text-xs text-slate-500">
+                  Create listing
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

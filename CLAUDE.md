@@ -19,10 +19,12 @@ npm run preview      # Preview production build
 ### Backend (my-island-api/)
 ```bash
 docker compose up -d              # Start PostgreSQL, LocalStack, Kafka, Grafana
-mvn spring-boot:run               # Run Spring Boot application
+mvn spring-boot:run               # Run Spring Boot application (http://localhost:8080)
 mvn test                          # Run tests (requires Docker for Testcontainers)
 mvn test -Dtest=ClassName         # Run specific test class
 ```
+
+**Important:** The backend API always runs on port 8080. Frontend API calls should target `http://localhost:8080/api/*`.
 
 ## Tech Stack
 

@@ -96,7 +96,9 @@ export default function DiscoverPage() {
 
         {/* View toggle */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-          <span className="text-sm text-slate-500">{campsites.length} campsites</span>
+          <span className="text-sm text-slate-500">
+            {isLoading ? 'Loading...' : `${campsites.length} campsites`}
+          </span>
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
             <button
               onClick={() => setViewMode('list')}

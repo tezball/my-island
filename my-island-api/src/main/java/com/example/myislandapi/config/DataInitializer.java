@@ -27,7 +27,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Configuration
-@Profile("dev")
+@Profile("!test")  // Run in all profiles except test
 public class DataInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
@@ -99,6 +99,27 @@ public class DataInitializer {
 
     private List<User> createOwners(UserRepository repository, PasswordEncoder encoder) {
         List<User> owners = new ArrayList<>();
+
+        // Demo owner account matching frontend - password: demo1234
+        var demoOwner = repository.findByEmail("owner@my-island.com");
+        if (demoOwner.isPresent()) {
+            User user = demoOwner.get();
+            if (!user.isOwner()) {
+                user.setOwner(true);
+                repository.save(user);
+            }
+            owners.add(user);
+        } else {
+            User owner = new User();
+            owner.setEmail("owner@my-island.com");
+            owner.setPasswordHash(encoder.encode("demo1234"));
+            owner.setName("Campsite Owner");
+            owner.setPhone("+353871234567");
+            owner.setOwner(true);
+            owners.add(repository.save(owner));
+        }
+
+        // Additional owner accounts
         String[] ownerEmails = {"owner1@example.com", "owner2@example.com", "owner3@example.com"};
         String[] ownerNames = {"John Murphy", "Mary O'Brien", "Sean Kelly"};
 
@@ -126,8 +147,30 @@ public class DataInitializer {
 
     private List<User> createUsers(UserRepository repository, PasswordEncoder encoder) {
         List<User> users = new ArrayList<>();
-        String[] userEmails = {"user1@example.com", "user2@example.com", "user3@example.com", "demo@example.com"};
-        String[] userNames = {"Alice Johnson", "Bob Smith", "Carol White", "Demo User"};
+
+        // Demo accounts matching frontend - password: demo1234
+        String[][] demoAccounts = {
+            {"guest@my-island.com", "Guest User", "false", "false"},
+            {"user@my-island.com", "Registered User", "false", "false"},
+            {"supplier@my-island.com", "Local Supplier", "false", "true"},
+        };
+
+        for (String[] account : demoAccounts) {
+            if (repository.findByEmail(account[0]).isEmpty()) {
+                User user = new User();
+                user.setEmail(account[0]);
+                user.setPasswordHash(encoder.encode("demo1234"));
+                user.setName(account[1]);
+                user.setPhone("+353" + (871000000 + random.nextInt(8999999)));
+                user.setOwner(Boolean.parseBoolean(account[2]));
+                user.setSupplier(Boolean.parseBoolean(account[3]));
+                users.add(repository.save(user));
+            }
+        }
+
+        // Additional test users
+        String[] userEmails = {"user1@example.com", "user2@example.com", "demo@example.com"};
+        String[] userNames = {"Alice Johnson", "Bob Smith", "Demo User"};
 
         for (int i = 0; i < userEmails.length; i++) {
             if (repository.findByEmail(userEmails[i]).isEmpty()) {

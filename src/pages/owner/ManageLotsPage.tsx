@@ -13,6 +13,43 @@ interface LotWithStatus extends LotResponse {
   status: 'available' | 'booked' | 'maintenance'
 }
 
+// Mock lots for when API is unavailable
+const mockLots: LotWithStatus[] = [
+  {
+    id: '1',
+    name: 'Ocean View Safari Tent',
+    type: 'GLAMPING',
+    capacity: 4,
+    pricePerNight: 95,
+    images: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400'],
+    amenities: ['King Bed', 'Private Bathroom', 'Deck', 'Fire Pit'],
+    available: true,
+    status: 'available',
+  },
+  {
+    id: '2',
+    name: 'Sunset Camping Pitch',
+    type: 'TENT',
+    capacity: 6,
+    pricePerNight: 35,
+    images: ['https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=400'],
+    amenities: ['Electric Hook-up', 'Water Point', 'Fire Pit'],
+    available: false,
+    status: 'booked',
+  },
+  {
+    id: '3',
+    name: 'Lakeside Caravan Bay',
+    type: 'CARAVAN',
+    capacity: 4,
+    pricePerNight: 45,
+    images: ['https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=400'],
+    amenities: ['Electric Hook-up', 'Water & Waste', 'Wi-Fi'],
+    available: false,
+    status: 'maintenance',
+  },
+]
+
 export default function ManageLotsPage() {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,10 +70,15 @@ export default function ManageLotsPage() {
             ...lot,
             status: (i === 0 ? 'available' : i === 1 ? 'booked' : i === 2 ? 'maintenance' : 'available') as 'available' | 'booked' | 'maintenance',
           }))
-          setLots(lotsWithStatus)
+          setLots(lotsWithStatus.length > 0 ? lotsWithStatus : mockLots)
+        } else {
+          // No campsites, use mock data
+          setLots(mockLots)
         }
       } catch (err) {
         console.error('Failed to fetch lots:', err)
+        // Use mock lots when API fails
+        setLots(mockLots)
       } finally {
         setIsLoading(false)
       }

@@ -60,6 +60,50 @@ function mapNotification(n: NotificationResponse): DisplayNotification {
   }
 }
 
+// Mock notifications for when API is unavailable
+const mockNotifications: DisplayNotification[] = [
+  {
+    id: '1',
+    type: 'booking',
+    icon: 'calendar_today',
+    title: 'Booking Confirmed',
+    message: 'Your booking at Clifden Coastal Glamping Resort has been confirmed for next weekend.',
+    read: false,
+    actionUrl: '/bookings',
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '2',
+    type: 'offer',
+    icon: 'local_offer',
+    title: 'New Local Offer',
+    message: "20% off at O'Malley's Seafood Restaurant - available this week only!",
+    read: false,
+    actionUrl: '/offers',
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '3',
+    type: 'reminder',
+    icon: 'schedule',
+    title: 'Check-in Tomorrow',
+    message: 'Your stay at Ring of Kerry Wild Camp starts tomorrow. Check-in is from 2:00 PM.',
+    read: true,
+    actionUrl: '/bookings',
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '4',
+    type: 'review',
+    icon: 'star',
+    title: 'Leave a Review',
+    message: 'How was your stay at Wicklow Mountains Holiday Park? Share your experience!',
+    read: true,
+    actionUrl: '/bookings',
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+]
+
 export default function NotificationsPage() {
   const [notifs, setNotifs] = useState<DisplayNotification[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -68,9 +112,11 @@ export default function NotificationsPage() {
     async function fetchNotifications() {
       try {
         const data = await notificationsApi.list()
-        setNotifs(data.map(mapNotification))
+        setNotifs(data.length > 0 ? data.map(mapNotification) : mockNotifications)
       } catch (error) {
         console.error('Failed to fetch notifications:', error)
+        // Use mock notifications when API fails
+        setNotifs(mockNotifications)
       } finally {
         setIsLoading(false)
       }

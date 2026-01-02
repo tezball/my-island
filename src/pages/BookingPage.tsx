@@ -62,8 +62,20 @@ export default function BookingPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [campsite, setCampsite] = useState<Campsite | null>(null)
   const [lots, setLots] = useState<Lot[]>([])
-  const [checkIn, setCheckIn] = useState('2025-01-20')
-  const [checkOut, setCheckOut] = useState('2025-01-23')
+  // Default dates: check-in tomorrow, check-out 3 days later
+  const getDefaultDates = () => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const checkout = new Date(tomorrow)
+    checkout.setDate(checkout.getDate() + 3)
+    return {
+      checkIn: tomorrow.toISOString().split('T')[0],
+      checkOut: checkout.toISOString().split('T')[0],
+    }
+  }
+  const defaultDates = getDefaultDates()
+  const [checkIn, setCheckIn] = useState(defaultDates.checkIn)
+  const [checkOut, setCheckOut] = useState(defaultDates.checkOut)
   const [guests, setGuests] = useState(2)
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null)
   const [selectedExtras, setSelectedExtras] = useState<string[]>([])

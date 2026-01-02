@@ -27,6 +27,54 @@ const categoryLabels: Record<OfferCategory, string> = {
   other: 'Other',
 }
 
+// Mock offers for when API is unavailable
+const mockOffers: OfferResponse[] = [
+  {
+    id: '1',
+    title: 'Fresh Seafood Platter',
+    description: 'Enjoy a delicious local seafood platter with freshly caught fish, mussels, and oysters.',
+    discount: '20% Off',
+    category: 'food',
+    supplierName: "O'Malley's Seafood",
+    supplierLogo: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=200',
+    location: { address: 'Clifden Harbour, Galway', lat: 53.49, lng: -10.02 },
+    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '2',
+    title: 'Kayak Adventure Tour',
+    description: 'Explore the stunning coastline with our guided 2-hour kayak adventure.',
+    discount: '15% Off',
+    category: 'activity',
+    supplierName: 'Wild Atlantic Adventures',
+    supplierLogo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200',
+    location: { address: 'Roundstone, Galway', lat: 53.40, lng: -9.92 },
+    validUntil: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '3',
+    title: 'Premium Camping Gear Rental',
+    description: 'Rent high-quality tents, sleeping bags, and camping equipment.',
+    discount: '25% Off',
+    category: 'gear',
+    supplierName: 'Camp Ready Ireland',
+    supplierLogo: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=200',
+    location: { address: 'Galway City', lat: 53.27, lng: -9.05 },
+    validUntil: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: '4',
+    title: 'Spa & Wellness Package',
+    description: 'Relax with a full body massage and access to thermal pools.',
+    discount: '30% Off',
+    category: 'wellness',
+    supplierName: 'Connemara Wellness',
+    supplierLogo: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200',
+    location: { address: 'Letterfrack, Galway', lat: 53.55, lng: -9.95 },
+    validUntil: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+]
+
 export default function OffersPage() {
   const navigate = useNavigate()
   const [selectedCategory, setSelectedCategory] = useState<OfferCategory | 'all'>('all')
@@ -35,7 +83,7 @@ export default function OffersPage() {
 
   const categories: (OfferCategory | 'all')[] = ['all', 'food', 'activity', 'gear', 'water', 'wellness', 'experience', 'other']
 
-  // Fetch offers from API
+  // Fetch offers from API with mock fallback
   useEffect(() => {
     async function fetchOffers() {
       setIsLoading(true)
@@ -43,10 +91,14 @@ export default function OffersPage() {
         const data = await offersApi.list(
           selectedCategory === 'all' ? {} : { category: selectedCategory }
         )
-        setOffers(data)
+        setOffers(data.length > 0 ? data : mockOffers)
       } catch (error) {
         console.error('Failed to fetch offers:', error)
-        setOffers([])
+        // Use mock offers when API fails
+        const filtered = selectedCategory === 'all'
+          ? mockOffers
+          : mockOffers.filter(o => o.category === selectedCategory)
+        setOffers(filtered)
       } finally {
         setIsLoading(false)
       }

@@ -424,7 +424,7 @@ export default function CampsiteDetailPage() {
                   <div className="flex items-center gap-2 mt-1">
                     <StarRating rating={campsite.rating} size={16} />
                     <span className="text-sm text-slate-500">
-                      {campsite.rating} • {reviews.length} reviews
+                      {campsite.rating} • {campsite.reviewCount} reviews
                     </span>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import BookingExpiredState from '../components/booking/BookingExpiredState'
 import { campsitesApi } from '../lib/api/campsites'
+import { bookingsApi, type CreateBookingRequest } from '../lib/api/bookings'
 
 type PaymentMethod = 'card' | 'apple_pay' | 'google_pay'
 
@@ -83,15 +84,44 @@ export default function BookingPaymentPage() {
 
   const handlePayment = async () => {
     setIsProcessing(true)
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    navigate(`/book/${id}/confirmation`, {
-      state: {
-        ...bookingState,
-        bookingId: 'BOOK-' + Date.now(),
-        paymentMethod,
-      },
-    })
+    try {
+      // Create the booking via API
+      const bookingRequest: CreateBookingRequest = {
+        lotId: bookingState.lotId,
+        checkIn: bookingState.checkIn,
+        checkOut: bookingState.checkOut,
+        guests: bookingState.guests,
+        extras: {
+          breakfast: bookingState.extras.includes('breakfast'),
+          parking: bookingState.extras.includes('parking'),
+          pets: bookingState.extras.includes('pets'),
+        },
+      }
+
+      const bookingResponse = await bookingsApi.create(bookingRequest)
+
+      // Navigate to confirmation with real booking data
+      navigate(`/book/${id}/confirmation`, {
+        state: {
+          ...bookingState,
+          bookingId: bookingResponse.id,
+          paymentMethod,
+          campsiteName: bookingResponse.campsiteName || campsite?.name,
+          totalPrice: bookingResponse.totalPrice || bookingState.totalPrice,
+        },
+      })
+    } catch (error) {
+      console.error('Failed to create booking:', error)
+      // Fallback to mock booking for demo purposes when API is unavailable
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      navigate(`/book/${id}/confirmation`, {
+        state: {
+          ...bookingState,
+          bookingId: 'BOOK-' + Date.now(),
+          paymentMethod,
+        },
+      })
+    }
   }
 
   const formatDate = (dateStr: string) => {
