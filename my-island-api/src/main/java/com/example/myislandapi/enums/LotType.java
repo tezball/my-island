@@ -5,5 +5,12 @@ public enum LotType {
     CARAVAN,
     CAMPERVAN,
     GLAMPING,
-    CABIN
+    CABIN,
+    RV,
+    TREEHOUSE,
+    YURT,
+    POD,
+    APARTMENT,
+    COTTAGE,
+    SAFARI_TENT
 }

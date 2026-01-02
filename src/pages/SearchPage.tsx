@@ -6,12 +6,27 @@ import CampsiteCard from '../components/ui/CampsiteCard'
 import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
 import { SkeletonCard } from '../components/ui/Skeleton'
-import { searchCampsites, getFeaturedCampsites } from '../data/mockData'
 import campsitesApi from '../lib/api/campsites'
-import type { Facility } from '../data/types'
+import type { Facility, Campsite } from '../data/types'
 import type { CampsiteResponse } from '../lib/api/campsites'
 
-const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
+// Map API response to Campsite type
+function mapToCampsite(data: CampsiteResponse): Campsite {
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    location: data.location,
+    images: data.images,
+    rating: data.rating,
+    reviewCount: data.reviewCount,
+    pricePerNight: data.priceFrom,
+    facilities: data.facilities.map(f => f.toLowerCase() as Facility),
+    ownerId: data.ownerId,
+    lots: [],
+    featured: data.featured,
+  }
+}
 
 const facilityFilters: { id: Facility; label: string; icon: string }[] = [
   { id: 'wifi', label: 'WiFi', icon: 'wifi' },
@@ -35,8 +50,8 @@ export default function SearchPage() {
   const [selectedFilters, setSelectedFilters] = useState<Facility[]>([])
   const [showFilters, setShowFilters] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
-  const [results, setResults] = useState<CampsiteResponse[]>([])
-  const [featured, setFeatured] = useState<CampsiteResponse[]>([])
+  const [results, setResults] = useState<Campsite[]>([])
+  const [featured, setFeatured] = useState<Campsite[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isLocating, setIsLocating] = useState(false)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
@@ -44,17 +59,11 @@ export default function SearchPage() {
   // Fetch featured campsites on mount
   useEffect(() => {
     const fetchFeatured = async () => {
-      if (USE_REAL_API) {
-        try {
-          const data = await campsitesApi.getFeatured()
-          setFeatured(data)
-        } catch (err) {
-          console.error('Failed to fetch featured campsites:', err)
-          // Fallback to mock data on error
-          setFeatured(getFeaturedCampsites() as unknown as CampsiteResponse[])
-        }
-      } else {
-        setFeatured(getFeaturedCampsites() as unknown as CampsiteResponse[])
+      try {
+        const data = await campsitesApi.getFeatured()
+        setFeatured(data.map(mapToCampsite))
+      } catch (err) {
+        console.error('Failed to fetch featured campsites:', err)
       }
     }
     fetchFeatured()
@@ -67,23 +76,16 @@ export default function SearchPage() {
       setError(null)
 
       const timer = setTimeout(async () => {
-        if (USE_REAL_API) {
-          try {
-            const data = await campsitesApi.search({
-              search: query,
-              facilities: selectedFilters.length > 0 ? selectedFilters : undefined
-            })
-            setResults(data)
-          } catch (err) {
-            console.error('Search failed:', err)
-            setError('Failed to search campsites. Please try again.')
-            // Fallback to mock data on error
-            setResults(searchCampsites(query, selectedFilters) as unknown as CampsiteResponse[])
-          } finally {
-            setIsSearching(false)
-          }
-        } else {
-          setResults(searchCampsites(query, selectedFilters) as unknown as CampsiteResponse[])
+        try {
+          const data = await campsitesApi.search({
+            search: query,
+            facilities: selectedFilters.length > 0 ? selectedFilters : undefined
+          })
+          setResults(data.map(mapToCampsite))
+        } catch (err) {
+          console.error('Search failed:', err)
+          setError('Failed to search campsites. Please try again.')
+        } finally {
           setIsSearching(false)
         }
       }, 300)
@@ -283,7 +285,7 @@ export default function SearchPage() {
                 </h2>
                 <div className="space-y-4">
                   {featured.slice(0, 4).map((campsite) => (
-                    <CampsiteCard key={campsite.id} campsite={campsite as unknown as any} />
+                    <CampsiteCard key={campsite.id} campsite={campsite} />
                   ))}
                 </div>
               </section>
@@ -319,7 +321,7 @@ export default function SearchPage() {
                 {filteredResults.length} campsite{filteredResults.length !== 1 ? 's' : ''} found
               </p>
               {filteredResults.map((campsite) => (
-                <CampsiteCard key={campsite.id} campsite={campsite as unknown as any} />
+                <CampsiteCard key={campsite.id} campsite={campsite} />
               ))}
             </div>
           )}

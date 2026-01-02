@@ -3,6 +3,7 @@ package com.example.myislandapi.controller;
 import com.example.myislandapi.dto.response.BookingResponse;
 import com.example.myislandapi.dto.response.CampsiteResponse;
 import com.example.myislandapi.dto.response.OwnerStatsResponse;
+import com.example.myislandapi.dto.response.RevenueDataResponse;
 import com.example.myislandapi.enums.BookingStatus;
 import com.example.myislandapi.security.UserDetailsImpl;
 import com.example.myislandapi.service.BookingService;
@@ -62,5 +63,12 @@ public class OwnerController {
             @PathVariable UUID id,
             @RequestParam(required = false) String reason) {
         return ResponseEntity.ok(bookingService.cancelBooking(id, userDetails.getId(), reason));
+    }
+
+    @GetMapping("/revenue-data")
+    public ResponseEntity<RevenueDataResponse> getRevenueData(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(defaultValue = "6") int months) {
+        return ResponseEntity.ok(ownerService.getRevenueData(userDetails.getId(), months));
     }
 }

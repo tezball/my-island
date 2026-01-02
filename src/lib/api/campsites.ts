@@ -23,6 +23,17 @@ function buildQueryString<T extends object>(params: T): string {
   }).join('&')
 }
 
+// Paginated response wrapper
+export interface PagedResponse<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+  first: boolean
+  last: boolean
+}
+
 // Response types
 export interface CampsiteResponse {
   id: string
@@ -88,17 +99,25 @@ export interface MapBoundsParams {
 
 // Campsites API service
 export const campsitesApi = {
-  // Search and filter campsites
-  search: (params: SearchParams) =>
-    api.get<CampsiteResponse[]>(`/campsites${buildQueryString(params)}`),
+  // Search and filter campsites (returns paginated response)
+  search: async (params: SearchParams): Promise<CampsiteResponse[]> => {
+    const response = await api.get<PagedResponse<CampsiteResponse>>(`/campsites${buildQueryString(params)}`)
+    return response.content
+  },
+
+  // Search with full pagination info
+  searchPaged: (params: SearchParams) =>
+    api.get<PagedResponse<CampsiteResponse>>(`/campsites${buildQueryString(params)}`),
 
   // Get campsite details
   getById: (id: string) =>
     api.get<CampsiteDetailResponse>(`/campsites/${id}`),
 
   // Get featured campsites
-  getFeatured: () =>
-    api.get<CampsiteResponse[]>('/campsites/featured'),
+  getFeatured: async (): Promise<CampsiteResponse[]> => {
+    const response = await api.get<PagedResponse<CampsiteResponse>>('/campsites?featured=true')
+    return response.content
+  },
 
   // Get campsites for map view
   getMapMarkers: (bounds: MapBoundsParams) =>

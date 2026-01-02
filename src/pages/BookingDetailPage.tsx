@@ -1,33 +1,74 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import { bookings, getCampsiteById } from '../data/mockData'
-import type { Booking } from '../data/types'
+import Skeleton from '../components/ui/Skeleton'
+import bookingsApi from '../lib/api/bookings'
+import type { BookingResponse } from '../lib/api/bookings'
 
-const statusLabels: Record<Booking['status'], string> = {
+const statusLabels: Record<string, string> = {
   confirmed: 'Confirmed',
   checked_in: 'Checked In',
   completed: 'Completed',
   cancelled: 'Cancelled',
 }
 
+// Normalize API status (uppercase) to display status (lowercase)
+const normalizeStatus = (status: string): string => {
+  return status.toLowerCase().replace('_', '_')
+}
+
 export default function BookingDetailPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(true)
+  const [booking, setBooking] = useState<BookingResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  const booking = bookings.find((b) => b.id === bookingId)
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
+  useEffect(() => {
+    async function fetchBooking() {
+      if (!bookingId) return
 
-  if (!booking || !campsite) {
+      try {
+        setIsLoading(true)
+        const data = await bookingsApi.getById(bookingId)
+        setBooking(data)
+      } catch (err) {
+        console.error('Failed to fetch booking:', err)
+        setError('Booking not found')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchBooking()
+  }, [bookingId])
+
+  if (isLoading) {
     return (
-      <AppShell showBack headerTitle="Booking">
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500">Booking not found</p>
+      <AppShell showBack headerTitle="Booking Details" showNotifications={false}>
+        <div className="flex-1 overflow-auto p-4 space-y-4">
+          <Skeleton variant="rectangular" height={50} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={200} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={150} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={100} className="rounded-xl" />
         </div>
       </AppShell>
     )
   }
+
+  if (error || !booking) {
+    return (
+      <AppShell showBack headerTitle="Booking">
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-slate-500">{error || 'Booking not found'}</p>
+        </div>
+      </AppShell>
+    )
+  }
+
+  const status = normalizeStatus(booking.status)
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IE', {
@@ -38,30 +79,26 @@ export default function BookingDetailPage() {
     })
   }
 
-  const isUpcoming = booking.status === 'confirmed' || booking.status === 'checked_in'
+  const isUpcoming = status === 'confirmed' || status === 'checked_in'
 
   return (
     <AppShell showBack headerTitle="Booking Details" showNotifications={false}>
       <div className="flex-1 overflow-auto">
         {/* Status Banner */}
         <div className={`px-4 py-3 flex items-center gap-3 ${
-          booking.status === 'confirmed' || booking.status === 'checked_in'
+          isUpcoming
             ? 'bg-emerald-50 dark:bg-emerald-900/20'
             : 'bg-slate-50 dark:bg-slate-800'
         }`}>
           <Icon
-            name={booking.status === 'confirmed' || booking.status === 'checked_in' ? 'check_circle' : 'schedule'}
+            name={isUpcoming ? 'check_circle' : 'schedule'}
             size={24}
-            className={
-              booking.status === 'confirmed' || booking.status === 'checked_in'
-                ? 'text-emerald-600'
-                : 'text-slate-600'
-            }
+            className={isUpcoming ? 'text-emerald-600' : 'text-slate-600'}
             filled
           />
           <div>
             <p className="font-medium text-slate-900 dark:text-white">
-              {statusLabels[booking.status]}
+              {statusLabels[status] || status}
             </p>
             <p className="text-sm text-slate-500">
               Booking #{booking.id.slice(-8).toUpperCase()}
@@ -72,31 +109,44 @@ export default function BookingDetailPage() {
         <div className="p-4 space-y-6">
           {/* Campsite Card */}
           <div className="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800">
-            <img
-              src={campsite.images[0]}
-              alt={campsite.name}
-              className="w-full h-40 object-cover"
-            />
+            {booking.campsiteImage ? (
+              <img
+                src={booking.campsiteImage}
+                alt={booking.campsiteName}
+                className="w-full h-40 object-cover"
+              />
+            ) : (
+              <div className="w-full h-40 bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                <Icon name="camping" size={48} className="text-slate-400" />
+              </div>
+            )}
             <div className="p-4">
               <h2 className="font-bold text-lg text-slate-900 dark:text-white">
-                {campsite.name}
+                {booking.campsiteName}
               </h2>
-              <p className="text-slate-500 flex items-center gap-1 mt-1">
-                <Icon name="location_on" size={16} />
-                {campsite.location.address}
+              {booking.campsiteLocation && (
+                <p className="text-slate-500 flex items-center gap-1 mt-1">
+                  <Icon name="location_on" size={16} />
+                  {booking.campsiteLocation}
+                </p>
+              )}
+              <p className="text-sm text-slate-500 mt-1">
+                {booking.lotName}
               </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-3"
-                leftIcon="directions"
-                onClick={() => {
-                  const address = encodeURIComponent(campsite.location.address)
-                  window.open(`https://maps.google.com/?q=${address}`, '_blank')
-                }}
-              >
-                Get Directions
-              </Button>
+              {booking.campsiteLocation && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  leftIcon="directions"
+                  onClick={() => {
+                    const address = encodeURIComponent(booking.campsiteLocation || '')
+                    window.open(`https://maps.google.com/?q=${address}`, '_blank')
+                  }}
+                >
+                  Get Directions
+                </Button>
+              )}
             </div>
           </div>
 
@@ -130,22 +180,30 @@ export default function BookingDetailPage() {
           </div>
 
           {/* Extras */}
-          {booking.extras.length > 0 && (
+          {booking.extras && (booking.extras.breakfast || booking.extras.parking || booking.extras.pets) && (
             <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
               <h3 className="font-bold text-slate-900 dark:text-white mb-3">
                 Extras
               </h3>
               <div className="space-y-2">
-                {booking.extras.map((extra) => (
-                  <div key={extra.id} className="flex items-center justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">
-                      {extra.name} x{extra.quantity}
-                    </span>
-                    <span className="font-medium text-slate-900 dark:text-white">
-                      €{extra.price * extra.quantity}
-                    </span>
+                {booking.extras.breakfast && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Breakfast</span>
+                    <Icon name="check" size={18} className="text-emerald-500" />
                   </div>
-                ))}
+                )}
+                {booking.extras.parking && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Parking</span>
+                    <Icon name="check" size={18} className="text-emerald-500" />
+                  </div>
+                )}
+                {booking.extras.pets && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Pets</span>
+                    <Icon name="check" size={18} className="text-emerald-500" />
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -153,16 +211,23 @@ export default function BookingDetailPage() {
           {/* Payment */}
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
             <h3 className="font-bold text-slate-900 dark:text-white mb-3">
-              Payment
+              Payment Summary
             </h3>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-slate-500">Method</span>
-              <div className="flex items-center gap-2">
-                <Icon name="credit_card" size={18} className="text-slate-400" />
+            <div className="space-y-2 mb-3">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">
+                  €{booking.pricePerNight} × {booking.nights} night{booking.nights !== 1 ? 's' : ''}
+                </span>
                 <span className="text-slate-900 dark:text-white">
-                  {booking.paymentMethod?.brand} ****{booking.paymentMethod?.last4}
+                  €{booking.pricePerNight * booking.nights}
                 </span>
               </div>
+              {booking.discount && booking.discount > 0 && (
+                <div className="flex items-center justify-between text-emerald-600">
+                  <span>Discount</span>
+                  <span>-€{booking.discount}</span>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
               <span className="font-bold text-slate-900 dark:text-white">Total Paid</span>
@@ -196,13 +261,13 @@ export default function BookingDetailPage() {
             </div>
           )}
 
-          {booking.status === 'completed' && (
+          {status === 'completed' && (
             <Button
               variant="primary"
               size="lg"
               className="w-full"
               leftIcon="rate_review"
-              onClick={() => navigate(`/campsite/${campsite.id}/review`)}
+              onClick={() => navigate(`/campsite/${booking.campsiteId}/review`)}
             >
               Write a Review
             </Button>

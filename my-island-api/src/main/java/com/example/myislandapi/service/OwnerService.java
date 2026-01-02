@@ -4,6 +4,7 @@ import com.example.myislandapi.dto.response.BookingResponse;
 import com.example.myislandapi.dto.response.CampsiteResponse;
 import com.example.myislandapi.dto.response.LocationResponse;
 import com.example.myislandapi.dto.response.OwnerStatsResponse;
+import com.example.myislandapi.dto.response.RevenueDataResponse;
 import com.example.myislandapi.entity.Booking;
 import com.example.myislandapi.entity.Campsite;
 import com.example.myislandapi.entity.Lot;
@@ -17,6 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -180,5 +185,38 @@ public class OwnerService {
                 extras,
                 booking.getCreatedAt()
         );
+    }
+
+    public RevenueDataResponse getRevenueData(UUID ownerId, int months) {
+        List<RevenueDataResponse.MonthlyRevenue> monthlyData = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM");
+
+        Page<Booking> allBookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
+
+        for (int i = months - 1; i >= 0; i--) {
+            YearMonth targetMonth = YearMonth.now().minusMonths(i);
+            LocalDate startOfMonth = targetMonth.atDay(1);
+            LocalDate endOfMonth = targetMonth.atEndOfMonth();
+
+            BigDecimal revenue = BigDecimal.ZERO;
+            int bookingCount = 0;
+
+            for (Booking booking : allBookings) {
+                if (booking.getStatus() == BookingStatus.COMPLETED &&
+                    !booking.getCheckOut().isBefore(startOfMonth) &&
+                    !booking.getCheckOut().isAfter(endOfMonth)) {
+                    revenue = revenue.add(booking.getTotalPrice());
+                    bookingCount++;
+                }
+            }
+
+            monthlyData.add(new RevenueDataResponse.MonthlyRevenue(
+                    targetMonth.format(formatter),
+                    revenue,
+                    bookingCount
+            ));
+        }
+
+        return new RevenueDataResponse(monthlyData);
     }
 }

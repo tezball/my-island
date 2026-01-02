@@ -9,6 +9,7 @@
  */
 
 import api from '../api'
+import type { PagedResponse } from './campsites'
 
 // Request types
 export interface CreateReviewRequest {
@@ -32,12 +33,7 @@ export interface OwnerResponseRequest {
 // Response types
 export interface ReviewResponse {
   id: string
-  campsiteId: string
-  userId: string
-  userName: string
-  userAvatar?: string
   rating: number
-  title: string
   comment: string
   categories?: {
     cleanliness?: number
@@ -46,13 +42,16 @@ export interface ReviewResponse {
     facilities?: number
   }
   helpfulCount: number
-  isHelpful: boolean
   ownerResponse?: {
     response: string
     respondedAt: string
+  } | null
+  user: {
+    id: string
+    name: string
+    avatar?: string
   }
   createdAt: string
-  updatedAt: string
 }
 
 export interface ReviewStatsResponse {
@@ -80,8 +79,10 @@ export const reviewsApi = {
     api.post<ReviewResponse>('/reviews', data),
 
   // Get reviews for a campsite
-  getByCampsite: (campsiteId: string) =>
-    api.get<ReviewResponse[]>(`/campsites/${campsiteId}/reviews`),
+  getByCampsite: async (campsiteId: string): Promise<ReviewResponse[]> => {
+    const response = await api.get<PagedResponse<ReviewResponse>>(`/campsites/${campsiteId}/reviews`)
+    return response.content
+  },
 
   // Get review statistics for a campsite
   getStats: (campsiteId: string) =>

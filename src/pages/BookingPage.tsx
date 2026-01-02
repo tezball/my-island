@@ -1,11 +1,45 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import Badge from '../components/ui/Badge'
-import { getCampsiteById, getLotsByCampsite } from '../data/mockData'
-import type { Lot } from '../data/types'
+import Skeleton from '../components/ui/Skeleton'
+import { campsitesApi, type CampsiteDetailResponse, type LotResponse } from '../lib/api/campsites'
+import type { Campsite, Lot, Facility } from '../data/types'
+
+// Map API response to Campsite type
+function mapToCampsite(data: CampsiteDetailResponse): Campsite {
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    location: data.location,
+    images: data.images,
+    rating: data.rating,
+    reviewCount: data.reviewCount,
+    pricePerNight: data.priceFrom,
+    facilities: data.facilities.map(f => f.toLowerCase() as Facility),
+    ownerId: data.ownerId,
+    lots: [],
+    featured: data.featured,
+  }
+}
+
+// Map API response to Lot type
+function mapToLot(data: LotResponse, campsiteId: string): Lot {
+  return {
+    id: data.id,
+    campsiteId,
+    name: data.name,
+    type: data.type.toLowerCase() as Lot['type'],
+    capacity: data.capacity,
+    pricePerNight: data.pricePerNight,
+    images: data.images,
+    amenities: data.amenities,
+    available: data.available,
+  }
+}
 
 interface BookingExtras {
   id: string
@@ -25,14 +59,58 @@ export default function BookingPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const campsite = getCampsiteById(id || '')
-  const lots = getLotsByCampsite(id || '')
-
+  const [isLoading, setIsLoading] = useState(true)
+  const [campsite, setCampsite] = useState<Campsite | null>(null)
+  const [lots, setLots] = useState<Lot[]>([])
   const [checkIn, setCheckIn] = useState('2025-01-20')
   const [checkOut, setCheckOut] = useState('2025-01-23')
   const [guests, setGuests] = useState(2)
-  const [selectedLot, setSelectedLot] = useState<Lot | null>(lots[0] || null)
+  const [selectedLot, setSelectedLot] = useState<Lot | null>(null)
   const [selectedExtras, setSelectedExtras] = useState<string[]>([])
+
+  // Fetch campsite data from API
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+
+      try {
+        setIsLoading(true)
+        const data = await campsitesApi.getById(id)
+        setCampsite(mapToCampsite(data))
+        const mappedLots = data.lots.map(lot => mapToLot(lot, id))
+        setLots(mappedLots)
+        // Select first available lot by default
+        const firstAvailable = mappedLots.find(l => l.available)
+        setSelectedLot(firstAvailable || null)
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+        setCampsite(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Book Your Stay" showNav={false} showNotifications={false}>
+        <div className="flex-1 overflow-auto p-4 space-y-6">
+          <div className="flex gap-3">
+            <Skeleton variant="rectangular" className="size-20 rounded-xl" />
+            <div className="flex-1">
+              <Skeleton variant="text" className="w-3/4 h-5 mb-2" />
+              <Skeleton variant="text" className="w-1/2 h-4" />
+            </div>
+          </div>
+          <Skeleton variant="rectangular" height={100} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={80} className="rounded-xl" />
+          <Skeleton variant="rectangular" height={200} className="rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
 
   if (!campsite) {
     return (

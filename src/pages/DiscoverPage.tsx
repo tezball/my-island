@@ -5,20 +5,53 @@ import CampsiteCard from '../components/ui/CampsiteCard'
 import Icon from '../components/ui/Icon'
 import MapView from '../components/ui/MapView'
 import Skeleton, { SkeletonCard } from '../components/ui/Skeleton'
-import { campsites, getFeaturedCampsites } from '../data/mockData'
+import { campsitesApi, type CampsiteResponse } from '../lib/api/campsites'
+import type { Campsite, Facility } from '../data/types'
 
 type ViewMode = 'list' | 'map'
+
+// Map API response to Campsite type
+function mapToCampsite(data: CampsiteResponse): Campsite {
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    location: data.location,
+    images: data.images,
+    rating: data.rating,
+    reviewCount: data.reviewCount,
+    pricePerNight: data.priceFrom,
+    facilities: data.facilities.map(f => f.toLowerCase() as Facility),
+    ownerId: data.ownerId,
+    lots: [],
+    featured: data.featured,
+  }
+}
 
 export default function DiscoverPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [isLoading, setIsLoading] = useState(true)
-  const featured = getFeaturedCampsites()
+  const [campsites, setCampsites] = useState<Campsite[]>([])
+  const [featured, setFeatured] = useState<Campsite[]>([])
   const navigate = useNavigate()
 
-  // Simulate initial data loading (useful for future API integration)
+  // Fetch campsites from API
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 500)
-    return () => clearTimeout(timer)
+    async function fetchData() {
+      try {
+        const [allCampsites, featuredCampsites] = await Promise.all([
+          campsitesApi.search({}),
+          campsitesApi.getFeatured(),
+        ])
+        setCampsites(allCampsites.map(mapToCampsite))
+        setFeatured(featuredCampsites.map(mapToCampsite))
+      } catch (error) {
+        console.error('Failed to fetch campsites:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
   }, [])
 
   // Prepare markers for map view

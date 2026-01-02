@@ -6,12 +6,9 @@ import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import EmptyState from '../components/ui/EmptyState'
 import { SkeletonBookingCard } from '../components/ui/Skeleton'
-import { bookings, getCampsiteById } from '../data/mockData'
 import bookingsApi from '../lib/api/bookings'
 import type { Booking } from '../data/types'
 import type { BookingResponse } from '../lib/api/bookings'
-
-const USE_REAL_API = import.meta.env.VITE_USE_REAL_API === 'true'
 
 type TabType = 'upcoming' | 'past'
 
@@ -38,8 +35,10 @@ export default function MyBookingsPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<TabType>('upcoming')
   const [isLoading, setIsLoading] = useState(true)
-  const [apiBookings, setApiBookings] = useState<BookingResponse[]>([])
-  const [_error, setError] = useState<string | null>(null)
+  const [bookings, setBookings] = useState<BookingResponse[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [upcomingCount, setUpcomingCount] = useState(0)
+  const [pastCount, setPastCount] = useState(0)
 
   // Fetch bookings from API
   useEffect(() => {
@@ -47,49 +46,29 @@ export default function MyBookingsPage() {
       setIsLoading(true)
       setError(null)
 
-      if (USE_REAL_API) {
-        try {
-          const data = await bookingsApi.list({
-            status: activeTab === 'upcoming' ? 'UPCOMING' : 'PAST'
-          })
-          setApiBookings(data)
-        } catch (err) {
-          console.error('Failed to fetch bookings:', err)
-          setError('Failed to load bookings. Please try again.')
-          // Fallback to mock data on error
-          const mockBookings = bookings.filter((b) =>
-            activeTab === 'upcoming'
-              ? b.status === 'confirmed' || b.status === 'checked_in'
-              : b.status === 'completed' || b.status === 'cancelled'
-          ) as unknown as BookingResponse[]
-          setApiBookings(mockBookings)
-        } finally {
-          setIsLoading(false)
+      try {
+        const data = await bookingsApi.list({
+          status: activeTab === 'upcoming' ? 'UPCOMING' : 'PAST'
+        })
+        setBookings(data)
+
+        // Update counts when data is fetched
+        if (activeTab === 'upcoming') {
+          setUpcomingCount(data.length)
+        } else {
+          setPastCount(data.length)
         }
-      } else {
-        // Use mock data
-        const mockBookings = bookings.filter((b) =>
-          activeTab === 'upcoming'
-            ? b.status === 'confirmed' || b.status === 'checked_in'
-            : b.status === 'completed' || b.status === 'cancelled'
-        ) as unknown as BookingResponse[]
-        setApiBookings(mockBookings)
+      } catch (err) {
+        console.error('Failed to fetch bookings:', err)
+        setError('Failed to load bookings. Please try again.')
+        setBookings([])
+      } finally {
         setIsLoading(false)
       }
     }
 
     fetchBookings()
   }, [activeTab])
-
-  const displayedBookings = apiBookings
-
-  // Derive booking counts for tab labels
-  const upcomingBookings = bookings.filter(b =>
-    b.status === 'confirmed' || b.status === 'checked_in'
-  )
-  const pastBookings = bookings.filter(b =>
-    b.status === 'completed' || b.status === 'cancelled'
-  )
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-IE', {
@@ -111,7 +90,7 @@ export default function MyBookingsPage() {
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
-            Upcoming ({upcomingBookings.length})
+            Upcoming ({upcomingCount})
           </button>
           <button
             onClick={() => setActiveTab('past')}
@@ -121,7 +100,7 @@ export default function MyBookingsPage() {
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
-            Past ({pastBookings.length})
+            Past ({pastCount})
           </button>
         </div>
 
@@ -133,7 +112,14 @@ export default function MyBookingsPage() {
                 <SkeletonBookingCard key={i} />
               ))}
             </div>
-          ) : displayedBookings.length === 0 ? (
+          ) : error ? (
+            <EmptyState
+              icon="error"
+              title="Failed to load bookings"
+              description={error}
+              action={{ label: 'Try Again', onClick: () => window.location.reload() }}
+            />
+          ) : bookings.length === 0 ? (
             <EmptyState
               icon={activeTab === 'upcoming' ? 'calendar_month' : 'history'}
               title={activeTab === 'upcoming' ? 'No upcoming bookings' : 'No past bookings'}
@@ -144,28 +130,30 @@ export default function MyBookingsPage() {
               }
               action={
                 activeTab === 'upcoming'
-                  ? { label: 'Explore Campsites', onClick: () => {} }
+                  ? { label: 'Explore Campsites', onClick: () => navigate('/') }
                   : undefined
               }
             />
           ) : (
             <div className="p-4 space-y-4">
-              {displayedBookings.map((booking) => {
-                const campsite = getCampsiteById(booking.campsiteId)
-                if (!campsite) return null
-
-                return (
+              {bookings.map((booking) => (
                   <Link
                     key={booking.id}
                     to={`/bookings/${booking.id}`}
                     className="block bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800"
                   >
                     <div className="relative">
-                      <img
-                        src={campsite.images[0]}
-                        alt={campsite.name}
-                        className="w-full h-32 object-cover"
-                      />
+                      {booking.campsiteImage ? (
+                        <img
+                          src={booking.campsiteImage}
+                          alt={booking.campsiteName}
+                          className="w-full h-32 object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-32 bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                          <Icon name="camping" size={48} className="text-slate-400" />
+                        </div>
+                      )}
                       <Badge
                         variant={statusColors[normalizeStatus(booking.status)]}
                         className="absolute top-3 right-3"
@@ -175,12 +163,14 @@ export default function MyBookingsPage() {
                     </div>
                     <div className="p-4">
                       <h3 className="font-bold text-slate-900 dark:text-white">
-                        {campsite.name}
+                        {booking.campsiteName}
                       </h3>
-                      <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
-                        <Icon name="location_on" size={14} />
-                        {campsite.location.county}
-                      </p>
+                      {booking.campsiteLocation && (
+                        <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
+                          <Icon name="location_on" size={14} />
+                          {booking.campsiteLocation}
+                        </p>
+                      )}
 
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-4">
@@ -209,7 +199,7 @@ export default function MyBookingsPage() {
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
-                              navigate(`/campsite/${campsite.id}/review`)
+                              navigate(`/campsite/${booking.campsiteId}/review`)
                             }}
                           >
                             Write a Review
@@ -218,8 +208,7 @@ export default function MyBookingsPage() {
                       )}
                     </div>
                   </Link>
-                )
-              })}
+              ))}
             </div>
           )}
         </div>

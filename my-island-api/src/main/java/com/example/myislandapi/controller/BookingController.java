@@ -1,12 +1,17 @@
 package com.example.myislandapi.controller;
 
 import com.example.myislandapi.dto.request.CreateBookingRequest;
+import com.example.myislandapi.dto.request.SendMessageRequest;
 import com.example.myislandapi.dto.response.AvailabilityResponse;
 import com.example.myislandapi.dto.response.BookingResponse;
+import com.example.myislandapi.dto.response.CheckInInstructionsResponse;
+import com.example.myislandapi.dto.response.MessageResponse;
 import com.example.myislandapi.enums.BookingStatus;
 import com.example.myislandapi.security.UserDetailsImpl;
 import com.example.myislandapi.service.AvailabilityService;
 import com.example.myislandapi.service.BookingService;
+import com.example.myislandapi.service.CheckInInstructionsService;
+import com.example.myislandapi.service.MessageService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,10 +32,15 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final AvailabilityService availabilityService;
+    private final CheckInInstructionsService checkInInstructionsService;
+    private final MessageService messageService;
 
-    public BookingController(BookingService bookingService, AvailabilityService availabilityService) {
+    public BookingController(BookingService bookingService, AvailabilityService availabilityService,
+                           CheckInInstructionsService checkInInstructionsService, MessageService messageService) {
         this.bookingService = bookingService;
         this.availabilityService = availabilityService;
+        this.checkInInstructionsService = checkInInstructionsService;
+        this.messageService = messageService;
     }
 
     @PostMapping("/bookings")
@@ -76,5 +87,28 @@ public class BookingController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(availabilityService.getAvailability(lotId, startDate, endDate));
+    }
+
+    @GetMapping("/bookings/{id}/check-in-instructions")
+    public ResponseEntity<CheckInInstructionsResponse> getCheckInInstructions(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(checkInInstructionsService.getForBooking(id, userDetails.getId()));
+    }
+
+    @GetMapping("/bookings/{id}/messages")
+    public ResponseEntity<List<MessageResponse>> getBookingMessages(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(messageService.getMessagesForBooking(id, userDetails.getId()));
+    }
+
+    @PostMapping("/bookings/{id}/messages")
+    public ResponseEntity<MessageResponse> sendMessage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID id,
+            @Valid @RequestBody SendMessageRequest request) {
+        MessageResponse message = messageService.sendMessage(id, userDetails.getId(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 }

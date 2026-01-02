@@ -42,6 +42,8 @@ export interface BookingResponse {
   lotId: string
   campsiteId: string
   campsiteName: string
+  campsiteImage?: string
+  campsiteLocation?: string
   lotName: string
   checkIn: string
   checkOut: string
@@ -49,7 +51,7 @@ export interface BookingResponse {
   nights: number
   pricePerNight: number
   totalPrice: number
-  status: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
+  status: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'CHECKED_IN'
   extras?: {
     breakfast?: boolean
     parking?: boolean

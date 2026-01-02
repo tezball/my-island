@@ -7,8 +7,66 @@ import Badge from '../components/ui/Badge'
 import StarRating from '../components/ui/StarRating'
 import MapView from '../components/ui/MapView'
 import Skeleton from '../components/ui/Skeleton'
-import { getCampsiteById, getLotsByCampsite, getReviewsByCampsite } from '../data/mockData'
+import { campsitesApi, type CampsiteDetailResponse, type LotResponse } from '../lib/api/campsites'
+import { reviewsApi, type ReviewResponse } from '../lib/api/reviews'
+import type { Campsite, Lot, Review, Facility } from '../data/types'
 import { useFavorites } from '../context/FavoritesContext'
+
+// Map API response to Campsite type
+function mapToCampsite(data: CampsiteDetailResponse): Campsite {
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    location: data.location,
+    images: data.images,
+    rating: data.rating,
+    reviewCount: data.reviewCount,
+    pricePerNight: data.priceFrom,
+    facilities: data.facilities.map(f => f.toLowerCase() as Facility),
+    ownerId: data.ownerId,
+    lots: [],
+    featured: data.featured,
+  }
+}
+
+// Map API response to Lot type
+function mapToLot(data: LotResponse, campsiteId: string): Lot {
+  return {
+    id: data.id,
+    campsiteId,
+    name: data.name,
+    type: data.type.toLowerCase() as Lot['type'],
+    capacity: data.capacity,
+    pricePerNight: data.pricePerNight,
+    images: data.images,
+    amenities: data.amenities,
+    available: data.available,
+  }
+}
+
+// Map API response to Review type
+function mapToReview(data: ReviewResponse, campsiteId: string): Review {
+  return {
+    id: data.id,
+    campsiteId,
+    userId: data.user.id,
+    userName: data.user.name,
+    userAvatar: data.user.avatar,
+    rating: data.rating,
+    title: '',
+    content: data.comment,
+    photos: [],
+    createdAt: data.createdAt,
+    helpfulCount: data.helpfulCount,
+    categories: {
+      cleanliness: data.categories?.cleanliness ?? data.rating,
+      location: data.categories?.location ?? data.rating,
+      value: data.categories?.value ?? data.rating,
+      facilities: data.categories?.facilities ?? data.rating,
+    },
+  }
+}
 
 const facilityIcons: Record<string, string> = {
   wifi: 'wifi',
@@ -35,6 +93,9 @@ export default function CampsiteDetailPage() {
   const [currentImage, setCurrentImage] = useState(0)
   const [activeSection, setActiveSection] = useState<Section>('overview')
   const [isLoading, setIsLoading] = useState(true)
+  const [campsite, setCampsite] = useState<Campsite | null>(null)
+  const [lots, setLots] = useState<Lot[]>([])
+  const [reviews, setReviews] = useState<Review[]>([])
   const { isFavorite, toggleFavorite } = useFavorites()
 
   const overviewRef = useRef<HTMLDivElement>(null)
@@ -42,16 +103,32 @@ export default function CampsiteDetailPage() {
   const reviewsRef = useRef<HTMLDivElement>(null)
   const locationRef = useRef<HTMLDivElement>(null)
 
-  const campsite = getCampsiteById(id || '')
-  const lots = getLotsByCampsite(id || '')
-  const reviews = getReviewsByCampsite(id || '')
-
   const isFav = isFavorite(id || '')
 
-  // Simulate loading data from API
+  // Fetch campsite data from API
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 400)
-    return () => clearTimeout(timer)
+    async function fetchData() {
+      if (!id) return
+
+      try {
+        setIsLoading(true)
+        const [campsiteData, reviewsData] = await Promise.all([
+          campsitesApi.getById(id),
+          reviewsApi.getByCampsite(id).catch(() => []), // Reviews may not exist yet
+        ])
+
+        setCampsite(mapToCampsite(campsiteData))
+        setLots(campsiteData.lots.map(lot => mapToLot(lot, id)))
+        setReviews(reviewsData.map(review => mapToReview(review, id)))
+      } catch (error) {
+        console.error('Failed to fetch campsite:', error)
+        setCampsite(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
   }, [id])
 
   const scrollToSection = (section: Section) => {
@@ -63,16 +140,6 @@ export default function CampsiteDetailPage() {
       location: locationRef,
     }
     refs[section].current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-
-  if (!campsite) {
-    return (
-      <AppShell showBack headerTitle="Campsite">
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500">Campsite not found</p>
-        </div>
-      </AppShell>
-    )
   }
 
   if (isLoading) {
@@ -105,6 +172,16 @@ export default function CampsiteDetailPage() {
               ))}
             </div>
           </div>
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (!campsite) {
+    return (
+      <AppShell showBack headerTitle="Campsite">
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-slate-500">Campsite not found</p>
         </div>
       </AppShell>
     )
