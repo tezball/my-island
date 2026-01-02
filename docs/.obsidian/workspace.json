@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "flows/user-flows.md",
+                "file": "DOMAIN_MODEL.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "user-flows"
+              "title": "DOMAIN_MODEL"
             }
           }
         ]
@@ -185,6 +185,11 @@
   },
   "active": "2cd6ba3fd7738262",
   "lastOpenFiles": [
+    "GUEST_USER_FEEDBACK.md",
+    "GUEST_USER_FEEDBACK.md.tmp.4076219.1767375960634",
+    "OWNER_UI_REVIEW.md",
+    "OWNER_UI_REVIEW.md.tmp.183292.1767375816685",
+    "flows/user-flows.md",
     "user-flows.canvas",
     "OUTSTANDING_WORK.md",
     "roadmap.md",
@@ -203,15 +208,12 @@
     "flows/favorites/favorites-flow.canvas",
     "flows/favorites/README.md",
     "flows/discovery/discovery-flow.canvas",
-    "flows/booking/booking-flow.canvas",
     "flows/reviews/reviews-flow.canvas.tmp.44632.1767193081731",
     "flows/profile/profile-flow.canvas.tmp.44632.1767193041137",
     "flows/owner-admin/owner-admin-flow.canvas.tmp.44632.1767192995182",
     "flows/onboarding/onboarding-flow.canvas.tmp.44632.1767192945068",
     "flows/offers/offers-flow.canvas.tmp.44632.1767192908984",
     "flows/notifications/notifications-flow.canvas.tmp.44632.1767192876042",
-    "flows/my-bookings/my-bookings-flow.canvas.tmp.44632.1767192840942",
-    "flows/favorites/favorites-flow.canvas.tmp.44632.1767192791322",
     "flows/auth/01-login.png",
     "flows/auth/README.md",
     "design/verify_email:_link_expired/screen.png",
@@ -231,7 +233,6 @@
     "design/sign_up:_personal_details/spec.md",
     "design/complete_apple_sign_up/spec.md",
     "design/email_verified_success/spec.md",
-    "flows/missing-screens.md",
     "flows/notifications/04-notification-settings.png",
     "flows/notifications/03-notification-detail.png",
     "flows/notifications/02-notifications-list.png",
@@ -239,7 +240,6 @@
     "design/welcome_to_my-island!/screen.png",
     "design/welcome_to_my-island/screen.png",
     "design/verify_your_email/screen.png",
-    "design/user_profile_screen/screen.png",
-    "flows/user-flows.md"
+    "design/user_profile_screen/screen.png"
   ]
 }

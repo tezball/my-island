@@ -1,25 +1,71 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppShell from '../../components/layout/AppShell'
 import StatCard from '../../components/ui/StatCard'
 import Icon from '../../components/ui/Icon'
 import LineChart from '../../components/charts/LineChart'
 import BarChart from '../../components/charts/BarChart'
-import { ownerStats, revenueData, ownerCampsites } from '../../data/mockData'
+import Skeleton from '../../components/ui/Skeleton'
+import { ownerApi, type OwnerStats, type CampsiteResponse } from '../../lib/api/owner'
 
 type TimePeriod = 'week' | 'month' | 'year'
 
+interface RevenueDataPoint {
+  month: string
+  revenue: number
+  bookings: number
+}
+
 export default function OwnerStatsPage() {
   const [period, setPeriod] = useState<TimePeriod>('month')
+  const [isLoading, setIsLoading] = useState(true)
+  const [stats, setStats] = useState<OwnerStats | null>(null)
+  const [campsite, setCampsite] = useState<CampsiteResponse | null>(null)
 
-  const campsite = ownerCampsites[0]
+  // Mock revenue data since no API endpoint
+  const revenueData: RevenueDataPoint[] = [
+    { month: 'Jan', revenue: 2400, bookings: 12 },
+    { month: 'Feb', revenue: 1398, bookings: 8 },
+    { month: 'Mar', revenue: 3800, bookings: 18 },
+    { month: 'Apr', revenue: 3908, bookings: 21 },
+    { month: 'May', revenue: 4800, bookings: 24 },
+    { month: 'Jun', revenue: 5200, bookings: 28 },
+  ]
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [statsData, campsitesData] = await Promise.all([
+          ownerApi.getStats(),
+          ownerApi.getMyCampsites(),
+        ])
+        setStats(statsData)
+        if (campsitesData.length > 0) {
+          setCampsite(campsitesData[0])
+        }
+      } catch (err) {
+        console.error('Failed to fetch stats:', err)
+        setStats({
+          totalBookings: 0,
+          upcomingBookings: 0,
+          revenue: 0,
+          revenueChange: 0,
+          occupancyRate: 0,
+          averageRating: 0,
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   // Transform revenue data for charts
-  const revenueChartData = revenueData.map(d => ({
+  const revenueChartData = revenueData.map((d: RevenueDataPoint) => ({
     name: d.month,
     value: d.revenue,
   }))
 
-  const bookingsChartData = revenueData.map(d => ({
+  const bookingsChartData = revenueData.map((d: RevenueDataPoint) => ({
     name: d.month,
     value: d.bookings,
   }))
@@ -30,6 +76,22 @@ export default function OwnerStatsPage() {
     { label: 'Services', value: 15, color: '#0eb562' },
     { label: 'Goods', value: 15, color: '#84ffc2' },
   ]
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Performance" showNav={false}>
+        <div className="flex-1 p-4 space-y-4">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <div className="grid grid-cols-2 gap-3">
+            <Skeleton className="h-24 rounded-2xl" />
+            <Skeleton className="h-24 rounded-2xl" />
+          </div>
+          <Skeleton className="h-48 w-full rounded-2xl" />
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </div>
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell
@@ -73,14 +135,14 @@ export default function OwnerStatsPage() {
         <div className="px-4 grid grid-cols-2 gap-3">
           <StatCard
             icon="payments"
-            value={`€${ownerStats.revenue.toLocaleString()}`}
+            value={`€${(stats?.revenue || 0).toLocaleString()}`}
             label="Revenue"
-            trend={ownerStats.revenueChange}
-            trendDirection={ownerStats.revenueChange >= 0 ? 'up' : 'down'}
+            trend={stats?.revenueChange || 0}
+            trendDirection={(stats?.revenueChange || 0) >= 0 ? 'up' : 'down'}
           />
           <StatCard
             icon="hotel"
-            value={`${ownerStats.occupancyRate}%`}
+            value={`${stats?.occupancyRate || 0}%`}
             label="Occupancy"
             trend={5}
             trendDirection="up"

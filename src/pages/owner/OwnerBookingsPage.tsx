@@ -1,27 +1,56 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
 import Badge from '../../components/ui/Badge'
-import { ownerBookings } from '../../data/mockData'
-import type { Booking } from '../../data/types'
+import Skeleton from '../../components/ui/Skeleton'
+import { bookingsApi, type BookingResponse } from '../../lib/api/bookings'
 
 type FilterStatus = 'all' | 'confirmed' | 'cancelled'
+
+// Extend BookingResponse with owner-specific fields
+interface OwnerBookingView extends BookingResponse {
+  guestName: string
+  guestAvatar?: string
+}
 
 export default function OwnerBookingsPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
+  const [bookings, setBookings] = useState<OwnerBookingView[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchBookings() {
+      try {
+        const data = await bookingsApi.list()
+        // Add mock guest info since API may not return it
+        const ownerBookings: OwnerBookingView[] = data.map((b, i) => ({
+          ...b,
+          guestName: `Guest ${i + 1}`,
+          guestAvatar: undefined,
+        }))
+        setBookings(ownerBookings)
+      } catch (err) {
+        console.error('Failed to fetch bookings:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchBookings()
+  }, [])
 
   // Filter bookings
-  const filteredBookings = ownerBookings.filter(booking => {
+  const filteredBookings = bookings.filter(booking => {
     const matchesSearch =
       booking.guestName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       booking.id.toLowerCase().includes(searchQuery.toLowerCase())
+    const normalizedStatus = booking.status.toLowerCase()
     const matchesStatus =
       filterStatus === 'all' ||
-      booking.status === filterStatus ||
-      (filterStatus === 'confirmed' && booking.status === 'completed')
+      normalizedStatus === filterStatus ||
+      (filterStatus === 'confirmed' && normalizedStatus === 'completed')
     return matchesSearch && matchesStatus
   })
 
@@ -31,8 +60,9 @@ export default function OwnerBookingsPage() {
     { value: 'cancelled', label: 'Cancelled', icon: 'close' },
   ]
 
-  const getStatusBadge = (status: Booking['status']) => {
-    switch (status) {
+  const getStatusBadge = (status: string) => {
+    const normalizedStatus = status.toLowerCase()
+    switch (normalizedStatus) {
       case 'confirmed':
         return <Badge variant="success">Confirmed</Badge>
       case 'cancelled':
@@ -59,13 +89,30 @@ export default function OwnerBookingsPage() {
     return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
   }
 
-  const activeBookings = ownerBookings.filter(b =>
-    ['confirmed', 'checked_in'].includes(b.status)
+  const activeBookings = bookings.filter(b =>
+    ['CONFIRMED', 'CHECKED_IN'].includes(b.status)
   ).length
 
-  const totalRevenue = ownerBookings
-    .filter(b => b.status !== 'cancelled')
-    .reduce((sum, b) => sum + b.totalPrice, 0)
+  const totalRevenue = bookings
+    .filter(b => b.status !== 'CANCELLED')
+    .reduce((sum: number, b) => sum + b.totalPrice, 0)
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Bookings" showNav={false}>
+        <div className="flex-1 p-4 space-y-4">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <div className="grid grid-cols-2 gap-3">
+            <Skeleton className="h-20 rounded-xl" />
+            <Skeleton className="h-20 rounded-xl" />
+          </div>
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-40 w-full rounded-2xl" />
+          ))}
+        </div>
+      </AppShell>
+    )
+  }
 
   return (
     <AppShell

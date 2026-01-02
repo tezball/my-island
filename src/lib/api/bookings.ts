@@ -91,6 +91,41 @@ export interface AvailabilityParams {
   checkOut: string
 }
 
+export interface CheckInInstructionsResponse {
+  checkInTime: string
+  checkOutTime: string
+  accessCode?: string
+  gateCode?: string
+  wifiName?: string
+  wifiPassword?: string
+  directions: string
+  rules: string[]
+  hostContact: {
+    name: string
+    phone: string
+  }
+}
+
+export interface BookingDetailResponse extends BookingResponse {
+  campsite: {
+    id: string
+    name: string
+    images: string[]
+    location: {
+      address: string
+      lat: number
+      lng: number
+    }
+  }
+  lot: {
+    id: string
+    name: string
+    type: string
+    images: string[]
+  }
+  checkInInstructions?: CheckInInstructionsResponse
+}
+
 // Bookings API service
 export const bookingsApi = {
   // Create a new booking
@@ -106,6 +141,10 @@ export const bookingsApi = {
   // Get booking details
   getById: (id: string) =>
     api.get<BookingResponse>(`/bookings/${id}`),
+
+  // Get booking with full details (campsite, lot, check-in instructions)
+  getDetailById: (id: string) =>
+    api.get<BookingDetailResponse>(`/bookings/${id}/details`),
 
   // Confirm booking
   confirm: (id: string) =>

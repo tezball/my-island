@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import { campsites } from '../data/mockData'
+import { favoritesApi, type FavoriteResponse } from '../lib/api/favorites'
+import { useAuth } from './AuthContext'
 import type { Campsite } from '../data/types'
 
 interface FavoritesContextType {
@@ -19,38 +20,81 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(undefin
 
 const STORAGE_KEY = 'my-island-favorites'
 
+// Map API response to Campsite type for backwards compatibility
+function mapFavoriteToCompsite(fav: FavoriteResponse): Campsite {
+  return {
+    id: fav.campsiteId,
+    name: fav.campsiteName,
+    description: '',
+    location: {
+      address: fav.location,
+      county: fav.location.split(',').pop()?.trim() || '',
+      lat: 0,
+      lng: 0,
+    },
+    images: [fav.campsiteImage],
+    rating: fav.rating,
+    reviewCount: 0,
+    pricePerNight: fav.priceFrom,
+    facilities: [],
+    ownerId: '',
+    lots: [],
+    featured: false,
+  }
+}
+
 export function FavoritesProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
+  const [favoritesData, setFavoritesData] = useState<FavoriteResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Load favorites from localStorage on mount
+  // Load favorites from API if logged in, otherwise from localStorage
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        if (Array.isArray(parsed)) {
-          setFavoriteIds(parsed)
+    async function loadFavorites() {
+      setIsLoading(true)
+      try {
+        if (user) {
+          // Fetch from API for logged-in users
+          const data = await favoritesApi.list()
+          setFavoritesData(data)
+          setFavoriteIds(data.map(f => f.campsiteId))
+        } else {
+          // Fall back to localStorage for guests
+          const stored = localStorage.getItem(STORAGE_KEY)
+          if (stored) {
+            const parsed = JSON.parse(stored)
+            if (Array.isArray(parsed)) {
+              setFavoriteIds(parsed)
+            }
+          }
         }
+      } catch (err) {
+        console.error('Failed to load favorites:', err)
+        // Fall back to localStorage on API error
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          if (Array.isArray(parsed)) {
+            setFavoriteIds(parsed)
+          }
+        }
+      } finally {
+        setIsLoading(false)
       }
-    } catch (err) {
-      console.error('Failed to load favorites:', err)
-      setError('Failed to load your saved campsites. Please try refreshing the page.')
-    } finally {
-      setIsLoading(false)
     }
-  }, [])
+    loadFavorites()
+  }, [user])
 
-  // Persist favorites to localStorage
+  // Persist favorites to localStorage as backup
   useEffect(() => {
     if (!isLoading) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(favoriteIds))
-        setError(null) // Clear error on successful save
+        setError(null)
       } catch (err) {
         console.error('Failed to save favorites:', err)
-        setError('Failed to save your favorites. Storage may be full.')
       }
     }
   }, [favoriteIds, isLoading])
@@ -60,32 +104,58 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Get full campsite objects for favorites
-  const favorites = campsites.filter((c) => favoriteIds.includes(c.id))
+  const favorites = favoritesData.map(mapFavoriteToCompsite)
 
   const isFavorite = useCallback(
     (campsiteId: string) => favoriteIds.includes(campsiteId),
     [favoriteIds]
   )
 
-  const addFavorite = useCallback((campsiteId: string) => {
-    setFavoriteIds((prev) => {
-      if (prev.includes(campsiteId)) return prev
-      return [...prev, campsiteId]
-    })
-  }, [])
+  const addFavorite = useCallback(async (campsiteId: string) => {
+    if (favoriteIds.includes(campsiteId)) return
 
-  const removeFavorite = useCallback((campsiteId: string) => {
-    setFavoriteIds((prev) => prev.filter((id) => id !== campsiteId))
-  }, [])
+    // Optimistic update
+    setFavoriteIds((prev) => [...prev, campsiteId])
 
-  const toggleFavorite = useCallback((campsiteId: string) => {
-    setFavoriteIds((prev) => {
-      if (prev.includes(campsiteId)) {
-        return prev.filter((id) => id !== campsiteId)
+    if (user) {
+      try {
+        await favoritesApi.add(campsiteId)
+        // Refresh the full favorites list to get campsite details
+        const data = await favoritesApi.list()
+        setFavoritesData(data)
+      } catch (err) {
+        console.error('Failed to add favorite:', err)
+        // Revert on error
+        setFavoriteIds((prev) => prev.filter((id) => id !== campsiteId))
       }
-      return [...prev, campsiteId]
-    })
-  }, [])
+    }
+  }, [favoriteIds, user])
+
+  const removeFavorite = useCallback(async (campsiteId: string) => {
+    // Optimistic update
+    setFavoriteIds((prev) => prev.filter((id) => id !== campsiteId))
+    setFavoritesData((prev) => prev.filter((f) => f.campsiteId !== campsiteId))
+
+    if (user) {
+      try {
+        await favoritesApi.remove(campsiteId)
+      } catch (err) {
+        console.error('Failed to remove favorite:', err)
+        // Revert on error - refetch the list
+        const data = await favoritesApi.list()
+        setFavoritesData(data)
+        setFavoriteIds(data.map(f => f.campsiteId))
+      }
+    }
+  }, [user])
+
+  const toggleFavorite = useCallback(async (campsiteId: string) => {
+    if (favoriteIds.includes(campsiteId)) {
+      await removeFavorite(campsiteId)
+    } else {
+      await addFavorite(campsiteId)
+    }
+  }, [favoriteIds, addFavorite, removeFavorite])
 
   const clearFavorites = useCallback(() => {
     setFavoriteIds([])

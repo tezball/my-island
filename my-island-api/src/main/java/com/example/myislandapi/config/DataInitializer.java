@@ -76,9 +76,14 @@ public class DataInitializer {
             List<User> users = createUsers(userRepository, passwordEncoder);
             log.info("Created {} regular users", users.size());
 
-            // Create campsites with lots
+            // Create featured test campsites with diverse lot types
+            List<Campsite> testCampsites = createFeaturedTestCampsites(campsiteRepository, lotRepository, owners);
+            log.info("Created {} featured test campsites", testCampsites.size());
+
+            // Create additional campsites with lots
             List<Campsite> campsites = createCampsites(campsiteRepository, lotRepository, owners);
-            log.info("Created {} campsites", campsites.size());
+            campsites.addAll(testCampsites);
+            log.info("Created {} total campsites", campsites.size());
 
             // Create FAQs
             List<FAQ> faqs = createFAQs(faqRepository);
@@ -201,6 +206,251 @@ public class DataInitializer {
             }
         }
         return campsites;
+    }
+
+    private List<Campsite> createFeaturedTestCampsites(
+            CampsiteRepository campsiteRepository,
+            LotRepository lotRepository,
+            List<User> owners
+    ) {
+        List<Campsite> campsites = new ArrayList<>();
+
+        // Campsite 1: Coastal Glamping Resort (Galway - premium glamping)
+        Campsite glamping = createTestCampsite(
+            "Clifden Coastal Glamping Resort",
+            "Experience luxury camping on Ireland's stunning Wild Atlantic Way. Our premium glamping resort " +
+            "offers stunning ocean views, boutique accommodations, and world-class amenities. Wake up to " +
+            "breathtaking sunsets over the Atlantic in our hand-crafted safari tents, cozy yurts, or " +
+            "enchanting treehouses.",
+            owners.get(0),
+            "Clifden", "Galway", 53.4890, -10.0501,
+            EnumSet.of(Facility.WIFI, Facility.ELECTRIC, Facility.WATER, Facility.TOILET,
+                       Facility.SHOWER, Facility.BEACH, Facility.RESTAURANT),
+            List.of(
+                "https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=800",
+                "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800",
+                "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=800"
+            ),
+            BigDecimal.valueOf(4.9), 87, true
+        );
+        glamping = campsiteRepository.save(glamping);
+        BigDecimal minPrice = createTestLots(lotRepository, glamping, List.of(
+            new LotSpec("Ocean View Safari Tent", LotType.SAFARI_TENT, 2, BigDecimal.valueOf(95),
+                List.of("King bed", "En-suite bathroom", "Private deck", "Ocean view")),
+            new LotSpec("Sunset Safari Tent", LotType.SAFARI_TENT, 4, BigDecimal.valueOf(120),
+                List.of("King bed", "Twin beds", "En-suite bathroom", "Outdoor seating")),
+            new LotSpec("Coastal Glamping Pod", LotType.POD, 2, BigDecimal.valueOf(85),
+                List.of("Double bed", "Heating", "Skylight", "USB charging")),
+            new LotSpec("Atlantic Yurt", LotType.YURT, 4, BigDecimal.valueOf(110),
+                List.of("King bed", "Sofa bed", "Wood stove", "Kitchenette")),
+            new LotSpec("Sky Treehouse", LotType.TREEHOUSE, 2, BigDecimal.valueOf(145),
+                List.of("King bed", "Panoramic windows", "Private bathroom", "Hot tub"))
+        ));
+        glamping.setPricePerNight(minPrice);
+        campsites.add(campsiteRepository.save(glamping));
+
+        // Campsite 2: Wild Atlantic Traditional Camp (Kerry - budget/traditional)
+        Campsite traditional = createTestCampsite(
+            "Ring of Kerry Wild Camp",
+            "Back-to-basics camping in the heart of the Ring of Kerry. Perfect for adventurers seeking " +
+            "an authentic Irish camping experience. Stunning mountain views, excellent hiking trails, " +
+            "and incredible stargazing. Basic facilities but unbeatable natural beauty.",
+            owners.get(1),
+            "Killarney", "Kerry", 52.0599, -9.5044,
+            EnumSet.of(Facility.WATER, Facility.TOILET, Facility.SHOWER, Facility.LAUNDRY,
+                       Facility.HIKING, Facility.FISHING),
+            List.of(
+                "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=800",
+                "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800"
+            ),
+            BigDecimal.valueOf(4.6), 124, true
+        );
+        traditional = campsiteRepository.save(traditional);
+        minPrice = createTestLots(lotRepository, traditional, List.of(
+            new LotSpec("Mountain View Pitch 1", LotType.TENT, 4, BigDecimal.valueOf(22),
+                List.of("Grass pitch", "Fire pit", "Picnic table")),
+            new LotSpec("Mountain View Pitch 2", LotType.TENT, 4, BigDecimal.valueOf(22),
+                List.of("Grass pitch", "Fire pit", "Picnic table")),
+            new LotSpec("Riverside Pitch 3", LotType.TENT, 6, BigDecimal.valueOf(28),
+                List.of("Large grass pitch", "Fire pit", "Picnic table", "River access")),
+            new LotSpec("Hardstanding Caravan Bay A", LotType.CARAVAN, 4, BigDecimal.valueOf(45),
+                List.of("Hardstanding", "Electric hook-up", "Water point")),
+            new LotSpec("Hardstanding Caravan Bay B", LotType.CARAVAN, 4, BigDecimal.valueOf(45),
+                List.of("Hardstanding", "Electric hook-up", "Water point")),
+            new LotSpec("Campervan Spot 1", LotType.CAMPERVAN, 2, BigDecimal.valueOf(42),
+                List.of("Level pitch", "Electric hook-up", "Grey water disposal"))
+        ));
+        traditional.setPricePerNight(minPrice);
+        campsites.add(campsiteRepository.save(traditional));
+
+        // Campsite 3: Mountain View Holiday Park (Wicklow - family-friendly mixed)
+        Campsite familyPark = createTestCampsite(
+            "Wicklow Mountains Holiday Park",
+            "A family-friendly holiday park nestled in the Wicklow Mountains, just an hour from Dublin. " +
+            "We offer a wide range of accommodation options from self-catering apartments to cozy cabins " +
+            "and glamping pods. On-site shop, playground, and bike hire available.",
+            owners.get(2),
+            "Roundwood", "Wicklow", 53.0667, -6.2333,
+            EnumSet.of(Facility.WIFI, Facility.ELECTRIC, Facility.WATER, Facility.TOILET,
+                       Facility.SHOWER, Facility.SHOP, Facility.PLAYGROUND, Facility.CYCLING, Facility.PETS),
+            List.of(
+                "https://images.unsplash.com/photo-1571863533956-01c88e79957e?w=800",
+                "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800",
+                "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=800"
+            ),
+            BigDecimal.valueOf(4.7), 203, true
+        );
+        familyPark = campsiteRepository.save(familyPark);
+        minPrice = createTestLots(lotRepository, familyPark, List.of(
+            new LotSpec("Pine Lodge Cabin", LotType.CABIN, 4, BigDecimal.valueOf(125),
+                List.of("2 bedrooms", "Full kitchen", "Living room", "Private parking")),
+            new LotSpec("Mountain View Cottage", LotType.COTTAGE, 6, BigDecimal.valueOf(185),
+                List.of("3 bedrooms", "Full kitchen", "Fireplace", "Garden", "BBQ")),
+            new LotSpec("Lakeside Apartment", LotType.APARTMENT, 4, BigDecimal.valueOf(155),
+                List.of("2 bedrooms", "Modern kitchen", "Balcony", "Lake views")),
+            new LotSpec("RV Park Spot 1", LotType.RV, 4, BigDecimal.valueOf(55),
+                List.of("Full hook-up", "50 amp electric", "Sewer", "Cable TV")),
+            new LotSpec("Forest Glamping Pod", LotType.GLAMPING, 2, BigDecimal.valueOf(95),
+                List.of("Double bed", "Heating", "Mini fridge", "Outdoor seating"))
+        ));
+        familyPark.setPricePerNight(minPrice);
+        campsites.add(campsiteRepository.save(familyPark));
+
+        // Campsite 4: Lakeside Eco Retreat (Clare - eco-focused)
+        Campsite ecoRetreat = createTestCampsite(
+            "Burren Lakeside Eco Retreat",
+            "An off-grid eco retreat in the unique Burren landscape. Solar-powered facilities, " +
+            "composting toilets, and sustainably built accommodations. Perfect for those seeking " +
+            "a mindful escape in harmony with nature. Yoga classes and nature walks included.",
+            owners.get(0),
+            "Ballyvaughan", "Clare", 53.1167, -9.1500,
+            EnumSet.of(Facility.WIFI, Facility.WATER, Facility.TOILET, Facility.SHOWER,
+                       Facility.FISHING, Facility.HIKING, Facility.CYCLING),
+            List.of(
+                "https://images.unsplash.com/photo-1520824071669-7cc5b7097969?w=800",
+                "https://images.unsplash.com/photo-1545572279-d0d91040c5d1?w=800"
+            ),
+            BigDecimal.valueOf(4.8), 56, false
+        );
+        ecoRetreat = campsiteRepository.save(ecoRetreat);
+        minPrice = createTestLots(lotRepository, ecoRetreat, List.of(
+            new LotSpec("Hobbit Pod", LotType.POD, 2, BigDecimal.valueOf(75),
+                List.of("Double bed", "Solar heating", "Composting toilet nearby")),
+            new LotSpec("Zen Yurt", LotType.YURT, 4, BigDecimal.valueOf(90),
+                List.of("King bed", "Floor cushions", "Wood stove", "Meditation corner")),
+            new LotSpec("Canopy Treehouse", LotType.TREEHOUSE, 2, BigDecimal.valueOf(135),
+                List.of("Double bed", "Compost toilet", "Solar shower", "Bird watching deck")),
+            new LotSpec("Wildflower Tent Pitch", LotType.TENT, 4, BigDecimal.valueOf(25),
+                List.of("Flat grass pitch", "Fire circle", "Shared facilities"))
+        ));
+        ecoRetreat.setPricePerNight(minPrice);
+        campsites.add(campsiteRepository.save(ecoRetreat));
+
+        // Campsite 5: Seaside Family Park (Cork - large family park)
+        Campsite seasidePark = createTestCampsite(
+            "Kinsale Seaside Family Park",
+            "The ultimate family destination on Ireland's sunny southeast coast. Our award-winning park " +
+            "offers everything from traditional camping to luxury apartments. Private beach access, " +
+            "heated pool, kids club, and on-site restaurant. Something for everyone!",
+            owners.get(1),
+            "Kinsale", "Cork", 51.7058, -8.5222,
+            EnumSet.of(Facility.WIFI, Facility.ELECTRIC, Facility.WATER, Facility.TOILET,
+                       Facility.SHOWER, Facility.LAUNDRY, Facility.SHOP, Facility.RESTAURANT,
+                       Facility.PLAYGROUND, Facility.BEACH, Facility.PETS),
+            List.of(
+                "https://images.unsplash.com/photo-1533632359083-0185df1be85d?w=800",
+                "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800",
+                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800"
+            ),
+            BigDecimal.valueOf(4.5), 312, true
+        );
+        seasidePark = campsiteRepository.save(seasidePark);
+        minPrice = createTestLots(lotRepository, seasidePark, List.of(
+            new LotSpec("Beachfront Caravan", LotType.CARAVAN, 4, BigDecimal.valueOf(65),
+                List.of("Hardstanding", "Electric hook-up", "Sea views")),
+            new LotSpec("Touring Campervan Bay", LotType.CAMPERVAN, 2, BigDecimal.valueOf(55),
+                List.of("Level pitch", "Electric hook-up", "Water/waste point")),
+            new LotSpec("Luxury Safari Tent", LotType.SAFARI_TENT, 5, BigDecimal.valueOf(120),
+                List.of("Master bedroom", "Kids room", "Kitchen", "Private deck")),
+            new LotSpec("Harbour View Cabin", LotType.CABIN, 6, BigDecimal.valueOf(165),
+                List.of("3 bedrooms", "Full kitchen", "Living room", "Harbour views")),
+            new LotSpec("Penthouse Apartment", LotType.APARTMENT, 4, BigDecimal.valueOf(175),
+                List.of("2 bedrooms", "Sea views", "Modern kitchen", "Balcony", "Parking")),
+            new LotSpec("Family Tent Pitch", LotType.TENT, 6, BigDecimal.valueOf(28),
+                List.of("Large grass pitch", "Sheltered", "Electric hook-up available"))
+        ));
+        seasidePark.setPricePerNight(minPrice);
+        campsites.add(campsiteRepository.save(seasidePark));
+
+        log.info("Created 5 featured test campsites with {} total lots",
+            campsites.stream().mapToInt(c -> c.getLots().size()).sum());
+
+        return campsites;
+    }
+
+    private Campsite createTestCampsite(
+            String name, String description, User owner,
+            String town, String county, double lat, double lng,
+            Set<Facility> facilities, List<String> images,
+            BigDecimal rating, int reviewCount, boolean featured
+    ) {
+        Campsite campsite = new Campsite();
+        campsite.setName(name);
+        campsite.setDescription(description);
+        campsite.setOwner(owner);
+
+        Location location = new Location();
+        location.setAddress(town + ", " + county);
+        location.setCounty(county);
+        location.setLat(lat);
+        location.setLng(lng);
+        campsite.setLocation(location);
+
+        campsite.setFacilities(facilities);
+        campsite.setImages(images);
+        campsite.setRating(rating);
+        campsite.setReviewCount(reviewCount);
+        campsite.setFeatured(featured);
+        campsite.setActive(true);
+
+        return campsite;
+    }
+
+    private record LotSpec(String name, LotType type, int capacity, BigDecimal price, List<String> amenities) {}
+
+    private BigDecimal createTestLots(LotRepository repository, Campsite campsite, List<LotSpec> specs) {
+        BigDecimal minPrice = BigDecimal.valueOf(999999);
+
+        for (LotSpec spec : specs) {
+            Lot lot = new Lot();
+            lot.setCampsite(campsite);
+            lot.setName(spec.name());
+            lot.setType(spec.type());
+            lot.setCapacity(spec.capacity());
+            lot.setPricePerNight(spec.price());
+            lot.setAmenities(spec.amenities());
+            lot.setImages(List.of(getLotImage(spec.type())));
+            lot.setAvailable(true);
+            repository.save(lot);
+
+            if (spec.price().compareTo(minPrice) < 0) {
+                minPrice = spec.price();
+            }
+        }
+        return minPrice;
+    }
+
+    private String getLotImage(LotType type) {
+        return switch (type) {
+            case TENT -> "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800";
+            case CARAVAN, CAMPERVAN, RV -> "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800";
+            case GLAMPING, SAFARI_TENT -> "https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=800";
+            case CABIN, COTTAGE -> "https://images.unsplash.com/photo-1571863533956-01c88e79957e?w=800";
+            case TREEHOUSE -> "https://images.unsplash.com/photo-1520824071669-7cc5b7097969?w=800";
+            case YURT -> "https://images.unsplash.com/photo-1545572279-d0d91040c5d1?w=800";
+            case POD -> "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=800";
+            case APARTMENT -> "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800";
+        };
     }
 
     private BigDecimal createLots(LotRepository repository, Campsite campsite) {

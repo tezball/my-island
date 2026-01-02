@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Icon from '../components/ui/Icon'
 import Badge from '../components/ui/Badge'
-import { offers } from '../data/mockData'
-import type { Offer } from '../data/types'
+import Skeleton from '../components/ui/Skeleton'
+import { offersApi, type OfferResponse } from '../lib/api/offers'
+import type { OfferCategory } from '../data/types'
 
-const categoryIcons: Record<Offer['category'], string> = {
+const categoryIcons: Record<OfferCategory, string> = {
   food: 'restaurant',
   activity: 'kayaking',
   gear: 'backpack',
@@ -16,7 +17,7 @@ const categoryIcons: Record<Offer['category'], string> = {
   other: 'category',
 }
 
-const categoryLabels: Record<Offer['category'], string> = {
+const categoryLabels: Record<OfferCategory, string> = {
   food: 'Food & Drink',
   activity: 'Activities',
   gear: 'Camping Gear',
@@ -28,13 +29,32 @@ const categoryLabels: Record<Offer['category'], string> = {
 
 export default function OffersPage() {
   const navigate = useNavigate()
-  const [selectedCategory, setSelectedCategory] = useState<Offer['category'] | 'all'>('all')
+  const [selectedCategory, setSelectedCategory] = useState<OfferCategory | 'all'>('all')
+  const [offers, setOffers] = useState<OfferResponse[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const categories: (Offer['category'] | 'all')[] = ['all', 'food', 'activity', 'gear', 'water', 'wellness', 'experience', 'other']
+  const categories: (OfferCategory | 'all')[] = ['all', 'food', 'activity', 'gear', 'water', 'wellness', 'experience', 'other']
 
-  const filteredOffers = selectedCategory === 'all'
-    ? offers
-    : offers.filter((o) => o.category === selectedCategory)
+  // Fetch offers from API
+  useEffect(() => {
+    async function fetchOffers() {
+      setIsLoading(true)
+      try {
+        const data = await offersApi.list(
+          selectedCategory === 'all' ? {} : { category: selectedCategory }
+        )
+        setOffers(data)
+      } catch (error) {
+        console.error('Failed to fetch offers:', error)
+        setOffers([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchOffers()
+  }, [selectedCategory])
+
+  const filteredOffers = offers
 
   const handleGetDirections = (e: React.MouseEvent, address: string) => {
     e.stopPropagation()
@@ -66,7 +86,22 @@ export default function OffersPage() {
 
         {/* Offers List */}
         <div className="flex-1 overflow-auto p-4">
-          {filteredOffers.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                  <div className="flex gap-4">
+                    <Skeleton className="size-16 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredOffers.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Icon name="local_offer" size={48} className="text-slate-300 dark:text-slate-600 mb-3" />
               <p className="text-slate-500 dark:text-slate-400">No offers in this category</p>

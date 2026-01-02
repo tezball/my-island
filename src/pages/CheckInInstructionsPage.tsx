@@ -1,28 +1,62 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import Badge from '../components/ui/Badge'
-import { getBookingById, getCampsiteById, getLotById, getCheckInInstructions } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { bookingsApi, type BookingDetailResponse } from '../lib/api/bookings'
 
 export default function CheckInInstructionsPage() {
   const { bookingId } = useParams<{ bookingId: string }>()
   const navigate = useNavigate()
+  const [bookingDetail, setBookingDetail] = useState<BookingDetailResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const booking = getBookingById(bookingId || '')
-  const campsite = booking ? getCampsiteById(booking.campsiteId) : null
-  const lot = booking ? getLotById(booking.lotId) : null
-  const instructions = campsite ? getCheckInInstructions(campsite.id) : null
+  useEffect(() => {
+    async function fetchBookingDetails() {
+      if (!bookingId) return
+      setIsLoading(true)
+      try {
+        const data = await bookingsApi.getDetailById(bookingId)
+        setBookingDetail(data)
+      } catch (err) {
+        console.error('Failed to fetch booking details:', err)
+        setError('Booking not found')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchBookingDetails()
+  }, [bookingId])
 
-  if (!booking || !campsite || !lot) {
+  if (isLoading) {
     return (
       <AppShell showBack headerTitle="Check-In Guide">
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500">Booking not found</p>
+        <div className="flex-1">
+          <Skeleton className="w-full h-40" />
+          <div className="p-4 space-y-4">
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-48 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+          </div>
         </div>
       </AppShell>
     )
   }
+
+  if (error || !bookingDetail) {
+    return (
+      <AppShell showBack headerTitle="Check-In Guide">
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-slate-500">{error || 'Booking not found'}</p>
+        </div>
+      </AppShell>
+    )
+  }
+
+  const { campsite, checkInInstructions: instructions } = bookingDetail
 
   // If no instructions, show placeholder
   if (!instructions) {
@@ -81,7 +115,7 @@ export default function CheckInInstructionsPage() {
               {campsite.name}
             </h2>
             <p className="text-white/80 text-sm drop-shadow">
-              Booking #{booking.id.slice(-8).toUpperCase()}
+              Booking #{bookingDetail.id.slice(-8).toUpperCase()}
             </p>
           </div>
         </div>

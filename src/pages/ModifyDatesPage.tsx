@@ -5,7 +5,7 @@ import Button from '../components/ui/Button'
 import Calendar from '../components/ui/Calendar'
 import Icon from '../components/ui/Icon'
 import Skeleton from '../components/ui/Skeleton'
-import bookingsApi, { type BookingResponse } from '../lib/api/bookings'
+import bookingsApi from '../lib/api/bookings'
 
 interface BookingData {
   id: string
@@ -27,7 +27,7 @@ export default function ModifyDatesPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [selectedDates, setSelectedDates] = useState<string[]>([])
   const [availableDates, setAvailableDates] = useState<string[]>([])
-  const [bookedDates, setBookedDates] = useState<string[]>([])
+  const [bookedDates, _setBookedDates] = useState<string[]>([])
 
   useEffect(() => {
     async function fetchBooking() {

@@ -1,20 +1,55 @@
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import Badge from '../components/ui/Badge'
-import { offers } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { offersApi, type OfferResponse } from '../lib/api/offers'
 
 export default function SupplierDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const [offer, setOffer] = useState<OfferResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const offer = offers.find(o => o.id === id)
+  useEffect(() => {
+    async function fetchOffer() {
+      if (!id) return
+      setIsLoading(true)
+      try {
+        const data = await offersApi.getById(id)
+        setOffer(data)
+      } catch (err) {
+        console.error('Failed to fetch offer:', err)
+        setError('Offer not found')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchOffer()
+  }, [id])
 
-  if (!offer) {
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Supplier">
+        <div className="flex-1">
+          <Skeleton className="w-full h-56" />
+          <div className="p-4 space-y-4">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (error || !offer) {
     return (
       <AppShell showBack headerTitle="Supplier">
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-slate-500">Offer not found</p>
+          <p className="text-slate-500">{error || 'Offer not found'}</p>
         </div>
       </AppShell>
     )

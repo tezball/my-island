@@ -21,6 +21,15 @@ export interface FavoriteResponse {
   createdAt: string
 }
 
+// Paginated response wrapper
+interface PagedResponse<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+}
+
 // Favorites API service
 export const favoritesApi = {
   // Add campsite to favorites
@@ -32,8 +41,14 @@ export const favoritesApi = {
     api.delete<void>(`/favorites/${campsiteId}`),
 
   // List user's favorites
-  list: () =>
-    api.get<FavoriteResponse[]>('/favorites'),
+  list: async (): Promise<FavoriteResponse[]> => {
+    const response = await api.get<FavoriteResponse[] | PagedResponse<FavoriteResponse>>('/favorites')
+    // Handle both array and paginated response formats
+    if (Array.isArray(response)) {
+      return response
+    }
+    return response.content || []
+  },
 
   // Check if campsite is favorited
   check: (campsiteId: string) =>

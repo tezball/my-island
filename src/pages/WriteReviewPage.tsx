@@ -84,8 +84,10 @@ export default function WriteReviewPage() {
 
     setIsSubmitting(true)
     try {
-      await reviewsApi.create(id, {
+      await reviewsApi.create({
+        campsiteId: id,
         rating: overallRating,
+        title: 'Review',
         comment: content,
         categories: ratings,
       })

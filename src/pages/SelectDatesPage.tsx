@@ -21,8 +21,8 @@ export default function SelectDatesPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [checkIn, setCheckIn] = useState<string | null>(null)
   const [checkOut, setCheckOut] = useState<string | null>(null)
-  const [bookedDates, setBookedDates] = useState<string[]>([])
-  const [blockedDates, setBlockedDates] = useState<string[]>([])
+  const [bookedDates, _setBookedDates] = useState<string[]>([])
+  const [blockedDates, _setBlockedDates] = useState<string[]>([])
 
   useEffect(() => {
     async function fetchCampsite() {

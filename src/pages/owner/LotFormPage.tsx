@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Toggle from '../../components/ui/Toggle'
 import Icon from '../../components/ui/Icon'
-import { getLotById } from '../../data/mockData'
+import Skeleton from '../../components/ui/Skeleton'
+import { ownerApi, type LotResponse } from '../../lib/api/owner'
 import type { LotType } from '../../data/types'
 
 const lotTypes: { id: LotType; label: string; icon: string }[] = [
@@ -23,7 +24,7 @@ const lotTypes: { id: LotType; label: string; icon: string }[] = [
   { id: 'safari_tent', label: 'Safari Tent', icon: 'holiday_village' },
 ]
 
-const amenities = [
+const amenitiesList = [
   'Electric', 'Water', 'Wi-Fi', 'Fire Pit', 'Pets Allowed', 'Picnic Table',
   'Shade', 'Lake View', 'Sea View', 'Private Bathroom',
 ]
@@ -33,17 +34,48 @@ export default function LotFormPage() {
   const navigate = useNavigate()
   const isEditing = !!lotId
 
-  const existingLot = lotId ? getLotById(lotId) : null
-
-  const [name, setName] = useState(existingLot?.name || '')
-  const [type, setType] = useState<LotType>(existingLot?.type || 'tent')
-  const [capacity, setCapacity] = useState(existingLot?.capacity || 4)
-  const [price, setPrice] = useState(existingLot?.pricePerNight.toString() || '')
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
-    existingLot?.amenities || []
-  )
-  const [isAvailable, setIsAvailable] = useState(existingLot?.available ?? true)
+  const [existingLot, setExistingLot] = useState<LotResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(!!lotId)
+  const [name, setName] = useState('')
+  const [type, setType] = useState<LotType>('tent')
+  const [capacity, setCapacity] = useState(4)
+  const [price, setPrice] = useState('')
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
+  const [isAvailable, setIsAvailable] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+
+  useEffect(() => {
+    async function fetchLot() {
+      if (!lotId) return
+      try {
+        const data = await ownerApi.getLot(lotId)
+        setExistingLot(data)
+        setName(data.name)
+        setType(data.type.toLowerCase() as LotType)
+        setCapacity(data.capacity)
+        setPrice(data.pricePerNight.toString())
+        setSelectedAmenities(data.amenities)
+        setIsAvailable(data.available)
+      } catch (err) {
+        console.error('Failed to fetch lot:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchLot()
+  }, [lotId])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle={isEditing ? 'Edit Lot' : 'Add New Lot'} showNav={false}>
+        <div className="flex-1 p-4 space-y-4">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-24 w-full rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
 
   const toggleAmenity = (amenity: string) => {
     setSelectedAmenities(prev =>
@@ -66,7 +98,7 @@ export default function LotFormPage() {
   const handleReset = () => {
     if (existingLot) {
       setName(existingLot.name)
-      setType(existingLot.type)
+      setType(existingLot.type.toLowerCase() as LotType)
       setCapacity(existingLot.capacity)
       setPrice(existingLot.pricePerNight.toString())
       setSelectedAmenities(existingLot.amenities)
@@ -185,15 +217,15 @@ export default function LotFormPage() {
             </h3>
             <button
               onClick={() => setSelectedAmenities(
-                selectedAmenities.length === amenities.length ? [] : [...amenities]
+                selectedAmenities.length === amenitiesList.length ? [] : [...amenitiesList]
               )}
               className="text-primary text-sm font-medium"
             >
-              {selectedAmenities.length === amenities.length ? 'Clear all' : 'Select all'}
+              {selectedAmenities.length === amenitiesList.length ? 'Clear all' : 'Select all'}
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {amenities.map(amenity => (
+            {amenitiesList.map((amenity: string) => (
               <button
                 key={amenity}
                 type="button"

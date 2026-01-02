@@ -7,7 +7,14 @@ import Icon from '../../components/ui/Icon'
 import Toggle from '../../components/ui/Toggle'
 import Skeleton from '../../components/ui/Skeleton'
 import { useToast } from '../../context/ToastContext'
-import { ownerStats, ownerCampsites, broadcastAlerts } from '../../data/mockData'
+import { ownerApi, type OwnerStats, type CampsiteResponse } from '../../lib/api/owner'
+
+interface BroadcastAlert {
+  id: string
+  message: string
+  sentAt: string
+  sentTo: number
+}
 
 export default function OwnerDashboardPage() {
   const navigate = useNavigate()
@@ -15,14 +22,41 @@ export default function OwnerDashboardPage() {
   const [campsiteVisible, setCampsiteVisible] = useState(true)
   const [broadcastMessage, setBroadcastMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [stats, setStats] = useState<OwnerStats | null>(null)
+  const [campsite, setCampsite] = useState<CampsiteResponse | null>(null)
+  const [broadcastAlerts, setBroadcastAlerts] = useState<BroadcastAlert[]>([])
 
-  // Simulate loading from API
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 500)
-    return () => clearTimeout(timer)
+    async function fetchData() {
+      try {
+        const [statsData, campsitesData] = await Promise.all([
+          ownerApi.getStats(),
+          ownerApi.getMyCampsites(),
+        ])
+        setStats(statsData)
+        if (campsitesData.length > 0) {
+          setCampsite(campsitesData[0])
+        }
+        // Mock broadcast alerts since no API endpoint exists
+        setBroadcastAlerts([])
+      } catch (err) {
+        console.error('Failed to fetch owner data:', err)
+        // Set default stats on error
+        setStats({
+          totalBookings: 0,
+          upcomingBookings: 0,
+          revenue: 0,
+          revenueChange: 0,
+          occupancyRate: 0,
+          averageRating: 0,
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
   }, [])
 
-  const campsite = ownerCampsites[0]
   const activeGuests = 45 // Mock number
 
   const handleBroadcast = () => {
@@ -186,7 +220,7 @@ export default function OwnerDashboardPage() {
                 View Bookings
               </span>
               <span className="text-xs text-slate-500">
-                {ownerStats.upcomingBookings} upcoming
+                {stats?.upcomingBookings || 0} upcoming
               </span>
             </Link>
             <Link
@@ -200,7 +234,7 @@ export default function OwnerDashboardPage() {
                 Manage Lots
               </span>
               <span className="text-xs text-slate-500">
-                {campsite?.lots.length || 3} active
+                3 active
               </span>
             </Link>
             <Link
@@ -214,7 +248,7 @@ export default function OwnerDashboardPage() {
                 View Stats
               </span>
               <span className="text-xs text-slate-500">
-                €{ownerStats.revenue.toLocaleString()}
+                €{(stats?.revenue || 0).toLocaleString()}
               </span>
             </Link>
             <Link

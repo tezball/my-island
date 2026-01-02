@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Calendar from '../components/ui/Calendar'
 import Icon from '../components/ui/Icon'
-import { getCampsiteById, getLotsByCampsite, getLotAvailability } from '../data/mockData'
+import Skeleton from '../components/ui/Skeleton'
+import { campsitesApi, type CampsiteDetailResponse } from '../lib/api/campsites'
+import { bookingsApi } from '../lib/api/bookings'
 
 export default function LotCalendarPage() {
   const { id } = useParams<{ id: string }>()
@@ -12,28 +14,68 @@ export default function LotCalendarPage() {
   const [searchParams] = useSearchParams()
   const initialLotId = searchParams.get('lot')
 
-  const campsite = getCampsiteById(id || '')
-  const lots = getLotsByCampsite(id || '')
-  const [selectedLotId, setSelectedLotId] = useState(initialLotId || lots[0]?.id || '')
+  const [campsite, setCampsite] = useState<CampsiteDetailResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [selectedLotId, setSelectedLotId] = useState('')
   const [selectedDates, setSelectedDates] = useState<string[]>([])
+  const [blockedDates, setBlockedDates] = useState<string[]>([])
 
-  const availability = useMemo(() => {
-    return getLotAvailability(selectedLotId)
+  // Fetch campsite with lots
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) return
+      setIsLoading(true)
+      try {
+        const data = await campsitesApi.getById(id)
+        setCampsite(data)
+        setSelectedLotId(initialLotId || data.lots[0]?.id || '')
+      } catch (err) {
+        console.error('Failed to fetch campsite:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchCampsite()
+  }, [id, initialLotId])
+
+  // Fetch availability when lot changes
+  useEffect(() => {
+    async function fetchAvailability() {
+      if (!selectedLotId) return
+      try {
+        // Get availability for next 60 days
+        const checkIn = new Date().toISOString().split('T')[0]
+        const checkOut = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        const availability = await bookingsApi.checkAvailability(selectedLotId, { checkIn, checkOut })
+        setBlockedDates(availability.blockedDates || [])
+      } catch (err) {
+        console.error('Failed to fetch availability:', err)
+        setBlockedDates([])
+      }
+    }
+    fetchAvailability()
   }, [selectedLotId])
 
-  const availableDates = availability
-    .filter(a => a.status === 'available')
-    .map(a => a.date)
-
-  const bookedDates = availability
-    .filter(a => a.status === 'booked')
-    .map(a => a.date)
-
-  const blockedDates = availability
-    .filter(a => a.status === 'blocked' || a.status === 'maintenance')
-    .map(a => a.date)
-
+  const lots = campsite?.lots || []
   const selectedLot = lots.find(l => l.id === selectedLotId)
+
+  // Generate available dates (all dates except blocked)
+  const availableDates: string[] = []
+  const bookedDates: string[] = [] // Backend returns blocked dates which include booked
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Select Dates" showNav={false}>
+        <div className="flex-1">
+          <div className="p-4">
+            <Skeleton className="h-12 w-full rounded-xl mb-4" />
+            <Skeleton className="h-20 w-full rounded-xl mb-4" />
+            <Skeleton className="h-80 w-full rounded-xl" />
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
 
   if (!campsite) {
     return (

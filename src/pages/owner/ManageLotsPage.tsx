@@ -1,31 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
 import Badge from '../../components/ui/Badge'
-import { lots, ownerCampsites } from '../../data/mockData'
+import Skeleton from '../../components/ui/Skeleton'
+import { ownerApi, type LotResponse, type CampsiteResponse } from '../../lib/api/owner'
 
 type FilterStatus = 'all' | 'available' | 'booked' | 'maintenance'
+
+interface LotWithStatus extends LotResponse {
+  status: 'available' | 'booked' | 'maintenance'
+}
 
 export default function ManageLotsPage() {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
+  const [, setCampsite] = useState<CampsiteResponse | null>(null)
+  const [lots, setLots] = useState<LotWithStatus[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const campsite = ownerCampsites[0]
-
-  // Filter lots for the owner's campsite
-  const campsiteLots = lots.filter(l => l.campsiteId === campsite?.id)
-
-  // Add mock status to lots
-  const lotsWithStatus = campsiteLots.map((lot, i) => ({
-    ...lot,
-    status: i === 0 ? 'available' : i === 1 ? 'booked' : i === 2 ? 'maintenance' : 'available',
-  }))
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const campsites = await ownerApi.getMyCampsites()
+        if (campsites.length > 0) {
+          setCampsite(campsites[0])
+          const lotsData = await ownerApi.getLotsByCampsite(campsites[0].id)
+          // Add mock status to lots
+          const lotsWithStatus: LotWithStatus[] = lotsData.map((lot, i) => ({
+            ...lot,
+            status: (i === 0 ? 'available' : i === 1 ? 'booked' : i === 2 ? 'maintenance' : 'available') as 'available' | 'booked' | 'maintenance',
+          }))
+          setLots(lotsWithStatus)
+        }
+      } catch (err) {
+        console.error('Failed to fetch lots:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   // Filter by search and status
-  const filteredLots = lotsWithStatus.filter(lot => {
+  const filteredLots = lots.filter(lot => {
     const matchesSearch = lot.name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesStatus = filterStatus === 'all' || lot.status === filterStatus
     return matchesSearch && matchesStatus
@@ -66,6 +86,20 @@ export default function ManageLotsPage() {
       default:
         return 'bed'
     }
+  }
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Campsite Lots" showNav={false}>
+        <div className="flex-1 p-4 space-y-3">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-10 w-full rounded-xl" />
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-2xl" />
+          ))}
+        </div>
+      </AppShell>
+    )
   }
 
   return (

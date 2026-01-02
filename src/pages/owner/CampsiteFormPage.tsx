@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Icon from '../../components/ui/Icon'
-import { getCampsiteById } from '../../data/mockData'
+import Skeleton from '../../components/ui/Skeleton'
+import { ownerApi, type CampsiteDetailResponse } from '../../lib/api/owner'
 import type { Facility } from '../../data/types'
 
 const facilities: { id: Facility; label: string; icon: string }[] = [
@@ -26,16 +27,49 @@ export default function CampsiteFormPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const campsite = getCampsiteById(id || '')
-
-  const [name, setName] = useState(campsite?.name || '')
-  const [description, setDescription] = useState(campsite?.description || '')
-  const [price, setPrice] = useState(campsite?.pricePerNight.toString() || '')
-  const [address, setAddress] = useState(campsite?.location.address || '')
-  const [selectedFacilities, setSelectedFacilities] = useState<Facility[]>(
-    campsite?.facilities || []
-  )
+  const [campsite, setCampsite] = useState<CampsiteDetailResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [price, setPrice] = useState('')
+  const [address, setAddress] = useState('')
+  const [selectedFacilities, setSelectedFacilities] = useState<Facility[]>([])
   const [isSaving, setIsSaving] = useState(false)
+
+  useEffect(() => {
+    async function fetchCampsite() {
+      if (!id) {
+        setIsLoading(false)
+        return
+      }
+      try {
+        const data = await ownerApi.getCampsite(id)
+        setCampsite(data)
+        setName(data.name)
+        setDescription(data.description)
+        setPrice(data.priceFrom.toString())
+        setAddress(data.location.address)
+        setSelectedFacilities(data.facilities)
+      } catch (err) {
+        console.error('Failed to fetch campsite:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchCampsite()
+  }, [id])
+
+  if (isLoading) {
+    return (
+      <AppShell showBack headerTitle="Edit Campsite">
+        <div className="flex-1 p-4 space-y-4">
+          <Skeleton className="h-24 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full rounded-xl" />
+        </div>
+      </AppShell>
+    )
+  }
 
   if (!campsite) {
     return (

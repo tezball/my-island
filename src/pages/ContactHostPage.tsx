@@ -37,7 +37,7 @@ export default function ContactHostPage() {
 
   const [booking, setBooking] = useState<BookingData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [existingMessages, setExistingMessages] = useState<Message[]>([])
+  const [existingMessages, _setExistingMessages] = useState<Message[]>([])
   const [subject, setSubject] = useState('')
   const [message, setMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
