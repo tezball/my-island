@@ -115,6 +115,14 @@ export default function SearchPage() {
     }
   }
 
+  const clearAllFilters = () => {
+    setSelectedFilters([])
+  }
+
+  const handleSearchClear = () => {
+    setSelectedFilters([])
+  }
+
   const handleNearMe = () => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser')
@@ -173,6 +181,7 @@ export default function SearchPage() {
           <SearchBar
             value={query}
             onChange={setQuery}
+            onClear={handleSearchClear}
             placeholder="Search campsites, locations..."
             autoFocus
           />
@@ -194,9 +203,19 @@ export default function SearchPage() {
           {/* Filters Panel */}
           {showFilters && (
             <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Facilities
-              </p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Facilities
+                </p>
+                {selectedFilters.length > 0 && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="text-sm text-primary hover:text-primary/80 font-medium"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
               <div className="flex flex-wrap gap-2">
                 {facilityFilters.map((filter) => (
                   <button

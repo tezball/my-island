@@ -10,6 +10,7 @@ import com.example.myislandapi.entity.Campsite;
 import com.example.myislandapi.entity.Location;
 import com.example.myislandapi.entity.Lot;
 import com.example.myislandapi.entity.User;
+import com.example.myislandapi.enums.Facility;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.exception.UnauthorizedException;
@@ -27,7 +28,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -58,9 +61,26 @@ public class CampsiteService {
                 .map(this::toCampsiteResponse);
     }
 
-    public Page<CampsiteResponse> searchCampsites(String county, String search, Pageable pageable) {
+    public Page<CampsiteResponse> searchCampsites(String county, String search, Set<String> facilities, Pageable pageable) {
         String searchLower = search != null ? search.toLowerCase() : null;
-        return campsiteRepository.search(county, searchLower, pageable)
+
+        // Convert string facility names to Facility enums
+        Set<Facility> facilityEnums = null;
+        if (facilities != null && !facilities.isEmpty()) {
+            facilityEnums = facilities.stream()
+                    .map(name -> {
+                        try {
+                            return Facility.valueOf(name.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            return null;
+                        }
+                    })
+                    .filter(f -> f != null)
+                    .collect(Collectors.toSet());
+        }
+
+        long facilityCount = facilityEnums != null ? facilityEnums.size() : 0;
+        return campsiteRepository.search(county, searchLower, facilityEnums, facilityCount, pageable)
                 .map(this::toCampsiteResponse);
     }
 

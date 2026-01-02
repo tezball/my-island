@@ -329,9 +329,9 @@ public class DataInitializer {
         // Campsite 3: Mountain View Holiday Park (Wicklow - family-friendly mixed)
         Campsite familyPark = createTestCampsite(
             "Wicklow Mountains Holiday Park",
-            "A family-friendly holiday park nestled in the Wicklow Mountains, just an hour from Dublin. " +
-            "We offer a wide range of accommodation options from self-catering apartments to cozy cabins " +
-            "and glamping pods. On-site shop, playground, and bike hire available.",
+            "A family-friendly holiday park nestled in the Wicklow Mountains, the perfect escape near Dublin. " +
+            "Just an hour from the city, we offer a wide range of accommodation options from self-catering " +
+            "apartments to cozy cabins and glamping pods. On-site shop, playground, and bike hire available.",
             owners.get(2),
             "Roundwood", "Wicklow", 53.0667, -6.2333,
             EnumSet.of(Facility.WIFI, Facility.ELECTRIC, Facility.WATER, Facility.TOILET,
@@ -392,9 +392,9 @@ public class DataInitializer {
         // Campsite 5: Seaside Family Park (Cork - large family park)
         Campsite seasidePark = createTestCampsite(
             "Kinsale Seaside Family Park",
-            "The ultimate family destination on Ireland's sunny southeast coast. Our award-winning park " +
-            "offers everything from traditional camping to luxury apartments. Private beach access, " +
-            "heated pool, kids club, and on-site restaurant. Something for everyone!",
+            "The ultimate family destination for beach camping on Ireland's sunny southeast coast. Our " +
+            "award-winning park offers everything from traditional camping to luxury apartments. Private " +
+            "beach access, heated pool, kids club, and on-site restaurant. Something for everyone!",
             owners.get(1),
             "Kinsale", "Cork", 51.7058, -8.5222,
             EnumSet.of(Facility.WIFI, Facility.ELECTRIC, Facility.WATER, Facility.TOILET,

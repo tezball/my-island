@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
@@ -16,6 +16,7 @@ interface OwnerBookingView extends BookingResponse {
 }
 
 export default function OwnerBookingsPage() {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [bookings, setBookings] = useState<OwnerBookingView[]>([])
@@ -120,14 +121,9 @@ export default function OwnerBookingsPage() {
       headerTitle="Bookings"
       showNav={false}
       headerRightAction={
-        <div className="flex items-center gap-2">
-          <button>
-            <Icon name="notifications" size={24} className="text-slate-600 dark:text-slate-400" />
-          </button>
-          <button>
-            <Icon name="help" size={24} className="text-slate-600 dark:text-slate-400" />
-          </button>
-        </div>
+        <button>
+          <Icon name="help" size={24} className="text-slate-600 dark:text-slate-400" />
+        </button>
       }
     >
       <div className="flex-1 overflow-auto">
@@ -183,7 +179,10 @@ export default function OwnerBookingsPage() {
             <h3 className="font-semibold text-slate-900 dark:text-white">
               Recent Bookings
             </h3>
-            <button className="text-primary text-sm font-medium">
+            <button
+              onClick={() => navigate('/owner/calendar')}
+              className="text-primary text-sm font-medium"
+            >
               View Calendar
             </button>
           </div>

@@ -21,6 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -38,11 +39,15 @@ public class CampsiteController {
     public ResponseEntity<Page<CampsiteResponse>> getCampsites(
             @RequestParam(required = false) String county,
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Set<String> facilities,
+            @RequestParam(required = false) Boolean featured,
             @PageableDefault(size = 20) Pageable pageable) {
 
         Page<CampsiteResponse> campsites;
-        if (county != null || search != null) {
-            campsites = campsiteService.searchCampsites(county, search, pageable);
+        if (Boolean.TRUE.equals(featured)) {
+            campsites = campsiteService.getFeaturedCampsites(pageable);
+        } else if (county != null || search != null || facilities != null) {
+            campsites = campsiteService.searchCampsites(county, search, facilities, pageable);
         } else {
             campsites = campsiteService.getAllCampsites(pageable);
         }

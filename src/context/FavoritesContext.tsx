@@ -140,9 +140,10 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Get full campsite objects for favorites - prefer API data, fall back to locally fetched
+  // Filter by favoriteIds to ensure removed items don't appear
   const favorites = favoritesData.length > 0
     ? favoritesData.map(mapFavoriteToCompsite)
-    : localCampsites
+    : localCampsites.filter(c => favoriteIds.includes(c.id))
 
   const isFavorite = useCallback(
     (campsiteId: string) => favoriteIds.includes(campsiteId),

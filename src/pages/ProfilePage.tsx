@@ -19,6 +19,7 @@ const menuSections: { title: string; items: MenuItem[] }[] = [
     title: 'Account',
     items: [
       { icon: 'person', label: 'Personal Info', path: '/profile/personal-info' },
+      { icon: 'favorite', label: 'Saved Campsites', path: '/favorites' },
       { icon: 'security', label: 'Login & Security', path: '/settings' },
       { icon: 'credit_card', label: 'Payment Methods', path: '/payment-methods' },
       { icon: 'link', label: 'Linked Accounts', path: '/profile/linked-accounts' },

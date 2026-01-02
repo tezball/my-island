@@ -6,6 +6,8 @@ import Icon from '../components/ui/Icon'
 import BookingExpiredState from '../components/booking/BookingExpiredState'
 import { campsitesApi } from '../lib/api/campsites'
 import { bookingsApi, type CreateBookingRequest } from '../lib/api/bookings'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 
 type PaymentMethod = 'card' | 'apple_pay' | 'google_pay'
 
@@ -19,6 +21,8 @@ export default function BookingPaymentPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth()
+  const toast = useToast()
   const bookingState = location.state as {
     checkIn: string
     checkOut: string
@@ -83,6 +87,19 @@ export default function BookingPaymentPage() {
   }
 
   const handlePayment = async () => {
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Login Required', 'Please log in to complete your booking.')
+      // Store booking state and redirect to login
+      navigate('/login', {
+        state: {
+          returnTo: `/book/${id}/payment`,
+          bookingState: bookingState,
+        },
+      })
+      return
+    }
+
     setIsProcessing(true)
     try {
       // Create the booking via API
@@ -112,15 +129,21 @@ export default function BookingPaymentPage() {
       })
     } catch (error) {
       console.error('Failed to create booking:', error)
-      // Fallback to mock booking for demo purposes when API is unavailable
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      navigate(`/book/${id}/confirmation`, {
-        state: {
-          ...bookingState,
-          bookingId: 'BOOK-' + Date.now(),
-          paymentMethod,
-        },
-      })
+      setIsProcessing(false)
+
+      // Show error to user instead of silently failing
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('403')) {
+        toast.error('Session Expired', 'Please log in again to complete your booking.')
+        navigate('/login', {
+          state: {
+            returnTo: `/book/${id}/payment`,
+            bookingState: bookingState,
+          },
+        })
+      } else {
+        toast.error('Booking Failed', 'Unable to complete your booking. Please try again.')
+      }
     }
   }
 

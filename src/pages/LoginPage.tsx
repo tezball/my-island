@@ -18,8 +18,7 @@ export default function LoginPage() {
 
   // Demo accounts for testing
   const demoAccounts = [
-    { label: 'Guest User', email: 'guest@my-island.com', password: 'demo1234', type: 'guest' },
-    { label: 'Registered User', email: 'user@my-island.com', password: 'demo1234', type: 'user' },
+    { label: 'Visitor', email: 'visitor@my-island.com', password: 'demo1234', type: 'visitor' },
     { label: 'Campsite Owner', email: 'owner@my-island.com', password: 'demo1234', type: 'owner' },
     { label: 'Supplier', email: 'supplier@my-island.com', password: 'demo1234', type: 'supplier' },
   ]

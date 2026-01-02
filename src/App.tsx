@@ -113,6 +113,17 @@ import OwnerPayoutSchedulePage from './pages/owner/OwnerPayoutSchedulePage'
 import OwnerTaxSettingsPage from './pages/owner/OwnerTaxSettingsPage'
 import OwnerTeamSettingsPage from './pages/owner/OwnerTeamSettingsPage'
 import CampsiteCreateWizardPage from './pages/owner/CampsiteCreateWizardPage'
+import OwnerReviewsPage from './pages/owner/OwnerReviewsPage'
+import OwnerCalendarPage from './pages/owner/OwnerCalendarPage'
+
+// Static Pages
+import AboutPage from './pages/AboutPage'
+import PrivacyPage from './pages/PrivacyPage'
+import TermsPage from './pages/TermsPage'
+
+// Map Pages
+import MapPage from './pages/MapPage'
+import CampsiteMapPage from './pages/CampsiteMapPage'
 
 function App() {
   return (
@@ -148,16 +159,19 @@ function App() {
       {/* Main App Routes */}
       <Route path="/" element={<DiscoverPage />} />
       <Route path="/search" element={<SearchPage />} />
+      <Route path="/map" element={<MapPage />} />
       <Route path="/campsite/:id" element={<CampsiteDetailPage />} />
       <Route path="/campsite/:id/photos" element={<PhotoGalleryPage />} />
       <Route path="/campsite/:id/reviews" element={<ReviewsPage />} />
       <Route path="/campsite/:id/review" element={<WriteReviewPage />} />
+      <Route path="/campsite/:id/map" element={<CampsiteMapPage />} />
 
       {/* Booking Flow */}
       <Route path="/book/:id" element={<BookingPage />} />
       <Route path="/book/:id/dates" element={<SelectDatesPage />} />
       <Route path="/book/:id/calendar" element={<LotCalendarPage />} />
       <Route path="/book/:id/guests" element={<GuestExtrasPage />} />
+      <Route path="/book/:id/extras" element={<GuestExtrasPage />} />
       <Route path="/book/:id/payment" element={<BookingPaymentPage />} />
       <Route path="/book/:id/payment-methods" element={<PaymentMethodsPage />} />
       <Route path="/book/:id/add-payment" element={<AddPaymentMethodPage />} />
@@ -206,6 +220,11 @@ function App() {
       <Route path="/support/tickets" element={<SupportTicketsPage />} />
       <Route path="/support/tickets/:ticketId" element={<SupportTicketDetailPage />} />
 
+      {/* Static Pages */}
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+
       {/* Notifications - Protected */}
       <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
       <Route path="/notifications/center" element={<ProtectedRoute><NotificationCenterPage /></ProtectedRoute>} />
@@ -238,6 +257,8 @@ function App() {
       <Route path="/owner/settings/payout-schedule" element={<ProtectedRoute requireOwner><OwnerPayoutSchedulePage /></ProtectedRoute>} />
       <Route path="/owner/settings/tax" element={<ProtectedRoute requireOwner><OwnerTaxSettingsPage /></ProtectedRoute>} />
       <Route path="/owner/settings/team" element={<ProtectedRoute requireOwner><OwnerTeamSettingsPage /></ProtectedRoute>} />
+      <Route path="/owner/reviews" element={<ProtectedRoute requireOwner><OwnerReviewsPage /></ProtectedRoute>} />
+      <Route path="/owner/calendar" element={<ProtectedRoute requireOwner><OwnerCalendarPage /></ProtectedRoute>} />
 
       {/* 404 Catch-all */}
       <Route path="*" element={<NotFoundPage />} />

@@ -6,6 +6,7 @@ interface SearchBarProps {
   value?: string
   onChange?: (value: string) => void
   onSearch?: (value: string) => void
+  onClear?: () => void
   autoFocus?: boolean
   className?: string
 }
@@ -15,6 +16,7 @@ export default function SearchBar({
   value: controlledValue,
   onChange,
   onSearch,
+  onClear,
   autoFocus = false,
   className = '',
 }: SearchBarProps) {
@@ -52,7 +54,10 @@ export default function SearchBar({
         {value && (
           <button
             type="button"
-            onClick={() => handleChange('')}
+            onClick={() => {
+              handleChange('')
+              onClear?.()
+            }}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
           >
             <Icon name="close" size={18} />
