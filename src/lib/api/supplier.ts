@@ -8,7 +8,7 @@
  */
 
 import api from '../api'
-import type { SupplierProfile, Offer } from '../../data/types'
+import type { SupplierProfile, Offer, OfferCategory } from '../../data/types'
 
 // Request types
 export interface UpdateProfileRequest {
@@ -22,8 +22,10 @@ export interface UpdateProfileRequest {
 export interface CreateOfferRequest {
   title: string
   description: string
+  imageUrl?: string
   discount: string
-  category: 'food' | 'activities' | 'gear' | 'attractions' | 'transport'
+  category: OfferCategory
+  tags?: string[]
   validUntil: string
   location: {
     address: string

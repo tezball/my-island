@@ -6,11 +6,13 @@ interface FavoritesContextType {
   favoriteIds: string[]
   favorites: Campsite[]
   isLoading: boolean
+  error: string | null
   isFavorite: (campsiteId: string) => boolean
   toggleFavorite: (campsiteId: string) => void
   addFavorite: (campsiteId: string) => void
   removeFavorite: (campsiteId: string) => void
   clearFavorites: () => void
+  clearError: () => void
 }
 
 const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined)
@@ -20,6 +22,7 @@ const STORAGE_KEY = 'my-island-favorites'
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   // Load favorites from localStorage on mount
   useEffect(() => {
@@ -31,8 +34,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
           setFavoriteIds(parsed)
         }
       }
-    } catch (error) {
-      console.error('Failed to load favorites:', error)
+    } catch (err) {
+      console.error('Failed to load favorites:', err)
+      setError('Failed to load your saved campsites. Please try refreshing the page.')
     } finally {
       setIsLoading(false)
     }
@@ -43,11 +47,17 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     if (!isLoading) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(favoriteIds))
-      } catch (error) {
-        console.error('Failed to save favorites:', error)
+        setError(null) // Clear error on successful save
+      } catch (err) {
+        console.error('Failed to save favorites:', err)
+        setError('Failed to save your favorites. Storage may be full.')
       }
     }
   }, [favoriteIds, isLoading])
+
+  const clearError = useCallback(() => {
+    setError(null)
+  }, [])
 
   // Get full campsite objects for favorites
   const favorites = campsites.filter((c) => favoriteIds.includes(c.id))
@@ -87,11 +97,13 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         favoriteIds,
         favorites,
         isLoading,
+        error,
         isFavorite,
         toggleFavorite,
         addFavorite,
         removeFavorite,
         clearFavorites,
+        clearError,
       }}
     >
       {children}

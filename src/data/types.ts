@@ -141,6 +141,9 @@ export interface Review {
   }
 }
 
+// Offer categories as per documentation
+export type OfferCategory = 'food' | 'activity' | 'gear' | 'water' | 'wellness' | 'experience' | 'other'
+
 export interface Offer {
   id: string
   supplierId: string
@@ -148,14 +151,17 @@ export interface Offer {
   supplierLogo: string
   title: string
   description: string
+  imageUrl?: string
   discount: string
-  category: 'food' | 'activities' | 'gear' | 'attractions' | 'transport'
+  category: OfferCategory
+  tags?: string[]
   validUntil: string
   location: {
     address: string
     lat: number
     lng: number
   }
+  distance?: string
   claimed: boolean
   code?: string
 }

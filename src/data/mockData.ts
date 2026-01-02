@@ -607,7 +607,7 @@ export const offers: Offer[] = [
     title: '20% off Kayak Tours',
     description: 'Experience the stunning Connemara coastline with our guided kayak tours. Perfect for beginners and experienced paddlers alike.',
     discount: '20% OFF',
-    category: 'activities',
+    category: 'activity',
     validUntil: '2025-03-31',
     location: {
       address: 'Clifden Harbour',
@@ -659,7 +659,7 @@ export const offers: Offer[] = [
     title: '10% off Entry Tickets',
     description: 'Visit Ireland\'s most iconic cliffs with a special discount for campers. Valid for up to 4 people.',
     discount: '10% OFF',
-    category: 'attractions',
+    category: 'experience',
     validUntil: '2025-12-31',
     location: {
       address: 'Cliffs of Moher, Clare',

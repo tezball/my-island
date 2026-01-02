@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
@@ -13,9 +13,11 @@ const discountTypes = [
 ]
 
 export default function OfferFormPage() {
-  const { offerId } = useParams<{ offerId: string }>()
+  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const isEditing = !!offerId
+  const location = useLocation()
+  const isEditing = !!id
+  const isSupplierRoute = location.pathname.startsWith('/supplier')
 
   const [name, setName] = useState('')
   const [discountType, setDiscountType] = useState('percentage')
@@ -28,12 +30,14 @@ export default function OfferFormPage() {
   const [isActive, setIsActive] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
 
+  const offersPath = isSupplierRoute ? '/supplier/offers' : '/owner/offers'
+
   const handleSave = async () => {
     if (!name.trim() || !discountValue) return
     setIsSaving(true)
     await new Promise(resolve => setTimeout(resolve, 1000))
     setIsSaving(false)
-    navigate('/owner/offers')
+    navigate(offersPath)
   }
 
   const generateCode = () => {
@@ -221,7 +225,7 @@ export default function OfferFormPage() {
           <Button
             variant="secondary"
             className="flex-1"
-            onClick={() => navigate('/owner/offers')}
+            onClick={() => navigate(offersPath)}
           >
             Cancel
           </Button>

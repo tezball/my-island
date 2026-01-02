@@ -11,7 +11,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { path: '/', icon: 'explore', label: 'Discover' },
   { path: '/search', icon: 'search', label: 'Search' },
-  { path: '/favorites', icon: 'favorite', label: 'Saved' },
+  { path: '/offers', icon: 'local_offer', label: 'Offers' },
   { path: '/bookings', icon: 'calendar_month', label: 'Bookings' },
   { path: '/profile', icon: 'person', label: 'Profile' },
 ]

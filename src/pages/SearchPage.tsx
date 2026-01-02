@@ -134,9 +134,8 @@ export default function SearchPage() {
         // Set query to indicate near me search
         setQuery('Near me')
 
-        // If using real API, we could search by coordinates
-        // For now, show a message that location was detected
-        console.log('User location:', location)
+        // If using real API, we would search by coordinates
+        // Location is now stored in userLocation state for API calls
       },
       (error) => {
         setIsLocating(false)

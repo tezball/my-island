@@ -8,25 +8,29 @@ import type { Offer } from '../data/types'
 
 const categoryIcons: Record<Offer['category'], string> = {
   food: 'restaurant',
-  activities: 'hiking',
+  activity: 'kayaking',
   gear: 'backpack',
-  attractions: 'attractions',
-  transport: 'directions_car',
+  water: 'pool',
+  wellness: 'spa',
+  experience: 'attractions',
+  other: 'category',
 }
 
 const categoryLabels: Record<Offer['category'], string> = {
   food: 'Food & Drink',
-  activities: 'Activities',
+  activity: 'Activities',
   gear: 'Camping Gear',
-  attractions: 'Attractions',
-  transport: 'Transport',
+  water: 'Water Sports',
+  wellness: 'Wellness',
+  experience: 'Experiences',
+  other: 'Other',
 }
 
 export default function OffersPage() {
   const navigate = useNavigate()
   const [selectedCategory, setSelectedCategory] = useState<Offer['category'] | 'all'>('all')
 
-  const categories: (Offer['category'] | 'all')[] = ['all', 'food', 'activities', 'gear', 'attractions', 'transport']
+  const categories: (Offer['category'] | 'all')[] = ['all', 'food', 'activity', 'gear', 'water', 'wellness', 'experience', 'other']
 
   const filteredOffers = selectedCategory === 'all'
     ? offers

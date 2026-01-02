@@ -4,13 +4,14 @@ import AppShell from '../../components/layout/AppShell'
 import Icon from '../../components/ui/Icon'
 import Skeleton from '../../components/ui/Skeleton'
 import { useToast } from '../../context/ToastContext'
+import type { OfferCategory } from '../../data/types'
 
 interface SupplierOffer {
   id: string
   title: string
   description: string
   discount: string
-  category: 'food' | 'activities' | 'gear' | 'attractions' | 'transport'
+  category: OfferCategory
   status: 'active' | 'inactive' | 'expired'
   validUntil: string
   views: number
@@ -24,7 +25,7 @@ const mockOffers: SupplierOffer[] = [
     title: '20% Off Kayak Rentals',
     description: 'Get 20% off all kayak rentals this summer.',
     discount: '20%',
-    category: 'activities',
+    category: 'activity',
     status: 'active',
     validUntil: '2025-08-31',
     views: 156,
@@ -46,7 +47,7 @@ const mockOffers: SupplierOffer[] = [
     title: 'Sunset Boat Tour Special',
     description: 'Book a sunset boat tour at a special rate.',
     discount: '15%',
-    category: 'attractions',
+    category: 'experience',
     status: 'active',
     validUntil: '2025-09-30',
     views: 170,
@@ -65,20 +66,24 @@ const mockOffers: SupplierOffer[] = [
   },
 ]
 
-const categoryIcons: Record<SupplierOffer['category'], string> = {
+const categoryIcons: Record<OfferCategory, string> = {
   food: 'restaurant',
-  activities: 'kayaking',
+  activity: 'kayaking',
   gear: 'backpack',
-  attractions: 'attractions',
-  transport: 'directions_car',
+  water: 'pool',
+  wellness: 'spa',
+  experience: 'attractions',
+  other: 'category',
 }
 
-const categoryColors: Record<SupplierOffer['category'], string> = {
+const categoryColors: Record<OfferCategory, string> = {
   food: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400',
-  activities: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+  activity: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
   gear: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
-  attractions: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400',
-  transport: 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400',
+  water: 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400',
+  wellness: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400',
+  experience: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+  other: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
 }
 
 type FilterStatus = 'all' | 'active' | 'inactive' | 'expired'

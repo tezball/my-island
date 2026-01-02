@@ -6,10 +6,12 @@ import StatCard from '../../components/ui/StatCard'
 import Icon from '../../components/ui/Icon'
 import Toggle from '../../components/ui/Toggle'
 import Skeleton from '../../components/ui/Skeleton'
+import { useToast } from '../../context/ToastContext'
 import { ownerStats, ownerCampsites, broadcastAlerts } from '../../data/mockData'
 
 export default function OwnerDashboardPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [campsiteVisible, setCampsiteVisible] = useState(true)
   const [broadcastMessage, setBroadcastMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
@@ -26,7 +28,7 @@ export default function OwnerDashboardPage() {
   const handleBroadcast = () => {
     if (broadcastMessage.trim()) {
       // In real app, would send broadcast via API
-      alert(`Broadcast sent to ${activeGuests} guests!`)
+      toast.success('Broadcast Sent', `Your message was sent to ${activeGuests} guests.`)
       setBroadcastMessage('')
     }
   }

@@ -116,20 +116,20 @@ export default function ProfilePage() {
           </Link>
         </div>
 
-        {/* Become Owner CTA - shown only for non-owners */}
-        {!user?.isOwner && (
+        {/* Supplier Dashboard Link - shown only for suppliers */}
+        {user?.isSupplier && (
           <div className="px-4 pt-4">
             <Link
-              to="/become-owner"
+              to="/supplier"
               className="flex items-center gap-4 p-4 bg-gradient-to-r from-primary/10 to-emerald-50 dark:from-primary/20 dark:to-emerald-900/20 rounded-2xl border border-primary/20"
             >
               <div className="size-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                <Icon name="add_business" size={24} className="text-primary" />
+                <Icon name="storefront" size={24} className="text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-slate-900 dark:text-white">Become a Host</h3>
+                <h3 className="font-semibold text-slate-900 dark:text-white">Supplier Dashboard</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  List your campsite and start earning
+                  Manage your business profile and offers
                 </p>
               </div>
               <Icon name="chevron_right" size={20} className="text-primary" />
@@ -151,6 +151,27 @@ export default function ProfilePage() {
                 <h3 className="font-semibold text-slate-900 dark:text-white">Owner Dashboard</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   Manage your campsites and bookings
+                </p>
+              </div>
+              <Icon name="chevron_right" size={20} className="text-primary" />
+            </Link>
+          </div>
+        )}
+
+        {/* Become Owner CTA - shown only for non-owners and non-suppliers */}
+        {!user?.isOwner && !user?.isSupplier && (
+          <div className="px-4 pt-4">
+            <Link
+              to="/become-owner"
+              className="flex items-center gap-4 p-4 bg-gradient-to-r from-primary/10 to-emerald-50 dark:from-primary/20 dark:to-emerald-900/20 rounded-2xl border border-primary/20"
+            >
+              <div className="size-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <Icon name="add_business" size={24} className="text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900 dark:text-white">Become a Host</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  List your campsite and start earning
                 </p>
               </div>
               <Icon name="chevron_right" size={20} className="text-primary" />
