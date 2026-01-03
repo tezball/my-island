@@ -6,40 +6,23 @@ import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
 import Badge from '../../components/ui/Badge'
 
-const mockOffers = [
-  {
-    id: '1',
-    title: 'Summer Special',
-    discount: '20% off',
-    validUntil: '2025-08-31',
-    status: 'active',
-    redemptions: 45,
-  },
-  {
-    id: '2',
-    title: 'Early Bird Deal',
-    discount: '15% off',
-    validUntil: '2025-06-30',
-    status: 'active',
-    redemptions: 23,
-  },
-  {
-    id: '3',
-    title: 'Weekend Warrior',
-    discount: 'Free night',
-    validUntil: '2025-03-15',
-    status: 'expired',
-    redemptions: 89,
-  },
-]
+interface Offer {
+  id: string
+  title: string
+  discount: string
+  validUntil: string
+  status: 'active' | 'expired'
+  redemptions: number
+}
 
 type FilterStatus = 'all' | 'active' | 'expired'
 
 export default function OfferManagementPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
+  const [offers] = useState<Offer[]>([])
 
-  const filteredOffers = mockOffers.filter(offer => {
+  const filteredOffers = offers.filter(offer => {
     const matchesSearch = offer.title.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesStatus = filterStatus === 'all' || offer.status === filterStatus
     return matchesSearch && matchesStatus
@@ -95,18 +78,18 @@ export default function OfferManagementPage() {
         <div className="px-4 grid grid-cols-3 gap-3 pb-4">
           <div className="p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800 text-center">
             <p className="text-2xl font-bold text-primary">
-              {mockOffers.filter(o => o.status === 'active').length}
+              {offers.filter(o => o.status === 'active').length}
             </p>
             <p className="text-xs text-slate-500">Active</p>
           </div>
           <div className="p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800 text-center">
             <p className="text-2xl font-bold text-slate-900 dark:text-white">
-              {mockOffers.reduce((sum, o) => sum + o.redemptions, 0)}
+              {offers.reduce((sum, o) => sum + o.redemptions, 0)}
             </p>
             <p className="text-xs text-slate-500">Redemptions</p>
           </div>
           <div className="p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800 text-center">
-            <p className="text-2xl font-bold text-emerald-600">€1,245</p>
+            <p className="text-2xl font-bold text-emerald-600">€0</p>
             <p className="text-xs text-slate-500">Revenue</p>
           </div>
         </div>

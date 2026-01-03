@@ -18,54 +18,6 @@ interface SupplierOffer {
   claims: number
 }
 
-// Mock offers data
-const mockOffers: SupplierOffer[] = [
-  {
-    id: 'offer-1',
-    title: '20% Off Kayak Rentals',
-    description: 'Get 20% off all kayak rentals this summer.',
-    discount: '20%',
-    category: 'activity',
-    status: 'active',
-    validUntil: '2025-08-31',
-    views: 156,
-    claims: 34,
-  },
-  {
-    id: 'offer-2',
-    title: 'Free Coffee with Breakfast',
-    description: 'Enjoy a free coffee with any breakfast order.',
-    discount: 'Free Coffee',
-    category: 'food',
-    status: 'active',
-    validUntil: '2025-07-15',
-    views: 198,
-    claims: 28,
-  },
-  {
-    id: 'offer-3',
-    title: 'Sunset Boat Tour Special',
-    description: 'Book a sunset boat tour at a special rate.',
-    discount: '15%',
-    category: 'experience',
-    status: 'active',
-    validUntil: '2025-09-30',
-    views: 170,
-    claims: 25,
-  },
-  {
-    id: 'offer-4',
-    title: 'Camping Gear Bundle',
-    description: 'Rent a complete camping gear bundle.',
-    discount: '25%',
-    category: 'gear',
-    status: 'inactive',
-    validUntil: '2025-06-01',
-    views: 89,
-    claims: 12,
-  },
-]
-
 const categoryIcons: Record<OfferCategory, string> = {
   food: 'restaurant',
   activity: 'kayaking',
@@ -96,7 +48,7 @@ export default function SupplierOffersPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setOffers(mockOffers)
+      setOffers([])
       setIsLoading(false)
     }, 500)
     return () => clearTimeout(timer)

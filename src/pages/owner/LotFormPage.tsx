@@ -29,40 +29,6 @@ const amenitiesList = [
   'Shade', 'Lake View', 'Sea View', 'Private Bathroom',
 ]
 
-// Mock lots for when API is unavailable
-const mockLots: Record<string, LotResponse> = {
-  '1': {
-    id: '1',
-    name: 'Ocean View Safari Tent',
-    type: 'GLAMPING',
-    capacity: 4,
-    pricePerNight: 95,
-    images: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400'],
-    amenities: ['Electric', 'Water', 'Private Bathroom', 'Sea View'],
-    available: true,
-  },
-  '2': {
-    id: '2',
-    name: 'Sunset Camping Pitch',
-    type: 'TENT',
-    capacity: 6,
-    pricePerNight: 35,
-    images: ['https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=400'],
-    amenities: ['Electric', 'Water', 'Fire Pit'],
-    available: false,
-  },
-  '3': {
-    id: '3',
-    name: 'Lakeside Caravan Bay',
-    type: 'CARAVAN',
-    capacity: 4,
-    pricePerNight: 45,
-    images: ['https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=400'],
-    amenities: ['Electric', 'Water', 'Wi-Fi'],
-    available: false,
-  },
-}
-
 export default function LotFormPage() {
   const { lotId } = useParams<{ lotId: string }>()
   const navigate = useNavigate()
@@ -92,17 +58,8 @@ export default function LotFormPage() {
         setIsAvailable(data.available)
       } catch (err) {
         console.error('Failed to fetch lot:', err)
-        // Use mock data as fallback
-        const mockData = mockLots[lotId]
-        if (mockData) {
-          setExistingLot(mockData)
-          setName(mockData.name)
-          setType(mockData.type.toLowerCase() as LotType)
-          setCapacity(mockData.capacity)
-          setPrice(mockData.pricePerNight.toString())
-          setSelectedAmenities(mockData.amenities)
-          setIsAvailable(mockData.available)
-        }
+        // Navigate back if lot not found
+        navigate('/owner/lots')
       } finally {
         setIsLoading(false)
       }

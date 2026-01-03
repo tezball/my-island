@@ -7,10 +7,9 @@ import Icon from '../../components/ui/Icon'
 import { useToast } from '../../context/ToastContext'
 import type { SupplierProfile } from '../../data/types'
 
-// Mock supplier profile data
-const mockProfile: SupplierProfile = {
-  id: 'supplier-1',
-  userId: 'user-1',
+const emptyProfile: SupplierProfile = {
+  id: '',
+  userId: '',
   businessName: '',
   description: '',
   location: '',
@@ -26,7 +25,7 @@ export default function BusinessProfilePage() {
   const toast = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [profile, setProfile] = useState<SupplierProfile>(mockProfile)
+  const [profile, setProfile] = useState<SupplierProfile>(emptyProfile)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 

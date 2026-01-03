@@ -22,43 +22,6 @@ interface LotWithStatus extends LotResponse {
   status: 'available' | 'booked' | 'maintenance'
 }
 
-// Mock lots for when API is unavailable
-const mockLots: LotWithStatus[] = [
-  {
-    id: '1',
-    name: 'Ocean View Safari Tent',
-    type: 'GLAMPING',
-    capacity: 4,
-    pricePerNight: 95,
-    images: ['https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400'],
-    amenities: ['King Bed', 'Private Bathroom', 'Deck', 'Fire Pit'],
-    available: true,
-    status: 'available',
-  },
-  {
-    id: '2',
-    name: 'Sunset Camping Pitch',
-    type: 'TENT',
-    capacity: 6,
-    pricePerNight: 35,
-    images: ['https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=400'],
-    amenities: ['Electric Hook-up', 'Water Point', 'Fire Pit'],
-    available: false,
-    status: 'booked',
-  },
-  {
-    id: '3',
-    name: 'Lakeside Caravan Bay',
-    type: 'CARAVAN',
-    capacity: 4,
-    pricePerNight: 45,
-    images: ['https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=400'],
-    amenities: ['Electric Hook-up', 'Water & Waste', 'Wi-Fi'],
-    available: false,
-    status: 'maintenance',
-  },
-]
-
 export default function ManageLotsPage() {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
@@ -74,20 +37,19 @@ export default function ManageLotsPage() {
         if (campsites.length > 0) {
           setCampsite(campsites[0])
           const lotsData = await ownerApi.getLotsByCampsite(campsites[0].id)
-          // Add mock status to lots
-          const lotsWithStatus: LotWithStatus[] = lotsData.map((lot, i) => ({
+          // Determine status based on availability
+          const lotsWithStatus: LotWithStatus[] = lotsData.map((lot) => ({
             ...lot,
-            status: (i === 0 ? 'available' : i === 1 ? 'booked' : i === 2 ? 'maintenance' : 'available') as 'available' | 'booked' | 'maintenance',
+            status: lot.available ? 'available' : 'booked',
           }))
-          setLots(lotsWithStatus.length > 0 ? lotsWithStatus : mockLots)
+          setLots(lotsWithStatus)
         } else {
-          // No campsites, use mock data
-          setLots(mockLots)
+          // No campsites - show empty state
+          setLots([])
         }
       } catch (err) {
         console.error('Failed to fetch lots:', err)
-        // Use mock lots when API fails
-        setLots(mockLots)
+        setLots([])
       } finally {
         setIsLoading(false)
       }
@@ -260,8 +222,19 @@ export default function ManageLotsPage() {
 
           {filteredLots.length === 0 && (
             <div className="text-center py-12">
-              <Icon name="search_off" size={48} className="text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">No lots found</p>
+              <Icon name={lots.length === 0 ? "add_home" : "search_off"} size={48} className="text-slate-300 mx-auto mb-3" />
+              <p className="text-slate-500 mb-4">
+                {lots.length === 0 ? "No lots yet. Add your first lot to start accepting bookings." : "No lots match your search"}
+              </p>
+              {lots.length === 0 && (
+                <Link
+                  to="/owner/lots/new"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"
+                >
+                  <Icon name="add" size={20} />
+                  Add First Lot
+                </Link>
+              )}
             </div>
           )}
         </div>

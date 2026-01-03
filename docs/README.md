@@ -26,6 +26,7 @@ tags:
 | [[04-User-Flows/README\|User Flows]] | User journeys, stories, and screen flows |
 | [[05-Design-Specs/README\|Design Specs]] | UI/UX specifications and screen designs |
 | [[06-Feedback/README\|Feedback]] | User testing and UI reviews |
+| [[07-Testing/TESTING_APPROACH\|Testing]] | Backend API testing strategy and patterns |
 
 ---
 
@@ -75,6 +76,7 @@ docs/
 ├── 04-User-Flows/                 # User journeys (was: flows/)
 ├── 05-Design-Specs/               # Screen designs (was: design/)
 ├── 06-Feedback/                   # User feedback and reviews
+├── 07-Testing/                    # Testing strategy and patterns
 └── .obsidian/                     # Obsidian config
 ```
 

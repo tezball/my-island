@@ -12,12 +12,6 @@ interface PaymentMethod {
   isDefault: boolean
 }
 
-// Mock saved payment methods
-const mockPaymentMethods: PaymentMethod[] = [
-  { id: '1', type: 'visa', last4: '4242', expiry: '12/26', isDefault: true },
-  { id: '2', type: 'mastercard', last4: '8888', expiry: '03/25', isDefault: false },
-]
-
 const cardIcons: Record<PaymentMethod['type'], string> = {
   visa: 'credit_card',
   mastercard: 'credit_card',
@@ -32,7 +26,7 @@ const cardLabels: Record<PaymentMethod['type'], string> = {
 
 export default function ProfilePaymentMethodsPage() {
   const toast = useToast()
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(mockPaymentMethods)
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
   const handleSetDefault = (id: string) => {

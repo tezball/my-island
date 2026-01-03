@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "07-Testing/TESTING_APPROACH.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "TESTING_APPROACH"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 407.5
+    "width": 407.5,
+    "collapsed": true
   },
   "right": {
     "id": "62f417dc1f6f45ad",
@@ -185,8 +186,9 @@
   },
   "active": "4849fc9b473955f3",
   "lastOpenFiles": [
-    "CAMPSITE_LEADS.md",
+    "07-Testing/TESTING_APPROACH.md.tmp.1487339.1767475892024",
     "README.md",
+    "CAMPSITE_LEADS.md",
     "03-Business/Revenue_Projection_Report.md.tmp.482289.1767441457188",
     "02-Architecture/DOMAIN_MODEL.md.tmp.482289.1767441446994",
     "01-Project-Management/MVP_CRITICAL_TASKS.md.tmp.482289.1767441435568",
@@ -239,7 +241,6 @@
     "04-User-Flows/offers/README.md",
     "04-User-Flows/notifications/notifications-flow.canvas",
     "04-User-Flows/notifications/README.md",
-    "04-User-Flows/my-bookings/my-bookings-flow.canvas",
-    "04-User-Flows/my-bookings/README.md"
+    "04-User-Flows/my-bookings/my-bookings-flow.canvas"
   ]
 }
