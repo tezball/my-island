@@ -79,9 +79,15 @@ public class CampsiteService {
                     .collect(Collectors.toSet());
         }
 
-        long facilityCount = facilityEnums != null ? facilityEnums.size() : 0;
-        return campsiteRepository.search(county, searchLower, facilityEnums, facilityCount, pageable)
-                .map(this::toCampsiteResponse);
+        // Use different query methods based on whether facilities filter is provided
+        if (facilityEnums != null && !facilityEnums.isEmpty()) {
+            long facilityCount = facilityEnums.size();
+            return campsiteRepository.searchWithFacilities(county, searchLower, facilityEnums, facilityCount, pageable)
+                    .map(this::toCampsiteResponse);
+        } else {
+            return campsiteRepository.searchByText(county, searchLower, pageable)
+                    .map(this::toCampsiteResponse);
+        }
     }
 
     public Page<CampsiteResponse> getCampsitesByCounty(String county, Pageable pageable) {

@@ -12,5 +12,6 @@ public enum LotType {
     POD,
     APARTMENT,
     COTTAGE,
-    SAFARI_TENT
+    SAFARI_TENT,
+    BED_AND_BREAKFAST
 }

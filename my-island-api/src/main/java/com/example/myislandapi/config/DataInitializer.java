@@ -58,6 +58,7 @@ public class DataInitializer {
             LotRepository lotRepository,
             FAQRepository faqRepository,
             OfferRepository offerRepository,
+            com.example.myislandapi.repository.BookingRepository bookingRepository,
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
@@ -93,8 +94,149 @@ public class DataInitializer {
             List<Offer> offers = createOffers(offerRepository, campsites);
             log.info("Created {} offers", offers.size());
 
+            // Add owner dashboard session data if not already present
+            seedOwnerDashboardData(userRepository, campsiteRepository, lotRepository, bookingRepository);
+
             log.info("Database initialization complete!");
         };
+    }
+
+    private void seedOwnerDashboardData(UserRepository userRepository, CampsiteRepository campsiteRepository,
+                                       LotRepository lotRepository, com.example.myislandapi.repository.BookingRepository bookingRepository) {
+        String ownerEmail = "siobhan@clifdeneco.ie";
+        User owner = userRepository.findByEmail(ownerEmail).orElse(null);
+        if (owner == null) return;
+
+        // Check if already seeded
+        if (campsiteRepository.findAll().stream().anyMatch(c -> c.getName().contains("Off-site"))) {
+            return;
+        }
+
+        log.info("Seeding owner dashboard session data for {}...", ownerEmail);
+
+        // 1. Create a new "Off-site B&B" campsite
+        Campsite bbCampsite = new Campsite();
+        bbCampsite.setName("Harbour View B&B (Off-site)");
+        bbCampsite.setDescription("Cozy bed and breakfast located just outside our main resort.");
+        bbCampsite.setOwner(owner);
+        Location bbLocation = new Location();
+        bbLocation.setAddress("Main St, Clifden");
+        bbLocation.setCounty("Galway");
+        bbLocation.setLat(53.4870);
+        bbLocation.setLng(-10.0210);
+        bbCampsite.setLocation(bbLocation);
+        bbCampsite.setRating(BigDecimal.valueOf(4.9));
+        bbCampsite.setReviewCount(32);
+        bbCampsite.setActive(true);
+        bbCampsite = campsiteRepository.save(bbCampsite);
+
+        // 2. Add lots to Clifden Eco Beach
+        Campsite clifden = campsiteRepository.findAll().stream()
+                .filter(c -> c.getName().contains("Clifden Eco Beach"))
+                .findFirst().orElse(null);
+
+        List<Lot> addedLots = new ArrayList<>();
+
+        if (clifden != null) {
+            // Tents (reach 30)
+            long existingTents = clifden.getLots().stream().filter(l -> l.getType() == LotType.TENT).count();
+            for (int i = (int)existingTents + 1; i <= 30; i++) {
+                Lot lot = new Lot();
+                lot.setCampsite(clifden);
+                lot.setName("Tent Pitch " + i);
+                lot.setType(LotType.TENT);
+                lot.setCapacity(4);
+                lot.setPricePerNight(BigDecimal.valueOf(25.00));
+                lot.setAvailable(true);
+                addedLots.add(lotRepository.save(lot));
+            }
+
+            // RVs (20)
+            for (int i = 1; i <= 20; i++) {
+                Lot lot = new Lot();
+                lot.setCampsite(clifden);
+                lot.setName("RV Spot " + i);
+                lot.setType(LotType.RV);
+                lot.setCapacity(6);
+                lot.setPricePerNight(BigDecimal.valueOf(55.00));
+                lot.setAvailable(true);
+                addedLots.add(lotRepository.save(lot));
+            }
+
+            // Apartments (4)
+            for (int i = 1; i <= 4; i++) {
+                Lot lot = new Lot();
+                lot.setCampsite(clifden);
+                lot.setName("Resort Apartment " + i);
+                lot.setType(LotType.APARTMENT);
+                lot.setCapacity(4);
+                lot.setPricePerNight(BigDecimal.valueOf(145.00));
+                lot.setAvailable(true);
+                addedLots.add(lotRepository.save(lot));
+            }
+            
+            // 1 Cabin (ensure at least 1)
+            if (clifden.getLots().stream().noneMatch(l -> l.getType() == LotType.CABIN)) {
+                Lot lot = new Lot();
+                lot.setCampsite(clifden);
+                lot.setName("Luxury Cabin");
+                lot.setType(LotType.CABIN);
+                lot.setCapacity(4);
+                lot.setPricePerNight(BigDecimal.valueOf(180.00));
+                lot.setAvailable(true);
+                addedLots.add(lotRepository.save(lot));
+            } else {
+                clifden.getLots().stream().filter(l -> l.getType() == LotType.CABIN).findFirst().ifPresent(addedLots::add);
+            }
+        }
+
+        // B&B lot
+        Lot bbLot = new Lot();
+        bbLot.setCampsite(bbCampsite);
+        bbLot.setName("Deluxe B&B Room");
+        bbLot.setType(LotType.BED_AND_BREAKFAST);
+        bbLot.setCapacity(2);
+        bbLot.setPricePerNight(BigDecimal.valueOf(120.00));
+        bbLot.setAvailable(true);
+        addedLots.add(lotRepository.save(bbLot));
+
+        // 3. Generate simulated COMPLETED bookings
+        seedBookings(addedLots, userRepository, bookingRepository);
+    }
+
+    private void seedBookings(List<Lot> lots, UserRepository userRepository, 
+                              com.example.myislandapi.repository.BookingRepository bookingRepository) {
+        log.info("Seeding simulated bookings for May-Sept 2025...");
+        List<User> guests = userRepository.findAll().stream().filter(u -> !u.isOwner()).toList();
+        if (guests.isEmpty()) return;
+
+        LocalDate start = LocalDate.of(2025, 5, 1);
+        
+        for (Lot lot : lots) {
+            int numBookings = 5 + random.nextInt(10);
+            for (int i = 0; i < numBookings; i++) {
+                com.example.myislandapi.entity.Booking booking = new com.example.myislandapi.entity.Booking();
+                booking.setLot(lot);
+                booking.setUser(guests.get(random.nextInt(guests.size())));
+                
+                LocalDate checkIn = start.plusDays(i * 10 + random.nextInt(5));
+                if (checkIn.isAfter(LocalDate.of(2025, 9, 15))) continue;
+                
+                booking.setCheckIn(checkIn);
+                booking.setCheckOut(checkIn.plusDays(2 + random.nextInt(5)));
+                booking.setGuests(1 + random.nextInt(lot.getCapacity()));
+                booking.setStatus(com.example.myislandapi.enums.BookingStatus.COMPLETED);
+                
+                long nights = java.time.temporal.ChronoUnit.DAYS.between(booking.getCheckIn(), booking.getCheckOut());
+                BigDecimal lotPrice = lot.getPricePerNight().multiply(BigDecimal.valueOf(nights));
+                booking.setLotPrice(lotPrice);
+                booking.setExtrasPrice(BigDecimal.ZERO);
+                booking.setServiceFee(lotPrice.multiply(BigDecimal.valueOf(0.1)));
+                booking.setTotalPrice(booking.getLotPrice().add(booking.getServiceFee()));
+                
+                bookingRepository.save(booking);
+            }
+        }
     }
 
     private List<User> createOwners(UserRepository repository, PasswordEncoder encoder) {
@@ -492,7 +634,7 @@ public class DataInitializer {
             case TREEHOUSE -> "https://images.unsplash.com/photo-1520824071669-7cc5b7097969?w=800";
             case YURT -> "https://images.unsplash.com/photo-1545572279-d0d91040c5d1?w=800";
             case POD -> "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=800";
-            case APARTMENT -> "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800";
+            case APARTMENT, BED_AND_BREAKFAST -> "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800";
         };
     }
 

@@ -97,11 +97,29 @@ export interface LotResponse {
 
 export interface OwnerStats {
   totalBookings: number
+  pendingBookings: number
+  confirmedBookings: number
+  completedBookings: number
   upcomingBookings: number
-  revenue: number
+  totalRevenue: number
+  thisMonthRevenue: number
+  lastMonthRevenue: number
   revenueChange: number
   occupancyRate: number
   averageRating: number
+  totalReviews: number
+  totalCampsites: number
+  totalLots: number
+}
+
+export interface RevenueDataPoint {
+  month: string
+  revenue: number
+  bookings: number
+}
+
+export interface RevenueDataResponse {
+  monthlyData: RevenueDataPoint[]
 }
 
 // Owner API service
@@ -113,6 +131,10 @@ export const ownerApi = {
   // Get owner statistics
   getStats: () =>
     api.get<OwnerStats>('/owner/stats'),
+
+  // Get revenue data for charts
+  getRevenueData: (months: number = 6) =>
+    api.get<RevenueDataResponse>(`/owner/revenue-data?months=${months}`),
 
   // Get owner's campsites
   getMyCampsites: () =>

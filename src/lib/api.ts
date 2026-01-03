@@ -68,6 +68,17 @@ export function getRefreshToken(): string | null {
   return localStorage.getItem(REFRESH_TOKEN_KEY)
 }
 
+// Auth error callback - set by AuthProvider to handle 401/403 responses
+let onAuthError: (() => void) | null = null
+
+export function setAuthErrorHandler(handler: () => void): void {
+  onAuthError = handler
+}
+
+export function clearAuthErrorHandler(): void {
+  onAuthError = null
+}
+
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { body, skipAuth = false, headers: customHeaders, ...fetchOptions } = options
 
@@ -101,6 +112,14 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     const data = await response.json().catch(() => null)
 
     if (!response.ok) {
+      // Handle auth errors - clear tokens and trigger auth error callback
+      if (response.status === 401 || response.status === 403) {
+        clearAuthTokens()
+        if (onAuthError) {
+          onAuthError()
+        }
+      }
+
       throw createApiError(
         data?.message || `HTTP ${response.status}`,
         response.status,

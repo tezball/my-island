@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import SearchBar from '../components/ui/SearchBar'
 import CampsiteCard from '../components/ui/CampsiteCard'
@@ -46,6 +46,7 @@ const popularSearches: Array<{ query: string; icon: string; filters?: Facility[]
 ]
 
 export default function SearchPage() {
+  const [searchParams] = useSearchParams()
   const [query, setQuery] = useState('')
   const [selectedFilters, setSelectedFilters] = useState<Facility[]>([])
   const [showFilters, setShowFilters] = useState(false)
@@ -55,6 +56,25 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLocating, setIsLocating] = useState(false)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+
+  // Initialize from URL params on mount
+  useEffect(() => {
+    const q = searchParams.get('q')
+    const filters = searchParams.get('filters')
+
+    if (q) {
+      setQuery(q)
+    }
+    if (filters) {
+      const filterList = filters.split(',').filter(f =>
+        facilityFilters.some(ff => ff.id === f)
+      ) as Facility[]
+      if (filterList.length > 0) {
+        setSelectedFilters(filterList)
+        setShowFilters(true)
+      }
+    }
+  }, [searchParams])
 
   // Fetch featured campsites on mount
   useEffect(() => {

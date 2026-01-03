@@ -44,11 +44,19 @@ export default function OwnerDashboardPage() {
         // Set default stats on error
         setStats({
           totalBookings: 0,
+          pendingBookings: 0,
+          confirmedBookings: 0,
+          completedBookings: 0,
           upcomingBookings: 0,
-          revenue: 0,
+          totalRevenue: 0,
+          thisMonthRevenue: 0,
+          lastMonthRevenue: 0,
           revenueChange: 0,
           occupancyRate: 0,
           averageRating: 0,
+          totalReviews: 0,
+          totalCampsites: 0,
+          totalLots: 0,
         })
       } finally {
         setIsLoading(false)
@@ -106,18 +114,16 @@ export default function OwnerDashboardPage() {
         {/* Stats Grid */}
         <div className="p-4 grid grid-cols-2 gap-3">
           <StatCard
-            icon="visibility"
-            value="1,240"
-            label="Views this week"
-            trend={12}
-            trendDirection="up"
+            icon="calendar_month"
+            value={stats?.totalBookings || 0}
+            label="Total bookings"
+            trend={stats?.revenueChange ? Math.round(stats.revenueChange) : 0}
+            trendDirection={(stats?.revenueChange || 0) >= 0 ? 'up' : 'down'}
           />
           <StatCard
-            icon="notifications_active"
-            value="8"
-            label="Alerts sent"
-            trend={2}
-            trendDirection="up"
+            icon="pending_actions"
+            value={stats?.pendingBookings || 0}
+            label="Pending approval"
           />
         </div>
 
@@ -234,7 +240,7 @@ export default function OwnerDashboardPage() {
                 Manage Lots
               </span>
               <span className="text-xs text-slate-500">
-                3 active
+                {stats?.totalLots || 0} active
               </span>
             </Link>
             <Link
@@ -248,7 +254,7 @@ export default function OwnerDashboardPage() {
                 View Stats
               </span>
               <span className="text-xs text-slate-500">
-                €{(stats?.revenue || 0).toLocaleString()}
+                €{(stats?.totalRevenue || 0).toLocaleString()}
               </span>
             </Link>
             {campsite ? (

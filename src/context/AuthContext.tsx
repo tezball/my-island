@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import type { User } from '../data/types'
-import api, { setAuthTokens, clearAuthTokens } from '../lib/api'
+import api, { setAuthTokens, clearAuthTokens, setAuthErrorHandler, clearAuthErrorHandler } from '../lib/api'
 
 // API Response types
 interface AuthResponse {
@@ -252,6 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     clearAuthTokens()
+    localStorage.removeItem(AUTH_STORAGE_KEY)
     setState({
       user: null,
       isAuthenticated: false,
@@ -259,6 +260,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       error: null,
     })
   }, [])
+
+  // Register auth error handler to logout on 401/403 API responses
+  useEffect(() => {
+    setAuthErrorHandler(() => {
+      logout()
+    })
+    return () => {
+      clearAuthErrorHandler()
+    }
+  }, [logout])
 
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }))

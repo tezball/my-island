@@ -55,23 +55,66 @@ public class OwnerService {
         int pendingBookings = 0;
         int confirmedBookings = 0;
         int completedBookings = 0;
+        int upcomingBookings = 0;
         BigDecimal totalRevenue = BigDecimal.ZERO;
+        BigDecimal thisMonthRevenue = BigDecimal.ZERO;
+        BigDecimal lastMonthRevenue = BigDecimal.ZERO;
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfThisMonth = today.withDayOfMonth(1);
+        LocalDate startOfLastMonth = startOfThisMonth.minusMonths(1);
+        LocalDate endOfLastMonth = startOfThisMonth.minusDays(1);
 
         for (Booking booking : bookings) {
             switch (booking.getStatus()) {
-                case PENDING -> pendingBookings++;
-                case CONFIRMED, CHECKED_IN -> confirmedBookings++;
+                case PENDING -> {
+                    pendingBookings++;
+                    // Count as upcoming if check-in is in the future
+                    if (!booking.getCheckIn().isBefore(today)) {
+                        upcomingBookings++;
+                    }
+                }
+                case CONFIRMED, CHECKED_IN -> {
+                    confirmedBookings++;
+                    // Count as upcoming if check-in is in the future
+                    if (!booking.getCheckIn().isBefore(today)) {
+                        upcomingBookings++;
+                    }
+                }
                 case COMPLETED -> {
                     completedBookings++;
                     totalRevenue = totalRevenue.add(booking.getTotalPrice());
+
+                    // Calculate this month's revenue (based on checkout date)
+                    LocalDate checkOut = booking.getCheckOut();
+                    if (!checkOut.isBefore(startOfThisMonth)) {
+                        thisMonthRevenue = thisMonthRevenue.add(booking.getTotalPrice());
+                    } else if (!checkOut.isBefore(startOfLastMonth) && !checkOut.isAfter(endOfLastMonth)) {
+                        lastMonthRevenue = lastMonthRevenue.add(booking.getTotalPrice());
+                    }
                 }
                 default -> {}
             }
         }
 
+        // Calculate revenue change percentage
+        double revenueChange = 0.0;
+        if (lastMonthRevenue.compareTo(BigDecimal.ZERO) > 0) {
+            revenueChange = thisMonthRevenue.subtract(lastMonthRevenue)
+                    .divide(lastMonthRevenue, 4, java.math.RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .doubleValue();
+        } else if (thisMonthRevenue.compareTo(BigDecimal.ZERO) > 0) {
+            revenueChange = 100.0; // 100% increase from zero
+        }
+
+        // Calculate occupancy rate for current month
+        double occupancyRate = calculateOccupancyRate(campsites, bookings.getContent(), today);
+
         // Calculate average rating
         double averageRating = campsites.stream()
-                .mapToDouble(c -> c.getRating() != null ? c.getRating().doubleValue() : 0)
+                .filter(c -> c.getRating() != null)
+                .mapToDouble(c -> c.getRating().doubleValue())
                 .average()
                 .orElse(0);
 
@@ -84,13 +127,58 @@ public class OwnerService {
                 pendingBookings,
                 confirmedBookings,
                 completedBookings,
+                upcomingBookings,
                 totalRevenue,
-                BigDecimal.ZERO, // TODO: Calculate this month's revenue
+                thisMonthRevenue,
+                lastMonthRevenue,
+                revenueChange,
+                occupancyRate,
                 averageRating,
                 totalReviews,
                 totalCampsites,
                 totalLots
         );
+    }
+
+    private double calculateOccupancyRate(List<Campsite> campsites, List<Booking> bookings, LocalDate today) {
+        // Calculate occupancy for the current month
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        int totalLots = campsites.stream().mapToInt(c -> c.getLots().size()).sum();
+        if (totalLots == 0) {
+            return 0.0;
+        }
+
+        // Total available lot-nights this month
+        int daysInMonth = today.lengthOfMonth();
+        int totalAvailableNights = totalLots * daysInMonth;
+
+        // Count booked nights
+        int bookedNights = 0;
+        for (Booking booking : bookings) {
+            // Only count confirmed, checked-in, or completed bookings
+            if (booking.getStatus() == BookingStatus.PENDING ||
+                booking.getStatus() == BookingStatus.CANCELLED) {
+                continue;
+            }
+
+            LocalDate checkIn = booking.getCheckIn();
+            LocalDate checkOut = booking.getCheckOut();
+
+            // Calculate overlap with current month
+            LocalDate overlapStart = checkIn.isBefore(startOfMonth) ? startOfMonth : checkIn;
+            LocalDate overlapEnd = checkOut.isAfter(endOfMonth) ? endOfMonth : checkOut;
+
+            if (!overlapStart.isAfter(overlapEnd)) {
+                // Count nights (checkOut is exclusive, so we count days from start to end-1)
+                bookedNights += (int) java.time.temporal.ChronoUnit.DAYS.between(overlapStart, overlapEnd);
+            }
+        }
+
+        return totalAvailableNights > 0
+                ? Math.round((double) bookedNights / totalAvailableNights * 1000) / 10.0
+                : 0.0;
     }
 
     public List<CampsiteResponse> getOwnerCampsites(UUID ownerId) {

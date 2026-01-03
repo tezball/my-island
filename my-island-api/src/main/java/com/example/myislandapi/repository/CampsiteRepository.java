@@ -33,21 +33,35 @@ public interface CampsiteRepository extends JpaRepository<Campsite, UUID> {
     Page<Campsite> findByCounty(@Param("county") String county, Pageable pageable);
 
     @EntityGraph(attributePaths = {"images", "facilities", "owner"})
-    @Query("SELECT DISTINCT c FROM Campsite c LEFT JOIN c.facilities f WHERE c.active = true AND " +
+    @Query("SELECT c FROM Campsite c WHERE c.active = true AND " +
            "(:county IS NULL OR c.location.county = :county) AND " +
            "(:search IS NULL OR " +
            "LOWER(c.name) LIKE %:search% OR " +
            "LOWER(c.location.county) LIKE %:search% OR " +
            "LOWER(c.location.address) LIKE %:search% OR " +
-           "LOWER(c.description) LIKE %:search%) AND " +
-           "(:facilities IS NULL OR f IN :facilities) " +
-           "GROUP BY c.id " +
-           "HAVING (:facilities IS NULL OR COUNT(DISTINCT f) >= :facilityCount)")
-    Page<Campsite> search(@Param("county") String county,
-                          @Param("search") String search,
-                          @Param("facilities") Set<Facility> facilities,
-                          @Param("facilityCount") long facilityCount,
-                          Pageable pageable);
+           "LOWER(c.description) LIKE %:search%)")
+    Page<Campsite> searchByText(@Param("county") String county,
+                                @Param("search") String search,
+                                Pageable pageable);
+
+    @Query("SELECT DISTINCT c FROM Campsite c " +
+           "JOIN FETCH c.facilities " +
+           "JOIN FETCH c.images " +
+           "JOIN FETCH c.owner " +
+           "WHERE c.active = true AND " +
+           "EXISTS (SELECT 1 FROM Campsite c2 JOIN c2.facilities f WHERE c2 = c AND f IN :facilities " +
+           "GROUP BY c2 HAVING COUNT(DISTINCT f) >= :facilityCount) AND " +
+           "(:county IS NULL OR c.location.county = :county) AND " +
+           "(:search IS NULL OR " +
+           "LOWER(c.name) LIKE %:search% OR " +
+           "LOWER(c.location.county) LIKE %:search% OR " +
+           "LOWER(c.location.address) LIKE %:search% OR " +
+           "LOWER(c.description) LIKE %:search%)")
+    Page<Campsite> searchWithFacilities(@Param("county") String county,
+                                        @Param("search") String search,
+                                        @Param("facilities") Set<Facility> facilities,
+                                        @Param("facilityCount") long facilityCount,
+                                        Pageable pageable);
 
     @EntityGraph(attributePaths = {"images", "facilities", "owner"})
     List<Campsite> findByOwnerId(UUID ownerId);

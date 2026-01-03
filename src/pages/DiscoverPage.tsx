@@ -83,14 +83,28 @@ export default function DiscoverPage() {
 
           {/* Quick filters */}
           <div className="flex gap-2 mt-4 overflow-x-auto pb-2 -mx-4 px-4">
-            {['Near me', 'Beach', 'Mountains', 'Pet Friendly', 'Glamping'].map((filter) => (
-              <button
-                key={filter}
-                className="flex-shrink-0 px-4 py-2 bg-white dark:bg-surface-dark rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors"
-              >
-                {filter}
-              </button>
-            ))}
+            {[
+              { label: 'Near me', query: '', filters: '' },
+              { label: 'Beach', query: '', filters: 'beach' },
+              { label: 'Mountains', query: 'Mountains', filters: 'hiking' },
+              { label: 'Pet Friendly', query: '', filters: 'pets' },
+              { label: 'Glamping', query: 'Glamping', filters: '' },
+            ].map((filter) => {
+              const params = new URLSearchParams()
+              if (filter.query) params.set('q', filter.query)
+              if (filter.filters) params.set('filters', filter.filters)
+              const searchUrl = `/search${params.toString() ? '?' + params.toString() : ''}`
+
+              return (
+                <button
+                  key={filter.label}
+                  onClick={() => navigate(searchUrl)}
+                  className="flex-shrink-0 px-4 py-2 bg-white dark:bg-surface-dark rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors"
+                >
+                  {filter.label}
+                </button>
+              )
+            })}
           </div>
         </div>
 

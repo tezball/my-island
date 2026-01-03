@@ -5,59 +5,56 @@ import Icon from '../../components/ui/Icon'
 import LineChart from '../../components/charts/LineChart'
 import BarChart from '../../components/charts/BarChart'
 import Skeleton from '../../components/ui/Skeleton'
-import { ownerApi, type OwnerStats, type CampsiteResponse } from '../../lib/api/owner'
+import { ownerApi, type OwnerStats, type CampsiteResponse, type RevenueDataPoint } from '../../lib/api/owner'
 
 type TimePeriod = 'week' | 'month' | 'year'
-
-interface RevenueDataPoint {
-  month: string
-  revenue: number
-  bookings: number
-}
 
 export default function OwnerStatsPage() {
   const [period, setPeriod] = useState<TimePeriod>('month')
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState<OwnerStats | null>(null)
   const [campsite, setCampsite] = useState<CampsiteResponse | null>(null)
-
-  // Mock revenue data since no API endpoint
-  const revenueData: RevenueDataPoint[] = [
-    { month: 'Jan', revenue: 2400, bookings: 12 },
-    { month: 'Feb', revenue: 1398, bookings: 8 },
-    { month: 'Mar', revenue: 3800, bookings: 18 },
-    { month: 'Apr', revenue: 3908, bookings: 21 },
-    { month: 'May', revenue: 4800, bookings: 24 },
-    { month: 'Jun', revenue: 5200, bookings: 28 },
-  ]
+  const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([])
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsData, campsitesData] = await Promise.all([
+        const monthsMap: Record<TimePeriod, number> = { week: 1, month: 6, year: 12 }
+        const [statsData, campsitesData, revenueResponse] = await Promise.all([
           ownerApi.getStats(),
           ownerApi.getMyCampsites(),
+          ownerApi.getRevenueData(monthsMap[period]),
         ])
         setStats(statsData)
         if (campsitesData.length > 0) {
           setCampsite(campsitesData[0])
         }
+        setRevenueData(revenueResponse.monthlyData)
       } catch (err) {
         console.error('Failed to fetch stats:', err)
         setStats({
           totalBookings: 0,
+          pendingBookings: 0,
+          confirmedBookings: 0,
+          completedBookings: 0,
           upcomingBookings: 0,
-          revenue: 0,
+          totalRevenue: 0,
+          thisMonthRevenue: 0,
+          lastMonthRevenue: 0,
           revenueChange: 0,
           occupancyRate: 0,
           averageRating: 0,
+          totalReviews: 0,
+          totalCampsites: 0,
+          totalLots: 0,
         })
+        setRevenueData([])
       } finally {
         setIsLoading(false)
       }
     }
     fetchData()
-  }, [])
+  }, [period])
 
   // Transform revenue data for charts
   const revenueChartData = revenueData.map((d: RevenueDataPoint) => ({
@@ -70,11 +67,13 @@ export default function OwnerStatsPage() {
     value: d.bookings,
   }))
 
-  // Calculate revenue breakdown (mock data)
+  // Revenue breakdown - currently stays are 100% since we only track lot bookings
+  // TODO: Add backend support for services and goods revenue tracking
+  const totalRevenue = stats?.totalRevenue || 0
   const revenueBreakdown = [
-    { label: 'Stays', value: 70, color: '#13ec80' },
-    { label: 'Services', value: 15, color: '#0eb562' },
-    { label: 'Goods', value: 15, color: '#84ffc2' },
+    { label: 'Stays', value: totalRevenue > 0 ? 100 : 0, color: '#13ec80' },
+    { label: 'Services', value: 0, color: '#0eb562' },
+    { label: 'Goods', value: 0, color: '#84ffc2' },
   ]
 
   if (isLoading) {
@@ -135,17 +134,15 @@ export default function OwnerStatsPage() {
         <div className="px-4 grid grid-cols-2 gap-3">
           <StatCard
             icon="payments"
-            value={`€${(stats?.revenue || 0).toLocaleString()}`}
+            value={`€${(stats?.totalRevenue || 0).toLocaleString()}`}
             label="Revenue"
-            trend={stats?.revenueChange || 0}
+            trend={stats?.revenueChange ? Math.round(stats.revenueChange) : 0}
             trendDirection={(stats?.revenueChange || 0) >= 0 ? 'up' : 'down'}
           />
           <StatCard
             icon="hotel"
             value={`${stats?.occupancyRate || 0}%`}
             label="Occupancy"
-            trend={5}
-            trendDirection="up"
           />
         </div>
 

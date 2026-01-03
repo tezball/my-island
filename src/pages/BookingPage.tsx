@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
@@ -58,12 +58,18 @@ const availableExtras: BookingExtras[] = [
 export default function BookingPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [campsite, setCampsite] = useState<Campsite | null>(null)
-  const [lots, setLots] = useState<Lot[]>([])
-  // Default dates: check-in tomorrow, check-out 3 days later
-  const getDefaultDates = () => {
+  // Read dates from URL params, fallback to defaults
+  const getInitialDates = () => {
+    const urlCheckIn = searchParams.get('checkIn')
+    const urlCheckOut = searchParams.get('checkOut')
+
+    if (urlCheckIn && urlCheckOut) {
+      return { checkIn: urlCheckIn, checkOut: urlCheckOut }
+    }
+
+    // Default dates: check-in tomorrow, check-out 3 days later
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     const checkout = new Date(tomorrow)
@@ -73,9 +79,15 @@ export default function BookingPage() {
       checkOut: checkout.toISOString().split('T')[0],
     }
   }
-  const defaultDates = getDefaultDates()
-  const [checkIn, setCheckIn] = useState(defaultDates.checkIn)
-  const [checkOut, setCheckOut] = useState(defaultDates.checkOut)
+
+  const initialDates = getInitialDates()
+  const urlLotId = searchParams.get('lot')
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [campsite, setCampsite] = useState<Campsite | null>(null)
+  const [lots, setLots] = useState<Lot[]>([])
+  const [checkIn, setCheckIn] = useState(initialDates.checkIn)
+  const [checkOut, setCheckOut] = useState(initialDates.checkOut)
   const [guests, setGuests] = useState(2)
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null)
   const [selectedExtras, setSelectedExtras] = useState<string[]>([])
@@ -91,9 +103,10 @@ export default function BookingPage() {
         setCampsite(mapToCampsite(data))
         const mappedLots = data.lots.map(lot => mapToLot(lot, id))
         setLots(mappedLots)
-        // Select first available lot by default
+        // Select lot from URL param, or first available by default
+        const lotFromUrl = urlLotId ? mappedLots.find(l => l.id === urlLotId) : null
         const firstAvailable = mappedLots.find(l => l.available)
-        setSelectedLot(firstAvailable || null)
+        setSelectedLot(lotFromUrl || firstAvailable || null)
       } catch (error) {
         console.error('Failed to fetch campsite:', error)
         setCampsite(null)
@@ -103,7 +116,7 @@ export default function BookingPage() {
     }
 
     fetchData()
-  }, [id])
+  }, [id, urlLotId])
 
   if (isLoading) {
     return (
