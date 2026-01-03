@@ -7,9 +7,17 @@ import MapView, { type MapMarker } from '../components/ui/MapView'
 import Skeleton, { SkeletonCard } from '../components/ui/Skeleton'
 import { campsitesApi, type CampsiteResponse } from '../lib/api/campsites'
 import { suppliersApi, type LocalBusinessResponse } from '../lib/api/suppliers'
+import {
+  supplierCategoryIcons,
+  supplierCategoryColors,
+  supplierCategoryLabels,
+  allSupplierCategories,
+  type SupplierCategory,
+} from '../data/supplierTypes'
 import type { Campsite, Facility } from '../data/types'
 
 type ViewMode = 'list' | 'map'
+type FilterType = 'all' | 'campsites' | 'suppliers'
 
 // Map API response to Campsite type
 function mapToCampsite(data: CampsiteResponse): Campsite {
@@ -35,7 +43,24 @@ export default function DiscoverPage() {
   const [campsites, setCampsites] = useState<Campsite[]>([])
   const [featured, setFeatured] = useState<Campsite[]>([])
   const [suppliers, setSuppliers] = useState<LocalBusinessResponse[]>([])
+  const [showFilters, setShowFilters] = useState(false)
+  const [filterType, setFilterType] = useState<FilterType>('all')
+  const [selectedCategories, setSelectedCategories] = useState<Set<SupplierCategory>>(
+    new Set(allSupplierCategories)
+  )
   const navigate = useNavigate()
+
+  const toggleCategory = (category: SupplierCategory) => {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev)
+      if (next.has(category)) {
+        next.delete(category)
+      } else {
+        next.add(category)
+      }
+      return next
+    })
+  }
 
   // Fetch campsites and suppliers from API
   useEffect(() => {
@@ -58,23 +83,34 @@ export default function DiscoverPage() {
     fetchData()
   }, [])
 
-  // Prepare markers for map view (campsites + suppliers)
-  const mapMarkers: MapMarker[] = [
-    ...campsites.map(campsite => ({
-      id: campsite.id,
-      position: [campsite.location.lat, campsite.location.lng] as [number, number],
-      price: campsite.pricePerNight,
-      name: campsite.name,
-      type: 'campsite' as const,
-    })),
-    ...suppliers.map(supplier => ({
-      id: supplier.id,
-      position: [supplier.location.lat, supplier.location.lng] as [number, number],
-      name: supplier.name,
-      type: 'supplier' as const,
-      category: supplier.category,
-    })),
-  ]
+  // Prepare markers for map view (campsites + suppliers) with filtering
+  const mapMarkers: MapMarker[] = []
+
+  if (filterType === 'all' || filterType === 'campsites') {
+    campsites.forEach(campsite => {
+      mapMarkers.push({
+        id: campsite.id,
+        position: [campsite.location.lat, campsite.location.lng] as [number, number],
+        price: campsite.pricePerNight,
+        name: campsite.name,
+        type: 'campsite' as const,
+      })
+    })
+  }
+
+  if (filterType === 'all' || filterType === 'suppliers') {
+    suppliers
+      .filter(s => selectedCategories.has(s.category))
+      .forEach(supplier => {
+        mapMarkers.push({
+          id: supplier.id,
+          position: [supplier.location.lat, supplier.location.lng] as [number, number],
+          name: supplier.name,
+          type: 'supplier' as const,
+          category: supplier.category,
+        })
+      })
+  }
 
   return (
     <AppShell showLogo showHeader>
@@ -155,7 +191,7 @@ export default function DiscoverPage() {
 
         {viewMode === 'map' ? (
           /* Map View */
-          <div className="h-[calc(100vh-220px)]">
+          <div className="h-[calc(100vh-220px)] relative">
             <MapView
               center={[53.5, -8]}
               zoom={7}
@@ -169,6 +205,77 @@ export default function DiscoverPage() {
               }}
               height="100%"
             />
+
+            {/* Filter Button */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`absolute top-4 right-4 p-3 rounded-xl shadow-lg border z-[1000] ${
+                showFilters
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              <Icon name="tune" size={20} />
+            </button>
+
+            {/* Filter Panel */}
+            {showFilters && (
+              <div className="absolute top-16 right-4 w-72 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-[1001]">
+                <h3 className="font-bold text-slate-900 dark:text-white mb-3">Show on Map</h3>
+
+                {/* Main filter */}
+                <div className="flex gap-2 mb-4">
+                  {(['all', 'campsites', 'suppliers'] as FilterType[]).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFilterType(f)}
+                      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium ${
+                        filterType === f
+                          ? 'bg-primary text-white'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      }`}
+                    >
+                      {f === 'all' ? 'All' : f === 'campsites' ? 'Campsites' : 'Suppliers'}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Category filters */}
+                {(filterType === 'all' || filterType === 'suppliers') && (
+                  <>
+                    <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
+                      Supplier Categories
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {allSupplierCategories.map((category) => (
+                        <button
+                          key={category}
+                          onClick={() => toggleCategory(category)}
+                          className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium ${
+                            selectedCategories.has(category)
+                              ? 'bg-slate-100 dark:bg-slate-800'
+                              : 'bg-slate-50 dark:bg-slate-900 opacity-50'
+                          }`}
+                        >
+                          <span
+                            className="material-symbols-outlined"
+                            style={{
+                              fontSize: 16,
+                              color: supplierCategoryColors[category],
+                            }}
+                          >
+                            {supplierCategoryIcons[category]}
+                          </span>
+                          <span className="text-slate-700 dark:text-slate-300 truncate">
+                            {supplierCategoryLabels[category]}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         ) : isLoading ? (
           /* Loading State */
