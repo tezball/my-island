@@ -1,5 +1,6 @@
 package com.example.myislandapi;
 
+import com.example.myislandapi.config.TestcontainersConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;

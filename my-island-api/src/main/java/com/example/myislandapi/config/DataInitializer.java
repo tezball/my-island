@@ -606,8 +606,7 @@ public class DataInitializer {
         seasidePark.setPricePerNight(minPrice);
         campsites.add(campsiteRepository.save(seasidePark));
 
-        log.info("Created 5 featured test campsites with {} total lots",
-            campsites.stream().mapToInt(c -> c.getLots().size()).sum());
+        log.info("Created {} featured test campsites", campsites.size());
 
         return campsites;
     }

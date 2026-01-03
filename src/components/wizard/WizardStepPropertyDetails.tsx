@@ -12,27 +12,32 @@ const IRISH_COUNTIES = [
   'Wexford', 'Wicklow',
 ]
 
-// Default center of Ireland
 const DEFAULT_CENTER: [number, number] = [53.5, -8]
 
-export default function WizardStepLocation() {
-  const { state, dispatch, canProceed, prevStep } = useCampsiteWizard()
+export default function WizardStepPropertyDetails() {
+  const { state, dispatch, canProceed } = useCampsiteWizard()
+
+  // Basic Info fields
+  const [name, setName] = useState(state.name)
+  const [description, setDescription] = useState(state.description)
+
+  // Location fields
   const [address, setAddress] = useState(state.address)
   const [county, setCounty] = useState(state.county)
   const [lat, setLat] = useState<number | null>(state.lat)
   const [lng, setLng] = useState<number | null>(state.lng)
 
-  // Update context when values change
+  // Update context when basic info changes
+  useEffect(() => {
+    dispatch({ type: 'UPDATE_BASIC_INFO', name, description })
+  }, [name, description, dispatch])
+
+  // Update context when location changes
   useEffect(() => {
     if (lat !== null && lng !== null) {
       dispatch({ type: 'UPDATE_LOCATION', address, county, lat, lng })
     }
   }, [address, county, lat, lng, dispatch])
-
-  // const handleMapClick = (position: [number, number]) => {
-  //   setLat(position[0])
-  //   setLng(position[1])
-  // }
 
   const handleNext = () => {
     if (canProceed()) {
@@ -47,11 +52,48 @@ export default function WizardStepLocation() {
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 p-4 space-y-6 overflow-auto">
+        {/* Section Header */}
         <div>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
-            Where is your campsite?
+            Tell us about your property
           </h2>
           <p className="text-slate-500 dark:text-slate-400">
+            Add basic details and location information.
+          </p>
+        </div>
+
+        {/* === Basic Info Section === */}
+        <Input
+          label="Campsite Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g., Whispering Pines Campground"
+          helperText="Choose a name that captures the essence of your location"
+        />
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            Description
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value.slice(0, 2000))}
+            placeholder="Tell guests what makes your campsite special. Describe the scenery, atmosphere, and unique features..."
+            rows={4}
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+          />
+          <p className="text-xs text-slate-400 mt-1 text-right">{description.length}/2000</p>
+        </div>
+
+        {/* === Visual Separator === */}
+        <div className="border-t border-slate-200 dark:border-slate-700 my-2" />
+
+        {/* === Location Section === */}
+        <div>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
+            Location
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Help guests find you by providing your location details.
           </p>
         </div>
@@ -89,7 +131,7 @@ export default function WizardStepLocation() {
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
             Click on the map to set your exact location
           </p>
-          <div className="h-64 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+          <div className="h-48 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
             <MapView
               center={lat && lng ? [lat, lng] : DEFAULT_CENTER}
               zoom={lat && lng ? 14 : 7}
@@ -129,14 +171,9 @@ export default function WizardStepLocation() {
 
       {/* Bottom Navigation */}
       <div className="sticky bottom-0 p-4 bg-white dark:bg-surface-dark border-t border-slate-100 dark:border-slate-800">
-        <div className="flex gap-3">
-          <Button variant="secondary" className="flex-1" onClick={prevStep}>
-            Back
-          </Button>
-          <Button className="flex-1" onClick={handleNext} disabled={!canProceed()}>
-            Next: Facilities
-          </Button>
-        </div>
+        <Button className="w-full" onClick={handleNext} disabled={!canProceed()}>
+          Next: Facilities & Media
+        </Button>
       </div>
     </div>
   )

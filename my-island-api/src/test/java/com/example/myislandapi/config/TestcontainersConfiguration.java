@@ -1,4 +1,4 @@
-package com.example.myislandapi;
+package com.example.myislandapi.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -6,15 +6,20 @@ import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+/**
+ * Test configuration that provides a PostgreSQL Testcontainer.
+ * For full integration tests with Kafka and LocalStack, use AbstractIntegrationTest.
+ */
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+public class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection
-    PostgreSQLContainer<?> postgresContainer() {
+    public PostgreSQLContainer<?> postgresContainer() {
         return new PostgreSQLContainer<>(DockerImageName.parse("postgres:17-alpine"))
-                .withDatabaseName("myisland")
-                .withUsername("myisland")
-                .withPassword("myisland");
+                .withDatabaseName("myisland_test")
+                .withUsername("test")
+                .withPassword("test")
+                .withReuse(true);
     }
 }

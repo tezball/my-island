@@ -1,16 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import WizardProgress from '../../components/wizard/WizardProgress'
-import WizardStepBasicInfo from '../../components/wizard/WizardStepBasicInfo'
-import WizardStepLocation from '../../components/wizard/WizardStepLocation'
-import WizardStepFacilities from '../../components/wizard/WizardStepFacilities'
-import WizardStepPhotos from '../../components/wizard/WizardStepPhotos'
+import WizardStepPropertyDetails from '../../components/wizard/WizardStepPropertyDetails'
+import WizardStepFacilitiesMedia from '../../components/wizard/WizardStepFacilitiesMedia'
 import WizardStepLot from '../../components/wizard/WizardStepLot'
 import { CampsiteWizardProvider, useCampsiteWizard } from '../../context/CampsiteWizardContext'
 import { useToast } from '../../context/ToastContext'
 import { ownerApi } from '../../lib/api/owner'
 
-const STEPS = ['Basic Info', 'Location', 'Facilities', 'Photos', 'First Lot']
+const STEPS = ['Property Details', 'Facilities & Media', 'First Accommodation']
 
 function WizardContent() {
   const navigate = useNavigate()
@@ -68,14 +66,10 @@ function WizardContent() {
   const renderStep = () => {
     switch (state.currentStep) {
       case 0:
-        return <WizardStepBasicInfo />
+        return <WizardStepPropertyDetails />
       case 1:
-        return <WizardStepLocation />
+        return <WizardStepFacilitiesMedia />
       case 2:
-        return <WizardStepFacilities />
-      case 3:
-        return <WizardStepPhotos />
-      case 4:
         return <WizardStepLot />
       default:
         return null

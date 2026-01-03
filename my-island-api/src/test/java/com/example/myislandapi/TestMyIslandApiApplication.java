@@ -1,5 +1,6 @@
 package com.example.myislandapi;
 
+import com.example.myislandapi.config.TestcontainersConfiguration;
 import org.springframework.boot.SpringApplication;
 
 public class TestMyIslandApiApplication {

@@ -63,7 +63,7 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
     case 'SET_STEP':
       return { ...state, currentStep: action.step }
     case 'NEXT_STEP':
-      return { ...state, currentStep: Math.min(state.currentStep + 1, 4) }
+      return { ...state, currentStep: Math.min(state.currentStep + 1, 2) }
     case 'PREV_STEP':
       return { ...state, currentStep: Math.max(state.currentStep - 1, 0) }
     case 'UPDATE_BASIC_INFO':
@@ -113,20 +113,17 @@ export function CampsiteWizardProvider({ children }: { children: ReactNode }) {
   // Validate each step before allowing to proceed
   const canProceed = (): boolean => {
     switch (state.currentStep) {
-      case 0: // Basic Info
-        return state.name.trim().length >= 3
-      case 1: // Location
+      case 0: // Property Details (merged Basic Info + Location)
         return (
+          state.name.trim().length >= 3 &&
           state.address.trim().length > 0 &&
           state.county.trim().length > 0 &&
           state.lat !== null &&
           state.lng !== null
         )
-      case 2: // Facilities
+      case 1: // Facilities & Media
         return true // Optional step
-      case 3: // Photos
-        return true // Optional step
-      case 4: // First Lot
+      case 2: // First Accommodation
         return state.lot !== null && state.lot.name.trim().length > 0
       default:
         return false

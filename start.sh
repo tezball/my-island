@@ -10,8 +10,9 @@ NC='\033[0m' # No Color
 echo -e "${YELLOW}=== my-island Development Startup Script ===${NC}"
 
 # Step 1: Start Docker services (PostgreSQL, LocalStack, Kafka)
-echo -e "\n${YELLOW}[1/5] Starting Docker services...${NC}"
-cd "$(dirname "$0")/my-island-api"
+echo -e "\n${YELLOW}[1/6] Starting Docker services...${NC}"
+PROJECT_ROOT="$(dirname "$0")"
+cd "$PROJECT_ROOT"
 if docker compose up -d 2>/dev/null; then
     echo -e "${GREEN}✓ Docker services started${NC}"
     # Wait for PostgreSQL to be ready
@@ -27,10 +28,18 @@ else
     echo -e "${RED}✗ Failed to start Docker services${NC}"
     exit 1
 fi
-cd ..
 
-# Step 2: Kill any process on port 8080
-echo -e "\n${YELLOW}[2/5] Checking port 8080...${NC}"
+# Step 2: Reset database data
+echo -e "\n${YELLOW}[2/6] Resetting database...${NC}"
+# Terminate all existing connections to the database
+docker compose exec -T postgres psql -U myisland -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'myisland' AND pid <> pg_backend_pid();" > /dev/null 2>&1 || true
+# Drop and recreate the database
+docker compose exec -T postgres psql -U myisland -d postgres -c "DROP DATABASE IF EXISTS myisland;" > /dev/null 2>&1
+docker compose exec -T postgres psql -U myisland -d postgres -c "CREATE DATABASE myisland;" > /dev/null 2>&1
+echo -e "${GREEN}✓ Database reset${NC}"
+
+# Step 3: Kill any process on port 8080
+echo -e "\n${YELLOW}[3/6] Checking port 8080...${NC}"
 if lsof -ti:8080 > /dev/null 2>&1; then
     echo -e "${YELLOW}Killing process on port 8080...${NC}"
     lsof -ti:8080 | xargs kill -9 2>/dev/null || true
@@ -40,9 +49,9 @@ else
     echo -e "${GREEN}✓ Port 8080 is free${NC}"
 fi
 
-# Step 3: Frontend build
-echo -e "\n${YELLOW}[3/5] Building frontend (npm run build)...${NC}"
-cd "$(dirname "$0")"
+# Step 4: Frontend build
+echo -e "\n${YELLOW}[4/6] Building frontend (npm run build)...${NC}"
+cd "$PROJECT_ROOT"
 if npm run build; then
     echo -e "${GREEN}✓ Frontend build successful${NC}"
 else
@@ -50,20 +59,20 @@ else
     exit 1
 fi
 
-# Step 4: Backend tests (requires Docker with API 1.44+)
-echo -e "\n${YELLOW}[4/5] Running backend tests (mvn test)...${NC}"
-cd my-island-api
+# Step 5: Backend tests (requires Docker with API 1.44+)
+echo -e "\n${YELLOW}[5/6] Running backend tests (mvn test)...${NC}"
+cd "$PROJECT_ROOT/my-island-api"
 if mvn test -q 2>/dev/null; then
     echo -e "${GREEN}✓ Backend tests passed${NC}"
 else
     echo -e "${YELLOW}⚠ Backend tests skipped (Docker API 1.44+ required for Testcontainers)${NC}"
 fi
 
-# Step 5: Start the backend
-echo -e "\n${YELLOW}[5/5] Starting Spring Boot backend...${NC}"
+# Step 6: Start the backend
+echo -e "\n${YELLOW}[6/6] Starting Spring Boot backend...${NC}"
 
 # Start in background and capture PID
-mvn spring-boot:run > /tmp/my-island-api.log 2>&1 &
+mvn spring-boot:run -Dmaven.test.skip=true > /tmp/my-island-api.log 2>&1 &
 APP_PID=$!
 
 # Wait for health endpoint
