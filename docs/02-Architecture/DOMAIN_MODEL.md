@@ -1,3 +1,15 @@
+---
+title: Domain Model
+type: architecture
+status: active
+created: 2026-01-03
+tags:
+  - architecture
+  - ddd
+  - domain
+  - entities
+---
+
 # Domain-Driven Design Model
 
 This document defines the domain objects, states, bounded contexts, and ubiquitous language for the my-island camping/glamping booking platform.

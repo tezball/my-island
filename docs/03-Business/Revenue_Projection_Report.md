@@ -1,3 +1,15 @@
+---
+title: Revenue Projection Report
+type: business
+status: active
+created: 2026-01-03
+tags:
+  - business
+  - revenue
+  - projections
+  - financial
+---
+
 # my-island Revenue Projection Report
 
 > [!info] Report Overview

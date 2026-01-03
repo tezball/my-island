@@ -89,6 +89,7 @@ import ReviewsPage from './pages/ReviewsPage'
 import WriteReviewPage from './pages/WriteReviewPage'
 import OffersPage from './pages/OffersPage'
 import SupplierDetailPage from './pages/SupplierDetailPage'
+import LocalBusinessDetailPage from './pages/LocalBusinessDetailPage'
 
 // Supplier Admin Pages
 import SupplierDashboardPage from './pages/supplier/SupplierDashboardPage'
@@ -198,6 +199,9 @@ function App() {
       {/* Offers */}
       <Route path="/offers" element={<OffersPage />} />
       <Route path="/offers/:id" element={<SupplierDetailPage />} />
+
+      {/* Local Businesses (Suppliers on Map) */}
+      <Route path="/supplier/:id" element={<LocalBusinessDetailPage />} />
 
       {/* Profile - Protected */}
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

@@ -524,7 +524,8 @@ export default function CampsiteDetailPage() {
                   id: campsite.id,
                   position: [campsite.location.lat, campsite.location.lng],
                   name: campsite.name,
-                  price: campsite.pricePerNight
+                  price: campsite.pricePerNight,
+                  type: 'campsite'
                 }]}
                 center={[campsite.location.lat, campsite.location.lng]}
                 zoom={14}

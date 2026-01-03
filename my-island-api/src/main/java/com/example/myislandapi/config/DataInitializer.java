@@ -2,6 +2,7 @@ package com.example.myislandapi.config;
 
 import com.example.myislandapi.entity.Campsite;
 import com.example.myislandapi.entity.FAQ;
+import com.example.myislandapi.entity.LocalBusiness;
 import com.example.myislandapi.entity.Location;
 import com.example.myislandapi.entity.Lot;
 import com.example.myislandapi.entity.Offer;
@@ -9,8 +10,10 @@ import com.example.myislandapi.entity.User;
 import com.example.myislandapi.enums.Facility;
 import com.example.myislandapi.enums.LotType;
 import com.example.myislandapi.enums.OfferCategory;
+import com.example.myislandapi.enums.SupplierCategory;
 import com.example.myislandapi.repository.CampsiteRepository;
 import com.example.myislandapi.repository.FAQRepository;
+import com.example.myislandapi.repository.LocalBusinessRepository;
 import com.example.myislandapi.repository.LotRepository;
 import com.example.myislandapi.repository.OfferRepository;
 import com.example.myislandapi.repository.UserRepository;
@@ -58,12 +61,18 @@ public class DataInitializer {
             LotRepository lotRepository,
             FAQRepository faqRepository,
             OfferRepository offerRepository,
+            LocalBusinessRepository localBusinessRepository,
             com.example.myislandapi.repository.BookingRepository bookingRepository,
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
             if (campsiteRepository.count() > 0) {
                 log.info("Database already seeded, skipping initialization");
+                // Still seed local businesses if they don't exist
+                if (localBusinessRepository.count() == 0) {
+                    List<LocalBusiness> businesses = createLocalBusinesses(localBusinessRepository);
+                    log.info("Created {} local businesses", businesses.size());
+                }
                 return;
             }
 
@@ -93,6 +102,10 @@ public class DataInitializer {
             // Create offers
             List<Offer> offers = createOffers(offerRepository, campsites);
             log.info("Created {} offers", offers.size());
+
+            // Create local businesses (suppliers)
+            List<LocalBusiness> businesses = createLocalBusinesses(localBusinessRepository);
+            log.info("Created {} local businesses", businesses.size());
 
             // Add owner dashboard session data if not already present
             seedOwnerDashboardData(userRepository, campsiteRepository, lotRepository, bookingRepository);
@@ -738,5 +751,207 @@ public class DataInitializer {
             offers.add(repository.save(offer));
         }
         return offers;
+    }
+
+    private List<LocalBusiness> createLocalBusinesses(LocalBusinessRepository repository) {
+        if (repository.count() > 0) {
+            return repository.findAll();
+        }
+
+        List<LocalBusiness> businesses = new ArrayList<>();
+
+        // Restaurants
+        businesses.add(createBusiness(repository, "O'Grady's Seafood Restaurant", SupplierCategory.RESTAURANT,
+            "Fresh Atlantic seafood with stunning harbour views. Local catch daily.",
+            "Clifden Harbour", "Galway", 53.4891, -10.0198,
+            "+353 95 21450", null, "https://ogradysseafood.ie",
+            "12:00 - 21:00", "12:00 - 22:00", 4.7, 234, true));
+
+        businesses.add(createBusiness(repository, "The Burren Kitchen", SupplierCategory.RESTAURANT,
+            "Farm-to-table dining featuring local Burren produce and wild ingredients.",
+            "Main Street, Ballyvaughan", "Clare", 53.1158, -9.1467,
+            "+353 65 7077800", "info@burrenkitchen.ie", null,
+            "10:00 - 20:00", "09:00 - 21:00", 4.8, 189, false));
+
+        businesses.add(createBusiness(repository, "Wild Atlantic Bistro", SupplierCategory.RESTAURANT,
+            "Contemporary Irish cuisine overlooking the Wild Atlantic Way.",
+            "Westport Quay", "Mayo", 53.8008, -9.5200,
+            "+353 98 26261", null, null,
+            "17:00 - 22:00", "12:00 - 22:00", 4.5, 156, false));
+
+        // Pubs
+        businesses.add(createBusiness(repository, "Lowry's Bar", SupplierCategory.PUB,
+            "Traditional Irish pub with live music sessions every weekend.",
+            "Main Street, Clifden", "Galway", 53.4875, -10.0172,
+            "+353 95 21347", null, null,
+            "16:00 - 23:30", "14:00 - 00:30", 4.6, 312, true));
+
+        businesses.add(createBusiness(repository, "Paddy Coyne's Pub", SupplierCategory.PUB,
+            "Cozy harbourside pub famous for chowder and Guinness.",
+            "Tully Cross", "Galway", 53.5448, -9.9612,
+            "+353 95 43499", null, null,
+            "12:00 - 23:00", "12:00 - 00:30", 4.8, 287, false));
+
+        businesses.add(createBusiness(repository, "The Sailors' Rest", SupplierCategory.PUB,
+            "Historic waterfront pub with craft beers and hearty food.",
+            "Killybegs Harbour", "Donegal", 54.6339, -8.4378,
+            "+353 74 9731000", null, null,
+            "11:00 - 23:00", "11:00 - 00:30", 4.4, 198, false));
+
+        // Farm Shops
+        businesses.add(createBusiness(repository, "Connemara Organics Farm Shop", SupplierCategory.FARM_SHOP,
+            "Organic vegetables, free-range eggs, and artisan cheeses from local farms.",
+            "Letterfrack", "Galway", 53.5514, -9.9456,
+            "+353 95 41058", "shop@connemaraorganics.ie", null,
+            "09:00 - 18:00", "10:00 - 17:00", 4.9, 145, true));
+
+        businesses.add(createBusiness(repository, "Burren Smokehouse", SupplierCategory.FARM_SHOP,
+            "Award-winning smoked salmon and local artisan products.",
+            "Kincora Road, Lisdoonvarna", "Clare", 53.0286, -9.2906,
+            "+353 65 7074432", null, "https://burrensmokehouse.ie",
+            "09:00 - 17:00", "10:00 - 16:00", 4.7, 267, false));
+
+        businesses.add(createBusiness(repository, "Dingle Farmhouse", SupplierCategory.FARM_SHOP,
+            "Kerry dairy products, local honey, and homemade preserves.",
+            "Green Street, Dingle", "Kerry", 52.1409, -10.2671,
+            "+353 66 9152000", null, null,
+            "08:00 - 19:00", "09:00 - 18:00", 4.6, 198, false));
+
+        // Grocery Stores
+        businesses.add(createBusiness(repository, "SuperValu Clifden", SupplierCategory.GROCERY,
+            "Full-service supermarket with camping supplies and local produce.",
+            "Market Street, Clifden", "Galway", 53.4867, -10.0189,
+            "+353 95 21182", null, null,
+            "08:00 - 21:00", "08:00 - 20:00", 4.2, 89, false));
+
+        businesses.add(createBusiness(repository, "Dunnes Stores Westport", SupplierCategory.GROCERY,
+            "Large supermarket with fresh bakery and deli counter.",
+            "Shop Street, Westport", "Mayo", 53.8000, -9.5178,
+            "+353 98 25544", null, null,
+            "08:30 - 21:00", "09:00 - 19:00", 4.1, 76, false));
+
+        // Outdoor Gear
+        businesses.add(createBusiness(repository, "Wild Atlantic Outfitters", SupplierCategory.OUTDOOR_GEAR,
+            "Camping equipment, hiking gear, and outdoor clothing.",
+            "Main Street, Clifden", "Galway", 53.4880, -10.0165,
+            "+353 95 21999", null, "https://wildatlanticoutfitters.ie",
+            "09:30 - 18:00", "10:00 - 17:00", 4.5, 134, true));
+
+        businesses.add(createBusiness(repository, "The Great Outdoors Killarney", SupplierCategory.OUTDOOR_GEAR,
+            "Premium hiking boots, waterproofs, and camping essentials.",
+            "New Street, Killarney", "Kerry", 52.0599, -9.5044,
+            "+353 64 6632888", "killarney@greatoutdoors.ie", null,
+            "09:00 - 18:00", "09:30 - 17:30", 4.7, 256, false));
+
+        // Kayak Rentals
+        businesses.add(createBusiness(repository, "Killary Fjord Kayaks", SupplierCategory.KAYAK_RENTAL,
+            "Guided kayak tours and rentals on Irelands only fjord.",
+            "Leenane", "Galway", 53.5986, -9.7208,
+            "+353 95 42276", null, "https://killarykayaks.ie",
+            "09:00 - 17:00", "08:00 - 18:00", 4.9, 312, true));
+
+        businesses.add(createBusiness(repository, "Dingle Sea Safari", SupplierCategory.KAYAK_RENTAL,
+            "Sea kayaking, SUP boards, and dolphin watching experiences.",
+            "The Marina, Dingle", "Kerry", 52.1395, -10.2645,
+            "+353 87 2856789", "info@dingleseasafari.ie", null,
+            "08:00 - 18:00", "07:00 - 19:00", 4.8, 189, false));
+
+        businesses.add(createBusiness(repository, "Achill Island Adventures", SupplierCategory.KAYAK_RENTAL,
+            "Kayaks, surfboards, and coasteering equipment rental.",
+            "Keel Beach, Achill Island", "Mayo", 53.9667, -10.0833,
+            "+353 98 43220", null, null,
+            "09:00 - 17:00", "08:00 - 18:00", 4.6, 145, false));
+
+        // Bike Rentals
+        businesses.add(createBusiness(repository, "Connemara Cycle Tours", SupplierCategory.BIKE_RENTAL,
+            "Quality bikes, e-bikes, and guided cycling tours of Connemara.",
+            "The Square, Clifden", "Galway", 53.4872, -10.0182,
+            "+353 95 21160", null, "https://connemaracycletours.com",
+            "09:00 - 18:00", "09:00 - 17:00", 4.7, 223, true));
+
+        businesses.add(createBusiness(repository, "Kerry Cycle Hire", SupplierCategory.BIKE_RENTAL,
+            "Mountain bikes, road bikes, and family cycles for Ring of Kerry.",
+            "Plunkett Street, Killarney", "Kerry", 52.0588, -9.5067,
+            "+353 64 6631282", "hire@kerrycycles.ie", null,
+            "08:30 - 18:30", "09:00 - 18:00", 4.5, 178, false));
+
+        // Fishing Supplies
+        businesses.add(createBusiness(repository, "Angler's Rest Tackle Shop", SupplierCategory.FISHING,
+            "Fresh bait, fishing tackle, and local fishing permits.",
+            "Oughterard", "Galway", 53.4306, -9.3167,
+            "+353 91 552688", null, null,
+            "07:00 - 18:00", "06:00 - 18:00", 4.4, 98, false));
+
+        businesses.add(createBusiness(repository, "Delphi Fishing Centre", SupplierCategory.FISHING,
+            "Salmon and trout fishing equipment, guides, and permits.",
+            "Delphi Valley", "Galway", 53.6142, -9.7889,
+            "+353 95 42222", null, "https://delphifishing.ie",
+            "08:00 - 17:00", "07:00 - 18:00", 4.8, 134, false));
+
+        businesses.add(createBusiness(repository, "West Cork Angling", SupplierCategory.FISHING,
+            "Sea fishing gear, boat trips, and tackle rental.",
+            "Baltimore Harbour", "Cork", 51.4828, -9.3711,
+            "+353 28 20197", null, null,
+            "08:00 - 17:00", "07:00 - 18:00", 4.5, 87, false));
+
+        // Convenience Stores
+        businesses.add(createBusiness(repository, "Centra Roundstone", SupplierCategory.CONVENIENCE,
+            "Essentials, snacks, ice, firewood, and camping basics.",
+            "Main Street, Roundstone", "Galway", 53.3953, -9.9231,
+            "+353 95 35800", null, null,
+            "07:00 - 22:00", "07:30 - 22:00", 4.0, 65, false));
+
+        businesses.add(createBusiness(repository, "Spar Leenane", SupplierCategory.CONVENIENCE,
+            "Groceries, hot food, ATM, and tourist information.",
+            "Leenane Village", "Galway", 53.6019, -9.7214,
+            "+353 95 42211", null, null,
+            "07:00 - 21:00", "08:00 - 21:00", 4.1, 54, false));
+
+        businesses.add(createBusiness(repository, "Mace Portmagee", SupplierCategory.CONVENIENCE,
+            "Last stop before Skellig Michael. Snacks, fuel, and gifts.",
+            "Portmagee", "Kerry", 51.8847, -10.3594,
+            "+353 66 9477116", null, null,
+            "07:30 - 20:00", "08:00 - 20:00", 4.2, 112, false));
+
+        businesses.add(createBusiness(repository, "Glencolmcille Store", SupplierCategory.CONVENIENCE,
+            "Remote village store with camping supplies and local crafts.",
+            "Glencolmcille", "Donegal", 54.7078, -8.7281,
+            "+353 74 9730017", null, null,
+            "08:00 - 19:00", "09:00 - 18:00", 4.3, 78, false));
+
+        return businesses;
+    }
+
+    private LocalBusiness createBusiness(
+            LocalBusinessRepository repository,
+            String name, SupplierCategory category, String description,
+            String address, String county, double lat, double lng,
+            String phone, String email, String website,
+            String weekdayHours, String weekendHours,
+            double rating, int reviewCount, boolean featured) {
+
+        LocalBusiness business = new LocalBusiness();
+        business.setName(name);
+        business.setCategory(category);
+        business.setDescription(description);
+
+        Location location = new Location();
+        location.setAddress(address);
+        location.setCounty(county);
+        location.setLat(lat);
+        location.setLng(lng);
+        business.setLocation(location);
+
+        business.setPhone(phone);
+        business.setEmail(email);
+        business.setWebsite(website);
+        business.setWeekdayHours(weekdayHours);
+        business.setWeekendHours(weekendHours);
+        business.setRating(BigDecimal.valueOf(rating));
+        business.setReviewCount(reviewCount);
+        business.setFeatured(featured);
+        business.setActive(true);
+
+        return repository.save(business);
     }
 }

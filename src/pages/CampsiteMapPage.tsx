@@ -74,6 +74,7 @@ export default function CampsiteMapPage() {
       position: [campsite.location.lat, campsite.location.lng] as [number, number],
       price: campsite.priceFrom,
       name: campsite.name,
+      type: 'campsite' as const,
     },
   ]
 

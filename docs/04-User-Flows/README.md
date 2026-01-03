@@ -1,27 +1,43 @@
-# my-island User Flows
+---
+title: User Flows
+type: MOC
+status: active
+created: 2026-01-03
+tags:
+  - moc
+  - user-flows
+  - user-stories
+  - ux
+---
 
-This directory contains documentation for all major user flows in the my-island camping/glamping booking application. Each flow includes screens, user stories, and flow diagrams.
+# User Flows
 
-**See also:** [user-flows.md](./user-flows.md) - Comprehensive visual flow guide with ASCII diagrams
+> User journeys, stories, and screen flows for all my-island features
+
+**See also:** [[user-flows|Master User Flows]] - Comprehensive visual guide with ASCII diagrams
+
+---
 
 ## Flow Overview
 
 | Flow | Description | User Stories | Screens |
 |------|-------------|--------------|---------|
-| [Onboarding](./onboarding/) | First-time user introduction and app benefits | 5 stories | 8 |
-| [Auth](./auth/) | Login, signup, password reset, email verification | 8 stories | 8 |
-| [Discovery](./discovery/) | Map, search, filters, campsite browsing | 10 stories | 5 |
-| [Booking](./booking/) | Date selection, lot choice, extras, payment | 11 stories | 11 |
-| [My Bookings](./my-bookings/) | View, modify, and cancel reservations | 12 stories | 10 |
-| [Profile](./profile/) | User profile, settings, preferences | 13 stories | 11 |
-| [Notifications](./notifications/) | Alerts, updates, and preferences | 8 stories | 4 |
-| [Favorites](./favorites/) | Save and manage favorite campsites | 6 stories | 1 |
-| [Reviews](./reviews/) | Submit and browse campsite reviews | 9 stories | 1 |
-| [Offers](./offers/) | Local supplier deals and promotions | 8 stories | 2 |
-| [Owner/Admin](./owner-admin/) | Campsite management for owners | 15 stories | 23 |
-| [Errors](./errors/) | Error handling and empty states | 8 stories | 0* |
+| [[onboarding/README\|Onboarding]] | First-time user introduction | 5 | 8 |
+| [[auth/README\|Authentication]] | Login, signup, password reset | 8 | 8 |
+| [[discovery/README\|Discovery]] | Map, search, campsite browsing | 10 | 5 |
+| [[booking/README\|Booking]] | Date selection to payment | 11 | 11 |
+| [[my-bookings/README\|My Bookings]] | View, modify, cancel reservations | 12 | 10 |
+| [[profile/README\|Profile]] | User settings and preferences | 13 | 11 |
+| [[notifications/README\|Notifications]] | Alerts and preferences | 8 | 4 |
+| [[favorites/README\|Favorites]] | Save favorite campsites | 6 | 1 |
+| [[reviews/README\|Reviews]] | Submit and browse reviews | 9 | 1 |
+| [[offers/README\|Offers]] | Local supplier deals | 8 | 2 |
+| [[owner-admin/README\|Owner/Admin]] | Campsite management | 15 | 23 |
+| [[errors/README\|Errors]] | Error and empty states | 8 | 0* |
 
 *Error screens need design
+
+---
 
 ## User Journey Map
 
@@ -40,7 +56,6 @@ This directory contains documentation for all major user flows in the my-island 
                               ▼                        │
                        ┌─────────────┐                 │
                        │ Onboarding  │                 │
-                       │    Flow     │                 │
                        └──────┬──────┘                 │
                               │                        │
                               └────────────┬───────────┘
@@ -55,68 +70,36 @@ This directory contains documentation for all major user flows in the my-island 
               ▼            ▼               ▼               ▼            ▼
        ┌─────────────┐ ┌─────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────┐
        │  Discovery  │ │Favorites│ │  Bookings   │ │   Offers    │ │ Profile │
-       │    Flow     │ │  Flow   │ │    Flow     │ │    Flow     │ │  Flow   │
        └──────┬──────┘ └─────────┘ └──────┬──────┘ └─────────────┘ └─────────┘
               │                           │
               ▼                           ▼
        ┌─────────────┐             ┌─────────────┐
        │  Campsite   │             │ My Bookings │
-       │   Detail    │             │    Flow     │
+       │   Detail    │             │             │
        └──────┬──────┘             └──────┬──────┘
               │                           │
               ▼                           ▼
        ┌─────────────┐             ┌─────────────┐
        │   Booking   │             │   Reviews   │
-       │    Flow     │             │    Flow     │
        └─────────────┘             └─────────────┘
 ```
 
-## Directory Structure
+---
 
-```
-docs/flows/
-├── README.md              # This file
-├── onboarding/
-│   ├── README.md          # User stories & flow diagram
-│   ├── 01-welcome.png
-│   ├── 02-benefits-1.png
-│   └── ...
-├── auth/
-│   ├── README.md
-│   ├── 01-login.png
-│   └── ...
-├── discovery/
-│   ├── README.md
-│   └── ...
-├── booking/
-│   ├── README.md
-│   └── ...
-├── my-bookings/
-│   ├── README.md
-│   └── ...
-├── profile/
-│   ├── README.md
-│   └── ...
-├── favorites/
-│   ├── README.md
-│   └── ...
-├── reviews/
-│   ├── README.md
-│   └── ...
-├── offers/
-│   ├── README.md
-│   └── ...
-├── owner-admin/
-│   ├── README.md
-│   └── ...
-└── errors/
-    ├── README.md
-    └── ...
-```
+## Primary User Types
+
+| User Type | Description | Primary Flows |
+|-----------|-------------|---------------|
+| Guest | Browsing without account | Discovery, Booking |
+| Registered | Logged-in users | All flows + Favorites |
+| Campsite Owner | Property managers | Owner/Admin (15+ pages) |
+| Supplier | Local businesses | Offers management |
+
+---
 
 ## User Story Format
 
-All user stories follow the standard format:
+All user stories follow this format:
 
 ```
 ### US-[FLOW]-[NUMBER]: [Title]
@@ -127,7 +110,6 @@ All user stories follow the standard format:
 **Acceptance Criteria:**
 - Criterion 1
 - Criterion 2
-- ...
 ```
 
 ### Story ID Prefixes
@@ -146,12 +128,7 @@ All user stories follow the standard format:
 | US-OWN | Owner/Admin |
 | US-ERR | Error States |
 
-## Primary User Types
-
-1. **Guest** - Users browsing and booking campsites
-2. **Registered User** - Logged-in guests with saved data
-3. **Campsite Owner** - Users managing campsite listings
-4. **Supplier** - Local businesses offering deals
+---
 
 ## Key Metrics by Flow
 
@@ -165,18 +142,39 @@ All user stories follow the standard format:
 | Reviews | Review submission rate, Average rating |
 | Offers | Redemption rate, Click-through rate |
 
-## Related Documentation
+---
 
-- [UI Style Guide](../ui-style-guide.html) - Visual design system
-- [Design Snag List](../Design%20Snag%20List.md) - Known issues
-- [Missing Features Analysis](../Missing%20Features%20Analysis.md) - Gap analysis
+## Directory Structure
 
-## Contributing
+```
+04-User-Flows/
+├── README.md              # This file (MOC)
+├── user-flows.md          # Master visual guide
+├── missing-screens.md     # Gap analysis
+├── onboarding/            # Onboarding flow
+├── auth/                  # Authentication flow
+├── discovery/             # Discovery flow
+├── booking/               # Booking flow
+├── my-bookings/           # My Bookings flow
+├── profile/               # Profile flow
+├── notifications/         # Notifications flow
+├── favorites/             # Favorites flow
+├── reviews/               # Reviews flow
+├── offers/                # Offers flow
+├── owner-admin/           # Owner/Admin flow
+└── errors/                # Error states
+```
 
-When adding new flows or updating existing ones:
+Each flow folder contains:
+- `README.md` - User stories and flow diagram
+- `*.png` - Screen screenshots
+- `*-flow.canvas` - Obsidian canvas diagram
 
-1. Create/update the flow folder with screenshots
-2. Update the README.md with user stories
-3. Include flow diagrams using ASCII art
-4. Link to relevant source code files
-5. Update this index if adding new flows
+---
+
+## Related Links
+
+- [[../README|Docs Home]]
+- [[../05-Design-Specs/README|Design Specs]]
+- [[../05-Design-Specs/ui-style-guide|UI Style Guide]]
+- [[missing-screens|Missing Screens]]

@@ -3,9 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import CampsiteCard from '../components/ui/CampsiteCard'
 import Icon from '../components/ui/Icon'
-import MapView from '../components/ui/MapView'
+import MapView, { type MapMarker } from '../components/ui/MapView'
 import Skeleton, { SkeletonCard } from '../components/ui/Skeleton'
 import { campsitesApi, type CampsiteResponse } from '../lib/api/campsites'
+import { suppliersApi, type LocalBusinessResponse } from '../lib/api/suppliers'
 import type { Campsite, Facility } from '../data/types'
 
 type ViewMode = 'list' | 'map'
@@ -33,20 +34,23 @@ export default function DiscoverPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [campsites, setCampsites] = useState<Campsite[]>([])
   const [featured, setFeatured] = useState<Campsite[]>([])
+  const [suppliers, setSuppliers] = useState<LocalBusinessResponse[]>([])
   const navigate = useNavigate()
 
-  // Fetch campsites from API
+  // Fetch campsites and suppliers from API
   useEffect(() => {
     async function fetchData() {
       try {
-        const [allCampsites, featuredCampsites] = await Promise.all([
+        const [allCampsites, featuredCampsites, allSuppliers] = await Promise.all([
           campsitesApi.search({}),
           campsitesApi.getFeatured(),
+          suppliersApi.getAll({}),
         ])
         setCampsites(allCampsites.map(mapToCampsite))
         setFeatured(featuredCampsites.map(mapToCampsite))
+        setSuppliers(allSuppliers)
       } catch (error) {
-        console.error('Failed to fetch campsites:', error)
+        console.error('Failed to fetch data:', error)
       } finally {
         setIsLoading(false)
       }
@@ -54,13 +58,23 @@ export default function DiscoverPage() {
     fetchData()
   }, [])
 
-  // Prepare markers for map view
-  const mapMarkers = campsites.map(campsite => ({
-    id: campsite.id,
-    position: [campsite.location.lat, campsite.location.lng] as [number, number],
-    price: campsite.pricePerNight,
-    name: campsite.name,
-  }))
+  // Prepare markers for map view (campsites + suppliers)
+  const mapMarkers: MapMarker[] = [
+    ...campsites.map(campsite => ({
+      id: campsite.id,
+      position: [campsite.location.lat, campsite.location.lng] as [number, number],
+      price: campsite.pricePerNight,
+      name: campsite.name,
+      type: 'campsite' as const,
+    })),
+    ...suppliers.map(supplier => ({
+      id: supplier.id,
+      position: [supplier.location.lat, supplier.location.lng] as [number, number],
+      name: supplier.name,
+      type: 'supplier' as const,
+      category: supplier.category,
+    })),
+  ]
 
   return (
     <AppShell showLogo showHeader>
@@ -111,7 +125,9 @@ export default function DiscoverPage() {
         {/* View toggle */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
           <span className="text-sm text-slate-500">
-            {isLoading ? 'Loading...' : `${campsites.length} campsites`}
+            {isLoading ? 'Loading...' : viewMode === 'map'
+              ? `${mapMarkers.length} locations`
+              : `${campsites.length} campsites`}
           </span>
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
             <button
@@ -144,7 +160,13 @@ export default function DiscoverPage() {
               center={[53.5, -8]}
               zoom={7}
               markers={mapMarkers}
-              onMarkerClick={(id) => navigate(`/campsite/${id}`)}
+              onMarkerClick={(id, type) => {
+                if (type === 'supplier') {
+                  navigate(`/supplier/${id}`)
+                } else {
+                  navigate(`/campsite/${id}`)
+                }
+              }}
               height="100%"
             />
           </div>

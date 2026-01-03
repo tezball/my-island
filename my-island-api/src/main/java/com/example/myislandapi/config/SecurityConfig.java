@@ -43,9 +43,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                        // Public read access to campsites and offers
+                        // Public read access to campsites, offers, and local businesses
                         .requestMatchers(HttpMethod.GET, "/api/campsites/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/offers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/local-businesses/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/support/faqs").permitAll()
                         // Static resources (React frontend)
                         .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.svg").permitAll()

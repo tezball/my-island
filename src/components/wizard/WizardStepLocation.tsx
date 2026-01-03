@@ -41,7 +41,7 @@ export default function WizardStepLocation() {
   }
 
   const mapMarkers = lat !== null && lng !== null
-    ? [{ id: 'location', position: [lat, lng] as [number, number], name: address || 'Selected Location' }]
+    ? [{ id: 'location', position: [lat, lng] as [number, number], name: address || 'Selected Location', type: 'campsite' as const }]
     : []
 
   return (

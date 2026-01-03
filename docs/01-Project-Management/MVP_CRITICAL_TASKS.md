@@ -1,3 +1,17 @@
+---
+title: MVP Critical Tasks
+type: task-tracker
+status: active
+priority: p0
+created: 2026-01-03
+updated: 2026-01-03
+tags:
+  - mvp
+  - bugs
+  - p0
+  - sprint
+---
+
 # MVP Critical Tasks - Prioritized by Impact
 
 **Generated:** 2026-01-03
