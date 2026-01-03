@@ -45,6 +45,14 @@ function mapToLot(data: LotResponse, campsiteId: string): Lot {
   }
 }
 
+// Format lot type for display (e.g., "safari_tent" -> "Safari Tent")
+function formatLotType(type: string): string {
+  return type
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
 // Map API response to Review type
 function mapToReview(data: ReviewResponse, campsiteId: string): Review {
   return {
@@ -388,8 +396,8 @@ export default function CampsiteDetailPage() {
                           {lot.available ? 'Available' : 'Booked'}
                         </Badge>
                       </div>
-                      <p className="text-sm text-slate-500 capitalize mt-0.5">
-                        {lot.type} • Up to {lot.capacity} guests
+                      <p className="text-sm text-slate-500 mt-0.5">
+                        {formatLotType(lot.type)} • Up to {lot.capacity} guests
                       </p>
                       <div className="flex items-center justify-between mt-2">
                         <p className="text-primary font-bold">

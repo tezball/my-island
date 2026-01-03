@@ -41,6 +41,14 @@ function mapToLot(data: LotResponse, campsiteId: string): Lot {
   }
 }
 
+// Format lot type for display (e.g., "safari_tent" -> "Safari Tent")
+function formatLotType(type: string): string {
+  return type
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
 interface BookingExtras {
   id: string
   name: string
@@ -298,8 +306,8 @@ export default function BookingPage() {
                         <Icon name="check_circle" size={20} className="text-primary" filled />
                       )}
                     </div>
-                    <p className="text-sm text-slate-500 capitalize">
-                      {lot.type} • Up to {lot.capacity} guests
+                    <p className="text-sm text-slate-500">
+                      {formatLotType(lot.type)} • Up to {lot.capacity} guests
                     </p>
                     <div className="flex items-center justify-between mt-1">
                       <Badge variant={lot.available ? 'success' : 'error'} size="sm">

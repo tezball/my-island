@@ -191,19 +191,7 @@ export default function OwnerStatsPage() {
                     fill="none"
                     stroke="#13ec80"
                     strokeWidth="3"
-                    strokeDasharray="70 100"
-                    strokeLinecap="round"
-                    transform="rotate(-90 18 18)"
-                  />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="15.9"
-                    fill="none"
-                    stroke="#0eb562"
-                    strokeWidth="3"
-                    strokeDasharray="15 100"
-                    strokeDashoffset="-70"
+                    strokeDasharray={`${totalRevenue > 0 ? 100 : 0} 100`}
                     strokeLinecap="round"
                     transform="rotate(-90 18 18)"
                   />
@@ -219,6 +207,9 @@ export default function OwnerStatsPage() {
                       />
                       <span className="text-sm text-slate-600 dark:text-slate-400">
                         {item.label}
+                        {item.value === 0 && item.label !== 'Stays' && (
+                          <span className="text-xs text-slate-400 ml-1">(Coming soon)</span>
+                        )}
                       </span>
                     </div>
                     <span className="font-medium text-slate-900 dark:text-white">
@@ -231,15 +222,23 @@ export default function OwnerStatsPage() {
           </div>
         </div>
 
-        {/* Popular Dates */}
+        {/* Popular Dates - Preview/placeholder until analytics endpoint is built */}
         <div className="px-4 pb-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-slate-900 dark:text-white">
-              Popular Dates
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-slate-900 dark:text-white">
+                Popular Dates
+              </h3>
+              <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-medium rounded-full">
+                Preview
+              </span>
+            </div>
             <button className="text-primary text-sm font-medium">View All</button>
           </div>
-          <div className="space-y-2">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">
+            Booking trends will appear here once you have more reservations.
+          </p>
+          <div className="space-y-2 opacity-60">
             <div className="flex items-center justify-between p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800">
               <div>
                 <p className="font-medium text-slate-900 dark:text-white">

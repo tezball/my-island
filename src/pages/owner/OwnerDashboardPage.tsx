@@ -65,13 +65,17 @@ export default function OwnerDashboardPage() {
     fetchData()
   }, [])
 
-  const activeGuests = 45 // Mock number
+  // Active guests = confirmed bookings that are currently checked in
+  // Using confirmedBookings as a proxy until we have a dedicated endpoint
+  const activeGuests = stats?.confirmedBookings || 0
 
   const handleBroadcast = () => {
-    if (broadcastMessage.trim()) {
+    if (broadcastMessage.trim() && activeGuests > 0) {
       // In real app, would send broadcast via API
       toast.success('Broadcast Sent', `Your message was sent to ${activeGuests} guests.`)
       setBroadcastMessage('')
+    } else if (activeGuests === 0) {
+      toast.info('No Active Guests', 'There are no guests currently checked in to receive your broadcast.')
     }
   }
 

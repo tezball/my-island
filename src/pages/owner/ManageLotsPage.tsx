@@ -9,6 +9,15 @@ import { ownerApi, type LotResponse, type CampsiteResponse } from '../../lib/api
 
 type FilterStatus = 'all' | 'available' | 'booked' | 'maintenance'
 
+// Format lot type for display (e.g., "SAFARI_TENT" -> "Safari Tent")
+function formatLotType(type: string): string {
+  return type
+    .toLowerCase()
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
 interface LotWithStatus extends LotResponse {
   status: 'available' | 'booked' | 'maintenance'
 }
@@ -201,7 +210,7 @@ export default function ManageLotsPage() {
                   <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
                     <span className="flex items-center gap-1">
                       <Icon name={getLotTypeIcon(lot.type)} size={16} />
-                      {lot.type.charAt(0).toUpperCase() + lot.type.slice(1)}
+                      {formatLotType(lot.type)}
                     </span>
                     <span className="flex items-center gap-1">
                       <Icon name="group" size={16} />

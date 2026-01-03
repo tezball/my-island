@@ -53,6 +53,7 @@ export default function SearchPage() {
   const [isSearching, setIsSearching] = useState(false)
   const [results, setResults] = useState<Campsite[]>([])
   const [featured, setFeatured] = useState<Campsite[]>([])
+  const [featuredLoading, setFeaturedLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isLocating, setIsLocating] = useState(false)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
@@ -80,10 +81,14 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
+        setFeaturedLoading(true)
         const data = await campsitesApi.getFeatured()
         setFeatured(data.map(mapToCampsite))
       } catch (err) {
         console.error('Failed to fetch featured campsites:', err)
+        setFeatured([])
+      } finally {
+        setFeaturedLoading(false)
       }
     }
     fetchFeatured()
@@ -323,9 +328,28 @@ export default function SearchPage() {
                   Featured Campsites
                 </h2>
                 <div className="space-y-4">
-                  {featured.slice(0, 4).map((campsite) => (
-                    <CampsiteCard key={campsite.id} campsite={campsite} />
-                  ))}
+                  {featuredLoading ? (
+                    <>
+                      {[1, 2, 3].map((i) => (
+                        <SkeletonCard key={i} />
+                      ))}
+                    </>
+                  ) : featured.length > 0 ? (
+                    featured.slice(0, 4).map((campsite) => (
+                      <CampsiteCard key={campsite.id} campsite={campsite} />
+                    ))
+                  ) : (
+                    <div className="text-center py-6 text-slate-500 dark:text-slate-400">
+                      <Icon name="camping" size={32} className="mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">Sign in to see featured campsites</p>
+                      <Link
+                        to="/login"
+                        className="inline-block mt-2 text-primary font-medium text-sm hover:underline"
+                      >
+                        Sign in
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </section>
 

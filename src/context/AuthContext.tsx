@@ -141,7 +141,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw new Error('EMAIL_UNVERIFIED')
         }
 
-        const user = createMockUser(credentials.email, 'Alex', 'Walker')
+        // Handle demo accounts with proper roles and names
+        let user
+        if (credentials.email === 'owner@my-island.com') {
+          user = createMockUser(credentials.email, 'Sarah', "O'Brien", { isOwner: true, isSupplier: false })
+        } else if (credentials.email === 'supplier@my-island.com') {
+          user = createMockUser(credentials.email, 'Michael', 'Kelly', { isOwner: false, isSupplier: true })
+        } else if (credentials.email === 'visitor@my-island.com') {
+          user = createMockUser(credentials.email, 'Emma', 'Murphy', { isOwner: false, isSupplier: false })
+        } else {
+          user = createMockUser(credentials.email, 'Alex', 'Walker')
+        }
         persistSession(user)
 
         setState({
