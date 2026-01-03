@@ -12,6 +12,13 @@ import {
   allSupplierCategories,
   type SupplierCategory,
 } from '../data/supplierTypes'
+import {
+  facilityIcons,
+  facilityColors,
+  facilityLabels,
+  allFacilities,
+} from '../data/facilityTypes'
+import type { Facility } from '../data/types'
 
 type FilterType = 'all' | 'campsites' | 'suppliers'
 
@@ -23,10 +30,10 @@ export default function MapPage() {
   const [selectedSupplier, setSelectedSupplier] = useState<LocalBusinessResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [filter, setFilter] = useState<FilterType>('all')
-  const [showFilters, setShowFilters] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState<Set<SupplierCategory>>(
     new Set(allSupplierCategories)
   )
+  const [selectedFacilities, setSelectedFacilities] = useState<Set<Facility>>(new Set())
 
   useEffect(() => {
     async function fetchData() {
@@ -47,11 +54,19 @@ export default function MapPage() {
     fetchData()
   }, [])
 
+  // Filter campsites by selected facilities
+  const filteredCampsites = campsites.filter((campsite) => {
+    if (selectedFacilities.size === 0) return true
+    return Array.from(selectedFacilities).every((facility) =>
+      campsite.facilities.includes(facility)
+    )
+  })
+
   // Build markers based on filter
   const markers: MapMarker[] = []
 
   if (filter === 'all' || filter === 'campsites') {
-    campsites.forEach((campsite) => {
+    filteredCampsites.forEach((campsite) => {
       markers.push({
         id: campsite.id,
         position: [campsite.location.lat, campsite.location.lng] as [number, number],
@@ -89,8 +104,30 @@ export default function MapPage() {
     }
   }
 
+  const toggleFacility = (facility: Facility) => {
+    setSelectedFacilities((prev) => {
+      // First action: if nothing selected, select only this one
+      if (prev.size === 0) {
+        return new Set([facility])
+      }
+      // Subsequent actions: toggle on/off
+      const next = new Set(prev)
+      if (next.has(facility)) {
+        next.delete(facility)
+      } else {
+        next.add(facility)
+      }
+      return next
+    })
+  }
+
   const toggleCategory = (category: SupplierCategory) => {
     setSelectedCategories((prev) => {
+      // First action: if all selected (default state), select only this one
+      if (prev.size === allSupplierCategories.length) {
+        return new Set([category])
+      }
+      // Subsequent actions: toggle on/off
       const next = new Set(prev)
       if (next.has(category)) {
         next.delete(category)
@@ -99,6 +136,11 @@ export default function MapPage() {
       }
       return next
     })
+  }
+
+  const clearAllFilters = () => {
+    setSelectedFacilities(new Set())
+    setSelectedCategories(new Set(allSupplierCategories))
   }
 
   if (isLoading) {
@@ -137,7 +179,7 @@ export default function MapPage() {
         />
 
         {/* Search Bar Overlay */}
-        <div className="absolute top-4 left-4 right-16">
+        <div className="absolute top-4 left-4 right-4">
           <button
             onClick={() => navigate('/search')}
             className="w-full flex items-center gap-3 px-4 py-3 bg-white dark:bg-surface-dark rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
@@ -147,76 +189,125 @@ export default function MapPage() {
           </button>
         </div>
 
-        {/* Filter Button */}
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={`absolute top-4 right-4 p-3 rounded-xl shadow-lg border ${
-            showFilters
-              ? 'bg-primary text-white border-primary'
-              : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
-          }`}
-        >
-          <Icon name="tune" size={20} />
-        </button>
+        {/* Filter Icons Bar */}
+        <div className="absolute top-20 left-0 right-0 px-4 z-40">
+          {/* Primary Filter Tabs */}
+          <div className="flex gap-2 mb-3">
+            {([
+              { key: 'all', label: 'All', icon: 'layers' },
+              { key: 'campsites', label: 'Campsites', icon: 'holiday_village' },
+              { key: 'suppliers', label: 'Local', icon: 'storefront' },
+            ] as const).map(({ key, label, icon }) => (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full shadow-md border transition-all ${
+                  filter === key
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-white dark:bg-surface-dark border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
+                }`}
+              >
+                <Icon name={icon} size={18} filled={filter === key} />
+                <span className="text-sm font-medium">{label}</span>
+              </button>
+            ))}
 
-        {/* Filter Panel */}
-        {showFilters && (
-          <div className="absolute top-20 right-4 w-72 bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 z-50">
-            <h3 className="font-bold text-slate-900 dark:text-white mb-3">Show on Map</h3>
+            {/* Clear filters button */}
+            {(selectedFacilities.size > 0 || selectedCategories.size < allSupplierCategories.length) && (
+              <button
+                onClick={clearAllFilters}
+                className="flex items-center gap-1 px-3 py-2.5 rounded-full shadow-md border bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400"
+              >
+                <Icon name="close" size={16} />
+                <span className="text-sm font-medium">Clear</span>
+              </button>
+            )}
+          </div>
 
-            {/* Main filter */}
-            <div className="flex gap-2 mb-4">
-              {(['all', 'campsites', 'suppliers'] as FilterType[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium ${
-                    filter === f
-                      ? 'bg-primary text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                  }`}
-                >
-                  {f === 'all' ? 'All' : f === 'campsites' ? 'Campsites' : 'Suppliers'}
-                </button>
-              ))}
-            </div>
-
-            {/* Category filters */}
-            {(filter === 'all' || filter === 'suppliers') && (
-              <>
-                <h4 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
-                  Supplier Categories
-                </h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {allSupplierCategories.map((category) => (
+          {/* Facility Filter Icons (for campsites) */}
+          {(filter === 'all' || filter === 'campsites') && (
+            <div className="overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+              <div className="flex gap-2">
+                {allFacilities.map((facility) => {
+                  const isSelected = selectedFacilities.has(facility)
+                  return (
                     <button
-                      key={category}
-                      onClick={() => toggleCategory(category)}
-                      className={`flex items-center gap-2 p-2 rounded-lg text-xs font-medium ${
-                        selectedCategories.has(category)
-                          ? 'bg-slate-100 dark:bg-slate-800'
-                          : 'bg-slate-50 dark:bg-slate-900 opacity-50'
+                      key={facility}
+                      onClick={() => toggleFacility(facility)}
+                      className={`flex-shrink-0 flex flex-col items-center gap-1 p-2.5 rounded-xl shadow-md border transition-all min-w-[60px] ${
+                        isSelected
+                          ? 'bg-white dark:bg-surface-dark border-2'
+                          : 'bg-white/80 dark:bg-surface-dark/80 border-slate-200 dark:border-slate-700 opacity-70'
                       }`}
+                      style={{
+                        borderColor: isSelected ? facilityColors[facility] : undefined,
+                      }}
                     >
                       <span
                         className="material-symbols-outlined"
                         style={{
-                          fontSize: 16,
-                          color: supplierCategoryColors[category],
+                          fontSize: 22,
+                          color: isSelected ? facilityColors[facility] : '#64748B',
+                        }}
+                      >
+                        {facilityIcons[facility]}
+                      </span>
+                      <span
+                        className={`text-[10px] font-medium ${
+                          isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-500'
+                        }`}
+                      >
+                        {facilityLabels[facility]}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Supplier Category Icons */}
+          {(filter === 'all' || filter === 'suppliers') && (
+            <div className={`overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide ${filter === 'all' ? 'mt-2' : ''}`}>
+              <div className="flex gap-2">
+                {allSupplierCategories.map((category) => {
+                  const isSelected = selectedCategories.has(category)
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => toggleCategory(category)}
+                      className={`flex-shrink-0 flex flex-col items-center gap-1 p-2.5 rounded-xl shadow-md border transition-all min-w-[60px] ${
+                        isSelected
+                          ? 'bg-white dark:bg-surface-dark border-2'
+                          : 'bg-white/80 dark:bg-surface-dark/80 border-slate-200 dark:border-slate-700 opacity-50'
+                      }`}
+                      style={{
+                        borderColor: isSelected ? supplierCategoryColors[category] : undefined,
+                      }}
+                    >
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: 22,
+                          color: isSelected ? supplierCategoryColors[category] : '#64748B',
                         }}
                       >
                         {supplierCategoryIcons[category]}
                       </span>
-                      <span className="text-slate-700 dark:text-slate-300 truncate">
+                      <span
+                        className={`text-[10px] font-medium truncate max-w-[56px] ${
+                          isSelected ? 'text-slate-900 dark:text-white' : 'text-slate-500'
+                        }`}
+                      >
                         {supplierCategoryLabels[category]}
                       </span>
                     </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        )}
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Selected Campsite Card */}
         {selectedCampsite && (

@@ -66,6 +66,9 @@ public class DataInitializer {
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
+            // Always ensure demo accounts exist (even if database is already seeded)
+            ensureDemoAccounts(userRepository, passwordEncoder);
+
             if (campsiteRepository.count() > 0) {
                 log.info("Database already seeded, skipping initialization");
                 // Still seed local businesses if they don't exist
@@ -252,6 +255,30 @@ public class DataInitializer {
         }
     }
 
+    private void ensureDemoAccounts(UserRepository repository, PasswordEncoder encoder) {
+        // Demo accounts matching frontend login page - password: demo1234
+        String[][] demoAccounts = {
+            {"visitor@my-island.com", "Emma Murphy", "false", "false"},
+            {"owner@my-island.com", "Sarah O'Brien", "true", "false"},
+            {"supplier@my-island.com", "Michael Kelly", "false", "true"},
+        };
+
+        for (String[] account : demoAccounts) {
+            String email = account[0];
+            if (repository.findByEmail(email).isEmpty()) {
+                User user = new User();
+                user.setEmail(email);
+                user.setPasswordHash(encoder.encode("demo1234"));
+                user.setName(account[1]);
+                user.setPhone("+353 87 " + (1000000 + random.nextInt(8999999)));
+                user.setOwner(Boolean.parseBoolean(account[2]));
+                user.setSupplier(Boolean.parseBoolean(account[3]));
+                repository.save(user);
+                log.info("Created demo account: {}", email);
+            }
+        }
+    }
+
     private List<User> createOwners(UserRepository repository, PasswordEncoder encoder) {
         List<User> owners = new ArrayList<>();
 
@@ -268,7 +295,7 @@ public class DataInitializer {
             User owner = new User();
             owner.setEmail("owner@my-island.com");
             owner.setPasswordHash(encoder.encode("demo1234"));
-            owner.setName("Campsite Owner");
+            owner.setName("Sarah O'Brien");
             owner.setPhone("+353871234567");
             owner.setOwner(true);
             owners.add(repository.save(owner));
@@ -305,9 +332,8 @@ public class DataInitializer {
 
         // Demo accounts matching frontend - password: demo1234
         String[][] demoAccounts = {
-            {"guest@my-island.com", "Guest User", "false", "false"},
-            {"user@my-island.com", "Registered User", "false", "false"},
-            {"supplier@my-island.com", "Local Supplier", "false", "true"},
+            {"visitor@my-island.com", "Emma Murphy", "false", "false"},
+            {"supplier@my-island.com", "Michael Kelly", "false", "true"},
         };
 
         for (String[] account : demoAccounts) {
