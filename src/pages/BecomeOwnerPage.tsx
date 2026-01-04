@@ -66,8 +66,8 @@ export default function BecomeOwnerPage() {
         await new Promise(resolve => setTimeout(resolve, 500))
       }
       updateUser({ ...user, isOwner: true })
-      toast.success('Welcome!', 'You are now registered as a campsite owner.')
-      navigate('/owner/campsites/new')
+      toast.success('Welcome!', 'You are now registered as a property owner.')
+      navigate('/owner/property/new')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to register as owner'
       toast.error('Error', message)

@@ -115,6 +115,8 @@ import OwnerPayoutSchedulePage from './pages/owner/OwnerPayoutSchedulePage'
 import OwnerTaxSettingsPage from './pages/owner/OwnerTaxSettingsPage'
 import OwnerTeamSettingsPage from './pages/owner/OwnerTeamSettingsPage'
 import CampsiteCreateWizardPage from './pages/owner/CampsiteCreateWizardPage'
+import PropertyWizardPage from './pages/owner/PropertyWizardPage'
+import PropertyTypeSelectionPage from './pages/owner/PropertyTypeSelectionPage'
 import OwnerReviewsPage from './pages/owner/OwnerReviewsPage'
 import OwnerCalendarPage from './pages/owner/OwnerCalendarPage'
 
@@ -252,6 +254,9 @@ function App() {
       <Route path="/owner/lots/new" element={<ProtectedRoute requireOwner><LotFormPage /></ProtectedRoute>} />
       <Route path="/owner/lots/:lotId/edit" element={<ProtectedRoute requireOwner><LotFormPage /></ProtectedRoute>} />
       <Route path="/owner/campsites/new" element={<ProtectedRoute requireOwner><CampsiteCreateWizardPage /></ProtectedRoute>} />
+      <Route path="/owner/property/new" element={<ProtectedRoute requireOwner><PropertyTypeSelectionPage /></ProtectedRoute>} />
+      <Route path="/owner/property/new/campsite" element={<ProtectedRoute requireOwner><PropertyWizardPage propertyType="campsite" /></ProtectedRoute>} />
+      <Route path="/owner/property/new/bnb" element={<ProtectedRoute requireOwner><PropertyWizardPage propertyType="bnb" /></ProtectedRoute>} />
       <Route path="/owner/campsites/:id/edit" element={<ProtectedRoute requireOwner><CampsiteFormPage /></ProtectedRoute>} />
       <Route path="/owner/bookings" element={<ProtectedRoute requireOwner><OwnerBookingsPage /></ProtectedRoute>} />
       <Route path="/owner/offers" element={<ProtectedRoute requireOwner><OfferManagementPage /></ProtectedRoute>} />

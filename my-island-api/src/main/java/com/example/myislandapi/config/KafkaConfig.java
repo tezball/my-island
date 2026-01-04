@@ -21,6 +21,7 @@ public class KafkaConfig {
     public static final String BOOKING_EVENTS_TOPIC = "booking-events";
     public static final String NOTIFICATION_EVENTS_TOPIC = "notification-events";
     public static final String EMAIL_EVENTS_TOPIC = "email-events";
+    public static final String PROPERTY_EVENTS_TOPIC = "property-events";
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -58,6 +59,14 @@ public class KafkaConfig {
     @Bean
     public NewTopic emailEventsTopic() {
         return TopicBuilder.name(EMAIL_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic propertyEventsTopic() {
+        return TopicBuilder.name(PROPERTY_EVENTS_TOPIC)
                 .partitions(3)
                 .replicas(1)
                 .build();

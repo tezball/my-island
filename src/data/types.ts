@@ -301,3 +301,142 @@ export interface BroadcastAlert {
   sentAt: string
   sentTo: number
 }
+
+// ============================================
+// Property Registration Wizard Types
+// ============================================
+
+// Property type for wizard flow differentiation
+export type PropertyType = 'campsite' | 'bnb'
+
+// Accommodation types selectable in wizard (maps to LotType)
+export type AccommodationType =
+  | 'TENT'
+  | 'RV'
+  | 'MOBILE_HOME'
+  | 'GLAMPING'
+  | 'CABIN'
+  | 'APARTMENT'
+  | 'BED_AND_BREAKFAST'
+
+// Configuration for a specific accommodation type
+export interface AccommodationConfig {
+  type: AccommodationType
+  quantity: number
+  defaultCapacity: number
+  pricePerNight: number
+  amenities: string[]
+  customAmenities: string[]
+}
+
+// Draft data for persistence
+export interface PropertyDraft {
+  id: string
+  propertyType: PropertyType
+  data: PropertyWizardData
+  createdAt: string
+  updatedAt: string
+}
+
+// Wizard data (separate from state control fields)
+export interface PropertyWizardData {
+  // Basic info
+  name: string
+  description: string
+  address: string
+  county: string
+  lat: number | null
+  lng: number | null
+  images: string[]
+  facilities: Facility[]
+
+  // Accommodation selection (campsite only)
+  selectedAccommodationTypes: AccommodationType[]
+
+  // Configuration per type
+  accommodationConfigs: Record<string, AccommodationConfig>
+}
+
+// Full wizard state (includes control fields)
+export interface PropertyWizardState extends PropertyWizardData {
+  // Flow control
+  propertyType: PropertyType | null
+  currentStepIndex: number
+  completedStepIds: string[]
+
+  // Draft management
+  isDraft: boolean
+  draftId: string | null
+  lastSaved: string | null
+
+  // Submission state
+  isSubmitting: boolean
+  error: string | null
+}
+
+// Step configuration for dynamic wizard
+export interface WizardStepConfig {
+  id: string
+  title: string
+  icon?: string
+  isRequired: boolean
+  appliesTo: PropertyType | 'both'
+}
+
+// API request/response types for draft endpoints
+export interface PropertyDraftRequest {
+  propertyType: PropertyType
+  name?: string
+  description?: string
+  location?: {
+    address: string
+    county: string
+    lat: number
+    lng: number
+  }
+  images?: string[]
+  facilities?: Facility[]
+  selectedAccommodationTypes?: AccommodationType[]
+  accommodationConfigs?: Record<string, AccommodationConfig>
+}
+
+export interface PropertyDraftResponse {
+  id: string
+  propertyType: PropertyType
+  data: PropertyDraftRequest
+  createdAt: string
+  updatedAt: string
+}
+
+// Default amenities per accommodation type
+export const ACCOMMODATION_AMENITIES: Record<AccommodationType, string[]> = {
+  TENT: ['Fire Pit', 'Picnic Table', 'Vehicle Access', 'Power Hookup', 'Water Tap'],
+  RV: ['Electric Hookup', 'Water Hookup', 'Waste Disposal', 'TV Hookup', 'Wi-Fi'],
+  MOBILE_HOME: ['Electric Hookup', 'Water Hookup', 'Parking Space', 'Patio Area'],
+  GLAMPING: ['Private Bathroom', 'Heating', 'Kitchen Area', 'Wi-Fi', 'Bed Linens'],
+  CABIN: ['Private Bathroom', 'Kitchen', 'Heating', 'Wi-Fi', 'BBQ Grill', 'Parking'],
+  APARTMENT: ['Private Bathroom', 'Kitchen', 'Heating', 'Wi-Fi', 'Laundry', 'Parking'],
+  BED_AND_BREAKFAST: ['Private Bathroom', 'Breakfast Included', 'Wi-Fi', 'TV', 'Daily Cleaning'],
+}
+
+// Default capacity per accommodation type
+export const ACCOMMODATION_DEFAULT_CAPACITY: Record<AccommodationType, number> = {
+  TENT: 4,
+  RV: 4,
+  MOBILE_HOME: 4,
+  GLAMPING: 2,
+  CABIN: 4,
+  APARTMENT: 4,
+  BED_AND_BREAKFAST: 2,
+}
+
+// Display labels for accommodation types
+export const ACCOMMODATION_LABELS: Record<AccommodationType, string> = {
+  TENT: 'Tent Pitches',
+  RV: 'RV / Motorhome Pitches',
+  MOBILE_HOME: 'Mobile Home Pitches',
+  GLAMPING: 'Glamping Pods',
+  CABIN: 'Cabins / Cottages',
+  APARTMENT: 'Apartments',
+  BED_AND_BREAKFAST: 'B&B Rooms',
+}

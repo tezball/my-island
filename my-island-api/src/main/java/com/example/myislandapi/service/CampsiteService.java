@@ -1,6 +1,7 @@
 package com.example.myislandapi.service;
 
 import com.example.myislandapi.dto.request.CreateCampsiteRequest;
+import com.example.myislandapi.dto.request.PropertyDraftRequest;
 import com.example.myislandapi.dto.request.UpdateCampsiteRequest;
 import com.example.myislandapi.dto.response.CampsiteDetailResponse;
 import com.example.myislandapi.dto.response.CampsiteResponse;
@@ -11,6 +12,7 @@ import com.example.myislandapi.entity.Location;
 import com.example.myislandapi.entity.Lot;
 import com.example.myislandapi.entity.User;
 import com.example.myislandapi.enums.Facility;
+import com.example.myislandapi.enums.LotType;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.exception.UnauthorizedException;
@@ -213,6 +215,123 @@ public class CampsiteService {
         }
 
         campsiteRepository.delete(campsite);
+    }
+
+    /**
+     * Create a campsite from a property draft.
+     * This creates both the campsite and its lots based on the draft data.
+     */
+    @Transactional
+    public CampsiteDetailResponse createCampsiteFromDraft(UUID ownerId, PropertyDraftRequest draftData) {
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", ownerId));
+
+        if (!owner.isOwner()) {
+            throw new BadRequestException("User is not registered as an owner");
+        }
+
+        // Create campsite
+        Campsite campsite = new Campsite();
+        campsite.setName(draftData.name());
+        campsite.setDescription(draftData.description());
+
+        if (draftData.location() != null) {
+            campsite.setLocation(new Location(
+                    draftData.location().address(),
+                    draftData.location().county(),
+                    draftData.location().lat(),
+                    draftData.location().lng()
+            ));
+        }
+
+        campsite.setImages(draftData.images() != null ? new ArrayList<>(draftData.images()) : new ArrayList<>());
+
+        // Convert facility strings to Facility enums
+        if (draftData.facilities() != null) {
+            Set<Facility> facilities = draftData.facilities().stream()
+                    .map(name -> {
+                        try {
+                            return Facility.valueOf(name.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            return null;
+                        }
+                    })
+                    .filter(f -> f != null)
+                    .collect(Collectors.toSet());
+            campsite.setFacilities(facilities);
+        } else {
+            campsite.setFacilities(new HashSet<>());
+        }
+
+        campsite.setOwner(owner);
+        campsite.setActive(true);
+        campsite = campsiteRepository.save(campsite);
+
+        // Create lots from accommodation configs
+        List<Lot> lots = new ArrayList<>();
+        if (draftData.accommodationConfigs() != null) {
+            for (var entry : draftData.accommodationConfigs().entrySet()) {
+                PropertyDraftRequest.AccommodationConfigRequest config = entry.getValue();
+                if (config == null || config.quantity() == null || config.quantity() <= 0) {
+                    continue;
+                }
+
+                // Convert accommodation type string to LotType
+                LotType lotType;
+                try {
+                    lotType = LotType.valueOf(config.type().toUpperCase().replace("-", "_"));
+                } catch (IllegalArgumentException e) {
+                    // Skip invalid lot types
+                    continue;
+                }
+
+                // Create lots for this accommodation type
+                for (int i = 1; i <= config.quantity(); i++) {
+                    Lot lot = new Lot();
+                    lot.setCampsite(campsite);
+                    lot.setName(getLotTypeLabel(lotType) + " " + i);
+                    lot.setType(lotType);
+                    lot.setCapacity(config.defaultCapacity() != null ? config.defaultCapacity() : 2);
+                    lot.setPricePerNight(config.pricePerNight() != null
+                            ? BigDecimal.valueOf(config.pricePerNight())
+                            : BigDecimal.valueOf(50));
+                    lot.setImages(new ArrayList<>());
+
+                    // Combine amenities
+                    List<String> allAmenities = new ArrayList<>();
+                    if (config.amenities() != null) {
+                        allAmenities.addAll(config.amenities());
+                    }
+                    if (config.customAmenities() != null) {
+                        allAmenities.addAll(config.customAmenities());
+                    }
+                    lot.setAmenities(allAmenities);
+                    lot.setAvailable(true);
+
+                    lots.add(lotRepository.save(lot));
+                }
+            }
+        }
+
+        return toCampsiteDetailResponse(campsite, lots, false);
+    }
+
+    private String getLotTypeLabel(LotType type) {
+        return switch (type) {
+            case TENT -> "Tent Pitch";
+            case CARAVAN -> "Caravan Bay";
+            case CAMPERVAN -> "Campervan Spot";
+            case RV -> "RV Pitch";
+            case GLAMPING -> "Glamping Pod";
+            case CABIN -> "Cabin";
+            case TREEHOUSE -> "Treehouse";
+            case YURT -> "Yurt";
+            case POD -> "Pod";
+            case APARTMENT -> "Apartment";
+            case COTTAGE -> "Cottage";
+            case SAFARI_TENT -> "Safari Tent";
+            case BED_AND_BREAKFAST -> "Room";
+        };
     }
 
     private CampsiteResponse toCampsiteResponse(Campsite campsite) {

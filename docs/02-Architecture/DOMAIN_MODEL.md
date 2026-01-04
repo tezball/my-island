@@ -20,19 +20,21 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 
 ### Core Terms
 
-| Term | Definition |
-|------|------------|
-| **Campsite** | A property offering outdoor accommodation (camping, glamping, cabins). Owned by exactly one Owner. |
-| **Lot** | A bookable unit within a Campsite (e.g., tent pitch, cabin, glamping pod). Has a type and capacity. |
-| **Guest** | A user who browses and books accommodations. |
-| **Owner** | A user who owns and manages one or more Campsites. |
-| **Supplier** | A business partner offering local deals and experiences to Guests. |
-| **Booking** | A reservation for a specific Lot over a date range. |
-| **Extra** | An add-on service or product available with a Booking (e.g., firewood, bike rental). |
-| **Facility** | An amenity available at a Campsite (e.g., WiFi, showers, playground). |
-| **Check-In Instructions** | Arrival information provided to Guests before their stay. |
-| **Offer** | A promotional deal from a Supplier for Guests. |
-| **Review** | Guest feedback submitted after completing a Booking. |
+| Term                      | Definition                                                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Site**                  | A site is a physical location with one or more accommodation types                                              |
+| **Campsite**              | A site type. A property offering outdoor accommodation (camping, glamping, cabins). Owned by exactly one Owner. |
+| **B&B**                   | A site type. A B&B with one or more rooms.                                                                      |
+| **Lot**                   | A bookable unit within a Campsite (e.g., tent pitch, cabin, glamping pod). Has a type and capacity.             |
+| **Guest**                 | A user who browses and books accommodations.                                                                    |
+| **Owner**                 | A user who owns and manages one or more Campsites.                                                              |
+| **Supplier**              | A business partner offering local deals and experiences to Guests.                                              |
+| **Booking**               | A reservation for a specific Lot over a date range.                                                             |
+| **Extra**                 | An add-on service or product available with a Booking (e.g., firewood, bike rental).                            |
+| **Facility**              | An amenity available at a Campsite (e.g., WiFi, showers, playground).                                           |
+| **Check-In Instructions** | Arrival information provided to Guests before their stay.                                                       |
+| **Offer**                 | A promotional deal from a Supplier for Guests.                                                                  |
+| **Review**                | Guest feedback submitted after completing a Booking.                                                            |
 
 ### User Roles
 

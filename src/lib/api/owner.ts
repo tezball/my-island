@@ -8,7 +8,13 @@
  */
 
 import api from '../api'
-import type { User, Facility, LotType } from '../../data/types'
+import type {
+  User,
+  Facility,
+  LotType,
+  PropertyDraftRequest,
+  PropertyDraftResponse,
+} from '../../data/types'
 
 // Request types
 export interface CreateCampsiteRequest {
@@ -168,6 +174,19 @@ export const ownerApi = {
 
   deleteLot: (id: string) =>
     api.delete<void>(`/lots/${id}`),
+
+  // Property Draft API
+  getDraft: () =>
+    api.get<PropertyDraftResponse | null>('/owner/property/draft'),
+
+  saveDraft: (data: PropertyDraftRequest) =>
+    api.post<PropertyDraftResponse>('/owner/property/draft', data),
+
+  deleteDraft: () =>
+    api.delete<void>('/owner/property/draft'),
+
+  publishDraft: (draftId: string) =>
+    api.post<CampsiteDetailResponse>(`/owner/property/draft/${draftId}/publish`),
 }
 
 export default ownerApi

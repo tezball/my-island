@@ -4,24 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "bea9c6bd6f50eb8a",
+        "id": "f297e79e75b09bb1",
         "type": "tabs",
         "children": [
           {
-            "id": "54af875f882c86d2",
+            "id": "b18c392056cc7755",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "04-User-Flows/auth/auth-flow.canvas",
-                "viewState": {
-                  "x": 122.45036781476642,
-                  "y": 645.4946814479684,
-                  "zoom": -0.15402788602156436
-                }
+                "file": "02-Architecture/DOMAIN_MODEL.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "auth-flow"
+              "icon": "lucide-file",
+              "title": "DOMAIN_MODEL"
             }
           }
         ]
@@ -183,28 +180,34 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "54af875f882c86d2",
+  "active": "b18c392056cc7755",
   "lastOpenFiles": [
+    "02-Architecture/DOMAIN_MODEL.md",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767549050574",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548973099",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548945080",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548909167",
+    "04-User-Flows/profile/profile-flow.canvas",
+    "04-User-Flows/reviews/reviews-flow.canvas",
+    "04-User-Flows/discovery/discovery-flow.canvas",
+    "04-User-Flows/booking/booking-flow.canvas",
     "04-User-Flows/auth/auth-flow.canvas",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548296006",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548295276",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548294559",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548293889",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548293236",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548292554",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548291909",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548291279",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548290678",
-    "04-User-Flows/auth/auth-flow.canvas.tmp.273980.1767548290073",
+    "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548712311",
+    "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548711528",
+    "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548710747",
+    "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548709966",
+    "04-User-Flows/offers/offers-flow.canvas.tmp.273980.1767548709254",
+    "04-User-Flows/offers/offers-flow.canvas.tmp.273980.1767548709138",
     "05-Design-Specs/not_found_(404)/screen.png",
     "05-Design-Specs/login_page_1/screen.png",
     "05-Design-Specs/2fa_code_entry/spec.md",
     "04-User-Flows/user-flows.md",
     "04-User-Flows/missing-screens.md",
-    "04-User-Flows/reviews/reviews-flow.canvas",
     "04-User-Flows/profile/03b-edit-profile-3.png",
     "04-User-Flows/profile/03-edit-profile-2.png",
     "04-User-Flows/profile/02-edit-profile-1.png",
@@ -213,15 +216,12 @@
     "04-User-Flows/owner-admin/01-dashboard.png",
     "04-User-Flows/owner-admin/20-property-overview-2.png",
     "04-User-Flows/owner-admin/21-property-overview-3.png",
-    "04-User-Flows/owner-admin/owner-admin-flow.canvas",
     "04-User-Flows/user-flows.canvas",
     "04-User-Flows/auth/README.md",
     "04-User-Flows/my-bookings/my-bookings-flow.canvas",
     "04-User-Flows/notifications/notifications-flow.canvas",
     "04-User-Flows/offers/offers-flow.canvas",
-    "04-User-Flows/onboarding/onboarding-flow.canvas",
     "04-User-Flows/owner-admin/OWNER_PROPERTY_SETUP_FLOW.md",
-    "04-User-Flows/booking/booking-flow.canvas",
     "04-User-Flows/owner-admin/README.md",
     "OWNER_PROPERTY_SETUP_FLOW.md",
     "01-Project-Management/SNAG_LIST.md",
@@ -232,7 +232,6 @@
     "08-Leads/CAMPSITE_LEADS.md",
     "07-Testing/TESTING_APPROACH.md",
     "05-Design-Specs/README.md",
-    "flows/booking/booking-flow.canvas",
     "05-Design-Specs/social_login_failed/spec.md",
     "05-Design-Specs/sign_up:_personal_details/spec.md",
     "05-Design-Specs/logout_confirmation/spec.md",

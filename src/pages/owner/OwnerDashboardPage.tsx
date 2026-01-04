@@ -7,7 +7,7 @@ import Icon from '../../components/ui/Icon'
 import Toggle from '../../components/ui/Toggle'
 import Skeleton from '../../components/ui/Skeleton'
 import { useToast } from '../../context/ToastContext'
-import { ownerApi, type OwnerStats, type CampsiteResponse } from '../../lib/api/owner'
+import { ownerApi, type OwnerStats } from '../../lib/api/owner'
 
 interface BroadcastAlert {
   id: string
@@ -23,20 +23,13 @@ export default function OwnerDashboardPage() {
   const [broadcastMessage, setBroadcastMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState<OwnerStats | null>(null)
-  const [campsite, setCampsite] = useState<CampsiteResponse | null>(null)
   const [broadcastAlerts, setBroadcastAlerts] = useState<BroadcastAlert[]>([])
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [statsData, campsitesData] = await Promise.all([
-          ownerApi.getStats(),
-          ownerApi.getMyCampsites(),
-        ])
+        const statsData = await ownerApi.getStats()
         setStats(statsData)
-        if (campsitesData.length > 0) {
-          setCampsite(campsitesData[0])
-        }
         // Mock broadcast alerts since no API endpoint exists
         setBroadcastAlerts([])
       } catch (err) {
@@ -261,37 +254,20 @@ export default function OwnerDashboardPage() {
                 €{(stats?.totalRevenue || 0).toLocaleString()}
               </span>
             </Link>
-            {campsite ? (
-              <Link
-                to={`/owner/campsites/${campsite.id}/edit`}
-                className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
-              >
-                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icon name="edit" size={24} className="text-primary" />
-                </div>
-                <span className="font-medium text-slate-900 dark:text-white text-sm">
-                  Edit Campsite
-                </span>
-                <span className="text-xs text-slate-500">
-                  Update details
-                </span>
-              </Link>
-            ) : (
-              <Link
-                to="/owner/campsites/new"
-                className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
-              >
-                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icon name="add" size={24} className="text-primary" />
-                </div>
-                <span className="font-medium text-slate-900 dark:text-white text-sm">
-                  Add Campsite
-                </span>
-                <span className="text-xs text-slate-500">
-                  Create listing
-                </span>
-              </Link>
-            )}
+            <Link
+              to="/owner/property/new"
+              className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
+            >
+              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon name="add_home" size={24} className="text-primary" />
+              </div>
+              <span className="font-medium text-slate-900 dark:text-white text-sm">
+                Add Property
+              </span>
+              <span className="text-xs text-slate-500">
+                Campsite or B&B
+              </span>
+            </Link>
           </div>
         </div>
       </div>
