@@ -2,7 +2,7 @@
 	"nodes":[
 		{"id":"grp-features-continued","type":"group","x":-320,"y":120,"width":1500,"height":800,"color":"5","label":"1. Onboarding"},
 		{"id":"title","type":"text","text":"# Onboarding Flows\n\nFirst-time user onboarding journeys.\n\n**Legend:**\n- Green (5): Success/Kafka Events\n- Blue (4): UI Events\n- Red (1): Error States","x":-300,"y":-200,"width":400,"height":240,"color":"6"},
-		{"id":"flow1-welcome","type":"file","file":"04-User-Flows/onboarding/01-welcome.png","x":-260,"y":200,"width":208,"height":500},
+		{"id":"flow1-welcome","type":"file","file":"01-welcome.png","x":-260,"y":200,"width":208,"height":500},
 		{"id":"flow2-home","type":"text","text":"## Home Screen\n\nUser can now explore campsites","x":373,"y":660,"width":280,"height":140,"color":"5"},
 		{"id":"82fb78f14d667ca0","type":"text","text":"## Login Flow","x":320,"y":230,"width":280,"height":140,"color":"5"},
 		{"id":"flow2-events","type":"text","text":"**Kafka Events:**\n- `user.onboarding_completed`\n  - Analytics, Feature flags","x":820,"y":190,"width":320,"height":140,"color":"5"}
