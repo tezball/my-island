@@ -55,12 +55,6 @@ export default function OffersPage() {
 
   const filteredOffers = offers
 
-  const handleGetDirections = (e: React.MouseEvent, address: string) => {
-    e.stopPropagation()
-    const encodedAddress = encodeURIComponent(address)
-    window.open(`https://maps.google.com/?q=${encodedAddress}`, '_blank')
-  }
-
   return (
     <AppShell headerTitle="Local Offers" showLogo>
       <div className="flex-1 flex flex-col">
@@ -107,57 +101,60 @@ export default function OffersPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
-              {filteredOffers.map((offer) => (
-                <div
-                  key={offer.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => navigate(`/offers/${offer.id}`)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/offers/${offer.id}`) }}
-                  className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800 text-left hover:border-primary/50 transition-colors cursor-pointer"
-                >
-                  <div className="flex gap-4">
-                    <img
-                      src={offer.supplierLogo}
-                      alt={offer.supplierName}
-                      className="size-16 rounded-xl object-cover flex-shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <h3 className="font-bold text-slate-900 dark:text-white truncate">
-                            {offer.title}
-                          </h3>
-                          <p className="text-sm text-slate-500 truncate">{offer.supplierName}</p>
+              {filteredOffers.map((offer) => {
+                // Map backend category (uppercase) to frontend category (lowercase)
+                const categoryKey = offer.category.toLowerCase() as OfferCategory
+                return (
+                  <div
+                    key={offer.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => navigate(`/offers/${offer.id}`)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/offers/${offer.id}`) }}
+                    className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800 text-left hover:border-primary/50 transition-colors cursor-pointer"
+                  >
+                    <div className="flex gap-4">
+                      {offer.imageUrl ? (
+                        <img
+                          src={offer.imageUrl}
+                          alt={offer.title}
+                          className="size-16 rounded-xl object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="size-16 rounded-xl bg-slate-100 dark:bg-slate-800 flex-shrink-0 flex items-center justify-center">
+                          <Icon name={categoryIcons[categoryKey] || 'local_offer'} size={24} className="text-slate-400" />
                         </div>
-                        <Badge variant="success" className="flex-shrink-0">{offer.discount}</Badge>
-                      </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">
-                        {offer.description}
-                      </p>
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1 text-xs text-slate-500">
-                            <Icon name={categoryIcons[offer.category]} size={14} />
-                            {categoryLabels[offer.category]}
-                          </span>
-                          <span className="flex items-center gap-1 text-xs text-slate-500">
-                            <Icon name="schedule" size={14} />
-                            {new Date(offer.validUntil).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
-                          </span>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-slate-900 dark:text-white truncate">
+                              {offer.title}
+                            </h3>
+                            <p className="text-sm text-slate-500 truncate">{offer.campsiteName}</p>
+                          </div>
+                          <Badge variant="success" className="flex-shrink-0">{offer.discountPercent}% off</Badge>
                         </div>
-                        <button
-                          onClick={(e) => handleGetDirections(e, offer.location.address)}
-                          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
-                        >
-                          <Icon name="directions" size={14} />
-                          Directions
-                        </button>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">
+                          {offer.description}
+                        </p>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-3">
+                            <span className="flex items-center gap-1 text-xs text-slate-500">
+                              <Icon name={categoryIcons[categoryKey] || 'category'} size={14} />
+                              {categoryLabels[categoryKey] || offer.category}
+                            </span>
+                            <span className="flex items-center gap-1 text-xs text-slate-500">
+                              <Icon name="schedule" size={14} />
+                              {new Date(offer.validUntil).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

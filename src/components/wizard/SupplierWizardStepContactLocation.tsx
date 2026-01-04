@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSupplierWizard } from '../../context/SupplierWizardContext'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
@@ -16,27 +16,27 @@ export default function SupplierWizardStepContactLocation({
 }: SupplierWizardStepContactLocationProps) {
   const { state, dispatch, prevStep, canProceed } = useSupplierWizard()
 
-  const [location, setLocation] = useState(state.location)
-  const [contactEmail, setContactEmail] = useState(state.contactEmail)
-  const [phoneNumber, setPhoneNumber] = useState(state.phoneNumber)
-  const [eircode, setEircode] = useState(state.eircode)
-  const [latitude, setLatitude] = useState<number | null>(state.latitude)
-  const [longitude, setLongitude] = useState<number | null>(state.longitude)
   const [isLocating, setIsLocating] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
 
-  // Update context when fields change
-  useEffect(() => {
+  const updateField = (updates: Partial<{
+    location: string
+    contactEmail: string
+    phoneNumber: string
+    eircode: string
+    latitude: number | null
+    longitude: number | null
+  }>) => {
     dispatch({
       type: 'UPDATE_CONTACT_LOCATION',
-      location,
-      contactEmail,
-      phoneNumber,
-      eircode,
-      latitude,
-      longitude,
+      location: updates.location ?? state.location,
+      contactEmail: updates.contactEmail ?? state.contactEmail,
+      phoneNumber: updates.phoneNumber ?? state.phoneNumber,
+      eircode: updates.eircode ?? state.eircode,
+      latitude: updates.latitude !== undefined ? updates.latitude : state.latitude,
+      longitude: updates.longitude !== undefined ? updates.longitude : state.longitude,
     })
-  }, [location, contactEmail, phoneNumber, eircode, latitude, longitude, dispatch])
+  }
 
   const handleSubmit = () => {
     if (canProceed()) {
@@ -55,8 +55,10 @@ export default function SupplierWizardStepContactLocation({
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLatitude(position.coords.latitude)
-        setLongitude(position.coords.longitude)
+        updateField({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
         setIsLocating(false)
       },
       (error) => {
@@ -84,20 +86,19 @@ export default function SupplierWizardStepContactLocation({
   }
 
   const clearLocation = () => {
-    setLatitude(null)
-    setLongitude(null)
+    updateField({ latitude: null, longitude: null })
     setLocationError(null)
   }
 
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.contactEmail)
 
   const mapMarkers =
-    latitude !== null && longitude !== null
+    state.latitude !== null && state.longitude !== null
       ? [
           {
             id: 'supplier-location',
-            position: [latitude, longitude] as [number, number],
-            name: location || 'Your Business',
+            position: [state.latitude, state.longitude] as [number, number],
+            name: state.location || 'Your Business',
             type: 'campsite' as const,
           },
         ]
@@ -119,8 +120,8 @@ export default function SupplierWizardStepContactLocation({
         {/* Business Address */}
         <Input
           label="Business Address"
-          value={location}
-          onChange={(e) => setLocation(e.target.value.slice(0, 255))}
+          value={state.location}
+          onChange={(e) => updateField({ location: e.target.value.slice(0, 255) })}
           placeholder="e.g., Main Street, Clifden, Co. Galway"
           helperText="Enter your full business address"
         />
@@ -128,8 +129,8 @@ export default function SupplierWizardStepContactLocation({
         {/* Eircode */}
         <Input
           label="Eircode"
-          value={eircode}
-          onChange={(e) => setEircode(e.target.value.toUpperCase().slice(0, 10))}
+          value={state.eircode}
+          onChange={(e) => updateField({ eircode: e.target.value.toUpperCase().slice(0, 10) })}
           placeholder="e.g., D02 X285"
           helperText="Irish postal code (optional but recommended)"
         />
@@ -139,12 +140,12 @@ export default function SupplierWizardStepContactLocation({
           <Input
             label="Contact Email"
             type="email"
-            value={contactEmail}
-            onChange={(e) => setContactEmail(e.target.value.slice(0, 255))}
+            value={state.contactEmail}
+            onChange={(e) => updateField({ contactEmail: e.target.value.slice(0, 255) })}
             placeholder="e.g., info@yourbusiness.ie"
             helperText="This email will be visible to customers"
           />
-          {contactEmail && !isEmailValid && (
+          {state.contactEmail && !isEmailValid && (
             <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
               <Icon name="error" size={14} />
               Please enter a valid email address
@@ -156,8 +157,8 @@ export default function SupplierWizardStepContactLocation({
         <Input
           label="Phone Number (optional)"
           type="tel"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value.slice(0, 50))}
+          value={state.phoneNumber}
+          onChange={(e) => updateField({ phoneNumber: e.target.value.slice(0, 50) })}
           placeholder="e.g., +353 91 123 456"
           helperText="Customers may call you directly"
         />
@@ -194,7 +195,7 @@ export default function SupplierWizardStepContactLocation({
                 </>
               )}
             </Button>
-            {(latitude !== null || longitude !== null) && (
+            {(state.latitude !== null || state.longitude !== null) && (
               <Button
                 type="button"
                 variant="outline"
@@ -219,9 +220,9 @@ export default function SupplierWizardStepContactLocation({
               label="Latitude"
               type="number"
               step="0.000001"
-              value={latitude?.toString() || ''}
+              value={state.latitude?.toString() || ''}
               onChange={(e) =>
-                setLatitude(e.target.value ? parseFloat(e.target.value) : null)
+                updateField({ latitude: e.target.value ? parseFloat(e.target.value) : null })
               }
               placeholder="e.g., 53.489"
             />
@@ -229,19 +230,19 @@ export default function SupplierWizardStepContactLocation({
               label="Longitude"
               type="number"
               step="0.000001"
-              value={longitude?.toString() || ''}
+              value={state.longitude?.toString() || ''}
               onChange={(e) =>
-                setLongitude(e.target.value ? parseFloat(e.target.value) : null)
+                updateField({ longitude: e.target.value ? parseFloat(e.target.value) : null })
               }
               placeholder="e.g., -10.019"
             />
           </div>
 
           {/* Map Preview */}
-          {(latitude !== null && longitude !== null) && (
+          {(state.latitude !== null && state.longitude !== null) && (
             <div className="h-48 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
               <MapView
-                center={[latitude, longitude]}
+                center={[state.latitude, state.longitude]}
                 zoom={14}
                 markers={mapMarkers}
                 onMarkerClick={() => {}}
@@ -249,7 +250,7 @@ export default function SupplierWizardStepContactLocation({
               />
             </div>
           )}
-          {latitude === null && longitude === null && (
+          {state.latitude === null && state.longitude === null && (
             <div className="h-32 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-slate-200 dark:border-slate-700">
               <div className="text-center text-slate-400">
                 <Icon name="map" size={32} className="mx-auto mb-2" />

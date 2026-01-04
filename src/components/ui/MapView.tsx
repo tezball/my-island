@@ -22,6 +22,7 @@ interface MapViewProps {
   zoom?: number
   markers?: MapMarker[]
   onMarkerClick?: (id: string, type: MarkerType) => void
+  onMapClick?: (lat: number, lng: number) => void
   className?: string
   height?: string
 }
@@ -102,9 +103,27 @@ function createSupplierIcon(marker: MapMarker): L.DivIcon {
 function createPopupContent(marker: MapMarker): string {
   if (marker.type === 'campsite') {
     return `
-      <div style="min-width: 150px;">
-        <strong>${marker.name}</strong>
-        ${marker.price ? `<br/><span style="color: #13ec80; font-weight: 600;">€${marker.price}/night</span>` : ''}
+      <div style="min-width: 180px; padding: 4px;">
+        <strong style="font-size: 14px;">${marker.name}</strong>
+        ${marker.price ? `<div style="color: #13ec80; font-weight: 600; margin: 4px 0;">€${marker.price}/night</div>` : ''}
+        <button
+          data-marker-id="${marker.id}"
+          data-marker-type="${marker.type}"
+          style="
+            margin-top: 8px;
+            width: 100%;
+            padding: 8px 12px;
+            background: #13ec80;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+          "
+        >
+          View Campsite
+        </button>
       </div>
     `
   }
@@ -113,12 +132,29 @@ function createPopupContent(marker: MapMarker): string {
   const color = supplierCategoryColors[category]
 
   return `
-    <div style="min-width: 150px;">
-      <strong>${marker.name}</strong>
-      <br/>
-      <span style="color: ${color}; font-weight: 500; font-size: 12px; text-transform: capitalize;">
+    <div style="min-width: 180px; padding: 4px;">
+      <strong style="font-size: 14px;">${marker.name}</strong>
+      <div style="color: ${color}; font-weight: 500; font-size: 12px; text-transform: capitalize; margin: 4px 0;">
         ${category.toLowerCase().replace('_', ' ')}
-      </span>
+      </div>
+      <button
+        data-marker-id="${marker.id}"
+        data-marker-type="${marker.type}"
+        style="
+          margin-top: 8px;
+          width: 100%;
+          padding: 8px 12px;
+          background: ${color};
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 13px;
+          cursor: pointer;
+        "
+      >
+        View Details
+      </button>
     </div>
   `
 }
@@ -128,6 +164,7 @@ export default function MapView({
   zoom = 7,
   markers = [],
   onMarkerClick,
+  onMapClick,
   className = '',
   height = '100%',
 }: MapViewProps) {
@@ -179,15 +216,30 @@ export default function MapView({
       const leafletMarker = L.marker(marker.position, { icon })
         .bindPopup(createPopupContent(marker))
 
-      if (onMarkerClick) {
-        leafletMarker.on('click', () => {
-          onMarkerClick(marker.id, marker.type)
-        })
-      }
-
       markersLayerRef.current?.addLayer(leafletMarker)
     })
-  }, [markers, onMarkerClick])
+  }, [markers])
+
+  // Handle popup button clicks
+  useEffect(() => {
+    if (!mapInstanceRef.current || !onMarkerClick) return
+
+    const handlePopupClick = (e: Event) => {
+      const target = e.target as HTMLElement
+      if (target.tagName === 'BUTTON' && target.dataset.markerId) {
+        const markerId = target.dataset.markerId
+        const markerType = target.dataset.markerType as MarkerType
+        onMarkerClick(markerId, markerType)
+      }
+    }
+
+    const mapContainer = mapInstanceRef.current.getContainer()
+    mapContainer.addEventListener('click', handlePopupClick)
+
+    return () => {
+      mapContainer.removeEventListener('click', handlePopupClick)
+    }
+  }, [onMarkerClick])
 
   // Update center when it changes
   useEffect(() => {
@@ -195,6 +247,21 @@ export default function MapView({
       mapInstanceRef.current.setView(center, zoom)
     }
   }, [center, zoom])
+
+  // Handle map click for location selection
+  useEffect(() => {
+    if (!mapInstanceRef.current || !onMapClick) return
+
+    const handleMapClick = (e: L.LeafletMouseEvent) => {
+      onMapClick(e.latlng.lat, e.latlng.lng)
+    }
+
+    mapInstanceRef.current.on('click', handleMapClick)
+
+    return () => {
+      mapInstanceRef.current?.off('click', handleMapClick)
+    }
+  }, [onMapClick])
 
   return (
     <div

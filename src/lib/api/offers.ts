@@ -10,22 +10,22 @@
 import api from '../api'
 import type { OfferCategory } from '../../data/types'
 
-// Response types
+// Response types matching backend OfferResponse
 export interface OfferResponse {
   id: string
   title: string
   description: string
-  supplierName: string
-  supplierLogo: string
-  discount: string
-  code?: string
-  category: OfferCategory
+  category: string // Backend returns uppercase enum like "FOOD"
+  imageUrl: string | null
+  originalPrice: number
+  discountPrice: number
+  discountPercent: number
+  validFrom: string
   validUntil: string
-  location: {
-    address: string
-    lat: number
-    lng: number
-  }
+  promoCode: string | null
+  featured: boolean
+  campsiteId: string
+  campsiteName: string
 }
 
 // Paginated response wrapper

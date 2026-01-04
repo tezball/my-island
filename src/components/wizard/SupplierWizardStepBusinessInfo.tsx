@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { useSupplierWizard, SUPPLIER_CATEGORIES } from '../../context/SupplierWizardContext'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
@@ -6,20 +5,29 @@ import Icon from '../ui/Icon'
 import type { SupplierCategory } from '../../data/types'
 
 export default function SupplierWizardStepBusinessInfo() {
-  const { state, dispatch, canProceed } = useSupplierWizard()
+  const { state, dispatch, nextStep, canProceed } = useSupplierWizard()
 
-  const [businessName, setBusinessName] = useState(state.businessName)
-  const [description, setDescription] = useState(state.description)
-  const [category, setCategory] = useState<SupplierCategory | null>(state.category)
+  const updateField = (field: 'businessName' | 'description', value: string) => {
+    dispatch({
+      type: 'UPDATE_BUSINESS_INFO',
+      businessName: field === 'businessName' ? value : state.businessName,
+      description: field === 'description' ? value : state.description,
+      category: state.category,
+    })
+  }
 
-  // Update context when fields change
-  useEffect(() => {
-    dispatch({ type: 'UPDATE_BUSINESS_INFO', businessName, description, category })
-  }, [businessName, description, category, dispatch])
+  const updateCategory = (category: SupplierCategory) => {
+    dispatch({
+      type: 'UPDATE_BUSINESS_INFO',
+      businessName: state.businessName,
+      description: state.description,
+      category,
+    })
+  }
 
   const handleNext = () => {
     if (canProceed()) {
-      dispatch({ type: 'NEXT_STEP' })
+      nextStep()
     }
   }
 
@@ -39,10 +47,15 @@ export default function SupplierWizardStepBusinessInfo() {
         {/* Business Name */}
         <Input
           label="Business Name"
-          value={businessName}
-          onChange={(e) => setBusinessName(e.target.value.slice(0, 255))}
+          value={state.businessName}
+          onChange={(e) => updateField('businessName', e.target.value.slice(0, 255))}
           placeholder="e.g., Murphy's Farm Shop"
           helperText="Choose a name that represents your business"
+          error={
+            state.businessName.trim().length > 0 && state.businessName.trim().length < 2
+              ? 'Name must be at least 2 characters'
+              : undefined
+          }
         />
 
         {/* Description */}
@@ -51,35 +64,51 @@ export default function SupplierWizardStepBusinessInfo() {
             Description
           </label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value.slice(0, 2000))}
+            value={state.description}
+            onChange={(e) => updateField('description', e.target.value.slice(0, 2000))}
             placeholder="Tell customers what makes your business special. Describe your products, services, and what sets you apart..."
             rows={4}
-            className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+            className={`w-full px-4 py-3 rounded-xl border bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none ${
+              state.description.trim().length > 0 && state.description.trim().length < 10
+                ? 'border-red-300 dark:border-red-700'
+                : 'border-slate-200 dark:border-slate-700'
+            }`}
           />
-          <p className="text-xs text-slate-400 mt-1 text-right">{description.length}/2000</p>
+          <div className="flex justify-between items-center mt-1">
+            <p className={`text-xs ${
+              state.description.trim().length > 0 && state.description.trim().length < 10
+                ? 'text-red-500'
+                : 'text-slate-400'
+            }`}>
+              {state.description.trim().length > 0 && state.description.trim().length < 10
+                ? `${10 - state.description.trim().length} more characters needed`
+                : 'Minimum 10 characters'}
+            </p>
+            <p className="text-xs text-slate-400">{state.description.length}/2000</p>
+          </div>
         </div>
 
         {/* Category Selection */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
             Business Category
           </label>
+          <p className="text-xs text-slate-400 mb-3">Select the category that best describes your business</p>
           <div className="grid grid-cols-3 gap-3">
             {SUPPLIER_CATEGORIES.map((cat) => (
               <button
                 key={cat.value}
                 type="button"
-                onClick={() => setCategory(cat.value)}
+                onClick={() => updateCategory(cat.value)}
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                  category === cat.value
+                  state.category === cat.value
                     ? 'border-primary bg-primary/10 dark:bg-primary/20'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                 }`}
               >
                 <div
                   className={`size-10 rounded-full flex items-center justify-center ${
-                    category === cat.value
+                    state.category === cat.value
                       ? 'bg-primary text-slate-900'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                   }`}
@@ -88,7 +117,7 @@ export default function SupplierWizardStepBusinessInfo() {
                 </div>
                 <span
                   className={`text-xs font-medium text-center ${
-                    category === cat.value
+                    state.category === cat.value
                       ? 'text-primary'
                       : 'text-slate-700 dark:text-slate-300'
                   }`}
@@ -98,9 +127,9 @@ export default function SupplierWizardStepBusinessInfo() {
               </button>
             ))}
           </div>
-          {category && (
+          {state.category && (
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-3">
-              {SUPPLIER_CATEGORIES.find((c) => c.value === category)?.description}
+              {SUPPLIER_CATEGORIES.find((c) => c.value === state.category)?.description}
             </p>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
@@ -32,7 +32,7 @@ export default function SupplierDetailPage() {
 
   if (isLoading) {
     return (
-      <AppShell showBack headerTitle="Supplier">
+      <AppShell showBack headerTitle="Offer">
         <div className="flex-1">
           <Skeleton className="w-full h-56" />
           <div className="p-4 space-y-4">
@@ -47,7 +47,7 @@ export default function SupplierDetailPage() {
 
   if (error || !offer) {
     return (
-      <AppShell showBack headerTitle="Supplier">
+      <AppShell showBack headerTitle="Offer">
         <div className="flex-1 flex items-center justify-center">
           <p className="text-slate-500">{error || 'Offer not found'}</p>
         </div>
@@ -55,14 +55,9 @@ export default function SupplierDetailPage() {
     )
   }
 
-  const handleGetDirections = () => {
-    // Open in maps app
-    const address = encodeURIComponent(offer.location.address)
-    window.open(`https://maps.google.com/?q=${address}`, '_blank')
-  }
-
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(offer.code || 'CAMP2025')
+    const code = offer.promoCode || 'CAMP2025'
+    navigator.clipboard.writeText(code)
     alert('Discount code copied!')
   }
 
@@ -80,18 +75,24 @@ export default function SupplierDetailPage() {
       <div className="flex-1 overflow-auto">
         {/* Hero Image */}
         <div className="relative h-56">
-          <img
-            src={offer.supplierLogo}
-            alt={offer.supplierName}
-            className="w-full h-full object-cover"
-          />
+          {offer.imageUrl ? (
+            <img
+              src={offer.imageUrl}
+              alt={offer.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+              <Icon name="local_offer" size={64} className="text-slate-400" />
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-4 left-4 right-4">
             <Badge variant="success" className="mb-2">
-              {offer.discount}
+              {offer.discountPercent}% off
             </Badge>
             <h1 className="text-2xl font-bold text-white">
-              {offer.supplierName}
+              {offer.title}
             </h1>
           </div>
         </div>
@@ -104,7 +105,7 @@ export default function SupplierDetailPage() {
               <Icon name="store" size={24} className="text-primary mx-auto mb-1" />
               <p className="text-xs text-slate-500">Category</p>
               <p className="text-sm font-medium text-slate-900 dark:text-white capitalize">
-                {offer.category}
+                {offer.category.toLowerCase()}
               </p>
             </div>
             <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
@@ -118,13 +119,28 @@ export default function SupplierDetailPage() {
               </p>
             </div>
             <div className="flex-1 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
-              <Icon name="location_on" size={24} className="text-primary mx-auto mb-1" />
-              <p className="text-xs text-slate-500">Location</p>
-              <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                {offer.location.address.split(',')[0]}
+              <Icon name="euro" size={24} className="text-primary mx-auto mb-1" />
+              <p className="text-xs text-slate-500">Savings</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">
+                €{(offer.originalPrice - offer.discountPrice).toFixed(0)}
               </p>
             </div>
           </div>
+
+          {/* Campsite Link */}
+          <Link
+            to={`/campsite/${offer.campsiteId}`}
+            className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl"
+          >
+            <Icon name="camping" size={24} className="text-primary" />
+            <div className="flex-1">
+              <p className="text-xs text-slate-500">Available at</p>
+              <p className="font-medium text-slate-900 dark:text-white">
+                {offer.campsiteName}
+              </p>
+            </div>
+            <Icon name="chevron_right" size={20} className="text-slate-400" />
+          </Link>
 
           {/* Description */}
           <div>
@@ -136,74 +152,40 @@ export default function SupplierDetailPage() {
             </p>
           </div>
 
-          {/* Discount Code */}
-          <div className="bg-primary/5 rounded-xl p-4">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">
-              Discount Code
-            </p>
+          {/* Pricing */}
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-slate-600 dark:text-slate-400">Original Price</span>
+              <span className="text-slate-500 line-through">€{offer.originalPrice.toFixed(2)}</span>
+            </div>
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xl font-bold text-primary">
-                {offer.code || 'CAMP2025'}
+              <span className="font-semibold text-slate-900 dark:text-white">Discounted Price</span>
+              <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                €{offer.discountPrice.toFixed(2)}
               </span>
-              <Button size="sm" variant="secondary" onClick={handleCopyCode}>
-                <Icon name="content_copy" size={18} />
-                Copy
-              </Button>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
-              Show this code at checkout to redeem your discount
-            </p>
           </div>
 
-          {/* Location */}
-          <div>
-            <h2 className="font-semibold text-slate-900 dark:text-white mb-2">
-              Location
-            </h2>
-            <div className="bg-slate-100 dark:bg-slate-800 rounded-xl h-40 flex items-center justify-center mb-3">
-              <div className="text-center">
-                <Icon name="map" size={32} className="text-slate-400 mx-auto mb-1" />
-                <p className="text-sm text-slate-500">{offer.location.address}</p>
+          {/* Discount Code */}
+          {(offer.promoCode || offer.discountPercent > 0) && (
+            <div className="bg-primary/5 rounded-xl p-4">
+              <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">
+                Discount Code
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xl font-bold text-primary">
+                  {offer.promoCode || 'CAMP2025'}
+                </span>
+                <Button size="sm" variant="secondary" onClick={handleCopyCode}>
+                  <Icon name="content_copy" size={18} />
+                  Copy
+                </Button>
               </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Show this code at checkout to redeem your discount
+              </p>
             </div>
-            <Button
-              variant="secondary"
-              className="w-full"
-              leftIcon="directions"
-              onClick={handleGetDirections}
-            >
-              Get Directions
-            </Button>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h2 className="font-semibold text-slate-900 dark:text-white mb-3">
-              Contact
-            </h2>
-            <div className="space-y-2">
-              <a
-                href="tel:+353123456789"
-                className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"
-              >
-                <Icon name="phone" size={20} className="text-primary" />
-                <span className="text-slate-900 dark:text-white">
-                  +353 1 234 5678
-                </span>
-              </a>
-              <a
-                href={`https://${offer.supplierName.toLowerCase().replace(/\s+/g, '')}.ie`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"
-              >
-                <Icon name="language" size={20} className="text-primary" />
-                <span className="text-slate-900 dark:text-white">
-                  www.{offer.supplierName.toLowerCase().replace(/\s+/g, '')}.ie
-                </span>
-              </a>
-            </div>
-          </div>
+          )}
 
           {/* Terms */}
           <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
@@ -214,7 +196,7 @@ export default function SupplierDetailPage() {
               <li>• Valid for My Island app users only</li>
               <li>• Cannot be combined with other offers</li>
               <li>• One use per customer</li>
-              <li>• Subject to availability</li>
+              <li>• Valid from {new Date(offer.validFrom).toLocaleDateString('en-IE')} to {new Date(offer.validUntil).toLocaleDateString('en-IE')}</li>
             </ul>
           </div>
         </div>
@@ -223,7 +205,7 @@ export default function SupplierDetailPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-surface-dark border-t border-slate-100 dark:border-slate-800 p-4 safe-area-pb">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface-dark border-t border-slate-100 dark:border-slate-800 p-4 safe-area-pb">
         <Button className="w-full" leftIcon="redeem" onClick={handleCopyCode}>
           Redeem Offer
         </Button>

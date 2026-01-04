@@ -28,7 +28,7 @@
 		{"id":"flow5-bookings","type":"file","file":"flows/owner-admin/12-owner-bookings.png","x":20,"y":2840,"width":135,"height":500},
 		{"id":"flow5-detail","type":"file","file":"flows/owner-admin/13-owner-booking-detail.png","x":440,"y":2840,"width":128,"height":500},
 		{"id":"flow5-events","type":"text","text":"**Kafka Events:**\n- `booking.modified_by_owner`\n- `booking.cancelled_by_owner`\n- `booking.checked_in`\n- `booking.checked_out`","x":880,"y":2840,"width":340,"height":160,"color":"5"},
-		{"id":"flow5-ui","type":"text","text":"**UI Events:**\n- `onBookingSelect`: View details\n- `onFilter`: Filter by status\n- `onContactGuest`: Message guest","x":880,"y":3040,"width":300,"height":120,"color":"4"},
+		{"id":"flow5-ui","type":"text","text":"**UI Events:**\n- `onBookingSelect`: View details\n- `onFilter`: Filter by status\n- `onContactGuest`: Message guest","x":880,"y":3040,"width":300,"height":220,"color":"4"},
 		{"id":"lbl-revenue","type":"text","text":"## Revenue Dashboard\nOwner views earnings and payouts","x":1720,"y":2720,"width":380,"height":80},
 		{"id":"flow6-revenue","type":"file","file":"flows/owner-admin/15-revenue-dashboard.png","x":1720,"y":2840,"width":151,"height":500},
 		{"id":"flow2-events","type":"text","text":"**Kafka Events:**\n- `lot.created`\n- `lot.updated`\n- `lot.availability_changed`\n- `lot.pricing_updated`","x":1700,"y":1040,"width":280,"height":160,"color":"5"},
