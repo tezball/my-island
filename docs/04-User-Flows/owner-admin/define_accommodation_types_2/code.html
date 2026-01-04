@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configure Apartments</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+            extend: {
+                colors: {
+                "primary": "#13ec80",
+                "primary-hover": "#0fd671",
+                "background-light": "#f6f8f7",
+                "background-dark": "#102219",
+                },
+                fontFamily: {
+                "display": ["Plus Jakarta Sans", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<div class="flex items-center px-4 pt-6 pb-2 justify-between z-10">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-white" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<div class="flex-1 text-center pr-10">
+<span class="text-slate-900 dark:text-white text-sm font-bold tracking-wide uppercase opacity-70">Property Setup</span>
+</div>
+</div>
+<div class="flex flex-col w-full px-6 py-2">
+<div class="flex w-full flex-row items-center justify-center gap-2">
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+<div class="h-1.5 flex-1 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+</div>
+<p class="text-center text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium">Step 3 of 5</p>
+</div>
+<div class="px-6 pt-4 pb-2">
+<div class="flex items-center gap-3 mb-2">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined" style="font-size: 24px;">apartment</span>
+</div>
+<h1 class="text-slate-900 dark:text-white tracking-tight text-[26px] font-bold leading-tight">Configure Apartments</h1>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-relaxed">Details about your private room units.</p>
+</div>
+<div class="flex-1 px-6 pt-6 pb-32 overflow-y-auto no-scrollbar">
+<form class="flex flex-col gap-8">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="quantity">How many Apartments do you have?</label>
+<div class="relative">
+<input class="w-full rounded-xl border-0 ring-1 ring-slate-200 bg-white px-4 py-4 pl-12 text-lg font-medium text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary dark:ring-slate-700 dark:bg-slate-800 dark:text-white transition-all shadow-sm" id="quantity" min="1" name="quantity" placeholder="e.g. 5" type="number"/>
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+<span class="material-symbols-outlined" style="font-size: 20px;">tag</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-200">Standard Amenities for Apartments</label>
+<span class="text-xs text-slate-400">Select all that apply</span>
+</div>
+<div class="flex flex-col gap-3 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-sm border border-slate-100 dark:border-slate-700">
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">Private Bathroom</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">bathtub</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">Full Kitchen</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">kitchen</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">Living Area</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">chair</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">Separate Bedroom(s)</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">bed</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">Laundry Facilities</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">local_laundry_service</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">Balcony/Patio</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">deck</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer transition-colors group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white font-medium">WiFi</span>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">wifi</span>
+</label>
+<div class="border-t border-slate-100 dark:border-slate-700 my-1"></div>
+<div class="p-2">
+<label class="flex items-center gap-3 mb-3 cursor-pointer group">
+<input class="h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:checked:bg-primary transition-all" type="checkbox"/>
+<span class="flex-1 text-slate-700 dark:text-slate-200 font-medium">Other</span>
+</label>
+<input class="w-full rounded-lg border-0 ring-1 ring-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary dark:ring-slate-600 dark:bg-white/5 dark:text-white transition-all" placeholder="Specify other amenities (e.g. fireplace)" type="text"/>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="capacity">Default Max Capacity per Apartment</label>
+<div class="relative">
+<input class="w-full rounded-xl border-0 ring-1 ring-slate-200 bg-white px-4 py-4 pl-12 text-lg font-medium text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary dark:ring-slate-700 dark:bg-slate-800 dark:text-white transition-all shadow-sm" id="capacity" min="1" name="capacity" placeholder="e.g. 2" type="number"/>
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+<span class="material-symbols-outlined" style="font-size: 20px;">person</span>
+</div>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 px-1">Maximum number of guests allowed.</p>
+</div>
+</form>
+</div>
+<div class="fixed bottom-0 left-0 right-0 z-20 flex w-full flex-col items-center justify-end bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark pt-12 pb-6 px-6 pointer-events-none">
+<div class="w-full max-w-md pointer-events-auto">
+<button class="w-full rounded-full bg-primary py-4 px-6 text-[#102219] shadow-lg shadow-primary/30 transition-transform active:scale-[0.98] hover:bg-primary-hover flex items-center justify-center gap-2">
+<span class="text-base font-bold">Next: Review</span>
+<span class="material-symbols-outlined font-bold" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+
+</body></html>

@@ -4,24 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "59e4c6c99d2d7728",
+        "id": "ede653d6d4aae46a",
         "type": "tabs",
         "children": [
           {
-            "id": "4849fc9b473955f3",
+            "id": "36722685a43b4b8d",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
-                "file": "04-User-Flows/owner-admin/owner-admin-flow.canvas",
+                "file": "04-User-Flows/auth/auth-flow.canvas",
                 "viewState": {
-                  "x": 809.1721796900939,
-                  "y": 3081.9975947102807,
-                  "zoom": -0.6
+                  "x": 2920,
+                  "y": 2130,
+                  "zoom": -2.0889307785550013
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "owner-admin-flow"
+              "title": "auth-flow"
             }
           }
         ]
@@ -186,40 +186,47 @@
       "bases:Create new base": false
     }
   },
-  "active": "4849fc9b473955f3",
+  "active": "36722685a43b4b8d",
   "lastOpenFiles": [
-    "owner-admin/OWNER_PROPERTY_SETUP_FLOW.md",
-    "owner-admin",
+    "04-User-Flows/my-bookings/my-bookings-flow.canvas",
+    "04-User-Flows/notifications/notifications-flow.canvas",
+    "04-User-Flows/offers/offers-flow.canvas",
+    "04-User-Flows/onboarding/onboarding-flow.canvas",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas",
+    "04-User-Flows/owner-admin/02-statistics.png",
+    "04-User-Flows/owner-admin/OWNER_PROPERTY_SETUP_FLOW.md",
+    "04-User-Flows/owner-admin/welcome_to_property_setup/screen.png",
+    "04-User-Flows/owner-admin/welcome_to_property_setup/code.html",
+    "04-User-Flows/owner-admin/welcome_to_property_setup",
+    "04-User-Flows/owner-admin/property_basic_info/screen.png",
+    "04-User-Flows/owner-admin/property_basic_info/code.html",
+    "04-User-Flows/owner-admin/property_basic_info",
+    "04-User-Flows/owner-admin/define_accommodation_types_2/screen.png",
+    "04-User-Flows/owner-admin/define_accommodation_types_2/code.html",
+    "04-User-Flows/owner-admin/define_accommodation_types_2",
+    "04-User-Flows/owner-admin/define_accommodation_types_1/screen.png",
+    "04-User-Flows/owner-admin/define_accommodation_types_1/code.html",
+    "04-User-Flows/owner-admin/define_accommodation_types_1",
+    "04-User-Flows/owner-admin/configure_rv_pitches_2/screen.png",
+    "04-User-Flows/owner-admin/configure_rv_pitches_2/code.html",
+    "04-User-Flows/owner-admin/configure_rv_pitches_2",
+    "04-User-Flows/owner-admin/configure_rv_pitches_1/screen.png",
+    "04-User-Flows/owner-admin/configure_glamping_pods/screen.png",
+    "04-User-Flows/owner-admin/configure_campsite_lots/screen.png",
+    "04-User-Flows/owner-admin/configure_cabins/cottages/screen.png",
+    "04-User-Flows/booking/booking-flow.canvas",
+    "04-User-Flows/owner-admin/README.md",
     "OWNER_PROPERTY_SETUP_FLOW.md",
-    "OWNER_PROPERTY_SETUP_FLOW.md.tmp.273980.1767538123628",
     "01-Project-Management/SNAG_LIST.md",
     "README.md",
     "01-Project-Management/OUTSTANDING_WORK.md",
-    "README.md.tmp.273980.1767532613204",
-    "01-Project-Management/README.md.tmp.273980.1767532592057",
-    "06-Feedback/README.md.tmp.273980.1767532575464",
-    "01-Project-Management/OUTSTANDING_WORK.md.tmp.273980.1767532547897",
-    "01-Project-Management/SNAG_LIST.md.tmp.273980.1767532508636",
     "01-Project-Management/MVP_CRITICAL_TASKS.md",
     "01-Project-Management/IMPLEMENTATION_SUMMARY.md",
     "CAMPSITE_LEADS.md",
     "07-Testing/TESTING_APPROACH.md",
-    "07-Testing/TESTING_APPROACH.md.tmp.1487339.1767475892024",
-    "03-Business/Revenue_Projection_Report.md.tmp.482289.1767441457188",
-    "02-Architecture/DOMAIN_MODEL.md.tmp.482289.1767441446994",
     "04-User-Flows/user-flows.canvas",
     "05-Design-Specs/README.md",
     "flows/booking/booking-flow.canvas",
-    "05-Design-Specs/home_/_map_view/screen.png",
-    "05-Design-Specs/get_started_/_explore/screen.png",
-    "05-Design-Specs/campsite_listing/edit_form_2/screen.png",
-    "05-Design-Specs/campsite_listing/edit_form_1/screen.png",
-    "05-Design-Specs/welcome_to_my-island!/screen.png",
-    "05-Design-Specs/welcome_to_my-island/screen.png",
-    "05-Design-Specs/verify_your_email/screen.png",
-    "05-Design-Specs/verify_email:_link_expired/screen.png",
-    "05-Design-Specs/user_profile_screen/screen.png",
-    "05-Design-Specs/support_ticket_conversation/screen.png",
     "05-Design-Specs/social_login_failed/spec.md",
     "05-Design-Specs/sign_up:_personal_details/spec.md",
     "05-Design-Specs/logout_confirmation/spec.md",
@@ -234,15 +241,8 @@
     "05-Design-Specs/biometric_auth_failed/spec.md",
     "05-Design-Specs/2fa_setup/spec.md",
     "05-Design-Specs/account_unlocked_success/spec.md",
-    "05-Design-Specs/2fa_code_invalid/spec.md",
-    "05-Design-Specs/2fa_code_entry/spec.md",
     "05-Design-Specs/screen-gallery.canvas",
     "04-User-Flows/reviews/reviews-flow.canvas",
-    "04-User-Flows/profile/profile-flow.canvas",
-    "04-User-Flows/owner-admin/owner-admin-flow.canvas",
-    "04-User-Flows/onboarding/onboarding-flow.canvas",
-    "04-User-Flows/offers/offers-flow.canvas",
-    "04-User-Flows/notifications/notifications-flow.canvas",
-    "04-User-Flows/my-bookings/my-bookings-flow.canvas"
+    "04-User-Flows/profile/profile-flow.canvas"
   ]
 }

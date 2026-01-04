@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Property Basic Info - my-island</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-[#111814] dark:text-gray-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<header class="sticky top-0 z-20 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md p-4 justify-between border-b border-gray-100 dark:border-white/5">
+<button class="text-[#111814] dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<h2 class="text-[#111814] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Property Details</h2>
+</header>
+<div class="flex flex-col w-full px-6 pt-4 pb-2">
+<div class="flex justify-between items-end mb-2">
+<span class="text-sm font-semibold text-primary">Step 1 of 4</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Basic Info</span>
+</div>
+<div class="flex w-full flex-row items-center justify-start gap-2">
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-[#dbe6e0] dark:bg-white/10"></div>
+<div class="h-1.5 flex-1 rounded-full bg-[#dbe6e0] dark:bg-white/10"></div>
+<div class="h-1.5 flex-1 rounded-full bg-[#dbe6e0] dark:bg-white/10"></div>
+</div>
+</div>
+<div class="px-6 pt-6 pb-2">
+<h1 class="text-[#111814] dark:text-white tracking-tight text-[32px] font-bold leading-tight text-left">Tell us about your property</h1>
+<p class="text-[#618975] dark:text-gray-400 text-base font-normal leading-normal pt-2">Start by giving your property a name and location to help guests find you.</p>
+</div>
+<div class="flex flex-col px-4 gap-6 mt-4">
+<div class="flex flex-col gap-2">
+<label class="text-[#111814] dark:text-gray-200 text-base font-medium leading-normal pl-2">Property Type</label>
+<div class="relative">
+<select class="form-select flex w-full min-w-0 flex-1 appearance-none rounded-xl text-[#111814] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dbe6e0] dark:border-white/10 bg-white dark:bg-white/5 h-14 pl-[15px] pr-10 text-base font-normal leading-normal transition-all cursor-pointer">
+<option disabled="" selected="" value="">Select a property type</option>
+<option value="campsite">Campsite</option>
+<option value="hotel">Hotel</option>
+<option value="hostel">Hostel</option>
+<option value="bnb">Bed &amp; Breakfast</option>
+<option value="glamping">Glamping</option>
+<option value="apartment">Apartment</option>
+<option value="villa">Villa</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[#111814] dark:text-gray-200 text-base font-medium leading-normal pl-2">What is your property called?</label>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111814] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dbe6e0] dark:border-white/10 bg-white dark:bg-white/5 h-14 placeholder:text-[#618975] dark:placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal transition-all" placeholder="e.g. The Lakeside Inn, Green Valley Retreat" value=""/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[#111814] dark:text-gray-200 text-base font-medium leading-normal pl-2">Where is it located?</label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#618975]">search</span>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111814] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dbe6e0] dark:border-white/10 bg-white dark:bg-white/5 h-14 placeholder:text-[#618975] dark:placeholder:text-gray-500 pl-12 pr-[15px] py-[15px] text-base font-normal leading-normal transition-all" placeholder="Search for a city or coordinates" value=""/>
+</div>
+<div class="relative w-full h-40 mt-2 rounded-xl overflow-hidden border border-[#dbe6e0] dark:border-white/10 group cursor-pointer">
+<img alt="Map showing campsite location" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" data-alt="Abstract map view showing terrain and location pin" data-location="Bali, Indonesia" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBa315iXpPVurwrFyqPjnqzs2hFx4MyUoObA4Ue6DUKzQX6d4fL3y7zqsu1g-FB7VJPnVTVbOLhQJ0w8sV1RHREAEv6zu3l8RD93C1N3idHDaVowRo9QUW_k9z6s-44QWBC46T2e3C6df230zGCRQEdnVJCRE3T6JD7wUTUzfDMaMqrbojWC0l53qWI3x5gmIIdEwsysuGA5QxNBdAYsjTnj1sskWmaLmaU7aNrvOv7neZ2zAtyMl_aZrrrUbwrUBbH3zwr7S5IkQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-center justify-center">
+<div class="bg-white dark:bg-[#102219] px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="text-sm font-semibold dark:text-white">Pin on Map</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-[#111814] dark:text-gray-200 text-base font-medium leading-normal pl-2">Describe the experience</label>
+<textarea class="form-textarea flex w-full min-w-0 flex-1 resize-none rounded-xl text-[#111814] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dbe6e0] dark:border-white/10 bg-white dark:bg-white/5 h-32 placeholder:text-[#618975] dark:placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal transition-all" placeholder="Tell guests what makes your site unique..."></textarea>
+</div>
+<div class="flex flex-col gap-3 pb-6">
+<div class="flex justify-between items-end pl-2">
+<label class="text-[#111814] dark:text-gray-200 text-base font-medium leading-normal">Main Photos</label>
+<span class="text-xs text-[#618975] dark:text-gray-400">0 of 10 uploaded</span>
+</div>
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+<button class="flex-shrink-0 w-28 h-28 rounded-xl border-2 border-dashed border-[#dbe6e0] dark:border-white/20 bg-white dark:bg-white/5 flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-all group">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-primary text-sm group-hover:text-[#111814]">add_a_photo</span>
+</div>
+<span class="text-xs font-medium text-[#618975] dark:text-gray-400 group-hover:text-primary">Add Photo</span>
+</button>
+<div class="relative flex-shrink-0 w-28 h-28 rounded-xl overflow-hidden border border-[#dbe6e0] dark:border-white/10 group">
+<img alt="Camping tent in the woods" class="w-full h-full object-cover" data-alt="Camping tent set up in a lush forest clearing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf5RcRmY8kkBStn8Fx3iXBtRtn9Bg38aFSNjO0OtgPTCBupRp5ChfyvMv-7j-OaRH0QT2DBZInyTryjrGZ6wPPtOXJlpCxT7Y63-92zeI7f-Td5_x8WBOTh-5CDCQ_2g6z0SxX3PIbhblEARFAjXNkankcYmxliBca4vkQAO-hFtJdFXJFtpaVHHIPYjwH8G0FTHyhqzu820XpFiGM6-_Mr2aG5tQvaRCmgyRhvthExEQqXUuuHoJndbJqCmcz8bQGuGCvV3od2Q"/>
+<button class="absolute top-1 right-1 bg-black/50 hover:bg-red-500 text-white p-1 rounded-full backdrop-blur-sm transition-colors">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+<div class="relative flex-shrink-0 w-28 h-28 rounded-xl overflow-hidden border border-[#dbe6e0] dark:border-white/10 group">
+<img alt="View from a tent looking at mountains" class="w-full h-full object-cover" data-alt="Scenic view of mountains seen from inside a tent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH7szFDBjeSutt9mtGKvyD9JLF8O_103TydlRbpUyJZSzHdrh1gGIzvjMiY4pVqvRvW1sknFZ4TsvV1dyFFBQlo8D1d7YQJyXmbJW7YDdE2YLLCJkHnnYhOTvk0A4ZDXmFa7uVIkV7NHbR7Cy6eO6u419nf-qMbjgiavkMEV3YcYlXObpDcXRGiQK4ads6ccdtiHvMP52ukxf0qT5_UzY-Db0j7UijqYB4nsVu_sq78Jeh8xaJH088DnRsaCoVaStJ6ZlOhStYGg"/>
+<button class="absolute top-1 right-1 bg-black/50 hover:bg-red-500 text-white p-1 rounded-full backdrop-blur-sm transition-colors">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-[#102219]/90 backdrop-blur-md border-t border-gray-100 dark:border-white/5 z-30">
+<button class="w-full rounded-xl bg-primary h-12 flex items-center justify-center gap-2 text-[#102219] font-bold text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+<span>Next: Define Your Stays</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

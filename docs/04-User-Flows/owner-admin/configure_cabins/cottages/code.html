@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configure Cabins/Cottages</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+            extend: {
+                colors: {
+                "primary": "#13ec80",
+                "background-light": "#f6f8f7",
+                "background-dark": "#102219",
+                "surface-light": "#ffffff",
+                "surface-dark": "#1a3326",
+                "secondary-text": "#618975",
+                },
+                fontFamily: {
+                "display": ["Manrope", "sans-serif"]
+                },
+                borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+            },
+        }
+    </script>
+<style>
+        /* Custom checkbox styles to match theme */
+        .checkbox-wrapper input:checked + div {
+            background-color: #ecfdf5; /* Light green bg */
+            border-color: #13ec80;
+        }
+        .checkbox-wrapper input:checked + div .check-icon {
+            opacity: 1;
+            color: #13ec80;
+        }
+        
+        /* Hide scrollbar for clean look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-[#111814] dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden shadow-xl">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm px-4 pt-4 pb-2">
+<div class="flex items-center justify-between mb-2">
+<button class="text-[#111814] dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-[#111814] dark:text-white text-base font-semibold leading-tight tracking-tight">Property Setup</h2>
+<div class="size-10"></div> <!-- Spacer for centering -->
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-2 px-1">
+<div class="flex justify-between items-end">
+<p class="text-secondary-text dark:text-gray-400 text-sm font-medium">Step 3 of 5</p>
+<span class="text-xs font-bold text-primary">60%</span>
+</div>
+<div class="h-1.5 w-full bg-[#dbe6e0] dark:bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500 ease-out" style="width: 60%;"></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col px-5 pt-4 pb-24">
+<!-- Headline -->
+<div class="mb-8">
+<h1 class="text-[#111814] dark:text-white text-3xl font-extrabold leading-tight tracking-tight mb-2">Configure Cabins/Cottages</h1>
+<p class="text-secondary-text dark:text-gray-400 text-base">Let's set up your inventory details so guests know what to expect.</p>
+</div>
+<!-- Inventory Details Card -->
+<section class="flex flex-col gap-5 mb-8">
+<h3 class="text-[#111814] dark:text-white text-lg font-bold">Inventory Details</h3>
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl shadow-sm border border-black/5 dark:border-white/5">
+<div class="flex flex-col gap-6">
+<!-- Quantity Input -->
+<div class="flex items-center justify-between gap-4">
+<label class="flex flex-col">
+<span class="text-[#111814] dark:text-white text-base font-semibold">Total Inventory</span>
+<span class="text-secondary-text dark:text-gray-400 text-sm">How many units available?</span>
+</label>
+<div class="flex items-center bg-background-light dark:bg-black/20 rounded-xl p-1 border border-[#dbe6e0] dark:border-white/10">
+<button class="size-10 flex items-center justify-center rounded-lg bg-white dark:bg-white/10 shadow-sm text-[#111814] dark:text-white active:scale-95 transition-transform hover:bg-gray-50">
+<span class="material-symbols-outlined text-xl">remove</span>
+</button>
+<input class="w-12 text-center bg-transparent border-none p-0 text-lg font-bold text-[#111814] dark:text-white focus:ring-0" type="number" value="1"/>
+<button class="size-10 flex items-center justify-center rounded-lg bg-primary text-[#102219] shadow-sm active:scale-95 transition-transform hover:brightness-105">
+<span class="material-symbols-outlined text-xl">add</span>
+</button>
+</div>
+</div>
+<div class="h-px bg-gray-100 dark:bg-white/5 w-full"></div>
+<!-- Capacity Input -->
+<div class="flex flex-col gap-2">
+<label class="text-[#111814] dark:text-white text-base font-semibold">Max Guests per Cabin</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary-text">group</span>
+<input class="w-full h-14 pl-12 pr-4 rounded-xl bg-background-light dark:bg-black/20 border border-[#dbe6e0] dark:border-white/10 text-[#111814] dark:text-white placeholder:text-secondary-text/70 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-medium text-lg" placeholder="e.g., 4" type="number"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Amenities Section -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-[#111814] dark:text-white text-lg font-bold">Standard Amenities</h3>
+<span class="text-secondary-text dark:text-gray-400 text-sm">Select all that apply</span>
+</div>
+<div class="grid grid-cols-1 gap-3">
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bathtub</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">Private Bathroom</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">kitchen</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">Full Kitchen</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chair</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">Living Area</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">bed</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">Multiple Bedrooms</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">fireplace</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">Fireplace</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">deck</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">Outdoor Deck</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+<!-- Amenity Item -->
+<label class="checkbox-wrapper relative cursor-pointer group">
+<input class="peer sr-only" type="checkbox"/>
+<div class="flex items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 rounded-xl transition-all duration-200 hover:border-primary/50 dark:hover:border-primary/50 peer-focus:ring-2 peer-focus:ring-primary/20">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center text-secondary-text dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">wifi</span>
+</div>
+<span class="text-[#111814] dark:text-white font-medium">WiFi</span>
+</div>
+<div class="check-icon opacity-0 transform scale-75 transition-all duration-200 material-symbols-outlined text-xl font-bold">check_circle</div>
+</div>
+</label>
+</div>
+<!-- Other Input -->
+<div class="mt-2">
+<label class="text-[#111814] dark:text-white text-sm font-semibold ml-1 mb-2 block">Other Amenities</label>
+<div class="relative">
+<input class="w-full h-14 pl-4 pr-10 rounded-xl bg-surface-light dark:bg-surface-dark border border-[#dbe6e0] dark:border-white/10 text-[#111814] dark:text-white placeholder:text-secondary-text/70 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-base" placeholder="e.g., Hot Tub, BBQ Grill" type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-primary font-bold text-sm uppercase tracking-wide">
+                            Add
+                        </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button Footer -->
+<footer class="fixed bottom-0 left-0 right-0 z-20 bg-background-light/80 dark:bg-background-dark/90 backdrop-blur-md border-t border-black/5 dark:border-white/5 p-4 max-w-md mx-auto">
+<button class="w-full h-14 bg-primary rounded-xl text-[#102219] text-lg font-bold shadow-lg shadow-primary/25 active:scale-[0.98] transition-all hover:brightness-105 flex items-center justify-center gap-2">
+<span>Next Step</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</footer>
+</div>
+</body></html>

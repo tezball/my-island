@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configure B&amp;B Rooms</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2c24",
+                        "border-light": "#dbe6e0",
+                        "border-dark": "#2a3c32",
+                        "text-main": "#111814",
+                        "text-muted": "#618975",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>/* Custom checkbox styles to match theme */
+.custom-checkbox:checked {
+    background-color: #13ec80;
+    border-color: #13ec80;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAhBTwJVDGlhCyd-ZLoMTBSS_kWXLoGYjzi1_f3O3OkNvv6GMbuJD2YQ-y7qRoH1mFRlv5JfEO_RAyM4-PpNe2Uz0SrcTZ04wTyqO68fCX3fbxqPqnDgieoz6mXMRpdDw4Sh5aw9wCyHdoMvnbGsfRFP9vuDS6gp3MUI0R-CYuSD3l-lG0DSu9xk9X5zkNRlJv739iHXO7_RQOGpzpiDMhaA-H57noRzzo7nJCKcjc_qNTALlyUPLCSqK852ty9pHqOWFjaT75MGA)
+    }
+/* Hide scrollbar for clean look */
+.no-scrollbar::-webkit-scrollbar {
+    display: none
+    }
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-xl">
+<!-- Top Navigation -->
+<div class="flex items-center px-4 py-4 justify-between bg-surface-light dark:bg-surface-dark sticky top-0 z-10 border-b border-border-light dark:border-border-dark">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-text-main dark:text-white transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Configure Property</h2>
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 text-text-main dark:text-white transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<!-- Progress Indicators -->
+<div class="flex w-full flex-col items-center justify-center gap-2 py-6 bg-surface-light dark:bg-surface-dark">
+<div class="flex flex-row gap-2">
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-primary"></div>
+<div class="h-1.5 w-8 rounded-full bg-border-light dark:bg-border-dark"></div>
+</div>
+<span class="text-xs font-medium text-text-muted">Step 3 of 4</span>
+</div>
+<!-- Main Scrollable Content -->
+<div class="flex-1 flex flex-col gap-6 p-5 pb-32">
+<!-- Header Text -->
+<div class="space-y-2">
+<h1 class="text-3xl font-bold text-text-main dark:text-white tracking-tight">B&amp;B Rooms</h1>
+<p class="text-text-muted text-base font-medium">Tell us about your indoor accommodations so we can help you get set up.</p>
+</div>
+<!-- Quantity Stepper Card -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-5 shadow-sm border border-border-light dark:border-border-dark">
+<label class="text-base font-bold text-text-main dark:text-white block mb-4">How many B&amp;B Rooms do you have?</label>
+<div class="flex items-center justify-between bg-background-light dark:bg-background-dark rounded-xl p-2 border border-border-light dark:border-border-dark">
+<button class="size-12 rounded-lg bg-surface-light dark:bg-surface-dark text-text-main dark:text-white shadow-sm border border-border-light dark:border-border-dark flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="text-2xl font-bold text-text-main dark:text-white w-16 text-center">3</span>
+<button class="size-12 rounded-lg bg-primary text-background-dark shadow-sm flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Capacity Input -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-5 shadow-sm border border-border-light dark:border-border-dark">
+<label class="text-base font-bold text-text-main dark:text-white block mb-2">Default Max Capacity per Room</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-4 text-text-muted">group</span>
+<input class="w-full pl-12 pr-4 h-14 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-main dark:text-white placeholder:text-text-muted focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-medium" placeholder="e.g. 2 guests" type="number"/>
+</div>
+</div>
+<!-- Amenities Section -->
+<div class="flex flex-col gap-4">
+<h3 class="text-lg font-bold text-text-main dark:text-white px-1">Standard Amenities</h3>
+<div class="flex flex-col gap-3">
+<!-- Amenity Item: Bathroom -->
+<label class="group relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark cursor-pointer select-none transition-all hover:border-primary/50">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-primary mr-4">
+<span class="material-symbols-outlined">bathtub</span>
+</div>
+<div class="flex-1">
+<span class="block text-base font-bold text-text-main dark:text-white">Private Bathroom</span>
+<span class="block text-xs text-text-muted">En-suite or dedicated</span>
+</div>
+<input checked="" class="custom-checkbox size-6 rounded-md border-2 border-border-light dark:border-border-dark text-primary focus:ring-0 focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<!-- Amenity Item: Breakfast -->
+<label class="group relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark cursor-pointer select-none transition-all hover:border-primary/50">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-primary mr-4">
+<span class="material-symbols-outlined">bakery_dining</span>
+</div>
+<div class="flex-1">
+<span class="block text-base font-bold text-text-main dark:text-white">Breakfast Included</span>
+<span class="block text-xs text-text-muted">Continental or full</span>
+</div>
+<input class="custom-checkbox size-6 rounded-md border-2 border-border-light dark:border-border-dark text-primary focus:ring-0 focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<!-- Amenity Item: WiFi -->
+<label class="group relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark cursor-pointer select-none transition-all hover:border-primary/50">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-primary mr-4">
+<span class="material-symbols-outlined">wifi</span>
+</div>
+<div class="flex-1">
+<span class="block text-base font-bold text-text-main dark:text-white">Free WiFi</span>
+<span class="block text-xs text-text-muted">High-speed internet</span>
+</div>
+<input checked="" class="custom-checkbox size-6 rounded-md border-2 border-border-light dark:border-border-dark text-primary focus:ring-0 focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<!-- Amenity Item: TV -->
+<label class="group relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark cursor-pointer select-none transition-all hover:border-primary/50">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-primary mr-4">
+<span class="material-symbols-outlined">tv</span>
+</div>
+<div class="flex-1">
+<span class="block text-base font-bold text-text-main dark:text-white">Television</span>
+<span class="block text-xs text-text-muted">Cable or Smart TV</span>
+</div>
+<input class="custom-checkbox size-6 rounded-md border-2 border-border-light dark:border-border-dark text-primary focus:ring-0 focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<!-- Amenity Item: Desk -->
+<label class="group relative flex items-center p-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark cursor-pointer select-none transition-all hover:border-primary/50">
+<div class="flex items-center justify-center size-10 rounded-full bg-background-light dark:bg-background-dark text-primary mr-4">
+<span class="material-symbols-outlined">desk</span>
+</div>
+<div class="flex-1">
+<span class="block text-base font-bold text-text-main dark:text-white">Desk Space</span>
+<span class="block text-xs text-text-muted">Workspace friendly</span>
+</div>
+<input class="custom-checkbox size-6 rounded-md border-2 border-border-light dark:border-border-dark text-primary focus:ring-0 focus:ring-offset-0 transition-all cursor-pointer" type="checkbox"/>
+</label>
+<!-- Other Input -->
+<div class="relative mt-2">
+<label class="text-sm font-bold text-text-main dark:text-white mb-2 block px-1">Other Amenities</label>
+<div class="flex items-center">
+<input class="w-full h-14 pl-4 pr-12 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark text-text-main dark:text-white placeholder:text-text-muted focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-normal" placeholder="e.g. Mini-fridge, Balcony" type="text"/>
+<button class="absolute right-3 p-2 text-primary hover:text-green-600 transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark max-w-md mx-auto z-20">
+<button class="w-full bg-primary hover:bg-[#0fd672] text-background-dark h-14 rounded-xl text-lg font-bold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/20">
+<span>Next: Review Setup</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

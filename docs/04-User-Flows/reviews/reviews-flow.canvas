@@ -16,7 +16,7 @@
 		{"id":"flow3-detail","type":"text","text":"## Review Detail\n\n**Screen:** ReviewDetailPage\n\nFull review with photos","x":1320,"y":1040,"width":280,"height":160,"color":"4"},
 		{"id":"flow3-events","type":"text","text":"**Kafka Events:**\n- `review.marked_helpful`\n  - Ranking algorithm\n  - Analytics\n- `review.reported`\n  - Moderation queue","x":1800,"y":960,"width":440,"height":240,"color":"5"},
 		{"id":"flow3-ui","type":"text","text":"**UI Events:**\n- `onViewPhotos`: See review photos\n- `onViewProfile`: See reviewer profile\n- `onHelpful`: Mark as helpful\n- `onReport`: Report review\n- `onBack`: Return to list","x":1840,"y":1280,"width":360,"height":200,"color":"4"},
-		{"id":"flow1-submit","type":"file","file":"flows/reviews/01-submit-review.png","x":20,"y":140,"width":184,"height":500},
+		{"id":"flow1-submit","type":"file","file":"01-submit-review.png","x":20,"y":140,"width":184,"height":500},
 		{"id":"flow4-points","type":"text","text":"## Entry Points\n\n1. **Post-stay email** - Review reminder\n2. **My Bookings** - Past booking card\n3. **Campsite Detail** - All reviews section\n4. **Push notification** - Review prompt","x":1720,"y":140,"width":360,"height":260,"color":"3"},
 		{"id":"flow1-ui","type":"text","text":"**UI Events:**\n- `onRatingSelect`: Choose star rating\n- `onCategoryRate`: Rate aspects\n- `onTextInput`: Write review\n- `onAddPhoto`: Upload photos\n- `onCancel`: Discard review","x":1190,"y":400,"width":370,"height":240,"color":"4"},
 		{"id":"flow1-submitted","type":"text","text":"## Review Submitted\n\n*Thank you message with confirmation*","x":440,"y":250,"width":300,"height":140,"color":"5"}

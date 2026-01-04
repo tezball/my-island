@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configure Mobile Home Pitches</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a3528",
+                        "text-main": "#111814",
+                        "text-muted": "#618975",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                    boxShadow: {
+                        "soft": "0 4px 20px -2px rgba(19, 236, 128, 0.1)",
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }.custom-checkbox:checked + div {
+                @apply bg-primary border-primary;
+            }
+            .custom-checkbox:checked + div span {
+                @apply text-black opacity-100;
+            }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white overflow-x-hidden antialiased selection:bg-primary selection:text-black">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+<header class="sticky top-0 z-30 flex items-center bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md p-4 pb-2 justify-between border-b border-gray-200/50 dark:border-white/5">
+<button class="text-text-main dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Property Setup</h2>
+<div class="flex w-12 items-center justify-end">
+<p class="text-text-muted dark:text-primary/80 text-sm font-bold leading-normal tracking-[0.015em] shrink-0">Step 3/5</p>
+</div>
+</header>
+<main class="flex-1 flex flex-col p-5 pb-32 gap-6">
+<div class="space-y-2">
+<div class="flex items-start justify-between">
+<h1 class="text-text-main dark:text-white tracking-tight text-3xl font-bold leading-tight">Mobile Home Pitches</h1>
+<div class="bg-primary/20 dark:bg-primary/10 p-2.5 rounded-full text-primary-dark shrink-0">
+<span class="material-symbols-outlined text-green-700 dark:text-primary" style="font-size: 28px;">bungalow</span>
+</div>
+</div>
+<p class="text-text-muted dark:text-gray-400 text-base font-normal leading-relaxed">
+                Configure your inventory for fixed mobile homes located permanently on site.
+            </p>
+</div>
+<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
+<section class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-text-muted dark:text-primary uppercase tracking-wider pl-1">Inventory</label>
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-4">
+<label class="text-base font-semibold text-text-main dark:text-white" for="pitch-count">How many mobile home pitches do you have?</label>
+<div class="flex items-center gap-4">
+<button class="size-12 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-text-main dark:text-white flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="flex-1 relative">
+<input class="w-full text-center bg-transparent border-2 border-gray-200 dark:border-white/10 rounded-lg py-3 text-xl font-bold focus:border-primary focus:ring-0 transition-all dark:text-white" id="pitch-count" placeholder="0" type="number" value="8"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-400 uppercase pointer-events-none">Units</span>
+</div>
+<button class="size-12 rounded-lg bg-primary text-black hover:bg-green-400 flex items-center justify-center transition-colors shadow-soft">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</section>
+<section class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-text-muted dark:text-primary uppercase tracking-wider pl-1">Standard Amenities</label>
+<div class="bg-surface-light dark:bg-surface-dark p-1 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
+<label class="relative flex items-center p-4 border-b border-gray-100 dark:border-white/5 cursor-pointer group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="size-6 rounded border-2 border-gray-300 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center mr-4 transition-all">
+<span class="material-symbols-outlined text-black text-[18px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="text-base font-medium text-text-main dark:text-white">Power Hookup</span>
+<span class="text-xs text-text-muted dark:text-gray-400">30/50 amp compatible</span>
+</div>
+<span class="material-symbols-outlined text-gray-300 peer-checked:text-primary">electrical_services</span>
+</label>
+<label class="relative flex items-center p-4 border-b border-gray-100 dark:border-white/5 cursor-pointer group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="size-6 rounded border-2 border-gray-300 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center mr-4 transition-all">
+<span class="material-symbols-outlined text-black text-[18px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+<span class="text-base font-medium flex-1 text-text-main dark:text-white">Water Hookup</span>
+<span class="material-symbols-outlined text-gray-300 peer-checked:text-primary">water_drop</span>
+</label>
+<label class="relative flex items-center p-4 border-b border-gray-100 dark:border-white/5 cursor-pointer group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<div class="size-6 rounded border-2 border-gray-300 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center mr-4 transition-all">
+<span class="material-symbols-outlined text-black text-[18px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+<span class="text-base font-medium flex-1 text-text-main dark:text-white">Sewer Hookup</span>
+<span class="material-symbols-outlined text-gray-300 peer-checked:text-primary">plumbing</span>
+</label>
+<label class="relative flex items-center p-4 border-b border-gray-100 dark:border-white/5 cursor-pointer group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<div class="size-6 rounded border-2 border-gray-300 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center mr-4 transition-all">
+<span class="material-symbols-outlined text-black text-[18px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+<span class="text-base font-medium flex-1 text-text-main dark:text-white">Drive-through</span>
+<span class="material-symbols-outlined text-gray-300 peer-checked:text-primary">alt_route</span>
+</label>
+<label class="relative flex items-center p-4 border-b border-gray-100 dark:border-white/5 cursor-pointer group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<div class="size-6 rounded border-2 border-gray-300 peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center mr-4 transition-all">
+<span class="material-symbols-outlined text-black text-[18px] opacity-0 peer-checked:opacity-100">check</span>
+</div>
+<span class="text-base font-medium flex-1 text-text-main dark:text-white">Concrete Pad</span>
+<span class="material-symbols-outlined text-gray-300 peer-checked:text-primary">foundation</span>
+</label>
+<div class="p-4 bg-gray-50 dark:bg-white/5">
+<label class="block text-xs font-semibold text-text-muted dark:text-gray-400 mb-1.5 ml-1">Other Amenities</label>
+<input class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-white/10 rounded-lg px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-gray-400 dark:text-white" placeholder="E.g., Decking, BBQ Area..." type="text"/>
+</div>
+</div>
+</section>
+<section class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-text-muted dark:text-primary uppercase tracking-wider pl-1">Occupancy Rules</label>
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-xl shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-base font-semibold text-text-main dark:text-white">Default Max Capacity</span>
+<span class="text-sm text-text-muted dark:text-gray-400">Guests per mobile home</span>
+</div>
+<div class="flex items-center bg-gray-100 dark:bg-white/5 rounded-lg p-1">
+<label class="cursor-pointer">
+<input class="peer sr-only" name="capacity" type="radio" value="2"/>
+<span class="flex size-10 items-center justify-center rounded-md text-sm font-bold text-gray-500 peer-checked:bg-white dark:peer-checked:bg-surface-dark peer-checked:text-black dark:peer-checked:text-white peer-checked:shadow-sm transition-all">2</span>
+</label>
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="capacity" type="radio" value="4"/>
+<span class="flex size-10 items-center justify-center rounded-md text-sm font-bold text-gray-500 peer-checked:bg-white dark:peer-checked:bg-surface-dark peer-checked:text-black dark:peer-checked:text-white peer-checked:shadow-sm transition-all">4</span>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="capacity" type="radio" value="6"/>
+<span class="flex size-10 items-center justify-center rounded-md text-sm font-bold text-gray-500 peer-checked:bg-white dark:peer-checked:bg-surface-dark peer-checked:text-black dark:peer-checked:text-white peer-checked:shadow-sm transition-all">6</span>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="capacity" type="radio" value="8+"/>
+<span class="flex size-10 items-center justify-center rounded-md text-sm font-bold text-gray-500 peer-checked:bg-white dark:peer-checked:bg-surface-dark peer-checked:text-black dark:peer-checked:text-white peer-checked:shadow-sm transition-all">8+</span>
+</label>
+</div>
+</div>
+</div>
+</section>
+</main>
+<div class="fixed bottom-0 w-full max-w-md bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-t border-gray-200 dark:border-white/10 p-4 pb-6 z-40">
+<button class="w-full bg-primary hover:bg-[#0fdc75] text-black font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+<span>Next: Configure Cabins</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+
+</body></html>
