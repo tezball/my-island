@@ -1,7 +1,10 @@
 package com.example.myislandapi.entity;
 
+import com.example.myislandapi.enums.SupplierCategory;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -32,6 +35,19 @@ public class Supplier extends BaseEntity {
 
     @Column(name = "logo_url", length = 500)
     private String logoUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 50)
+    private SupplierCategory category;
+
+    @Column(name = "eircode", length = 10)
+    private String eircode;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
 
     public Supplier() {
     }
@@ -90,5 +106,37 @@ public class Supplier extends BaseEntity {
 
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
+    }
+
+    public SupplierCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(SupplierCategory category) {
+        this.category = category;
+    }
+
+    public String getEircode() {
+        return eircode;
+    }
+
+    public void setEircode(String eircode) {
+        this.eircode = eircode;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

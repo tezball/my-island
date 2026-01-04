@@ -6,14 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.KafkaContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.localstack.LocalStackContainer;
-import org.testcontainers.lifecycle.Startables;
-import org.testcontainers.utility.DockerImageName;
 
 import com.example.myislandapi.fixture.TestDataSeeder;
 
@@ -23,49 +20,25 @@ import static io.restassured.RestAssured.given;
 
 /**
  * Base class for ALL E2E and integration tests.
- * Provides shared Testcontainers infrastructure using singleton pattern.
+ * Uses shared Testcontainers via TestcontainersConfiguration to reuse
+ * containers across all test classes for better performance and reliability.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(TestcontainersConfiguration.class)
 @ActiveProfiles("test")
 public abstract class AbstractIntegrationTest {
 
-    // Singleton containers - shared across all tests for performance
-    static final PostgreSQLContainer<?> POSTGRES;
-    static final KafkaContainer KAFKA;
-    static final LocalStackContainer LOCALSTACK;
-
-    static {
-        POSTGRES = new PostgreSQLContainer<>(DockerImageName.parse("postgres:17-alpine"))
-                .withDatabaseName("myisland_test")
-                .withUsername("test")
-                .withPassword("test")
-                .withReuse(true);
-
-        KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.0"))
-                .withReuse(true);
-
-        LOCALSTACK = new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.0"))
-                .withServices(LocalStackContainer.Service.S3, LocalStackContainer.Service.SES)
-                .withReuse(true);
-
-        // Start all containers in parallel for faster startup
-        Startables.deepStart(POSTGRES, KAFKA, LOCALSTACK).join();
-    }
-
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        // PostgreSQL
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
-
-        // Kafka
-        registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
-
-        // LocalStack S3/SES
-        registry.add("aws.endpoint", () -> LOCALSTACK.getEndpoint().toString());
-        registry.add("aws.s3.endpoint", () ->
-            LOCALSTACK.getEndpointOverride(LocalStackContainer.Service.S3).toString());
+        // PostgreSQL is auto-configured via @ServiceConnection
+        // Configure Kafka and LocalStack properties
+        registry.add("spring.kafka.bootstrap-servers",
+                () -> TestcontainersConfiguration.getKafka().getBootstrapServers());
+        registry.add("aws.endpoint",
+                () -> TestcontainersConfiguration.getLocalstack().getEndpoint().toString());
+        registry.add("aws.s3.endpoint",
+                () -> TestcontainersConfiguration.getLocalstack()
+                        .getEndpointOverride(LocalStackContainer.Service.S3).toString());
     }
 
     @LocalServerPort

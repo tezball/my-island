@@ -2,17 +2,12 @@
 title: my-island Documentation
 type: MOC
 status: active
-created: 2026-01-03
-updated: 2026-01-03
-tags:
-  - moc
-  - index
-  - navigation
+updated: 2026-01-04
 ---
 
 # my-island Documentation
 
-> Camping/glamping booking platform for Ireland - Documentation Hub
+> Camping/glamping booking platform for Ireland
 
 ---
 
@@ -20,13 +15,13 @@ tags:
 
 | Section | Description |
 |---------|-------------|
-| [[01-Project-Management/README\|Project Management]] | Roadmaps, tasks, and sprint planning |
+| [[01-Project-Management/README\|Project Management]] | Task tracking and snag list |
 | [[02-Architecture/README\|Architecture]] | Technical design and domain models |
 | [[03-Business/README\|Business]] | Revenue projections and cost estimates |
-| [[04-User-Flows/README\|User Flows]] | User journeys, stories, and screen flows |
-| [[05-Design-Specs/README\|Design Specs]] | UI/UX specifications and screen designs |
-| [[06-Feedback/README\|Feedback]] | User testing and UI reviews |
-| [[07-Testing/TESTING_APPROACH\|Testing]] | Backend API testing strategy and patterns |
+| [[04-User-Flows/README\|User Flows]] | User journeys and screen flows |
+| [[05-Design-Specs/README\|Design Specs]] | UI/UX specifications |
+| [[06-Feedback/README\|Feedback]] | Testing status and issue tracking |
+| [[07-Testing/TESTING_APPROACH\|Testing]] | Backend API testing strategy |
 
 ---
 
@@ -35,58 +30,33 @@ tags:
 ```
 MVP Progress: ~75% Complete
 ├── Frontend: 83 page components
-├── Backend: Auth + User APIs complete
-├── Mock Data: 120 campsites
-└── User Flows: Guest + Owner
+├── Backend: 12 controllers, 55+ endpoints
+├── Database: PostgreSQL with Flyway migrations
+└── Infrastructure: Docker, LocalStack (S3/SES), Kafka
 ```
 
-### Critical Path Items
-- [[01-Project-Management/MVP_CRITICAL_TASKS|MVP Critical Tasks]] - Prioritized bug fixes
-- [[01-Project-Management/OUTSTANDING_WORK|Outstanding Work]] - Remaining implementation
+### Current Focus
+- [[01-Project-Management/SNAG_LIST|Snag List]] - Active bugs from E2E testing
+- [[01-Project-Management/OUTSTANDING_WORK|Outstanding Work]] - Remaining MVP tasks
 
 ---
 
 ## User Types
-
-```mermaid
-graph LR
-    A[Guest] --> B[Browse & Book]
-    C[Registered User] --> D[Save Favorites & History]
-    E[Campsite Owner] --> F[Manage Properties]
-    G[Supplier] --> H[Post Local Offers]
-```
 
 | User Type | Primary Flow | Admin Panel |
 |-----------|--------------|-------------|
 | Guest | [[04-User-Flows/discovery/README\|Discovery]] → [[04-User-Flows/booking/README\|Booking]] | - |
 | Registered | All flows + [[04-User-Flows/favorites/README\|Favorites]] | - |
 | Owner | [[04-User-Flows/owner-admin/README\|Owner Admin]] | 15+ pages |
-| Supplier | [[04-User-Flows/offers/README\|Offers]] management | Coming soon |
+| Supplier | [[04-User-Flows/offers/README\|Offers]] management | 3 pages |
 
 ---
 
-## Documentation Structure
-
-```
-docs/
-├── README.md                      # This file (MOC)
-├── 01-Project-Management/         # PM docs, roadmaps, tasks
-├── 02-Architecture/               # Technical design docs
-├── 03-Business/                   # Business planning docs
-├── 04-User-Flows/                 # User journeys (was: flows/)
-├── 05-Design-Specs/               # Screen designs (was: design/)
-├── 06-Feedback/                   # User feedback and reviews
-├── 07-Testing/                    # Testing strategy and patterns
-└── .obsidian/                     # Obsidian config
-```
-
----
-
-## Key Flows Overview
+## Key Flows
 
 ### Guest Journey
 ```
-Onboarding → Discovery (Map/Search) → Campsite Detail → Booking → Confirmation
+Discovery (Map/Search) → Campsite Detail → Booking → Confirmation
 ```
 
 ### Owner Journey
@@ -94,18 +64,15 @@ Onboarding → Discovery (Map/Search) → Campsite Detail → Booking → Confir
 Dashboard → Manage Lots → View Bookings → Revenue → Settings
 ```
 
-### Support Journey
-```
-Profile → Help & Support → FAQ / Contact Us / Submit Ticket
-```
-
 ---
 
-## Related Resources
+## Core Documentation
 
-- [[02-Architecture/tech-stack|Tech Stack]] - Full technology overview
-- [[05-Design-Specs/ui-style-guide|UI Style Guide]] - Design system reference
-- [[04-User-Flows/user-flows|Master User Flows]] - Visual flow diagrams
+| Document | Purpose |
+|----------|---------|
+| [[02-Architecture/DOMAIN_MODEL\|Domain Model]] | Entities, enums, business rules |
+| [[04-User-Flows/user-flows\|User Flows]] | Visual flow diagrams |
+| [[02-Architecture/tech-stack\|Tech Stack]] | Technology overview |
 
 ---
 
@@ -114,26 +81,9 @@ Profile → Help & Support → FAQ / Contact Us / Submit Ticket
 ### For Developers
 1. Read [[02-Architecture/README|Architecture Overview]]
 2. Review [[02-Architecture/DOMAIN_MODEL|Domain Model]]
-3. Check [[01-Project-Management/MVP_CRITICAL_TASKS|Current Tasks]]
+3. Check [[01-Project-Management/SNAG_LIST|Current Issues]]
 
 ### For PMs/Stakeholders
 1. Start with [[01-Project-Management/README|Project Status]]
 2. Review [[04-User-Flows/README|User Flows]]
-3. Check [[06-Feedback/README|User Feedback]]
-
-### For Designers
-1. See [[05-Design-Specs/README|Design Specs]]
-2. Review [[05-Design-Specs/ui-style-guide|UI Style Guide]]
-3. Check [[04-User-Flows/missing-screens|Missing Screens]]
-
----
-
-## Tags Index
-
-- `#moc` - Map of Content pages
-- `#p0` - Critical priority
-- `#p1` - High priority
-- `#flow` - User flow documentation
-- `#design` - Design specifications
-- `#owner` - Owner portal related
-- `#guest` - Guest experience related
+3. Check [[06-Feedback/README|Testing Status]]

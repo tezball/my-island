@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "07-Testing/TESTING_APPROACH.md",
+                "file": "01-Project-Management/OUTSTANDING_WORK.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TESTING_APPROACH"
+              "title": "OUTSTANDING_WORK"
             }
           }
         ]
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 407.5,
-    "collapsed": true
+    "width": 407.5
   },
   "right": {
     "id": "62f417dc1f6f45ad",
@@ -186,9 +185,18 @@
   },
   "active": "4849fc9b473955f3",
   "lastOpenFiles": [
-    "07-Testing/TESTING_APPROACH.md.tmp.1487339.1767475892024",
+    "README.md.tmp.273980.1767532613204",
+    "01-Project-Management/README.md.tmp.273980.1767532592057",
+    "06-Feedback/README.md.tmp.273980.1767532575464",
+    "01-Project-Management/OUTSTANDING_WORK.md.tmp.273980.1767532547897",
+    "01-Project-Management/SNAG_LIST.md",
+    "01-Project-Management/SNAG_LIST.md.tmp.273980.1767532508636",
+    "01-Project-Management/MVP_CRITICAL_TASKS.md",
+    "01-Project-Management/IMPLEMENTATION_SUMMARY.md",
     "README.md",
     "CAMPSITE_LEADS.md",
+    "07-Testing/TESTING_APPROACH.md",
+    "07-Testing/TESTING_APPROACH.md.tmp.1487339.1767475892024",
     "03-Business/Revenue_Projection_Report.md.tmp.482289.1767441457188",
     "02-Architecture/DOMAIN_MODEL.md.tmp.482289.1767441446994",
     "01-Project-Management/MVP_CRITICAL_TASKS.md.tmp.482289.1767441435568",
@@ -196,16 +204,11 @@
     "05-Design-Specs/ui-style-guide.html",
     "04-User-Flows/README.md.tmp.482289.1767441406408",
     "05-Design-Specs/README.md",
-    "05-Design-Specs/README.md.tmp.482289.1767441367994",
     "flows/booking/booking-flow.canvas",
     "05-Design-Specs/home_/_map_view/screen.png",
-    "05-Design-Specs/home_/_map_view/code.html",
     "05-Design-Specs/get_started_/_explore/screen.png",
-    "05-Design-Specs/get_started_/_explore/code.html",
     "05-Design-Specs/campsite_listing/edit_form_2/screen.png",
-    "05-Design-Specs/campsite_listing/edit_form_2/code.html",
     "05-Design-Specs/campsite_listing/edit_form_1/screen.png",
-    "05-Design-Specs/campsite_listing/edit_form_1/code.html",
     "05-Design-Specs/welcome_to_my-island!/screen.png",
     "05-Design-Specs/welcome_to_my-island/screen.png",
     "05-Design-Specs/verify_your_email/screen.png",
@@ -234,13 +237,9 @@
     "04-User-Flows/profile/profile-flow.canvas",
     "04-User-Flows/profile/README.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
-    "04-User-Flows/owner-admin/README.md",
     "04-User-Flows/onboarding/onboarding-flow.canvas",
-    "04-User-Flows/onboarding/README.md",
     "04-User-Flows/offers/offers-flow.canvas",
-    "04-User-Flows/offers/README.md",
     "04-User-Flows/notifications/notifications-flow.canvas",
-    "04-User-Flows/notifications/README.md",
     "04-User-Flows/my-bookings/my-bookings-flow.canvas"
   ]
 }

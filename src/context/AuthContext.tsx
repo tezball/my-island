@@ -83,6 +83,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const stored = localStorage.getItem(AUTH_STORAGE_KEY)
         if (stored) {
           const { user, expiresAt } = JSON.parse(stored)
+
+          // If using real API, we also need valid auth tokens
+          if (USE_REAL_API) {
+            const accessToken = localStorage.getItem('access_token')
+            if (!accessToken) {
+              // Have stored user but no tokens - likely from mock mode
+              // Clear the stale session
+              localStorage.removeItem(AUTH_STORAGE_KEY)
+              setState(prev => ({ ...prev, isLoading: false }))
+              return
+            }
+          }
+
           if (new Date(expiresAt) > new Date()) {
             setState({
               user,
@@ -94,9 +107,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
           // Session expired, clear it
           localStorage.removeItem(AUTH_STORAGE_KEY)
+          clearAuthTokens()
         }
       } catch {
         localStorage.removeItem(AUTH_STORAGE_KEY)
+        clearAuthTokens()
       }
       setState(prev => ({ ...prev, isLoading: false }))
     }

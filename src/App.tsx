@@ -70,6 +70,7 @@ import LinkedAccountsPage from './pages/LinkedAccountsPage'
 import ProfilePaymentMethodsPage from './pages/ProfilePaymentMethodsPage'
 import SettingsPage from './pages/SettingsPage'
 import BecomeOwnerPage from './pages/BecomeOwnerPage'
+import BecomeSupplierPage from './pages/BecomeSupplierPage'
 
 // Support Pages
 import SupportPage from './pages/SupportPage'
@@ -216,6 +217,9 @@ function App() {
 
       {/* Become Owner - Protected */}
       <Route path="/become-owner" element={<ProtectedRoute><BecomeOwnerPage /></ProtectedRoute>} />
+
+      {/* Become Supplier - Protected */}
+      <Route path="/become-supplier" element={<ProtectedRoute><BecomeSupplierPage /></ProtectedRoute>} />
 
       {/* Support */}
       <Route path="/support" element={<SupportPage />} />

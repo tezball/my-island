@@ -2,16 +2,11 @@
 title: Project Management
 type: MOC
 status: active
-created: 2026-01-03
-tags:
-  - moc
-  - project-management
-  - roadmap
 ---
 
 # Project Management
 
-> Sprint planning, task tracking, and implementation status for my-island MVP
+> Sprint planning and task tracking for my-island MVP
 
 ---
 
@@ -20,71 +15,36 @@ tags:
 | Metric | Value |
 |--------|-------|
 | MVP Completion | ~75% |
-| P0 Bugs Fixed | 4/4 |
-| P1 Issues Fixed | 4/4 |
 | Screens Implemented | 83 |
+| Backend Controllers | 12 |
+| API Endpoints | 55+ |
 
 ---
 
 ## Key Documents
 
-### Task Tracking
-- [[MVP_CRITICAL_TASKS]] - Prioritized bug fixes (P0-P3)
-- [[OUTSTANDING_WORK]] - Remaining implementation work
-- [[IMPLEMENTATION_SUMMARY]] - What's been built
-
-### Sprint Planning
-See [[MVP_CRITICAL_TASKS#Recommended MVP Sprint Order|Sprint Order]] for recommended execution sequence.
+| Document | Description |
+|----------|-------------|
+| [[SNAG_LIST]] | Active bugs from E2E testing |
+| [[OUTSTANDING_WORK]] | Remaining MVP work |
 
 ---
 
-## Priority Matrix
+## Critical Path
 
-```
-┌─────────────────────────────────────────┐
-│           PRIORITY MATRIX               │
-├─────────────┬─────────────┬─────────────┤
-│     P0      │     P1      │     P2      │
-│  Critical   │    High     │   Medium    │
-│  Blockers   │  Important  │   Should    │
-├─────────────┼─────────────┼─────────────┤
-│ ✅ All Fixed│ ✅ All Fixed│ ✅ All Fixed│
-└─────────────┴─────────────┴─────────────┘
-```
+1. **Fix Login API** - Unblocks all authenticated flows
+2. **Fix Booking Buttons** - Core booking flow
+3. **Fix Image Loading** - Offers and lot images
+4. **Test Owner/Supplier** - Admin portals
 
 ---
 
-## Recently Completed
+## Quick Links
 
-### P0 - Critical (All Fixed)
-- [x] Booking flow dates propagation
-- [x] Protected routes auth handling
-- [x] Owner stats page rendering
-- [x] Notifications page rendering
-
-### P1 - High Priority (All Fixed)
-- [x] API 403 error handling
-- [x] Search page featured campsites
-- [x] Login URL mismatch (verified working)
-- [x] Currency consistency (verified €)
-
----
-
-## Upcoming Work
-
-See [[OUTSTANDING_WORK]] for detailed breakdown of remaining tasks.
-
-### High Priority
-1. Backend API integration (replace mock data)
-2. Payment processing (Stripe integration)
-3. Image upload to S3
-4. Email notifications (SES)
-
-### Medium Priority
-1. Reviews system
-2. Supplier portal
-3. Analytics dashboard
-4. Push notifications
+- [[../02-Architecture/DOMAIN_MODEL|Domain Model]]
+- [[../04-User-Flows/user-flows|User Flows]]
+- [[../02-Architecture/tech-stack|Tech Stack]]
+- [[../06-Feedback/README|Testing Status]]
 
 ---
 

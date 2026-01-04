@@ -8,15 +8,30 @@
  */
 
 import api from '../api'
-import type { SupplierProfile, Offer, OfferCategory } from '../../data/types'
+import type { SupplierProfile, Offer, OfferCategory, SupplierCategory, User } from '../../data/types'
 
 // Request types
+export interface BecomeSupplierRequest {
+  businessName: string
+  description: string
+  location: string
+  contactEmail: string
+  phoneNumber: string
+  category: SupplierCategory
+  eircode?: string
+  latitude?: number
+  longitude?: number
+}
+
 export interface UpdateProfileRequest {
   businessName: string
   description: string
   location: string
   contactEmail: string
   phoneNumber: string
+  eircode?: string
+  latitude?: number
+  longitude?: number
 }
 
 export interface CreateOfferRequest {
@@ -54,6 +69,10 @@ export interface SupplierStatsResponse {
 
 // Supplier API service
 export const supplierApi = {
+  // Register current user as a supplier with initial profile
+  becomeSupplier: (data: BecomeSupplierRequest) =>
+    api.post<User>('/users/me/become-supplier', data),
+
   // Get current supplier's business profile
   getProfile: () =>
     api.get<SupplierProfile>('/supplier/profile'),

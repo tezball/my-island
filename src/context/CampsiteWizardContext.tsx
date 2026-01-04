@@ -1,30 +1,60 @@
 import { createContext, useContext, useReducer, type ReactNode } from 'react'
-import type { Facility } from '../data/types'
+import type { Facility, LotType } from '../data/types'
 
-export interface WizardLot {
-  name: string
-  type: 'tent' | 'caravan' | 'campervan' | 'glamping' | 'cabin'
+export type { LotType }
+
+export interface LotBatch {
+  id: string
+  type: LotType
+  count: number
+  namePrefix: string
   capacity: number
   pricePerNight: number
   amenities: string[]
 }
 
+// Supported lot types for the wizard (subset of all LotType values)
+export const WIZARD_LOT_TYPES: LotType[] = [
+  'tent', 'caravan', 'campervan', 'glamping', 'cabin', 'yurt', 'pod', 'treehouse'
+]
+
+// Smart defaults per lot type
+export const LOT_TYPE_DEFAULTS: Partial<Record<LotType, { capacity: number; amenities: string[] }>> = {
+  tent: { capacity: 4, amenities: ['Fire Pit', 'Picnic Table'] },
+  caravan: { capacity: 4, amenities: ['Electric Hookup', 'Water Hookup'] },
+  campervan: { capacity: 2, amenities: ['Electric Hookup'] },
+  glamping: { capacity: 2, amenities: ['Private Bathroom', 'Wi-Fi'] },
+  cabin: { capacity: 4, amenities: ['Private Bathroom', 'Wi-Fi', 'BBQ Grill'] },
+  yurt: { capacity: 4, amenities: ['Fire Pit'] },
+  pod: { capacity: 2, amenities: ['Electric Hookup', 'Wi-Fi'] },
+  treehouse: { capacity: 2, amenities: ['Wi-Fi'] },
+}
+
+export const LOT_TYPE_LABELS: Partial<Record<LotType, string>> = {
+  tent: 'Tent Pitch',
+  caravan: 'Caravan Bay',
+  campervan: 'Campervan Spot',
+  glamping: 'Glamping Unit',
+  cabin: 'Cabin',
+  yurt: 'Yurt',
+  pod: 'Glamping Pod',
+  treehouse: 'Treehouse',
+}
+
 interface WizardState {
   currentStep: number
-  // Step 1: Basic Info
+  // Step 1: Property Details
   name: string
   description: string
-  // Step 2: Location
   address: string
   county: string
   lat: number | null
   lng: number | null
-  // Step 3: Facilities
+  // Step 2: Facilities & Media
   facilities: Facility[]
-  // Step 4: Photos
   images: string[]
-  // Step 5: First Lot
-  lot: WizardLot | null
+  // Step 3: Accommodations (batch lot creation)
+  lotBatches: LotBatch[]
   // Submission state
   isSubmitting: boolean
   error: string | null
@@ -38,10 +68,25 @@ type WizardAction =
   | { type: 'UPDATE_LOCATION'; address: string; county: string; lat: number; lng: number }
   | { type: 'UPDATE_FACILITIES'; facilities: Facility[] }
   | { type: 'UPDATE_IMAGES'; images: string[] }
-  | { type: 'UPDATE_LOT'; lot: WizardLot }
+  | { type: 'ADD_LOT_BATCH'; batch: LotBatch }
+  | { type: 'UPDATE_LOT_BATCH'; id: string; batch: Partial<LotBatch> }
+  | { type: 'REMOVE_LOT_BATCH'; id: string }
   | { type: 'SET_SUBMITTING'; isSubmitting: boolean }
   | { type: 'SET_ERROR'; error: string | null }
   | { type: 'RESET' }
+
+function createDefaultBatch(): LotBatch {
+  const tentDefaults = LOT_TYPE_DEFAULTS.tent!
+  return {
+    id: crypto.randomUUID(),
+    type: 'tent',
+    count: 1,
+    namePrefix: 'Pitch',
+    capacity: tentDefaults.capacity,
+    pricePerNight: 25,
+    amenities: [...tentDefaults.amenities],
+  }
+}
 
 const initialState: WizardState = {
   currentStep: 0,
@@ -53,7 +98,7 @@ const initialState: WizardState = {
   lng: null,
   facilities: [],
   images: [],
-  lot: null,
+  lotBatches: [createDefaultBatch()],
   isSubmitting: false,
   error: null,
 }
@@ -80,14 +125,26 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...state, facilities: action.facilities }
     case 'UPDATE_IMAGES':
       return { ...state, images: action.images }
-    case 'UPDATE_LOT':
-      return { ...state, lot: action.lot }
+    case 'ADD_LOT_BATCH':
+      return { ...state, lotBatches: [...state.lotBatches, action.batch] }
+    case 'UPDATE_LOT_BATCH':
+      return {
+        ...state,
+        lotBatches: state.lotBatches.map((batch) =>
+          batch.id === action.id ? { ...batch, ...action.batch } : batch
+        ),
+      }
+    case 'REMOVE_LOT_BATCH':
+      return {
+        ...state,
+        lotBatches: state.lotBatches.filter((batch) => batch.id !== action.id),
+      }
     case 'SET_SUBMITTING':
       return { ...state, isSubmitting: action.isSubmitting }
     case 'SET_ERROR':
       return { ...state, error: action.error }
     case 'RESET':
-      return initialState
+      return { ...initialState, lotBatches: [createDefaultBatch()] }
     default:
       return state
   }
@@ -100,6 +157,10 @@ interface CampsiteWizardContextType {
   nextStep: () => void
   prevStep: () => void
   canProceed: () => boolean
+  addLotBatch: () => void
+  removeLotBatch: (id: string) => void
+  updateLotBatch: (id: string, updates: Partial<LotBatch>) => void
+  getTotalLots: () => number
 }
 
 const CampsiteWizardContext = createContext<CampsiteWizardContextType | undefined>(undefined)
@@ -110,10 +171,26 @@ export function CampsiteWizardProvider({ children }: { children: ReactNode }) {
   const nextStep = () => dispatch({ type: 'NEXT_STEP' })
   const prevStep = () => dispatch({ type: 'PREV_STEP' })
 
+  const addLotBatch = () => {
+    dispatch({ type: 'ADD_LOT_BATCH', batch: createDefaultBatch() })
+  }
+
+  const removeLotBatch = (id: string) => {
+    dispatch({ type: 'REMOVE_LOT_BATCH', id })
+  }
+
+  const updateLotBatch = (id: string, updates: Partial<LotBatch>) => {
+    dispatch({ type: 'UPDATE_LOT_BATCH', id, batch: updates })
+  }
+
+  const getTotalLots = () => {
+    return state.lotBatches.reduce((sum, batch) => sum + batch.count, 0)
+  }
+
   // Validate each step before allowing to proceed
   const canProceed = (): boolean => {
     switch (state.currentStep) {
-      case 0: // Property Details (merged Basic Info + Location)
+      case 0: // Property Details
         return (
           state.name.trim().length >= 3 &&
           state.address.trim().length > 0 &&
@@ -123,15 +200,36 @@ export function CampsiteWizardProvider({ children }: { children: ReactNode }) {
         )
       case 1: // Facilities & Media
         return true // Optional step
-      case 2: // First Accommodation
-        return state.lot !== null && state.lot.name.trim().length > 0
+      case 2: // Accommodations
+        return (
+          state.lotBatches.length > 0 &&
+          state.lotBatches.every(
+            (batch) =>
+              batch.count >= 1 &&
+              batch.namePrefix.trim().length > 0 &&
+              batch.capacity >= 1 &&
+              batch.pricePerNight > 0
+          )
+        )
       default:
         return false
     }
   }
 
   return (
-    <CampsiteWizardContext.Provider value={{ state, dispatch, nextStep, prevStep, canProceed }}>
+    <CampsiteWizardContext.Provider
+      value={{
+        state,
+        dispatch,
+        nextStep,
+        prevStep,
+        canProceed,
+        addLotBatch,
+        removeLotBatch,
+        updateLotBatch,
+        getTotalLots,
+      }}
+    >
       {children}
     </CampsiteWizardContext.Provider>
   )

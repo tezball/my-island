@@ -5,7 +5,7 @@ import com.example.myislandapi.dto.request.SignupRequest;
 import com.example.myislandapi.dto.response.AuthResponse;
 import com.example.myislandapi.dto.response.UserResponse;
 import com.example.myislandapi.entity.User;
-import com.example.myislandapi.exception.BadRequestException;
+import com.example.myislandapi.exception.ConflictException;
 import com.example.myislandapi.exception.UnauthorizedException;
 import com.example.myislandapi.repository.UserRepository;
 import com.example.myislandapi.security.JwtTokenProvider;
@@ -33,7 +33,7 @@ public class AuthService {
     @Transactional
     public AuthResponse register(SignupRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new BadRequestException("Email is already registered");
+            throw new ConflictException("Email is already registered");
         }
 
         User user = new User();

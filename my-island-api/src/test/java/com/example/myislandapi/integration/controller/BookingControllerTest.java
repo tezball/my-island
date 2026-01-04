@@ -196,8 +196,9 @@ class BookingControllerTest extends AbstractIntegrationTest {
             .extract()
             .path("id");
 
+        // Owner confirms the booking (not the guest)
         given()
-            .header("Authorization", "Bearer " + userToken)
+            .header("Authorization", "Bearer " + testSetup.ownerToken())
         .when()
             .post("/bookings/{id}/confirm", bookingId)
         .then()

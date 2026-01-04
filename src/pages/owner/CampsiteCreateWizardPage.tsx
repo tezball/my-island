@@ -3,12 +3,12 @@ import AppShell from '../../components/layout/AppShell'
 import WizardProgress from '../../components/wizard/WizardProgress'
 import WizardStepPropertyDetails from '../../components/wizard/WizardStepPropertyDetails'
 import WizardStepFacilitiesMedia from '../../components/wizard/WizardStepFacilitiesMedia'
-import WizardStepLot from '../../components/wizard/WizardStepLot'
+import WizardStepAccommodations from '../../components/wizard/WizardStepAccommodations'
 import { CampsiteWizardProvider, useCampsiteWizard } from '../../context/CampsiteWizardContext'
 import { useToast } from '../../context/ToastContext'
 import { ownerApi } from '../../lib/api/owner'
 
-const STEPS = ['Property Details', 'Facilities & Media', 'First Accommodation']
+const STEPS = ['Property Details', 'Facilities & Media', 'Accommodations']
 
 function WizardContent() {
   const navigate = useNavigate()
@@ -18,7 +18,7 @@ function WizardContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!state.lot || state.lat === null || state.lng === null) {
+    if (state.lotBatches.length === 0 || state.lat === null || state.lng === null) {
       toast.error('Missing Information', 'Please complete all required steps.')
       return
     }
@@ -41,17 +41,27 @@ function WizardContent() {
         facilities: state.facilities.length > 0 ? state.facilities : undefined,
       })
 
-      // Create the first lot
-      await ownerApi.createLot({
-        campsiteId: campsiteResponse.id,
-        name: state.lot.name,
-        type: state.lot.type,
-        capacity: state.lot.capacity,
-        pricePerNight: state.lot.pricePerNight,
-        amenities: state.lot.amenities.length > 0 ? state.lot.amenities : undefined,
-      })
+      // Create all lots from batches
+      let lotsCreated = 0
 
-      toast.success('Campsite Created!', 'Your campsite is now live and ready for bookings.')
+      for (const batch of state.lotBatches) {
+        for (let i = 1; i <= batch.count; i++) {
+          await ownerApi.createLot({
+            campsiteId: campsiteResponse.id,
+            name: `${batch.namePrefix} ${i}`,
+            type: batch.type,
+            capacity: batch.capacity,
+            pricePerNight: batch.pricePerNight,
+            amenities: batch.amenities.length > 0 ? batch.amenities : undefined,
+          })
+          lotsCreated++
+        }
+      }
+
+      toast.success(
+        'Campsite Created!',
+        `Your campsite with ${lotsCreated} accommodation${lotsCreated > 1 ? 's' : ''} is now live.`
+      )
       dispatch({ type: 'RESET' })
       navigate('/owner')
     } catch (error) {
@@ -70,7 +80,7 @@ function WizardContent() {
       case 1:
         return <WizardStepFacilitiesMedia />
       case 2:
-        return <WizardStepLot />
+        return <WizardStepAccommodations />
       default:
         return null
     }

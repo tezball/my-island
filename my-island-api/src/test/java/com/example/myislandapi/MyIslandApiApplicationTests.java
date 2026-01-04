@@ -8,8 +8,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Import(TestcontainersConfiguration.class)
 @SpringBootTest
+@Import(TestcontainersConfiguration.class)
 @ActiveProfiles("test")
 class MyIslandApiApplicationTests {
 

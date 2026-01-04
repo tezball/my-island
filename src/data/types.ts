@@ -14,6 +14,18 @@ export interface User {
   notificationPreferences: NotificationPreferences
 }
 
+// Supplier categories matching backend enum
+export type SupplierCategory =
+  | 'RESTAURANT'
+  | 'PUB'
+  | 'FARM_SHOP'
+  | 'GROCERY'
+  | 'OUTDOOR_GEAR'
+  | 'KAYAK_RENTAL'
+  | 'BIKE_RENTAL'
+  | 'FISHING'
+  | 'CONVENIENCE'
+
 // Supplier business profile
 export interface SupplierProfile {
   id: string
@@ -24,6 +36,10 @@ export interface SupplierProfile {
   contactEmail: string
   phoneNumber: string
   logoUrl?: string
+  category?: SupplierCategory
+  eircode?: string
+  latitude?: number
+  longitude?: number
   createdAt: string
   updatedAt: string
 }

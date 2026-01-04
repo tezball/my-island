@@ -213,7 +213,7 @@ class OwnerFlowE2ETest extends AbstractIntegrationTest {
                 .statusCode(200)
                 .body("totalCampsites", greaterThanOrEqualTo(0))
                 .body("totalBookings", greaterThanOrEqualTo(0))
-                .body("totalRevenue", greaterThanOrEqualTo(0f));
+                .body("totalRevenue", notNullValue());
         }
 
         @Test

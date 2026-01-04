@@ -89,3 +89,15 @@ html {
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
 }
+
+/* Leaflet custom marker overrides - remove default div-icon styling */
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-marker-icon.custom-marker {
+  background: transparent !important;
+  border: none !important;
+  overflow: visible !important;
+}

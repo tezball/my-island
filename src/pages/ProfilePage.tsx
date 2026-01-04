@@ -159,8 +159,8 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Become Owner CTA - shown only for non-owners and non-suppliers */}
-        {!user?.isOwner && !user?.isSupplier && (
+        {/* Become Owner CTA - shown for non-owners */}
+        {!user?.isOwner && (
           <div className="px-4 pt-4">
             <Link
               to="/become-owner"
@@ -176,6 +176,27 @@ export default function ProfilePage() {
                 </p>
               </div>
               <Icon name="chevron_right" size={20} className="text-primary" />
+            </Link>
+          </div>
+        )}
+
+        {/* Become Supplier CTA - shown for non-suppliers */}
+        {!user?.isSupplier && (
+          <div className="px-4 pt-4">
+            <Link
+              to="/become-supplier"
+              className="flex items-center gap-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl border border-amber-200 dark:border-amber-800"
+            >
+              <div className="size-12 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center flex-shrink-0">
+                <Icon name="storefront" size={24} className="text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-slate-900 dark:text-white">Become a Supplier</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Partner with campsites and offer your services
+                </p>
+              </div>
+              <Icon name="chevron_right" size={20} className="text-amber-600 dark:text-amber-400" />
             </Link>
           </div>
         )}

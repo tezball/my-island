@@ -563,7 +563,7 @@ export default function CampsiteDetailPage() {
         </div>
 
         {/* Fixed Bottom CTA */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-surface-dark border-t border-slate-100 dark:border-slate-800 px-5 py-4 safe-area-pb">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface-dark border-t border-slate-100 dark:border-slate-800 px-5 py-4 safe-area-pb">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white">

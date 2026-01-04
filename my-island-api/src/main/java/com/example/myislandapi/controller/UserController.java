@@ -1,5 +1,6 @@
 package com.example.myislandapi.controller;
 
+import com.example.myislandapi.dto.request.BecomeSupplierRequest;
 import com.example.myislandapi.dto.request.UpdateNotificationPreferencesRequest;
 import com.example.myislandapi.dto.request.UpdateUserRequest;
 import com.example.myislandapi.dto.response.UserResponse;
@@ -63,6 +64,15 @@ public class UserController {
     public ResponseEntity<UserResponse> becomeOwner(@AuthenticationPrincipal UserDetails userDetails) {
         UUID userId = UUID.fromString(userDetails.getUsername());
         return ResponseEntity.ok(userService.becomeOwner(userId));
+    }
+
+    @PostMapping("/me/become-supplier")
+    @Operation(summary = "Convert current user to supplier with initial business profile")
+    public ResponseEntity<UserResponse> becomeSupplier(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody BecomeSupplierRequest request) {
+        UUID userId = UUID.fromString(userDetails.getUsername());
+        return ResponseEntity.ok(userService.becomeSupplier(userId, request));
     }
 
     @DeleteMapping("/me")

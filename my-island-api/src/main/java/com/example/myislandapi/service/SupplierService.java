@@ -50,6 +50,18 @@ public class SupplierService {
         if (request.phoneNumber() != null) {
             supplier.setPhoneNumber(request.phoneNumber());
         }
+        if (request.category() != null) {
+            supplier.setCategory(request.category());
+        }
+        if (request.eircode() != null) {
+            supplier.setEircode(request.eircode());
+        }
+        if (request.latitude() != null) {
+            supplier.setLatitude(request.latitude());
+        }
+        if (request.longitude() != null) {
+            supplier.setLongitude(request.longitude());
+        }
 
         supplier = supplierRepository.save(supplier);
         return SupplierProfileResponse.from(supplier);

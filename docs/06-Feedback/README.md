@@ -2,104 +2,64 @@
 title: Feedback
 type: MOC
 status: active
-created: 2026-01-03
-tags:
-  - moc
-  - feedback
-  - testing
 ---
 
-# Feedback
+# Feedback & Issues
 
-> User testing feedback, UI reviews, and quality assurance for my-island
+> Bug tracking and quality assurance for my-island
 
 ---
 
-## Key Documents
+## Active Issues
 
-### User Testing
-- [[GUEST_USER_FEEDBACK]] - Feedback from guest user testing
-- [[OWNER_UI_REVIEW]] - Owner portal UI review
+**[[../01-Project-Management/SNAG_LIST|Snag List]]** - Current bugs from E2E testing (2026-01-04)
 
 ---
 
-## Testing Status
+## Test Accounts
 
-| Area | Status | Last Review |
-|------|--------|-------------|
-| Guest Flows | Reviewed | 2026-01-03 |
-| Owner Portal | Reviewed | 2026-01-03 |
-| Auth Flows | Tested | 2026-01-03 |
-| Booking Flow | Tested | 2026-01-03 |
-
----
-
-## Common Feedback Themes
-
-### Positive
-- Clean, modern UI
-- Intuitive navigation
-- Fast page loads
-- Good mobile responsiveness
-
-### Areas for Improvement
-- More filter options on search
-- Clearer pricing breakdown
-- Better error messages
-- More social proof (reviews)
-
----
-
-## Bug Reports
-
-Critical bugs are tracked in [[../01-Project-Management/MVP_CRITICAL_TASKS|MVP Critical Tasks]].
-
-### Recently Fixed
-- [x] Booking dates not passing correctly
-- [x] 403 errors on API calls
-- [x] Stats page rendering timing
-- [x] Currency inconsistency
+| User | Email | Password | Role |
+|------|-------|----------|------|
+| Visitor | visitor@my-island.com | demo1234 | Guest |
+| Owner | owner@my-island.com | demo1234 | Campsite management |
+| Supplier | supplier@my-island.com | demo1234 | Offers management |
 
 ---
 
 ## Testing Checklist
 
 ### Guest Flows
-- [x] Onboarding walkthrough
-- [x] Login/Signup
 - [x] Browse campsites
 - [x] Search with filters
 - [x] View campsite details
-- [x] Complete booking
-- [x] View bookings
+- [ ] Complete booking (buttons broken)
 - [ ] Modify booking
 - [ ] Cancel booking
 - [ ] Submit review
 
+### Auth Flows
+- [ ] Login (API failing)
+- [ ] Signup
+- [ ] Demo mode
+
 ### Owner Flows
-- [x] Dashboard overview
-- [x] View statistics
-- [x] Manage lots
-- [x] View bookings
-- [x] Revenue dashboard
-- [ ] Edit campsite details
-- [ ] Respond to reviews
-- [ ] Payout setup
+- [ ] Dashboard - blocked by login
+- [ ] Manage lots - blocked by login
+- [ ] View bookings - blocked by login
+
+### Supplier Flows
+- [ ] Dashboard - blocked by login
+- [ ] Manage offers - blocked by login
 
 ---
 
-## Feedback Collection
+## Reporting Issues
 
-### Channels
-1. In-app feedback form
-2. Support tickets
-3. User testing sessions
-4. Analytics (Grafana)
-
-### Process
-```
-Feedback → Triage → Prioritize → Implement → Verify → Close
-```
+When reporting issues, include:
+1. Page/route where issue occurs
+2. Steps to reproduce
+3. Expected vs actual behavior
+4. Browser console errors (if any)
 
 ---
 

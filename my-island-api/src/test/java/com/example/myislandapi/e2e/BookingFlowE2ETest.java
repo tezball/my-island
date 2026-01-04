@@ -293,9 +293,9 @@ class BookingFlowE2ETest extends AbstractIntegrationTest {
                 .extract()
                 .path("id");
 
-            // Confirm booking
+            // Owner confirms the booking
             given()
-                .header("Authorization", "Bearer " + userToken)
+                .header("Authorization", "Bearer " + testSetup.ownerToken())
             .when()
                 .post("/bookings/{id}/confirm", bookingId)
             .then()
@@ -432,9 +432,9 @@ class BookingFlowE2ETest extends AbstractIntegrationTest {
                 .body("id", equalTo(bookingId))
                 .body("specialRequests", equalTo("Quiet spot please"));
 
-            // Step 5: Confirm booking
+            // Step 5: Owner confirms booking
             given()
-                .header("Authorization", "Bearer " + userToken)
+                .header("Authorization", "Bearer " + testSetup.ownerToken())
             .when()
                 .post("/bookings/{id}/confirm", bookingId)
             .then()

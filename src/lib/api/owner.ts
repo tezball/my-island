@@ -8,7 +8,7 @@
  */
 
 import api from '../api'
-import type { User, Facility } from '../../data/types'
+import type { User, Facility, LotType } from '../../data/types'
 
 // Request types
 export interface CreateCampsiteRequest {
@@ -41,7 +41,7 @@ export interface UpdateCampsiteRequest {
 export interface CreateLotRequest {
   campsiteId: string
   name: string
-  type: 'tent' | 'caravan' | 'campervan' | 'glamping' | 'cabin'
+  type: LotType
   capacity: number
   pricePerNight: number
   images?: string[]
@@ -51,7 +51,7 @@ export interface CreateLotRequest {
 
 export interface UpdateLotRequest {
   name?: string
-  type?: 'tent' | 'caravan' | 'campervan' | 'glamping' | 'cabin'
+  type?: LotType
   capacity?: number
   pricePerNight?: number
   images?: string[]
