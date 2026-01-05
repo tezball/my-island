@@ -145,6 +145,68 @@ export function WizardStepReview() {
         </div>
       </div>
 
+      {/* Photos Card */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <Icon name="photo_library" size={20} className="text-green-600" />
+            Photos
+          </h3>
+          <button
+            onClick={() => goToStep(1)}
+            className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+          >
+            <Icon name="edit" size={16} />
+            Edit
+          </button>
+        </div>
+
+        {state.images.length > 0 ? (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {state.images.length} photo{state.images.length !== 1 ? 's' : ''} uploaded
+            </p>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {state.images.slice(0, 4).map((image, index) => (
+                <div
+                  key={index}
+                  className="relative aspect-[4/3] rounded-lg overflow-hidden"
+                >
+                  <img
+                    src={image}
+                    alt={`Property photo ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  {index === 0 && (
+                    <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-primary text-gray-900 text-[10px] font-bold rounded">
+                      Cover
+                    </div>
+                  )}
+                  {index === 3 && state.images.length > 4 && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <span className="text-white font-medium">
+                        +{state.images.length - 4}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-4">
+            <Icon name="image" size={32} className="text-gray-300 mx-auto mb-2" />
+            <p className="text-sm text-gray-500">No photos added yet</p>
+            <button
+              onClick={() => goToStep(1)}
+              className="mt-2 text-sm text-green-600 hover:text-green-700 font-medium"
+            >
+              Add photos
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Accommodations Card */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">

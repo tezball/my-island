@@ -50,7 +50,18 @@ export default function Header({
           </Link>
         )}
 
-        {title && (
+        {title && !showLogo && (
+          <Link to="/" className="flex items-center gap-2">
+            <div className="size-8 rounded-full bg-primary flex items-center justify-center">
+              <Icon name="forest" size={16} className="text-slate-900" />
+            </div>
+            <h1 className="text-lg font-bold text-slate-900 dark:text-white truncate">
+              {title}
+            </h1>
+          </Link>
+        )}
+
+        {title && showLogo && (
           <h1 className="text-lg font-bold text-slate-900 dark:text-white truncate">
             {title}
           </h1>

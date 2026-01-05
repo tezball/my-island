@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useCampsiteWizard } from '../../context/CampsiteWizardContext'
 import Button from '../ui/Button'
 import Icon from '../ui/Icon'
-import Input from '../ui/Input'
+import ImageUpload from '../ui/ImageUpload'
 import type { Facility } from '../../data/types'
 
 interface FacilityOption {
@@ -34,19 +34,10 @@ export default function WizardStepFacilitiesMedia() {
   // Facilities state
   const [selected, setSelected] = useState<Facility[]>(state.facilities)
 
-  // Photos state
-  const [images, setImages] = useState<string[]>(state.images)
-  const [newImageUrl, setNewImageUrl] = useState('')
-
   // Update context when facilities change
   useEffect(() => {
     dispatch({ type: 'UPDATE_FACILITIES', facilities: selected })
   }, [selected, dispatch])
-
-  // Update context when images change
-  useEffect(() => {
-    dispatch({ type: 'UPDATE_IMAGES', images })
-  }, [images, dispatch])
 
   const toggleFacility = (facility: Facility) => {
     setSelected((prev) =>
@@ -56,15 +47,8 @@ export default function WizardStepFacilitiesMedia() {
     )
   }
 
-  const addImage = () => {
-    if (newImageUrl.trim() && !images.includes(newImageUrl.trim())) {
-      setImages([...images, newImageUrl.trim()])
-      setNewImageUrl('')
-    }
-  }
-
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index))
+  const handleImagesChange = (images: string[]) => {
+    dispatch({ type: 'UPDATE_IMAGES', images })
   }
 
   const handleNext = () => {
@@ -135,69 +119,14 @@ export default function WizardStepFacilitiesMedia() {
             Photos
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-            Great photos help attract guests. Add URLs to your best images.
+            Great photos help attract guests. Upload your best images.
           </p>
 
-          {/* Add image URL */}
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <Input
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="Enter image URL (https://...)"
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
-              />
-            </div>
-            <Button type="button" onClick={addImage} disabled={!newImageUrl.trim()}>
-              Add
-            </Button>
-          </div>
-
-          {/* Image preview grid */}
-          {images.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              {images.map((url, index) => (
-                <div key={index} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                  <img
-                    src={url}
-                    alt={`Campsite photo ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://placehold.co/400x300?text=Invalid+Image'
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 size-8 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
-                  >
-                    <Icon name="close" size={18} className="text-white" />
-                  </button>
-                  {index === 0 && (
-                    <div className="absolute bottom-2 left-2 px-2 py-1 bg-primary text-slate-900 text-xs font-bold rounded">
-                      Cover Photo
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-6 text-center mt-4">
-              <Icon name="add_photo_alternate" size={40} className="mx-auto text-slate-300 mb-2" />
-              <p className="text-slate-500 dark:text-slate-400 text-sm">
-                No photos added yet
-              </p>
-            </div>
-          )}
-
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 mt-4">
-            <h4 className="font-medium text-slate-900 dark:text-white mb-2 text-sm">Photo Tips</h4>
-            <ul className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-              <li>• Use high-quality, well-lit photos</li>
-              <li>• Show different areas of your campsite</li>
-              <li>• The first photo will be your cover image</li>
-            </ul>
-          </div>
+          <ImageUpload
+            images={state.images}
+            onChange={handleImagesChange}
+            maxImages={10}
+          />
         </div>
       </div>
 

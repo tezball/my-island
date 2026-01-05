@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { usePropertyWizard } from '@/context/PropertyWizardContext'
 import Icon from '@/components/ui/Icon'
 import MapView from '@/components/ui/MapView'
+import ImageUpload from '@/components/ui/ImageUpload'
 
 const IRISH_COUNTIES = [
   'Antrim', 'Armagh', 'Carlow', 'Cavan', 'Clare', 'Cork', 'Derry', 'Donegal',
@@ -89,6 +90,10 @@ export function WizardStepBasicInfo() {
         lng: coord === 'lng' ? numValue : (state.lng ?? -6.2603),
       })
     }
+  }
+
+  const handleImagesChange = (images: string[]) => {
+    dispatch({ type: 'UPDATE_IMAGES', images })
   }
 
   return (
@@ -242,6 +247,21 @@ export function WizardStepBasicInfo() {
           <Icon name="location_on" size={12} />
           Click on the map to adjust the pin location
         </p>
+      </div>
+
+      {/* Property Photos */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Property Photos
+        </label>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Add high-quality photos to showcase your property. Great photos help attract more guests!
+        </p>
+        <ImageUpload
+          images={state.images}
+          onChange={handleImagesChange}
+          maxImages={10}
+        />
       </div>
     </div>
   )

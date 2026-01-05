@@ -87,6 +87,13 @@ export default function PropertyPublishSuccessPage() {
               </Button>
             </Link>
           )}
+
+          <Link to="/" className="block">
+            <Button variant="ghost" className="w-full" size="lg">
+              <Icon name="home" size={20} className="mr-2" />
+              Back to Home
+            </Button>
+          </Link>
         </div>
 
         {/* Create Another Property Section */}

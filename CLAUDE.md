@@ -8,22 +8,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-### Frontend
+### Starting the Application
+
+**IMPORTANT: ALWAYS use `./start.sh` to start the application. No exceptions.**
+
 ```bash
-npm install          # Install dependencies
-npm run dev          # Start Vite dev server (http://localhost:5173)
-npm run build        # TypeScript check + production build
-npm run preview      # Preview production build
+./start.sh           # Start everything (Docker, DB reset, build, tests, backend)
 ```
 
-### Backend (from my-island-api/)
-```bash
-# Start infrastructure (PostgreSQL, LocalStack, Kafka)
-docker compose -f ../docker-compose.yml up -d
+This script handles: Docker services, database reset, frontend build, backend tests, and Spring Boot startup. Never use `mvn spring-boot:run`, `docker compose up`, or other individual commands to start the app.
 
-# Run Spring Boot
-mvn spring-boot:run                    # Start API (http://localhost:8080)
-mvn test                               # Run all tests (requires Docker)
+### Frontend (after backend is running)
+```bash
+npm run dev          # Start Vite dev server (http://localhost:5173)
+npm run build        # TypeScript check + production build
+```
+
+### Running Tests Only
+```bash
+cd my-island-api
+mvn test                               # Run all tests
 mvn test -Dtest=ClassName              # Run specific test class
 mvn test -Dtest=ClassName#methodName   # Run specific test method
 ```

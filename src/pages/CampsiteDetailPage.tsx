@@ -222,13 +222,21 @@ export default function CampsiteDetailPage() {
             </div>
           </Link>
 
-          {/* Back button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 size-10 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-lg flex items-center justify-center"
-          >
-            <Icon name="arrow_back" size={20} />
-          </button>
+          {/* Back & Home buttons */}
+          <div className="absolute top-4 left-4 flex gap-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="size-10 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-lg flex items-center justify-center"
+            >
+              <Icon name="arrow_back" size={20} />
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="size-10 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-lg flex items-center justify-center"
+            >
+              <Icon name="home" size={20} />
+            </button>
+          </div>
 
           {/* Favorite & Share */}
           <div className="absolute top-4 right-4 flex gap-2">

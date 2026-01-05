@@ -5,7 +5,7 @@ spring:
   # Jackson configuration
   jackson:
     mapper:
-      accept-case-insensitive-enums: false
+      accept-case-insensitive-enums: true
 
   # Disable Docker Compose integration (managed externally)
   docker:
