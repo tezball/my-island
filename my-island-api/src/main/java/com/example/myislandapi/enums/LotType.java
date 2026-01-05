@@ -13,5 +13,6 @@ public enum LotType {
     APARTMENT,
     COTTAGE,
     SAFARI_TENT,
-    BED_AND_BREAKFAST
+    BED_AND_BREAKFAST,
+    MOBILE_HOME
 }

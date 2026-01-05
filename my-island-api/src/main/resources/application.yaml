@@ -2,6 +2,11 @@ spring:
   application:
     name: my-island-api
 
+  # Jackson configuration
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: false
+
   # Disable Docker Compose integration (managed externally)
   docker:
     compose:
@@ -94,6 +99,11 @@ logging:
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
     org.flywaydb: DEBUG
+
+# Application Configuration
+app:
+  sample-data:
+    enabled: false  # Set to false for blank state with only demo accounts
 
 ---
 # Test profile

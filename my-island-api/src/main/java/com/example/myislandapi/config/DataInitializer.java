@@ -19,6 +19,7 @@ import com.example.myislandapi.repository.OfferRepository;
 import com.example.myislandapi.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,9 @@ import java.util.*;
 public class DataInitializer {
 
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
+
+    @Value("${app.sample-data.enabled:true}")
+    private boolean sampleDataEnabled;
 
     private final Random random = new Random(42);
 
@@ -68,6 +72,12 @@ public class DataInitializer {
         return args -> {
             // Always ensure demo accounts exist (even if database is already seeded)
             ensureDemoAccounts(userRepository, passwordEncoder);
+
+            // If sample data is disabled, only create demo accounts and exit
+            if (!sampleDataEnabled) {
+                log.info("Sample data disabled - only demo accounts created (blank state)");
+                return;
+            }
 
             if (campsiteRepository.count() > 0) {
                 log.info("Database already seeded, skipping initialization");
@@ -666,7 +676,7 @@ public class DataInitializer {
     private String getLotImage(LotType type) {
         return switch (type) {
             case TENT -> "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800";
-            case CARAVAN, CAMPERVAN, RV -> "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800";
+            case CARAVAN, CAMPERVAN, RV, MOBILE_HOME -> "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800";
             case GLAMPING, SAFARI_TENT -> "https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?w=800";
             case CABIN, COTTAGE -> "https://images.unsplash.com/photo-1571863533956-01c88e79957e?w=800";
             case TREEHOUSE -> "https://images.unsplash.com/photo-1520824071669-7cc5b7097969?w=800";

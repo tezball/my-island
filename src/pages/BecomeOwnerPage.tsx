@@ -13,17 +13,17 @@ const benefits = [
   {
     icon: 'payments',
     title: 'Earn Extra Income',
-    description: 'Turn your land into a source of revenue by hosting campers and glampers.',
+    description: 'Turn your property into a source of revenue by hosting guests.',
   },
   {
     icon: 'calendar_month',
     title: 'Flexible Schedule',
-    description: 'You control when your site is available. Block dates whenever you need.',
+    description: 'You control when your property is available. Block dates whenever you need.',
   },
   {
     icon: 'groups',
     title: 'Meet New People',
-    description: 'Connect with travelers from around the world who share your love of nature.',
+    description: 'Connect with travelers from around the world exploring Ireland.',
   },
   {
     icon: 'support_agent',
@@ -39,17 +39,14 @@ export default function BecomeOwnerPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
 
-  // If already an owner, redirect to owner dashboard
+  // If user was already an owner when page loaded, redirect to property type selection
   useEffect(() => {
     if (user?.isOwner) {
-      navigate('/owner', { replace: true })
+      navigate('/owner/property/new', { replace: true })
     }
-  }, [user?.isOwner, navigate])
-
-  // Don't render content if user is already an owner (will redirect)
-  if (user?.isOwner) {
-    return null
-  }
+    // Only run on mount - don't re-run when user becomes owner via handleBecomeOwner
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleBecomeOwner = async () => {
     if (!agreed) {
@@ -85,7 +82,7 @@ export default function BecomeOwnerPage() {
             <div className="text-center text-white">
               <Icon name="add_business" size={48} className="mb-2" />
               <h1 className="text-2xl font-bold">Start Hosting Today</h1>
-              <p className="text-white/80">Share your space with adventurers</p>
+              <p className="text-white/80">List your campsite or B&B</p>
             </div>
           </div>
         </div>
@@ -125,8 +122,8 @@ export default function BecomeOwnerPage() {
             </h2>
             <div className="space-y-3">
               {[
-                { step: 1, text: 'Create your first campsite listing' },
-                { step: 2, text: 'Add photos and set your prices' },
+                { step: 1, text: 'Choose your property type (Campsite or B&B)' },
+                { step: 2, text: 'Add photos, details, and set your prices' },
                 { step: 3, text: 'Start receiving bookings' },
               ].map(({ step, text }) => (
                 <div key={step} className="flex items-center gap-3">

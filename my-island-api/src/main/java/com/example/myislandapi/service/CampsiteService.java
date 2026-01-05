@@ -331,6 +331,7 @@ public class CampsiteService {
             case COTTAGE -> "Cottage";
             case SAFARI_TENT -> "Safari Tent";
             case BED_AND_BREAKFAST -> "Room";
+            case MOBILE_HOME -> "Mobile Home";
         };
     }
 

@@ -117,6 +117,7 @@ import OwnerTeamSettingsPage from './pages/owner/OwnerTeamSettingsPage'
 import CampsiteCreateWizardPage from './pages/owner/CampsiteCreateWizardPage'
 import PropertyWizardPage from './pages/owner/PropertyWizardPage'
 import PropertyTypeSelectionPage from './pages/owner/PropertyTypeSelectionPage'
+import PropertyPublishSuccessPage from './pages/owner/PropertyPublishSuccessPage'
 import OwnerReviewsPage from './pages/owner/OwnerReviewsPage'
 import OwnerCalendarPage from './pages/owner/OwnerCalendarPage'
 
@@ -257,6 +258,7 @@ function App() {
       <Route path="/owner/property/new" element={<ProtectedRoute requireOwner><PropertyTypeSelectionPage /></ProtectedRoute>} />
       <Route path="/owner/property/new/campsite" element={<ProtectedRoute requireOwner><PropertyWizardPage propertyType="campsite" /></ProtectedRoute>} />
       <Route path="/owner/property/new/bnb" element={<ProtectedRoute requireOwner><PropertyWizardPage propertyType="bnb" /></ProtectedRoute>} />
+      <Route path="/owner/property/published" element={<ProtectedRoute requireOwner><PropertyPublishSuccessPage /></ProtectedRoute>} />
       <Route path="/owner/campsites/:id/edit" element={<ProtectedRoute requireOwner><CampsiteFormPage /></ProtectedRoute>} />
       <Route path="/owner/bookings" element={<ProtectedRoute requireOwner><OwnerBookingsPage /></ProtectedRoute>} />
       <Route path="/owner/offers" element={<ProtectedRoute requireOwner><OfferManagementPage /></ProtectedRoute>} />

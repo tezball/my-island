@@ -29,7 +29,21 @@ export function WizardStepReview() {
 
       toast.success('Property published successfully!')
 
-      navigate(`/campsites/${property.id}`)
+      // Navigate to success page with property summary
+      navigate('/owner/property/published', {
+        state: {
+          property: {
+            id: property.id,
+            name: state.name,
+            propertyType: state.propertyType,
+            location: {
+              address: state.address,
+              county: state.county,
+            },
+            totalUnits: getTotalAccommodations(),
+          },
+        },
+      })
     } catch (error) {
       console.error('Failed to publish property:', error)
       toast.error('Failed to publish property. Please try again.')
