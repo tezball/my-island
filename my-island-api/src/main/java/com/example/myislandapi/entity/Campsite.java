@@ -37,7 +37,7 @@ public class Campsite extends BaseEntity {
 
     @ElementCollection
     @CollectionTable(name = "campsite_images", joinColumns = @JoinColumn(name = "campsite_id"))
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
     private List<String> images = new ArrayList<>();
 

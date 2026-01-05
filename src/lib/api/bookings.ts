@@ -21,15 +21,16 @@ function buildQueryString<T extends object>(params: T): string {
 // Request types
 export interface CreateBookingRequest {
   lotId: string
-  checkIn: string // ISO date string
-  checkOut: string // ISO date string
+  checkIn: string // YYYY-MM-DD date string (LocalDate format)
+  checkOut: string // YYYY-MM-DD date string (LocalDate format)
   guests: number
-  extras?: {
-    breakfast?: boolean
-    parking?: boolean
-    pets?: boolean
-  }
-  promoCode?: string
+  extras?: BookingExtraRequest[] // List of extras with IDs and quantities
+  specialRequests?: string
+}
+
+export interface BookingExtraRequest {
+  extraId: string
+  quantity: number
 }
 
 export interface CancelBookingRequest {
@@ -39,28 +40,38 @@ export interface CancelBookingRequest {
 // Response types
 export interface BookingResponse {
   id: string
-  lotId: string
-  campsiteId: string
-  campsiteName: string
-  campsiteImage?: string
-  campsiteLocation?: string
-  lotName: string
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'CHECKED_IN'
   checkIn: string
   checkOut: string
   guests: number
   nights: number
-  pricePerNight: number
+  lotPrice: number
+  extrasPrice: number
+  serviceFee: number
   totalPrice: number
-  status: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'CHECKED_IN'
-  extras?: {
-    breakfast?: boolean
-    parking?: boolean
-    pets?: boolean
+  specialRequests?: string
+  lot: {
+    id: string
+    name: string
+    type: string
+    images: string[]
   }
-  promoCode?: string
-  discount?: number
+  campsite: {
+    id: string
+    name: string
+    county?: string
+    imageUrl?: string
+  }
+  extras: BookingExtraResponse[]
   createdAt: string
-  updatedAt: string
+}
+
+export interface BookingExtraResponse {
+  extraId: string
+  name: string
+  quantity: number
+  unitPrice: number
+  totalPrice: number
 }
 
 export interface AvailabilityResponse {

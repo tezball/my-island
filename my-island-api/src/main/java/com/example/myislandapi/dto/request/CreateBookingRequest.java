@@ -1,6 +1,6 @@
 package com.example.myislandapi.dto.request;
 
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public record CreateBookingRequest(
     @NotNull UUID lotId,
-    @NotNull @Future LocalDate checkIn,
-    @NotNull @Future LocalDate checkOut,
+    @NotNull @FutureOrPresent LocalDate checkIn,
+    @NotNull @FutureOrPresent LocalDate checkOut,
     @Min(1) int guests,
     List<BookingExtraRequest> extras,
     String specialRequests

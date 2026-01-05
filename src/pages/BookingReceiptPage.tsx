@@ -35,13 +35,13 @@ export default function BookingReceiptPage() {
 
         // If booking doesn't have campsite address, fetch it
         let campsiteAddress = ''
-        if (!bookingData.campsiteLocation) {
+        if (!bookingData.campsite?.county) {
           try {
-            const campsiteData = await campsitesApi.getById(bookingData.campsiteId)
+            const campsiteData = await campsitesApi.getById(bookingData.campsite?.id || '')
             campsiteAddress = campsiteData.location.address
           } catch {
             // Use location from booking if available
-            campsiteAddress = bookingData.campsiteLocation || ''
+            campsiteAddress = bookingData.campsite?.county || ''
           }
         }
 
@@ -51,10 +51,10 @@ export default function BookingReceiptPage() {
           checkOut: bookingData.checkOut,
           guests: bookingData.guests,
           totalPrice: bookingData.totalPrice,
-          campsiteId: bookingData.campsiteId,
-          campsiteName: bookingData.campsiteName,
-          campsiteImage: bookingData.campsiteImage,
-          campsiteAddress: campsiteAddress || bookingData.campsiteLocation,
+          campsiteId: bookingData.campsite?.id || '',
+          campsiteName: bookingData.campsite?.name || '',
+          campsiteImage: bookingData.campsite?.imageUrl || '',
+          campsiteAddress: campsiteAddress || bookingData.campsite?.county || '',
         })
       } catch (err) {
         console.error('Failed to fetch booking:', err)

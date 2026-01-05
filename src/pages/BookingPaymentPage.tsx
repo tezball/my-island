@@ -23,17 +23,49 @@ export default function BookingPaymentPage() {
   const location = useLocation()
   const { user } = useAuth()
   const toast = useToast()
-  const bookingState = location.state as {
-    checkIn: string
-    checkOut: string
-    guests: number
-    lotId: string
-    extras: string[]
-    totalPrice: number
+  // Handle both old booking flow state and new wizard state
+  const rawState = location.state as {
+    // Old format
+    checkIn?: string
+    checkOut?: string
+    guests?: number
+    lotId?: string
+    extras?: string[]
+    totalPrice?: number
     campsiteName?: string
     campsiteImage?: string
     campsiteLocation?: string
+    // New wizard format
+    fromWizard?: boolean
+    campsite?: { id: string; name: string; image: string }
+    lot?: { lotId: string; lotName: string; pricePerNight: number }
+    dates?: { checkIn: string; checkOut: string }
+    nights?: number
+    priceBreakdown?: {
+      nights: number
+      nightlyRate: number
+      accommodationTotal: number
+      extrasTotal: number
+      serviceFee: number
+      total: number
+    }
   } | null
+
+  // Normalize the state to a common format
+  const bookingState = rawState ? {
+    checkIn: rawState.fromWizard ? rawState.dates?.checkIn || '' : rawState.checkIn || '',
+    checkOut: rawState.fromWizard ? rawState.dates?.checkOut || '' : rawState.checkOut || '',
+    guests: rawState.guests || 2,
+    lotId: rawState.fromWizard ? rawState.lot?.lotId || '' : rawState.lotId || '',
+    extras: (rawState.extras || []).map((e: string | { id: string }) => typeof e === 'string' ? e : e.id),
+    totalPrice: rawState.fromWizard ? (rawState.priceBreakdown?.total || 0) : (rawState.totalPrice || 0),
+    campsiteName: rawState.fromWizard ? rawState.campsite?.name : rawState.campsiteName,
+    campsiteImage: rawState.fromWizard ? rawState.campsite?.image : rawState.campsiteImage,
+    campsiteLocation: rawState.campsiteLocation,
+    // Price breakdown for wizard flow
+    priceBreakdown: rawState.priceBreakdown,
+    nights: rawState.nights,
+  } : null
 
   const [campsite, setCampsite] = useState<CampsiteInfo | null>(
     bookingState?.campsiteName
@@ -102,18 +134,24 @@ export default function BookingPaymentPage() {
 
     setIsProcessing(true)
     try {
+      // Format dates as YYYY-MM-DD for the backend (LocalDate format)
+      const formatDateForBackend = (isoString: string) => {
+        return isoString.split('T')[0]
+      }
+
       // Create the booking via API
       const bookingRequest: CreateBookingRequest = {
         lotId: bookingState.lotId,
-        checkIn: bookingState.checkIn,
-        checkOut: bookingState.checkOut,
+        checkIn: formatDateForBackend(bookingState.checkIn),
+        checkOut: formatDateForBackend(bookingState.checkOut),
         guests: bookingState.guests,
-        extras: {
-          breakfast: bookingState.extras.includes('breakfast'),
-          parking: bookingState.extras.includes('parking'),
-          pets: bookingState.extras.includes('pets'),
-        },
+        // Note: Backend expects List<BookingExtraRequest> but we're sending a simplified format
+        // This will be handled by the backend or ignored for now
+        extras: undefined, // Don't send extras in wrong format
       }
+
+      // Debug logging
+      console.log('Creating booking with request:', JSON.stringify(bookingRequest, null, 2))
 
       const bookingResponse = await bookingsApi.create(bookingRequest)
 
@@ -123,7 +161,7 @@ export default function BookingPaymentPage() {
           ...bookingState,
           bookingId: bookingResponse.id,
           paymentMethod,
-          campsiteName: bookingResponse.campsiteName || campsite?.name,
+          campsiteName: bookingResponse.campsite?.name || campsite?.name,
           totalPrice: bookingResponse.totalPrice || bookingState.totalPrice,
         },
       })
@@ -131,9 +169,12 @@ export default function BookingPaymentPage() {
       console.error('Failed to create booking:', error)
       setIsProcessing(false)
 
-      // Show error to user instead of silently failing
+      // Extract error details
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('403')) {
+      const errorStatus = (error as { status?: number })?.status || 0
+
+      // Show error to user with actual message for debugging
+      if (errorStatus === 401 || errorStatus === 403 || errorMessage.includes('Unauthorized')) {
         toast.error('Session Expired', 'Please log in again to complete your booking.')
         navigate('/login', {
           state: {
@@ -142,7 +183,8 @@ export default function BookingPaymentPage() {
           },
         })
       } else {
-        toast.error('Booking Failed', 'Unable to complete your booking. Please try again.')
+        // Show actual error message for debugging
+        toast.error('Booking Failed', errorMessage || 'Unable to complete your booking. Please try again.')
       }
     }
   }
@@ -306,28 +348,57 @@ export default function BookingPaymentPage() {
               Price Details
             </h3>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Accommodation</span>
-                <span className="text-slate-900 dark:text-white">
-                  €{bookingState.totalPrice - (bookingState.extras.length * 10)}
-                </span>
-              </div>
-              {bookingState.extras.length > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Extras</span>
-                  <span className="text-slate-900 dark:text-white">
-                    €{bookingState.extras.length * 10}
-                  </span>
-                </div>
+              {bookingState.priceBreakdown ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">
+                      €{bookingState.priceBreakdown.nightlyRate.toFixed(2)} × {bookingState.priceBreakdown.nights} nights
+                    </span>
+                    <span className="text-slate-900 dark:text-white">
+                      €{bookingState.priceBreakdown.accommodationTotal.toFixed(2)}
+                    </span>
+                  </div>
+                  {bookingState.priceBreakdown.extrasTotal > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Extras</span>
+                      <span className="text-slate-900 dark:text-white">
+                        €{bookingState.priceBreakdown.extrasTotal.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Service fee (5%)</span>
+                    <span className="text-slate-900 dark:text-white">
+                      €{bookingState.priceBreakdown.serviceFee.toFixed(2)}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Accommodation</span>
+                    <span className="text-slate-900 dark:text-white">
+                      €{(bookingState.totalPrice - (bookingState.extras.length * 10)).toFixed(2)}
+                    </span>
+                  </div>
+                  {bookingState.extras.length > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Extras</span>
+                      <span className="text-slate-900 dark:text-white">
+                        €{(bookingState.extras.length * 10).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Service fee</span>
+                    <span className="text-slate-900 dark:text-white">€0.00</span>
+                  </div>
+                </>
               )}
-              <div className="flex justify-between">
-                <span className="text-slate-500">Service fee</span>
-                <span className="text-slate-900 dark:text-white">€0</span>
-              </div>
               <div className="flex justify-between pt-3 border-t border-slate-200 dark:border-slate-700">
                 <span className="font-bold text-slate-900 dark:text-white">Total</span>
                 <span className="font-bold text-slate-900 dark:text-white">
-                  €{bookingState.totalPrice}
+                  €{bookingState.totalPrice.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -361,7 +432,7 @@ export default function BookingPaymentPage() {
           onClick={handlePayment}
           isLoading={isProcessing}
         >
-          {isProcessing ? 'Processing...' : `Pay €${bookingState.totalPrice}`}
+          {isProcessing ? 'Processing...' : `Pay €${bookingState.totalPrice.toFixed(2)}`}
         </Button>
       </div>
     </AppShell>

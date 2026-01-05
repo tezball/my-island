@@ -32,7 +32,7 @@ mvn test -Dtest=ClassName              # Run specific test class
 mvn test -Dtest=ClassName#methodName   # Run specific test method
 ```
 
-**Ports**: Frontend runs on 5173, backend API on 8080. Frontend API calls target `http://localhost:8080/api/*`.
+**Ports**: The UI is always served on port 8080 (Spring Boot serves the built frontend). Use `http://localhost:8080` for all browser testing. The Vite dev server on 5173 is only for frontend-only development with hot reload.
 
 ## Tech Stack
 

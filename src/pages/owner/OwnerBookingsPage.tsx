@@ -222,7 +222,7 @@ export default function OwnerBookingsPage() {
                 {/* Booking details */}
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 mb-3">
                   <Icon name="location_on" size={16} />
-                  <span>{booking.campsiteName} • {booking.lotName}</span>
+                  <span>{booking.campsite?.name} • {booking.lot?.name}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 mb-3">
                   <Icon name="event" size={16} />

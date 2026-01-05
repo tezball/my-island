@@ -62,6 +62,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/offers/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/local-businesses/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/lots/*/availability").permitAll()
+                        // Lot types and auto-assign for booking wizard
+                        .requestMatchers(HttpMethod.GET, "/api/lots/types").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/lots/auto-assign").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/support/faqs").permitAll()
                         // Static resources (React frontend)
                         .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.svg").permitAll()

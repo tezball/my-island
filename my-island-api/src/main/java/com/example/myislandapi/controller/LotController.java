@@ -1,8 +1,11 @@
 package com.example.myislandapi.controller;
 
+import com.example.myislandapi.dto.request.AutoAssignLotRequest;
 import com.example.myislandapi.dto.request.CreateLotRequest;
 import com.example.myislandapi.dto.request.UpdateLotRequest;
+import com.example.myislandapi.dto.response.AutoAssignLotResponse;
 import com.example.myislandapi.dto.response.LotResponse;
+import com.example.myislandapi.dto.response.LotTypeAggregationResponse;
 import com.example.myislandapi.security.UserDetailsImpl;
 import com.example.myislandapi.service.LotService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,6 +42,19 @@ public class LotController {
     @Operation(summary = "Get lots by campsite ID")
     public ResponseEntity<List<LotResponse>> getLotsByCampsite(@RequestParam UUID campsiteId) {
         return ResponseEntity.ok(lotService.getLotsByCampsiteId(campsiteId));
+    }
+
+    @GetMapping("/types")
+    @Operation(summary = "Get lot types aggregated by campsite ID")
+    public ResponseEntity<List<LotTypeAggregationResponse>> getLotTypes(@RequestParam UUID campsiteId) {
+        return ResponseEntity.ok(lotService.getLotTypesByCampsiteId(campsiteId));
+    }
+
+    @PostMapping("/auto-assign")
+    @Operation(summary = "Auto-assign the best available lot of the specified type")
+    public ResponseEntity<AutoAssignLotResponse> autoAssignLot(
+            @Valid @RequestBody AutoAssignLotRequest request) {
+        return ResponseEntity.ok(lotService.autoAssignLot(request));
     }
 
     @PostMapping

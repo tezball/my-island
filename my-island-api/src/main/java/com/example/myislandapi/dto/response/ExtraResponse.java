@@ -5,9 +5,12 @@ import java.util.UUID;
 
 public record ExtraResponse(
     UUID id,
+    UUID campsiteId,
+    String campsiteName,
     String name,
     String description,
     BigDecimal price,
     boolean perNight,
-    String imageUrl
+    String imageUrl,
+    boolean available
 ) {}

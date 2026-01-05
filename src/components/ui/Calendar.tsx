@@ -67,7 +67,8 @@ export default function Calendar({
   }
 
   const getDateStatus = (dateStr: string) => {
-    if (selectedDates.includes(dateStr)) return 'selected'
+    // In range mode, also highlight the first selected date (rangeStart)
+    if (selectedDates.includes(dateStr) || (rangeMode && rangeStart === dateStr)) return 'selected'
     if (blockedDates.includes(dateStr)) return 'blocked'
     if (bookedDates.includes(dateStr)) return 'booked'
     if (availableDates.length === 0 || availableDates.includes(dateStr)) return 'available'

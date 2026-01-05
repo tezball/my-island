@@ -51,8 +51,8 @@ export default function ContactHostPage() {
         const data = await bookingsApi.getById(bookingId)
         setBooking({
           id: data.id,
-          campsiteName: data.campsiteName,
-          campsiteImage: data.campsiteImage,
+          campsiteName: data.campsite?.name || '',
+          campsiteImage: data.campsite?.imageUrl || '',
           checkIn: data.checkIn,
           checkOut: data.checkOut,
           guests: data.guests,

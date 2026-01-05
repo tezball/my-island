@@ -4,17 +4,27 @@ import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import GuestCounter from '../components/ui/GuestCounter'
 import Icon from '../components/ui/Icon'
+import Skeleton from '../components/ui/Skeleton'
 import BookingExpiredState from '../components/booking/BookingExpiredState'
 import { campsitesApi } from '../lib/api/campsites'
+import { extrasApi, type ExtraResponse } from '../lib/api/extras'
 
-// Extras catalog - would come from API in production
-const extras = [
-  { id: 'breakfast', name: 'Breakfast', description: 'Full Irish breakfast', price: 15, icon: 'restaurant' },
-  { id: 'firewood', name: 'Firewood Bundle', description: 'Enough for one evening', price: 10, icon: 'local_fire_department' },
-  { id: 'marshmallows', name: 'Marshmallow Kit', description: 'For campfire treats', price: 5, icon: 'cake' },
-  { id: 'bike', name: 'Bike Rental', description: 'Per day', price: 20, icon: 'pedal_bike' },
-  { id: 'kayak', name: 'Kayak Rental', description: 'Per day', price: 35, icon: 'kayaking' },
-]
+// Map common extra names to icons
+function getExtraIcon(name: string): string {
+  const lowerName = name.toLowerCase()
+  if (lowerName.includes('firewood') || lowerName.includes('fire')) return 'local_fire_department'
+  if (lowerName.includes('breakfast') || lowerName.includes('meal')) return 'restaurant'
+  if (lowerName.includes('kayak')) return 'kayaking'
+  if (lowerName.includes('bike') || lowerName.includes('bicycle')) return 'pedal_bike'
+  if (lowerName.includes('marshmallow')) return 'cake'
+  if (lowerName.includes('canoe') || lowerName.includes('paddle')) return 'rowing'
+  if (lowerName.includes('fish')) return 'phishing'
+  if (lowerName.includes('bbq') || lowerName.includes('grill')) return 'outdoor_grill'
+  if (lowerName.includes('wifi') || lowerName.includes('internet')) return 'wifi'
+  if (lowerName.includes('parking')) return 'local_parking'
+  if (lowerName.includes('pet') || lowerName.includes('dog')) return 'pets'
+  return 'add_shopping_cart'
+}
 
 interface CampsiteInfo {
   name: string
@@ -30,7 +40,9 @@ export default function GuestExtrasPage() {
   const { checkIn, checkOut } = (location.state as { checkIn?: string; checkOut?: string }) || {}
 
   const [campsite, setCampsite] = useState<CampsiteInfo | null>(null)
+  const [extras, setExtras] = useState<ExtraResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [extrasLoading, setExtrasLoading] = useState(true)
 
   useEffect(() => {
     async function fetchCampsite() {
@@ -51,6 +63,25 @@ export default function GuestExtrasPage() {
     }
 
     fetchCampsite()
+  }, [id])
+
+  // Fetch extras from API
+  useEffect(() => {
+    async function fetchExtras() {
+      if (!id) return
+
+      try {
+        const data = await extrasApi.getExtrasByCampsite(id)
+        setExtras(data)
+      } catch (error) {
+        console.error('Failed to fetch extras:', error)
+        setExtras([])
+      } finally {
+        setExtrasLoading(false)
+      }
+    }
+
+    fetchExtras()
   }, [id])
 
   // If dates are missing, show expired state
@@ -90,7 +121,9 @@ export default function GuestExtrasPage() {
 
   const extrasTotal = selectedExtras.reduce((sum, extraId) => {
     const extra = extras.find(e => e.id === extraId)
-    return sum + (extra?.price || 0)
+    if (!extra) return sum
+    // If perNight, multiply by nights
+    return sum + (extra.perNight ? extra.price * nights : extra.price)
   }, 0)
 
   const totalPrice = basePrice + extrasTotal
@@ -180,45 +213,60 @@ export default function GuestExtrasPage() {
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-4">
             Add Extras
           </h3>
-          <div className="space-y-3">
-            {extras.map(extra => (
-              <button
-                key={extra.id}
-                onClick={() => toggleExtra(extra.id)}
-                className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 transition-colors ${
-                  selectedExtras.includes(extra.id)
-                    ? 'border-primary bg-primary/5'
-                    : 'border-slate-200 dark:border-slate-700'
-                }`}
-              >
-                <div className="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                  <Icon
-                    name={extra.icon}
-                    size={24}
-                    className={selectedExtras.includes(extra.id) ? 'text-primary' : 'text-slate-400'}
-                  />
-                </div>
-                <div className="flex-1 text-left">
-                  <p className={`font-medium ${
+          {extrasLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : extras.length > 0 ? (
+            <div className="space-y-3">
+              {extras.map(extra => (
+                <button
+                  key={extra.id}
+                  onClick={() => toggleExtra(extra.id)}
+                  className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 transition-colors ${
                     selectedExtras.includes(extra.id)
-                      ? 'text-primary'
-                      : 'text-slate-900 dark:text-white'
-                  }`}>
-                    {extra.name}
-                  </p>
-                  <p className="text-sm text-slate-500">{extra.description}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-slate-900 dark:text-white">
-                    €{extra.price.toFixed(2)}
-                  </p>
-                  {selectedExtras.includes(extra.id) && (
-                    <Icon name="check_circle" size={20} className="text-primary ml-auto" />
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
+                      ? 'border-primary bg-primary/5'
+                      : 'border-slate-200 dark:border-slate-700'
+                  }`}
+                >
+                  <div className="size-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <Icon
+                      name={getExtraIcon(extra.name)}
+                      size={24}
+                      className={selectedExtras.includes(extra.id) ? 'text-primary' : 'text-slate-400'}
+                    />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className={`font-medium ${
+                      selectedExtras.includes(extra.id)
+                        ? 'text-primary'
+                        : 'text-slate-900 dark:text-white'
+                    }`}>
+                      {extra.name}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {extra.description || (extra.perNight ? 'Per night' : 'One-time charge')}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-slate-900 dark:text-white">
+                      €{extra.price.toFixed(2)}{extra.perNight ? '/night' : ''}
+                    </p>
+                    {selectedExtras.includes(extra.id) && (
+                      <Icon name="check_circle" size={20} className="text-primary ml-auto" />
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <Icon name="inventory_2" size={36} className="text-slate-300 mx-auto mb-2" />
+              <p className="text-sm text-slate-500">No extras available for this campsite.</p>
+            </div>
+          )}
         </div>
 
         <div className="h-32" />

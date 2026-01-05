@@ -241,6 +241,20 @@ export default function OwnerDashboardPage() {
               </span>
             </Link>
             <Link
+              to="/owner/extras"
+              className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
+            >
+              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon name="add_shopping_cart" size={24} className="text-primary" />
+              </div>
+              <span className="font-medium text-slate-900 dark:text-white text-sm">
+                Manage Extras
+              </span>
+              <span className="text-xs text-slate-500">
+                Firewood, rentals
+              </span>
+            </Link>
+            <Link
               to="/owner/stats"
               className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
             >

@@ -12,14 +12,16 @@ import type { BookingResponse } from '../lib/api/bookings'
 
 type TabType = 'upcoming' | 'past'
 
-const statusColors: Record<Booking['status'], 'success' | 'warning' | 'info' | 'default' | 'error'> = {
+const statusColors: Record<string, 'success' | 'warning' | 'info' | 'default' | 'error'> = {
+  pending: 'warning',
   confirmed: 'success',
   checked_in: 'info',
   completed: 'default',
   cancelled: 'error',
 }
 
-const statusLabels: Record<Booking['status'], string> = {
+const statusLabels: Record<string, string> = {
+  pending: 'Pending',
   confirmed: 'Confirmed',
   checked_in: 'Checked In',
   completed: 'Completed',
@@ -151,10 +153,10 @@ export default function MyBookingsPage() {
                     className="block bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800"
                   >
                     <div className="relative">
-                      {booking.campsiteImage ? (
+                      {booking.campsite?.imageUrl ? (
                         <img
-                          src={booking.campsiteImage}
-                          alt={booking.campsiteName}
+                          src={booking.campsite.imageUrl}
+                          alt={booking.campsite.name}
                           className="w-full h-32 object-cover"
                         />
                       ) : (
@@ -171,12 +173,12 @@ export default function MyBookingsPage() {
                     </div>
                     <div className="p-4">
                       <h3 className="font-bold text-slate-900 dark:text-white">
-                        {booking.campsiteName}
+                        {booking.campsite?.name}
                       </h3>
-                      {booking.campsiteLocation && (
+                      {booking.campsite?.county && (
                         <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
                           <Icon name="location_on" size={14} />
-                          {booking.campsiteLocation}
+                          {booking.campsite.county}
                         </p>
                       )}
 
@@ -207,7 +209,7 @@ export default function MyBookingsPage() {
                             onClick={(e) => {
                               e.preventDefault()
                               e.stopPropagation()
-                              navigate(`/campsite/${booking.campsiteId}/review`)
+                              navigate(`/campsite/${booking.campsite?.id}/review`)
                             }}
                           >
                             Write a Review

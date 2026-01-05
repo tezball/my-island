@@ -3,13 +3,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
-import Badge from '../components/ui/Badge'
 import StarRating from '../components/ui/StarRating'
 import MapView from '../components/ui/MapView'
 import Skeleton from '../components/ui/Skeleton'
-import { campsitesApi, type CampsiteDetailResponse, type LotResponse } from '../lib/api/campsites'
+import { campsitesApi, type CampsiteDetailResponse } from '../lib/api/campsites'
 import { reviewsApi, type ReviewResponse } from '../lib/api/reviews'
-import type { Campsite, Lot, Review, Facility } from '../data/types'
+import type { Campsite, Review, Facility } from '../data/types'
 import { useFavorites } from '../context/FavoritesContext'
 
 // Map API response to Campsite type
@@ -28,29 +27,6 @@ function mapToCampsite(data: CampsiteDetailResponse): Campsite {
     lots: [],
     featured: data.featured,
   }
-}
-
-// Map API response to Lot type
-function mapToLot(data: LotResponse, campsiteId: string): Lot {
-  return {
-    id: data.id,
-    campsiteId,
-    name: data.name,
-    type: data.type.toLowerCase() as Lot['type'],
-    capacity: data.capacity,
-    pricePerNight: data.pricePerNight,
-    images: data.images,
-    amenities: data.amenities,
-    available: data.available,
-  }
-}
-
-// Format lot type for display (e.g., "safari_tent" -> "Safari Tent")
-function formatLotType(type: string): string {
-  return type
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
 }
 
 // Map API response to Review type
@@ -93,7 +69,7 @@ const facilityIcons: Record<string, string> = {
   pets: 'pets',
 }
 
-type Section = 'overview' | 'pitches' | 'reviews' | 'location'
+type Section = 'overview' | 'reviews' | 'location'
 
 export default function CampsiteDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -102,12 +78,10 @@ export default function CampsiteDetailPage() {
   const [activeSection, setActiveSection] = useState<Section>('overview')
   const [isLoading, setIsLoading] = useState(true)
   const [campsite, setCampsite] = useState<Campsite | null>(null)
-  const [lots, setLots] = useState<Lot[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const { isFavorite, toggleFavorite } = useFavorites()
 
   const overviewRef = useRef<HTMLDivElement>(null)
-  const pitchesRef = useRef<HTMLDivElement>(null)
   const reviewsRef = useRef<HTMLDivElement>(null)
   const locationRef = useRef<HTMLDivElement>(null)
 
@@ -126,7 +100,6 @@ export default function CampsiteDetailPage() {
         ])
 
         setCampsite(mapToCampsite(campsiteData))
-        setLots(campsiteData.lots.map(lot => mapToLot(lot, id)))
         setReviews(reviewsData.map(review => mapToReview(review, id)))
       } catch (error) {
         console.error('Failed to fetch campsite:', error)
@@ -143,7 +116,6 @@ export default function CampsiteDetailPage() {
     setActiveSection(section)
     const refs = {
       overview: overviewRef,
-      pitches: pitchesRef,
       reviews: reviewsRef,
       location: locationRef,
     }
@@ -197,7 +169,6 @@ export default function CampsiteDetailPage() {
 
   const sections: { id: Section; label: string; icon: string }[] = [
     { id: 'overview', label: 'Overview', icon: 'info' },
-    { id: 'pitches', label: 'Pitches', icon: 'camping' },
     { id: 'reviews', label: 'Reviews', icon: 'reviews' },
     { id: 'location', label: 'Location', icon: 'location_on' },
   ]
@@ -318,16 +289,11 @@ export default function CampsiteDetailPage() {
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-3 gap-3 mb-6">
+              <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
                   <Icon name="star" size={24} className="text-amber-500 mx-auto mb-1" filled />
                   <p className="font-bold text-slate-900 dark:text-white">{campsite.rating}</p>
                   <p className="text-xs text-slate-500">{campsite.reviewCount} reviews</p>
-                </div>
-                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
-                  <Icon name="camping" size={24} className="text-primary mx-auto mb-1" />
-                  <p className="font-bold text-slate-900 dark:text-white">{lots.length}</p>
-                  <p className="text-xs text-slate-500">Pitches</p>
                 </div>
                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl text-center">
                   <Icon name="euro" size={24} className="text-emerald-500 mx-auto mb-1" />
@@ -368,62 +334,6 @@ export default function CampsiteDetailPage() {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Section Divider */}
-              <div className="border-t border-slate-200 dark:border-slate-700 my-8" />
-            </div>
-
-            {/* SECTION: Pitches */}
-            <div ref={pitchesRef} className="scroll-mt-20">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                  Available Pitches
-                </h2>
-                <span className="text-sm text-slate-500">
-                  {lots.filter(l => l.available).length} of {lots.length} available
-                </span>
-              </div>
-              <div className="space-y-3 mb-6">
-                {lots.map((lot) => (
-                  <div
-                    key={lot.id}
-                    className="flex gap-3 p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800"
-                  >
-                    <img
-                      src={lot.images[0]}
-                      alt={lot.name}
-                      className="size-20 rounded-lg object-cover"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-semibold text-slate-900 dark:text-white">
-                          {lot.name}
-                        </h3>
-                        <Badge variant={lot.available ? 'success' : 'error'} size="sm">
-                          {lot.available ? 'Available' : 'Booked'}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-slate-500 mt-0.5">
-                        {formatLotType(lot.type)} • Up to {lot.capacity} guests
-                      </p>
-                      <div className="flex items-center justify-between mt-2">
-                        <p className="text-primary font-bold">
-                          €{lot.pricePerNight}/night
-                        </p>
-                        {lot.available && (
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => navigate(`/book/${id}/calendar`)}
-                          >
-                            Check Dates
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
 
               {/* Section Divider */}
@@ -527,18 +437,27 @@ export default function CampsiteDetailPage() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
                 Location & Directions
               </h2>
-              <MapView
-                markers={[{
-                  id: campsite.id,
-                  position: [campsite.location.lat, campsite.location.lng],
-                  name: campsite.name,
-                  price: campsite.pricePerNight,
-                  type: 'campsite'
-                }]}
-                center={[campsite.location.lat, campsite.location.lng]}
-                zoom={14}
-                className="aspect-video mb-4"
-              />
+              {campsite.location.lat && campsite.location.lng ? (
+                <MapView
+                  markers={[{
+                    id: campsite.id,
+                    position: [campsite.location.lat, campsite.location.lng],
+                    name: campsite.name,
+                    price: campsite.pricePerNight,
+                    type: 'campsite'
+                  }]}
+                  center={[campsite.location.lat, campsite.location.lng]}
+                  zoom={14}
+                  className="aspect-video mb-4"
+                />
+              ) : (
+                <div className="aspect-video mb-4 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center">
+                  <div className="text-center text-slate-500">
+                    <Icon name="map" size={48} className="mx-auto mb-2 opacity-50" />
+                    <p>Map coordinates not available</p>
+                  </div>
+                </div>
+              )}
               <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4">
                 <div className="flex items-start gap-3">
                   <Icon name="location_on" size={24} className="text-primary mt-0.5" />
@@ -555,10 +474,18 @@ export default function CampsiteDetailPage() {
                 className="w-full"
                 leftIcon="directions"
                 onClick={() => {
-                  const address = encodeURIComponent(
-                    `${campsite.location.address}, ${campsite.location.county}, Ireland`
-                  )
-                  window.open(`https://maps.google.com/?q=${address}`, '_blank')
+                  // Use coordinates for accurate pin placement, fall back to address search
+                  if (campsite.location.lat && campsite.location.lng) {
+                    window.open(
+                      `https://www.google.com/maps/dir/?api=1&destination=${campsite.location.lat},${campsite.location.lng}`,
+                      '_blank'
+                    )
+                  } else {
+                    const address = encodeURIComponent(
+                      `${campsite.location.address}, ${campsite.location.county}, Ireland`
+                    )
+                    window.open(`https://maps.google.com/?q=${address}`, '_blank')
+                  }
                 }}
               >
                 Get Directions
@@ -583,7 +510,7 @@ export default function CampsiteDetailPage() {
               variant="primary"
               size="lg"
               rightIcon="arrow_forward"
-              onClick={() => navigate(`/book/${id}`)}
+              onClick={() => navigate(`/book/${id}/wizard`)}
             >
               Book Now
             </Button>

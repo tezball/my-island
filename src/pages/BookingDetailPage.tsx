@@ -109,10 +109,10 @@ export default function BookingDetailPage() {
         <div className="p-4 space-y-6">
           {/* Campsite Card */}
           <div className="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800">
-            {booking.campsiteImage ? (
+            {booking.campsite?.imageUrl ? (
               <img
-                src={booking.campsiteImage}
-                alt={booking.campsiteName}
+                src={booking.campsite.imageUrl}
+                alt={booking.campsite?.name}
                 className="w-full h-40 object-cover"
               />
             ) : (
@@ -122,25 +122,25 @@ export default function BookingDetailPage() {
             )}
             <div className="p-4">
               <h2 className="font-bold text-lg text-slate-900 dark:text-white">
-                {booking.campsiteName}
+                {booking.campsite?.name}
               </h2>
-              {booking.campsiteLocation && (
+              {booking.campsite?.county && (
                 <p className="text-slate-500 flex items-center gap-1 mt-1">
                   <Icon name="location_on" size={16} />
-                  {booking.campsiteLocation}
+                  {booking.campsite.county}
                 </p>
               )}
               <p className="text-sm text-slate-500 mt-1">
-                {booking.lotName}
+                {booking.lot?.name}
               </p>
-              {booking.campsiteLocation && (
+              {booking.campsite?.county && (
                 <Button
                   variant="outline"
                   size="sm"
                   className="mt-3"
                   leftIcon="directions"
                   onClick={() => {
-                    const address = encodeURIComponent(booking.campsiteLocation || '')
+                    const address = encodeURIComponent(booking.campsite?.county || '')
                     window.open(`https://maps.google.com/?q=${address}`, '_blank')
                   }}
                 >
@@ -180,30 +180,22 @@ export default function BookingDetailPage() {
           </div>
 
           {/* Extras */}
-          {booking.extras && (booking.extras.breakfast || booking.extras.parking || booking.extras.pets) && (
+          {booking.extras && booking.extras.length > 0 && (
             <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
               <h3 className="font-bold text-slate-900 dark:text-white mb-3">
                 Extras
               </h3>
               <div className="space-y-2">
-                {booking.extras.breakfast && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">Breakfast</span>
-                    <Icon name="check" size={18} className="text-emerald-500" />
+                {booking.extras.map((extra) => (
+                  <div key={extra.extraId} className="flex items-center justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">
+                      {extra.name} {extra.quantity > 1 ? `(x${extra.quantity})` : ''}
+                    </span>
+                    <span className="text-slate-900 dark:text-white">
+                      €{extra.totalPrice.toFixed(2)}
+                    </span>
                   </div>
-                )}
-                {booking.extras.parking && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">Parking</span>
-                    <Icon name="check" size={18} className="text-emerald-500" />
-                  </div>
-                )}
-                {booking.extras.pets && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">Pets</span>
-                    <Icon name="check" size={18} className="text-emerald-500" />
-                  </div>
-                )}
+                ))}
               </div>
             </div>
           )}
@@ -216,23 +208,29 @@ export default function BookingDetailPage() {
             <div className="space-y-2 mb-3">
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">
-                  €{booking.pricePerNight} × {booking.nights} night{booking.nights !== 1 ? 's' : ''}
+                  €{(booking.lotPrice / booking.nights).toFixed(2)} × {booking.nights} night{booking.nights !== 1 ? 's' : ''}
                 </span>
                 <span className="text-slate-900 dark:text-white">
-                  €{booking.pricePerNight * booking.nights}
+                  €{booking.lotPrice.toFixed(2)}
                 </span>
               </div>
-              {booking.discount && booking.discount > 0 && (
-                <div className="flex items-center justify-between text-emerald-600">
-                  <span>Discount</span>
-                  <span>-€{booking.discount}</span>
+              {booking.extrasPrice > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Extras</span>
+                  <span className="text-slate-900 dark:text-white">€{booking.extrasPrice.toFixed(2)}</span>
+                </div>
+              )}
+              {booking.serviceFee > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Service fee</span>
+                  <span className="text-slate-900 dark:text-white">€{booking.serviceFee.toFixed(2)}</span>
                 </div>
               )}
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
               <span className="font-bold text-slate-900 dark:text-white">Total Paid</span>
               <span className="font-bold text-lg text-slate-900 dark:text-white">
-                €{booking.totalPrice}
+                €{booking.totalPrice.toFixed(2)}
               </span>
             </div>
           </div>
@@ -267,7 +265,7 @@ export default function BookingDetailPage() {
               size="lg"
               className="w-full"
               leftIcon="rate_review"
-              onClick={() => navigate(`/campsite/${booking.campsiteId}/review`)}
+              onClick={() => navigate(`/campsite/${booking.campsite?.id}/review`)}
             >
               Write a Review
             </Button>

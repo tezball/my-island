@@ -66,6 +66,8 @@ public interface CampsiteRepository extends JpaRepository<Campsite, UUID> {
     @EntityGraph(attributePaths = {"images", "facilities", "owner"})
     List<Campsite> findByOwnerId(UUID ownerId);
 
+    Optional<Campsite> findByIdAndOwnerId(UUID id, UUID ownerId);
+
     @EntityGraph(attributePaths = {"images", "facilities", "owner"})
     @Query("SELECT c FROM Campsite c WHERE c.active = true AND " +
            "c.location.lat BETWEEN :minLat AND :maxLat AND " +

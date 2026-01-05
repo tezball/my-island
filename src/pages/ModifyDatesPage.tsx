@@ -38,14 +38,14 @@ export default function ModifyDatesPage() {
         const data = await bookingsApi.getById(bookingId)
         setBooking({
           id: data.id,
-          lotId: data.lotId,
-          lotName: data.lotName,
-          campsiteName: data.campsiteName,
-          campsiteImage: data.campsiteImage,
+          lotId: data.lot?.id || '',
+          lotName: data.lot?.name || '',
+          campsiteName: data.campsite?.name || '',
+          campsiteImage: data.campsite?.imageUrl || '',
           checkIn: data.checkIn,
           checkOut: data.checkOut,
           guests: data.guests,
-          pricePerNight: data.pricePerNight,
+          pricePerNight: data.lotPrice / data.nights, // Calculate from total
         })
         setSelectedDates([data.checkIn, data.checkOut])
 

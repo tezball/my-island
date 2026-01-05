@@ -38,6 +38,7 @@ import PhotoGalleryPage from './pages/PhotoGalleryPage'
 
 // Booking Pages
 import BookingPage from './pages/BookingPage'
+import BookingWizardPage from './pages/BookingWizardPage'
 import BookingPaymentPage from './pages/BookingPaymentPage'
 import BookingConfirmationPage from './pages/BookingConfirmationPage'
 import LotCalendarPage from './pages/LotCalendarPage'
@@ -120,6 +121,8 @@ import PropertyTypeSelectionPage from './pages/owner/PropertyTypeSelectionPage'
 import PropertyPublishSuccessPage from './pages/owner/PropertyPublishSuccessPage'
 import OwnerReviewsPage from './pages/owner/OwnerReviewsPage'
 import OwnerCalendarPage from './pages/owner/OwnerCalendarPage'
+import ManageExtrasPage from './pages/owner/ManageExtrasPage'
+import ExtraFormPage from './pages/owner/ExtraFormPage'
 
 // Static Pages
 import AboutPage from './pages/AboutPage'
@@ -173,6 +176,7 @@ function App() {
 
       {/* Booking Flow */}
       <Route path="/book/:id" element={<BookingPage />} />
+      <Route path="/book/:id/wizard" element={<BookingWizardPage />} />
       <Route path="/book/:id/dates" element={<SelectDatesPage />} />
       <Route path="/book/:id/calendar" element={<LotCalendarPage />} />
       <Route path="/book/:id/guests" element={<GuestExtrasPage />} />
@@ -254,6 +258,9 @@ function App() {
       <Route path="/owner/lots" element={<ProtectedRoute requireOwner><ManageLotsPage /></ProtectedRoute>} />
       <Route path="/owner/lots/new" element={<ProtectedRoute requireOwner><LotFormPage /></ProtectedRoute>} />
       <Route path="/owner/lots/:lotId/edit" element={<ProtectedRoute requireOwner><LotFormPage /></ProtectedRoute>} />
+      <Route path="/owner/extras" element={<ProtectedRoute requireOwner><ManageExtrasPage /></ProtectedRoute>} />
+      <Route path="/owner/extras/new" element={<ProtectedRoute requireOwner><ExtraFormPage /></ProtectedRoute>} />
+      <Route path="/owner/extras/:extraId/edit" element={<ProtectedRoute requireOwner><ExtraFormPage /></ProtectedRoute>} />
       <Route path="/owner/campsites/new" element={<ProtectedRoute requireOwner><CampsiteCreateWizardPage /></ProtectedRoute>} />
       <Route path="/owner/property/new" element={<ProtectedRoute requireOwner><PropertyTypeSelectionPage /></ProtectedRoute>} />
       <Route path="/owner/property/new/campsite" element={<ProtectedRoute requireOwner><PropertyWizardPage propertyType="campsite" /></ProtectedRoute>} />

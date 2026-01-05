@@ -16,4 +16,6 @@ public interface LotRepository extends JpaRepository<Lot, UUID> {
     List<Lot> findByCampsiteIdAndAvailableTrue(UUID campsiteId);
 
     List<Lot> findByCampsiteIdAndType(UUID campsiteId, LotType type);
+
+    List<Lot> findByCampsiteIdAndTypeAndAvailableTrueOrderByPricePerNightAsc(UUID campsiteId, LotType type);
 }

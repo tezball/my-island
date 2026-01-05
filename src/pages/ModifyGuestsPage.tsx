@@ -54,13 +54,13 @@ export default function ModifyGuestsPage() {
         const data = await bookingsApi.getById(bookingId)
         setBooking({
           id: data.id,
-          lotName: data.lotName,
-          campsiteName: data.campsiteName,
-          campsiteImage: data.campsiteImage,
+          lotName: data.lot?.name || '',
+          campsiteName: data.campsite?.name || '',
+          campsiteImage: data.campsite?.imageUrl || '',
           checkIn: data.checkIn,
           checkOut: data.checkOut,
           guests: data.guests,
-          pricePerNight: data.pricePerNight,
+          pricePerNight: data.lotPrice / data.nights, // Calculate from total
           capacity: 6, // Default capacity, would come from lot data
         })
         setAdults(data.guests)

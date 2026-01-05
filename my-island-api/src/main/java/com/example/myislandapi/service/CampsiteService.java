@@ -389,11 +389,15 @@ public class CampsiteService {
     }
 
     private LocationResponse toLocationResponse(Campsite campsite) {
+        Location location = campsite.getLocation();
+        if (location == null) {
+            return new LocationResponse(null, null, null, null);
+        }
         return new LocationResponse(
-                campsite.getLocation().getAddress(),
-                campsite.getLocation().getCounty(),
-                campsite.getLocation().getLat(),
-                campsite.getLocation().getLng()
+                location.getAddress(),
+                location.getCounty(),
+                location.getLat(),
+                location.getLng()
         );
     }
 
