@@ -28,6 +28,7 @@ export interface SelectedExtra {
   name: string
   price: number
   quantity: number
+  perNight: boolean
 }
 
 export interface PriceBreakdown {
@@ -389,7 +390,7 @@ export function BookingWizardProvider({
           const nightlyRate = state.assignedLot.pricePerNight
           const accommodationTotal = nightlyRate * nights
           const extrasTotal = state.selectedExtras.reduce(
-            (sum, e) => sum + e.price * e.quantity * nights,
+            (sum, e) => sum + e.price * e.quantity * (e.perNight ? nights : 1),
             0
           )
           const serviceFee = (accommodationTotal + extrasTotal) * 0.05

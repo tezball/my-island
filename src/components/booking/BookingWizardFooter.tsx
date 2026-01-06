@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useBookingWizard } from '@/context/BookingWizardContext'
 import Button from '@/components/ui/Button'
 import Icon from '@/components/ui/Icon'
@@ -18,6 +19,7 @@ export default function BookingWizardFooter({ onNext, isLoading = false }: Booki
     nights,
   } = useBookingWizard()
 
+  const [showBreakdown, setShowBreakdown] = useState(false)
   const canContinue = canProceed()
 
   // Get button text based on current step
@@ -48,23 +50,45 @@ export default function BookingWizardFooter({ onNext, isLoading = false }: Booki
       <div className="max-w-lg mx-auto">
         {/* Price Summary (when available) */}
         {priceBreakdown ? (
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <p className="text-sm text-slate-500">Total</p>
-              <p className="text-xl font-bold text-slate-900 dark:text-white">
-                €{priceBreakdown.total.toFixed(2)}
-              </p>
+          <div className="mb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-500">Total</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">
+                  €{priceBreakdown.total.toFixed(2)}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="text-sm text-primary font-medium flex items-center gap-1"
+                onClick={() => setShowBreakdown(!showBreakdown)}
+              >
+                {showBreakdown ? 'Hide' : 'View'} breakdown
+                <Icon name={showBreakdown ? 'expand_less' : 'expand_more'} size={16} />
+              </button>
             </div>
-            <button
-              type="button"
-              className="text-sm text-primary font-medium flex items-center gap-1"
-              onClick={() => {
-                // Could show a price breakdown modal
-              }}
-            >
-              View breakdown
-              <Icon name="expand_more" size={16} />
-            </button>
+            {showBreakdown && (
+              <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2 text-sm">
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                  <span>€{priceBreakdown.nightlyRate.toFixed(2)} × {priceBreakdown.nights} {priceBreakdown.nights === 1 ? 'night' : 'nights'}</span>
+                  <span>€{priceBreakdown.accommodationTotal.toFixed(2)}</span>
+                </div>
+                {priceBreakdown.extrasTotal > 0 && (
+                  <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                    <span>Extras</span>
+                    <span>€{priceBreakdown.extrasTotal.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                  <span>Service fee (5%)</span>
+                  <span>€{priceBreakdown.serviceFee.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-semibold text-slate-900 dark:text-white pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <span>Total</span>
+                  <span>€{priceBreakdown.total.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
           </div>
         ) : selectedLotType && nights > 0 ? (
           <div className="flex items-center justify-between mb-3">

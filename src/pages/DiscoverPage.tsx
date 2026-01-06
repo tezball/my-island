@@ -162,8 +162,8 @@ export default function DiscoverPage() {
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
           <span className="text-sm text-slate-500">
             {isLoading ? 'Loading...' : viewMode === 'map'
-              ? `${mapMarkers.length} locations`
-              : `${campsites.length} campsites`}
+              ? `${mapMarkers.length} location${mapMarkers.length !== 1 ? 's' : ''}`
+              : `${campsites.length} campsite${campsites.length !== 1 ? 's' : ''}`}
           </span>
           <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
             <button

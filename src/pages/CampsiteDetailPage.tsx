@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import AppShell from '../components/layout/AppShell'
 import Button from '../components/ui/Button'
@@ -10,6 +10,8 @@ import { campsitesApi, type CampsiteDetailResponse } from '../lib/api/campsites'
 import { reviewsApi, type ReviewResponse } from '../lib/api/reviews'
 import type { Campsite, Review, Facility } from '../data/types'
 import { useFavorites } from '../context/FavoritesContext'
+
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop'
 
 // Map API response to Campsite type
 function mapToCampsite(data: CampsiteDetailResponse): Campsite {
@@ -79,7 +81,19 @@ export default function CampsiteDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [campsite, setCampsite] = useState<Campsite | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
+  const [imgErrors, setImgErrors] = useState<Set<number>>(new Set())
   const { isFavorite, toggleFavorite } = useFavorites()
+
+  const handleImageError = useCallback((index: number) => {
+    setImgErrors(prev => new Set(prev).add(index))
+  }, [])
+
+  const getImageUrl = useCallback((index: number) => {
+    if (imgErrors.has(index) || !campsite?.images?.[index]) {
+      return PLACEHOLDER_IMAGE
+    }
+    return campsite.images[index]
+  }, [campsite?.images, imgErrors])
 
   const overviewRef = useRef<HTMLDivElement>(null)
   const reviewsRef = useRef<HTMLDivElement>(null)
@@ -181,9 +195,10 @@ export default function CampsiteDetailPage() {
           <Link to={`/campsite/${id}/photos`} className="block">
             <div className="aspect-[4/3] overflow-hidden">
               <img
-                src={campsite.images[currentImage]}
+                src={getImageUrl(currentImage)}
                 alt={campsite.name}
                 className="w-full h-full object-cover"
+                onError={() => handleImageError(currentImage)}
               />
             </div>
             {/* Photo count badge */}
@@ -307,9 +322,15 @@ export default function CampsiteDetailPage() {
                 <h2 className="font-bold text-slate-900 dark:text-white mb-2">
                   About this campsite
                 </h2>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {campsite.description}
-                </p>
+                {campsite.description ? (
+                  <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {campsite.description}
+                  </p>
+                ) : (
+                  <p className="text-slate-400 dark:text-slate-500 italic">
+                    No description available for this campsite.
+                  </p>
+                )}
               </div>
 
               {/* Facilities */}
@@ -317,23 +338,29 @@ export default function CampsiteDetailPage() {
                 <h2 className="font-bold text-slate-900 dark:text-white mb-3">
                   Facilities & Amenities
                 </h2>
-                <div className="grid grid-cols-4 gap-3">
-                  {campsite.facilities.map((facility) => (
-                    <div
-                      key={facility}
-                      className="flex flex-col items-center gap-1 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"
-                    >
-                      <Icon
-                        name={facilityIcons[facility] || 'check'}
-                        size={24}
-                        className="text-primary"
-                      />
-                      <span className="text-xs text-slate-600 dark:text-slate-400 capitalize text-center">
-                        {facility}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                {campsite.facilities && campsite.facilities.length > 0 ? (
+                  <div className="grid grid-cols-4 gap-3">
+                    {campsite.facilities.map((facility) => (
+                      <div
+                        key={facility}
+                        className="flex flex-col items-center gap-1 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"
+                      >
+                        <Icon
+                          name={facilityIcons[facility] || 'check'}
+                          size={24}
+                          className="text-primary"
+                        />
+                        <span className="text-xs text-slate-600 dark:text-slate-400 capitalize text-center">
+                          {facility}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 dark:text-slate-500 italic">
+                    No facilities information available.
+                  </p>
+                )}
               </div>
 
               {/* Section Divider */}

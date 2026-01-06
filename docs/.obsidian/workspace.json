@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "02-Architecture/DOMAIN_MODEL.md",
+                "file": "snaglist.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DOMAIN_MODEL"
+              "title": "snaglist"
             }
           }
         ]
@@ -186,6 +186,8 @@
   },
   "active": "b18c392056cc7755",
   "lastOpenFiles": [
+    "SNAG_LIST.md",
+    "snaglist.md",
     "02-Architecture/DOMAIN_MODEL.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767549050574",
@@ -239,8 +241,6 @@
     "05-Design-Specs/delete_account:_confirm/spec.md",
     "05-Design-Specs/delete_account/spec.md",
     "05-Design-Specs/complete_apple_sign_up/spec.md",
-    "05-Design-Specs/change_password/spec.md",
-    "05-Design-Specs/change_email:_verify/spec.md",
-    "05-Design-Specs/change_email/spec.md"
+    "05-Design-Specs/change_password/spec.md"
   ]
 }

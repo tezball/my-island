@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Campsite } from '../../data/types'
 import Icon from './Icon'
 import { useFavorites } from '../../context/FavoritesContext'
+
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop'
 
 interface CampsiteCardProps {
   campsite: Campsite
@@ -16,6 +19,9 @@ export default function CampsiteCard({
 }: CampsiteCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites()
   const isFav = isFavorite(campsite.id)
+  const [imgError, setImgError] = useState(false)
+
+  const imageUrl = (!imgError && campsite.images?.[0]) || PLACEHOLDER_IMAGE
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -30,9 +36,10 @@ export default function CampsiteCard({
         className="flex gap-3 bg-white dark:bg-surface-dark rounded-xl p-3 shadow-sm border border-slate-100 dark:border-slate-800"
       >
         <img
-          src={campsite.images[0]}
+          src={imageUrl}
           alt={campsite.name}
           className="size-20 rounded-lg object-cover flex-shrink-0"
+          onError={() => setImgError(true)}
         />
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-slate-900 dark:text-white truncate">
@@ -64,9 +71,10 @@ export default function CampsiteCard({
         className="relative flex-shrink-0 w-72 rounded-2xl overflow-hidden shadow-lg"
       >
         <img
-          src={campsite.images[0]}
+          src={imageUrl}
           alt={campsite.name}
           className="w-full h-48 object-cover"
+          onError={() => setImgError(true)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         {showFavoriteButton && (
@@ -111,9 +119,10 @@ export default function CampsiteCard({
     >
       <div className="relative">
         <img
-          src={campsite.images[0]}
+          src={imageUrl}
           alt={campsite.name}
           className="w-full h-44 object-cover"
+          onError={() => setImgError(true)}
         />
         {showFavoriteButton && (
           <button
