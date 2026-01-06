@@ -71,6 +71,9 @@ fi
 # Step 6: Start the backend
 echo -e "\n${YELLOW}[6/6] Starting Spring Boot backend...${NC}"
 
+# Clean and rebuild to ensure fresh migration files
+mvn clean -q
+
 # Start in background and capture PID
 mvn spring-boot:run -Dmaven.test.skip=true > /tmp/my-island-api.log 2>&1 &
 APP_PID=$!
