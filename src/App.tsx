@@ -123,6 +123,7 @@ import OwnerReviewsPage from './pages/owner/OwnerReviewsPage'
 import OwnerCalendarPage from './pages/owner/OwnerCalendarPage'
 import ManageExtrasPage from './pages/owner/ManageExtrasPage'
 import ExtraFormPage from './pages/owner/ExtraFormPage'
+import OwnerCampsitesPage from './pages/owner/OwnerCampsitesPage'
 
 // Static Pages
 import AboutPage from './pages/AboutPage'
@@ -261,6 +262,7 @@ function App() {
       <Route path="/owner/extras" element={<ProtectedRoute requireOwner><ManageExtrasPage /></ProtectedRoute>} />
       <Route path="/owner/extras/new" element={<ProtectedRoute requireOwner><ExtraFormPage /></ProtectedRoute>} />
       <Route path="/owner/extras/:extraId/edit" element={<ProtectedRoute requireOwner><ExtraFormPage /></ProtectedRoute>} />
+      <Route path="/owner/campsites" element={<ProtectedRoute requireOwner><OwnerCampsitesPage /></ProtectedRoute>} />
       <Route path="/owner/campsites/new" element={<ProtectedRoute requireOwner><CampsiteCreateWizardPage /></ProtectedRoute>} />
       <Route path="/owner/property/new" element={<ProtectedRoute requireOwner><PropertyTypeSelectionPage /></ProtectedRoute>} />
       <Route path="/owner/property/new/campsite" element={<ProtectedRoute requireOwner><PropertyWizardPage propertyType="campsite" /></ProtectedRoute>} />

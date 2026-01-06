@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { PropertyProvider } from './context/PropertyContext'
 import { BookingProvider } from './context/BookingContext'
 import { FavoritesProvider } from './context/FavoritesContext'
 import { ToastProvider } from './context/ToastContext'
@@ -14,13 +15,15 @@ createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
-          <BookingProvider>
-            <FavoritesProvider>
-              <ToastProvider>
-                <App />
-              </ToastProvider>
-            </FavoritesProvider>
-          </BookingProvider>
+          <PropertyProvider>
+            <BookingProvider>
+              <FavoritesProvider>
+                <ToastProvider>
+                  <App />
+                </ToastProvider>
+              </FavoritesProvider>
+            </BookingProvider>
+          </PropertyProvider>
         </AuthProvider>
       </BrowserRouter>
     </ErrorBoundary>

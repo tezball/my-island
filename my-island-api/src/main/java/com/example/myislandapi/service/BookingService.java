@@ -295,6 +295,7 @@ public class BookingService {
     private BookingResponse toBookingResponse(Booking booking) {
         Lot lot = booking.getLot();
         var campsite = lot.getCampsite();
+        var user = booking.getUser();
 
         var lotSummary = new BookingResponse.LotSummary(
                 lot.getId(),
@@ -308,6 +309,13 @@ public class BookingService {
                 campsite.getName(),
                 campsite.getLocation() != null ? campsite.getLocation().getCounty() : null,
                 campsite.getImages().isEmpty() ? null : campsite.getImages().get(0)
+        );
+
+        var guestSummary = new BookingResponse.GuestSummary(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getAvatar()
         );
 
         List<BookingResponse.BookingExtraResponse> extras = booking.getBookingExtras().stream()
@@ -334,6 +342,7 @@ public class BookingService {
                 booking.getSpecialRequests(),
                 lotSummary,
                 campsiteSummary,
+                guestSummary,
                 extras,
                 booking.getCreatedAt()
         );

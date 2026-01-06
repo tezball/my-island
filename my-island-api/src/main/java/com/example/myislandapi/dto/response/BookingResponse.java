@@ -22,9 +22,16 @@ public record BookingResponse(
     String specialRequests,
     LotSummary lot,
     CampsiteSummary campsite,
+    GuestSummary guest,
     List<BookingExtraResponse> extras,
     Instant createdAt
 ) {
+    public record GuestSummary(
+        UUID id,
+        String name,
+        String email,
+        String avatarUrl
+    ) {}
     public record LotSummary(
         UUID id,
         String name,

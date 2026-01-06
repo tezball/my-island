@@ -246,11 +246,18 @@ This review evaluates the Owner Dashboard experience from the perspective of an 
 
 ## Next Steps
 
-1. [ ] File bug ticket for Bookings page data loading issue
-2. [ ] Create design spec for owner campsites management page
-3. [ ] Design global property selector component
-4. [ ] Prioritize fixes based on severity
-5. [ ] Re-test after fixes implemented
+1. [x] File bug ticket for Bookings page data loading issue - **FIXED** (2026-01-06)
+   - Added `GuestSummary` to `BookingResponse.java`
+   - Updated `OwnerService.toBookingResponse()` to include guest data
+   - Updated `BookingService.toBookingResponse()` to include guest data
+2. [x] Create design spec for owner campsites management page - **IMPLEMENTED** (2026-01-06)
+   - Created `OwnerCampsitesPage.tsx` at `/owner/campsites`
+   - Shows all owner properties with stats, actions (Edit, View Public)
+3. [ ] Design global property selector component - Already exists (`PropertySelector.tsx`)
+4. [ ] Fix Lots Page to show all properties with PropertySelector
+5. [ ] Add property context to Dashboard for multi-property support
+6. [ ] Add property indicator to Calendar bookings
+7. [ ] Re-test after all fixes implemented
 
 ---
 

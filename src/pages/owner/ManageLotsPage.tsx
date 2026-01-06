@@ -5,6 +5,8 @@ import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
 import Badge from '../../components/ui/Badge'
 import Skeleton from '../../components/ui/Skeleton'
+import PropertySelector from '../../components/owner/PropertySelector'
+import { useProperty } from '../../context/PropertyContext'
 import { ownerApi, type LotResponse, type CampsiteResponse } from '../../lib/api/owner'
 
 type FilterStatus = 'all' | 'available' | 'booked' | 'maintenance'
@@ -18,50 +20,66 @@ function formatLotType(type: string): string {
     .join(' ')
 }
 
-interface LotWithStatus extends LotResponse {
+interface LotWithCampsite extends LotResponse {
   status: 'available' | 'booked' | 'maintenance'
+  campsiteId: string
+  campsiteName: string
 }
 
 export default function ManageLotsPage() {
   const navigate = useNavigate()
+  const { campsites, selectedCampsiteId } = useProperty()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
-  const [, setCampsite] = useState<CampsiteResponse | null>(null)
-  const [lots, setLots] = useState<LotWithStatus[]>([])
+  const [allLots, setAllLots] = useState<LotWithCampsite[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  // Fetch lots from all campsites
   useEffect(() => {
-    async function fetchData() {
+    async function fetchAllLots() {
+      if (campsites.length === 0) {
+        setAllLots([])
+        setIsLoading(false)
+        return
+      }
+
+      setIsLoading(true)
       try {
-        const campsites = await ownerApi.getMyCampsites()
-        if (campsites.length > 0) {
-          setCampsite(campsites[0])
-          const lotsData = await ownerApi.getLotsByCampsite(campsites[0].id)
-          // Determine status based on availability
-          const lotsWithStatus: LotWithStatus[] = lotsData.map((lot) => ({
+        // Fetch lots for each campsite in parallel
+        const lotsPromises = campsites.map(async (campsite: CampsiteResponse) => {
+          const lots = await ownerApi.getLotsByCampsite(campsite.id)
+          return lots.map(lot => ({
             ...lot,
-            status: lot.available ? 'available' : 'booked',
+            status: lot.available ? 'available' as const : 'booked' as const,
+            campsiteId: campsite.id,
+            campsiteName: campsite.name,
           }))
-          setLots(lotsWithStatus)
-        } else {
-          // No campsites - show empty state
-          setLots([])
-        }
+        })
+
+        const lotsArrays = await Promise.all(lotsPromises)
+        const combinedLots = lotsArrays.flat()
+        setAllLots(combinedLots)
       } catch (err) {
         console.error('Failed to fetch lots:', err)
-        setLots([])
+        setAllLots([])
       } finally {
         setIsLoading(false)
       }
     }
-    fetchData()
-  }, [])
 
-  // Filter by search and status
-  const filteredLots = lots.filter(lot => {
-    const matchesSearch = lot.name.toLowerCase().includes(searchQuery.toLowerCase())
+    fetchAllLots()
+  }, [campsites])
+
+  // Filter lots by property, search, and status
+  const filteredLots = allLots.filter(lot => {
+    // Filter by selected property
+    const matchesProperty = selectedCampsiteId === 'all' || lot.campsiteId === selectedCampsiteId
+    // Filter by search
+    const matchesSearch = lot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      lot.campsiteName.toLowerCase().includes(searchQuery.toLowerCase())
+    // Filter by status
     const matchesStatus = filterStatus === 'all' || lot.status === filterStatus
-    return matchesSearch && matchesStatus
+    return matchesProperty && matchesSearch && matchesStatus
   })
 
   const filters: { value: FilterStatus; label: string }[] = [
@@ -85,7 +103,8 @@ export default function ManageLotsPage() {
   }
 
   const getLotTypeIcon = (type: string) => {
-    switch (type) {
+    const normalizedType = type.toLowerCase()
+    switch (normalizedType) {
       case 'tent':
         return 'camping'
       case 'campervan':
@@ -93,6 +112,7 @@ export default function ManageLotsPage() {
       case 'caravan':
         return 'rv_hookup'
       case 'glamping':
+      case 'safari_tent':
         return 'cottage'
       case 'cabin':
         return 'cabin'
@@ -103,12 +123,13 @@ export default function ManageLotsPage() {
 
   if (isLoading) {
     return (
-      <AppShell showBack headerTitle="Campsite Lots" showNav={false}>
+      <AppShell showBack headerTitle="Manage Lots" showNav={false}>
         <div className="flex-1 p-4 space-y-3">
+          <Skeleton className="h-14 w-full rounded-xl" />
           <Skeleton className="h-12 w-full rounded-xl" />
           <Skeleton className="h-10 w-full rounded-xl" />
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-2xl" />
+            <Skeleton key={i} className="h-36 w-full rounded-2xl" />
           ))}
         </div>
       </AppShell>
@@ -118,16 +139,21 @@ export default function ManageLotsPage() {
   return (
     <AppShell
       showBack
-      headerTitle="Campsite Lots"
+      headerTitle="Manage Lots"
       showNav={false}
     >
       <div className="flex-1 overflow-auto">
+        {/* Property Selector */}
+        <div className="p-4 pb-0">
+          <PropertySelector showAllOption label="Filter by Property" />
+        </div>
+
         {/* Search */}
         <div className="p-4">
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder="Search lots by name or number..."
+            placeholder="Search lots by name or property..."
           />
         </div>
 
@@ -153,7 +179,8 @@ export default function ManageLotsPage() {
         {/* Lots count */}
         <div className="px-4 pb-3">
           <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-            Managing {filteredLots.length} active sites
+            {filteredLots.length} Lot{filteredLots.length !== 1 ? 's' : ''}
+            {selectedCampsiteId === 'all' && campsites.length > 1 && ` across ${campsites.length} properties`}
           </p>
         </div>
 
@@ -164,6 +191,16 @@ export default function ManageLotsPage() {
               key={lot.id}
               className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800"
             >
+              {/* Property badge - shown when viewing all properties */}
+              {selectedCampsiteId === 'all' && campsites.length > 1 && (
+                <div className="mb-3 -mt-1">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-md">
+                    <Icon name="location_on" size={12} />
+                    {lot.campsiteName}
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white">
@@ -184,21 +221,23 @@ export default function ManageLotsPage() {
               </div>
 
               {/* Amenities */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                {lot.amenities.slice(0, 3).map((amenity, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs text-slate-600 dark:text-slate-400"
-                  >
-                    {amenity}
-                  </span>
-                ))}
-                {lot.amenities.length > 3 && (
-                  <span className="px-2 py-1 text-xs text-slate-400">
-                    +{lot.amenities.length - 3} more
-                  </span>
-                )}
-              </div>
+              {lot.amenities && lot.amenities.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {lot.amenities.slice(0, 3).map((amenity, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-xs text-slate-600 dark:text-slate-400"
+                    >
+                      {amenity}
+                    </span>
+                  ))}
+                  {lot.amenities.length > 3 && (
+                    <span className="px-2 py-1 text-xs text-slate-400">
+                      +{lot.amenities.length - 3} more
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* Price and actions */}
               <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
@@ -222,11 +261,13 @@ export default function ManageLotsPage() {
 
           {filteredLots.length === 0 && (
             <div className="text-center py-12">
-              <Icon name={lots.length === 0 ? "add_home" : "search_off"} size={48} className="text-slate-300 mx-auto mb-3" />
+              <Icon name={allLots.length === 0 ? "add_home" : "search_off"} size={48} className="text-slate-300 mx-auto mb-3" />
               <p className="text-slate-500 mb-4">
-                {lots.length === 0 ? "No lots yet. Add your first lot to start accepting bookings." : "No lots match your search"}
+                {allLots.length === 0
+                  ? "No lots yet. Add your first lot to start accepting bookings."
+                  : "No lots match your search"}
               </p>
-              {lots.length === 0 && (
+              {allLots.length === 0 && (
                 <Link
                   to="/owner/lots/new"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"

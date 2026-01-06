@@ -3,15 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import AppShell from '../../components/layout/AppShell'
 import Icon from '../../components/ui/Icon'
 import Skeleton from '../../components/ui/Skeleton'
+import PropertySelector from '../../components/owner/PropertySelector'
+import { useProperty } from '../../context/PropertyContext'
+import { ownerApi, type OwnerBookingResponse } from '../../lib/api/owner'
 
-interface Booking {
+interface CalendarBooking {
   id: string
   guestName: string
   lotName: string
+  campsiteId: string
+  campsiteName: string
   checkIn: string
   checkOut: string
   guests: number
-  status: 'confirmed' | 'pending' | 'checked_in' | 'checked_out'
+  status: 'CONFIRMED' | 'PENDING' | 'CHECKED_IN' | 'COMPLETED' | 'CANCELLED'
 }
 
 interface BlockedDate {
@@ -21,71 +26,45 @@ interface BlockedDate {
 
 export default function OwnerCalendarPage() {
   const navigate = useNavigate()
+  const { selectedCampsiteId, campsites } = useProperty()
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([])
+  const [bookings, setBookings] = useState<CalendarBooking[]>([])
+  const [blockedDates] = useState<BlockedDate[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true)
       try {
-        // Mock data - would come from API
-        await new Promise((resolve) => setTimeout(resolve, 500))
+        const params = selectedCampsiteId !== 'all'
+          ? { campsiteId: selectedCampsiteId }
+          : undefined
+        const response = await ownerApi.getOwnerBookings(params)
 
-        const today = new Date()
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        const nextWeek = new Date(today)
-        nextWeek.setDate(nextWeek.getDate() + 7)
-        const twoWeeks = new Date(today)
-        twoWeeks.setDate(twoWeeks.getDate() + 14)
+        const calendarBookings: CalendarBooking[] = response.content.map((b: OwnerBookingResponse) => ({
+          id: b.id,
+          guestName: b.guest?.name || 'Guest',
+          lotName: b.lot?.name || 'Unknown Lot',
+          campsiteId: b.campsite?.id || '',
+          campsiteName: b.campsite?.name || 'Unknown Property',
+          checkIn: b.checkIn,
+          checkOut: b.checkOut,
+          guests: b.guests,
+          status: b.status,
+        }))
 
-        setBookings([
-          {
-            id: '1',
-            guestName: 'Sarah Murphy',
-            lotName: 'Ocean View Pod',
-            checkIn: tomorrow.toISOString().split('T')[0],
-            checkOut: new Date(tomorrow.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            guests: 2,
-            status: 'confirmed',
-          },
-          {
-            id: '2',
-            guestName: 'Michael O\'Brien',
-            lotName: 'Forest Cabin',
-            checkIn: nextWeek.toISOString().split('T')[0],
-            checkOut: new Date(nextWeek.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            guests: 4,
-            status: 'pending',
-          },
-          {
-            id: '3',
-            guestName: 'Emma Walsh',
-            lotName: 'Beach Tent',
-            checkIn: twoWeeks.toISOString().split('T')[0],
-            checkOut: new Date(twoWeeks.getTime() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            guests: 3,
-            status: 'confirmed',
-          },
-        ])
-
-        // Mock blocked dates
-        const maintenanceDate = new Date(today)
-        maintenanceDate.setDate(maintenanceDate.getDate() + 21)
-        setBlockedDates([
-          { date: maintenanceDate.toISOString().split('T')[0], reason: 'Maintenance' },
-        ])
+        setBookings(calendarBookings)
       } catch (error) {
         console.error('Failed to fetch calendar data:', error)
+        setBookings([])
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchData()
-  }, [])
+  }, [selectedCampsiteId])
 
   const daysInMonth = useMemo(() => {
     const year = currentMonth.getFullYear()
@@ -130,8 +109,9 @@ export default function OwnerCalendarPage() {
     })
 
     if (booking) {
-      if (booking.status === 'pending') return 'pending'
-      if (booking.status === 'checked_in') return 'active'
+      if (booking.status === 'PENDING') return 'pending'
+      if (booking.status === 'CHECKED_IN') return 'active'
+      if (booking.status === 'CANCELLED') return 'available'
       return 'booked'
     }
 
@@ -140,6 +120,7 @@ export default function OwnerCalendarPage() {
 
   const getBookingsForDate = (date: Date) => {
     return bookings.filter((b) => {
+      if (b.status === 'CANCELLED') return false
       const checkIn = new Date(b.checkIn)
       const checkOut = new Date(b.checkOut)
       return date >= checkIn && date < checkOut
@@ -180,6 +161,7 @@ export default function OwnerCalendarPage() {
     return (
       <AppShell showBack headerTitle="Calendar" showNav={false}>
         <div className="flex-1 overflow-auto p-4 space-y-4">
+          <Skeleton variant="rectangular" height={56} className="rounded-xl" />
           <Skeleton variant="rectangular" height={300} className="rounded-2xl" />
           <Skeleton variant="rectangular" height={150} className="rounded-2xl" />
         </div>
@@ -188,6 +170,10 @@ export default function OwnerCalendarPage() {
   }
 
   const selectedBookings = selectedDate ? getBookingsForDate(selectedDate) : []
+  const upcomingBookings = bookings
+    .filter((b) => new Date(b.checkIn) >= new Date() && b.status !== 'CANCELLED')
+    .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())
+    .slice(0, 5)
 
   return (
     <AppShell
@@ -201,6 +187,11 @@ export default function OwnerCalendarPage() {
       }
     >
       <div className="flex-1 overflow-auto">
+        {/* Property Selector */}
+        <div className="p-4 pb-0">
+          <PropertySelector showAllOption label="Filter by Property" />
+        </div>
+
         {/* Month Navigation */}
         <div className="p-4 flex items-center justify-between">
           <button
@@ -326,7 +317,7 @@ export default function OwnerCalendarPage() {
                     <div
                       key={booking.id}
                       className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                      onClick={() => navigate(`/owner/bookings`)}
+                      onClick={() => navigate(`/bookings/${booking.id}`)}
                     >
                       <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <span className="text-primary font-semibold">
@@ -340,15 +331,20 @@ export default function OwnerCalendarPage() {
                         <p className="text-sm text-slate-500">
                           {booking.lotName} • {booking.guests} guests
                         </p>
+                        {selectedCampsiteId === 'all' && campsites.length > 1 && (
+                          <p className="text-xs text-primary mt-0.5">
+                            {booking.campsiteName}
+                          </p>
+                        )}
                       </div>
                       <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        booking.status === 'confirmed'
+                        booking.status === 'CONFIRMED'
                           ? 'bg-primary/10 text-primary'
-                          : booking.status === 'pending'
-                          ? 'bg-amber-100 text-amber-700'
-                          : booking.status === 'checked_in'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-slate-100 text-slate-600'
+                          : booking.status === 'PENDING'
+                          ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                          : booking.status === 'CHECKED_IN'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                          : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                       }`}>
                         {booking.status.replace('_', ' ')}
                       </div>
@@ -370,15 +366,13 @@ export default function OwnerCalendarPage() {
           <h3 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3">
             Upcoming Bookings
           </h3>
-          <div className="space-y-2">
-            {bookings
-              .filter((b) => new Date(b.checkIn) >= new Date())
-              .sort((a, b) => new Date(a.checkIn).getTime() - new Date(b.checkIn).getTime())
-              .slice(0, 3)
-              .map((booking) => (
+          {upcomingBookings.length > 0 ? (
+            <div className="space-y-2">
+              {upcomingBookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className="flex items-center gap-3 p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800"
+                  className="flex items-center gap-3 p-3 bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  onClick={() => navigate(`/bookings/${booking.id}`)}
                 >
                   <div className="size-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                     <Icon name="person" size={20} className="text-slate-500" />
@@ -397,12 +391,21 @@ export default function OwnerCalendarPage() {
                         day: 'numeric',
                         month: 'short',
                       })}
+                      {selectedCampsiteId === 'all' && campsites.length > 1 && (
+                        <span className="text-primary ml-1">• {booking.campsiteName}</span>
+                      )}
                     </p>
                   </div>
                   <Icon name="chevron_right" size={20} className="text-slate-400" />
                 </div>
               ))}
-          </div>
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-surface-dark rounded-xl border border-slate-100 dark:border-slate-800 p-6 text-center">
+              <Icon name="event_available" size={32} className="text-slate-300 mx-auto mb-2" />
+              <p className="text-slate-500 text-sm">No upcoming bookings</p>
+            </div>
+          )}
         </div>
       </div>
     </AppShell>

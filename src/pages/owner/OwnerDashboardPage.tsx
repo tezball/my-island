@@ -7,6 +7,7 @@ import Icon from '../../components/ui/Icon'
 import Toggle from '../../components/ui/Toggle'
 import Skeleton from '../../components/ui/Skeleton'
 import { useToast } from '../../context/ToastContext'
+import { useProperty } from '../../context/PropertyContext'
 import { ownerApi, type OwnerStats } from '../../lib/api/owner'
 
 interface BroadcastAlert {
@@ -19,11 +20,23 @@ interface BroadcastAlert {
 export default function OwnerDashboardPage() {
   const navigate = useNavigate()
   const toast = useToast()
-  const [campsiteVisible, setCampsiteVisible] = useState(true)
+  const { campsites, isLoading: campsitesLoading } = useProperty()
+  const [propertyVisibility, setPropertyVisibility] = useState<Record<string, boolean>>({})
   const [broadcastMessage, setBroadcastMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState<OwnerStats | null>(null)
   const [broadcastAlerts, setBroadcastAlerts] = useState<BroadcastAlert[]>([])
+
+  // Initialize visibility state when campsites load
+  useEffect(() => {
+    if (campsites.length > 0) {
+      const visibility: Record<string, boolean> = {}
+      campsites.forEach(c => {
+        visibility[c.id] = true // Default to visible
+      })
+      setPropertyVisibility(visibility)
+    }
+  }, [campsites])
 
   useEffect(() => {
     async function fetchData() {
@@ -58,6 +71,20 @@ export default function OwnerDashboardPage() {
     fetchData()
   }, [])
 
+  const togglePropertyVisibility = (propertyId: string) => {
+    setPropertyVisibility(prev => ({
+      ...prev,
+      [propertyId]: !prev[propertyId]
+    }))
+    // In real app, would update via API
+    const property = campsites.find(c => c.id === propertyId)
+    const newState = !propertyVisibility[propertyId]
+    toast.success(
+      newState ? 'Property Visible' : 'Property Hidden',
+      `${property?.name || 'Property'} is now ${newState ? 'visible' : 'hidden'} on the map`
+    )
+  }
+
   // Active guests = confirmed bookings that are currently checked in
   // Using confirmedBookings as a proxy until we have a dedicated endpoint
   const activeGuests = stats?.confirmedBookings || 0
@@ -72,7 +99,7 @@ export default function OwnerDashboardPage() {
     }
   }
 
-  if (isLoading) {
+  if (isLoading || campsitesLoading) {
     return (
       <AppShell showBack headerTitle="Admin Dashboard" showNav={false}>
         <div className="flex-1 overflow-auto p-4 space-y-4">
@@ -124,23 +151,51 @@ export default function OwnerDashboardPage() {
           />
         </div>
 
-        {/* Campsite Status */}
+        {/* Properties Status - Multi-property support */}
         <div className="px-4 mb-4">
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
             <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white">
-                  Campsite Status
-                </h3>
-                <p className="text-sm text-slate-500">
-                  {campsiteVisible ? 'Visible to guests on map' : 'Hidden from map'}
-                </p>
-              </div>
-              <Toggle checked={campsiteVisible} onChange={setCampsiteVisible} />
+              <h3 className="font-semibold text-slate-900 dark:text-white">
+                {campsites.length > 1 ? 'Properties Status' : 'Property Status'}
+              </h3>
+              {campsites.length > 1 && (
+                <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full">
+                  {campsites.length} properties
+                </span>
+              )}
             </div>
-            <div className="flex items-start gap-2 text-sm text-slate-500 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3">
+
+            {/* Property list with toggles */}
+            <div className="space-y-3">
+              {campsites.map(property => (
+                <div
+                  key={property.id}
+                  className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon name="location_on" size={20} className="text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-900 dark:text-white truncate">
+                        {property.name}
+                      </p>
+                      <p className="text-xs text-slate-500 truncate">
+                        {propertyVisibility[property.id] ? 'Visible on map' : 'Hidden from map'}
+                      </p>
+                    </div>
+                  </div>
+                  <Toggle
+                    checked={propertyVisibility[property.id] ?? true}
+                    onChange={() => togglePropertyVisibility(property.id)}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-start gap-2 text-sm text-slate-500 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 mt-3">
               <Icon name="info" size={18} className="text-slate-400 shrink-0 mt-0.5" />
-              <p>Update details to auto-notify upcoming guests about changes.</p>
+              <p>Toggle visibility to show or hide properties from the guest map.</p>
             </div>
           </div>
         </div>
@@ -149,7 +204,7 @@ export default function OwnerDashboardPage() {
         <div className="px-4 mb-4">
           <div className="bg-white dark:bg-surface-dark rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
             <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
-              Send Supplier Alert
+              Send Guest Alert
             </h3>
             <p className="text-sm text-slate-500 mb-3">
               Notify guests about fresh supplies, happy hours, or local events.
@@ -266,6 +321,20 @@ export default function OwnerDashboardPage() {
               </span>
               <span className="text-xs text-slate-500">
                 €{(stats?.totalRevenue || 0).toLocaleString()}
+              </span>
+            </Link>
+            <Link
+              to="/owner/campsites"
+              className="p-4 bg-white dark:bg-surface-dark rounded-2xl border border-slate-100 dark:border-slate-800 flex flex-col items-center gap-2"
+            >
+              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Icon name="home" size={24} className="text-primary" />
+              </div>
+              <span className="font-medium text-slate-900 dark:text-white text-sm">
+                My Properties
+              </span>
+              <span className="text-xs text-slate-500">
+                {stats?.totalCampsites || 0} properties
               </span>
             </Link>
             <Link

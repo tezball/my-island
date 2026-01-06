@@ -128,6 +128,57 @@ export interface RevenueDataResponse {
   monthlyData: RevenueDataPoint[]
 }
 
+export interface OwnerBookingResponse {
+  id: string
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'CHECKED_IN'
+  checkIn: string
+  checkOut: string
+  guests: number
+  nights: number
+  totalPrice: number
+  specialRequests?: string
+  lot: {
+    id: string
+    name: string
+    type: string
+    images: string[]
+  }
+  campsite: {
+    id: string
+    name: string
+    county?: string
+  }
+  guest: {
+    id: string
+    name: string
+    email: string
+    avatarUrl?: string
+  }
+  createdAt: string
+}
+
+export interface OwnerBookingsParams {
+  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
+  campsiteId?: string
+  page?: number
+  size?: number
+}
+
+export interface PagedResponse<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+}
+
+// Helper to build query string
+function buildQueryString<T extends object>(params: T): string {
+  const entries = Object.entries(params).filter(([, v]) => v !== undefined)
+  if (entries.length === 0) return ''
+  return '?' + entries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`).join('&')
+}
+
 // Owner API service
 export const ownerApi = {
   // User becomes owner
@@ -135,8 +186,13 @@ export const ownerApi = {
     api.post<User>('/users/me/become-owner'),
 
   // Get owner statistics
-  getStats: () =>
-    api.get<OwnerStats>('/owner/stats'),
+  getStats: (campsiteId?: string) =>
+    api.get<OwnerStats>(`/owner/stats${campsiteId ? `?campsiteId=${campsiteId}` : ''}`),
+
+  // Get owner's bookings (for their properties)
+  getOwnerBookings: async (params?: OwnerBookingsParams): Promise<PagedResponse<OwnerBookingResponse>> => {
+    return api.get<PagedResponse<OwnerBookingResponse>>(`/owner/bookings${params ? buildQueryString(params) : ''}`)
+  },
 
   // Get revenue data for charts
   getRevenueData: (months: number = 6) =>
