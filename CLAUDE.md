@@ -37,7 +37,7 @@ mvn test -Dtest=ClassName#methodName   # Run specific test method
 ## Tech Stack
 
 - **Frontend**: React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS 4 + React Router 7 + Leaflet (maps) + Recharts
-- **Backend**: Spring Boot 4.0.1 + Java 25 + PostgreSQL 17 + Spring Security (JWT) + Flyway + MapStruct
+- **Backend**: Spring Boot 4.0.1 + Java 25 + PostgreSQL 17 + Spring Security (JWT) + MapStruct
 - **Infrastructure**: LocalStack (S3/SES), Kafka (events), Testcontainers (testing)
 
 ## Architecture
@@ -79,8 +79,11 @@ my-island-api/src/main/java/com/example/myislandapi/
 └── service/          # Business logic layer
 ```
 
-### Database Migrations
-Located in `my-island-api/src/main/resources/db/migration/` (Flyway, currently disabled - using Hibernate ddl-auto).
+### Database Schema & Seeding
+- **Schema**: Created by Hibernate `ddl-auto: update`
+- **Data Seeding**: Handled by Flyway migrations (via `FlywayConfig.java`)
+- **Flyway baseline**: V25 (skips old migrations V1-V25, only runs V26+)
+- **Important**: To add/modify seed data, add new Flyway migrations (V27+) in `db/migration/`
 
 ### API Authentication
 - JWT-based stateless auth
@@ -98,4 +101,15 @@ Located in `my-island-api/src/main/resources/db/migration/` (Flyway, currently d
 Strict mode with `noUnusedLocals: true` and `noUnusedParameters: true`.
 
 ## Test Data
-6 seed campsites with 23 lots defined in `V13__seed_campsites_lots.sql`. Test users in `V12__seed_users.sql`.
+
+Data is seeded via Flyway migration `V26__seed_demo_accounts.sql`.
+
+### Demo Accounts (password: `demo123`)
+| Email | Name | Role |
+|-------|------|------|
+| `visitor@my-island.com` | Emma Murphy | Guest |
+| `owner@my-island.com` | Sarah O'Brien | Owner |
+| `supplier@my-island.com` | Michael Kelly | Supplier |
+| `sean@wildatlantic-glamping.ie` | Sean O'Donnell | Owner |
+| `mary@galwaybay-guesthouse.ie` | Mary Gallagher | Owner |
+| `aoife@cork-eco-retreat.ie` | Aoife Brennan | Owner |

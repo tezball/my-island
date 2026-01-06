@@ -28,7 +28,7 @@ spring:
       hibernate:
         format_sql: true
 
-  # Flyway migrations - disabled for now, using Hibernate ddl-auto
+  # Flyway - disabled auto-configuration, using custom FlywayConfig bean
   flyway:
     enabled: false
 
@@ -118,7 +118,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
   flyway:
     enabled: false
