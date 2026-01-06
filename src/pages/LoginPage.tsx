@@ -18,9 +18,12 @@ export default function LoginPage() {
 
   // Demo accounts for testing
   const demoAccounts = [
-    { label: 'Visitor', email: 'visitor@my-island.com', password: 'demo1234', type: 'visitor' },
-    { label: 'Campsite Owner', email: 'owner@my-island.com', password: 'demo1234', type: 'owner' },
-    { label: 'Supplier', email: 'supplier@my-island.com', password: 'demo1234', type: 'supplier' },
+    { label: 'Visitor (Emma Murphy)', email: 'visitor@my-island.com', password: 'demo1234', type: 'visitor' },
+    { label: 'Owner: Mary Gallagher (B&B)', email: 'mary@galwaybay-guesthouse.ie', password: 'demo1234', type: 'owner' },
+    { label: 'Owner: Sean O\'Donnell (2 properties)', email: 'sean@wildatlantic-glamping.ie', password: 'demo1234', type: 'owner' },
+    { label: 'Owner: Aoife Brennan (Eco Retreat)', email: 'aoife@cork-eco-retreat.ie', password: 'demo1234', type: 'owner' },
+    { label: 'Owner: Sarah O\'Brien (Generic)', email: 'owner@my-island.com', password: 'demo1234', type: 'owner' },
+    { label: 'Supplier (Michael Kelly)', email: 'supplier@my-island.com', password: 'demo1234', type: 'supplier' },
   ]
 
   const handleDemoSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {

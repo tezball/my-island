@@ -186,6 +186,11 @@
   },
   "active": "b18c392056cc7755",
   "lastOpenFiles": [
+    "06-Feedback/OWNER_DASHBOARD_REVIEW.md",
+    "06-Feedback/OWNER_DASHBOARD_REVIEW.md.tmp.3208585.1767698505939",
+    "README.md.tmp.3208585.1767694050275",
+    "01-Project-Management/ROADMAP.md",
+    "01-Project-Management/ROADMAP.md.tmp.3208585.1767694043087",
     "SNAG_LIST.md",
     "snaglist.md",
     "02-Architecture/DOMAIN_MODEL.md",
@@ -202,9 +207,6 @@
     "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548712311",
     "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548711528",
     "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548710747",
-    "04-User-Flows/notifications/notifications-flow.canvas.tmp.273980.1767548709966",
-    "04-User-Flows/offers/offers-flow.canvas.tmp.273980.1767548709254",
-    "04-User-Flows/offers/offers-flow.canvas.tmp.273980.1767548709138",
     "05-Design-Specs/not_found_(404)/screen.png",
     "05-Design-Specs/login_page_1/screen.png",
     "05-Design-Specs/2fa_code_entry/spec.md",
@@ -239,8 +241,6 @@
     "05-Design-Specs/logout_confirmation/spec.md",
     "05-Design-Specs/email_verified_success/spec.md",
     "05-Design-Specs/delete_account:_confirm/spec.md",
-    "05-Design-Specs/delete_account/spec.md",
-    "05-Design-Specs/complete_apple_sign_up/spec.md",
-    "05-Design-Specs/change_password/spec.md"
+    "05-Design-Specs/delete_account/spec.md"
   ]
 }

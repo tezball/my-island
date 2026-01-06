@@ -36,6 +36,7 @@ MVP Progress: ~75% Complete
 ```
 
 ### Current Focus
+- [[01-Project-Management/ROADMAP|Product Roadmap]] - MVP and post-MVP planning
 - [[01-Project-Management/SNAG_LIST|Snag List]] - Active bugs from E2E testing
 - [[01-Project-Management/OUTSTANDING_WORK|Outstanding Work]] - Remaining MVP tasks
 

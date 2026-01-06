@@ -103,7 +103,7 @@ logging:
 # Application Configuration
 app:
   sample-data:
-    enabled: false  # Set to false for blank state with only demo accounts
+    enabled: true  # Set to false for blank state with only demo accounts
 
 ---
 # Test profile
