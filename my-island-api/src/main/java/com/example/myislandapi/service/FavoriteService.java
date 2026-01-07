@@ -2,15 +2,15 @@ package com.example.myislandapi.service;
 
 import com.example.myislandapi.dto.response.CampsiteResponse;
 import com.example.myislandapi.dto.response.LocationResponse;
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Favorite;
-import com.example.myislandapi.entity.Lot;
-import com.example.myislandapi.entity.User;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.FavoriteModel;
+import com.example.myislandapi.model.LotModel;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.CampsiteRepository;
-import com.example.myislandapi.repository.FavoriteRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcFavoriteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcLotRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,22 +24,29 @@ import java.util.UUID;
 @Transactional
 public class FavoriteService {
 
-    private final FavoriteRepository favoriteRepository;
-    private final UserRepository userRepository;
-    private final CampsiteRepository campsiteRepository;
+    private final JdbcFavoriteRepository favoriteRepository;
+    private final JdbcUserRepository userRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
+    private final JdbcLotRepository lotRepository;
 
-    public FavoriteService(FavoriteRepository favoriteRepository,
-                          UserRepository userRepository,
-                          CampsiteRepository campsiteRepository) {
+    public FavoriteService(JdbcFavoriteRepository favoriteRepository,
+                          JdbcUserRepository userRepository,
+                          JdbcCampsiteRepository campsiteRepository,
+                          JdbcLotRepository lotRepository) {
         this.favoriteRepository = favoriteRepository;
         this.userRepository = userRepository;
         this.campsiteRepository = campsiteRepository;
+        this.lotRepository = lotRepository;
     }
 
     @Transactional(readOnly = true)
     public Page<CampsiteResponse> getUserFavorites(UUID userId, Pageable pageable) {
         return favoriteRepository.findByUserId(userId, pageable)
-                .map(favorite -> toCampsiteResponse(favorite.getCampsite()));
+                .map(favorite -> {
+                    CampsiteModel campsite = campsiteRepository.findById(favorite.getCampsiteId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Campsite not found: " + favorite.getCampsiteId()));
+                    return toCampsiteResponse(campsite);
+                });
     }
 
     public void addFavorite(UUID userId, UUID campsiteId) {
@@ -47,13 +54,17 @@ public class FavoriteService {
             throw new BadRequestException("Campsite already in favorites");
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found: " + userId);
+        }
 
-        Campsite campsite = campsiteRepository.findById(campsiteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Campsite not found: " + campsiteId));
+        if (!campsiteRepository.existsById(campsiteId)) {
+            throw new ResourceNotFoundException("Campsite not found: " + campsiteId);
+        }
 
-        Favorite favorite = new Favorite(user, campsite);
+        FavoriteModel favorite = new FavoriteModel();
+        favorite.setUserId(userId);
+        favorite.setCampsiteId(campsiteId);
         favoriteRepository.save(favorite);
     }
 
@@ -69,9 +80,10 @@ public class FavoriteService {
         return favoriteRepository.existsByUserIdAndCampsiteId(userId, campsiteId);
     }
 
-    private CampsiteResponse toCampsiteResponse(Campsite campsite) {
-        BigDecimal priceFrom = campsite.getLots().stream()
-                .map(Lot::getPricePerNight)
+    private CampsiteResponse toCampsiteResponse(CampsiteModel campsite) {
+        var lots = lotRepository.findByCampsiteId(campsite.getId());
+        BigDecimal priceFrom = lots.stream()
+                .map(LotModel::getPricePerNight)
                 .min(Comparator.naturalOrder())
                 .orElse(BigDecimal.ZERO);
 
@@ -96,7 +108,7 @@ public class FavoriteService {
                 priceFrom,
                 campsite.getFacilities(),
                 campsite.isFeatured(),
-                campsite.getOwner().getId()
+                campsite.getOwnerId()
         );
     }
 }

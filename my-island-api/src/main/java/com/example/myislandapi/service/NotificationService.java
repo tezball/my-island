@@ -1,12 +1,11 @@
 package com.example.myislandapi.service;
 
 import com.example.myislandapi.dto.response.NotificationResponse;
-import com.example.myislandapi.entity.Notification;
-import com.example.myislandapi.entity.User;
+import com.example.myislandapi.model.NotificationModel;
 import com.example.myislandapi.enums.NotificationType;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.NotificationRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.repository.jdbc.JdbcNotificationRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,11 +17,11 @@ import java.util.UUID;
 @Transactional
 public class NotificationService {
 
-    private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
+    private final JdbcNotificationRepository notificationRepository;
+    private final JdbcUserRepository userRepository;
 
-    public NotificationService(NotificationRepository notificationRepository,
-                               UserRepository userRepository) {
+    public NotificationService(JdbcNotificationRepository notificationRepository,
+                               JdbcUserRepository userRepository) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
     }
@@ -39,10 +38,10 @@ public class NotificationService {
     }
 
     public NotificationResponse markAsRead(UUID notificationId, UUID userId) {
-        Notification notification = notificationRepository.findById(notificationId)
+        NotificationModel notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Notification not found: " + notificationId));
 
-        if (!notification.getUser().getId().equals(userId)) {
+        if (!notification.getUserId().equals(userId)) {
             throw new ResourceNotFoundException("Notification not found: " + notificationId);
         }
 
@@ -54,11 +53,12 @@ public class NotificationService {
 
     public void createNotification(UUID userId, NotificationType type, String title,
                                    String message, String actionUrl, String relatedId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User not found: " + userId);
+        }
 
-        Notification notification = new Notification();
-        notification.setUser(user);
+        NotificationModel notification = new NotificationModel();
+        notification.setUserId(userId);
         notification.setType(type);
         notification.setTitle(title);
         notification.setMessage(message);
@@ -68,7 +68,7 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    private NotificationResponse toNotificationResponse(Notification notification) {
+    private NotificationResponse toNotificationResponse(NotificationModel notification) {
         return new NotificationResponse(
                 notification.getId(),
                 notification.getType(),

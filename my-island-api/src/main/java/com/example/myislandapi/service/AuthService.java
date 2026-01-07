@@ -4,10 +4,10 @@ import com.example.myislandapi.dto.request.LoginRequest;
 import com.example.myislandapi.dto.request.SignupRequest;
 import com.example.myislandapi.dto.response.AuthResponse;
 import com.example.myislandapi.dto.response.UserResponse;
-import com.example.myislandapi.entity.User;
+import com.example.myislandapi.model.UserModel;
 import com.example.myislandapi.exception.ConflictException;
 import com.example.myislandapi.exception.UnauthorizedException;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import com.example.myislandapi.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final JdbcUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+    public AuthService(JdbcUserRepository userRepository, PasswordEncoder passwordEncoder,
                        JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -36,7 +36,7 @@ public class AuthService {
             throw new ConflictException("Email is already registered");
         }
 
-        User user = new User();
+        UserModel user = new UserModel();
         user.setEmail(request.email());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setName(request.name());
@@ -48,7 +48,7 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        UserModel user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
@@ -70,13 +70,13 @@ public class AuthService {
         }
 
         UUID userId = jwtTokenProvider.getUserIdFromToken(refreshToken);
-        User user = userRepository.findById(userId)
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
 
         return generateAuthResponse(user);
     }
 
-    private AuthResponse generateAuthResponse(User user) {
+    private AuthResponse generateAuthResponse(UserModel user) {
         String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getEmail());
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
 
@@ -90,7 +90,7 @@ public class AuthService {
         );
     }
 
-    private UserResponse mapToUserResponse(User user) {
+    private UserResponse mapToUserResponse(UserModel user) {
         List<UserResponse.LinkedAccountResponse> linkedAccounts = user.getLinkedAccounts().stream()
                 .map(la -> new UserResponse.LinkedAccountResponse(
                         la.getProvider().name().toLowerCase(),

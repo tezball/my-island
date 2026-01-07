@@ -4,13 +4,13 @@ import com.example.myislandapi.dto.request.BecomeSupplierRequest;
 import com.example.myislandapi.dto.request.UpdateNotificationPreferencesRequest;
 import com.example.myislandapi.dto.request.UpdateUserRequest;
 import com.example.myislandapi.dto.response.UserResponse;
-import com.example.myislandapi.entity.NotificationPreferences;
-import com.example.myislandapi.entity.Supplier;
-import com.example.myislandapi.entity.User;
+import com.example.myislandapi.model.NotificationPreferences;
+import com.example.myislandapi.model.SupplierModel;
+import com.example.myislandapi.model.UserModel;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.SupplierRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.repository.jdbc.JdbcSupplierRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,24 +20,24 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final SupplierRepository supplierRepository;
+    private final JdbcUserRepository userRepository;
+    private final JdbcSupplierRepository supplierRepository;
 
-    public UserService(UserRepository userRepository, SupplierRepository supplierRepository) {
+    public UserService(JdbcUserRepository userRepository, JdbcSupplierRepository supplierRepository) {
         this.userRepository = userRepository;
         this.supplierRepository = supplierRepository;
     }
 
     @Transactional(readOnly = true)
     public UserResponse getCurrentUser(UUID userId) {
-        User user = userRepository.findById(userId)
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         return mapToUserResponse(user);
     }
 
     @Transactional
     public UserResponse updateUser(UUID userId, UpdateUserRequest request) {
-        User user = userRepository.findById(userId)
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         if (request.name() != null) {
@@ -59,10 +59,14 @@ public class UserService {
 
     @Transactional
     public UserResponse updateNotificationPreferences(UUID userId, UpdateNotificationPreferencesRequest request) {
-        User user = userRepository.findById(userId)
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         NotificationPreferences prefs = user.getNotificationPreferences();
+        if (prefs == null) {
+            prefs = new NotificationPreferences();
+            user.setNotificationPreferences(prefs);
+        }
         if (request.email() != null) {
             prefs.setEmail(request.email());
         }
@@ -90,7 +94,7 @@ public class UserService {
 
     @Transactional
     public UserResponse becomeOwner(UUID userId) {
-        User user = userRepository.findById(userId)
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         if (user.isOwner()) {
@@ -104,7 +108,7 @@ public class UserService {
 
     @Transactional
     public UserResponse becomeSupplier(UUID userId, BecomeSupplierRequest request) {
-        User user = userRepository.findById(userId)
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         if (user.isSupplier()) {
@@ -112,17 +116,17 @@ public class UserService {
         }
 
         // Create supplier profile with all required fields
-        Supplier supplier = new Supplier();
-        supplier.setUser(user);
+        SupplierModel supplier = new SupplierModel();
+        supplier.setUserId(userId);
         supplier.setBusinessName(request.businessName());
         supplier.setDescription(request.description());
-        supplier.setLocation(request.location());
-        supplier.setContactEmail(request.contactEmail() != null ? request.contactEmail() : user.getEmail());
-        supplier.setPhoneNumber(request.phoneNumber() != null ? request.phoneNumber() : user.getPhone());
+        supplier.setAddress(request.location());
+        supplier.setEmail(request.contactEmail() != null ? request.contactEmail() : user.getEmail());
+        supplier.setPhone(request.phoneNumber() != null ? request.phoneNumber() : user.getPhone());
         supplier.setCategory(request.category());
-        supplier.setEircode(request.eircode());
-        supplier.setLatitude(request.latitude());
-        supplier.setLongitude(request.longitude());
+        supplier.setCounty(request.eircode());
+        supplier.setLat(request.latitude());
+        supplier.setLng(request.longitude());
         supplierRepository.save(supplier);
 
         // Update user's supplier flag
@@ -132,7 +136,7 @@ public class UserService {
         return mapToUserResponse(user);
     }
 
-    private UserResponse mapToUserResponse(User user) {
+    private UserResponse mapToUserResponse(UserModel user) {
         List<UserResponse.LinkedAccountResponse> linkedAccounts = user.getLinkedAccounts().stream()
                 .map(la -> new UserResponse.LinkedAccountResponse(
                         la.getProvider().name().toLowerCase(),

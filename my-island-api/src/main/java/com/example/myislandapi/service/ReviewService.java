@@ -2,16 +2,20 @@ package com.example.myislandapi.service;
 
 import com.example.myislandapi.dto.request.CreateReviewRequest;
 import com.example.myislandapi.dto.response.ReviewResponse;
-import com.example.myislandapi.entity.ReviewCategories;
-import com.example.myislandapi.entity.Booking;
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Review;
+import com.example.myislandapi.model.ReviewCategories;
+import com.example.myislandapi.model.BookingModel;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.LotModel;
+import com.example.myislandapi.model.ReviewModel;
+import com.example.myislandapi.model.UserModel;
 import com.example.myislandapi.enums.BookingStatus;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.BookingRepository;
-import com.example.myislandapi.repository.CampsiteRepository;
-import com.example.myislandapi.repository.ReviewRepository;
+import com.example.myislandapi.repository.jdbc.JdbcBookingRepository;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcLotRepository;
+import com.example.myislandapi.repository.jdbc.JdbcReviewRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,25 +29,31 @@ import java.util.UUID;
 @Transactional
 public class ReviewService {
 
-    private final ReviewRepository reviewRepository;
-    private final BookingRepository bookingRepository;
-    private final CampsiteRepository campsiteRepository;
+    private final JdbcReviewRepository reviewRepository;
+    private final JdbcBookingRepository bookingRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
+    private final JdbcLotRepository lotRepository;
+    private final JdbcUserRepository userRepository;
 
-    public ReviewService(ReviewRepository reviewRepository,
-                        BookingRepository bookingRepository,
-                        CampsiteRepository campsiteRepository) {
+    public ReviewService(JdbcReviewRepository reviewRepository,
+                        JdbcBookingRepository bookingRepository,
+                        JdbcCampsiteRepository campsiteRepository,
+                        JdbcLotRepository lotRepository,
+                        JdbcUserRepository userRepository) {
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
         this.campsiteRepository = campsiteRepository;
+        this.lotRepository = lotRepository;
+        this.userRepository = userRepository;
     }
 
     public ReviewResponse createReview(UUID userId, CreateReviewRequest request) {
         // Get booking
-        Booking booking = bookingRepository.findById(request.bookingId())
+        BookingModel booking = bookingRepository.findById(request.bookingId())
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found: " + request.bookingId()));
 
         // Verify user owns the booking
-        if (!booking.getUser().getId().equals(userId)) {
+        if (!booking.getUserId().equals(userId)) {
             throw new ResourceNotFoundException("Booking not found: " + request.bookingId());
         }
 
@@ -57,11 +67,16 @@ public class ReviewService {
             throw new BadRequestException("Review already submitted for this booking");
         }
 
+        // Get lot and campsite
+        LotModel lot = lotRepository.findById(booking.getLotId())
+                .orElseThrow(() -> new ResourceNotFoundException("Lot not found"));
+        UUID campsiteId = lot.getCampsiteId();
+
         // Create review
-        Review review = new Review();
-        review.setUser(booking.getUser());
-        review.setCampsite(booking.getLot().getCampsite());
-        review.setBooking(booking);
+        ReviewModel review = new ReviewModel();
+        review.setUserId(userId);
+        review.setCampsiteId(campsiteId);
+        review.setBookingId(booking.getId());
         review.setRating(request.rating());
         review.setComment(request.comment());
 
@@ -77,7 +92,7 @@ public class ReviewService {
         review = reviewRepository.save(review);
 
         // Update campsite rating
-        updateCampsiteRating(booking.getLot().getCampsite().getId());
+        updateCampsiteRating(campsiteId);
 
         return toReviewResponse(review);
     }
@@ -95,21 +110,24 @@ public class ReviewService {
     }
 
     public ReviewResponse markHelpful(UUID reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+        ReviewModel review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
 
-        review.incrementHelpfulCount();
+        review.setHelpfulCount(review.getHelpfulCount() + 1);
         review = reviewRepository.save(review);
 
         return toReviewResponse(review);
     }
 
     public ReviewResponse addOwnerResponse(UUID reviewId, UUID ownerId, String response) {
-        Review review = reviewRepository.findById(reviewId)
+        ReviewModel review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found: " + reviewId));
 
         // Verify owner
-        if (!review.getCampsite().getOwner().getId().equals(ownerId)) {
+        CampsiteModel campsite = campsiteRepository.findById(review.getCampsiteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Campsite not found"));
+
+        if (!campsite.getOwnerId().equals(ownerId)) {
             throw new ResourceNotFoundException("Review not found: " + reviewId);
         }
 
@@ -127,7 +145,7 @@ public class ReviewService {
         Double avgRating = reviewRepository.getAverageRatingForCampsite(campsiteId);
         int reviewCount = reviewRepository.countByCampsiteId(campsiteId);
 
-        Campsite campsite = campsiteRepository.findById(campsiteId)
+        CampsiteModel campsite = campsiteRepository.findById(campsiteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite not found: " + campsiteId));
 
         if (avgRating != null) {
@@ -137,7 +155,7 @@ public class ReviewService {
         campsiteRepository.save(campsite);
     }
 
-    private ReviewResponse toReviewResponse(Review review) {
+    private ReviewResponse toReviewResponse(ReviewModel review) {
         ReviewResponse.ReviewCategoriesResponse categories = null;
         if (review.getCategories() != null) {
             categories = new ReviewResponse.ReviewCategoriesResponse(
@@ -148,10 +166,13 @@ public class ReviewService {
             );
         }
 
+        UserModel user = userRepository.findById(review.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         var userSummary = new ReviewResponse.UserSummary(
-                review.getUser().getId(),
-                review.getUser().getName(),
-                review.getUser().getAvatar()
+                user.getId(),
+                user.getName(),
+                user.getAvatar()
         );
 
         return new ReviewResponse(

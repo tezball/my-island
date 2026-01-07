@@ -6,13 +6,13 @@ import com.example.myislandapi.dto.request.UpdateLotRequest;
 import com.example.myislandapi.dto.response.AutoAssignLotResponse;
 import com.example.myislandapi.dto.response.LotResponse;
 import com.example.myislandapi.dto.response.LotTypeAggregationResponse;
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Lot;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.LotModel;
 import com.example.myislandapi.enums.LotType;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.exception.UnauthorizedException;
-import com.example.myislandapi.repository.CampsiteRepository;
-import com.example.myislandapi.repository.LotRepository;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcLotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class LotService {
 
-    private final LotRepository lotRepository;
-    private final CampsiteRepository campsiteRepository;
+    private final JdbcLotRepository lotRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
     private final AvailabilityService availabilityService;
 
-    public LotService(LotRepository lotRepository, CampsiteRepository campsiteRepository,
+    public LotService(JdbcLotRepository lotRepository, JdbcCampsiteRepository campsiteRepository,
                       AvailabilityService availabilityService) {
         this.lotRepository = lotRepository;
         this.campsiteRepository = campsiteRepository;
@@ -41,7 +41,7 @@ public class LotService {
     }
 
     public LotResponse getLotById(UUID id) {
-        Lot lot = lotRepository.findById(id)
+        LotModel lot = lotRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", "id", id));
         return toLotResponse(lot);
     }
@@ -54,15 +54,15 @@ public class LotService {
 
     @Transactional
     public LotResponse createLot(UUID ownerId, CreateLotRequest request) {
-        Campsite campsite = campsiteRepository.findById(request.campsiteId())
+        CampsiteModel campsite = campsiteRepository.findById(request.campsiteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite", "id", request.campsiteId()));
 
-        if (!campsite.getOwner().getId().equals(ownerId)) {
+        if (!campsite.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedException("Not authorized to add lots to this campsite");
         }
 
-        Lot lot = new Lot();
-        lot.setCampsite(campsite);
+        LotModel lot = new LotModel();
+        lot.setCampsiteId(campsite.getId());
         lot.setName(request.name());
         lot.setType(request.type());
         lot.setCapacity(request.capacity());
@@ -77,10 +77,13 @@ public class LotService {
 
     @Transactional
     public LotResponse updateLot(UUID lotId, UUID ownerId, UpdateLotRequest request) {
-        Lot lot = lotRepository.findById(lotId)
+        LotModel lot = lotRepository.findById(lotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", "id", lotId));
 
-        if (!lot.getCampsite().getOwner().getId().equals(ownerId)) {
+        CampsiteModel campsite = campsiteRepository.findById(lot.getCampsiteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Campsite not found"));
+
+        if (!campsite.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedException("Not authorized to update this lot");
         }
 
@@ -112,17 +115,20 @@ public class LotService {
 
     @Transactional
     public void deleteLot(UUID lotId, UUID ownerId) {
-        Lot lot = lotRepository.findById(lotId)
+        LotModel lot = lotRepository.findById(lotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", "id", lotId));
 
-        if (!lot.getCampsite().getOwner().getId().equals(ownerId)) {
+        CampsiteModel campsite = campsiteRepository.findById(lot.getCampsiteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Campsite not found"));
+
+        if (!campsite.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedException("Not authorized to delete this lot");
         }
 
-        lotRepository.delete(lot);
+        lotRepository.deleteById(lotId);
     }
 
-    private LotResponse toLotResponse(Lot lot) {
+    private LotResponse toLotResponse(LotModel lot) {
         return new LotResponse(
                 lot.getId(),
                 lot.getName(),
@@ -136,31 +142,31 @@ public class LotService {
     }
 
     public List<LotTypeAggregationResponse> getLotTypesByCampsiteId(UUID campsiteId) {
-        List<Lot> allLots = lotRepository.findByCampsiteId(campsiteId);
+        List<LotModel> allLots = lotRepository.findByCampsiteId(campsiteId);
 
-        Map<LotType, List<Lot>> lotsByType = allLots.stream()
-                .collect(Collectors.groupingBy(Lot::getType));
+        Map<LotType, List<LotModel>> lotsByType = allLots.stream()
+                .collect(Collectors.groupingBy(LotModel::getType));
 
         return lotsByType.entrySet().stream()
                 .map(entry -> {
                     LotType type = entry.getKey();
-                    List<Lot> typeLots = entry.getValue();
+                    List<LotModel> typeLots = entry.getValue();
 
                     int totalCount = typeLots.size();
-                    int availableCount = (int) typeLots.stream().filter(Lot::isAvailable).count();
+                    int availableCount = (int) typeLots.stream().filter(LotModel::isAvailable).count();
 
                     BigDecimal minPrice = typeLots.stream()
-                            .map(Lot::getPricePerNight)
+                            .map(LotModel::getPricePerNight)
                             .min(BigDecimal::compareTo)
                             .orElse(BigDecimal.ZERO);
 
                     BigDecimal maxPrice = typeLots.stream()
-                            .map(Lot::getPricePerNight)
+                            .map(LotModel::getPricePerNight)
                             .max(BigDecimal::compareTo)
                             .orElse(BigDecimal.ZERO);
 
                     int maxCapacity = typeLots.stream()
-                            .mapToInt(Lot::getCapacity)
+                            .mapToInt(LotModel::getCapacity)
                             .max()
                             .orElse(0);
 
@@ -197,14 +203,14 @@ public class LotService {
     }
 
     public AutoAssignLotResponse autoAssignLot(AutoAssignLotRequest request) {
-        List<Lot> candidateLots = lotRepository.findByCampsiteIdAndTypeAndAvailableTrueOrderByPricePerNightAsc(
+        List<LotModel> candidateLots = lotRepository.findByCampsiteIdAndTypeAndAvailableTrueOrderByPricePerNightAsc(
                 request.campsiteId(), request.type());
 
         if (candidateLots.isEmpty()) {
             throw new ResourceNotFoundException("No available lots of type " + request.type() + " found");
         }
 
-        for (Lot lot : candidateLots) {
+        for (LotModel lot : candidateLots) {
             if (lot.getCapacity() < request.guests()) {
                 continue;
             }
