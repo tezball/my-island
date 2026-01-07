@@ -18,6 +18,7 @@ import com.example.myislandapi.repository.BookingRepository;
 import com.example.myislandapi.repository.ExtraRepository;
 import com.example.myislandapi.repository.LotRepository;
 import com.example.myislandapi.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,19 +42,22 @@ public class BookingService {
     private final UserRepository userRepository;
     private final AvailabilityService availabilityService;
     private final EventPublisher eventPublisher;
+    private final EntityManager entityManager;
 
     public BookingService(BookingRepository bookingRepository,
                          LotRepository lotRepository,
                          ExtraRepository extraRepository,
                          UserRepository userRepository,
                          AvailabilityService availabilityService,
-                         EventPublisher eventPublisher) {
+                         EventPublisher eventPublisher,
+                         EntityManager entityManager) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.extraRepository = extraRepository;
         this.userRepository = userRepository;
         this.availabilityService = availabilityService;
         this.eventPublisher = eventPublisher;
+        this.entityManager = entityManager;
     }
 
     public BookingResponse createBooking(UUID userId, CreateBookingRequest request) {
@@ -118,10 +122,11 @@ public class BookingService {
         BigDecimal totalPrice = subtotal.add(serviceFee);
         booking.setTotalPrice(totalPrice);
 
-        // Save booking
+        // Save booking and flush to ensure it's visible to JDBC queries
         booking = bookingRepository.save(booking);
+        entityManager.flush();
 
-        // Block availability
+        // Block availability (uses JDBC, needs booking to exist in DB)
         availabilityService.blockDates(lot.getId(), request.checkIn(), request.checkOut(), booking.getId());
 
         // Publish events

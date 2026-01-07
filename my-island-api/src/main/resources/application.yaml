@@ -118,12 +118,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+    show-sql: false
 
   flyway:
-    enabled: false
+    enabled: true
+    locations: classpath:db/migration
 
 logging:
   level:
     root: WARN
     com.example.myislandapi: INFO
+    org.hibernate: WARN

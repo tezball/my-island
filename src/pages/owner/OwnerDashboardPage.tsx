@@ -23,11 +23,12 @@ export default function OwnerDashboardPage() {
   const { campsites, isLoading: campsitesLoading } = useProperty()
   const [propertyVisibility, setPropertyVisibility] = useState<Record<string, boolean>>({})
   const [broadcastMessage, setBroadcastMessage] = useState('')
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState<OwnerStats | null>(null)
   const [broadcastAlerts, setBroadcastAlerts] = useState<BroadcastAlert[]>([])
 
-  // Initialize visibility state when campsites load
+  // Initialize visibility state and select first property when campsites load
   useEffect(() => {
     if (campsites.length > 0) {
       const visibility: Record<string, boolean> = {}
@@ -35,8 +36,12 @@ export default function OwnerDashboardPage() {
         visibility[c.id] = true // Default to visible
       })
       setPropertyVisibility(visibility)
+      // Select first property by default for broadcasts
+      if (!selectedPropertyId) {
+        setSelectedPropertyId(campsites[0].id)
+      }
     }
-  }, [campsites])
+  }, [campsites, selectedPropertyId])
 
   useEffect(() => {
     async function fetchData() {
@@ -85,17 +90,32 @@ export default function OwnerDashboardPage() {
     )
   }
 
-  // Active guests = confirmed bookings that are currently checked in
-  // Using confirmedBookings as a proxy until we have a dedicated endpoint
-  const activeGuests = stats?.confirmedBookings || 0
+  // Active guests per property - using mock data until we have a dedicated endpoint
+  // In real app, this would come from an API that returns guests per property
+  const getActiveGuestsForProperty = (propertyId: string): number => {
+    // Mock: distribute confirmed bookings across properties
+    const totalConfirmed = stats?.confirmedBookings || 0
+    if (campsites.length === 0 || totalConfirmed === 0) return 0
+    // Simple distribution for demo - in real app this would be actual per-property data
+    const propertyIndex = campsites.findIndex(c => c.id === propertyId)
+    if (propertyIndex === -1) return 0
+    return Math.floor(totalConfirmed / campsites.length) + (propertyIndex === 0 ? totalConfirmed % campsites.length : 0)
+  }
+
+  const selectedProperty = campsites.find(c => c.id === selectedPropertyId)
+  const activeGuestsForSelectedProperty = selectedPropertyId ? getActiveGuestsForProperty(selectedPropertyId) : 0
 
   const handleBroadcast = () => {
-    if (broadcastMessage.trim() && activeGuests > 0) {
-      // In real app, would send broadcast via API
-      toast.success('Broadcast Sent', `Your message was sent to ${activeGuests} guests.`)
+    if (!selectedPropertyId || !selectedProperty) {
+      toast.error('No Property Selected', 'Please select a property to send the alert to.')
+      return
+    }
+    if (broadcastMessage.trim() && activeGuestsForSelectedProperty > 0) {
+      // In real app, would send broadcast via API with propertyId
+      toast.success('Alert Sent', `Your message was sent to ${activeGuestsForSelectedProperty} guests at ${selectedProperty.name}.`)
       setBroadcastMessage('')
-    } else if (activeGuests === 0) {
-      toast.info('No Active Guests', 'There are no guests currently checked in to receive your broadcast.')
+    } else if (activeGuestsForSelectedProperty === 0) {
+      toast.info('No Active Guests', `There are no guests currently checked in at ${selectedProperty.name}.`)
     }
   }
 
@@ -209,6 +229,25 @@ export default function OwnerDashboardPage() {
             <p className="text-sm text-slate-500 mb-3">
               Notify guests about fresh supplies, happy hours, or local events.
             </p>
+
+            {/* Property Selector */}
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
+                Select Property
+              </label>
+              <select
+                value={selectedPropertyId}
+                onChange={(e) => setSelectedPropertyId(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm appearance-none cursor-pointer"
+              >
+                {campsites.map(property => (
+                  <option key={property.id} value={property.id}>
+                    {property.name} ({getActiveGuestsForProperty(property.id)} guests)
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <textarea
               value={broadcastMessage}
               onChange={(e) => setBroadcastMessage(e.target.value.slice(0, 140))}
@@ -222,16 +261,16 @@ export default function OwnerDashboardPage() {
               </span>
               <Button
                 size="sm"
-                disabled={!broadcastMessage.trim()}
+                disabled={!broadcastMessage.trim() || !selectedPropertyId}
                 onClick={handleBroadcast}
                 rightIcon="send"
               >
-                Broadcast to Guests
+                Send Alert
               </Button>
             </div>
-            {broadcastMessage.trim() && (
+            {broadcastMessage.trim() && selectedProperty && (
               <p className="text-xs text-slate-500 mt-2">
-                This will send a push notification to {activeGuests} active guests.
+                This will send a push notification to {activeGuestsForSelectedProperty} active guests at {selectedProperty.name}.
               </p>
             )}
           </div>

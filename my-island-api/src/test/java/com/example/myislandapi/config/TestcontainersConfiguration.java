@@ -1,5 +1,6 @@
 package com.example.myislandapi.config;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +8,8 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
+
+import javax.sql.DataSource;
 
 /**
  * Test configuration that provides shared Testcontainers as Spring beans.
@@ -68,5 +71,24 @@ public class TestcontainersConfiguration {
     @Bean
     public LocalStackContainer localstackContainer() {
         return LOCALSTACK;
+    }
+
+    /**
+     * Configure Flyway for tests - runs migrations to create schema.
+     * This ensures the database schema exists before tests run.
+     */
+    @Bean
+    public Flyway flyway(DataSource dataSource) {
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/migration")
+                .cleanDisabled(false)
+                .load();
+
+        // Clean and migrate for a fresh test database
+        flyway.clean();
+        flyway.migrate();
+
+        return flyway;
     }
 }
