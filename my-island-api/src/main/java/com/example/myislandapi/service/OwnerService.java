@@ -5,13 +5,17 @@ import com.example.myislandapi.dto.response.CampsiteResponse;
 import com.example.myislandapi.dto.response.LocationResponse;
 import com.example.myislandapi.dto.response.OwnerStatsResponse;
 import com.example.myislandapi.dto.response.RevenueDataResponse;
-import com.example.myislandapi.entity.Booking;
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Lot;
 import com.example.myislandapi.enums.BookingStatus;
-import com.example.myislandapi.repository.BookingRepository;
-import com.example.myislandapi.repository.CampsiteRepository;
-import com.example.myislandapi.repository.ReviewRepository;
+import com.example.myislandapi.model.BookingModel;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.LotModel;
+import com.example.myislandapi.model.UserModel;
+import com.example.myislandapi.repository.jdbc.JdbcBookingRepository;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcExtraRepository;
+import com.example.myislandapi.repository.jdbc.JdbcLotRepository;
+import com.example.myislandapi.repository.jdbc.JdbcReviewRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,26 +34,38 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class OwnerService {
 
-    private final CampsiteRepository campsiteRepository;
-    private final BookingRepository bookingRepository;
-    private final ReviewRepository reviewRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
+    private final JdbcBookingRepository bookingRepository;
+    private final JdbcReviewRepository reviewRepository;
+    private final JdbcLotRepository lotRepository;
+    private final JdbcUserRepository userRepository;
+    private final JdbcExtraRepository extraRepository;
 
-    public OwnerService(CampsiteRepository campsiteRepository,
-                       BookingRepository bookingRepository,
-                       ReviewRepository reviewRepository) {
+    public OwnerService(JdbcCampsiteRepository campsiteRepository,
+                       JdbcBookingRepository bookingRepository,
+                       JdbcReviewRepository reviewRepository,
+                       JdbcLotRepository lotRepository,
+                       JdbcUserRepository userRepository,
+                       JdbcExtraRepository extraRepository) {
         this.campsiteRepository = campsiteRepository;
         this.bookingRepository = bookingRepository;
         this.reviewRepository = reviewRepository;
+        this.lotRepository = lotRepository;
+        this.userRepository = userRepository;
+        this.extraRepository = extraRepository;
     }
 
     public OwnerStatsResponse getOwnerStats(UUID ownerId) {
-        List<Campsite> campsites = campsiteRepository.findByOwnerId(ownerId);
+        List<CampsiteModel> campsites = campsiteRepository.findByOwnerId(ownerId);
 
         int totalCampsites = campsites.size();
-        int totalLots = campsites.stream().mapToInt(c -> c.getLots().size()).sum();
+        int totalLots = 0;
+        for (CampsiteModel campsite : campsites) {
+            totalLots += lotRepository.findByCampsiteId(campsite.getId()).size();
+        }
 
         // Get all bookings for owner
-        Page<Booking> bookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
+        Page<BookingModel> bookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
 
         int totalBookings = (int) bookings.getTotalElements();
         int pendingBookings = 0;
@@ -65,7 +81,7 @@ public class OwnerService {
         LocalDate startOfLastMonth = startOfThisMonth.minusMonths(1);
         LocalDate endOfLastMonth = startOfThisMonth.minusDays(1);
 
-        for (Booking booking : bookings) {
+        for (BookingModel booking : bookings) {
             switch (booking.getStatus()) {
                 case PENDING -> {
                     pendingBookings++;
@@ -119,7 +135,7 @@ public class OwnerService {
                 .orElse(0);
 
         int totalReviews = campsites.stream()
-                .mapToInt(Campsite::getReviewCount)
+                .mapToInt(CampsiteModel::getReviewCount)
                 .sum();
 
         return new OwnerStatsResponse(
@@ -140,12 +156,15 @@ public class OwnerService {
         );
     }
 
-    private double calculateOccupancyRate(List<Campsite> campsites, List<Booking> bookings, LocalDate today) {
+    private double calculateOccupancyRate(List<CampsiteModel> campsites, List<BookingModel> bookings, LocalDate today) {
         // Calculate occupancy for the current month
         LocalDate startOfMonth = today.withDayOfMonth(1);
         LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
-        int totalLots = campsites.stream().mapToInt(c -> c.getLots().size()).sum();
+        int totalLots = 0;
+        for (CampsiteModel campsite : campsites) {
+            totalLots += lotRepository.findByCampsiteId(campsite.getId()).size();
+        }
         if (totalLots == 0) {
             return 0.0;
         }
@@ -156,7 +175,7 @@ public class OwnerService {
 
         // Count booked nights
         int bookedNights = 0;
-        for (Booking booking : bookings) {
+        for (BookingModel booking : bookings) {
             // Only count confirmed, checked-in, or completed bookings
             if (booking.getStatus() == BookingStatus.PENDING ||
                 booking.getStatus() == BookingStatus.CANCELLED) {
@@ -188,7 +207,7 @@ public class OwnerService {
     }
 
     public Page<BookingResponse> getOwnerBookings(UUID ownerId, BookingStatus status, Pageable pageable) {
-        Page<Booking> bookings;
+        Page<BookingModel> bookings;
         if (status != null) {
             bookings = bookingRepository.findByOwnerIdAndStatus(ownerId, status, pageable);
         } else {
@@ -197,9 +216,10 @@ public class OwnerService {
         return bookings.map(this::toBookingResponse);
     }
 
-    private CampsiteResponse toCampsiteResponse(Campsite campsite) {
-        BigDecimal priceFrom = campsite.getLots().stream()
-                .map(Lot::getPricePerNight)
+    private CampsiteResponse toCampsiteResponse(CampsiteModel campsite) {
+        List<LotModel> lots = lotRepository.findByCampsiteId(campsite.getId());
+        BigDecimal priceFrom = lots.stream()
+                .map(LotModel::getPricePerNight)
                 .min(Comparator.naturalOrder())
                 .orElse(BigDecimal.ZERO);
 
@@ -224,45 +244,50 @@ public class OwnerService {
                 priceFrom,
                 campsite.getFacilities(),
                 campsite.isFeatured(),
-                campsite.getOwner().getId()
+                campsite.getOwnerId()
         );
     }
 
-    private BookingResponse toBookingResponse(Booking booking) {
-        Lot lot = booking.getLot();
-        var campsite = lot.getCampsite();
-        var user = booking.getUser();
+    private BookingResponse toBookingResponse(BookingModel booking) {
+        LotModel lot = lotRepository.findById(booking.getLotId()).orElse(null);
+        CampsiteModel campsite = lot != null ? campsiteRepository.findById(lot.getCampsiteId()).orElse(null) : null;
+        UserModel user = userRepository.findById(booking.getUserId()).orElse(null);
 
-        var lotSummary = new BookingResponse.LotSummary(
+        var lotSummary = lot != null ? new BookingResponse.LotSummary(
                 lot.getId(),
                 lot.getName(),
                 lot.getType().name(),
                 lot.getImages()
-        );
+        ) : null;
 
-        var campsiteSummary = new BookingResponse.CampsiteSummary(
+        var campsiteSummary = campsite != null ? new BookingResponse.CampsiteSummary(
                 campsite.getId(),
                 campsite.getName(),
                 campsite.getLocation() != null ? campsite.getLocation().getCounty() : null,
                 campsite.getImages().isEmpty() ? null : campsite.getImages().get(0)
-        );
+        ) : null;
 
-        var guestSummary = new BookingResponse.GuestSummary(
+        var guestSummary = user != null ? new BookingResponse.GuestSummary(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getAvatar()
-        );
+        ) : null;
 
-        List<BookingResponse.BookingExtraResponse> extras = booking.getBookingExtras().stream()
-                .map(be -> new BookingResponse.BookingExtraResponse(
-                        be.getExtra().getId(),
-                        be.getExtra().getName(),
-                        be.getQuantity(),
-                        be.getUnitPrice(),
-                        be.getTotalPrice()
-                ))
-                .toList();
+        List<BookingResponse.BookingExtraResponse> extras = booking.getBookingExtras() != null
+                ? booking.getBookingExtras().stream()
+                    .map(be -> {
+                        var extra = extraRepository.findById(be.getExtraId()).orElse(null);
+                        return new BookingResponse.BookingExtraResponse(
+                                be.getExtraId(),
+                                extra != null ? extra.getName() : "Unknown",
+                                be.getQuantity(),
+                                be.getUnitPrice(),
+                                be.getTotalPrice()
+                        );
+                    })
+                    .toList()
+                : List.of();
 
         return new BookingResponse(
                 booking.getId(),
@@ -288,7 +313,7 @@ public class OwnerService {
         List<RevenueDataResponse.MonthlyRevenue> monthlyData = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM");
 
-        Page<Booking> allBookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
+        Page<BookingModel> allBookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
 
         for (int i = months - 1; i >= 0; i--) {
             YearMonth targetMonth = YearMonth.now().minusMonths(i);
@@ -298,7 +323,7 @@ public class OwnerService {
             BigDecimal revenue = BigDecimal.ZERO;
             int bookingCount = 0;
 
-            for (Booking booking : allBookings) {
+            for (BookingModel booking : allBookings) {
                 if (booking.getStatus() == BookingStatus.COMPLETED &&
                     !booking.getCheckOut().isBefore(startOfMonth) &&
                     !booking.getCheckOut().isAfter(endOfMonth)) {

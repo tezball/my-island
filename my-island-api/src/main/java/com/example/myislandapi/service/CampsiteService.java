@@ -7,19 +7,19 @@ import com.example.myislandapi.dto.response.CampsiteDetailResponse;
 import com.example.myislandapi.dto.response.CampsiteResponse;
 import com.example.myislandapi.dto.response.LocationResponse;
 import com.example.myislandapi.dto.response.LotResponse;
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Location;
-import com.example.myislandapi.entity.Lot;
-import com.example.myislandapi.entity.User;
 import com.example.myislandapi.enums.Facility;
 import com.example.myislandapi.enums.LotType;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.exception.UnauthorizedException;
-import com.example.myislandapi.repository.CampsiteRepository;
-import com.example.myislandapi.repository.FavoriteRepository;
-import com.example.myislandapi.repository.LotRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.Location;
+import com.example.myislandapi.model.LotModel;
+import com.example.myislandapi.model.UserModel;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcFavoriteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcLotRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,15 +38,15 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CampsiteService {
 
-    private final CampsiteRepository campsiteRepository;
-    private final LotRepository lotRepository;
-    private final FavoriteRepository favoriteRepository;
-    private final UserRepository userRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
+    private final JdbcLotRepository lotRepository;
+    private final JdbcFavoriteRepository favoriteRepository;
+    private final JdbcUserRepository userRepository;
 
-    public CampsiteService(CampsiteRepository campsiteRepository,
-                          LotRepository lotRepository,
-                          FavoriteRepository favoriteRepository,
-                          UserRepository userRepository) {
+    public CampsiteService(JdbcCampsiteRepository campsiteRepository,
+                          JdbcLotRepository lotRepository,
+                          JdbcFavoriteRepository favoriteRepository,
+                          JdbcUserRepository userRepository) {
         this.campsiteRepository = campsiteRepository;
         this.lotRepository = lotRepository;
         this.favoriteRepository = favoriteRepository;
@@ -98,10 +98,10 @@ public class CampsiteService {
     }
 
     public CampsiteDetailResponse getCampsiteById(UUID id, UUID userId) {
-        Campsite campsite = campsiteRepository.findById(id)
+        CampsiteModel campsite = campsiteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite not found: " + id));
 
-        List<Lot> lots = lotRepository.findByCampsiteId(id);
+        List<LotModel> lots = lotRepository.findByCampsiteId(id);
         boolean isFavorite = userId != null && favoriteRepository.existsByUserIdAndCampsiteId(userId, id);
 
         return toCampsiteDetailResponse(campsite, lots, isFavorite);
@@ -131,14 +131,14 @@ public class CampsiteService {
 
     @Transactional
     public CampsiteDetailResponse createCampsite(UUID ownerId, CreateCampsiteRequest request) {
-        User owner = userRepository.findById(ownerId)
+        UserModel owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", ownerId));
 
         if (!owner.isOwner()) {
             throw new BadRequestException("User is not registered as an owner");
         }
 
-        Campsite campsite = new Campsite();
+        CampsiteModel campsite = new CampsiteModel();
         campsite.setName(request.name());
         campsite.setDescription(request.description());
         campsite.setLocation(new Location(
@@ -149,6 +149,7 @@ public class CampsiteService {
         ));
         campsite.setImages(request.images() != null ? new ArrayList<>(request.images()) : new ArrayList<>());
         campsite.setFacilities(request.facilities() != null ? new HashSet<>(request.facilities()) : new HashSet<>());
+        campsite.setOwnerId(ownerId);
         campsite.setOwner(owner);
         campsite.setActive(true);
 
@@ -158,10 +159,10 @@ public class CampsiteService {
 
     @Transactional
     public CampsiteDetailResponse updateCampsite(UUID campsiteId, UUID ownerId, UpdateCampsiteRequest request) {
-        Campsite campsite = campsiteRepository.findById(campsiteId)
+        CampsiteModel campsite = campsiteRepository.findById(campsiteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite", "id", campsiteId));
 
-        if (!campsite.getOwner().getId().equals(ownerId)) {
+        if (!campsite.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedException("Not authorized to update this campsite");
         }
 
@@ -201,20 +202,20 @@ public class CampsiteService {
         }
 
         campsite = campsiteRepository.save(campsite);
-        List<Lot> lots = lotRepository.findByCampsiteId(campsiteId);
+        List<LotModel> lots = lotRepository.findByCampsiteId(campsiteId);
         return toCampsiteDetailResponse(campsite, lots, false);
     }
 
     @Transactional
     public void deleteCampsite(UUID campsiteId, UUID ownerId) {
-        Campsite campsite = campsiteRepository.findById(campsiteId)
+        CampsiteModel campsite = campsiteRepository.findById(campsiteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite", "id", campsiteId));
 
-        if (!campsite.getOwner().getId().equals(ownerId)) {
+        if (!campsite.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedException("Not authorized to delete this campsite");
         }
 
-        campsiteRepository.delete(campsite);
+        campsiteRepository.deleteById(campsiteId);
     }
 
     /**
@@ -223,7 +224,7 @@ public class CampsiteService {
      */
     @Transactional
     public CampsiteDetailResponse createCampsiteFromDraft(UUID ownerId, PropertyDraftRequest draftData) {
-        User owner = userRepository.findById(ownerId)
+        UserModel owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", ownerId));
 
         if (!owner.isOwner()) {
@@ -231,7 +232,7 @@ public class CampsiteService {
         }
 
         // Create campsite
-        Campsite campsite = new Campsite();
+        CampsiteModel campsite = new CampsiteModel();
         campsite.setName(draftData.name());
         campsite.setDescription(draftData.description());
 
@@ -263,12 +264,13 @@ public class CampsiteService {
             campsite.setFacilities(new HashSet<>());
         }
 
+        campsite.setOwnerId(ownerId);
         campsite.setOwner(owner);
         campsite.setActive(true);
         campsite = campsiteRepository.save(campsite);
 
         // Create lots from accommodation configs
-        List<Lot> lots = new ArrayList<>();
+        List<LotModel> lots = new ArrayList<>();
         if (draftData.accommodationConfigs() != null) {
             for (var entry : draftData.accommodationConfigs().entrySet()) {
                 PropertyDraftRequest.AccommodationConfigRequest config = entry.getValue();
@@ -287,8 +289,8 @@ public class CampsiteService {
 
                 // Create lots for this accommodation type
                 for (int i = 1; i <= config.quantity(); i++) {
-                    Lot lot = new Lot();
-                    lot.setCampsite(campsite);
+                    LotModel lot = new LotModel();
+                    lot.setCampsiteId(campsite.getId());
                     lot.setName(getLotTypeLabel(lotType) + " " + i);
                     lot.setType(lotType);
                     lot.setCapacity(config.defaultCapacity() != null ? config.defaultCapacity() : 2);
@@ -335,13 +337,13 @@ public class CampsiteService {
         };
     }
 
-    private CampsiteResponse toCampsiteResponse(Campsite campsite) {
+    private CampsiteResponse toCampsiteResponse(CampsiteModel campsite) {
         // Use pricePerNight from campsite if available, otherwise calculate from lots
         BigDecimal priceFrom = campsite.getPricePerNight();
         if (priceFrom == null || priceFrom.equals(BigDecimal.ZERO)) {
-            List<Lot> lots = lotRepository.findByCampsiteId(campsite.getId());
+            List<LotModel> lots = lotRepository.findByCampsiteId(campsite.getId());
             priceFrom = lots.stream()
-                    .map(Lot::getPricePerNight)
+                    .map(LotModel::getPricePerNight)
                     .min(Comparator.naturalOrder())
                     .orElse(BigDecimal.ZERO);
         }
@@ -357,13 +359,13 @@ public class CampsiteService {
                 priceFrom,
                 campsite.getFacilities(),
                 campsite.isFeatured(),
-                campsite.getOwner().getId()
+                campsite.getOwnerId()
         );
     }
 
-    private CampsiteDetailResponse toCampsiteDetailResponse(Campsite campsite, List<Lot> lots, boolean isFavorite) {
+    private CampsiteDetailResponse toCampsiteDetailResponse(CampsiteModel campsite, List<LotModel> lots, boolean isFavorite) {
         BigDecimal priceFrom = lots.stream()
-                .map(Lot::getPricePerNight)
+                .map(LotModel::getPricePerNight)
                 .min(Comparator.naturalOrder())
                 .orElse(BigDecimal.ZERO);
 
@@ -382,13 +384,13 @@ public class CampsiteService {
                 priceFrom,
                 campsite.getFacilities(),
                 campsite.isFeatured(),
-                campsite.getOwner().getId(),
+                campsite.getOwnerId(),
                 lotResponses,
                 isFavorite
         );
     }
 
-    private LocationResponse toLocationResponse(Campsite campsite) {
+    private LocationResponse toLocationResponse(CampsiteModel campsite) {
         Location location = campsite.getLocation();
         if (location == null) {
             return new LocationResponse(null, null, null, null);
@@ -401,7 +403,7 @@ public class CampsiteService {
         );
     }
 
-    private LotResponse toLotResponse(Lot lot) {
+    private LotResponse toLotResponse(LotModel lot) {
         return new LotResponse(
                 lot.getId(),
                 lot.getName(),

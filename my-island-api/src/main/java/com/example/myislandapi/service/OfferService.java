@@ -1,10 +1,12 @@
 package com.example.myislandapi.service;
 
 import com.example.myislandapi.dto.response.OfferResponse;
-import com.example.myislandapi.entity.Offer;
 import com.example.myislandapi.enums.OfferCategory;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.OfferRepository;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.OfferModel;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcOfferRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,14 +19,16 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class OfferService {
 
-    private final OfferRepository offerRepository;
+    private final JdbcOfferRepository offerRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
 
-    public OfferService(OfferRepository offerRepository) {
+    public OfferService(JdbcOfferRepository offerRepository, JdbcCampsiteRepository campsiteRepository) {
         this.offerRepository = offerRepository;
+        this.campsiteRepository = campsiteRepository;
     }
 
     public Page<OfferResponse> getOffers(OfferCategory category, Pageable pageable) {
-        Page<Offer> offers;
+        Page<OfferModel> offers;
         if (category != null) {
             offers = offerRepository.findByActiveTrueAndCategory(category, pageable);
         } else {
@@ -39,7 +43,7 @@ public class OfferService {
     }
 
     public OfferResponse getOffer(UUID id) {
-        Offer offer = offerRepository.findById(id)
+        OfferModel offer = offerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Offer not found: " + id));
         return toOfferResponse(offer);
     }
@@ -54,7 +58,15 @@ public class OfferService {
         ).stream().map(this::toOfferResponse).toList();
     }
 
-    private OfferResponse toOfferResponse(Offer offer) {
+    private OfferResponse toOfferResponse(OfferModel offer) {
+        String campsiteName = null;
+        if (offer.getCampsiteId() != null) {
+            CampsiteModel campsite = campsiteRepository.findById(offer.getCampsiteId()).orElse(null);
+            if (campsite != null) {
+                campsiteName = campsite.getName();
+            }
+        }
+
         return new OfferResponse(
                 offer.getId(),
                 offer.getTitle(),
@@ -68,8 +80,8 @@ public class OfferService {
                 offer.getValidUntil(),
                 offer.getPromoCode(),
                 offer.isFeatured(),
-                offer.getCampsite() != null ? offer.getCampsite().getId() : null,
-                offer.getCampsite() != null ? offer.getCampsite().getName() : null
+                offer.getCampsiteId(),
+                campsiteName
         );
     }
 }

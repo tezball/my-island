@@ -4,6 +4,7 @@ import com.example.myislandapi.dto.request.LoginRequest;
 import com.example.myislandapi.dto.request.SignupRequest;
 import com.example.myislandapi.dto.response.AuthResponse;
 import com.example.myislandapi.dto.response.UserResponse;
+import com.example.myislandapi.event.EmailEvent;
 import com.example.myislandapi.model.UserModel;
 import com.example.myislandapi.exception.ConflictException;
 import com.example.myislandapi.exception.UnauthorizedException;
@@ -22,12 +23,14 @@ public class AuthService {
     private final JdbcUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EventPublisher eventPublisher;
 
     public AuthService(JdbcUserRepository userRepository, PasswordEncoder passwordEncoder,
-                       JwtTokenProvider jwtTokenProvider) {
+                       JwtTokenProvider jwtTokenProvider, EventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -42,6 +45,9 @@ public class AuthService {
         user.setName(request.name());
 
         user = userRepository.save(user);
+
+        // Publish welcome email event
+        eventPublisher.publishEmailEvent(EmailEvent.welcome(user.getId()));
 
         return generateAuthResponse(user);
     }

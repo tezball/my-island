@@ -1,11 +1,11 @@
 package com.example.myislandapi.listener;
 
 import com.example.myislandapi.config.KafkaConfig;
-import com.example.myislandapi.entity.Notification;
-import com.example.myislandapi.entity.User;
 import com.example.myislandapi.event.NotificationEvent;
-import com.example.myislandapi.repository.NotificationRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.model.NotificationModel;
+import com.example.myislandapi.model.UserModel;
+import com.example.myislandapi.repository.jdbc.JdbcNotificationRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,11 +16,11 @@ public class NotificationListener {
 
     private static final Logger log = LoggerFactory.getLogger(NotificationListener.class);
 
-    private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
+    private final JdbcNotificationRepository notificationRepository;
+    private final JdbcUserRepository userRepository;
 
-    public NotificationListener(NotificationRepository notificationRepository,
-                                UserRepository userRepository) {
+    public NotificationListener(JdbcNotificationRepository notificationRepository,
+                                JdbcUserRepository userRepository) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
     }
@@ -33,14 +33,14 @@ public class NotificationListener {
         log.info("Received notification event for user: {}, type: {}", event.userId(), event.type());
 
         try {
-            User user = userRepository.findById(event.userId()).orElse(null);
+            UserModel user = userRepository.findById(event.userId()).orElse(null);
             if (user == null) {
                 log.warn("User not found for notification: {}", event.userId());
                 return;
             }
 
-            Notification notification = new Notification();
-            notification.setUser(user);
+            NotificationModel notification = new NotificationModel();
+            notification.setUserId(event.userId());
             notification.setType(event.type());
             notification.setTitle(event.title());
             notification.setMessage(event.message());

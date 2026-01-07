@@ -1,34 +1,34 @@
 package com.example.myislandapi.fixture;
 
-import com.example.myislandapi.entity.User;
+import com.example.myislandapi.model.UserModel;
 
 /**
- * Fixtures for creating User entities in tests.
+ * Fixtures for creating UserModel instances in tests.
  */
 public class UserFixtures {
 
-    public static User createUser() {
+    public static UserModel createUser() {
         return createUser("test@example.com", "Test User", false, false);
     }
 
-    public static User createUser(String email) {
+    public static UserModel createUser(String email) {
         return createUser(email, "Test User", false, false);
     }
 
-    public static User createOwner() {
+    public static UserModel createOwner() {
         return createUser("owner@example.com", "Test Owner", true, false);
     }
 
-    public static User createOwner(String email) {
+    public static UserModel createOwner(String email) {
         return createUser(email, "Test Owner", true, false);
     }
 
-    public static User createSupplier() {
+    public static UserModel createSupplier() {
         return createUser("supplier@example.com", "Test Supplier", false, true);
     }
 
-    public static User createUser(String email, String name, boolean isOwner, boolean isSupplier) {
-        User user = new User();
+    public static UserModel createUser(String email, String name, boolean isOwner, boolean isSupplier) {
+        UserModel user = new UserModel();
         user.setEmail(email);
         user.setPasswordHash("$2a$10$dummyHashForTesting123456789012345678901234567890");
         user.setName(name);
@@ -73,8 +73,8 @@ public class UserFixtures {
             return this;
         }
 
-        public User build() {
-            User user = new User();
+        public UserModel build() {
+            UserModel user = new UserModel();
             user.setEmail(email);
             user.setPasswordHash(passwordHash);
             user.setName(name);

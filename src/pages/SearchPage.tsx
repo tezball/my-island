@@ -94,18 +94,33 @@ export default function SearchPage() {
     fetchFeatured()
   }, [])
 
-  // Search with debounce
+  // Search with debounce - triggers on query, filter, or location changes
   useEffect(() => {
-    if (query) {
+    const isNearMeSearch = query === 'Near me' && userLocation
+    const hasSearchCriteria = query || selectedFilters.length > 0
+
+    if (hasSearchCriteria) {
       setIsSearching(true)
       setError(null)
 
       const timer = setTimeout(async () => {
         try {
-          const data = await campsitesApi.search({
-            search: query,
-            facilities: selectedFilters.length > 0 ? selectedFilters : undefined
-          })
+          let data
+          if (isNearMeSearch) {
+            // Use location-based search
+            data = await campsitesApi.searchNearby(
+              userLocation.lat,
+              userLocation.lng,
+              50, // 50km radius
+              selectedFilters.length > 0 ? selectedFilters : undefined
+            )
+          } else {
+            // Regular text/filter search
+            data = await campsitesApi.search({
+              search: query || undefined,
+              facilities: selectedFilters.length > 0 ? selectedFilters : undefined
+            })
+          }
           setResults(data.map(mapToCampsite))
         } catch (err) {
           console.error('Search failed:', err)
@@ -120,7 +135,7 @@ export default function SearchPage() {
       setResults([])
       setIsSearching(false)
     }
-  }, [query, selectedFilters])
+  }, [query, selectedFilters, userLocation])
 
   const filteredResults = results
 
@@ -282,7 +297,7 @@ export default function SearchPage() {
 
         {/* Results */}
         <div className="flex-1 overflow-auto">
-          {!query ? (
+          {!query && selectedFilters.length === 0 ? (
             /* Initial state - show popular searches and featured campsites */
             <div className="px-4 py-4 space-y-6">
               {/* Popular Searches */}
@@ -315,9 +330,9 @@ export default function SearchPage() {
 
                 {/* Location Status */}
                 {userLocation && (
-                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                    <Icon name="location_on" size={14} />
-                    Location detected: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+                  <p className="mt-2 text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <Icon name="check_circle" size={14} />
+                    Location detected - tap "Near me" to search nearby campsites
                   </p>
                 )}
               </section>
@@ -382,6 +397,7 @@ export default function SearchPage() {
             <div className="px-4 py-4 space-y-4">
               <p className="text-sm text-slate-500">
                 {filteredResults.length} campsite{filteredResults.length !== 1 ? 's' : ''} found
+                {query === 'Near me' && userLocation && ' within 50km'}
               </p>
               {filteredResults.map((campsite) => (
                 <CampsiteCard key={campsite.id} campsite={campsite} />

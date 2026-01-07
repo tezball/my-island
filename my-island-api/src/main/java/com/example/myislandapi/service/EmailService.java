@@ -1,7 +1,7 @@
 package com.example.myislandapi.service;
 
-import com.example.myislandapi.entity.Booking;
-import com.example.myislandapi.entity.User;
+import com.example.myislandapi.model.BookingModel;
+import com.example.myislandapi.model.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +28,8 @@ public class EmailService {
     }
 
     @Async
-    public void sendBookingConfirmation(Booking booking) {
-        User user = booking.getUser();
+    public void sendBookingConfirmation(BookingModel booking) {
+        UserModel user = booking.getUser();
         String campsiteName = booking.getLot().getCampsite().getName();
         String lotName = booking.getLot().getName();
 
@@ -44,7 +44,7 @@ public class EmailService {
             - Lot: %s
             - Check-in: %s
             - Check-out: %s
-            - Total: €%.2f
+            - Total: %.2f
 
             Reference: %s
 
@@ -66,8 +66,8 @@ public class EmailService {
     }
 
     @Async
-    public void sendBookingCancellation(Booking booking) {
-        User user = booking.getUser();
+    public void sendBookingCancellation(BookingModel booking) {
+        UserModel user = booking.getUser();
         String campsiteName = booking.getLot().getCampsite().getName();
 
         String subject = "Booking Cancelled - " + campsiteName;
@@ -99,7 +99,7 @@ public class EmailService {
     }
 
     @Async
-    public void sendPasswordResetEmail(User user, String resetToken) {
+    public void sendPasswordResetEmail(UserModel user, String resetToken) {
         String subject = "Password Reset Request";
         String resetLink = "https://myisland.local/reset-password?token=" + resetToken;
 
@@ -126,7 +126,7 @@ public class EmailService {
     }
 
     @Async
-    public void sendWelcomeEmail(User user) {
+    public void sendWelcomeEmail(UserModel user) {
         String subject = "Welcome to My Island!";
         String body = String.format("""
             Hello %s,
@@ -151,8 +151,8 @@ public class EmailService {
     }
 
     @Async
-    public void sendCheckInReminder(Booking booking) {
-        User user = booking.getUser();
+    public void sendCheckInReminder(BookingModel booking) {
+        UserModel user = booking.getUser();
         String campsiteName = booking.getLot().getCampsite().getName();
 
         String subject = "Reminder: Your check-in is tomorrow - " + campsiteName;

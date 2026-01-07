@@ -3,10 +3,10 @@ package com.example.myislandapi.service;
 import com.example.myislandapi.dto.response.LocalBusinessMapMarker;
 import com.example.myislandapi.dto.response.LocalBusinessResponse;
 import com.example.myislandapi.dto.response.LocationResponse;
-import com.example.myislandapi.entity.LocalBusiness;
 import com.example.myislandapi.enums.SupplierCategory;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.LocalBusinessRepository;
+import com.example.myislandapi.model.LocalBusinessModel;
+import com.example.myislandapi.repository.jdbc.JdbcLocalBusinessRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,14 +19,14 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class LocalBusinessService {
 
-    private final LocalBusinessRepository repository;
+    private final JdbcLocalBusinessRepository repository;
 
-    public LocalBusinessService(LocalBusinessRepository repository) {
+    public LocalBusinessService(JdbcLocalBusinessRepository repository) {
         this.repository = repository;
     }
 
     public Page<LocalBusinessResponse> getAll(SupplierCategory category, String search, Pageable pageable) {
-        Page<LocalBusiness> businesses;
+        Page<LocalBusinessModel> businesses;
 
         if (search != null && !search.isBlank()) {
             businesses = repository.searchByNameOrDescription(search.trim(), pageable);
@@ -44,7 +44,7 @@ public class LocalBusinessService {
     }
 
     public LocalBusinessResponse getById(UUID id) {
-        LocalBusiness business = repository.findById(id)
+        LocalBusinessModel business = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Local business not found: " + id));
         return toResponse(business);
     }
@@ -52,7 +52,7 @@ public class LocalBusinessService {
     public List<LocalBusinessMapMarker> getMapMarkers(
             Double minLat, Double maxLat, Double minLng, Double maxLng, SupplierCategory category) {
 
-        List<LocalBusiness> businesses;
+        List<LocalBusinessModel> businesses;
         if (category != null) {
             businesses = repository.findWithinBoundsAndCategory(category, minLat, maxLat, minLng, maxLng);
         } else {
@@ -69,7 +69,7 @@ public class LocalBusinessService {
         double latDelta = radiusKm / 111.0;
         double lngDelta = radiusKm / (111.0 * Math.cos(Math.toRadians(lat)));
 
-        List<LocalBusiness> businesses;
+        List<LocalBusinessModel> businesses;
         if (category != null) {
             businesses = repository.findWithinBoundsAndCategory(
                     category,
@@ -109,7 +109,7 @@ public class LocalBusinessService {
         return R * c;
     }
 
-    private LocalBusinessResponse toResponse(LocalBusiness business) {
+    private LocalBusinessResponse toResponse(LocalBusinessModel business) {
         return new LocalBusinessResponse(
                 business.getId(),
                 business.getName(),
@@ -137,7 +137,7 @@ public class LocalBusinessService {
         );
     }
 
-    private LocalBusinessMapMarker toMapMarker(LocalBusiness business) {
+    private LocalBusinessMapMarker toMapMarker(LocalBusinessModel business) {
         return new LocalBusinessMapMarker(
                 business.getId(),
                 business.getName(),

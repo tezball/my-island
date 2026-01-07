@@ -64,17 +64,6 @@ public class JdbcBookingRepository {
     }
 
     public Page<BookingModel> findByOwnerId(UUID ownerId, Pageable pageable) {
-        String sql = """
-            SELECT b.* FROM bookings b
-            JOIN lots l ON b.lot_id = l.id
-            JOIN campsites c ON l.campsite_id = c.id
-            WHERE c.owner_id = :ownerId
-            ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset
-            """;
-        List<BookingModel> content = jdbc.query(sql,
-            Map.of("ownerId", ownerId, "limit", pageable.getPageSize(), "offset", pageable.getOffset()), rowMapper);
-        loadBookingExtras(content);
-
         String countSql = """
             SELECT COUNT(*) FROM bookings b
             JOIN lots l ON b.lot_id = l.id
@@ -82,6 +71,30 @@ public class JdbcBookingRepository {
             WHERE c.owner_id = :ownerId
             """;
         Long total = jdbc.queryForObject(countSql, Map.of("ownerId", ownerId), Long.class);
+
+        List<BookingModel> content;
+        if (pageable.isUnpaged()) {
+            String sql = """
+                SELECT b.* FROM bookings b
+                JOIN lots l ON b.lot_id = l.id
+                JOIN campsites c ON l.campsite_id = c.id
+                WHERE c.owner_id = :ownerId
+                ORDER BY b.created_at DESC
+                """;
+            content = jdbc.query(sql, Map.of("ownerId", ownerId), rowMapper);
+        } else {
+            String sql = """
+                SELECT b.* FROM bookings b
+                JOIN lots l ON b.lot_id = l.id
+                JOIN campsites c ON l.campsite_id = c.id
+                WHERE c.owner_id = :ownerId
+                ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset
+                """;
+            content = jdbc.query(sql,
+                Map.of("ownerId", ownerId, "limit", pageable.getPageSize(), "offset", pageable.getOffset()), rowMapper);
+        }
+        loadBookingExtras(content);
+
         return new PageImpl<>(content, pageable, total != null ? total : 0L);
     }
 

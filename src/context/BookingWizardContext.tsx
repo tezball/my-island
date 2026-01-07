@@ -424,33 +424,15 @@ export function BookingWizardProvider({
         selectedExtras: state.selectedExtras,
         currentStep: state.currentStep,
         completedSteps: state.completedSteps,
+        assignedLot: state.assignedLot,
+        maxCapacity: state.maxCapacity,
+        availableLotTypes: state.availableLotTypes,
       }
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave))
     } catch (error) {
       console.error('Failed to save booking wizard state:', error)
     }
   }, [state])
-
-  const loadFromStorage = useCallback((): boolean => {
-    try {
-      const stored = sessionStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const data = JSON.parse(stored)
-        dispatch({
-          type: 'LOAD_STATE',
-          payload: {
-            ...data,
-            checkIn: data.checkIn ? new Date(data.checkIn) : null,
-            checkOut: data.checkOut ? new Date(data.checkOut) : null,
-          },
-        })
-        return true
-      }
-    } catch (error) {
-      console.error('Failed to load booking wizard state:', error)
-    }
-    return false
-  }, [])
 
   // Auto-save on state changes (debounced)
   useEffect(() => {
@@ -471,12 +453,28 @@ export function BookingWizardProvider({
     }
   }, [state, saveToStorage])
 
-  // Load from storage on mount
+  // Load from storage on mount (only if stored state matches current campsite)
   useEffect(() => {
-    if (!campsiteId) {
-      loadFromStorage()
+    try {
+      const stored = sessionStorage.getItem(STORAGE_KEY)
+      if (stored) {
+        const data = JSON.parse(stored)
+        // Only restore if same campsite
+        if (data.campsiteId === campsiteId) {
+          dispatch({
+            type: 'LOAD_STATE',
+            payload: {
+              ...data,
+              checkIn: data.checkIn ? new Date(data.checkIn) : null,
+              checkOut: data.checkOut ? new Date(data.checkOut) : null,
+            },
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load booking wizard state:', error)
     }
-  }, [campsiteId, loadFromStorage])
+  }, [campsiteId])
 
   // ============================================
   // Validation

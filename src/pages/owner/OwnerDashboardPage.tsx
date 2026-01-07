@@ -161,8 +161,9 @@ export default function OwnerDashboardPage() {
             icon="calendar_month"
             value={stats?.totalBookings || 0}
             label="Total bookings"
-            trend={stats?.revenueChange ? Math.round(stats.revenueChange) : 0}
+            trend={stats?.revenueChange && stats.revenueChange > -100 && stats.revenueChange < 1000 ? Math.round(stats.revenueChange) : undefined}
             trendDirection={(stats?.revenueChange || 0) >= 0 ? 'up' : 'down'}
+            trendLabel="vs last month"
           />
           <StatCard
             icon="pending_actions"

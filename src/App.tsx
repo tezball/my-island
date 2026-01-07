@@ -182,7 +182,7 @@ function App() {
       <Route path="/book/:id/calendar" element={<LotCalendarPage />} />
       <Route path="/book/:id/guests" element={<GuestExtrasPage />} />
       <Route path="/book/:id/extras" element={<GuestExtrasPage />} />
-      <Route path="/book/:id/payment" element={<BookingPaymentPage />} />
+      <Route path="/book/:id/payment" element={<ProtectedRoute><BookingPaymentPage /></ProtectedRoute>} />
       <Route path="/book/:id/payment-methods" element={<PaymentMethodsPage />} />
       <Route path="/book/:id/add-payment" element={<AddPaymentMethodPage />} />
       <Route path="/book/:id/processing" element={<PaymentProcessingPage />} />

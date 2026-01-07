@@ -3,12 +3,11 @@ package com.example.myislandapi.service;
 import com.example.myislandapi.dto.request.PropertyDraftRequest;
 import com.example.myislandapi.dto.response.CampsiteDetailResponse;
 import com.example.myislandapi.dto.response.PropertyDraftResponse;
-import com.example.myislandapi.entity.PropertyDraft;
-import com.example.myislandapi.entity.User;
-import com.example.myislandapi.service.EventPublisher;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.PropertyDraftRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.model.PropertyDraftModel;
+import com.example.myislandapi.model.UserModel;
+import com.example.myislandapi.repository.jdbc.JdbcPropertyDraftRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -25,15 +24,15 @@ public class PropertySetupService {
 
     private static final Logger log = LoggerFactory.getLogger(PropertySetupService.class);
 
-    private final PropertyDraftRepository draftRepository;
-    private final UserRepository userRepository;
+    private final JdbcPropertyDraftRepository draftRepository;
+    private final JdbcUserRepository userRepository;
     private final CampsiteService campsiteService;
     private final EventPublisher eventPublisher;
     private final ObjectMapper objectMapper;
 
     public PropertySetupService(
-            PropertyDraftRepository draftRepository,
-            UserRepository userRepository,
+            JdbcPropertyDraftRepository draftRepository,
+            JdbcUserRepository userRepository,
             CampsiteService campsiteService,
             EventPublisher eventPublisher,
             ObjectMapper objectMapper) {
@@ -58,7 +57,7 @@ public class PropertySetupService {
      * Each owner can only have one draft at a time.
      */
     public PropertyDraftResponse saveDraft(UUID ownerId, PropertyDraftRequest request) {
-        User owner = userRepository.findById(ownerId)
+        UserModel owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String dataJson;
@@ -68,15 +67,21 @@ public class PropertySetupService {
             throw new RuntimeException("Failed to serialize draft data", e);
         }
 
-        PropertyDraft draft = draftRepository.findByOwnerId(ownerId)
+        PropertyDraftModel draft = draftRepository.findByOwnerId(ownerId)
                 .map(existing -> {
                     existing.setPropertyType(request.propertyType());
                     existing.setData(dataJson);
                     return existing;
                 })
-                .orElseGet(() -> new PropertyDraft(owner, request.propertyType(), dataJson));
+                .orElseGet(() -> {
+                    PropertyDraftModel newDraft = new PropertyDraftModel();
+                    newDraft.setOwnerId(ownerId);
+                    newDraft.setPropertyType(request.propertyType());
+                    newDraft.setData(dataJson);
+                    return newDraft;
+                });
 
-        PropertyDraft saved = draftRepository.save(draft);
+        PropertyDraftModel saved = draftRepository.save(draft);
 
         // Publish Kafka event
         eventPublisher.publishPropertyDraftSaved(saved.getId(), ownerId, request.propertyType());
@@ -98,10 +103,10 @@ public class PropertySetupService {
      * This creates the campsite/lots from the draft data and deletes the draft.
      */
     public CampsiteDetailResponse publishDraft(UUID draftId, UUID ownerId) {
-        PropertyDraft draft = draftRepository.findById(draftId)
+        PropertyDraftModel draft = draftRepository.findById(draftId)
                 .orElseThrow(() -> new ResourceNotFoundException("Draft not found"));
 
-        if (!draft.getOwner().getId().equals(ownerId)) {
+        if (!draft.getOwnerId().equals(ownerId)) {
             throw new IllegalArgumentException("Draft does not belong to this owner");
         }
 
@@ -116,7 +121,7 @@ public class PropertySetupService {
         CampsiteDetailResponse campsite = campsiteService.createCampsiteFromDraft(ownerId, draftData);
 
         // Delete the draft
-        draftRepository.delete(draft);
+        draftRepository.deleteById(draft.getId());
 
         // Publish Kafka events
         eventPublisher.publishPropertyCreated(campsite.id(), ownerId, draft.getPropertyType());
@@ -126,7 +131,7 @@ public class PropertySetupService {
         return campsite;
     }
 
-    private PropertyDraftResponse toResponse(PropertyDraft draft) {
+    private PropertyDraftResponse toResponse(PropertyDraftModel draft) {
         Object data;
         try {
             data = objectMapper.readValue(draft.getData(), Object.class);

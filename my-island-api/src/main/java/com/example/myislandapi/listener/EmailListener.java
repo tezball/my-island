@@ -1,11 +1,15 @@
 package com.example.myislandapi.listener;
 
 import com.example.myislandapi.config.KafkaConfig;
-import com.example.myislandapi.entity.Booking;
-import com.example.myislandapi.entity.User;
 import com.example.myislandapi.event.EmailEvent;
-import com.example.myislandapi.repository.BookingRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.model.BookingModel;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.LotModel;
+import com.example.myislandapi.model.UserModel;
+import com.example.myislandapi.repository.jdbc.JdbcBookingRepository;
+import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
+import com.example.myislandapi.repository.jdbc.JdbcLotRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import com.example.myislandapi.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +22,21 @@ public class EmailListener {
     private static final Logger log = LoggerFactory.getLogger(EmailListener.class);
 
     private final EmailService emailService;
-    private final UserRepository userRepository;
-    private final BookingRepository bookingRepository;
+    private final JdbcUserRepository userRepository;
+    private final JdbcBookingRepository bookingRepository;
+    private final JdbcLotRepository lotRepository;
+    private final JdbcCampsiteRepository campsiteRepository;
 
     public EmailListener(EmailService emailService,
-                        UserRepository userRepository,
-                        BookingRepository bookingRepository) {
+                        JdbcUserRepository userRepository,
+                        JdbcBookingRepository bookingRepository,
+                        JdbcLotRepository lotRepository,
+                        JdbcCampsiteRepository campsiteRepository) {
         this.emailService = emailService;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
+        this.lotRepository = lotRepository;
+        this.campsiteRepository = campsiteRepository;
     }
 
     @KafkaListener(
@@ -37,7 +47,7 @@ public class EmailListener {
         log.info("Received email event: {} for user: {}", event.emailType(), event.userId());
 
         try {
-            User user = userRepository.findById(event.userId()).orElse(null);
+            UserModel user = userRepository.findById(event.userId()).orElse(null);
             if (user == null) {
                 log.warn("User not found for email: {}", event.userId());
                 return;
@@ -45,20 +55,20 @@ public class EmailListener {
 
             switch (event.emailType()) {
                 case EmailEvent.TYPE_BOOKING_CONFIRMATION -> {
-                    Booking booking = bookingRepository.findById(event.referenceId()).orElse(null);
+                    BookingModel booking = loadBookingWithRelations(event.referenceId());
                     if (booking != null) {
                         emailService.sendBookingConfirmation(booking);
                     }
                 }
                 case EmailEvent.TYPE_BOOKING_CANCELLATION -> {
-                    Booking booking = bookingRepository.findById(event.referenceId()).orElse(null);
+                    BookingModel booking = loadBookingWithRelations(event.referenceId());
                     if (booking != null) {
                         emailService.sendBookingCancellation(booking);
                     }
                 }
                 case EmailEvent.TYPE_WELCOME -> emailService.sendWelcomeEmail(user);
                 case EmailEvent.TYPE_CHECK_IN_REMINDER -> {
-                    Booking booking = bookingRepository.findById(event.referenceId()).orElse(null);
+                    BookingModel booking = loadBookingWithRelations(event.referenceId());
                     if (booking != null) {
                         emailService.sendCheckInReminder(booking);
                     }
@@ -68,5 +78,21 @@ public class EmailListener {
         } catch (Exception e) {
             log.error("Error processing email event: {}", e.getMessage(), e);
         }
+    }
+
+    private BookingModel loadBookingWithRelations(java.util.UUID bookingId) {
+        BookingModel booking = bookingRepository.findById(bookingId).orElse(null);
+        if (booking == null) return null;
+
+        // Load user
+        userRepository.findById(booking.getUserId()).ifPresent(booking::setUser);
+
+        // Load lot and campsite
+        lotRepository.findById(booking.getLotId()).ifPresent(lot -> {
+            booking.setLot(lot);
+            campsiteRepository.findById(lot.getCampsiteId()).ifPresent(lot::setCampsite);
+        });
+
+        return booking;
     }
 }

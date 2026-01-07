@@ -1,32 +1,32 @@
 package com.example.myislandapi.fixture;
 
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Lot;
 import com.example.myislandapi.enums.LotType;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.LotModel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fixtures for creating Lot entities in tests.
+ * Fixtures for creating LotModel instances in tests.
  */
 public class LotFixtures {
 
-    public static Lot createLot(Campsite campsite) {
+    public static LotModel createLot(CampsiteModel campsite) {
         return builder()
                 .campsite(campsite)
                 .build();
     }
 
-    public static Lot createLot(Campsite campsite, String name) {
+    public static LotModel createLot(CampsiteModel campsite, String name) {
         return builder()
                 .campsite(campsite)
                 .name(name)
                 .build();
     }
 
-    public static Lot createLot(Campsite campsite, LotType type) {
+    public static LotModel createLot(CampsiteModel campsite, LotType type) {
         return builder()
                 .campsite(campsite)
                 .type(type)
@@ -38,7 +38,7 @@ public class LotFixtures {
     }
 
     public static class LotBuilder {
-        private Campsite campsite;
+        private CampsiteModel campsite;
         private String name = "Test Lot";
         private LotType type = LotType.TENT;
         private int capacity = 4;
@@ -47,7 +47,7 @@ public class LotFixtures {
         private List<String> images = new ArrayList<>();
         private List<String> amenities = new ArrayList<>(List.of("Fire Pit", "Picnic Table"));
 
-        public LotBuilder campsite(Campsite campsite) {
+        public LotBuilder campsite(CampsiteModel campsite) {
             this.campsite = campsite;
             return this;
         }
@@ -87,9 +87,12 @@ public class LotFixtures {
             return this;
         }
 
-        public Lot build() {
-            Lot lot = new Lot();
-            lot.setCampsite(campsite);
+        public LotModel build() {
+            LotModel lot = new LotModel();
+            if (campsite != null) {
+                lot.setCampsiteId(campsite.getId());
+                lot.setCampsite(campsite);
+            }
             lot.setName(name);
             lot.setType(type);
             lot.setCapacity(capacity);

@@ -1,7 +1,7 @@
 package com.example.myislandapi.dto.response;
 
-import com.example.myislandapi.entity.Supplier;
 import com.example.myislandapi.enums.SupplierCategory;
+import com.example.myislandapi.model.SupplierModel;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,10 +22,10 @@ public record SupplierProfileResponse(
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static SupplierProfileResponse from(Supplier supplier) {
+    public static SupplierProfileResponse from(SupplierModel supplier) {
         return new SupplierProfileResponse(
                 supplier.getId(),
-                supplier.getUser().getId(),
+                supplier.getUserId(),
                 supplier.getBusinessName(),
                 supplier.getDescription(),
                 supplier.getLocation(),

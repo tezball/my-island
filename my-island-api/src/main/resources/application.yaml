@@ -19,15 +19,6 @@ spring:
     password: myisland
     driver-class-name: org.postgresql.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-
   # Flyway - disabled auto-configuration, using custom FlywayConfig bean
   flyway:
     enabled: false
@@ -97,7 +88,6 @@ logging:
     root: INFO
     com.example.myislandapi: DEBUG
     org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
     org.flywaydb: DEBUG
 
 # Application Configuration
@@ -116,11 +106,6 @@ spring:
     url: jdbc:tc:postgresql:17-alpine:///myisland
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -129,4 +114,3 @@ logging:
   level:
     root: WARN
     com.example.myislandapi: INFO
-    org.hibernate: WARN

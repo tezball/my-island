@@ -136,8 +136,9 @@ export default function OwnerStatsPage() {
             icon="payments"
             value={`€${(stats?.totalRevenue || 0).toLocaleString()}`}
             label="Revenue"
-            trend={stats?.revenueChange ? Math.round(stats.revenueChange) : 0}
+            trend={stats?.revenueChange && stats.revenueChange > -100 && stats.revenueChange < 1000 ? Math.round(stats.revenueChange) : undefined}
             trendDirection={(stats?.revenueChange || 0) >= 0 ? 'up' : 'down'}
+            trendLabel="vs last month"
           />
           <StatCard
             icon="hotel"

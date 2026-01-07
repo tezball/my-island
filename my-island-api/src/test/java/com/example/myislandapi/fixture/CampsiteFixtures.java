@@ -1,9 +1,9 @@
 package com.example.myislandapi.fixture;
 
-import com.example.myislandapi.entity.Campsite;
-import com.example.myislandapi.entity.Location;
-import com.example.myislandapi.entity.User;
 import com.example.myislandapi.enums.Facility;
+import com.example.myislandapi.model.CampsiteModel;
+import com.example.myislandapi.model.Location;
+import com.example.myislandapi.model.UserModel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Fixtures for creating Campsite entities in tests.
+ * Fixtures for creating CampsiteModel instances in tests.
  */
 public class CampsiteFixtures {
 
-    public static Campsite createCampsite(User owner) {
+    public static CampsiteModel createCampsite(UserModel owner) {
         return builder()
                 .owner(owner)
                 .build();
     }
 
-    public static Campsite createCampsite(User owner, String name) {
+    public static CampsiteModel createCampsite(UserModel owner, String name) {
         return builder()
                 .owner(owner)
                 .name(name)
@@ -36,7 +36,7 @@ public class CampsiteFixtures {
     public static class CampsiteBuilder {
         private String name = "Test Campsite";
         private String description = "A beautiful campsite for testing";
-        private User owner;
+        private UserModel owner;
         private boolean active = true;
         private boolean featured = false;
         private BigDecimal pricePerNight = new BigDecimal("50.00");
@@ -57,7 +57,7 @@ public class CampsiteFixtures {
             return this;
         }
 
-        public CampsiteBuilder owner(User owner) {
+        public CampsiteBuilder owner(UserModel owner) {
             this.owner = owner;
             return this;
         }
@@ -105,11 +105,14 @@ public class CampsiteFixtures {
             return this;
         }
 
-        public Campsite build() {
-            Campsite campsite = new Campsite();
+        public CampsiteModel build() {
+            CampsiteModel campsite = new CampsiteModel();
             campsite.setName(name);
             campsite.setDescription(description);
-            campsite.setOwner(owner);
+            if (owner != null) {
+                campsite.setOwnerId(owner.getId());
+                campsite.setOwner(owner);
+            }
             campsite.setActive(active);
             campsite.setFeatured(featured);
             campsite.setPricePerNight(pricePerNight);

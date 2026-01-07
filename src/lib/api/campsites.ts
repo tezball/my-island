@@ -88,6 +88,9 @@ export interface SearchParams {
   guests?: number
   page?: number
   size?: number
+  lat?: number
+  lng?: number
+  radius?: number
 }
 
 export interface MapBoundsParams {
@@ -122,6 +125,38 @@ export const campsitesApi = {
   // Get campsites for map view
   getMapMarkers: (bounds: MapBoundsParams) =>
     api.get<MapMarkerResponse[]>(`/campsites/map${buildQueryString(bounds)}`),
+
+  // Search campsites near a location (uses map endpoint with calculated bounding box)
+  searchNearby: async (lat: number, lng: number, radiusKm: number = 50, facilities?: Facility[]): Promise<CampsiteResponse[]> => {
+    // Calculate bounding box from lat/lng and radius
+    // 1 degree latitude ≈ 111km
+    // 1 degree longitude ≈ 111km * cos(latitude)
+    const latDelta = radiusKm / 111.0
+    const lngDelta = radiusKm / (111.0 * Math.cos(lat * Math.PI / 180))
+
+    const bounds: MapBoundsParams = {
+      minLat: lat - latDelta,
+      maxLat: lat + latDelta,
+      minLng: lng - lngDelta,
+      maxLng: lng + lngDelta,
+    }
+
+    const campsites = await api.get<CampsiteResponse[]>(`/campsites/map${buildQueryString(bounds)}`)
+
+    // Filter by facilities client-side if specified (since map endpoint doesn't support it)
+    if (facilities && facilities.length > 0) {
+      return campsites.filter(c =>
+        facilities.every(f => c.facilities.map(cf => cf.toLowerCase()).includes(f.toLowerCase()))
+      )
+    }
+
+    // Sort by distance from user
+    return campsites.sort((a, b) => {
+      const distA = Math.sqrt(Math.pow(a.location.lat - lat, 2) + Math.pow(a.location.lng - lng, 2))
+      const distB = Math.sqrt(Math.pow(b.location.lat - lat, 2) + Math.pow(b.location.lng - lng, 2))
+      return distA - distB
+    })
+  },
 
   // Get campsite reviews (delegated to reviews service)
   getReviews: (campsiteId: string) =>

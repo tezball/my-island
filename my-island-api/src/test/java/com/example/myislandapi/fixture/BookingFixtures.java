@@ -1,26 +1,26 @@
 package com.example.myislandapi.fixture;
 
-import com.example.myislandapi.entity.Booking;
-import com.example.myislandapi.entity.Lot;
-import com.example.myislandapi.entity.User;
 import com.example.myislandapi.enums.BookingStatus;
+import com.example.myislandapi.model.BookingModel;
+import com.example.myislandapi.model.LotModel;
+import com.example.myislandapi.model.UserModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Fixtures for creating Booking entities in tests.
+ * Fixtures for creating BookingModel instances in tests.
  */
 public class BookingFixtures {
 
-    public static Booking createBooking(User user, Lot lot) {
+    public static BookingModel createBooking(UserModel user, LotModel lot) {
         return builder()
                 .user(user)
                 .lot(lot)
                 .build();
     }
 
-    public static Booking createBooking(User user, Lot lot, LocalDate checkIn, LocalDate checkOut) {
+    public static BookingModel createBooking(UserModel user, LotModel lot, LocalDate checkIn, LocalDate checkOut) {
         return builder()
                 .user(user)
                 .lot(lot)
@@ -34,8 +34,8 @@ public class BookingFixtures {
     }
 
     public static class BookingBuilder {
-        private User user;
-        private Lot lot;
+        private UserModel user;
+        private LotModel lot;
         private LocalDate checkIn = LocalDate.now().plusDays(7);
         private LocalDate checkOut = LocalDate.now().plusDays(10);
         private int guests = 2;
@@ -46,12 +46,12 @@ public class BookingFixtures {
         private BigDecimal totalPrice = new BigDecimal("115.00");
         private String specialRequests = null;
 
-        public BookingBuilder user(User user) {
+        public BookingBuilder user(UserModel user) {
             this.user = user;
             return this;
         }
 
-        public BookingBuilder lot(Lot lot) {
+        public BookingBuilder lot(LotModel lot) {
             this.lot = lot;
             return this;
         }
@@ -111,10 +111,16 @@ public class BookingFixtures {
             return this;
         }
 
-        public Booking build() {
-            Booking booking = new Booking();
-            booking.setUser(user);
-            booking.setLot(lot);
+        public BookingModel build() {
+            BookingModel booking = new BookingModel();
+            if (user != null) {
+                booking.setUserId(user.getId());
+                booking.setUser(user);
+            }
+            if (lot != null) {
+                booking.setLotId(lot.getId());
+                booking.setLot(lot);
+            }
             booking.setCheckIn(checkIn);
             booking.setCheckOut(checkOut);
             booking.setGuests(guests);

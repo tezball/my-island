@@ -2,11 +2,11 @@ package com.example.myislandapi.service;
 
 import com.example.myislandapi.dto.request.UpdateSupplierProfileRequest;
 import com.example.myislandapi.dto.response.SupplierProfileResponse;
-import com.example.myislandapi.entity.Supplier;
-import com.example.myislandapi.entity.User;
 import com.example.myislandapi.exception.ResourceNotFoundException;
-import com.example.myislandapi.repository.SupplierRepository;
-import com.example.myislandapi.repository.UserRepository;
+import com.example.myislandapi.model.SupplierModel;
+import com.example.myislandapi.model.UserModel;
+import com.example.myislandapi.repository.jdbc.JdbcSupplierRepository;
+import com.example.myislandapi.repository.jdbc.JdbcUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,24 +15,24 @@ import java.util.UUID;
 @Service
 public class SupplierService {
 
-    private final SupplierRepository supplierRepository;
-    private final UserRepository userRepository;
+    private final JdbcSupplierRepository supplierRepository;
+    private final JdbcUserRepository userRepository;
 
-    public SupplierService(SupplierRepository supplierRepository, UserRepository userRepository) {
+    public SupplierService(JdbcSupplierRepository supplierRepository, JdbcUserRepository userRepository) {
         this.supplierRepository = supplierRepository;
         this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
     public SupplierProfileResponse getProfile(UUID userId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
+        SupplierModel supplier = supplierRepository.findByUserId(userId)
                 .orElseGet(() -> createSupplierProfile(userId));
         return SupplierProfileResponse.from(supplier);
     }
 
     @Transactional
     public SupplierProfileResponse updateProfile(UUID userId, UpdateSupplierProfileRequest request) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
+        SupplierModel supplier = supplierRepository.findByUserId(userId)
                 .orElseGet(() -> createSupplierProfile(userId));
 
         if (request.businessName() != null) {
@@ -69,7 +69,7 @@ public class SupplierService {
 
     @Transactional
     public SupplierProfileResponse updateLogoUrl(UUID userId, String logoUrl) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
+        SupplierModel supplier = supplierRepository.findByUserId(userId)
                 .orElseGet(() -> createSupplierProfile(userId));
 
         supplier.setLogoUrl(logoUrl);
@@ -77,12 +77,12 @@ public class SupplierService {
         return SupplierProfileResponse.from(supplier);
     }
 
-    private Supplier createSupplierProfile(UUID userId) {
-        User user = userRepository.findById(userId)
+    private SupplierModel createSupplierProfile(UUID userId) {
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        Supplier supplier = new Supplier();
-        supplier.setUser(user);
+        SupplierModel supplier = new SupplierModel();
+        supplier.setUserId(userId);
         supplier.setContactEmail(user.getEmail());
         supplier.setPhoneNumber(user.getPhone());
         return supplierRepository.save(supplier);
