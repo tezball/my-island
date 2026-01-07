@@ -122,7 +122,7 @@ public class BookingService {
         booking = bookingRepository.save(booking);
 
         // Block availability
-        availabilityService.blockDates(lot.getId(), request.checkIn(), request.checkOut(), booking);
+        availabilityService.blockDates(lot.getId(), request.checkIn(), request.checkOut(), booking.getId());
 
         // Publish events
         publishBookingCreatedEvents(booking);

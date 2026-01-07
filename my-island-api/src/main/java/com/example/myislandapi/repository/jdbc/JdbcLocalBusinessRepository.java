@@ -220,7 +220,7 @@ public class JdbcLocalBusinessRepository {
         params.addValue("category", business.getCategory() != null ? business.getCategory().name() : null);
         params.addValue("phone", business.getPhone());
         params.addValue("email", business.getEmail());
-        params.addValue("websiteUrl", business.getWebsiteUrl());
+        params.addValue("websiteUrl", business.getWebsite());
         params.addValue("address", location != null ? location.getAddress() : null);
         params.addValue("county", location != null ? location.getCounty() : null);
         params.addValue("lat", location != null ? location.getLat() : null);

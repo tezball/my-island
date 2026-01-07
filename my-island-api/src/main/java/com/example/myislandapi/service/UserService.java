@@ -120,13 +120,13 @@ public class UserService {
         supplier.setUserId(userId);
         supplier.setBusinessName(request.businessName());
         supplier.setDescription(request.description());
-        supplier.setAddress(request.location());
-        supplier.setEmail(request.contactEmail() != null ? request.contactEmail() : user.getEmail());
-        supplier.setPhone(request.phoneNumber() != null ? request.phoneNumber() : user.getPhone());
+        supplier.setLocation(request.location());
+        supplier.setContactEmail(request.contactEmail() != null ? request.contactEmail() : user.getEmail());
+        supplier.setPhoneNumber(request.phoneNumber() != null ? request.phoneNumber() : user.getPhone());
         supplier.setCategory(request.category());
-        supplier.setCounty(request.eircode());
-        supplier.setLat(request.latitude());
-        supplier.setLng(request.longitude());
+        supplier.setEircode(request.eircode());
+        supplier.setLatitude(request.latitude());
+        supplier.setLongitude(request.longitude());
         supplierRepository.save(supplier);
 
         // Update user's supplier flag

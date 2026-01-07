@@ -181,6 +181,12 @@ public class JdbcCampsiteRepository {
         return results;
     }
 
+    public boolean existsById(UUID id) {
+        String sql = "SELECT COUNT(*) FROM campsites WHERE id = :id";
+        Integer count = jdbc.queryForObject(sql, Map.of("id", id), Integer.class);
+        return count != null && count > 0;
+    }
+
     @Transactional
     public CampsiteModel save(CampsiteModel campsite) {
         if (campsite.getId() == null) {

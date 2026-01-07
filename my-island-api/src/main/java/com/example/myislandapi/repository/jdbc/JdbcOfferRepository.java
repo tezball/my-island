@@ -128,12 +128,12 @@ public class JdbcOfferRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", offer.getId());
         params.addValue("campsiteId", offer.getCampsiteId());
-        params.addValue("name", offer.getName());
+        params.addValue("name", offer.getTitle());
         params.addValue("description", offer.getDescription());
-        params.addValue("discountPercentage", offer.getDiscountPercentage());
+        params.addValue("discountPercentage", offer.getDiscountPercent());
         params.addValue("category", offer.getCategory() != null ? offer.getCategory().name() : null);
-        params.addValue("startDate", offer.getStartDate() != null ? Date.valueOf(offer.getStartDate()) : null);
-        params.addValue("endDate", offer.getEndDate() != null ? Date.valueOf(offer.getEndDate()) : null);
+        params.addValue("startDate", offer.getValidFrom() != null ? Date.valueOf(offer.getValidFrom()) : null);
+        params.addValue("endDate", offer.getValidUntil() != null ? Date.valueOf(offer.getValidUntil()) : null);
         params.addValue("imageUrl", offer.getImageUrl());
         params.addValue("lat", offer.getLat());
         params.addValue("lng", offer.getLng());

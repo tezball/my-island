@@ -13,6 +13,7 @@ public class PropertyDraftModel {
     private UUID id;
     private UUID ownerId;
     private PropertyType propertyType;
+    private Integer currentStep;
     private String data; // JSON string
     private Instant createdAt;
     private Instant updatedAt;
@@ -42,6 +43,14 @@ public class PropertyDraftModel {
 
     public void setPropertyType(PropertyType propertyType) {
         this.propertyType = propertyType;
+    }
+
+    public Integer getCurrentStep() {
+        return currentStep;
+    }
+
+    public void setCurrentStep(Integer currentStep) {
+        this.currentStep = currentStep;
     }
 
     public String getData() {

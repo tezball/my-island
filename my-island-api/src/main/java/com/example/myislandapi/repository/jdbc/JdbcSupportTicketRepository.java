@@ -116,7 +116,7 @@ public class JdbcSupportTicketRepository {
             message.setTicketId(UUID.fromString(rs.getString("ticket_id")));
             message.setSenderId(UUID.fromString(rs.getString("sender_id")));
             message.setContent(rs.getString("content"));
-            message.setFromSupport(rs.getBoolean("from_support"));
+            message.setStaffReply(rs.getBoolean("from_support"));
             message.setCreatedAt(rs.getTimestamp("created_at").toInstant());
             message.setUpdatedAt(rs.getTimestamp("updated_at").toInstant());
             messagesMap.computeIfAbsent(message.getTicketId(), k -> new ArrayList<>()).add(message);
@@ -146,15 +146,15 @@ public class JdbcSupportTicketRepository {
                 message.setTicketId(ticket.getId());
                 message.setUpdatedAt(AuditingUtil.now());
 
-                jdbc.update(sql, Map.of(
-                    "id", message.getId(),
-                    "ticketId", message.getTicketId(),
-                    "senderId", message.getSenderId(),
-                    "content", message.getContent(),
-                    "fromSupport", message.isFromSupport(),
-                    "createdAt", Timestamp.from(message.getCreatedAt()),
-                    "updatedAt", Timestamp.from(message.getUpdatedAt())
-                ));
+                MapSqlParameterSource params = new MapSqlParameterSource();
+                params.addValue("id", message.getId());
+                params.addValue("ticketId", message.getTicketId());
+                params.addValue("senderId", message.getSenderId());
+                params.addValue("content", message.getContent());
+                params.addValue("fromSupport", message.isStaffReply());
+                params.addValue("createdAt", Timestamp.from(message.getCreatedAt()));
+                params.addValue("updatedAt", Timestamp.from(message.getUpdatedAt()));
+                jdbc.update(sql, params);
             }
         }
     }

@@ -19,6 +19,7 @@ public class CheckInInstructionsModel {
     private String wifiPassword;
     private LocalTime checkInTime = LocalTime.of(14, 0);
     private LocalTime checkOutTime = LocalTime.of(11, 0);
+    private String instructions;
     private String directions;
     private String parkingInfo;
     private String hostName;
@@ -95,6 +96,14 @@ public class CheckInInstructionsModel {
 
     public void setCheckOutTime(LocalTime checkOutTime) {
         this.checkOutTime = checkOutTime;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
     }
 
     public String getDirections() {

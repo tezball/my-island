@@ -100,6 +100,12 @@ public class JdbcLotRepository {
         return lot;
     }
 
+    public boolean existsById(UUID id) {
+        String sql = "SELECT COUNT(*) FROM lots WHERE id = :id";
+        Integer count = jdbc.queryForObject(sql, Map.of("id", id), Integer.class);
+        return count != null && count > 0;
+    }
+
     @Transactional
     public void deleteById(UUID id) {
         jdbc.update("DELETE FROM lot_images WHERE lot_id = :id", Map.of("id", id));

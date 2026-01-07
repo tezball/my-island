@@ -1,6 +1,6 @@
 package com.example.myislandapi.dto.response;
 
-import com.example.myislandapi.entity.NotificationPreferences;
+import com.example.myislandapi.model.NotificationPreferences;
 
 import java.time.Instant;
 import java.util.List;
