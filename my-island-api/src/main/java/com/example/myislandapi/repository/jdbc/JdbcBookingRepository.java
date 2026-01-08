@@ -201,9 +201,9 @@ public class JdbcBookingRepository {
 
         String sql = """
             INSERT INTO bookings (id, user_id, lot_id, check_in, check_out, guests, status,
-                lot_price, extras_price, service_fee, total_price, special_requests, cancellation_reason, created_at, updated_at)
+                lot_price, extras_price, service_fee, total_price, special_requests, cancellation_reason, payment_intent_id, created_at, updated_at)
             VALUES (:id, :userId, :lotId, :checkIn, :checkOut, :guests, :status,
-                :lotPrice, :extrasPrice, :serviceFee, :totalPrice, :specialRequests, :cancellationReason, :createdAt, :updatedAt)
+                :lotPrice, :extrasPrice, :serviceFee, :totalPrice, :specialRequests, :cancellationReason, :paymentIntentId, :createdAt, :updatedAt)
             """;
 
         jdbc.update(sql, toParameterSource(booking));
@@ -219,7 +219,7 @@ public class JdbcBookingRepository {
                 user_id = :userId, lot_id = :lotId, check_in = :checkIn, check_out = :checkOut,
                 guests = :guests, status = :status, lot_price = :lotPrice, extras_price = :extrasPrice,
                 service_fee = :serviceFee, total_price = :totalPrice, special_requests = :specialRequests,
-                cancellation_reason = :cancellationReason, updated_at = :updatedAt
+                cancellation_reason = :cancellationReason, payment_intent_id = :paymentIntentId, updated_at = :updatedAt
             WHERE id = :id
             """;
 
@@ -299,6 +299,7 @@ public class JdbcBookingRepository {
         params.addValue("totalPrice", booking.getTotalPrice());
         params.addValue("specialRequests", booking.getSpecialRequests());
         params.addValue("cancellationReason", booking.getCancellationReason());
+        params.addValue("paymentIntentId", booking.getPaymentIntentId());
         params.addValue("createdAt", Timestamp.from(booking.getCreatedAt()));
         params.addValue("updatedAt", Timestamp.from(booking.getUpdatedAt()));
         return params;

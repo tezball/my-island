@@ -43,6 +43,7 @@ public class BookingRowMapper implements RowMapper<BookingModel> {
         booking.setTotalPrice(rs.getBigDecimal("total_price"));
         booking.setSpecialRequests(rs.getString("special_requests"));
         booking.setCancellationReason(rs.getString("cancellation_reason"));
+        booking.setPaymentIntentId(rs.getString("payment_intent_id"));
 
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {

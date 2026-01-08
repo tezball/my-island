@@ -160,6 +160,102 @@ public class JdbcCampsiteRepository {
         return new PageImpl<>(content, pageable, total);
     }
 
+    public Page<CampsiteModel> searchAdvanced(String county, String search, Set<Facility> facilities,
+                                               java.math.BigDecimal priceMin, java.math.BigDecimal priceMax,
+                                               Integer guests, Pageable pageable) {
+        String searchPattern = search != null ? "%" + search + "%" : null;
+        List<String> facilityNames = facilities != null ? facilities.stream().map(Enum::name).toList() : null;
+
+        // Build the query with optional lot-based filtering
+        boolean hasLotFilters = priceMin != null || priceMax != null || guests != null;
+
+        StringBuilder sql = new StringBuilder();
+        if (hasLotFilters) {
+            sql.append("SELECT DISTINCT c.* FROM campsites c ");
+            sql.append("JOIN lots l ON l.campsite_id = c.id ");
+            sql.append("WHERE c.active = true ");
+        } else {
+            sql.append("SELECT c.* FROM campsites c WHERE c.active = true ");
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("limit", pageable.getPageSize());
+        params.put("offset", pageable.getOffset());
+
+        // County filter
+        if (county != null) {
+            sql.append("AND c.county = :county ");
+            params.put("county", county);
+        }
+
+        // Text search filter
+        if (search != null) {
+            sql.append("AND (LOWER(c.name) LIKE :search OR LOWER(c.county) LIKE :search OR LOWER(c.address) LIKE :search OR LOWER(c.description) LIKE :search) ");
+            params.put("search", searchPattern);
+        }
+
+        // Facilities filter
+        if (facilityNames != null && !facilityNames.isEmpty()) {
+            sql.append("AND c.id IN (SELECT campsite_id FROM campsite_facilities WHERE facility IN (:facilities) GROUP BY campsite_id HAVING COUNT(DISTINCT facility) >= :facilityCount) ");
+            params.put("facilities", facilityNames);
+            params.put("facilityCount", (long) facilityNames.size());
+        }
+
+        // Price range filter (based on lots)
+        if (priceMin != null) {
+            sql.append("AND l.price_per_night >= :priceMin ");
+            params.put("priceMin", priceMin);
+        }
+        if (priceMax != null) {
+            sql.append("AND l.price_per_night <= :priceMax ");
+            params.put("priceMax", priceMax);
+        }
+
+        // Capacity/guests filter (based on lots)
+        if (guests != null) {
+            sql.append("AND l.capacity >= :guests ");
+            params.put("guests", guests);
+        }
+
+        sql.append("ORDER BY c.created_at DESC LIMIT :limit OFFSET :offset");
+
+        List<CampsiteModel> content = jdbc.query(sql.toString(), params, rowMapper);
+        loadCollections(content);
+        loadOwners(content);
+
+        // Count query (simplified)
+        StringBuilder countSql = new StringBuilder();
+        if (hasLotFilters) {
+            countSql.append("SELECT COUNT(DISTINCT c.id) FROM campsites c ");
+            countSql.append("JOIN lots l ON l.campsite_id = c.id ");
+            countSql.append("WHERE c.active = true ");
+        } else {
+            countSql.append("SELECT COUNT(*) FROM campsites c WHERE c.active = true ");
+        }
+
+        if (county != null) {
+            countSql.append("AND c.county = :county ");
+        }
+        if (search != null) {
+            countSql.append("AND (LOWER(c.name) LIKE :search OR LOWER(c.county) LIKE :search OR LOWER(c.address) LIKE :search OR LOWER(c.description) LIKE :search) ");
+        }
+        if (facilityNames != null && !facilityNames.isEmpty()) {
+            countSql.append("AND c.id IN (SELECT campsite_id FROM campsite_facilities WHERE facility IN (:facilities) GROUP BY campsite_id HAVING COUNT(DISTINCT facility) >= :facilityCount) ");
+        }
+        if (priceMin != null) {
+            countSql.append("AND l.price_per_night >= :priceMin ");
+        }
+        if (priceMax != null) {
+            countSql.append("AND l.price_per_night <= :priceMax ");
+        }
+        if (guests != null) {
+            countSql.append("AND l.capacity >= :guests ");
+        }
+
+        Long total = jdbc.queryForObject(countSql.toString(), params, Long.class);
+        return new PageImpl<>(content, pageable, total != null ? total : 0L);
+    }
+
     public List<CampsiteModel> findByOwnerId(UUID ownerId) {
         String sql = "SELECT * FROM campsites WHERE owner_id = :ownerId ORDER BY created_at DESC";
         List<CampsiteModel> results = jdbc.query(sql, Map.of("ownerId", ownerId), rowMapper);

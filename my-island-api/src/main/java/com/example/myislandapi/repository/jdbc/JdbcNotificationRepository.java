@@ -59,6 +59,11 @@ public class JdbcNotificationRepository {
         return count != null ? count : 0;
     }
 
+    public int markAllAsReadByUserId(UUID userId) {
+        String sql = "UPDATE notifications SET is_read = true, updated_at = :updatedAt WHERE user_id = :userId AND is_read = false";
+        return jdbc.update(sql, Map.of("userId", userId, "updatedAt", Timestamp.from(java.time.Instant.now())));
+    }
+
     public NotificationModel save(NotificationModel notification) {
         if (notification.getId() == null) {
             return insert(notification);

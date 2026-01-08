@@ -51,6 +51,10 @@ public class NotificationService {
         return toNotificationResponse(notification);
     }
 
+    public int markAllAsRead(UUID userId) {
+        return notificationRepository.markAllAsReadByUserId(userId);
+    }
+
     public void createNotification(UUID userId, NotificationType type, String title,
                                    String message, String actionUrl, String relatedId) {
         if (!userRepository.existsById(userId)) {

@@ -1,6 +1,8 @@
 package com.example.myislandapi.controller;
 
 import com.example.myislandapi.dto.request.CreateBookingRequest;
+import com.example.myislandapi.dto.request.ModifyBookingDatesRequest;
+import com.example.myislandapi.dto.request.ModifyBookingGuestsRequest;
 import com.example.myislandapi.dto.request.SendMessageRequest;
 import com.example.myislandapi.dto.response.AvailabilityResponse;
 import com.example.myislandapi.dto.response.BookingResponse;
@@ -79,6 +81,22 @@ public class BookingController {
             @PathVariable UUID id,
             @RequestParam(required = false) String reason) {
         return ResponseEntity.ok(bookingService.cancelBooking(id, userDetails.getId(), reason));
+    }
+
+    @PutMapping("/bookings/{id}/dates")
+    public ResponseEntity<BookingResponse> modifyBookingDates(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID id,
+            @Valid @RequestBody ModifyBookingDatesRequest request) {
+        return ResponseEntity.ok(bookingService.modifyBookingDates(id, userDetails.getId(), request.checkIn(), request.checkOut()));
+    }
+
+    @PutMapping("/bookings/{id}/guests")
+    public ResponseEntity<BookingResponse> modifyBookingGuests(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID id,
+            @Valid @RequestBody ModifyBookingGuestsRequest request) {
+        return ResponseEntity.ok(bookingService.modifyBookingGuests(id, userDetails.getId(), request.guests()));
     }
 
     @GetMapping("/lots/{lotId}/availability")

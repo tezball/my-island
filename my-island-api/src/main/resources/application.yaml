@@ -90,6 +90,12 @@ logging:
     org.springframework.security: DEBUG
     org.flywaydb: DEBUG
 
+# Stripe Configuration
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY:sk_test_placeholder}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_test_placeholder}
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_placeholder}
+
 # Application Configuration
 app:
   sample-data:

@@ -1,6 +1,8 @@
 package com.example.myislandapi.controller;
 
+import com.example.myislandapi.dto.request.ForgotPasswordRequest;
 import com.example.myislandapi.dto.request.LoginRequest;
+import com.example.myislandapi.dto.request.ResetPasswordRequest;
 import com.example.myislandapi.dto.request.SignupRequest;
 import com.example.myislandapi.dto.response.AuthResponse;
 import com.example.myislandapi.service.AuthService;
@@ -46,5 +48,21 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Request password reset email")
+    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.forgotPassword(request);
+        // Always return success to prevent email enumeration
+        return ResponseEntity.ok(new MessageResponse("If an account with that email exists, a password reset link has been sent."));
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(summary = "Reset password using token")
+    public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok(new MessageResponse("Password has been reset successfully."));
+    }
+
     public record RefreshTokenRequest(String refreshToken) {}
+    public record MessageResponse(String message) {}
 }

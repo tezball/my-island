@@ -43,4 +43,11 @@ public class NotificationController {
             @PathVariable UUID id) {
         return ResponseEntity.ok(notificationService.markAsRead(id, userDetails.getId()));
     }
+
+    @PutMapping("/read-all")
+    public ResponseEntity<Map<String, Integer>> markAllAsRead(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        int count = notificationService.markAllAsRead(userDetails.getId());
+        return ResponseEntity.ok(Map.of("markedAsRead", count));
+    }
 }

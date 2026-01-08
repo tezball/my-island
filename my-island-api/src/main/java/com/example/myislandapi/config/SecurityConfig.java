@@ -66,6 +66,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/lots/types").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/lots/auto-assign").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/support/faqs").permitAll()
+                        // Stripe webhook (must be public for Stripe to call)
+                        .requestMatchers(HttpMethod.POST, "/api/payments/webhook").permitAll()
                         // Static resources (React frontend)
                         .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.svg").permitAll()
                         // SPA routes - allow all non-API paths for React Router to handle

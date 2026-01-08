@@ -245,6 +245,114 @@ public class BookingService {
         return toBookingResponse(booking);
     }
 
+    public BookingResponse modifyBookingDates(UUID bookingId, UUID userId, java.time.LocalDate checkIn, java.time.LocalDate checkOut) {
+        // Validate dates
+        if (!checkOut.isAfter(checkIn)) {
+            throw new BadRequestException("Check-out date must be after check-in date");
+        }
+
+        BookingModel booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found: " + bookingId));
+
+        // Load related entities
+        loadBookingRelations(booking);
+
+        // Check ownership - only guest can modify
+        if (!booking.getUserId().equals(userId)) {
+            throw new ResourceNotFoundException("Booking not found: " + bookingId);
+        }
+
+        // Check if booking is in modifiable state
+        if (booking.getStatus() == BookingStatus.CANCELLED ||
+            booking.getStatus() == BookingStatus.COMPLETED) {
+            throw new BadRequestException("Booking cannot be modified in current state");
+        }
+
+        // Release old dates
+        availabilityService.releaseDates(bookingId);
+
+        // Check availability for new dates
+        if (!availabilityService.isAvailable(booking.getLotId(), checkIn, checkOut)) {
+            // Re-block old dates if new dates unavailable
+            availabilityService.blockDates(booking.getLotId(), booking.getCheckIn(), booking.getCheckOut(), bookingId);
+            throw new BadRequestException("Lot is not available for the selected dates");
+        }
+
+        // Block new dates
+        availabilityService.blockDates(booking.getLotId(), checkIn, checkOut, bookingId);
+
+        // Recalculate prices
+        LotModel lot = booking.getLot();
+        long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
+        BigDecimal lotPrice = lot.getPricePerNight().multiply(BigDecimal.valueOf(nights));
+
+        // Recalculate extras prices for per-night extras
+        BigDecimal extrasPrice = BigDecimal.ZERO;
+        for (BookingExtraModel bookingExtra : booking.getBookingExtras()) {
+            ExtraModel extra = bookingExtra.getExtra();
+            if (extra == null) {
+                extra = extraRepository.findById(bookingExtra.getExtraId()).orElse(null);
+            }
+            if (extra != null) {
+                bookingExtra.calculateTotalPrice(nights, extra.isPerNight());
+                extrasPrice = extrasPrice.add(bookingExtra.getTotalPrice());
+            }
+        }
+
+        // Update booking
+        booking.setCheckIn(checkIn);
+        booking.setCheckOut(checkOut);
+        booking.setLotPrice(lotPrice);
+        booking.setExtrasPrice(extrasPrice);
+
+        // Recalculate service fee and total
+        BigDecimal subtotal = lotPrice.add(extrasPrice);
+        BigDecimal serviceFee = subtotal.multiply(SERVICE_FEE_RATE).setScale(2, RoundingMode.HALF_UP);
+        booking.setServiceFee(serviceFee);
+        booking.setTotalPrice(subtotal.add(serviceFee));
+
+        booking = bookingRepository.save(booking);
+
+        // Reload relations after save
+        loadBookingRelations(booking);
+
+        return toBookingResponse(booking);
+    }
+
+    public BookingResponse modifyBookingGuests(UUID bookingId, UUID userId, Integer guests) {
+        BookingModel booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found: " + bookingId));
+
+        // Load related entities
+        loadBookingRelations(booking);
+
+        // Check ownership - only guest can modify
+        if (!booking.getUserId().equals(userId)) {
+            throw new ResourceNotFoundException("Booking not found: " + bookingId);
+        }
+
+        // Check if booking is in modifiable state
+        if (booking.getStatus() == BookingStatus.CANCELLED ||
+            booking.getStatus() == BookingStatus.COMPLETED) {
+            throw new BadRequestException("Booking cannot be modified in current state");
+        }
+
+        // Check capacity
+        LotModel lot = booking.getLot();
+        if (guests > lot.getCapacity()) {
+            throw new BadRequestException("Number of guests exceeds lot capacity of " + lot.getCapacity());
+        }
+
+        // Update booking
+        booking.setGuests(guests);
+        booking = bookingRepository.save(booking);
+
+        // Reload relations after save
+        loadBookingRelations(booking);
+
+        return toBookingResponse(booking);
+    }
+
     private void loadBookingRelations(BookingModel booking) {
         // Load user
         if (booking.getUser() == null) {

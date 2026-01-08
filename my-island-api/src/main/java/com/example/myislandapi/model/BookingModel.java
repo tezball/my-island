@@ -31,6 +31,7 @@ public class BookingModel {
     private List<BookingExtraModel> bookingExtras = new ArrayList<>();
     private String specialRequests;
     private String cancellationReason;
+    private String paymentIntentId;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -163,6 +164,14 @@ public class BookingModel {
 
     public void setCancellationReason(String cancellationReason) {
         this.cancellationReason = cancellationReason;
+    }
+
+    public String getPaymentIntentId() {
+        return paymentIntentId;
+    }
+
+    public void setPaymentIntentId(String paymentIntentId) {
+        this.paymentIntentId = paymentIntentId;
     }
 
     public Instant getCreatedAt() {

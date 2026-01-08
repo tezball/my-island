@@ -63,7 +63,9 @@ public class CampsiteService {
                 .map(this::toCampsiteResponse);
     }
 
-    public Page<CampsiteResponse> searchCampsites(String county, String search, Set<String> facilities, Pageable pageable) {
+    public Page<CampsiteResponse> searchCampsites(String county, String search, Set<String> facilities,
+                                                      BigDecimal priceMin, BigDecimal priceMax, Integer guests,
+                                                      Pageable pageable) {
         String searchLower = search != null ? search.toLowerCase() : null;
 
         // Convert string facility names to Facility enums
@@ -81,15 +83,9 @@ public class CampsiteService {
                     .collect(Collectors.toSet());
         }
 
-        // Use different query methods based on whether facilities filter is provided
-        if (facilityEnums != null && !facilityEnums.isEmpty()) {
-            long facilityCount = facilityEnums.size();
-            return campsiteRepository.searchWithFacilities(county, searchLower, facilityEnums, facilityCount, pageable)
-                    .map(this::toCampsiteResponse);
-        } else {
-            return campsiteRepository.searchByText(county, searchLower, pageable)
-                    .map(this::toCampsiteResponse);
-        }
+        // Use the advanced search method
+        return campsiteRepository.searchAdvanced(county, searchLower, facilityEnums, priceMin, priceMax, guests, pageable)
+                .map(this::toCampsiteResponse);
     }
 
     public Page<CampsiteResponse> getCampsitesByCounty(String county, Pageable pageable) {

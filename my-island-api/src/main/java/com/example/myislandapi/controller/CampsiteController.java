@@ -41,13 +41,16 @@ public class CampsiteController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Set<String> facilities,
             @RequestParam(required = false) Boolean featured,
+            @RequestParam(required = false) java.math.BigDecimal priceMin,
+            @RequestParam(required = false) java.math.BigDecimal priceMax,
+            @RequestParam(required = false) Integer guests,
             @PageableDefault(size = 20) Pageable pageable) {
 
         Page<CampsiteResponse> campsites;
         if (Boolean.TRUE.equals(featured)) {
             campsites = campsiteService.getFeaturedCampsites(pageable);
-        } else if (county != null || search != null || facilities != null) {
-            campsites = campsiteService.searchCampsites(county, search, facilities, pageable);
+        } else if (county != null || search != null || facilities != null || priceMin != null || priceMax != null || guests != null) {
+            campsites = campsiteService.searchCampsites(county, search, facilities, priceMin, priceMax, guests, pageable);
         } else {
             campsites = campsiteService.getAllCampsites(pageable);
         }

@@ -4,6 +4,164 @@ This document contains all user stories for the My Island camping/glamping booki
 
 ---
 
+## Executive Summary: MVP Strategy
+
+### Product Vision
+My Island is a camping/glamping booking platform connecting travelers with unique outdoor accommodations across Ireland. Our MVP focuses on proving the core booking marketplace model before expanding into additional features.
+
+### MVP Success Criteria
+1. **Primary Metric**: 50+ completed bookings in first 3 months
+2. **Supply Side**: 10+ active property listings at launch
+3. **Demand Side**: 500+ registered users in first 3 months
+4. **NPS Score**: >30 from both guests and hosts
+5. **Booking Completion Rate**: >60% of started bookings complete payment
+
+### MVP Scope Definition
+
+#### IN SCOPE (MVP Phase 1)
+| Feature Area | Stories | Rationale |
+|-------------|---------|-----------|
+| Guest Browse | US-G-001 to US-G-009 | Core discovery experience |
+| Auth (Basic) | US-G-018, US-G-020, US-G-022 | Essential for bookings |
+| Booking Flow | US-U-001 to US-U-008 | Core transaction |
+| Booking Mgmt | US-U-009 to US-U-015 | Post-booking essentials |
+| Owner Basics | US-O-001 to US-O-012 | Supply side onboarding |
+| Owner Bookings | US-O-023 to US-O-025 | Transaction completion |
+
+#### DEFERRED (Post-MVP)
+| Feature Area | Stories | Deferral Reason |
+|-------------|---------|-----------------|
+| Social Auth | US-G-019, US-G-021 | Nice-to-have; email/password sufficient |
+| Email Verification | US-G-023 | Can operate without initially |
+| Offers & Local Business | US-G-010 to US-G-013 | Ecosystem feature; not core value |
+| Favorites | US-U-017 to US-U-019 | Enhancement; users can bookmark URLs |
+| Reviews | US-U-020 to US-U-022 | Requires booking volume first |
+| Support Tickets | US-U-032 to US-U-035 | Email support sufficient initially |
+| Owner Calendar | US-O-027 to US-O-029 | Complex; basic availability sufficient |
+| Supplier Module | US-S-* | Entire feature set deferred |
+| Payment Methods | US-U-026 | Single payment flow sufficient |
+
+### MVP User Personas
+
+#### Primary Persona: "Adventure Sarah" (Guest)
+- **Demographics**: 28-45, professional, Dublin-based
+- **Behavior**: Plans 2-3 camping trips per year, values convenience
+- **Pain Points**: Scattered listings, unclear availability, payment friction
+- **MVP Needs**: Browse, book, pay, get confirmation - nothing more
+
+#### Secondary Persona: "Host Michael" (Property Owner)
+- **Demographics**: 40-60, owns glamping site in Wicklow
+- **Behavior**: Currently uses phone/email bookings, loses track of availability
+- **Pain Points**: Manual booking management, no online presence, missed inquiries
+- **MVP Needs**: List property, receive bookings, accept payment
+
+---
+
+## MVP Phase Breakdown
+
+### Phase 1: Core Marketplace (Weeks 1-8)
+**Goal**: Prove the booking transaction works end-to-end
+
+**Guest Journey**:
+```
+Homepage → Search/Browse → View Campsite → Select Dates → Book → Pay → Confirmation
+```
+
+**Owner Journey**:
+```
+Sign Up → Create Property Wizard → Publish → Receive Booking → Confirm → Payout
+```
+
+### Phase 2: Trust & Retention (Weeks 9-12)
+**Goal**: Build trust signals and repeat usage
+
+- Reviews system
+- Favorites
+- Email notifications (booking reminders, check-in instructions)
+- Basic owner analytics
+
+### Phase 3: Ecosystem Expansion (Weeks 13-16)
+**Goal**: Add value beyond core booking
+
+- Local businesses & offers
+- Supplier portal
+- Advanced calendar management
+- Social authentication
+
+---
+
+## MVP Feature Specifications
+
+### Critical Path Features
+
+These features MUST work flawlessly for MVP success:
+
+| Feature | Complexity | Risk | Notes |
+|---------|------------|------|-------|
+| Campsite search & filter | Medium | Low | Query performance critical |
+| Availability calendar | High | High | Core to booking accuracy |
+| Payment processing | High | High | Stripe integration; PCI compliance |
+| Booking confirmation | Low | Low | Email delivery reliability |
+| Property wizard | High | Medium | Owner onboarding friction |
+
+### MVP Simplifications
+
+| Full Feature | MVP Version | Rationale |
+|-------------|-------------|-----------|
+| Multiple payment methods | Card only via Stripe | Reduce integration complexity |
+| Social login | Email/password only | Faster to implement |
+| Real-time messaging | Email-based communication | No WebSocket infrastructure needed |
+| Dynamic pricing | Fixed nightly rate | Reduce owner cognitive load |
+| Instant booking + Requests | Instant booking only | Simpler guest experience |
+| Multi-language | English only | Ireland-focused MVP |
+| Guest count pricing | Per-lot pricing only | Simpler pricing model |
+
+---
+
+## MVP Technical Dependencies
+
+### Must Have Before Launch
+- [x] User authentication (JWT)
+- [x] PostgreSQL database with migrations
+- [x] Property CRUD operations
+- [x] Booking creation flow
+- [ ] Stripe payment integration
+- [x] Email sending (SES)
+- [x] Image upload (S3)
+
+### Nice to Have
+- [ ] Redis caching
+- [ ] Full-text search (PostgreSQL sufficient initially)
+- [ ] CDN for images
+- [ ] Error monitoring (Sentry)
+
+---
+
+## MVP Metrics Dashboard
+
+Track these metrics weekly:
+
+### Acquisition
+- New user registrations
+- Traffic sources
+- Property listing submissions
+
+### Activation
+- Search-to-view rate (users who search and view a property)
+- View-to-book rate (users who view and start booking)
+- Booking completion rate
+
+### Revenue
+- Gross booking value
+- Platform commission
+- Average booking value
+
+### Retention
+- Repeat bookers
+- Repeat hosts (listings added)
+
+---
+
 ## Table of Contents
 
 1. [Guest User Stories](#1-guest-user-stories)
@@ -1927,9 +2085,134 @@ These stories cover cross-cutting concerns, infrastructure, and system features.
 
 ---
 
+## Appendix: MVP Risk Register
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| **Low initial supply (properties)** | High | Critical | Pre-launch owner recruitment; seed with 5-10 properties from network |
+| **Payment integration delays** | Medium | Critical | Start Stripe setup immediately; have manual backup process |
+| **Double-booking bugs** | Medium | High | Extensive testing of availability logic; pessimistic locking |
+| **Email deliverability issues** | Medium | Medium | Use established provider (SES); monitor bounce rates |
+| **Poor search relevance** | Low | Medium | PostgreSQL full-text sufficient; iterate based on feedback |
+| **Mobile performance** | Medium | Medium | Test on low-end devices; optimize images early |
+| **Owner onboarding friction** | High | High | Keep wizard simple; phone support for first 10 owners |
+
+---
+
+## Appendix: MVP Launch Checklist
+
+### Pre-Launch (T-2 weeks)
+- [ ] 5+ properties fully listed with photos
+- [ ] Payment flow tested end-to-end with real Stripe
+- [ ] Email templates for all transactional emails
+- [ ] Basic SEO (meta tags, sitemap)
+- [ ] Analytics tracking (Google Analytics / Mixpanel)
+- [ ] Terms of Service and Privacy Policy pages
+- [ ] Error monitoring setup (Sentry)
+- [ ] Staging environment validated
+
+### Launch Day
+- [ ] Production deployment
+- [ ] DNS configuration
+- [ ] SSL certificate active
+- [ ] Monitoring dashboards live
+- [ ] Support email configured
+- [ ] Social media announcement ready
+
+### Post-Launch (T+1 week)
+- [ ] Daily metric reviews
+- [ ] User feedback collection (email survey)
+- [ ] Bug triage process established
+- [ ] First booking celebration!
+
+---
+
+## Appendix: MVP Feature Flags
+
+Use feature flags to gradually roll out functionality:
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `ENABLE_REVIEWS` | OFF | Enable review submission (turn on after 20+ bookings) |
+| `ENABLE_FAVORITES` | OFF | Heart icons and favorites list |
+| `ENABLE_OFFERS` | OFF | Local business offers module |
+| `ENABLE_SUPPLIER_PORTAL` | OFF | Supplier registration and management |
+| `ENABLE_SOCIAL_AUTH` | OFF | Google/Apple/Facebook login |
+| `ENABLE_MESSAGING` | OFF | In-app messaging between guests and hosts |
+| `ENABLE_CALENDAR_SYNC` | OFF | iCal import/export for owners |
+
+---
+
+## Appendix: MVP Feedback Loops
+
+### Guest Feedback
+1. **Post-booking email** (Day 0): "How was your booking experience?"
+2. **Post-stay email** (Checkout +1 day): "How was your trip? Leave a review!"
+3. **NPS survey** (Monthly): Measure overall satisfaction
+
+### Owner Feedback
+1. **Onboarding follow-up** (Day 3): "How was setting up your property?"
+2. **First booking call**: Personal call after first booking received
+3. **Monthly check-in**: Email with stats and feedback request
+
+### Metrics-Based Decisions
+
+| Metric | Threshold | Action |
+|--------|-----------|--------|
+| Booking completion < 40% | Red | Investigate checkout friction |
+| Search-to-view < 20% | Yellow | Improve search relevance |
+| Property wizard dropout > 50% | Red | Simplify wizard steps |
+| Support emails > 10/day | Yellow | Add FAQ/help content |
+| Page load > 3s | Red | Performance optimization sprint |
+
+---
+
+## Appendix: Competitive Differentiation (MVP)
+
+### What We Do BETTER for MVP
+1. **Ireland-focused**: Local expertise, Irish counties, Eircodes
+2. **Simple booking**: No unnecessary steps or information
+3. **Owner-friendly**: Quick listing creation, clear payout process
+4. **Mobile-first**: Designed for on-the-go booking
+
+### What We DON'T Do (Intentionally for MVP)
+- Complex pricing rules (competitors have; causes confusion)
+- Messaging system (email works; reduces complexity)
+- Wishlist sharing (nice-to-have; not core value)
+- Price alerts (requires significant infrastructure)
+- Reviews at launch (need booking volume first)
+
+---
+
+## Appendix: MVP Go/No-Go Criteria
+
+Before launching MVP, ALL of these must be true:
+
+### Technical
+- [ ] All P0 user stories implemented and tested
+- [ ] Payment flow works with real cards (test mode)
+- [ ] Email delivery confirmed working
+- [ ] No critical/high security vulnerabilities
+- [ ] Page load times < 3s on 4G
+
+### Business
+- [ ] 5+ properties listed with quality photos
+- [ ] Terms of Service legally reviewed
+- [ ] Support process documented
+- [ ] Pricing/commission model finalized
+
+### Operations
+- [ ] At least 1 person on-call for launch week
+- [ ] Rollback procedure documented
+- [ ] Monitoring alerts configured
+- [ ] First 10 owner contacts identified for feedback
+
+---
+
 ## Document History
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-01-07 | Claude Code | Initial comprehensive user stories |
+| 1.1 | 2026-01-07 | Claude Code | Added MVP strategy, risk register, launch checklist, and PM-focused appendices |
 
