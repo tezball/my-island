@@ -119,10 +119,13 @@ public final class BrowseScenarios {
     /**
      * Check lot availability.
      */
-    public static ChainBuilder checkAvailability = doIf(session -> session.contains("lotId")).then(
+    public static ChainBuilder checkAvailability = doIf(session ->
+            session.contains("lotId") && session.contains("accessToken")
+    ).then(
             exec(
                     http("Check Availability")
-                            .get("/api/availability/#{lotId}")
+                            .get("/api/bookings/lots/#{lotId}/availability")
+                            .header("Authorization", "Bearer #{accessToken}")
                             .queryParam("startDate", "2026-07-01")
                             .queryParam("endDate", "2026-07-31")
                             .check(status().in(200, 404))

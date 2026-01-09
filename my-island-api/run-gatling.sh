@@ -105,6 +105,10 @@ else
 fi
 
 echo ""
+echo -e "${BLUE}Compiling test classes...${NC}"
+mvn test-compile -q 2>/dev/null
+
+echo ""
 echo -e "${BLUE}Starting Gatling simulation...${NC}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""

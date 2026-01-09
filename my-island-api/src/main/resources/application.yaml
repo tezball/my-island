@@ -77,18 +77,41 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,metrics,prometheus,loggers
   endpoint:
     health:
       show-details: when_authorized
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+    metrics:
+      export:
+        enabled: true
+        endpoint: http://localhost:4318/v1/metrics
+        step: 10s
 
-# Logging
+# Loki Configuration
+loki:
+  url: http://localhost:3100
+
+# Logging - configured via logback-spring.xml
 logging:
   level:
     root: INFO
     com.example.myislandapi: DEBUG
     org.springframework.security: DEBUG
     org.flywaydb: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 # Stripe Configuration
 stripe:

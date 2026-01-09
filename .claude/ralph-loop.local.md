@@ -1,9 +1,9 @@
 ---
 active: true
-iteration: 5
+iteration: 2
 max_iterations: 0
 completion_promise: null
-started_at: "2026-01-09T14:15:57Z"
+started_at: "2026-01-09T15:31:15Z"
 ---
 
-Complete the tasks within @BUG_FIX_PLAN.md
+configure kafka ui http://localhost:8090/ --completion_promise=DONE

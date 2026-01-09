@@ -56,7 +56,7 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus", "/actuator/metrics/**").permitAll()
                         // Public read access to campsites, offers, local businesses, and lot availability
                         .requestMatchers(HttpMethod.GET, "/api/campsites/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/offers/**").permitAll()

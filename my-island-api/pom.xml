@@ -35,6 +35,7 @@
 		<testcontainers.version>1.20.5</testcontainers.version>
 		<gatling.version>3.13.1</gatling.version>
 		<gatling-maven-plugin.version>4.15.0</gatling-maven-plugin.version>
+		<loki4j.version>1.5.2</loki4j.version>
 	</properties>
 	<dependencies>
 		<!-- Spring Boot Starters -->
@@ -123,6 +124,19 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-opentelemetry</artifactId>
+		</dependency>
+
+		<!-- Loki4j - Direct log shipping to Grafana Loki -->
+		<dependency>
+			<groupId>com.github.loki4j</groupId>
+			<artifactId>loki-logback-appender</artifactId>
+			<version>${loki4j.version}</version>
+		</dependency>
+
+		<!-- Micrometer Prometheus registry for metrics -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -275,9 +289,6 @@
 				<groupId>io.gatling</groupId>
 				<artifactId>gatling-maven-plugin</artifactId>
 				<version>${gatling-maven-plugin.version}</version>
-				<configuration>
-					<simulationClass>gatling.MyIslandLoadSimulation</simulationClass>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
