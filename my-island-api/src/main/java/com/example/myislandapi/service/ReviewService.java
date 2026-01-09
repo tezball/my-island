@@ -9,6 +9,7 @@ import com.example.myislandapi.model.LotModel;
 import com.example.myislandapi.model.ReviewModel;
 import com.example.myislandapi.model.UserModel;
 import com.example.myislandapi.enums.BookingStatus;
+import com.example.myislandapi.event.ReviewEvent;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.repository.jdbc.JdbcBookingRepository;
@@ -34,17 +35,20 @@ public class ReviewService {
     private final JdbcCampsiteRepository campsiteRepository;
     private final JdbcLotRepository lotRepository;
     private final JdbcUserRepository userRepository;
+    private final EventPublisher eventPublisher;
 
     public ReviewService(JdbcReviewRepository reviewRepository,
                         JdbcBookingRepository bookingRepository,
                         JdbcCampsiteRepository campsiteRepository,
                         JdbcLotRepository lotRepository,
-                        JdbcUserRepository userRepository) {
+                        JdbcUserRepository userRepository,
+                        EventPublisher eventPublisher) {
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
         this.campsiteRepository = campsiteRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public ReviewResponse createReview(UUID userId, CreateReviewRequest request) {
@@ -94,6 +98,10 @@ public class ReviewService {
         // Update campsite rating
         updateCampsiteRating(campsiteId);
 
+        // Publish review created event
+        eventPublisher.publishReviewEvent(ReviewEvent.created(
+                review.getId(), userId, campsiteId, booking.getId(), review.getRating()));
+
         return toReviewResponse(review);
     }
 
@@ -137,6 +145,10 @@ public class ReviewService {
 
         review.setOwnerResponse(response);
         review = reviewRepository.save(review);
+
+        // Publish owner response added event
+        eventPublisher.publishReviewEvent(ReviewEvent.responseAdded(
+                review.getId(), ownerId, review.getCampsiteId()));
 
         return toReviewResponse(review);
     }

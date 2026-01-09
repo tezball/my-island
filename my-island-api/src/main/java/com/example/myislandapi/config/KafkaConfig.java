@@ -26,6 +26,12 @@ public class KafkaConfig {
     public static final String NOTIFICATION_EVENTS_TOPIC = "notification-events";
     public static final String EMAIL_EVENTS_TOPIC = "email-events";
     public static final String PROPERTY_EVENTS_TOPIC = "property-events";
+    public static final String USER_EVENTS_TOPIC = "user-events";
+    public static final String REVIEW_EVENTS_TOPIC = "review-events";
+    public static final String FAVORITE_EVENTS_TOPIC = "favorite-events";
+    public static final String PAYMENT_EVENTS_TOPIC = "payment-events";
+    public static final String SEARCH_EVENTS_TOPIC = "search-events";
+    public static final String ANALYTICS_EVENTS_TOPIC = "analytics-events";
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -91,6 +97,54 @@ public class KafkaConfig {
     @Bean
     public NewTopic propertyEventsTopic() {
         return TopicBuilder.name(PROPERTY_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic userEventsTopic() {
+        return TopicBuilder.name(USER_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic reviewEventsTopic() {
+        return TopicBuilder.name(REVIEW_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic favoriteEventsTopic() {
+        return TopicBuilder.name(FAVORITE_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic paymentEventsTopic() {
+        return TopicBuilder.name(PAYMENT_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic searchEventsTopic() {
+        return TopicBuilder.name(SEARCH_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic analyticsEventsTopic() {
+        return TopicBuilder.name(ANALYTICS_EVENTS_TOPIC)
                 .partitions(3)
                 .replicas(1)
                 .build();

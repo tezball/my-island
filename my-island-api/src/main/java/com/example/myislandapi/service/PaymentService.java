@@ -3,6 +3,7 @@ package com.example.myislandapi.service;
 import com.example.myislandapi.config.StripeConfig;
 import com.example.myislandapi.dto.response.PaymentIntentResponse;
 import com.example.myislandapi.enums.BookingStatus;
+import com.example.myislandapi.event.PaymentEvent;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.model.BookingModel;
@@ -28,10 +29,13 @@ public class PaymentService {
 
     private final JdbcBookingRepository bookingRepository;
     private final StripeConfig stripeConfig;
+    private final EventPublisher eventPublisher;
 
-    public PaymentService(JdbcBookingRepository bookingRepository, StripeConfig stripeConfig) {
+    public PaymentService(JdbcBookingRepository bookingRepository, StripeConfig stripeConfig,
+                          EventPublisher eventPublisher) {
         this.bookingRepository = bookingRepository;
         this.stripeConfig = stripeConfig;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -116,6 +120,15 @@ public class PaymentService {
                 booking.setPaymentIntentId(paymentIntent.getId());
                 bookingRepository.save(booking);
                 log.info("Booking {} confirmed after successful payment", bookingId);
+
+                // Publish payment succeeded event
+                eventPublisher.publishPaymentEvent(PaymentEvent.succeeded(
+                        bookingId,
+                        booking.getUserId(),
+                        booking.getTotalPrice(),
+                        CURRENCY,
+                        paymentIntent.getId()
+                ));
             }
         });
     }
@@ -133,5 +146,20 @@ public class PaymentService {
 
         UUID bookingId = UUID.fromString(bookingIdStr);
         log.warn("Payment failed for booking {}: {}", bookingId, paymentIntent.getLastPaymentError());
+
+        // Publish payment failed event
+        bookingRepository.findById(bookingId).ifPresent(booking -> {
+            String failureReason = paymentIntent.getLastPaymentError() != null
+                    ? paymentIntent.getLastPaymentError().getMessage()
+                    : "Unknown error";
+            eventPublisher.publishPaymentEvent(PaymentEvent.failed(
+                    bookingId,
+                    booking.getUserId(),
+                    booking.getTotalPrice(),
+                    CURRENCY,
+                    paymentIntent.getId(),
+                    failureReason
+            ));
+        });
     }
 }

@@ -24,6 +24,20 @@ if docker compose up -d 2>/dev/null; then
         fi
         sleep 1
     done
+
+    # Wait for Kafka to be ready
+    echo -e "${YELLOW}Waiting for Kafka...${NC}"
+    for i in {1..20}; do
+        if docker compose exec -T kafka /opt/kafka/bin/kafka-cluster.sh cluster-id --bootstrap-server localhost:9092 > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ Kafka is ready${NC}"
+            break
+        fi
+        if [ $i -eq 20 ]; then
+            echo -e "${RED}✗ Kafka failed to start${NC}"
+            exit 1
+        fi
+        sleep 1
+    done
 else
     echo -e "${RED}✗ Failed to start Docker services${NC}"
     exit 1

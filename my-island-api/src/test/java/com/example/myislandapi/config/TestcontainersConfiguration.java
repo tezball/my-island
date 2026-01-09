@@ -83,7 +83,11 @@ public class TestcontainersConfiguration {
      */
     private static void initializeKafkaTopics() {
         try {
-            String[] topics = {"email-events", "booking-events", "notification-events", "property-events"};
+            String[] topics = {
+                "email-events", "booking-events", "notification-events", "property-events",
+                "user-events", "review-events", "favorite-events", "payment-events",
+                "search-events", "analytics-events"
+            };
             for (String topic : topics) {
                 KAFKA.execInContainer(
                     "kafka-topics", "--create",

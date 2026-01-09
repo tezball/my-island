@@ -68,6 +68,19 @@ services:
       - "4317:4317"
       - "4318:4318"
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: my-island-kafka-ui
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: my-island-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   localstack_data:

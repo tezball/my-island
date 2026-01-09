@@ -67,6 +67,13 @@ public class OwnerController {
         return ResponseEntity.ok(bookingService.cancelBooking(id, userDetails.getId(), reason));
     }
 
+    @PostMapping("/bookings/{id}/complete")
+    public ResponseEntity<BookingResponse> completeBooking(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(bookingService.completeBooking(id, userDetails.getId()));
+    }
+
     @GetMapping("/revenue-data")
     public ResponseEntity<RevenueDataResponse> getRevenueData(
             @AuthenticationPrincipal UserDetailsImpl userDetails,

@@ -5,6 +5,7 @@ import com.example.myislandapi.dto.response.LocationResponse;
 import com.example.myislandapi.model.CampsiteModel;
 import com.example.myislandapi.model.FavoriteModel;
 import com.example.myislandapi.model.LotModel;
+import com.example.myislandapi.event.FavoriteEvent;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.exception.ResourceNotFoundException;
 import com.example.myislandapi.repository.jdbc.JdbcCampsiteRepository;
@@ -28,15 +29,18 @@ public class FavoriteService {
     private final JdbcUserRepository userRepository;
     private final JdbcCampsiteRepository campsiteRepository;
     private final JdbcLotRepository lotRepository;
+    private final EventPublisher eventPublisher;
 
     public FavoriteService(JdbcFavoriteRepository favoriteRepository,
                           JdbcUserRepository userRepository,
                           JdbcCampsiteRepository campsiteRepository,
-                          JdbcLotRepository lotRepository) {
+                          JdbcLotRepository lotRepository,
+                          EventPublisher eventPublisher) {
         this.favoriteRepository = favoriteRepository;
         this.userRepository = userRepository;
         this.campsiteRepository = campsiteRepository;
         this.lotRepository = lotRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -66,6 +70,9 @@ public class FavoriteService {
         favorite.setUserId(userId);
         favorite.setCampsiteId(campsiteId);
         favoriteRepository.save(favorite);
+
+        // Publish favorite added event
+        eventPublisher.publishFavoriteEvent(FavoriteEvent.added(userId, campsiteId));
     }
 
     public void removeFavorite(UUID userId, UUID campsiteId) {
@@ -73,6 +80,9 @@ public class FavoriteService {
             throw new ResourceNotFoundException("Favorite not found");
         }
         favoriteRepository.deleteByUserIdAndCampsiteId(userId, campsiteId);
+
+        // Publish favorite removed event
+        eventPublisher.publishFavoriteEvent(FavoriteEvent.removed(userId, campsiteId));
     }
 
     @Transactional(readOnly = true)

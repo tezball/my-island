@@ -6,7 +6,6 @@
 -- Using consistent seed numbers so images are deterministic
 
 -- Wild Atlantic Glamping (c0000000-0000-0000-0000-000000000001)
-UPDATE campsite_images SET image_url = 'https://picsum.photos/seed/camp1a/800/600' WHERE campsite_id = 'c0000000-0000-0000-0000-000000000001' AND image_url LIKE '%unsplash%' LIMIT 1;
 DELETE FROM campsite_images WHERE campsite_id = 'c0000000-0000-0000-0000-000000000001' AND image_url LIKE '%unsplash%';
 INSERT INTO campsite_images (campsite_id, image_url) VALUES
 ('c0000000-0000-0000-0000-000000000001', 'https://picsum.photos/seed/camp1a/800/600'),

@@ -210,6 +210,42 @@ public class BookingService {
         return toBookingResponse(booking);
     }
 
+    public BookingResponse completeBooking(UUID bookingId, UUID ownerId) {
+        BookingModel booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found: " + bookingId));
+
+        // Load related entities
+        loadBookingRelations(booking);
+
+        if (!booking.getLot().getCampsite().getOwnerId().equals(ownerId)) {
+            throw new ResourceNotFoundException("Booking not found: " + bookingId);
+        }
+
+        if (booking.getStatus() != BookingStatus.CONFIRMED && booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new BadRequestException("Booking can only be completed from CONFIRMED or CHECKED_IN state");
+        }
+
+        booking.setStatus(BookingStatus.COMPLETED);
+        booking = bookingRepository.save(booking);
+
+        // Reload relations after save
+        loadBookingRelations(booking);
+
+        // Publish completion events
+        CampsiteModel campsite = booking.getLot().getCampsite();
+        eventPublisher.publishBookingEvent(BookingEvent.completed(
+                booking.getId(),
+                booking.getUserId(),
+                campsite.getId(),
+                booking.getLotId(),
+                booking.getCheckIn(),
+                booking.getCheckOut(),
+                booking.getTotalPrice()
+        ));
+
+        return toBookingResponse(booking);
+    }
+
     public BookingResponse cancelBooking(UUID bookingId, UUID userId, String reason) {
         BookingModel booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found: " + bookingId));

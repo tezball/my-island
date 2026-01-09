@@ -7,6 +7,7 @@ import com.example.myislandapi.dto.request.SignupRequest;
 import com.example.myislandapi.dto.response.AuthResponse;
 import com.example.myislandapi.dto.response.UserResponse;
 import com.example.myislandapi.event.EmailEvent;
+import com.example.myislandapi.event.UserEvent;
 import com.example.myislandapi.exception.BadRequestException;
 import com.example.myislandapi.model.UserModel;
 import com.example.myislandapi.exception.ConflictException;
@@ -61,17 +62,29 @@ public class AuthService {
         // Publish welcome email event
         eventPublisher.publishEmailEvent(EmailEvent.welcome(user.getId()));
 
+        // Publish user registered event
+        eventPublisher.publishUserEvent(UserEvent.registered(user.getId(), user.getEmail()));
+
         return generateAuthResponse(user);
     }
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         UserModel user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
+                .orElseGet(() -> {
+                    // Publish login failed event for non-existent user
+                    eventPublisher.publishUserEvent(UserEvent.loginFailed(request.email(), null, null));
+                    throw new UnauthorizedException("Invalid email or password");
+                });
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            // Publish login failed event for wrong password
+            eventPublisher.publishUserEvent(UserEvent.loginFailed(request.email(), null, null));
             throw new UnauthorizedException("Invalid email or password");
         }
+
+        // Publish successful login event
+        eventPublisher.publishUserEvent(UserEvent.login(user.getId(), user.getEmail(), null, null));
 
         return generateAuthResponse(user);
     }
@@ -104,6 +117,10 @@ public class AuthService {
             emailService.sendPasswordResetEmail(user, token);
             log.info("Password reset email sent to: {}", request.email());
         });
+
+        // Publish password reset requested event (always, to not leak user existence)
+        eventPublisher.publishUserEvent(UserEvent.passwordResetRequested(request.email()));
+
         // Always log, even if user not found (to prevent timing attacks)
         log.debug("Forgot password request processed for email: {}", request.email());
     }
@@ -124,6 +141,9 @@ public class AuthService {
 
         // Invalidate the token after use
         passwordResetTokenService.invalidateToken(request.token());
+
+        // Publish password reset completed event
+        eventPublisher.publishUserEvent(UserEvent.passwordResetCompleted(user.getId(), user.getEmail()));
 
         log.info("Password reset successful for user: {}", user.getEmail());
     }
