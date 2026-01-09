@@ -32,8 +32,9 @@ public class OwnerController {
 
     @GetMapping("/stats")
     public ResponseEntity<OwnerStatsResponse> getStats(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(ownerService.getOwnerStats(userDetails.getId()));
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = false) UUID campsiteId) {
+        return ResponseEntity.ok(ownerService.getOwnerStats(userDetails.getId(), campsiteId));
     }
 
     @GetMapping("/campsites")
@@ -46,8 +47,9 @@ public class OwnerController {
     public ResponseEntity<Page<BookingResponse>> getBookings(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam(required = false) BookingStatus status,
+            @RequestParam(required = false) UUID campsiteId,
             @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ownerService.getOwnerBookings(userDetails.getId(), status, pageable));
+        return ResponseEntity.ok(ownerService.getOwnerBookings(userDetails.getId(), status, campsiteId, pageable));
     }
 
     @PostMapping("/bookings/{id}/confirm")

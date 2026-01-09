@@ -5,8 +5,9 @@ import SearchBar from '../../components/ui/SearchBar'
 import Icon from '../../components/ui/Icon'
 import Badge from '../../components/ui/Badge'
 import Skeleton from '../../components/ui/Skeleton'
+import PropertySelector from '../../components/owner/PropertySelector'
 import { useToast } from '../../context/ToastContext'
-import { ownerApi, type CampsiteResponse } from '../../lib/api/owner'
+import { useProperty } from '../../context/PropertyContext'
 import { extrasApi, type ExtraResponse } from '../../lib/api/extras'
 
 type FilterStatus = 'all' | 'available' | 'unavailable'
@@ -14,22 +15,26 @@ type FilterStatus = 'all' | 'available' | 'unavailable'
 export default function ManageExtrasPage() {
   const navigate = useNavigate()
   const toast = useToast()
+  const { selectedCampsiteId, campsites, isLoading: campsitesLoading } = useProperty()
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
-  const [campsites, setCampsites] = useState<CampsiteResponse[]>([])
-  const [selectedCampsiteId, setSelectedCampsiteId] = useState<string>('')
   const [extras, setExtras] = useState<ExtraResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  // Fetch extras when campsite selection changes
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const campsitesData = await ownerApi.getMyCampsites()
-        setCampsites(campsitesData)
+    async function fetchExtras() {
+      if (campsitesLoading) return
 
-        if (campsitesData.length > 0) {
-          setSelectedCampsiteId(campsitesData[0].id)
-          const extrasData = await extrasApi.getOwnerExtras(campsitesData[0].id)
+      setIsLoading(true)
+      try {
+        // Use selected campsite if specific one is chosen, otherwise use first campsite
+        const campsiteIdToUse = selectedCampsiteId !== 'all'
+          ? selectedCampsiteId
+          : campsites[0]?.id
+
+        if (campsiteIdToUse) {
+          const extrasData = await extrasApi.getOwnerExtras(campsiteIdToUse)
           setExtras(extrasData)
         } else {
           setExtras([])
@@ -41,25 +46,8 @@ export default function ManageExtrasPage() {
         setIsLoading(false)
       }
     }
-    fetchData()
-  }, [])
-
-  // Fetch extras when campsite selection changes
-  const handleCampsiteChange = async (campsiteId: string) => {
-    setSelectedCampsiteId(campsiteId)
-    setIsLoading(true)
-    try {
-      const extrasData = campsiteId
-        ? await extrasApi.getOwnerExtras(campsiteId)
-        : await extrasApi.getOwnerExtras()
-      setExtras(extrasData)
-    } catch (err) {
-      console.error('Failed to fetch extras:', err)
-      setExtras([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    fetchExtras()
+  }, [selectedCampsiteId, campsites, campsitesLoading])
 
   // Handle delete (soft delete)
   const handleDelete = async (extraId: string, extraName: string) => {
@@ -97,7 +85,7 @@ export default function ManageExtrasPage() {
     return `€${price}${perNight ? '/night' : ' one-time'}`
   }
 
-  if (isLoading) {
+  if (isLoading || campsitesLoading) {
     return (
       <AppShell showBack headerTitle="Campsite Extras" showNav={false}>
         <div className="flex-1 p-4 space-y-3">
@@ -118,23 +106,10 @@ export default function ManageExtrasPage() {
       showNav={false}
     >
       <div className="flex-1 overflow-auto">
-        {/* Campsite Selector */}
+        {/* Property Selector - extras must be managed per campsite */}
         {campsites.length > 1 && (
-          <div className="p-4 pb-0">
-            <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
-              Select Campsite
-            </label>
-            <select
-              value={selectedCampsiteId}
-              onChange={(e) => handleCampsiteChange(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-slate-900 dark:text-white"
-            >
-              {campsites.map(campsite => (
-                <option key={campsite.id} value={campsite.id}>
-                  {campsite.name}
-                </option>
-              ))}
-            </select>
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+            <PropertySelector showAllOption={false} label="" />
           </div>
         )}
 

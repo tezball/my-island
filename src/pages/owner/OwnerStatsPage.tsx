@@ -5,7 +5,9 @@ import Icon from '../../components/ui/Icon'
 import LineChart from '../../components/charts/LineChart'
 import BarChart from '../../components/charts/BarChart'
 import Skeleton from '../../components/ui/Skeleton'
-import { ownerApi, type OwnerStats, type CampsiteResponse, type RevenueDataPoint } from '../../lib/api/owner'
+import PropertySelector from '../../components/owner/PropertySelector'
+import { useProperty } from '../../context/PropertyContext'
+import { ownerApi, type OwnerStats, type RevenueDataPoint } from '../../lib/api/owner'
 
 type TimePeriod = 'week' | 'month' | 'year'
 
@@ -13,22 +15,20 @@ export default function OwnerStatsPage() {
   const [period, setPeriod] = useState<TimePeriod>('month')
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState<OwnerStats | null>(null)
-  const [campsite, setCampsite] = useState<CampsiteResponse | null>(null)
   const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([])
+  const { selectedCampsiteId, campsites, isLoading: campsitesLoading } = useProperty()
 
   useEffect(() => {
     async function fetchData() {
       try {
         const monthsMap: Record<TimePeriod, number> = { week: 1, month: 6, year: 12 }
-        const [statsData, campsitesData, revenueResponse] = await Promise.all([
-          ownerApi.getStats(),
-          ownerApi.getMyCampsites(),
+        // Pass selected campsite ID to filter stats (when backend supports it)
+        const campsiteIdParam = selectedCampsiteId !== 'all' ? selectedCampsiteId : undefined
+        const [statsData, revenueResponse] = await Promise.all([
+          ownerApi.getStats(campsiteIdParam),
           ownerApi.getRevenueData(monthsMap[period]),
         ])
         setStats(statsData)
-        if (campsitesData.length > 0) {
-          setCampsite(campsitesData[0])
-        }
         setRevenueData(revenueResponse.monthlyData)
       } catch (err) {
         console.error('Failed to fetch stats:', err)
@@ -54,7 +54,7 @@ export default function OwnerStatsPage() {
       }
     }
     fetchData()
-  }, [period])
+  }, [period, selectedCampsiteId])
 
   // Transform revenue data for charts
   const revenueChartData = revenueData.map((d: RevenueDataPoint) => ({
@@ -76,7 +76,7 @@ export default function OwnerStatsPage() {
     { label: 'Goods', value: 0, color: '#84ffc2' },
   ]
 
-  if (isLoading) {
+  if (isLoading || campsitesLoading) {
     return (
       <AppShell showBack headerTitle="Performance" showNav={false}>
         <div className="flex-1 p-4 space-y-4">
@@ -104,12 +104,12 @@ export default function OwnerStatsPage() {
       }
     >
       <div className="flex-1 overflow-auto">
-        {/* Campsite Selector */}
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800">
-          <select className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-surface-dark text-slate-900 dark:text-white">
-            <option>{campsite?.name || 'Select Campsite'}</option>
-          </select>
-        </div>
+        {/* Property Selector */}
+        {campsites.length > 1 && (
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+            <PropertySelector showAllOption={true} label="" />
+          </div>
+        )}
 
         {/* Period Tabs */}
         <div className="p-4">

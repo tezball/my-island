@@ -126,9 +126,10 @@ export default function BookingStepExtras() {
     state.selectedExtras.some((e) => e.id === extraId)
 
   // Calculate total accounting for perNight flag
+  // Default to false (one-time) when extra not found - safer than multiplying by nights
   const extrasTotal = state.selectedExtras.reduce((sum, selected) => {
     const extra = availableExtras.find(e => e.id === selected.id)
-    const perNight = extra?.perNight ?? true
+    const perNight = extra?.perNight ?? false
     return sum + selected.price * selected.quantity * (perNight ? nights : 1)
   }, 0)
 

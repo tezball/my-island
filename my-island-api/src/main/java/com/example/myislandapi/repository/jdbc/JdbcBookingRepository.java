@@ -120,6 +120,52 @@ public class JdbcBookingRepository {
         return new PageImpl<>(content, pageable, total != null ? total : 0L);
     }
 
+    public Page<BookingModel> findByOwnerIdAndCampsiteId(UUID ownerId, UUID campsiteId, Pageable pageable) {
+        String sql = """
+            SELECT b.* FROM bookings b
+            JOIN lots l ON b.lot_id = l.id
+            JOIN campsites c ON l.campsite_id = c.id
+            WHERE c.owner_id = :ownerId AND c.id = :campsiteId
+            ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset
+            """;
+        List<BookingModel> content = jdbc.query(sql,
+            Map.of("ownerId", ownerId, "campsiteId", campsiteId, "limit", pageable.getPageSize(), "offset", pageable.getOffset()), rowMapper);
+        loadBookingExtras(content);
+
+        String countSql = """
+            SELECT COUNT(*) FROM bookings b
+            JOIN lots l ON b.lot_id = l.id
+            JOIN campsites c ON l.campsite_id = c.id
+            WHERE c.owner_id = :ownerId AND c.id = :campsiteId
+            """;
+        Long total = jdbc.queryForObject(countSql, Map.of("ownerId", ownerId, "campsiteId", campsiteId), Long.class);
+        return new PageImpl<>(content, pageable, total != null ? total : 0L);
+    }
+
+    public Page<BookingModel> findByOwnerIdAndCampsiteIdAndStatus(UUID ownerId, UUID campsiteId, BookingStatus status, Pageable pageable) {
+        String sql = """
+            SELECT b.* FROM bookings b
+            JOIN lots l ON b.lot_id = l.id
+            JOIN campsites c ON l.campsite_id = c.id
+            WHERE c.owner_id = :ownerId AND c.id = :campsiteId AND b.status = :status
+            ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset
+            """;
+        List<BookingModel> content = jdbc.query(sql,
+            Map.of("ownerId", ownerId, "campsiteId", campsiteId, "status", status.name(),
+                "limit", pageable.getPageSize(), "offset", pageable.getOffset()), rowMapper);
+        loadBookingExtras(content);
+
+        String countSql = """
+            SELECT COUNT(*) FROM bookings b
+            JOIN lots l ON b.lot_id = l.id
+            JOIN campsites c ON l.campsite_id = c.id
+            WHERE c.owner_id = :ownerId AND c.id = :campsiteId AND b.status = :status
+            """;
+        Long total = jdbc.queryForObject(countSql,
+            Map.of("ownerId", ownerId, "campsiteId", campsiteId, "status", status.name()), Long.class);
+        return new PageImpl<>(content, pageable, total != null ? total : 0L);
+    }
+
     public List<BookingModel> findConflictingBookings(UUID lotId, LocalDate checkIn, LocalDate checkOut) {
         String sql = """
             SELECT * FROM bookings

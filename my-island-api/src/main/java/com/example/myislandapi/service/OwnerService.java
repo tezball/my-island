@@ -55,8 +55,17 @@ public class OwnerService {
         this.extraRepository = extraRepository;
     }
 
-    public OwnerStatsResponse getOwnerStats(UUID ownerId) {
-        List<CampsiteModel> campsites = campsiteRepository.findByOwnerId(ownerId);
+    public OwnerStatsResponse getOwnerStats(UUID ownerId, UUID campsiteId) {
+        List<CampsiteModel> campsites;
+        if (campsiteId != null) {
+            // Filter to specific campsite if provided
+            campsites = campsiteRepository.findById(campsiteId)
+                    .filter(c -> c.getOwnerId().equals(ownerId))
+                    .map(List::of)
+                    .orElse(List.of());
+        } else {
+            campsites = campsiteRepository.findByOwnerId(ownerId);
+        }
 
         int totalCampsites = campsites.size();
         int totalLots = 0;
@@ -64,8 +73,13 @@ public class OwnerService {
             totalLots += lotRepository.findByCampsiteId(campsite.getId()).size();
         }
 
-        // Get all bookings for owner
-        Page<BookingModel> bookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
+        // Get bookings for owner (filtered by campsite if provided)
+        Page<BookingModel> bookings;
+        if (campsiteId != null) {
+            bookings = bookingRepository.findByOwnerIdAndCampsiteId(ownerId, campsiteId, Pageable.unpaged());
+        } else {
+            bookings = bookingRepository.findByOwnerId(ownerId, Pageable.unpaged());
+        }
 
         int totalBookings = (int) bookings.getTotalElements();
         int pendingBookings = 0;
@@ -206,9 +220,13 @@ public class OwnerService {
                 .toList();
     }
 
-    public Page<BookingResponse> getOwnerBookings(UUID ownerId, BookingStatus status, Pageable pageable) {
+    public Page<BookingResponse> getOwnerBookings(UUID ownerId, BookingStatus status, UUID campsiteId, Pageable pageable) {
         Page<BookingModel> bookings;
-        if (status != null) {
+        if (campsiteId != null && status != null) {
+            bookings = bookingRepository.findByOwnerIdAndCampsiteIdAndStatus(ownerId, campsiteId, status, pageable);
+        } else if (campsiteId != null) {
+            bookings = bookingRepository.findByOwnerIdAndCampsiteId(ownerId, campsiteId, pageable);
+        } else if (status != null) {
             bookings = bookingRepository.findByOwnerIdAndStatus(ownerId, status, pageable);
         } else {
             bookings = bookingRepository.findByOwnerId(ownerId, pageable);
