@@ -33,6 +33,8 @@
 		<springdoc.version>2.8.8</springdoc.version>
 		<localstack.version>1.20.5</localstack.version>
 		<testcontainers.version>1.20.5</testcontainers.version>
+		<gatling.version>3.13.1</gatling.version>
+		<gatling-maven-plugin.version>4.15.0</gatling-maven-plugin.version>
 	</properties>
 	<dependencies>
 		<!-- Spring Boot Starters -->
@@ -213,6 +215,26 @@
 			<artifactId>stripe-java</artifactId>
 			<version>28.3.0</version>
 		</dependency>
+
+		<!-- Gatling for Performance Testing -->
+		<dependency>
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.gatling</groupId>
+			<artifactId>gatling-core-java</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.gatling</groupId>
+			<artifactId>gatling-http-java</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -247,6 +269,14 @@
 					<compilerArgs>
 						<arg>-Amapstruct.defaultComponentModel=spring</arg>
 					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.gatling</groupId>
+				<artifactId>gatling-maven-plugin</artifactId>
+				<version>${gatling-maven-plugin.version}</version>
+				<configuration>
+					<simulationClass>gatling.MyIslandLoadSimulation</simulationClass>
 				</configuration>
 			</plugin>
 		</plugins>
