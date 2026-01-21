@@ -22,9 +22,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 
 | Term                      | Definition                                                                                                      |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Site**                  | A site is a physical location with one or more accommodation types                                              |
 | **Campsite**              | A site type. A property offering outdoor accommodation (camping, glamping, cabins). Owned by exactly one Owner. |
-| **B&B**                   | A site type. A B&B with one or more rooms.                                                                      |
 | **Lot**                   | A bookable unit within a Campsite (e.g., tent pitch, cabin, glamping pod). Has a type and capacity.             |
 | **Guest**                 | A user who browses and books accommodations.                                                                    |
 | **Owner**                 | A user who owns and manages one or more Campsites.                                                              |
@@ -144,6 +142,7 @@ Campsite (Root)
 ```
 
 **Campsite**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -160,6 +159,7 @@ Campsite (Root)
 | active | Boolean | Published/visible |
 
 **Lot**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -173,6 +173,7 @@ Campsite (Root)
 | available | Boolean | Currently bookable |
 
 **Extra**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -195,6 +196,7 @@ Booking (Root)
 ```
 
 **Booking**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -213,6 +215,7 @@ Booking (Root)
 | createdAt | Timestamp | Booking creation time |
 
 **BookingExtra**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -235,6 +238,7 @@ User (Root)
 ```
 
 **User**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -250,6 +254,7 @@ User (Root)
 | createdAt | Timestamp | Account creation |
 
 **LinkedAccount**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -268,6 +273,7 @@ Review (Root)
 ```
 
 **Review**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |
@@ -291,6 +297,7 @@ SupportTicket (Root)
 ```
 
 **SupportTicket**
+
 | Field | Type | Description |
 |-------|------|-------------|
 | id | UUID | Unique identifier |

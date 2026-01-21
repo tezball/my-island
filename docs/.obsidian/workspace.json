@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "USER_STORIES.md",
+                "file": "02-Architecture/DOMAIN_MODEL.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "USER_STORIES"
+              "title": "DOMAIN_MODEL"
             }
           }
         ]
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "USER_STORIES.md",
+                "file": "02-Architecture/DOMAIN_MODEL.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of USER_STORIES"
+              "title": "Outline of DOMAIN_MODEL"
             }
           }
         ],
@@ -184,27 +184,42 @@
       "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "4bfacca73f2bc141",
+  "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "README.md",
+    "test-images/glamping-bell-tent.jpg",
+    "test-images/camping-tent-forest.jpg",
+    "test-images/camping-night-campfire.jpg",
+    "test-images/camping-mountain-view.jpg",
+    "test-images/camping-lake-tent.jpg",
+    "01-Project-Management/ROADMAP.md",
+    "01-Project-Management/SNAG_LIST.md",
+    "01-Project-Management/README.md",
+    "01-Project-Management/BUG_FIX_PLAN.md",
+    "01-Project-Management/OUTSTANDING_WORK.md",
+    "02-Architecture/tech-stack.md",
+    "02-Architecture/README.md",
+    "02-Architecture/KAFKA_EVENTS.md",
+    "02-Architecture/DOMAIN_MODEL.md",
+    "06-Feedback/OWNER_DASHBOARD_REVIEW.md",
+    "06-Feedback/README.md",
+    "08-Leads/CAMPSITE_LEADS.md",
+    "07-Testing/TESTING_APPROACH.md",
+    "claude-wd/PHASE_1_2_IMPLEMENTATION_PLAN.md",
+    "snaglist.md",
+    "USER_STORIES.md",
     "USER_STORIES.md.tmp.3919667.1767815013290",
     "USER_STORIES.md.tmp.3919667.1767814956893",
-    "06-Feedback/OWNER_DASHBOARD_REVIEW.md",
     "06-Feedback/OWNER_DASHBOARD_REVIEW.md.tmp.3790632.1767704813714",
-    "claude-wd/PHASE_1_2_IMPLEMENTATION_PLAN.md",
-    "README.md",
     "claude-wd",
-    "snaglist.md",
     "06-Feedback/OWNER_DASHBOARD_REVIEW.md.tmp.3208585.1767698505939",
     "README.md.tmp.3208585.1767694050275",
-    "01-Project-Management/ROADMAP.md",
     "01-Project-Management/ROADMAP.md.tmp.3208585.1767694043087",
     "SNAG_LIST.md",
-    "02-Architecture/DOMAIN_MODEL.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767549050574",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548973099",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548945080",
-    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548909167",
     "04-User-Flows/profile/profile-flow.canvas",
     "04-User-Flows/reviews/reviews-flow.canvas",
     "04-User-Flows/discovery/discovery-flow.canvas",
@@ -218,11 +233,6 @@
     "04-User-Flows/profile/03b-edit-profile-3.png",
     "04-User-Flows/profile/03-edit-profile-2.png",
     "04-User-Flows/profile/02-edit-profile-1.png",
-    "04-User-Flows/profile/01-profile.png",
-    "04-User-Flows/owner-admin/19-property-overview-1.png",
-    "04-User-Flows/owner-admin/01-dashboard.png",
-    "04-User-Flows/owner-admin/20-property-overview-2.png",
-    "04-User-Flows/owner-admin/21-property-overview-3.png",
     "04-User-Flows/user-flows.canvas",
     "04-User-Flows/auth/README.md",
     "04-User-Flows/my-bookings/my-bookings-flow.canvas",
@@ -230,17 +240,6 @@
     "04-User-Flows/offers/offers-flow.canvas",
     "04-User-Flows/owner-admin/OWNER_PROPERTY_SETUP_FLOW.md",
     "04-User-Flows/owner-admin/README.md",
-    "OWNER_PROPERTY_SETUP_FLOW.md",
-    "01-Project-Management/SNAG_LIST.md",
-    "01-Project-Management/OUTSTANDING_WORK.md",
-    "01-Project-Management/MVP_CRITICAL_TASKS.md",
-    "01-Project-Management/IMPLEMENTATION_SUMMARY.md",
-    "08-Leads/CAMPSITE_LEADS.md",
-    "07-Testing/TESTING_APPROACH.md",
-    "05-Design-Specs/README.md",
-    "05-Design-Specs/social_login_failed/spec.md",
-    "05-Design-Specs/sign_up:_personal_details/spec.md",
-    "05-Design-Specs/logout_confirmation/spec.md",
-    "05-Design-Specs/email_verified_success/spec.md"
+    "OWNER_PROPERTY_SETUP_FLOW.md"
   ]
 }
