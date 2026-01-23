@@ -1,4 +1,5 @@
 import React from 'react';
+import { DateInput } from '../components/ui/DateInput';
 
 const CATEGORIES = [
     { id: 'tents', icon: 'camping', label: 'Tents', color: 'emerald' },
@@ -8,56 +9,37 @@ const CATEGORIES = [
     { id: 'yurts', icon: 'deck', label: 'Yurts' },
 ];
 
+// In a real app, these would come from an API. Valid logic for now is to show Nore Valley data.
 const FEATURED = [
     {
-        id: 1,
-        title: 'Kerry',
-        count: 34,
-        price: 45,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAJIVrDvo19VFG3xvddZlVssAwGcpQGF_qmqoSXpb5vpq8WSUjXuamD_VNkdJgIK3GyM3N8YOQAjNlC2qOQPYfBZsahwA6Ip6dAKUiIftCQ1S5C2Uk2vi-_NITv3uhlVxl-2tCZFezMvajW0OnN1ZvGpaXDyHEdTm9bo5dNaK6qh1qVFAFa4Aqkubd_46gctHFNihFoCQViQe6xysko6d-YjQ3sVZEcO5nrJ9igwK418SLlYh927CzjC3Ye7yhxjKJwt7Au2jHModQ'
-    },
-    {
-        id: 2,
-        title: 'Donegal',
-        count: 21,
-        price: 38,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmogU6m90mxdocw_g09oKBi5oMh65R370s9cAd9LuSZOfxIaeHsstmh1q8XRkW2lAqgV09qr0Zom_ssZ8OSlocPvFjl98prj9PWwjkSR0IF3XPXvxDkAPaYZjNyKwYaxtBiavIX507C-kdvkb4gzMCIZ61zB_Z1bT2k1ZwfJbPxpySYRFL0EJ03P_xQ05c_Q0-1nvsJBStWD9q0zfsBMoNImzqOUdXEd09Z4vNR2M1xH5zGV-k3EyQQbLRlc_d7oNcliBn2ojg8cU'
-    },
-    {
-        id: 3,
-        title: 'Wicklow',
-        count: 18,
-        price: 50,
-        image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA_OBLcpVSxsHZDTdYj91D0JNdKC1OvihLGpwzamLkmtqBC0dZSWIQxiVRNQ8HZ1W9rSGSeToKDIuBQvm-DpRu0FNMkaB664rswKLH6L9qRX62cKmBg17oToarf0qAukNwsDyv2YtkePMDHC4JWmKKtpOFOvYbWtzFz_UqE4fA-yDHBqMpZ7woe0NqkEjJKooOjaYzZ6KCrrzMs8a85QAWPcGdkjb2JfvgxDETnWg_C7HuQxKl3l580cI-4wWQdQPo_oNll6-dVz2Q'
+        id: 'nore-valley-owner', // Use actual ID for linking
+        title: 'Kilkenny',
+        count: 1, // Only Nore Valley
+        price: 30, // Lowest price
+        image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800' // Kilkenny/Irish Castle vibe
     }
 ];
 
 const POPULAR = [
     {
-        id: 1,
-        name: "Eagle's Point Glamping",
-        location: "West Cork",
-        distance: "12km away",
-        rating: 4.9,
-        price: 85,
-        tag: "Eco-Friendly",
-        tagColor: "emerald",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCFftBBxDGhqAhjH6r6_gj7s1c0D8K88wI2MjOfYlX6j9o2pXlWVtwBlR2WFgk44cqKb0LdWz0e5uTB8Q4RmdvSj9pd41dpLVCIufT49IDZVjgZMuv8YWmYBzJi0vWgn-yeN9yF8XOlOcDIJ1TtxoAE2Ktcy04pa-C145xqYhnoJvjAF1UIp63R4aPHzrt74RGeqzT0rGMJQ5VHR9Mdhg41-MxDx5ffe8yQxqQ1h_0Ua4iALOj0iAvYo3UffBF8qJb93lZPbS9gO7w"
-    },
-    {
-        id: 2,
-        name: "Lakeside Caravan Park",
-        location: "Killarney",
-        distance: "24km away",
-        rating: 4.5,
-        price: 42,
-        tag: "Lake View",
-        tagColor: "blue",
-        image: "https://lh3.googleusercontent.com/aida-public/AB6AXuClt1fzyMfwTZwbovIbonkF_J_9wfRm6ucDm3GmfX1oejYnv-AFTj83Avft2Sfksw2pTNRXN_H2rSVYUSEx-6OMynSg3ZyuYmcoWd1ezDQdtlu6-amCoKnlqD8SJU28M_f1zlWdilRXlouVtsRNogef4dlKkH90Z88E3_H8EL6l_AgwHo_firJS6FS4rR_En2Uty5N3_Jjz9K4fYV1kpES2YRNUvuCGiKAdhCuVX95exW0U1RkjK42MnsGRKm4nmLYVWHFfRpqWZq8"
+        id: 'nore-valley-owner',
+        name: "Nore Valley Park",
+        location: "Bennettsbridge, Kilkenny",
+        distance: "2.5km away",
+        rating: 4.8,
+        price: 30,
+        tag: "Family Friendly",
+        tagColor: "orange",
+        image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800" // Camping scene
     }
 ];
 
+// ... (inside component)
+
 export const HomePage: React.FC = () => {
+    const [checkIn, setCheckIn] = React.useState('');
+    const [checkOut, setCheckOut] = React.useState('');
+
     return (
         <main className="flex-1 flex flex-col gap-6 pt-4 pb-20">
             {/* Search Section */}
@@ -77,27 +59,25 @@ export const HomePage: React.FC = () => {
                         </div>
                         <div className="flex gap-3">
                             <div className="relative w-full flex-1">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-20">
                                     <span className="material-symbols-outlined text-gray-400 text-lg">calendar_today</span>
                                 </div>
-                                <input
+                                <DateInput
                                     className="block w-full p-3.5 pl-10 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:border-gray-700 dark:text-white outline-none"
                                     placeholder="Check-in"
-                                    type="text"
-                                    onFocus={(e) => e.target.type = 'date'}
-                                    onBlur={(e) => e.target.type = 'text'}
+                                    value={checkIn}
+                                    onChange={setCheckIn}
                                 />
                             </div>
                             <div className="relative w-full flex-1">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-20 opacity-50">
                                     <span className="material-symbols-outlined text-gray-400 text-lg">calendar_today</span>
                                 </div>
-                                <input
+                                <DateInput
                                     className="block w-full p-3.5 pl-10 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:border-gray-700 dark:text-white outline-none"
                                     placeholder="Check-out"
-                                    type="text"
-                                    onFocus={(e) => e.target.type = 'date'}
-                                    onBlur={(e) => e.target.type = 'text'}
+                                    value={checkOut}
+                                    onChange={setCheckOut}
                                 />
                             </div>
                         </div>
@@ -132,17 +112,17 @@ export const HomePage: React.FC = () => {
                             className={`flex flex-col items-center gap-2 min-w-[72px] group cursor-pointer ${idx === 0 ? '' : 'opacity-70 hover:opacity-100 transition-opacity'}`}
                         >
                             <div className={`size-14 rounded-full flex items-center justify-center shadow-sm ${idx === 0
-                                    ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-500'
-                                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-primary/50'
+                                ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-500'
+                                : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-primary/50'
                                 }`}>
                                 <span className={`material-symbols-outlined ${idx === 0
-                                        ? 'text-emerald-600 dark:text-emerald-400 filled'
-                                        : 'text-gray-600 dark:text-gray-300'
+                                    ? 'text-emerald-600 dark:text-emerald-400 filled'
+                                    : 'text-gray-600 dark:text-gray-300'
                                     }`}>{cat.icon}</span>
                             </div>
                             <span className={`text-xs font-semibold ${idx === 0
-                                    ? 'text-emerald-700 dark:text-emerald-400'
-                                    : 'text-gray-600 dark:text-gray-400'
+                                ? 'text-emerald-700 dark:text-emerald-400'
+                                : 'text-gray-600 dark:text-gray-400'
                                 }`}>{cat.label}</span>
                         </button>
                     ))}
@@ -157,7 +137,11 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div className="flex gap-4 overflow-x-auto no-scrollbar pr-4 pb-4">
                     {FEATURED.map(item => (
-                        <div key={item.id} className="relative min-w-[220px] h-[280px] rounded-xl overflow-hidden group cursor-pointer shadow-md shrink-0">
+                        <div
+                            key={item.id}
+                            onClick={() => window.location.href = `/campsite/${item.id}`}
+                            className="relative min-w-[220px] h-[280px] rounded-xl overflow-hidden group cursor-pointer shadow-md shrink-0"
+                        >
                             <img
                                 alt={item.title}
                                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -181,7 +165,11 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-4">
                     {POPULAR.map(item => (
-                        <div key={item.id} className="flex gap-4 bg-white dark:bg-[#1a2632] rounded-lg p-3 shadow-sm border border-gray-100 dark:border-gray-800">
+                        <div
+                            key={item.id}
+                            onClick={() => window.location.href = `/campsite/${item.id}`}
+                            className="flex gap-4 bg-white dark:bg-[#1a2632] rounded-lg p-3 shadow-sm border border-gray-100 dark:border-gray-800 cursor-pointer hover:shadow-md transition-all"
+                        >
                             <div className="relative w-24 h-24 shrink-0 rounded-lg overflow-hidden">
                                 <img alt={item.name} className="w-full h-full object-cover" src={item.image} />
                                 <div className="absolute top-1 right-1 bg-white/90 dark:bg-black/60 rounded px-1 flex items-center gap-0.5">

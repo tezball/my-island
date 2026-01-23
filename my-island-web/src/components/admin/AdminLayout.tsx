@@ -12,18 +12,39 @@ export const AdminLayout: React.FC = () => {
         navigate('/signin');
     };
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+        <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden relative">
+            {/* Mobile Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="absolute inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-64 bg-white dark:bg-[#1a2632] border-r border-gray-200 dark:border-gray-800 flex flex-col shrink-0">
-                <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
-                    <div className="size-8 rounded-lg bg-primary flex items-center justify-center text-white">
-                        <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+            <aside className={clsx(
+                "w-64 bg-white dark:bg-[#1a2632] border-r border-gray-200 dark:border-gray-800 flex flex-col shrink-0 transition-transform duration-300 absolute md:relative z-50 h-full",
+                isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            )}>
+                <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="size-8 rounded-lg bg-primary flex items-center justify-center text-white">
+                            <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+                        </div>
+                        <span className="text-lg font-bold text-[#111418] dark:text-white">Portal</span>
                     </div>
-                    <span className="text-lg font-bold text-[#111418] dark:text-white">Admin Portal</span>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="md:hidden text-gray-500 hover:text-[#111418] dark:text-gray-400 dark:hover:text-white transition-colors"
+                    >
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+                <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
                     <AdminNavLink to="/admin" icon="dashboard" label="Dashboard" end />
                     <AdminNavLink to="/admin/bookings" icon="calendar_month" label="Bookings" />
                     <AdminNavLink to="/admin/lots" icon="camping" label="Lots & Campsites" />
@@ -53,12 +74,21 @@ export const AdminLayout: React.FC = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <header className="h-16 bg-white dark:bg-[#1a2632] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-8 shrink-0">
-                    <h1 className="text-xl font-bold text-[#111418] dark:text-white">Overview</h1>
+            <main className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+                <header className="h-16 bg-white dark:bg-[#1a2632] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 md:px-8 shrink-0">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="md:hidden p-2 -ml-2 text-gray-500 hover:text-[#111418] dark:text-gray-400 dark:hover:text-white rounded-lg transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-2xl">menu</span>
+                        </button>
+                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">Overview</h1>
+                    </div>
                     <div className="flex items-center gap-4">
                         <Link to="/" className="text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1">
-                            Go to Main Site
+                            <span className="hidden md:inline">Go to Main Site</span>
+                            <span className="md:hidden">Exit</span>
                             <span className="material-symbols-outlined text-lg">open_in_new</span>
                         </Link>
                     </div>

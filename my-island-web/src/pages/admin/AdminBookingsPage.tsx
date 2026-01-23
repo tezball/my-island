@@ -38,7 +38,7 @@ export const AdminBookingsPage: React.FC = () => {
 
             <div className="bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
+                    <table className="w-full text-sm text-left whitespace-nowrap">
                         <thead className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 font-medium">
                             <tr>
                                 <th className="px-6 py-3">ID</th>
@@ -57,7 +57,14 @@ export const AdminBookingsPage: React.FC = () => {
                                     <td className="px-6 py-4 font-medium text-[#111418] dark:text-white">{booking.userName}</td>
                                     <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{booking.lotName}</td>
                                     <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
-                                        {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                                        {(() => {
+                                            // Handle various date formats safely
+                                            const formatDate = (dateStr: string) => {
+                                                if (dateStr.includes('/')) return dateStr; // Already formatted
+                                                return new Date(dateStr).toLocaleDateString('en-GB'); // Convert ISO to DD/MM/YYYY
+                                            };
+                                            return `${formatDate(booking.startDate)} - ${formatDate(booking.endDate)}`;
+                                        })()}
                                     </td>
                                     <td className="px-6 py-4 font-medium">€{booking.totalPrice}</td>
                                     <td className="px-6 py-4">

@@ -1,3 +1,5 @@
+import { MOCK_DB } from './mockData';
+
 export interface User {
     id: string;
     email: string;
@@ -11,34 +13,7 @@ export interface AuthResponse {
     token: string;
 }
 
-const MOCK_USER: User = {
-    id: 'u1',
-    email: 'test@example.com',
-    name: 'Sarah O\'Connor',
-    avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBJ5BNuO8loW1yn3QgoTqdTTkR3gR2Pplm0zpvBGEqcc44eQAYXmvthnp4ANjmGs-9vZA2JDrNs-nO4lq5pa0X97RD7tVs_JsTet1fS0NEbXDfbQPGlHwEuqa99U0KO60UPf6XuPACdJP9c7zn9rh3Wzw9ZYTIOdST9IVM7rEXnHa7fn16pRfPkZ7pQdRh9Vcyu4gdrfIqZeeHHvYeUp0dh1nDzi_1jLmiXqhwhn3dM31DGe1TZLWoAryZVPcqxapsD_B5efMjfoKg',
-    role: 'user',
-};
-
-export const MOCK_USERS = [
-    {
-        email: 'test@example.com',
-        password: 'password',
-        label: 'Sarah O\'Connor (Default User)',
-        role: 'user' as const
-    },
-    {
-        email: 'john@example.com',
-        password: 'password',
-        label: 'John Doe (New User)',
-        role: 'user' as const
-    },
-    {
-        email: 'admin@myisland.com',
-        password: 'password',
-        label: 'Admin User (Power User)',
-        role: 'admin' as const
-    }
-];
+export const MOCK_USERS = MOCK_DB.users;
 
 // Simulate API delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -47,10 +22,12 @@ export const authService = {
     async login(email: string, password: string): Promise<AuthResponse> {
         await delay(800); // Simulate network request for 0.8s
 
-        if (email === 'test@example.com' && password === 'password') {
+        // Check against mock DB
+        const dbUser = MOCK_DB.users.find(u => u.email === email && u.password === password);
+        if (dbUser) {
             return {
-                user: MOCK_USER,
-                token: 'mock-jwt-token-12345',
+                user: dbUser.userProfile,
+                token: `mock-jwt-token-${dbUser.userProfile.id}`,
             };
         }
 

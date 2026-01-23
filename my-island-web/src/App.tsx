@@ -13,6 +13,7 @@ import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminBookingsPage } from './pages/admin/AdminBookingsPage';
 import { AdminLotsPage } from './pages/admin/AdminLotsPage';
+import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -40,6 +41,7 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/personalize" element={<PersonalizationPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/campsite/:id" element={<CampsiteDetailsPage />} />
             <Route path="/saved" element={<div className="p-4">Saved Pages (Coming Soon)</div>} />
             <Route path="/trips" element={<div className="p-4">Trips (Coming Soon)</div>} />
           </Routes>

@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { adminService, type Lot } from '../../services/adminService';
+import { useAuth } from '../../context/AuthContext';
 
 export const AdminLotsPage: React.FC = () => {
+    const { user } = useAuth();
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingLot, setEditingLot] = useState<Lot | null>(null);
 
     useEffect(() => {
-        loadLots();
-    }, []);
+        if (user?.id) {
+            loadLots(user.id);
+        }
+    }, [user?.id]);
 
-    const loadLots = async () => {
+    const loadLots = async (userId: string) => {
         setIsLoading(true);
         try {
-            const data = await adminService.getLots();
+            const data = await adminService.getLots(userId);
             setLots(data);
         } catch (error) {
             console.error('Failed to load lots:', error);
