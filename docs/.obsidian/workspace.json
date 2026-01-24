@@ -15,9 +15,9 @@
               "state": {
                 "file": "00-Domain/Event Storm.canvas",
                 "viewState": {
-                  "x": 824.6185613770951,
-                  "y": 790.3128738268313,
-                  "zoom": -0.19999999999999996
+                  "x": 532.2712198193449,
+                  "y": 3120.955553383546,
+                  "zoom": 0.20000000000000007
                 }
               },
               "icon": "lucide-layout-dashboard",
@@ -190,6 +190,7 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "00-Domain/Event Storm.canvas.tmp.8347.1769260685440",
     "00-Domain/Event Storm.canvas.tmp.8347.1769258077604",
     "00-Domain/07-Marketplace/USER_STORIES.md",
     "00-Domain/07-Marketplace/NOTES.md",
@@ -220,7 +221,6 @@
     "00-Domain",
     "e2e-review-findings.md",
     "booking-flow-review.md",
-    "booking-flow-review.md.tmp.33388.1769176870485",
     "test-images/glamping-bell-tent.jpg",
     "test-images/camping-tent-forest.jpg",
     "test-images/camping-night-campfire.jpg",
