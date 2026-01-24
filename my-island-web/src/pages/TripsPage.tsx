@@ -8,6 +8,7 @@ export const TripsPage: React.FC = () => {
     const { user } = useAuth();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -148,7 +149,10 @@ export const TripsPage: React.FC = () => {
                 {/* Card Footer */}
                 {!isPast && booking.status !== 'cancelled' && (
                     <div className="px-4 pb-4">
-                        <button className="w-full py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors">
+                        <button
+                            onClick={() => setSelectedBooking(booking)}
+                            className="w-full py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
+                        >
                             View Details
                         </button>
                     </div>
@@ -253,6 +257,108 @@ export const TripsPage: React.FC = () => {
                             </div>
                         </section>
                     )}
+                </div>
+            )}
+
+            {/* Booking Details Modal */}
+            {selectedBooking && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-[#1a2632] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+                        {/* Modal Header */}
+                        <div className="bg-primary text-white p-6">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h2 className="text-xl font-bold mb-1">Booking Confirmation</h2>
+                                    <p className="text-white/80 text-sm">Reference: #{selectedBooking.id.toUpperCase()}</p>
+                                </div>
+                                <button
+                                    onClick={() => setSelectedBooking(null)}
+                                    className="p-1 hover:bg-white/20 rounded-full transition-colors"
+                                >
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="p-6 space-y-4">
+                            {/* Status */}
+                            <div className="flex justify-center">
+                                {getStatusBadge(selectedBooking.status)}
+                            </div>
+
+                            {/* Accommodation */}
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                                <h3 className="font-semibold text-[#111418] dark:text-white mb-1">{selectedBooking.lotName}</h3>
+                                <p className="text-sm text-gray-500 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-sm">location_on</span>
+                                    Nore Valley Park, Kilkenny
+                                </p>
+                            </div>
+
+                            {/* Dates */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Check-in</p>
+                                    <p className="font-semibold text-[#111418] dark:text-white">{selectedBooking.startDate}</p>
+                                    <p className="text-xs text-gray-500">After 2:00 PM</p>
+                                </div>
+                                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Check-out</p>
+                                    <p className="font-semibold text-[#111418] dark:text-white">{selectedBooking.endDate}</p>
+                                    <p className="text-xs text-gray-500">Before 11:00 AM</p>
+                                </div>
+                            </div>
+
+                            {/* Guest */}
+                            <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-primary">person</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">Guest</p>
+                                    <p className="font-semibold text-[#111418] dark:text-white">{selectedBooking.userName}</p>
+                                </div>
+                            </div>
+
+                            {/* Extras */}
+                            {selectedBooking.details && (
+                                <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                                    <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-yellow-600">bolt</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Extras Included</p>
+                                        <p className="font-semibold text-[#111418] dark:text-white">Electric Hookup</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Total */}
+                            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-500">Total Paid</span>
+                                    <span className="text-2xl font-bold text-primary">€{selectedBooking.totalPrice}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-6 pt-0 space-y-3">
+                            <Link
+                                to="/campsite/nore-valley-owner"
+                                className="block w-full py-3 text-center font-semibold text-primary border border-primary rounded-xl hover:bg-primary/5 transition-colors"
+                            >
+                                View Campsite
+                            </Link>
+                            <button
+                                onClick={() => setSelectedBooking(null)}
+                                className="w-full py-3 font-semibold text-white bg-primary hover:bg-emerald-600 rounded-xl transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

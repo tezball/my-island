@@ -15,9 +15,9 @@
               "state": {
                 "file": "00-Domain/Event Storm.canvas",
                 "viewState": {
-                  "x": 357.25,
-                  "y": -223.20000000000016,
-                  "zoom": 0
+                  "x": 824.6185613770951,
+                  "y": 790.3128738268313,
+                  "zoom": -0.19999999999999996
                 }
               },
               "icon": "lucide-layout-dashboard",
@@ -190,6 +190,7 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "00-Domain/Event Storm.canvas.tmp.8347.1769258077604",
     "00-Domain/07-Marketplace/USER_STORIES.md",
     "00-Domain/07-Marketplace/NOTES.md",
     "00-Domain/06-Support/NOTES.md",

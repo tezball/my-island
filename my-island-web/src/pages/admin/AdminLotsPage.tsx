@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { adminService, type Lot } from '../../services/adminService';
 import { useAuth } from '../../context/AuthContext';
-import { LotFilters, LotCard, LotFormModal, LotBulkActionsBar } from '../../components/admin/lots';
+import { LotFilters, LotTable, LotFormModal, LotBulkActionsBar } from '../../components/admin/lots';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -50,7 +50,7 @@ export const AdminLotsPage: React.FC = () => {
     const filteredLots = useMemo(() => {
         return lots.filter(lot => {
             const matchesSearch = lot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                  lot.description.toLowerCase().includes(searchQuery.toLowerCase());
+                lot.description.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesType = typeFilter === 'all' || lot.type === typeFilter;
             const matchesStatus = statusFilter === 'all' ||
                 (statusFilter === 'available' ? lot.isAvailable : !lot.isAvailable);
@@ -189,19 +189,25 @@ export const AdminLotsPage: React.FC = () => {
                 </div>
             ) : (
                 <>
-                    {/* Lot Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {paginatedLots.map((lot) => (
-                            <LotCard
-                                key={lot.id}
-                                lot={lot}
-                                isSelected={selectedIds.has(lot.id)}
-                                onSelect={handleSelect}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
-                            />
-                        ))}
-                    </div>
+                    {/* Lot Table */}
+                    <LotTable
+                        lots={paginatedLots}
+                        selectedIds={selectedIds}
+                        onSelect={handleSelect}
+                        onSelectAll={(selected) => {
+                            if (selected) {
+                                const newIds = new Set(selectedIds);
+                                paginatedLots.forEach(lot => newIds.add(lot.id));
+                                setSelectedIds(newIds);
+                            } else {
+                                const newIds = new Set(selectedIds);
+                                paginatedLots.forEach(lot => newIds.delete(lot.id));
+                                setSelectedIds(newIds);
+                            }
+                        }}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
 
                     {/* Pagination */}
                     {totalPages > 1 && (
@@ -218,11 +224,10 @@ export const AdminLotsPage: React.FC = () => {
                                 <button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                                        currentPage === page
-                                            ? 'bg-primary text-white'
-                                            : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                                    }`}
+                                    className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
+                                        ? 'bg-primary text-white'
+                                        : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                                        }`}
                                 >
                                     {page}
                                 </button>
