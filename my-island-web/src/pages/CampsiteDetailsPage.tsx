@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
 import { type Lot } from '../services/adminService';
 import { BookingModal } from '../components/booking/BookingModal';
+import { useSaved } from '../context/SavedContext';
 
 export const CampsiteDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -10,6 +11,7 @@ export const CampsiteDetailsPage: React.FC = () => {
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
+    const { isSaved, toggleSaved } = useSaved();
 
     useEffect(() => {
         if (!id) return;
@@ -96,6 +98,18 @@ export const CampsiteDetailsPage: React.FC = () => {
                                 {lot.imageUrl && (
                                     <img src={lot.imageUrl} alt={lot.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 )}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleSaved(lot.id);
+                                    }}
+                                    className="absolute top-2 left-2 p-2 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform"
+                                    title={isSaved(lot.id) ? 'Remove from saved' : 'Save for later'}
+                                >
+                                    <span className={`material-symbols-outlined ${isSaved(lot.id) ? 'text-red-500' : 'text-gray-600 dark:text-gray-300'}`}>
+                                        {isSaved(lot.id) ? 'favorite' : 'favorite_border'}
+                                    </span>
+                                </button>
                                 <div className="absolute top-2 right-2 bg-white/90 dark:bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm">
                                     €{lot.pricePerNight} <span className="text-xs font-normal">/ night</span>
                                 </div>

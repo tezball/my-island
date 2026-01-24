@@ -3,10 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const PROFILE_SECTIONS = [
-    { id: 'personal', label: 'Personal Details', icon: 'person', desc: 'Update your information' },
-    { id: 'security', label: 'Security', icon: 'lock', desc: 'Password and settings' },
-    { id: 'payments', label: 'Payment Details', icon: 'credit_card', desc: 'Add or remove cards' },
-    { id: 'notifications', label: 'Notifications', icon: 'notifications', desc: 'Manage alerts' },
+    { id: 'personal', label: 'Personal Details', icon: 'person', desc: 'Update your information', path: '/profile/details' },
+    { id: 'security', label: 'Security', icon: 'lock', desc: 'Password and settings', path: '/profile/security' },
+    { id: 'payments', label: 'Payment Details', icon: 'credit_card', desc: 'Add or remove cards', path: '/profile/payment' },
+    { id: 'notifications', label: 'Notifications', icon: 'notifications', desc: 'Manage alerts', path: '/profile/notifications' },
 ];
 
 export const ProfilePage: React.FC = () => {
@@ -74,7 +74,7 @@ export const ProfilePage: React.FC = () => {
                     {PROFILE_SECTIONS.map((section) => (
                         <Link
                             key={section.id}
-                            to="#"
+                            to={section.path}
                             className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-gray-100 dark:border-gray-800"
                         >
                             <div className="flex items-center gap-4">

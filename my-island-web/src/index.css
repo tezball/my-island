@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Disable dark mode by effectively redefining the variant to a non-existent class */
+@variant dark (&:where(.force-no-match));
+
 @theme {
   --color-primary: #059669;
   --color-background-light: #f6f7f8;

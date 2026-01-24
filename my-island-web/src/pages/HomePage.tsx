@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DateInput } from '../components/ui/DateInput';
 
 const CATEGORIES = [
-    { id: 'tents', icon: 'camping', label: 'Tents', color: 'emerald' },
+    { id: 'tent', icon: 'camping', label: 'Tents', color: 'emerald' },
     { id: 'glamping', icon: 'cottage', label: 'Glamping' },
-    { id: 'rvs', icon: 'rv_hookup', label: 'RVs' },
-    { id: 'cabins', icon: 'home_work', label: 'Cabins' },
-    { id: 'yurts', icon: 'deck', label: 'Yurts' },
+    { id: 'rv', icon: 'rv_hookup', label: 'RVs' },
+    { id: 'cabin', icon: 'home_work', label: 'Cabins' },
+    { id: 'lodge', icon: 'deck', label: 'Lodges' },
 ];
 
 // In a real app, these would come from an API. Valid logic for now is to show Nore Valley data.
 const FEATURED = [
     {
-        id: 'nore-valley-owner', // Use actual ID for linking
+        id: 'nore-valley-owner',
         title: 'Kilkenny',
-        count: 1, // Only Nore Valley
-        price: 30, // Lowest price
-        image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800' // Kilkenny/Irish Castle vibe
+        location: 'Kilkenny',
+        count: 1,
+        price: 30,
+        image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800'
     }
 ];
 
@@ -24,184 +26,360 @@ const POPULAR = [
     {
         id: 'nore-valley-owner',
         name: "Nore Valley Park",
-        location: "Bennettsbridge, Kilkenny",
-        distance: "2.5km away",
+        location: "Kilkenny",
+        distance: "2.5km",
         rating: 4.8,
         price: 30,
-        tag: "Family Friendly",
+        tag: "Family",
         tagColor: "orange",
-        image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800" // Camping scene
+        image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800"
     }
 ];
 
-// ... (inside component)
+interface GuestSelectorProps {
+    adults: number;
+    children: number;
+    rooms: number;
+    onUpdate: (adults: number, children: number, rooms: number) => void;
+    isOpen: boolean;
+    onToggle: () => void;
+}
+
+const GuestSelector: React.FC<GuestSelectorProps> = ({ adults, children, rooms, onUpdate, isOpen, onToggle }) => {
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                if (isOpen) onToggle();
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isOpen, onToggle]);
+
+    const displayText = `${adults} adult${adults !== 1 ? 's' : ''} · ${children} child${children !== 1 ? 'ren' : ''} · ${rooms} room${rooms !== 1 ? 's' : ''}`;
+
+    return (
+        <div ref={ref} className="relative w-full">
+            <div
+                className="flex items-center cursor-pointer"
+                onClick={onToggle}
+            >
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <span className="material-symbols-outlined text-gray-500">person</span>
+                </div>
+                <input
+                    className="block w-full p-4 pl-10 pr-10 text-base text-gray-900 bg-transparent outline-none dark:text-white placeholder:text-gray-500 cursor-pointer"
+                    value={displayText}
+                    readOnly
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <span className="material-symbols-outlined text-gray-400">unfold_more</span>
+                </div>
+            </div>
+
+            {isOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1a2632] rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-50">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="font-medium text-[#111418] dark:text-white">Adults</p>
+                                <p className="text-sm text-gray-500">Age 18+</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(Math.max(1, adults - 1), children, rooms)}
+                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary disabled:opacity-50"
+                                    disabled={adults <= 1}
+                                >
+                                    <span className="material-symbols-outlined text-sm">remove</span>
+                                </button>
+                                <span className="w-6 text-center font-medium">{adults}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(adults + 1, children, rooms)}
+                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary"
+                                >
+                                    <span className="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="font-medium text-[#111418] dark:text-white">Children</p>
+                                <p className="text-sm text-gray-500">Age 0-17</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(adults, Math.max(0, children - 1), rooms)}
+                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary disabled:opacity-50"
+                                    disabled={children <= 0}
+                                >
+                                    <span className="material-symbols-outlined text-sm">remove</span>
+                                </button>
+                                <span className="w-6 text-center font-medium">{children}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(adults, children + 1, rooms)}
+                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary"
+                                >
+                                    <span className="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="font-medium text-[#111418] dark:text-white">Rooms</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(adults, children, Math.max(1, rooms - 1))}
+                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary disabled:opacity-50"
+                                    disabled={rooms <= 1}
+                                >
+                                    <span className="material-symbols-outlined text-sm">remove</span>
+                                </button>
+                                <span className="w-6 text-center font-medium">{rooms}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => onUpdate(adults, children, rooms + 1)}
+                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary"
+                                >
+                                    <span className="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={onToggle}
+                        className="w-full mt-4 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-emerald-600 transition-colors"
+                    >
+                        Done
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export const HomePage: React.FC = () => {
-    const [checkIn, setCheckIn] = React.useState('');
-    const [checkOut, setCheckOut] = React.useState('');
+    const navigate = useNavigate();
+    const [location, setLocation] = useState('');
+    const [checkIn, setCheckIn] = useState('');
+    const [checkOut, setCheckOut] = useState('');
+    const [adults, setAdults] = useState(2);
+    const [children, setChildren] = useState(0);
+    const [rooms, setRooms] = useState(1);
+    const [guestSelectorOpen, setGuestSelectorOpen] = useState(false);
+
+    const handleSearch = () => {
+        const params = new URLSearchParams();
+        if (location) params.set('location', location);
+        if (checkIn) params.set('checkIn', checkIn);
+        if (checkOut) params.set('checkOut', checkOut);
+        params.set('adults', adults.toString());
+        params.set('children', children.toString());
+        params.set('rooms', rooms.toString());
+        navigate(`/search?${params.toString()}`);
+    };
+
+    const handleCategoryClick = (categoryId: string) => {
+        navigate(`/search?type=${categoryId}`);
+    };
+
+    const handleDestinationClick = (locationName: string) => {
+        navigate(`/search?location=${encodeURIComponent(locationName)}`);
+    };
+
+    // Handle check-in date change - clear check-out if it's before new check-in
+    const handleCheckInChange = (newCheckIn: string) => {
+        setCheckIn(newCheckIn);
+        if (checkOut && newCheckIn >= checkOut) {
+            setCheckOut('');
+        }
+    };
+
+    // Get minimum checkout date (day after check-in)
+    const getMinCheckoutDate = () => {
+        if (!checkIn) return undefined;
+        const nextDay = new Date(checkIn);
+        nextDay.setDate(nextDay.getDate() + 1);
+        return nextDay.toISOString().split('T')[0];
+    };
 
     return (
         <main className="flex-1 flex flex-col gap-6 pt-4 pb-20">
             {/* Search Section */}
-            <section className="px-4">
-                <div className="bg-white dark:bg-[#1a2632] rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-5 border border-gray-100 dark:border-gray-800">
-                    <h1 className="text-2xl font-bold mb-4 text-[#111418] dark:text-white">Where to next?</h1>
-                    <div className="flex flex-col gap-3">
-                        <div className="relative w-full">
+            <section className="bg-primary pb-8 pt-4 px-4 desktop:pt-8 -mt-4 mb-8">
+                <div className="max-w-7xl mx-auto">
+                    <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">Find your next stay</h1>
+                    <div className="bg-white dark:bg-[#1a2632] rounded-lg p-1 gap-1 flex flex-col md:flex-row shadow-lg border-4 border-yellow-400">
+                        {/* Location Input */}
+                        <div className="relative w-full flex-1 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700">
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <span className="material-symbols-outlined text-gray-400">search</span>
+                                <span className="material-symbols-outlined text-gray-500">bed</span>
                             </div>
                             <input
-                                className="block w-full p-3.5 pl-10 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary outline-none"
-                                placeholder="Try 'Ring of Kerry' or 'Wicklow'"
+                                className="block w-full p-4 pl-10 text-base text-gray-900 bg-transparent outline-none dark:text-white placeholder:text-gray-500"
+                                placeholder="Where are you going?"
                                 type="text"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
                             />
                         </div>
-                        <div className="flex gap-3">
-                            <div className="relative w-full flex-1">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-20">
-                                    <span className="material-symbols-outlined text-gray-400 text-lg">calendar_today</span>
-                                </div>
-                                <DateInput
-                                    className="block w-full p-3.5 pl-10 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:border-gray-700 dark:text-white outline-none"
-                                    placeholder="Check-in"
-                                    value={checkIn}
-                                    onChange={setCheckIn}
-                                />
+
+                        {/* Check-in Date */}
+                        <div className="relative w-full flex-1 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-20">
+                                <span className="material-symbols-outlined text-gray-500">calendar_month</span>
                             </div>
-                            <div className="relative w-full flex-1">
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-20 opacity-50">
-                                    <span className="material-symbols-outlined text-gray-400 text-lg">calendar_today</span>
-                                </div>
-                                <DateInput
-                                    className="block w-full p-3.5 pl-10 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:border-gray-700 dark:text-white outline-none"
-                                    placeholder="Check-out"
-                                    value={checkOut}
-                                    onChange={setCheckOut}
-                                />
-                            </div>
-                        </div>
-                        <div className="relative w-full">
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <span className="material-symbols-outlined text-gray-400">group</span>
-                            </div>
-                            <input
-                                className="block w-full p-3.5 pl-10 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-primary focus:border-primary dark:bg-gray-800 dark:border-gray-700 dark:text-white outline-none"
-                                placeholder="2 Adults, 0 Children"
-                                type="number"
+                            <DateInput
+                                className="block w-full p-4 pl-10 text-base text-gray-900 bg-transparent outline-none dark:text-white placeholder:text-gray-500"
+                                placeholder="Check-in"
+                                value={checkIn}
+                                onChange={handleCheckInChange}
                             />
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span className="material-symbols-outlined text-gray-400">unfold_more</span>
-                            </div>
                         </div>
-                        <button className="w-full mt-2 bg-primary hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
-                            <span className="material-symbols-outlined">search</span>
+
+                        {/* Check-out Date */}
+                        <div className="relative w-full flex-1 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-20">
+                                <span className="material-symbols-outlined text-gray-500">calendar_month</span>
+                            </div>
+                            <DateInput
+                                className="block w-full p-4 pl-10 text-base text-gray-900 bg-transparent outline-none dark:text-white placeholder:text-gray-500"
+                                placeholder="Check-out"
+                                value={checkOut}
+                                onChange={setCheckOut}
+                                minDate={getMinCheckoutDate()}
+                            />
+                        </div>
+
+                        {/* Guest Selector */}
+                        <div className="relative w-full flex-1 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700">
+                            <GuestSelector
+                                adults={adults}
+                                children={children}
+                                rooms={rooms}
+                                onUpdate={(a, c, r) => { setAdults(a); setChildren(c); setRooms(r); }}
+                                isOpen={guestSelectorOpen}
+                                onToggle={() => setGuestSelectorOpen(!guestSelectorOpen)}
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleSearch}
+                            className="w-full md:w-auto bg-primary hover:bg-emerald-600 text-white font-bold py-3 px-8 text-lg rounded-[4px] transition-colors"
+                        >
                             Search
                         </button>
                     </div>
                 </div>
             </section>
 
-            {/* Categories */}
-            <section className="pl-4">
-                <h3 className="text-lg font-bold text-[#111418] dark:text-white mb-3">Campsite Types</h3>
-                <div className="flex gap-3 overflow-x-auto no-scrollbar pr-4 pb-2">
-                    {CATEGORIES.map((cat, idx) => (
+            <div className="max-w-7xl mx-auto w-full flex flex-col gap-8 px-4 pb-12">
+                {/* Categories */}
+                <section>
+                    <h3 className="text-xl font-bold text-[#111418] dark:text-white mb-4">Browse by property type</h3>
+                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                        {CATEGORIES.map((cat) => (
+                            <button
+                                key={cat.id}
+                                onClick={() => handleCategoryClick(cat.id)}
+                                className="flex flex-col items-start gap-3 min-w-[200px] flex-1 group cursor-pointer"
+                            >
+                                <div className="w-full aspect-[4/3] rounded-lg overflow-hidden relative">
+                                    <img
+                                        src={
+                                            cat.id === 'tent' ? 'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?auto=format&fit=crop&q=80&w=600' :
+                                                cat.id === 'glamping' ? 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=600' :
+                                                    cat.id === 'rv' ? 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=600' :
+                                                        cat.id === 'cabin' ? 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&q=80&w=600' :
+                                                            'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&q=80&w=600'
+                                        }
+                                        alt={cat.label}
+                                        className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                    />
+                                </div>
+                                <span className="text-base font-bold text-[#111418] dark:text-white">{cat.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Featured Destinations */}
+                <section>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-bold text-[#111418] dark:text-white">Trending destinations</h3>
                         <button
-                            key={cat.id}
-                            className={`flex flex-col items-center gap-2 min-w-[72px] group cursor-pointer ${idx === 0 ? '' : 'opacity-70 hover:opacity-100 transition-opacity'}`}
+                            onClick={() => navigate('/search')}
+                            className="text-sm font-semibold text-primary hover:underline"
                         >
-                            <div className={`size-14 rounded-full flex items-center justify-center shadow-sm ${idx === 0
-                                ? 'bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-500'
-                                : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group-hover:border-primary/50'
-                                }`}>
-                                <span className={`material-symbols-outlined ${idx === 0
-                                    ? 'text-emerald-600 dark:text-emerald-400 filled'
-                                    : 'text-gray-600 dark:text-gray-300'
-                                    }`}>{cat.icon}</span>
-                            </div>
-                            <span className={`text-xs font-semibold ${idx === 0
-                                ? 'text-emerald-700 dark:text-emerald-400'
-                                : 'text-gray-600 dark:text-gray-400'
-                                }`}>{cat.label}</span>
+                            See all
                         </button>
-                    ))}
-                </div>
-            </section>
-
-            {/* Featured Destinations */}
-            <section className="pl-4">
-                <div className="flex justify-between items-center pr-4 mb-3">
-                    <h3 className="text-lg font-bold text-[#111418] dark:text-white">Featured Destinations</h3>
-                    <a className="text-sm font-semibold text-primary" href="#">See all</a>
-                </div>
-                <div className="flex gap-4 overflow-x-auto no-scrollbar pr-4 pb-4">
-                    {FEATURED.map(item => (
-                        <div
-                            key={item.id}
-                            onClick={() => window.location.href = `/campsite/${item.id}`}
-                            className="relative min-w-[220px] h-[280px] rounded-xl overflow-hidden group cursor-pointer shadow-md shrink-0"
-                        >
-                            <img
-                                alt={item.title}
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                src={item.image}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 p-4 w-full">
-                                <h4 className="text-white text-xl font-bold">{item.title}</h4>
-                                <p className="text-gray-200 text-sm mt-1 mb-2">{item.count} Campsites</p>
-                                <span className="inline-block bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded">From €{item.price}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Popular Near You */}
-            <section className="px-4 pb-6">
-                <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-lg font-bold text-[#111418] dark:text-white">Popular Near You</h3>
-                </div>
-                <div className="flex flex-col gap-4">
-                    {POPULAR.map(item => (
-                        <div
-                            key={item.id}
-                            onClick={() => window.location.href = `/campsite/${item.id}`}
-                            className="flex gap-4 bg-white dark:bg-[#1a2632] rounded-lg p-3 shadow-sm border border-gray-100 dark:border-gray-800 cursor-pointer hover:shadow-md transition-all"
-                        >
-                            <div className="relative w-24 h-24 shrink-0 rounded-lg overflow-hidden">
-                                <img alt={item.name} className="w-full h-full object-cover" src={item.image} />
-                                <div className="absolute top-1 right-1 bg-white/90 dark:bg-black/60 rounded px-1 flex items-center gap-0.5">
-                                    <span className="material-symbols-outlined text-yellow-500 text-[10px] filled">star</span>
-                                    <span className="text-[10px] font-bold">{item.rating}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {FEATURED.map((item, i) => (
+                            <div
+                                key={i}
+                                onClick={() => handleDestinationClick(item.location)}
+                                className="relative h-[270px] rounded-lg overflow-hidden group cursor-pointer shadow-sm"
+                            >
+                                <img
+                                    alt={item.title}
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    src={item.image}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div className="absolute top-4 left-4">
+                                    <h4 className="text-white text-2xl font-bold drop-shadow-md">{item.title}</h4>
+                                    <img src="https://flagcdn.com/ie.svg" alt="Ireland" className="w-6 h-4 mt-2" />
                                 </div>
                             </div>
-                            <div className="flex flex-col flex-1 justify-center">
-                                <div className="flex justify-between items-start">
-                                    <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1">{item.name}</h4>
-                                    <span className="material-symbols-outlined text-gray-400 text-lg">favorite</span>
-                                </div>
-                                <div className="flex items-center gap-1 mt-1 text-gray-500 dark:text-gray-400 text-xs">
-                                    <span className="material-symbols-outlined text-[14px]">location_on</span>
-                                    <span>{item.location} • {item.distance}</span>
-                                </div>
-                                <div className="flex items-end justify-between mt-2">
-                                    <div className="flex items-center gap-1">
-                                        <span className={`bg-${item.tagColor}-100 dark:bg-${item.tagColor}-900 text-${item.tagColor}-700 dark:text-${item.tagColor}-300 text-[10px] font-bold px-1.5 py-0.5 rounded`}>
-                                            {item.tag}
-                                        </span>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Popular Homes aka "Homes guests love" */}
+                <section>
+                    <h3 className="text-xl font-bold text-[#111418] dark:text-white mb-4">Homes guests love</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {POPULAR.map((item, i) => (
+                            <div
+                                key={i}
+                                onClick={() => navigate(`/campsite/${item.id}`)}
+                                className="flex flex-col gap-2 cursor-pointer group"
+                            >
+                                <div className="aspect-square rounded-lg overflow-hidden relative">
+                                    <img alt={item.name} className="w-full h-full object-cover" src={item.image} />
+                                    <div className="absolute top-2 right-2 bg-white rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm">
+                                        <span className="text-sm font-bold text-[#111418]">{item.rating}</span>
                                     </div>
-                                    <div className="text-right">
-                                        <span className="text-lg font-bold text-primary">€{item.price}</span>
-                                        <span className="text-xs text-gray-500">/night</span>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">{item.name}</h4>
+                                    <p className="text-gray-500 text-sm">{item.location}</p>
+                                    <div className="flex items-center gap-1 mt-1">
+                                        <span className="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-r-lg rounded-tl-lg">Genius</span>
+                                    </div>
+                                    <div className="mt-1 text-right md:text-left">
+                                        <span className="text-sm font-medium">Starting from </span>
+                                        <span className="text-lg font-bold text-[#111418] dark:text-white">€{item.price}</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+                        ))}
+                    </div>
+                </section>
+            </div>
         </main>
     );
 };

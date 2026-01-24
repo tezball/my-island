@@ -25,5 +25,19 @@ export const campsiteService = {
         };
         MOCK_DB.bookings.push(newBooking);
         return newBooking;
+    },
+
+    async getUserBookings(userId: string): Promise<Booking[]> {
+        // Return bookings for the specific user, sorted by start date (newest first)
+        return MOCK_DB.bookings
+            .filter(booking => booking.userId === userId)
+            .sort((a, b) => {
+                // Parse DD/MM/YYYY format
+                const parseDate = (dateStr: string) => {
+                    const [d, m, y] = dateStr.split('/');
+                    return new Date(`${y}-${m}-${d}`);
+                };
+                return parseDate(b.startDate).getTime() - parseDate(a.startDate).getTime();
+            });
     }
 };

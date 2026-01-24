@@ -11,14 +11,17 @@
             "id": "e4a632610aa52cf7",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "02-Architecture/DOMAIN_MODEL.md",
-                "mode": "source",
-                "source": false
+                "file": "00-Domain/Event Storm.canvas",
+                "viewState": {
+                  "x": 0,
+                  "y": 0,
+                  "zoom": 0
+                }
               },
-              "icon": "lucide-file",
-              "title": "DOMAIN_MODEL"
+              "icon": "lucide-layout-dashboard",
+              "title": "Event Storm"
             }
           }
         ]
@@ -156,13 +159,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "02-Architecture/DOMAIN_MODEL.md",
+                "file": "booking-flow-review.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of DOMAIN_MODEL"
+              "title": "Outline of booking-flow-review"
             }
           }
         ],
@@ -170,7 +173,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 469.5
+    "width": 469.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -186,7 +190,36 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "00-Domain/07-Marketplace/USER_STORIES.md",
+    "00-Domain/07-Marketplace/NOTES.md",
+    "00-Domain/06-Support/NOTES.md",
+    "00-Domain/05-Communication/USER_STORIES.md",
+    "00-Domain/05-Communication/NOTES.md",
+    "00-Domain/04-Review/NOTES.md",
+    "00-Domain/03-Identity/NOTES.md",
+    "00-Domain/02-Booking/USER_STORIES.md",
+    "00-Domain/02-Booking/NOTES.md",
+    "00-Domain/01-Accommodation/USER_STORIES.md",
+    "e2e-review-findings.md.tmp.8347.1769255332775",
+    "00-Domain/01-Accommodation/NOTES.md",
+    "00-Domain/Event Storm.canvas",
+    "00-Domain/DOMAIN_MODEL.md",
+    "00-Domain/06-Support/USER_STORIES.md",
+    "00-Domain/04-Review/USER_STORIES.md",
+    "00-Domain/03-Identity/USER_STORIES.md",
+    "00-Domain/07-Marketplace",
+    "00-Domain/06-Support",
+    "00-Domain/05-Communication",
+    "00-Domain/04-Review",
+    "00-Domain/03-Identity",
+    "00-Domain/02-Booking",
+    "00-Domain/01-Accommodation",
+    "02-Architecture/tech-stack.md",
     "README.md",
+    "00-Domain",
+    "e2e-review-findings.md",
+    "booking-flow-review.md",
+    "booking-flow-review.md.tmp.33388.1769176870485",
     "test-images/glamping-bell-tent.jpg",
     "test-images/camping-tent-forest.jpg",
     "test-images/camping-night-campfire.jpg",
@@ -197,29 +230,8 @@
     "01-Project-Management/README.md",
     "01-Project-Management/BUG_FIX_PLAN.md",
     "01-Project-Management/OUTSTANDING_WORK.md",
-    "02-Architecture/tech-stack.md",
     "02-Architecture/README.md",
-    "02-Architecture/KAFKA_EVENTS.md",
-    "02-Architecture/DOMAIN_MODEL.md",
-    "06-Feedback/OWNER_DASHBOARD_REVIEW.md",
-    "06-Feedback/README.md",
-    "08-Leads/CAMPSITE_LEADS.md",
-    "07-Testing/TESTING_APPROACH.md",
-    "claude-wd/PHASE_1_2_IMPLEMENTATION_PLAN.md",
-    "snaglist.md",
-    "USER_STORIES.md",
-    "USER_STORIES.md.tmp.3919667.1767815013290",
-    "USER_STORIES.md.tmp.3919667.1767814956893",
-    "06-Feedback/OWNER_DASHBOARD_REVIEW.md.tmp.3790632.1767704813714",
-    "claude-wd",
-    "06-Feedback/OWNER_DASHBOARD_REVIEW.md.tmp.3208585.1767698505939",
-    "README.md.tmp.3208585.1767694050275",
-    "01-Project-Management/ROADMAP.md.tmp.3208585.1767694043087",
-    "SNAG_LIST.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
-    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767549050574",
-    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548973099",
-    "04-User-Flows/owner-admin/owner-admin-flow.canvas.tmp.273980.1767548945080",
     "04-User-Flows/profile/profile-flow.canvas",
     "04-User-Flows/reviews/reviews-flow.canvas",
     "04-User-Flows/discovery/discovery-flow.canvas",
@@ -227,19 +239,11 @@
     "04-User-Flows/auth/auth-flow.canvas",
     "05-Design-Specs/not_found_(404)/screen.png",
     "05-Design-Specs/login_page_1/screen.png",
-    "05-Design-Specs/2fa_code_entry/spec.md",
-    "04-User-Flows/user-flows.md",
-    "04-User-Flows/missing-screens.md",
     "04-User-Flows/profile/03b-edit-profile-3.png",
     "04-User-Flows/profile/03-edit-profile-2.png",
     "04-User-Flows/profile/02-edit-profile-1.png",
     "04-User-Flows/user-flows.canvas",
-    "04-User-Flows/auth/README.md",
     "04-User-Flows/my-bookings/my-bookings-flow.canvas",
-    "04-User-Flows/notifications/notifications-flow.canvas",
-    "04-User-Flows/offers/offers-flow.canvas",
-    "04-User-Flows/owner-admin/OWNER_PROPERTY_SETUP_FLOW.md",
-    "04-User-Flows/owner-admin/README.md",
-    "OWNER_PROPERTY_SETUP_FLOW.md"
+    "04-User-Flows/notifications/notifications-flow.canvas"
   ]
 }

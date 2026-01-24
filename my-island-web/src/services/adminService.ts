@@ -91,5 +91,26 @@ export const adminService = {
         if (index !== -1) {
             MOCK_DB.lots.splice(index, 1);
         }
+    },
+
+    // Bulk operations
+    async updateLotsAvailability(ids: string[], isAvailable: boolean): Promise<void> {
+        await delay(500);
+        ids.forEach(id => {
+            const lot = MOCK_DB.lots.find(l => l.id === id);
+            if (lot) {
+                lot.isAvailable = isAvailable;
+            }
+        });
+    },
+
+    async deleteLots(ids: string[]): Promise<void> {
+        await delay(600);
+        ids.forEach(id => {
+            const index = MOCK_DB.lots.findIndex(l => l.id === id);
+            if (index !== -1) {
+                MOCK_DB.lots.splice(index, 1);
+            }
+        });
     }
 };

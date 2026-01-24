@@ -48,7 +48,7 @@ export const authService = {
         throw new Error('Invalid credentials');
     },
 
-    async signup(name: string, email: string, password: string): Promise<AuthResponse> {
+    async signup(name: string, email: string, _password: string): Promise<AuthResponse> {
         await delay(1000); // Simulate network request
 
         if (email === 'taken@example.com') {
