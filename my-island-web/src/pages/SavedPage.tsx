@@ -83,7 +83,7 @@ export const SavedPage: React.FC = () => {
                                     {lot.description}
                                 </p>
                                 <div className="flex flex-wrap gap-1">
-                                    {lot.amenities.slice(0, 3).map((amenity, i) => (
+                                    {[...lot.lotAmenities, ...lot.campsiteAmenities].slice(0, 3).map((amenity, i) => (
                                         <span
                                             key={i}
                                             className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded"

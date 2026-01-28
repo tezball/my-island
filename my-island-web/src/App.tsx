@@ -16,6 +16,13 @@ import { AdminBookingsPage } from './pages/admin/AdminBookingsPage';
 import { AdminLotsPage } from './pages/admin/AdminLotsPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
+import { AdminCalendarPage } from './pages/admin/AdminCalendarPage';
+import { SupplierGuard } from './components/auth/SupplierGuard';
+import { SupplierLayout } from './components/supplier/SupplierLayout';
+import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
+import { SupplierOffersPage } from './pages/supplier/SupplierOffersPage';
+import { SupplierProfilePage } from './pages/supplier/SupplierProfilePage';
+import { SupplierSettingsPage } from './pages/supplier/SupplierSettingsPage';
 import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
 import { TripsPage } from './pages/TripsPage';
 import { SearchResultsPage } from './pages/SearchResultsPage';
@@ -24,16 +31,19 @@ import { PersonalDetailsPage } from './pages/profile/PersonalDetailsPage';
 import { SecurityPage } from './pages/profile/SecurityPage';
 import { PaymentDetailsPage } from './pages/profile/PaymentDetailsPage';
 import { NotificationsPage } from './pages/profile/NotificationsPage';
+import { VouchersPage } from './pages/VouchersPage';
+import { OffersPage } from './pages/OffersPage';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const hideNavRoutes = ['/signin', '/signup', '/personalize'];
   const isAdminRoute = location.pathname.startsWith('/admin');
-  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isAdminRoute;
+  const isSupplierRoute = location.pathname.startsWith('/supplier');
+  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isAdminRoute || isSupplierRoute;
 
-  // Don't render the layout wrapper at all for admin routes
-  if (isAdminRoute) {
+  // Don't render the layout wrapper at all for admin/supplier routes
+  if (isAdminRoute || isSupplierRoute) {
     return null;
   }
 
@@ -66,6 +76,8 @@ function App() {
               <Route path="/saved" element={<SavedPage />} />
               <Route path="/trips" element={<TripsPage />} />
               <Route path="/search" element={<SearchResultsPage />} />
+              <Route path="/vouchers" element={<VouchersPage />} />
+              <Route path="/offers" element={<OffersPage />} />
             </Routes>
           </Layout>
 
@@ -75,9 +87,22 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
                 <Route path="bookings" element={<AdminBookingsPage />} />
+                <Route path="calendar" element={<AdminCalendarPage />} />
                 <Route path="lots" element={<AdminLotsPage />} />
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="settings" element={<AdminSettingsPage />} />
+              </Route>
+            </Route>
+          </Routes>
+
+          {/* Supplier Routes - Outside of Main Layout */}
+          <Routes>
+            <Route element={<SupplierGuard />}>
+              <Route path="/supplier" element={<SupplierLayout />}>
+                <Route index element={<SupplierDashboardPage />} />
+                <Route path="offers" element={<SupplierOffersPage />} />
+                <Route path="profile" element={<SupplierProfilePage />} />
+                <Route path="settings" element={<SupplierSettingsPage />} />
               </Route>
             </Route>
           </Routes>

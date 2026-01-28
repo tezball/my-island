@@ -43,8 +43,24 @@ export const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-primary/10 rounded-xl p-4 flex items-center gap-3 mb-8">
-                    <div className="size-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+                <Link
+                    to="/vouchers"
+                    className="bg-gradient-to-r from-primary/10 to-emerald-100 dark:from-primary/20 dark:to-emerald-900/20 rounded-xl p-4 flex items-center justify-between mb-4 border border-primary/20"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="size-12 rounded-full bg-primary flex items-center justify-center shrink-0">
+                            <span className="material-symbols-outlined text-white">local_offer</span>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-[#111418] dark:text-white text-base">My Vouchers</h3>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">View your saved offers & discounts</p>
+                        </div>
+                    </div>
+                    <span className="material-symbols-outlined text-primary">chevron_right</span>
+                </Link>
+
+                <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 flex items-center gap-3 mb-8 border border-amber-200 dark:border-amber-900/50">
+                    <div className="size-10 rounded-full bg-amber-500 flex items-center justify-center shrink-0">
                         <span className="material-symbols-outlined text-white">card_giftcard</span>
                     </div>
                     <div>
@@ -66,6 +82,23 @@ export const ProfilePage: React.FC = () => {
                                 <div>
                                     <h3 className="font-bold text-[#111418] dark:text-white text-base">Admin Portal</h3>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">Manage bookings & lots</p>
+                                </div>
+                            </div>
+                            <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                        </Link>
+                    )}
+                    {user?.isSupplier && (
+                        <Link
+                            to="/supplier"
+                            className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-purple-200 dark:border-purple-900/50 mb-2"
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                                    <span className="material-symbols-outlined">storefront</span>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-[#111418] dark:text-white text-base">Supplier Portal</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Manage offers & business</p>
                                 </div>
                             </div>
                             <span className="material-symbols-outlined text-gray-400">chevron_right</span>

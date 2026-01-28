@@ -61,6 +61,8 @@ export const CampsiteDetailsPage: React.FC = () => {
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
+    const [selectedTypeLabel, setSelectedTypeLabel] = useState<string>('');
+    const [selectedMinPrice, setSelectedMinPrice] = useState<number | undefined>(undefined);
     const { isSaved, toggleSaved } = useSaved();
 
     useEffect(() => {
@@ -101,10 +103,11 @@ export const CampsiteDetailsPage: React.FC = () => {
             const availableLots = typeLots.filter(l => l.isAvailable);
             const prices = typeLots.map(l => l.pricePerNight);
 
-            // Collect all unique amenities across lots of this type
+            // Collect all unique amenities across lots of this type (combine lot and campsite amenities)
             const allAmenities = new Set<string>();
             typeLots.forEach(lot => {
-                lot.amenities.forEach(amenity => allAmenities.add(amenity));
+                lot.lotAmenities.forEach(amenity => allAmenities.add(amenity));
+                lot.campsiteAmenities.forEach(amenity => allAmenities.add(amenity));
             });
 
             // Use the first available lot as representative, or first lot if none available
@@ -215,7 +218,7 @@ export const CampsiteDetailsPage: React.FC = () => {
                                         </span>
                                     </button>
                                     <div className={`absolute top-2 right-2 px-3 py-1.5 rounded-lg text-sm font-bold shadow-sm ${isAvailable ? 'bg-primary text-white' : 'bg-gray-500 text-white'}`}>
-                                        {isAvailable ? `${accom.availableCount} spots available` : 'Fully booked'}
+                                        {isAvailable ? `${accom.availableCount} ${accom.availableCount === 1 ? 'spot' : 'spots'} available` : 'Fully booked'}
                                     </div>
                                 </div>
                                 <div className="p-5">
@@ -249,7 +252,11 @@ export const CampsiteDetailsPage: React.FC = () => {
                                     {isAvailable ? (
                                         <button
                                             className="w-full bg-primary hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
-                                            onClick={() => setSelectedLot(accom.representativeLot)}
+                                            onClick={() => {
+                                                setSelectedLot(accom.representativeLot);
+                                                setSelectedTypeLabel(config.label);
+                                                setSelectedMinPrice(accom.minPrice);
+                                            }}
                                         >
                                             Book Now
                                         </button>
@@ -273,6 +280,8 @@ export const CampsiteDetailsPage: React.FC = () => {
                     lot={selectedLot}
                     isOpen={!!selectedLot}
                     onClose={() => setSelectedLot(null)}
+                    typeLabel={selectedTypeLabel}
+                    minPrice={selectedMinPrice}
                 />
             )}
         </main>

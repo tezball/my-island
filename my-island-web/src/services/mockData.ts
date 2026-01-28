@@ -1,4 +1,5 @@
 import type { Booking, Lot } from '../services/adminService';
+import type { Supplier, Offer, OfferClaim } from '../services/supplierService';
 
 // Tent images for rotation
 const TENT_IMAGES = [
@@ -12,9 +13,14 @@ const TENT_IMAGES = [
 
 // Generate 30 tent lots with variety
 function generateTentLots(): Lot[] {
-    const basicAmenities = ['Free Showers', 'Pet Farm Access'];
-    const standardExtras = ['Electric Hookup', 'River Walk'];
-    const premiumExtras = ['Private Fire Pit', 'River View', 'Picnic Table'];
+    // Campsite-level amenities (shared facilities)
+    const baseCampsiteAmenities = ['Free Showers', 'WiFi', 'Shared Kitchen'];
+    const standardCampsiteExtras = ['Pet Farm Access', 'Playground', 'Laundry'];
+    const premiumCampsiteExtras = ['River Walk', 'Crazy Golf', 'Camp Store', 'Bread Baking'];
+
+    // Lot-level amenities (specific to pitch)
+    const standardLotAmenities = ['Electric Hookup', 'Picnic Table'];
+    const premiumLotAmenities = ['Private Fire Pit', 'River View', 'Water Hookup', 'Private BBQ'];
 
     const descriptions = {
         basic: [
@@ -41,23 +47,27 @@ function generateTentLots(): Lot[] {
         const num = i + 1;
         let tier: 'basic' | 'standard' | 'premium';
         let price: number;
-        let amenities: string[];
+        let lotAmenities: string[];
+        let campsiteAmenities: string[];
 
         if (num <= 10) {
             // Basic tier: spots 1-10
             tier = 'basic';
             price = 25 + Math.floor(Math.random() * 6); // €25-30
-            amenities = [...basicAmenities];
+            lotAmenities = [];
+            campsiteAmenities = [...baseCampsiteAmenities, standardCampsiteExtras[num % 3]];
         } else if (num <= 22) {
             // Standard tier: spots 11-22
             tier = 'standard';
             price = 30 + Math.floor(Math.random() * 6); // €30-35
-            amenities = [...basicAmenities, standardExtras[num % 2]];
+            lotAmenities = [standardLotAmenities[num % 2]];
+            campsiteAmenities = [...baseCampsiteAmenities, ...standardCampsiteExtras];
         } else {
             // Premium tier: spots 23-30
             tier = 'premium';
             price = 35 + Math.floor(Math.random() * 11); // €35-45
-            amenities = [...basicAmenities, ...standardExtras, premiumExtras[num % 3]];
+            lotAmenities = [...standardLotAmenities, premiumLotAmenities[num % 4]];
+            campsiteAmenities = [...baseCampsiteAmenities, ...standardCampsiteExtras, premiumCampsiteExtras[num % 4]];
         }
 
         const descArray = descriptions[tier];
@@ -70,7 +80,8 @@ function generateTentLots(): Lot[] {
             type: 'tent' as const,
             pricePerNight: price,
             description,
-            amenities,
+            lotAmenities,
+            campsiteAmenities,
             isAvailable: num % 7 !== 0, // Most available, every 7th is unavailable
             imageUrl: TENT_IMAGES[(num - 1) % TENT_IMAGES.length]
         };
@@ -120,6 +131,20 @@ export const MOCK_DB = {
                 avatarUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=150',
                 role: 'user' as const
             }
+        },
+        {
+            email: 'farmshop@greenacres.ie',
+            password: 'password',
+            label: 'Green Acres Farm Shop (Supplier)',
+            role: 'user' as const,
+            userProfile: {
+                id: 'green-acres-supplier',
+                email: 'farmshop@greenacres.ie',
+                name: 'Green Acres Farm Shop',
+                avatarUrl: 'https://ui-avatars.com/api/?name=Green+Acres&background=84cc16&color=fff',
+                role: 'user' as const,
+                isSupplier: true
+            }
         }
     ],
     lots: [
@@ -130,7 +155,8 @@ export const MOCK_DB = {
             type: 'tent',
             pricePerNight: 30,
             description: 'A beautiful spot in the peaceful valley.',
-            amenities: ['Free Showers', 'Pet Farm Access', 'River Walk'],
+            lotAmenities: ['Picnic Table', 'Private Fire Pit'],
+            campsiteAmenities: ['Free Showers', 'Pet Farm Access', 'River Walk', 'Shared Kitchen', 'WiFi', 'Laundry', 'Playground'],
             isAvailable: true,
             imageUrl: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=800'
         },
@@ -141,7 +167,8 @@ export const MOCK_DB = {
             type: 'rv',
             pricePerNight: 45,
             description: 'Spacious pitch with electric hookup.',
-            amenities: ['Electric', 'Water', 'Pet Farm Access', 'Crazy Golf'],
+            lotAmenities: ['Electric Hookup', 'Water Hookup', 'Private BBQ'],
+            campsiteAmenities: ['Free Showers', 'Pet Farm Access', 'Crazy Golf', 'WiFi', 'Camp Store', 'Laundry'],
             isAvailable: true,
             imageUrl: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800'
         },
@@ -152,7 +179,8 @@ export const MOCK_DB = {
             type: 'lodge',
             pricePerNight: 150,
             description: 'Comfortable wooden lodge for the whole family.',
-            amenities: ['Kitchen', 'Heating', 'Private Deck', 'Bread Baking'],
+            lotAmenities: ['Built-in Kitchen', 'Heating', 'Private Deck', 'Private Shower', 'Living Area'],
+            campsiteAmenities: ['Bread Baking', 'Free Showers', 'WiFi', 'Pet Farm Access', 'River Walk', 'Playground'],
             isAvailable: true,
             imageUrl: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800'
         },
@@ -163,7 +191,8 @@ export const MOCK_DB = {
             type: 'mobile-home',
             pricePerNight: 110,
             description: 'Fully equipped mobile home.',
-            amenities: ['Kitchen', 'Shower', 'Living Area', 'Pedal Go-Karts'],
+            lotAmenities: ['Built-in Kitchen', 'Private Shower', 'Living Area', 'Heating'],
+            campsiteAmenities: ['Pedal Go-Karts', 'Playground', 'WiFi', 'Free Showers', 'Camp Store', 'Laundry'],
             isAvailable: false,
             imageUrl: 'https://images.unsplash.com/photo-1512918580421-b2feee3b85a6?auto=format&fit=crop&q=80&w=800'
         },
@@ -1078,5 +1107,145 @@ export const MOCK_DB = {
             totalPrice: 770,
             details: 'Before school starts'
         }
-    ] as Booking[]
+    ] as Booking[],
+
+    // ============================================
+    // SUPPLIERS
+    // ============================================
+    suppliers: [
+        {
+            id: 'supplier-green-acres',
+            userId: 'green-acres-supplier',
+            businessName: 'Green Acres Farm Shop',
+            description: 'Family-run farm shop offering fresh local produce, artisan cheeses, homemade jams, and freshly baked goods. We source from local farmers and producers within 30km.',
+            logo: 'https://ui-avatars.com/api/?name=Green+Acres&background=84cc16&color=fff&size=200',
+            category: 'FOOD' as const,
+            location: 'Bennettsbridge, Co. Kilkenny',
+            contactEmail: 'farmshop@greenacres.ie',
+            contactPhone: '+353 56 123 4567',
+            active: true,
+            createdAt: '2025-06-15T10:00:00Z'
+        }
+    ] as Supplier[],
+
+    // ============================================
+    // OFFERS
+    // ============================================
+    offers: [
+        {
+            id: 'offer-001',
+            supplierId: 'supplier-green-acres',
+            title: '10% Off Fresh Produce Hamper',
+            description: 'Get 10% off our signature farm fresh produce hamper, perfect for your camping trip. Includes seasonal vegetables, free-range eggs, and artisan bread.',
+            category: 'FOOD' as const,
+            discountPercent: 10,
+            validFrom: '2026-01-01',
+            validUntil: '2026-03-31',
+            maxClaims: 50,
+            claimCount: 12,
+            terms: 'Valid for one hamper per booking. Must show confirmation email at checkout. Cannot be combined with other offers.',
+            active: true,
+            imageUrl: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&q=80&w=800',
+            createdAt: '2025-12-20T10:00:00Z'
+        },
+        {
+            id: 'offer-002',
+            supplierId: 'supplier-green-acres',
+            title: 'Free Coffee with Any Purchase',
+            description: 'Enjoy a complimentary cup of our locally roasted coffee with any purchase over €10.',
+            category: 'FOOD' as const,
+            discountPercent: 0,
+            validFrom: '2026-01-01',
+            validUntil: '2026-12-31',
+            maxClaims: null,
+            claimCount: 34,
+            terms: 'One free coffee per customer per visit. Valid with purchases over €10.',
+            active: true,
+            imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800',
+            createdAt: '2025-12-20T10:30:00Z'
+        },
+        {
+            id: 'offer-003',
+            supplierId: 'supplier-green-acres',
+            title: '15% Off Artisan Cheese Selection',
+            description: 'Sample our award-winning selection of Irish artisan cheeses at a special discount.',
+            category: 'FOOD' as const,
+            discountPercent: 15,
+            validFrom: '2026-02-01',
+            validUntil: '2026-02-28',
+            maxClaims: 30,
+            claimCount: 5,
+            terms: 'Valid on cheese selection only. Cannot be combined with other offers.',
+            active: true,
+            imageUrl: 'https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fit=crop&q=80&w=800',
+            createdAt: '2026-01-15T09:00:00Z'
+        },
+        {
+            id: 'offer-004',
+            supplierId: 'supplier-green-acres',
+            title: 'Summer BBQ Bundle - 20% Off',
+            description: 'Everything you need for a campsite BBQ: burgers, sausages, salads, and condiments.',
+            category: 'FOOD' as const,
+            discountPercent: 20,
+            validFrom: '2026-06-01',
+            validUntil: '2026-08-31',
+            maxClaims: 100,
+            claimCount: 0,
+            terms: 'Pre-order 24 hours in advance. Collection only.',
+            active: false,
+            imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800',
+            createdAt: '2026-01-10T14:00:00Z'
+        }
+    ] as Offer[],
+
+    // ============================================
+    // OFFER CLAIMS
+    // ============================================
+    offerClaims: [
+        {
+            id: 'claim-001',
+            offerId: 'offer-001',
+            userId: 'family-camper',
+            userName: 'The Smith Family',
+            claimedAt: '2026-01-15T14:30:00Z',
+            redeemedAt: '2026-01-16T11:00:00Z',
+            status: 'redeemed' as const
+        },
+        {
+            id: 'claim-002',
+            offerId: 'offer-002',
+            userId: 'family-camper',
+            userName: 'The Smith Family',
+            claimedAt: '2026-01-16T10:45:00Z',
+            redeemedAt: '2026-01-16T11:05:00Z',
+            status: 'redeemed' as const
+        },
+        {
+            id: 'claim-003',
+            offerId: 'offer-001',
+            userId: 'u-murphy-sean',
+            userName: 'Sean Murphy',
+            claimedAt: '2026-01-18T09:15:00Z',
+            redeemedAt: null,
+            status: 'claimed' as const
+        },
+        {
+            id: 'claim-004',
+            offerId: 'offer-003',
+            userId: 'u-kelly-family',
+            userName: 'Kelly Family',
+            claimedAt: '2026-01-20T16:00:00Z',
+            redeemedAt: null,
+            status: 'claimed' as const
+        },
+        {
+            id: 'claim-005',
+            offerId: 'offer-002',
+            userId: 'u-obrien-michael',
+            userName: 'Michael O\'Brien',
+            claimedAt: '2026-01-22T08:30:00Z',
+            redeemedAt: '2026-01-22T09:00:00Z',
+            status: 'redeemed' as const
+        }
+    ] as OfferClaim[]
 };

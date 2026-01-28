@@ -17,20 +17,34 @@ const LOT_TYPES: { value: Lot['type']; label: string }[] = [
     { value: 'mobile-home', label: 'Mobile Home' }
 ];
 
-const AVAILABLE_AMENITIES = [
+// Campsite-level amenities (shared facilities available to all guests)
+const CAMPSITE_AMENITIES = [
     'Free Showers',
     'Pet Farm Access',
     'River Walk',
+    'Crazy Golf',
+    'Bread Baking',
+    'Pedal Go-Karts',
+    'Playground',
+    'Camp Store',
+    'Laundry',
+    'WiFi',
+    'Shared Kitchen'
+];
+
+// Lot-level amenities (specific to individual pitch/unit)
+const LOT_AMENITIES = [
     'Electric Hookup',
     'Water Hookup',
     'Private Fire Pit',
     'River View',
     'Picnic Table',
-    'Kitchen',
     'Heating',
     'Private Deck',
-    'Crazy Golf',
-    'Bread Baking'
+    'Private Shower',
+    'Living Area',
+    'Private BBQ',
+    'Built-in Kitchen'
 ];
 
 export const LotFormModal: React.FC<LotFormModalProps> = ({
@@ -45,7 +59,8 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
         type: 'tent' as Lot['type'],
         pricePerNight: 30,
         description: '',
-        amenities: [] as string[],
+        lotAmenities: [] as string[],
+        campsiteAmenities: [] as string[],
         imageUrl: '',
         isAvailable: true
     });
@@ -63,7 +78,8 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                     type: lot.type,
                     pricePerNight: lot.pricePerNight,
                     description: lot.description,
-                    amenities: [...lot.amenities],
+                    lotAmenities: [...lot.lotAmenities],
+                    campsiteAmenities: [...lot.campsiteAmenities],
                     imageUrl: lot.imageUrl || '',
                     isAvailable: lot.isAvailable
                 });
@@ -73,7 +89,8 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                     type: 'tent',
                     pricePerNight: 30,
                     description: '',
-                    amenities: [],
+                    lotAmenities: [],
+                    campsiteAmenities: [],
                     imageUrl: '',
                     isAvailable: true
                 });
@@ -112,7 +129,8 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                 type: formData.type,
                 pricePerNight: formData.pricePerNight,
                 description: formData.description.trim(),
-                amenities: formData.amenities,
+                lotAmenities: formData.lotAmenities,
+                campsiteAmenities: formData.campsiteAmenities,
                 imageUrl: formData.imageUrl.trim() || undefined,
                 isAvailable: formData.isAvailable
             });
@@ -124,12 +142,21 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
         }
     };
 
-    const toggleAmenity = (amenity: string) => {
+    const toggleLotAmenity = (amenity: string) => {
         setFormData(prev => ({
             ...prev,
-            amenities: prev.amenities.includes(amenity)
-                ? prev.amenities.filter(a => a !== amenity)
-                : [...prev.amenities, amenity]
+            lotAmenities: prev.lotAmenities.includes(amenity)
+                ? prev.lotAmenities.filter(a => a !== amenity)
+                : [...prev.lotAmenities, amenity]
+        }));
+    };
+
+    const toggleCampsiteAmenity = (amenity: string) => {
+        setFormData(prev => ({
+            ...prev,
+            campsiteAmenities: prev.campsiteAmenities.includes(amenity)
+                ? prev.campsiteAmenities.filter(a => a !== amenity)
+                : [...prev.campsiteAmenities, amenity]
         }));
     };
 
@@ -235,19 +262,48 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                             />
                         </div>
 
-                        {/* Amenities */}
+                        {/* Lot Amenities */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Amenities
+                                Lot Amenities
                             </label>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                Specific to this pitch/unit
+                            </p>
                             <div className="flex flex-wrap gap-2">
-                                {AVAILABLE_AMENITIES.map(amenity => (
+                                {LOT_AMENITIES.map(amenity => (
                                     <button
                                         key={amenity}
                                         type="button"
-                                        onClick={() => toggleAmenity(amenity)}
+                                        onClick={() => toggleLotAmenity(amenity)}
                                         className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
-                                            formData.amenities.includes(amenity)
+                                            formData.lotAmenities.includes(amenity)
+                                                ? 'bg-primary text-white border-primary'
+                                                : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary'
+                                        }`}
+                                    >
+                                        {amenity}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Campsite Amenities */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Campsite Amenities
+                            </label>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                Shared facilities available to guests
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                {CAMPSITE_AMENITIES.map(amenity => (
+                                    <button
+                                        key={amenity}
+                                        type="button"
+                                        onClick={() => toggleCampsiteAmenity(amenity)}
+                                        className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
+                                            formData.campsiteAmenities.includes(amenity)
                                                 ? 'bg-primary text-white border-primary'
                                                 : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary'
                                         }`}

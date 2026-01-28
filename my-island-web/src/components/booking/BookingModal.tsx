@@ -9,6 +9,8 @@ interface BookingModalProps {
     lot: Lot;
     isOpen: boolean;
     onClose: () => void;
+    typeLabel?: string; // Display name for accommodation type (e.g., "Tent Spot")
+    minPrice?: number; // Minimum price for grouped accommodation types
 }
 
 interface BookingConfirmation {
@@ -22,7 +24,7 @@ interface BookingConfirmation {
     details?: string;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose }) => {
+export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose, typeLabel, minPrice }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState('');
@@ -294,8 +296,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                     <span className="material-symbols-outlined">close</span>
                 </button>
 
-                <h2 className="text-2xl font-bold mb-1 text-[#111418] dark:text-white">Book {lot.name}</h2>
-                <p className="text-gray-500 text-sm mb-6">€{lot.pricePerNight} per night</p>
+                <h2 className="text-2xl font-bold mb-1 text-[#111418] dark:text-white">Book {typeLabel || lot.name}</h2>
+                <p className="text-gray-500 text-sm mb-6">
+                    {minPrice && minPrice < lot.pricePerNight ? `From €${minPrice}` : `€${lot.pricePerNight}`} per night
+                </p>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-4">

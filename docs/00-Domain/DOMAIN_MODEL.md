@@ -122,6 +122,8 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 **Key Operations**:
 - Create supplier profile
 - Publish offers
+- Browse marketplace (query available offers)
+- View offer details
 - Claim/redeem offers
 
 ---
@@ -233,9 +235,11 @@ Booking (Root)
 User (Root)
 ├── NotificationPreferences (Value Object)
 ├── LinkedAccount[] (Entity)
-├── Supplier (Entity, optional)
 └── Favorite[] (Entity)
 ```
+
+> **Note**: The `Supplier` entity is owned by the **Marketplace Context**, not Identity.
+> Users with `isSupplier=true` can create a Supplier profile there. See [Identity Notes](00-Domain/03-Identity/NOTES.md) for boundary details.
 
 **User**
 
@@ -514,31 +518,53 @@ SupportTicket (Root)
 ## Entity Relationships
 
 ```
-User (1) ──────────────────── (0..*) LinkedAccount
-  │
-  ├──── isOwner=true ──────── (0..*) Campsite
-  │                                    │
-  │                                    ├── (1..*) Lot ─────── (0..*) LotAvailability
-  │                                    │                            │
-  │                                    ├── (0..*) Extra             │
-  │                                    │                            │
-  │                                    └── (0..1) CheckInInstructions
-  │
-  ├──── (0..*) Booking ─────────────────────────────────────── (1) Lot
-  │       │
-  │       ├── (0..*) BookingExtra ── (1) Extra
-  │       │
-  │       ├── (0..*) Message
-  │       │
-  │       └── (0..1) Review
-  │
-  ├──── (0..*) Favorite ────── (1) Campsite
-  │
-  ├──── (0..*) Notification
-  │
-  ├──── (0..*) SupportTicket ── (0..*) TicketMessage
-  │
-  └──── isSupplier=true ───── (0..1) Supplier ── (0..*) Offer
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ IDENTITY CONTEXT                                                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ User (1) ──────────────────── (0..*) LinkedAccount                          │
+│   │                                                                         │
+│   ├──── (0..*) Favorite                                                     │
+│   │                                                                         │
+│   └──── (0..*) Notification                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+      │
+      │ userId references
+      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ACCOMMODATION CONTEXT                                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ User (isOwner=true) ─────── (0..*) Campsite                                 │
+│                                      │                                      │
+│                                      ├── (1..*) Lot ─── (0..*) Availability │
+│                                      ├── (0..*) Extra                       │
+│                                      └── (0..1) CheckInInstructions         │
+└─────────────────────────────────────────────────────────────────────────────┘
+      │
+      │ lotId, extraId references
+      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ BOOKING CONTEXT                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ User ─────── (0..*) Booking ─────────────────────────────────── (1) Lot     │
+│                      │                                                      │
+│                      ├── (0..*) BookingExtra ── (1) Extra                   │
+│                      ├── (0..*) Message                                     │
+│                      └── (0..1) Review                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ SUPPORT CONTEXT                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ User ─────── (0..*) SupportTicket ── (0..*) TicketMessage                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ MARKETPLACE CONTEXT                                                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ User (isSupplier=true) ───── (0..1) Supplier ── (0..*) Offer                │
+│                                                      │                      │
+│ User (Guest) ─────────────────────── (0..*) OfferClaim                      │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---

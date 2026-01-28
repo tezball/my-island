@@ -1,23 +1,11 @@
 import React from 'react';
-import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import clsx from 'clsx';
 
-const PAGE_TITLES: Record<string, string> = {
-    '/admin': 'Dashboard',
-    '/admin/bookings': 'Bookings',
-    '/admin/calendar': 'Calendar',
-    '/admin/lots': 'Lots & Campsites',
-    '/admin/users': 'Users',
-    '/admin/settings': 'Settings',
-};
-
-export const AdminLayout: React.FC = () => {
+export const SupplierLayout: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const pageTitle = PAGE_TITLES[location.pathname] || 'Dashboard';
 
     const handleLogout = async () => {
         await logout();
@@ -43,10 +31,10 @@ export const AdminLayout: React.FC = () => {
             )}>
                 <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-lg bg-primary flex items-center justify-center text-white">
-                            <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+                        <div className="size-8 rounded-lg bg-lime-500 flex items-center justify-center text-white">
+                            <span className="material-symbols-outlined text-xl">storefront</span>
                         </div>
-                        <span className="text-lg font-bold text-[#111418] dark:text-white">Portal</span>
+                        <span className="text-lg font-bold text-[#111418] dark:text-white">Supplier</span>
                     </div>
                     <button
                         onClick={() => setIsMobileMenuOpen(false)}
@@ -57,12 +45,10 @@ export const AdminLayout: React.FC = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    <AdminNavLink to="/admin" icon="dashboard" label="Dashboard" end />
-                    <AdminNavLink to="/admin/bookings" icon="calendar_month" label="Bookings" />
-                    <AdminNavLink to="/admin/calendar" icon="date_range" label="Calendar" />
-                    <AdminNavLink to="/admin/lots" icon="camping" label="Lots & Campsites" />
-                    <AdminNavLink to="/admin/users" icon="group" label="Users" />
-                    <AdminNavLink to="/admin/settings" icon="settings" label="Settings" />
+                    <SupplierNavLink to="/supplier" icon="dashboard" label="Dashboard" end />
+                    <SupplierNavLink to="/supplier/offers" icon="local_offer" label="Offers" />
+                    <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />
+                    <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />
                 </div>
 
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800">
@@ -73,7 +59,7 @@ export const AdminLayout: React.FC = () => {
                         ></div>
                         <div className="flex flex-col overflow-hidden">
                             <span className="text-sm font-bold text-[#111418] dark:text-white truncate">{user?.name}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Administrator</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Supplier</span>
                         </div>
                     </div>
                     <button
@@ -96,10 +82,10 @@ export const AdminLayout: React.FC = () => {
                         >
                             <span className="material-symbols-outlined text-2xl">menu</span>
                         </button>
-                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">{pageTitle}</h1>
+                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">Supplier Portal</h1>
                     </div>
                     <div className="flex items-center gap-4">
-                        <Link to="/" className="text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1">
+                        <Link to="/" className="text-sm font-medium text-gray-500 hover:text-lime-500 transition-colors flex items-center gap-1">
                             <span className="hidden md:inline">Go to Main Site</span>
                             <span className="md:hidden">Exit</span>
                             <span className="material-symbols-outlined text-lg">open_in_new</span>
@@ -114,7 +100,7 @@ export const AdminLayout: React.FC = () => {
     );
 };
 
-const AdminNavLink: React.FC<{ to: string; icon: string; label: string; end?: boolean }> = ({ to, icon, label, end }) => {
+const SupplierNavLink: React.FC<{ to: string; icon: string; label: string; end?: boolean }> = ({ to, icon, label, end }) => {
     return (
         <NavLink
             to={to}
@@ -122,7 +108,7 @@ const AdminNavLink: React.FC<{ to: string; icon: string; label: string; end?: bo
             className={({ isActive }) => clsx(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive
-                    ? "bg-primary text-white shadow-sm"
+                    ? "bg-lime-500 text-white shadow-sm"
                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-[#111418] dark:hover:text-white"
             )}
         >

@@ -11,17 +11,14 @@
             "id": "e4a632610aa52cf7",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "00-Domain/Event Storm.canvas",
-                "viewState": {
-                  "x": 532.2712198193449,
-                  "y": 3120.955553383546,
-                  "zoom": 0.20000000000000007
-                }
+                "file": "00-Domain/07-Marketplace/domain_gap_analysis.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "Event Storm"
+              "icon": "lucide-file",
+              "title": "domain_gap_analysis"
             }
           }
         ]
@@ -190,8 +187,21 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
-    "00-Domain/Event Storm.canvas.tmp.8347.1769260685440",
-    "00-Domain/Event Storm.canvas.tmp.8347.1769258077604",
+    "pm-owner-review-findings.md.tmp.8347.1769266862760",
+    "pm-owner-review-findings.md.tmp.8347.1769266856397",
+    "pm-owner-review-findings.md.tmp.8347.1769266842999",
+    "pm-owner-review-findings.md.tmp.8347.1769266836491",
+    "pm-owner-review-findings.md.tmp.8347.1769266807533",
+    "00-Domain/DOMAIN_MODEL.md.tmp.65238.1769263751869",
+    "00-Domain/DOMAIN_MODEL.md.tmp.65238.1769263733173",
+    "00-Domain/07-Marketplace/NOTES.md.tmp.65238.1769263725510",
+    "00-Domain/03-Identity/NOTES.md.tmp.65238.1769263703580",
+    "00-Domain/DOMAIN_MODEL.md.tmp.65238.1769263684111",
+    "pm-owner-review-findings.md",
+    "README.md",
+    "00-Domain/Event Storm.canvas",
+    "00-Domain/07-Marketplace/domain_gap_analysis.md",
+    "pm-owner-review-findings.md.tmp.8347.1769262346602",
     "00-Domain/07-Marketplace/USER_STORIES.md",
     "00-Domain/07-Marketplace/NOTES.md",
     "00-Domain/06-Support/NOTES.md",
@@ -202,23 +212,12 @@
     "00-Domain/02-Booking/USER_STORIES.md",
     "00-Domain/02-Booking/NOTES.md",
     "00-Domain/01-Accommodation/USER_STORIES.md",
-    "e2e-review-findings.md.tmp.8347.1769255332775",
     "00-Domain/01-Accommodation/NOTES.md",
-    "00-Domain/Event Storm.canvas",
     "00-Domain/DOMAIN_MODEL.md",
     "00-Domain/06-Support/USER_STORIES.md",
     "00-Domain/04-Review/USER_STORIES.md",
     "00-Domain/03-Identity/USER_STORIES.md",
-    "00-Domain/07-Marketplace",
-    "00-Domain/06-Support",
-    "00-Domain/05-Communication",
-    "00-Domain/04-Review",
-    "00-Domain/03-Identity",
-    "00-Domain/02-Booking",
-    "00-Domain/01-Accommodation",
     "02-Architecture/tech-stack.md",
-    "README.md",
-    "00-Domain",
     "e2e-review-findings.md",
     "booking-flow-review.md",
     "test-images/glamping-bell-tent.jpg",
@@ -230,8 +229,6 @@
     "01-Project-Management/SNAG_LIST.md",
     "01-Project-Management/README.md",
     "01-Project-Management/BUG_FIX_PLAN.md",
-    "01-Project-Management/OUTSTANDING_WORK.md",
-    "02-Architecture/README.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
     "04-User-Flows/profile/profile-flow.canvas",
     "04-User-Flows/reviews/reviews-flow.canvas",

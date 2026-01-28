@@ -6,6 +6,7 @@ export interface User {
     name: string;
     avatarUrl?: string;
     role: 'admin' | 'user';
+    isSupplier?: boolean;
 }
 
 export interface AuthResponse {

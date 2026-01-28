@@ -141,9 +141,11 @@ export const AdminLotsPage: React.FC = () => {
 
     const handleBulkDelete = async () => {
         const ids = Array.from(selectedIds);
-        await adminService.deleteLots(ids);
-        setLots(prev => prev.filter(l => !ids.includes(l.id)));
-        setSelectedIds(new Set());
+        if (confirm(`Are you sure you want to delete ${ids.length} lot${ids.length > 1 ? 's' : ''}? This action cannot be undone.`)) {
+            await adminService.deleteLots(ids);
+            setLots(prev => prev.filter(l => !ids.includes(l.id)));
+            setSelectedIds(new Set());
+        }
     };
 
     return (

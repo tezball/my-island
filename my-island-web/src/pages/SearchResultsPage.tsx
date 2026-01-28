@@ -87,8 +87,8 @@ export const SearchResultsPage: React.FC = () => {
             group.minPrice = Math.min(group.minPrice, lot.pricePerNight);
             group.maxPrice = Math.max(group.maxPrice, lot.pricePerNight);
 
-            // Collect unique amenities
-            lot.amenities.forEach(amenity => {
+            // Collect unique amenities (combine lot and campsite amenities)
+            [...lot.lotAmenities, ...lot.campsiteAmenities].forEach(amenity => {
                 if (!group.amenities.includes(amenity)) {
                     group.amenities.push(amenity);
                 }
@@ -223,7 +223,7 @@ export const SearchResultsPage: React.FC = () => {
                                     </div>
                                     <div className="absolute top-3 left-3">
                                         <span className="bg-primary/90 text-white text-xs font-semibold px-2 py-1 rounded-lg">
-                                            {accom.availableCount} spots available
+                                            {accom.availableCount} {accom.availableCount === 1 ? 'spot' : 'spots'} available
                                         </span>
                                     </div>
                                 </div>
