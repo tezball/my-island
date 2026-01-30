@@ -32,7 +32,7 @@ const TYPE_CONFIG: Record<string, { label: string; pluralLabel: string; icon: st
         label: 'Lodge',
         pluralLabel: 'Lodges',
         icon: 'house',
-        defaultImage: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800',
+        defaultImage: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=800',
         description: 'Spacious lodges with full amenities for the whole family.'
     },
     'mobile-home': {

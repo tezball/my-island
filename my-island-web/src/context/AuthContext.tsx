@@ -8,6 +8,8 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     signup: (name: string, email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    upgradeToOwner: () => Promise<void>;
+    upgradeToSupplier: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,8 +68,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const upgradeToOwner = async () => {
+        if (!user) return;
+        setIsLoading(true);
+        try {
+            const upgradedUser = await authService.upgradeUserToOwner(user.id);
+            const newUser = { ...user, ...upgradedUser, isOwner: true };
+            setUser(newUser);
+            localStorage.setItem('user', JSON.stringify(newUser));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const upgradeToSupplier = async () => {
+        if (!user) return;
+        setIsLoading(true);
+        try {
+            const upgradedUser = await authService.upgradeUserToSupplier(user.id);
+            const newUser = { ...user, ...upgradedUser, isSupplier: true };
+            setUser(newUser);
+            localStorage.setItem('user', JSON.stringify(newUser));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, signup, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, signup, logout, upgradeToOwner, upgradeToSupplier }}>
             {children}
         </AuthContext.Provider>
     );

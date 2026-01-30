@@ -13,13 +13,7 @@ const CATEGORY_ICONS: Record<string, string> = {
     TRANSPORT: 'directions_car'
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-    FOOD: 'Food & Drink',
-    ACTIVITIES: 'Activities',
-    GEAR: 'Camping Gear',
-    ATTRACTIONS: 'Attractions',
-    TRANSPORT: 'Transport'
-};
+
 
 export const VouchersPage: React.FC = () => {
     const { user } = useAuth();
@@ -123,11 +117,10 @@ export const VouchersPage: React.FC = () => {
                         <button
                             key={status}
                             onClick={() => setFilter(status)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                filter === status
-                                    ? 'bg-primary text-white'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-                            }`}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === status
+                                ? 'bg-primary text-white'
+                                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                }`}
                         >
                             {status === 'all' ? 'All' : status === 'claimed' ? 'Ready to Use' : 'Redeemed'}
                         </button>
@@ -162,32 +155,28 @@ export const VouchersPage: React.FC = () => {
                     {filteredVouchers.map((voucher) => (
                         <div
                             key={voucher.id}
-                            className={`bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border overflow-hidden ${
-                                voucher.status === 'redeemed'
-                                    ? 'border-gray-200 dark:border-gray-800 opacity-75'
-                                    : 'border-primary/30'
-                            }`}
+                            className={`bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border overflow-hidden ${voucher.status === 'redeemed'
+                                ? 'border-gray-200 dark:border-gray-800 opacity-75'
+                                : 'border-primary/30'
+                                }`}
                         >
                             {/* Voucher Header */}
                             <div className="flex">
                                 {/* Left side - Discount badge */}
-                                <div className={`w-24 flex flex-col items-center justify-center p-4 ${
-                                    voucher.status === 'redeemed'
-                                        ? 'bg-gray-100 dark:bg-gray-800'
-                                        : 'bg-primary/10'
-                                }`}>
-                                    <span className={`text-2xl font-bold ${
-                                        voucher.status === 'redeemed'
-                                            ? 'text-gray-400'
-                                            : 'text-primary'
+                                <div className={`w-24 flex flex-col items-center justify-center p-4 ${voucher.status === 'redeemed'
+                                    ? 'bg-gray-100 dark:bg-gray-800'
+                                    : 'bg-primary/10'
                                     }`}>
+                                    <span className={`text-2xl font-bold ${voucher.status === 'redeemed'
+                                        ? 'text-gray-400'
+                                        : 'text-primary'
+                                        }`}>
                                         {voucher.offer.discountPercent}%
                                     </span>
-                                    <span className={`text-xs font-medium ${
-                                        voucher.status === 'redeemed'
-                                            ? 'text-gray-400'
-                                            : 'text-primary'
-                                    }`}>
+                                    <span className={`text-xs font-medium ${voucher.status === 'redeemed'
+                                        ? 'text-gray-400'
+                                        : 'text-primary'
+                                        }`}>
                                         OFF
                                     </span>
                                 </div>

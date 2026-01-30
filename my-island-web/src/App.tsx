@@ -17,6 +17,9 @@ import { AdminLotsPage } from './pages/admin/AdminLotsPage';
 import { AdminUsersPage } from './pages/admin/AdminUsersPage';
 import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
 import { AdminCalendarPage } from './pages/admin/AdminCalendarPage';
+import { OwnerGuard } from './components/auth/OwnerGuard';
+import { OwnerLayout } from './components/owner/OwnerLayout';
+import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage } from './pages/owner';
 import { SupplierGuard } from './components/auth/SupplierGuard';
 import { SupplierLayout } from './components/supplier/SupplierLayout';
 import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
@@ -33,17 +36,22 @@ import { PaymentDetailsPage } from './pages/profile/PaymentDetailsPage';
 import { NotificationsPage } from './pages/profile/NotificationsPage';
 import { VouchersPage } from './pages/VouchersPage';
 import { OffersPage } from './pages/OffersPage';
+import { BecomeHostPage } from './pages/supplier-onboarding';
+import { BecomeSupplierPage } from './pages/supplier-business-onboarding';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const hideNavRoutes = ['/signin', '/signup', '/personalize'];
+  const hideNavRoutes = ['/signin', '/signup', '/personalize', '/become-a-host', '/become-a-supplier'];
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isOwnerRoute = location.pathname.startsWith('/owner');
   const isSupplierRoute = location.pathname.startsWith('/supplier');
-  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isAdminRoute || isSupplierRoute;
+  const isBecomeHostRoute = location.pathname.startsWith('/become-a-host');
+  const isBecomeSupplierRoute = location.pathname.startsWith('/become-a-supplier');
+  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isAdminRoute || isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute;
 
-  // Don't render the layout wrapper at all for admin/supplier routes
-  if (isAdminRoute || isSupplierRoute) {
+  // Don't render the layout wrapper at all for admin/owner/supplier/become-a-host/become-a-supplier routes
+  if (isAdminRoute || isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute) {
     return null;
   }
 
@@ -95,6 +103,20 @@ function App() {
             </Route>
           </Routes>
 
+          {/* Owner Routes - Outside of Main Layout */}
+          <Routes>
+            <Route element={<OwnerGuard />}>
+              <Route path="/owner" element={<OwnerLayout />}>
+                <Route index element={<OwnerDashboardPage />} />
+                <Route path="lots" element={<OwnerLotsPage />} />
+                <Route path="bookings" element={<OwnerBookingsPage />} />
+                <Route path="calendar" element={<OwnerCalendarPage />} />
+                <Route path="property" element={<OwnerPropertyPage />} />
+                <Route path="settings" element={<OwnerSettingsPage />} />
+              </Route>
+            </Route>
+          </Routes>
+
           {/* Supplier Routes - Outside of Main Layout */}
           <Routes>
             <Route element={<SupplierGuard />}>
@@ -105,6 +127,16 @@ function App() {
                 <Route path="settings" element={<SupplierSettingsPage />} />
               </Route>
             </Route>
+          </Routes>
+
+          {/* Become a Host - Outside of Main Layout */}
+          <Routes>
+            <Route path="/become-a-host" element={<BecomeHostPage />} />
+          </Routes>
+
+          {/* Become a Supplier - Outside of Main Layout */}
+          <Routes>
+            <Route path="/become-a-supplier" element={<BecomeSupplierPage />} />
           </Routes>
         </SavedProvider>
       </AuthProvider>

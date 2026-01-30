@@ -22,6 +22,14 @@ export const Header: React.FC = () => {
                             <h2 className="text-[#111418] dark:text-white text-base font-bold leading-tight tracking-[-0.015em]">{user.name}</h2>
                         </div>
                         <div className="flex items-center justify-end gap-3">
+                            {!user.isSupplier && !user.isOwner && (
+                                <Link
+                                    to="/become-a-host"
+                                    className="hidden md:inline-flex items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm font-bold text-[#111418] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mr-2"
+                                >
+                                    Become a Host
+                                </Link>
+                            )}
                             <button className="flex items-center justify-center rounded-full size-10 bg-transparent text-[#111418] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                 <span className="material-symbols-outlined text-2xl">notifications</span>
                             </button>

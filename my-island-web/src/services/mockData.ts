@@ -103,7 +103,8 @@ export const MOCK_DB = {
                 email: 'norevalley@myisland.com',
                 name: 'Nore Valley Park',
                 avatarUrl: 'https://ui-avatars.com/api/?name=Nore+Valley&background=10b981&color=fff',
-                role: 'admin' as const
+                role: 'admin' as const,
+                isOwner: true
             }
         },
         {
@@ -182,7 +183,7 @@ export const MOCK_DB = {
             lotAmenities: ['Built-in Kitchen', 'Heating', 'Private Deck', 'Private Shower', 'Living Area'],
             campsiteAmenities: ['Bread Baking', 'Free Showers', 'WiFi', 'Pet Farm Access', 'River Walk', 'Playground'],
             isAvailable: true,
-            imageUrl: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&q=80&w=800'
+            imageUrl: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=800'
         },
         {
             id: 'nv4',

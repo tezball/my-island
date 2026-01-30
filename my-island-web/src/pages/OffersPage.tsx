@@ -147,7 +147,7 @@ export const OffersPage: React.FC = () => {
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute top-3 right-3 bg-primary text-white font-bold px-3 py-1 rounded-lg">
-                                        {offer.discountPercent}% OFF
+                                        {offer.discountPercent === 0 ? 'FREE' : `${offer.discountPercent}% OFF`}
                                     </div>
                                 </div>
                             )}

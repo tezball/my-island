@@ -6,6 +6,7 @@ export interface User {
     name: string;
     avatarUrl?: string;
     role: 'admin' | 'user';
+    isOwner?: boolean;
     isSupplier?: boolean;
 }
 
@@ -21,7 +22,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const authService = {
     async login(email: string, password: string): Promise<AuthResponse> {
-        await delay(800); // Simulate network request for 0.8s
+        await delay(800);
 
         // Check against mock DB
         const dbUser = MOCK_DB.users.find(u => u.email === email && u.password === password);
@@ -50,7 +51,7 @@ export const authService = {
     },
 
     async signup(name: string, email: string, _password: string): Promise<AuthResponse> {
-        await delay(1000); // Simulate network request
+        await delay(1000);
 
         if (email === 'taken@example.com') {
             throw new Error('Email already already in use');
@@ -70,5 +71,29 @@ export const authService = {
 
     async logout(): Promise<void> {
         await delay(300);
+    },
+
+    async upgradeUserToOwner(userId: string): Promise<User> {
+        await delay(800);
+        return {
+            id: userId,
+            email: 'user@example.com',
+            name: 'Property Owner',
+            avatarUrl: '',
+            role: 'user',
+            isOwner: true
+        };
+    },
+
+    async upgradeUserToSupplier(userId: string): Promise<User> {
+        await delay(800);
+        return {
+            id: userId,
+            email: 'user@example.com',
+            name: 'Supplier',
+            avatarUrl: '',
+            role: 'user',
+            isSupplier: true
+        };
     }
 };
