@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateInput } from '../components/ui/DateInput';
 
@@ -36,158 +36,17 @@ const POPULAR = [
     }
 ];
 
-interface GuestSelectorProps {
-    adults: number;
-    children: number;
-    rooms: number;
-    onUpdate: (adults: number, children: number, rooms: number) => void;
-    isOpen: boolean;
-    onToggle: () => void;
-}
-
-const GuestSelector: React.FC<GuestSelectorProps> = ({ adults, children, rooms, onUpdate, isOpen, onToggle }) => {
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (ref.current && !ref.current.contains(event.target as Node)) {
-                if (isOpen) onToggle();
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isOpen, onToggle]);
-
-    const displayText = `${adults} adult${adults !== 1 ? 's' : ''} · ${children} child${children !== 1 ? 'ren' : ''} · ${rooms} room${rooms !== 1 ? 's' : ''}`;
-
-    return (
-        <div ref={ref} className="relative w-full">
-            <div
-                className="flex items-center cursor-pointer"
-                onClick={onToggle}
-            >
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <span className="material-symbols-outlined text-gray-500">person</span>
-                </div>
-                <input
-                    className="block w-full p-4 pl-10 pr-10 text-base text-gray-900 bg-transparent outline-none dark:text-white placeholder:text-gray-500 cursor-pointer"
-                    value={displayText}
-                    readOnly
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <span className="material-symbols-outlined text-gray-400">unfold_more</span>
-                </div>
-            </div>
-
-            {isOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1a2632] rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-50">
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="font-medium text-[#111418] dark:text-white">Adults</p>
-                                <p className="text-sm text-gray-500">Age 18+</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => onUpdate(Math.max(1, adults - 1), children, rooms)}
-                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary disabled:opacity-50"
-                                    disabled={adults <= 1}
-                                >
-                                    <span className="material-symbols-outlined text-sm">remove</span>
-                                </button>
-                                <span className="w-6 text-center font-medium">{adults}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => onUpdate(adults + 1, children, rooms)}
-                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary"
-                                >
-                                    <span className="material-symbols-outlined text-sm">add</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="font-medium text-[#111418] dark:text-white">Children</p>
-                                <p className="text-sm text-gray-500">Age 0-17</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => onUpdate(adults, Math.max(0, children - 1), rooms)}
-                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary disabled:opacity-50"
-                                    disabled={children <= 0}
-                                >
-                                    <span className="material-symbols-outlined text-sm">remove</span>
-                                </button>
-                                <span className="w-6 text-center font-medium">{children}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => onUpdate(adults, children + 1, rooms)}
-                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary"
-                                >
-                                    <span className="material-symbols-outlined text-sm">add</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="font-medium text-[#111418] dark:text-white">Rooms</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => onUpdate(adults, children, Math.max(1, rooms - 1))}
-                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary disabled:opacity-50"
-                                    disabled={rooms <= 1}
-                                >
-                                    <span className="material-symbols-outlined text-sm">remove</span>
-                                </button>
-                                <span className="w-6 text-center font-medium">{rooms}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => onUpdate(adults, children, rooms + 1)}
-                                    className="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center hover:border-primary"
-                                >
-                                    <span className="material-symbols-outlined text-sm">add</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        onClick={onToggle}
-                        className="w-full mt-4 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-emerald-600 transition-colors"
-                    >
-                        Done
-                    </button>
-                </div>
-            )}
-        </div>
-    );
-};
-
 export const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [location, setLocation] = useState('');
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
-    const [adults, setAdults] = useState(2);
-    const [children, setChildren] = useState(0);
-    const [rooms, setRooms] = useState(1);
-    const [guestSelectorOpen, setGuestSelectorOpen] = useState(false);
 
     const handleSearch = () => {
         const params = new URLSearchParams();
         if (location) params.set('location', location);
         if (checkIn) params.set('checkIn', checkIn);
         if (checkOut) params.set('checkOut', checkOut);
-        params.set('adults', adults.toString());
-        params.set('children', children.toString());
-        params.set('rooms', rooms.toString());
         navigate(`/search?${params.toString()}`);
     };
 
@@ -260,18 +119,6 @@ export const HomePage: React.FC = () => {
                                 value={checkOut}
                                 onChange={setCheckOut}
                                 minDate={getMinCheckoutDate()}
-                            />
-                        </div>
-
-                        {/* Guest Selector */}
-                        <div className="relative w-full flex-1 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700">
-                            <GuestSelector
-                                adults={adults}
-                                children={children}
-                                rooms={rooms}
-                                onUpdate={(a, c, r) => { setAdults(a); setChildren(c); setRooms(r); }}
-                                isOpen={guestSelectorOpen}
-                                onToggle={() => setGuestSelectorOpen(!guestSelectorOpen)}
                             />
                         </div>
 
