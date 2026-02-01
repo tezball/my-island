@@ -117,14 +117,15 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 ### 7. Marketplace Context
 **Purpose**: Partner offers and local experiences.
 
-**Aggregates**: Supplier, Offer
+**Aggregates**: Supplier, Offer, OfferClaim
 
 **Key Operations**:
 - Create supplier profile
 - Publish offers
 - Browse marketplace (query available offers)
 - View offer details
-- Claim/redeem offers
+- Claim offers (Guest claims offer, receives voucher)
+- Redeem claims (Supplier marks voucher as used)
 
 ---
 
@@ -395,20 +396,17 @@ SupportTicket (Root)
 
 ### LotType
 
-| Type | Description |
-|------|-------------|
-| TENT | Tent pitch |
-| CARAVAN | Caravan/trailer pitch |
-| CAMPERVAN | Campervan/motorhome pitch |
-| RV | Large RV pitch |
-| GLAMPING | Premium tent (bell tent, safari tent) |
-| CABIN | Wooden cabin |
-| TREEHOUSE | Elevated accommodation |
-| YURT | Traditional circular tent |
-| POD | Camping pod |
-| APARTMENT | Indoor unit |
-| COTTAGE | Self-contained house |
-| SAFARI_TENT | Luxury safari-style tent |
+Simplified to 5 types that reflect the Irish camping/glamping market:
+
+| Type | Label | Description | Examples |
+|------|-------|-------------|----------|
+| TENT | Tent Pitches | Designated spots where guests pitch their own tent. Access to shared facilities (toilets, showers). | Grass pitch, hardstanding pitch |
+| TOURING | Touring Pitches | Pitches for caravans, campervans, and motorhomes. Typically include electric hookup, may have water/waste connections. | Caravan pitch, campervan spot, motorhome bay |
+| GLAMPING | Glamping | Pre-pitched luxury camping accommodation. Guests arrive to a ready setup with beds, furniture, and amenities. | Bell tent, yurt, safari tent, camping pod, geodesic dome |
+| CABIN | Cabins & Lodges | Wooden or permanent structures with beds and basic amenities. May include private bathroom, kitchenette, or heating. | Wooden cabin, lodge, treehouse, shepherd's hut |
+| MOBILE_HOME | Mobile Homes | Static caravans or mobile homes with full amenities. Self-contained units with kitchen, bathroom, and living areas. | Static caravan, holiday home, park home |
+
+> **Design Decision**: These 5 types cover 95%+ of Irish camping accommodations while remaining simple for both owners (when listing) and guests (when searching). Previous 12-type model was overly granular for the Irish market.
 
 ### Facility
 
@@ -448,6 +446,26 @@ SupportTicket (Root)
 | GEAR | Equipment rental |
 | ATTRACTIONS | Local attractions, museums |
 | TRANSPORT | Car rental, bikes, shuttles |
+
+### ClaimStatus (State Machine)
+
+```
+┌─────────┐    redeem    ┌──────────┐
+│ CLAIMED │─────────────►│ REDEEMED │
+└─────────┘              └──────────┘
+     │
+     │ expires (validUntil passed)
+     ▼
+┌─────────┐
+│ EXPIRED │
+└─────────┘
+```
+
+| Status | Description |
+|--------|-------------|
+| CLAIMED | Offer claimed by guest, voucher ready to use |
+| REDEEMED | Supplier has marked the voucher as used |
+| EXPIRED | Claim expired (past offer's validUntil date) |
 
 ### PaymentType
 
@@ -512,6 +530,7 @@ SupportTicket (Root)
 | `MessageSent` | New message | Recipient notification |
 | `TicketCreated` | Support ticket opened | Staff queue |
 | `OfferClaimed` | Guest claims offer | Supplier notification |
+| `OfferRedeemed` | Supplier marks claim as used | Analytics, Guest notification |
 
 ---
 

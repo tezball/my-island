@@ -22,25 +22,32 @@ const ACCOMMODATION_TYPES: Array<{
         imageUrl: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=400',
     },
     {
+        type: 'touring',
+        label: 'Touring Pitches',
+        description: 'Pitches for caravans, campervans, and motorhomes',
+        emoji: '🚐',
+        imageUrl: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=400',
+    },
+    {
         type: 'glamping',
-        label: 'Glamping Units',
+        label: 'Glamping',
         description: 'Bell tents, yurts, pods, or safari tents',
         emoji: '⛺',
         imageUrl: 'https://images.unsplash.com/photo-1618767689160-da3fb810aad7?auto=format&fit=crop&q=80&w=400',
     },
     {
-        type: 'rv',
-        label: 'RV / Caravan Spots',
-        description: 'Pitches with hookups for motorhomes',
-        emoji: '🚐',
-        imageUrl: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=400',
-    },
-    {
         type: 'cabin',
-        label: 'Cabins / Lodges',
+        label: 'Cabins & Lodges',
         description: 'Wooden cabins, lodges, or tiny homes',
         emoji: '🏠',
         imageUrl: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+        type: 'mobile-home',
+        label: 'Mobile Homes',
+        description: 'Static caravans with full amenities',
+        emoji: '🏡',
+        imageUrl: 'https://images.unsplash.com/photo-1566438480900-0609be27a4be?auto=format&fit=crop&q=80&w=400',
     },
 ];
 

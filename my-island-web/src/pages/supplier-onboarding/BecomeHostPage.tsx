@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { SupplierOnboardingProvider, useSupplierOnboarding } from '../../context/SupplierOnboardingContext';
 import { OnboardingProgress } from '../../components/supplier-onboarding';
@@ -8,14 +8,14 @@ import { PropertyDetailsStep } from './PropertyDetailsStep';
 import { LotConfigurationStep } from './LotConfigurationStep';
 import { AmenitiesPricingStep } from './AmenitiesPricingStep';
 import { ReviewLaunchStep } from './ReviewLaunchStep';
+import { OwnerPaymentStep } from './OwnerPaymentStep';
 import { supplierService } from '../../services/supplierService';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 const BecomeHostContent: React.FC = () => {
-    const navigate = useNavigate();
     const { user, isAuthenticated, upgradeToOwner } = useAuth();
-    const { state, resetState } = useSupplierOnboarding();
+    const { state } = useSupplierOnboarding();
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -29,13 +29,12 @@ const BecomeHostContent: React.FC = () => {
         if (types.length > 1) return 'mixed';
         if (types.includes('tent')) return 'campsite';
         if (types.includes('glamping')) return 'glamping';
-        if (types.includes('rv')) return 'caravan-park';
+        if (types.includes('touring')) return 'caravan-park';
         return 'campsite';
     };
 
-    const handleSubmit = async () => {
+    const handleCreateProperty = async () => {
         if (!user) {
-            navigate('/signin', { state: { from: '/become-a-host' } });
             return;
         }
 
@@ -61,8 +60,8 @@ const BecomeHostContent: React.FC = () => {
             });
 
             await upgradeToOwner();
-            resetState();
-            navigate('/owner');
+            // Don't reset state yet - go to payment step
+            nextStep();
         } catch (error) {
             console.error('Failed to create property:', error);
         } finally {
@@ -81,7 +80,9 @@ const BecomeHostContent: React.FC = () => {
             case 4:
                 return <AmenitiesPricingStep onNext={nextStep} onBack={prevStep} />;
             case 5:
-                return <ReviewLaunchStep onBack={prevStep} onSubmit={handleSubmit} isLoading={isLoading} />;
+                return <ReviewLaunchStep onBack={prevStep} onSubmit={handleCreateProperty} isLoading={isLoading} />;
+            case 6:
+                return <OwnerPaymentStep onBack={prevStep} />;
             default:
                 return null;
         }

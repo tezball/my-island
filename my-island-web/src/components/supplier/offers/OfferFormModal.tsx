@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Offer, OfferCategory } from '../../../services/supplierService';
 
 interface OfferFormModalProps {
@@ -38,6 +38,8 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isEditMode = !!offer;
 
@@ -74,6 +76,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                 });
             }
             setErrors({});
+            setIsDragging(false);
         }
     }, [isOpen, offer]);
 
@@ -103,6 +106,64 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleFileSelect = (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            setErrors(prev => ({ ...prev, image: 'Please select an image file' }));
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            setErrors(prev => ({ ...prev, image: 'Image must be less than 5MB' }));
+            return;
+        }
+
+        setErrors(prev => {
+            const { image, ...rest } = prev;
+            return rest;
+        });
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result as string;
+            setFormData(prev => ({ ...prev, imageUrl: result }));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            handleFileSelect(file);
+        }
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            handleFileSelect(file);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setFormData(prev => ({ ...prev, imageUrl: '' }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -120,7 +181,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                 validUntil: formData.validUntil,
                 maxClaims: formData.maxClaims === '' ? null : Number(formData.maxClaims),
                 terms: formData.terms.trim(),
-                imageUrl: formData.imageUrl.trim() || undefined,
+                imageUrl: formData.imageUrl || undefined,
                 active: formData.active
             });
             onClose();
@@ -271,18 +332,82 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                             {errors.terms && <p className="text-red-500 text-xs mt-1">{errors.terms}</p>}
                         </div>
 
-                        {/* Image URL */}
+                        {/* Image Upload */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Image URL
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Offer Image
                             </label>
+
+                            {formData.imageUrl ? (
+                                <div className="relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                                    <img
+                                        src={formData.imageUrl}
+                                        alt="Offer preview"
+                                        className="w-full h-40 object-cover"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = 'https://placehold.co/400x160/e2e8f0/94a3b8?text=Image+Not+Found';
+                                        }}
+                                    />
+                                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs text-white/80 truncate max-w-[200px]">
+                                                {formData.imageUrl.startsWith('data:') ? 'Uploaded image' : 'External image'}
+                                            </span>
+                                            <div className="flex items-center gap-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    className="p-1.5 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors"
+                                                    title="Change image"
+                                                >
+                                                    <span className="material-symbols-outlined text-lg">edit</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRemoveImage}
+                                                    className="p-1.5 bg-white/20 text-white rounded-lg hover:bg-red-500/80 transition-colors"
+                                                    title="Remove image"
+                                                >
+                                                    <span className="material-symbols-outlined text-lg">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    onDrop={handleDrop}
+                                    onDragOver={handleDragOver}
+                                    onDragLeave={handleDragLeave}
+                                    className={`
+                                        relative border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
+                                        ${isDragging
+                                            ? 'border-lime-500 bg-lime-50 dark:bg-lime-900/20'
+                                            : 'border-gray-300 dark:border-gray-700 hover:border-lime-400 dark:hover:border-lime-600 bg-gray-50 dark:bg-gray-800'
+                                        }
+                                    `}
+                                >
+                                    <span className="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-500 mb-2">
+                                        add_photo_alternate
+                                    </span>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                        <span className="font-medium text-lime-600 dark:text-lime-400">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                                        PNG, JPG, GIF up to 5MB
+                                    </p>
+                                </div>
+                            )}
+
                             <input
-                                type="url"
-                                value={formData.imageUrl}
-                                onChange={(e) => setFormData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                                className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
-                                placeholder="https://..."
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileInputChange}
+                                className="hidden"
                             />
+                            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
                         </div>
 
                         {/* Active Toggle */}

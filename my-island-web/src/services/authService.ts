@@ -5,7 +5,6 @@ export interface User {
     email: string;
     name: string;
     avatarUrl?: string;
-    role: 'admin' | 'user';
     isOwner?: boolean;
     isSupplier?: boolean;
 }
@@ -41,7 +40,6 @@ export const authService = {
                     email,
                     name: email.split('@')[0],
                     avatarUrl: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=random`,
-                    role: email.includes('admin') ? 'admin' : 'user',
                 },
                 token: 'mock-jwt-token-random',
             };
@@ -63,7 +61,6 @@ export const authService = {
                 email,
                 name,
                 avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`,
-                role: 'user',
             },
             token: 'mock-jwt-token-new-user',
         };
@@ -80,7 +77,6 @@ export const authService = {
             email: 'user@example.com',
             name: 'Property Owner',
             avatarUrl: '',
-            role: 'user',
             isOwner: true
         };
     },
@@ -92,7 +88,6 @@ export const authService = {
             email: 'user@example.com',
             name: 'Supplier',
             avatarUrl: '',
-            role: 'user',
             isSupplier: true
         };
     }

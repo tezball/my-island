@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { Lot } from '../services/adminService';
+import type { Lot } from '../types/booking';
 import { MOCK_DB } from '../services/mockData';
 
 interface SavedContextType {

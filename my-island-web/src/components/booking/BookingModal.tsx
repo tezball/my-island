@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Lot } from '../../services/adminService';
+import type { Lot } from '../../types/booking';
 import { useAuth } from '../../context/AuthContext';
 import { campsiteService } from '../../services/campsiteService';
 import { DateInput } from '../ui/DateInput';

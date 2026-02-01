@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { DateInput } from '../components/ui/DateInput';
 
 const CATEGORIES = [
-    { id: 'tent', icon: 'camping', label: 'Tents', color: 'emerald' },
+    { id: 'tent', icon: 'camping', label: 'Tent Pitches' },
+    { id: 'touring', icon: 'rv_hookup', label: 'Touring Pitches' },
     { id: 'glamping', icon: 'cottage', label: 'Glamping' },
-    { id: 'rv', icon: 'rv_hookup', label: 'RVs' },
-    { id: 'cabin', icon: 'home_work', label: 'Cabins' },
-    { id: 'lodge', icon: 'deck', label: 'Lodges' },
+    { id: 'cabin', icon: 'cabin', label: 'Cabins & Lodges' },
+    { id: 'mobile-home', icon: 'home', label: 'Mobile Homes' },
 ];
 
 // In a real app, these would come from an API. Valid logic for now is to show Nore Valley data.
@@ -147,10 +147,10 @@ export const HomePage: React.FC = () => {
                                     <img
                                         src={
                                             cat.id === 'tent' ? 'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?auto=format&fit=crop&q=80&w=600' :
-                                                cat.id === 'glamping' ? 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=600' :
-                                                    cat.id === 'rv' ? 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=600' :
-                                                        cat.id === 'cabin' ? 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&q=80&w=600' :
-                                                            'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&q=80&w=600'
+                                                cat.id === 'touring' ? 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=600' :
+                                                    cat.id === 'glamping' ? 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=600' :
+                                                        cat.id === 'cabin' ? 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=600' :
+                                                            'https://images.unsplash.com/photo-1566438480900-0609be27a4be?auto=format&fit=crop&q=80&w=600'
                                         }
                                         alt={cat.label}
                                         className="w-full h-full object-cover transition-transform group-hover:scale-105"

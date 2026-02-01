@@ -1,0 +1,196 @@
+package com.myisland.api.modules.marketplace.entity;
+
+import com.myisland.api.modules.identity.entity.User;
+import com.myisland.api.shared.domain.BaseEntity;
+import jakarta.persistence.*;
+
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "suppliers")
+public class Supplier extends BaseEntity {
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
+    @Column(name = "business_name", nullable = false)
+    private String businessName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SupplierCategory category;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(nullable = false)
+    private String county;
+
+    private String town;
+
+    @Column(columnDefinition = "TEXT")
+    private String address;
+
+    private String phone;
+
+    private String website;
+
+    @Column(name = "logo_url", length = 500)
+    private String logoUrl;
+
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified = false;
+
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Offer> offers = new HashSet<>();
+
+    // Subscription fields
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
+    @Column(name = "stripe_subscription_id")
+    private String stripeSubscriptionId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subscription_status")
+    private SubscriptionStatus subscriptionStatus = SubscriptionStatus.NONE;
+
+    @Column(name = "subscription_current_period_end")
+    private Instant subscriptionCurrentPeriodEnd;
+
+    @Column(name = "subscription_cancel_at_period_end")
+    private boolean subscriptionCancelAtPeriodEnd = false;
+
+    public enum SubscriptionStatus {
+        NONE,       // Never subscribed
+        ACTIVE,     // Subscription is active
+        PAST_DUE,   // Payment failed, in grace period
+        CANCELED,   // Subscription was canceled
+        UNPAID      // Payment failed, subscription suspended
+    }
+
+    public enum SupplierCategory {
+        FARM_SHOP, RESTAURANT, CAFE, PUB,
+        ACTIVITY_PROVIDER, TOUR_OPERATOR, EQUIPMENT_RENTAL,
+        SPA, ARTISAN, GROCERY, OTHER
+    }
+
+    public Supplier() {}
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private User user;
+        private String businessName;
+        private SupplierCategory category;
+        private String description;
+        private String county;
+        private String town;
+        private String address;
+        private String phone;
+        private String website;
+        private String logoUrl;
+        private boolean isVerified = false;
+
+        public Builder user(User user) { this.user = user; return this; }
+        public Builder businessName(String businessName) { this.businessName = businessName; return this; }
+        public Builder category(SupplierCategory category) { this.category = category; return this; }
+        public Builder description(String description) { this.description = description; return this; }
+        public Builder county(String county) { this.county = county; return this; }
+        public Builder town(String town) { this.town = town; return this; }
+        public Builder address(String address) { this.address = address; return this; }
+        public Builder phone(String phone) { this.phone = phone; return this; }
+        public Builder website(String website) { this.website = website; return this; }
+        public Builder logoUrl(String logoUrl) { this.logoUrl = logoUrl; return this; }
+        public Builder isVerified(boolean isVerified) { this.isVerified = isVerified; return this; }
+
+        public Supplier build() {
+            Supplier supplier = new Supplier();
+            supplier.user = this.user;
+            supplier.businessName = this.businessName;
+            supplier.category = this.category;
+            supplier.description = this.description;
+            supplier.county = this.county;
+            supplier.town = this.town;
+            supplier.address = this.address;
+            supplier.phone = this.phone;
+            supplier.website = this.website;
+            supplier.logoUrl = this.logoUrl;
+            supplier.isVerified = this.isVerified;
+            return supplier;
+        }
+    }
+
+    // Getters and Setters
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public String getBusinessName() { return businessName; }
+    public void setBusinessName(String businessName) { this.businessName = businessName; }
+
+    public SupplierCategory getCategory() { return category; }
+    public void setCategory(SupplierCategory category) { this.category = category; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getCounty() { return county; }
+    public void setCounty(String county) { this.county = county; }
+
+    public String getTown() { return town; }
+    public void setTown(String town) { this.town = town; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getWebsite() { return website; }
+    public void setWebsite(String website) { this.website = website; }
+
+    public String getLogoUrl() { return logoUrl; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+
+    public boolean isVerified() { return isVerified; }
+    public void setVerified(boolean verified) { isVerified = verified; }
+
+    public Set<Offer> getOffers() { return offers; }
+    public void setOffers(Set<Offer> offers) { this.offers = offers; }
+
+    // Subscription getters and setters
+    public String getStripeCustomerId() { return stripeCustomerId; }
+    public void setStripeCustomerId(String stripeCustomerId) { this.stripeCustomerId = stripeCustomerId; }
+
+    public String getStripeSubscriptionId() { return stripeSubscriptionId; }
+    public void setStripeSubscriptionId(String stripeSubscriptionId) { this.stripeSubscriptionId = stripeSubscriptionId; }
+
+    public SubscriptionStatus getSubscriptionStatus() { return subscriptionStatus; }
+    public void setSubscriptionStatus(SubscriptionStatus subscriptionStatus) { this.subscriptionStatus = subscriptionStatus; }
+
+    public Instant getSubscriptionCurrentPeriodEnd() { return subscriptionCurrentPeriodEnd; }
+    public void setSubscriptionCurrentPeriodEnd(Instant subscriptionCurrentPeriodEnd) { this.subscriptionCurrentPeriodEnd = subscriptionCurrentPeriodEnd; }
+
+    public boolean isSubscriptionCancelAtPeriodEnd() { return subscriptionCancelAtPeriodEnd; }
+    public void setSubscriptionCancelAtPeriodEnd(boolean subscriptionCancelAtPeriodEnd) { this.subscriptionCancelAtPeriodEnd = subscriptionCancelAtPeriodEnd; }
+
+    // Helper methods
+    public boolean hasActiveSubscription() {
+        return subscriptionStatus == SubscriptionStatus.ACTIVE;
+    }
+
+    public boolean hasLapsedSubscription() {
+        return subscriptionStatus == SubscriptionStatus.PAST_DUE
+                || subscriptionStatus == SubscriptionStatus.CANCELED
+                || subscriptionStatus == SubscriptionStatus.UNPAID;
+    }
+
+    public boolean needsSubscription() {
+        return subscriptionStatus == SubscriptionStatus.NONE;
+    }
+}

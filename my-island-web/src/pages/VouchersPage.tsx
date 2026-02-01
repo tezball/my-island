@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supplierService, type Offer, type Supplier, type OfferClaim } from '../services/supplierService';
 import { Link } from 'react-router-dom';
+import { VoucherQRModal } from '../components/vouchers/VoucherQRModal';
 
 type VoucherWithDetails = OfferClaim & { offer: Offer; supplier: Supplier };
 
@@ -20,6 +21,18 @@ export const VouchersPage: React.FC = () => {
     const [vouchers, setVouchers] = useState<VoucherWithDetails[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'claimed' | 'redeemed'>('all');
+    const [selectedVoucher, setSelectedVoucher] = useState<VoucherWithDetails | null>(null);
+    const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+
+    const handleViewQRCode = (voucher: VoucherWithDetails) => {
+        setSelectedVoucher(voucher);
+        setIsQRModalOpen(true);
+    };
+
+    const handleCloseQRModal = () => {
+        setIsQRModalOpen(false);
+        setSelectedVoucher(null);
+    };
 
     useEffect(() => {
         const fetchVouchers = async () => {
@@ -106,12 +119,15 @@ export const VouchersPage: React.FC = () => {
         <div className="pb-24">
             {/* Header */}
             <div className="bg-primary text-white py-6 px-4">
-                <h1 className="text-2xl font-bold">My Vouchers</h1>
-                <p className="text-white/80 mt-1">Exclusive offers from local suppliers</p>
+                <div className="max-w-7xl mx-auto">
+                    <h1 className="text-2xl font-bold">My Vouchers</h1>
+                    <p className="text-white/80 mt-1">Exclusive offers from local suppliers</p>
+                </div>
             </div>
 
             {/* Filter Tabs */}
-            <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="border-b border-gray-200 dark:border-gray-800">
+                <div className="max-w-7xl mx-auto px-4 py-4">
                 <div className="flex gap-2">
                     {(['all', 'claimed', 'redeemed'] as const).map((status) => (
                         <button
@@ -125,11 +141,12 @@ export const VouchersPage: React.FC = () => {
                             {status === 'all' ? 'All' : status === 'claimed' ? 'Ready to Use' : 'Redeemed'}
                         </button>
                     ))}
+                    </div>
                 </div>
             </div>
 
             {filteredVouchers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center min-h-[40vh] p-4">
+                <div className="flex flex-col items-center justify-center min-h-[40vh] p-4 max-w-7xl mx-auto">
                     <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
                         <span className="material-symbols-outlined text-4xl text-gray-400">
                             {filter === 'all' ? 'local_offer' : filter === 'claimed' ? 'schedule' : 'check_circle'}
@@ -151,7 +168,7 @@ export const VouchersPage: React.FC = () => {
                     </Link>
                 </div>
             ) : (
-                <div className="px-4 py-4 space-y-4">
+                <div className="px-4 py-4 space-y-4 max-w-7xl mx-auto">
                     {filteredVouchers.map((voucher) => (
                         <div
                             key={voucher.id}
@@ -225,7 +242,10 @@ export const VouchersPage: React.FC = () => {
                                                 Show to supplier to redeem
                                             </span>
                                         </div>
-                                        <button className="bg-primary hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors">
+                                        <button
+                                            onClick={() => handleViewQRCode(voucher)}
+                                            className="bg-primary hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+                                        >
                                             View QR Code
                                         </button>
                                     </div>
@@ -248,7 +268,7 @@ export const VouchersPage: React.FC = () => {
 
             {/* Browse More Offers CTA */}
             {filteredVouchers.length > 0 && (
-                <div className="px-4 py-6">
+                <div className="px-4 py-6 max-w-7xl mx-auto">
                     <div className="bg-primary/10 rounded-xl p-4 flex items-center justify-between">
                         <div>
                             <h3 className="font-semibold text-[#111418] dark:text-white">Want more deals?</h3>
@@ -262,6 +282,15 @@ export const VouchersPage: React.FC = () => {
                         </Link>
                     </div>
                 </div>
+            )}
+
+            {/* QR Code Modal */}
+            {selectedVoucher && (
+                <VoucherQRModal
+                    voucher={selectedVoucher}
+                    isOpen={isQRModalOpen}
+                    onClose={handleCloseQRModal}
+                />
             )}
         </div>
     );

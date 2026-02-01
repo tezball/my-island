@@ -1,4 +1,4 @@
-import type { Booking, Lot } from '../services/adminService';
+import type { Booking, Lot } from '../types/booking';
 import type { Supplier, Offer, OfferClaim } from '../services/supplierService';
 
 // Tent images for rotation
@@ -97,53 +97,34 @@ export const MOCK_DB = {
             email: 'norevalley@myisland.com',
             password: 'password',
             label: 'Nore Valley Park (Campsite Owner)',
-            role: 'admin' as const,
             userProfile: {
                 id: 'nore-valley-owner',
                 email: 'norevalley@myisland.com',
                 name: 'Nore Valley Park',
                 avatarUrl: 'https://ui-avatars.com/api/?name=Nore+Valley&background=10b981&color=fff',
-                role: 'admin' as const,
                 isOwner: true
-            }
-        },
-        {
-            email: 'admin@myisland.com',
-            password: 'password',
-            label: 'System Admin',
-            role: 'admin' as const,
-            userProfile: {
-                id: 'sys-admin',
-                email: 'admin@myisland.com',
-                name: 'System Admin',
-                avatarUrl: 'https://ui-avatars.com/api/?name=System+Admin&background=random',
-                role: 'admin' as const
             }
         },
         {
             email: 'family@example.com',
             password: 'password',
             label: 'The Smith Family (Guest)',
-            role: 'user' as const,
             userProfile: {
                 id: 'family-camper',
                 email: 'family@example.com',
                 name: 'The Smith Family',
-                avatarUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=150',
-                role: 'user' as const
+                avatarUrl: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&q=80&w=150'
             }
         },
         {
             email: 'farmshop@greenacres.ie',
             password: 'password',
             label: 'Green Acres Farm Shop (Supplier)',
-            role: 'user' as const,
             userProfile: {
                 id: 'green-acres-supplier',
                 email: 'farmshop@greenacres.ie',
                 name: 'Green Acres Farm Shop',
                 avatarUrl: 'https://ui-avatars.com/api/?name=Green+Acres&background=84cc16&color=fff',
-                role: 'user' as const,
                 isSupplier: true
             }
         }
@@ -164,10 +145,10 @@ export const MOCK_DB = {
         {
             id: 'nv2',
             ownerId: 'nore-valley-owner',
-            name: 'Caravan Pitch',
-            type: 'rv',
+            name: 'Touring Pitch',
+            type: 'touring',
             pricePerNight: 45,
-            description: 'Spacious pitch with electric hookup.',
+            description: 'Spacious pitch with electric hookup for caravans and motorhomes.',
             lotAmenities: ['Electric Hookup', 'Water Hookup', 'Private BBQ'],
             campsiteAmenities: ['Free Showers', 'Pet Farm Access', 'Crazy Golf', 'WiFi', 'Camp Store', 'Laundry'],
             isAvailable: true,
@@ -176,14 +157,26 @@ export const MOCK_DB = {
         {
             id: 'nv3',
             ownerId: 'nore-valley-owner',
-            name: 'Wooden Lodge',
-            type: 'lodge',
+            name: 'Woodland Cabin',
+            type: 'cabin',
             pricePerNight: 150,
-            description: 'Comfortable wooden lodge for the whole family.',
+            description: 'Comfortable wooden cabin for the whole family.',
             lotAmenities: ['Built-in Kitchen', 'Heating', 'Private Deck', 'Private Shower', 'Living Area'],
             campsiteAmenities: ['Bread Baking', 'Free Showers', 'WiFi', 'Pet Farm Access', 'River Walk', 'Playground'],
             isAvailable: true,
             imageUrl: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=800'
+        },
+        {
+            id: 'nv5',
+            ownerId: 'nore-valley-owner',
+            name: 'Bell Tent',
+            type: 'glamping',
+            pricePerNight: 85,
+            description: 'Luxury bell tent with real beds and cozy furnishings.',
+            lotAmenities: ['Real Beds', 'Fairy Lights', 'Outdoor Seating', 'Fire Pit'],
+            campsiteAmenities: ['Free Showers', 'Pet Farm Access', 'River Walk', 'WiFi', 'Shared Kitchen'],
+            isAvailable: true,
+            imageUrl: 'https://images.unsplash.com/photo-1618767689160-da3fb810aad7?auto=format&fit=crop&q=80&w=800'
         },
         {
             id: 'nv4',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { supplierService, type Supplier, type OfferCategory } from '../../services/supplierService';
 
@@ -16,6 +16,8 @@ export const SupplierProfilePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [imageError, setImageError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [formData, setFormData] = useState({
         businessName: '',
         description: '',
@@ -51,6 +53,41 @@ export const SupplierProfilePage: React.FC = () => {
         };
         loadProfile();
     }, [user]);
+
+    const handleFileSelect = (file: File) => {
+        if (!file.type.startsWith('image/')) {
+            setImageError('Please select an image file');
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            setImageError('Image must be less than 5MB');
+            return;
+        }
+
+        setImageError(null);
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result as string;
+            setFormData(prev => ({ ...prev, logo: result }));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            handleFileSelect(file);
+        }
+    };
+
+    const handleRemoveLogo = () => {
+        setFormData(prev => ({ ...prev, logo: '' }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -95,28 +132,86 @@ export const SupplierProfilePage: React.FC = () => {
             )}
 
             <form onSubmit={handleSave} className="space-y-6">
-                {/* Logo Preview */}
-                <div className="flex items-center gap-6">
-                    <div
-                        className="size-24 rounded-xl bg-cover bg-center bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
-                        style={{ backgroundImage: formData.logo ? `url(${formData.logo})` : undefined }}
-                    >
-                        {!formData.logo && (
-                            <span className="material-symbols-outlined text-4xl text-gray-400">storefront</span>
-                        )}
+                {/* Logo Upload */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                        Business Logo
+                    </label>
+                    <div className="flex items-start gap-6">
+                        <div className="relative group">
+                            <div className="size-24 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-700">
+                                {formData.logo ? (
+                                    <img
+                                        src={formData.logo}
+                                        alt="Business logo"
+                                        className="size-full object-cover"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = 'https://placehold.co/96x96/e2e8f0/94a3b8?text=Logo';
+                                        }}
+                                    />
+                                ) : (
+                                    <span className="material-symbols-outlined text-4xl text-gray-400">storefront</span>
+                                )}
+                            </div>
+                            {formData.logo && (
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="p-1.5 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                                        title="Change logo"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">edit</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveLogo}
+                                        className="p-1.5 bg-white text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
+                                        title="Remove logo"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex-1 pt-1">
+                            {!formData.logo ? (
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:border-lime-400 dark:hover:border-lime-600 hover:text-lime-600 dark:hover:text-lime-400 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-lg">add_photo_alternate</span>
+                                    Upload Logo
+                                </button>
+                            ) : (
+                                <div className="space-y-2">
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                        {formData.logo.startsWith('data:') ? 'Custom uploaded logo' : 'Current logo'}
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="inline-flex items-center gap-1.5 text-sm text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">sync</span>
+                                        Change logo
+                                    </button>
+                                </div>
+                            )}
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                                PNG, JPG, GIF up to 5MB. Square images work best.
+                            </p>
+                            {imageError && <p className="text-red-500 text-xs mt-1">{imageError}</p>}
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Logo URL
-                        </label>
-                        <input
-                            type="url"
-                            value={formData.logo}
-                            onChange={(e) => setFormData(prev => ({ ...prev, logo: e.target.value }))}
-                            className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
-                            placeholder="https://..."
-                        />
-                    </div>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileInputChange}
+                        className="hidden"
+                    />
                 </div>
 
                 {/* Business Name */}

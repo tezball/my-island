@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService } from '../../services/ownerService';
-import type { Lot } from '../../services/adminService';
+import type { Lot } from '../../types/booking';
 import clsx from 'clsx';
 
 const LOT_TYPE_INFO: Record<string, { label: string; icon: string; color: string }> = {
-    tent: { label: 'Tent', icon: '🏕️', color: 'bg-emerald-100 text-emerald-700' },
-    glamping: { label: 'Glamping', icon: '⛺', color: 'bg-amber-100 text-amber-700' },
-    rv: { label: 'RV/Caravan', icon: '🚐', color: 'bg-blue-100 text-blue-700' },
-    cabin: { label: 'Cabin', icon: '🏠', color: 'bg-purple-100 text-purple-700' },
-    lodge: { label: 'Lodge', icon: '🏠', color: 'bg-purple-100 text-purple-700' },
-    'mobile-home': { label: 'Mobile Home', icon: '🏠', color: 'bg-indigo-100 text-indigo-700' },
+    tent: { label: 'Tent Pitch', icon: '🏕️', color: 'bg-emerald-100 text-emerald-700' },
+    touring: { label: 'Touring Pitch', icon: '🚐', color: 'bg-blue-100 text-blue-700' },
+    glamping: { label: 'Glamping', icon: '⛺', color: 'bg-purple-100 text-purple-700' },
+    cabin: { label: 'Cabin & Lodge', icon: '🏠', color: 'bg-amber-100 text-amber-700' },
+    'mobile-home': { label: 'Mobile Home', icon: '🏠', color: 'bg-rose-100 text-rose-700' },
 };
 
 export const OwnerLotsPage: React.FC = () => {

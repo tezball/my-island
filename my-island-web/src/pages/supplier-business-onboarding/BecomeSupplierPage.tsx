@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { SupplierBusinessOnboardingProvider, useSupplierBusinessOnboarding } from '../../context/SupplierBusinessOnboardingContext';
 import { OnboardingProgress } from '../../components/supplier-onboarding';
 import { BusinessTypeStep } from './BusinessTypeStep';
 import { BusinessDetailsStep } from './BusinessDetailsStep';
 import { BusinessReviewStep } from './BusinessReviewStep';
+import { PaymentStep } from './PaymentStep';
 import { supplierService } from '../../services/supplierService';
 
-const TOTAL_STEPS = 3;
-const SUPPLIER_STEP_LABELS = ['Business Type', 'Details', 'Review'];
+const TOTAL_STEPS = 4;
+const SUPPLIER_STEP_LABELS = ['Business Type', 'Details', 'Review', 'Payment'];
 
 const BecomeSupplierContent: React.FC = () => {
-    const navigate = useNavigate();
     const { user, isAuthenticated, upgradeToSupplier } = useAuth();
-    const { state, resetState } = useSupplierBusinessOnboarding();
+    const { state } = useSupplierBusinessOnboarding();
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
     const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
     const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
-    const handleSubmit = async () => {
+    const handleCreateBusiness = async () => {
         if (!user) {
-            navigate('/signin', { state: { from: '/become-a-supplier' } });
             return;
         }
 
@@ -44,8 +43,8 @@ const BecomeSupplierContent: React.FC = () => {
             });
 
             await upgradeToSupplier();
-            resetState();
-            navigate('/supplier');
+            // Don't reset state yet - go to payment step
+            nextStep();
         } catch (error) {
             console.error('Failed to create supplier business:', error);
         } finally {
@@ -60,7 +59,9 @@ const BecomeSupplierContent: React.FC = () => {
             case 2:
                 return <BusinessDetailsStep onNext={nextStep} onBack={prevStep} />;
             case 3:
-                return <BusinessReviewStep onBack={prevStep} onSubmit={handleSubmit} isLoading={isLoading} />;
+                return <BusinessReviewStep onBack={prevStep} onSubmit={handleCreateBusiness} isLoading={isLoading} />;
+            case 4:
+                return <PaymentStep onBack={prevStep} />;
             default:
                 return null;
         }

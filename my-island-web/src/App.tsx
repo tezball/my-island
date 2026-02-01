@@ -9,14 +9,6 @@ import { PersonalizationPage } from './pages/PersonalizationPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { AuthProvider } from './context/AuthContext';
 import { SavedProvider } from './context/SavedContext';
-import { AdminGuard } from './components/auth/AdminGuard';
-import { AdminLayout } from './components/admin/AdminLayout';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
-import { AdminBookingsPage } from './pages/admin/AdminBookingsPage';
-import { AdminLotsPage } from './pages/admin/AdminLotsPage';
-import { AdminUsersPage } from './pages/admin/AdminUsersPage';
-import { AdminSettingsPage } from './pages/admin/AdminSettingsPage';
-import { AdminCalendarPage } from './pages/admin/AdminCalendarPage';
 import { OwnerGuard } from './components/auth/OwnerGuard';
 import { OwnerLayout } from './components/owner/OwnerLayout';
 import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage } from './pages/owner';
@@ -24,6 +16,8 @@ import { SupplierGuard } from './components/auth/SupplierGuard';
 import { SupplierLayout } from './components/supplier/SupplierLayout';
 import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
 import { SupplierOffersPage } from './pages/supplier/SupplierOffersPage';
+import { SupplierOfferDetailPage } from './pages/supplier/SupplierOfferDetailPage';
+import { SupplierRedeemPage } from './pages/supplier/SupplierRedeemPage';
 import { SupplierProfilePage } from './pages/supplier/SupplierProfilePage';
 import { SupplierSettingsPage } from './pages/supplier/SupplierSettingsPage';
 import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
@@ -43,15 +37,14 @@ import { BecomeSupplierPage } from './pages/supplier-business-onboarding';
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const hideNavRoutes = ['/signin', '/signup', '/personalize', '/become-a-host', '/become-a-supplier'];
-  const isAdminRoute = location.pathname.startsWith('/admin');
   const isOwnerRoute = location.pathname.startsWith('/owner');
   const isSupplierRoute = location.pathname.startsWith('/supplier');
   const isBecomeHostRoute = location.pathname.startsWith('/become-a-host');
   const isBecomeSupplierRoute = location.pathname.startsWith('/become-a-supplier');
-  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isAdminRoute || isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute;
+  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute;
 
-  // Don't render the layout wrapper at all for admin/owner/supplier/become-a-host/become-a-supplier routes
-  if (isAdminRoute || isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute) {
+  // Don't render the layout wrapper at all for owner/supplier/become-a-host/become-a-supplier routes
+  if (isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute) {
     return null;
   }
 
@@ -89,20 +82,6 @@ function App() {
             </Routes>
           </Layout>
 
-          {/* Admin Routes - Outside of Main Layout */}
-          <Routes>
-            <Route element={<AdminGuard />}>
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboardPage />} />
-                <Route path="bookings" element={<AdminBookingsPage />} />
-                <Route path="calendar" element={<AdminCalendarPage />} />
-                <Route path="lots" element={<AdminLotsPage />} />
-                <Route path="users" element={<AdminUsersPage />} />
-                <Route path="settings" element={<AdminSettingsPage />} />
-              </Route>
-            </Route>
-          </Routes>
-
           {/* Owner Routes - Outside of Main Layout */}
           <Routes>
             <Route element={<OwnerGuard />}>
@@ -123,6 +102,8 @@ function App() {
               <Route path="/supplier" element={<SupplierLayout />}>
                 <Route index element={<SupplierDashboardPage />} />
                 <Route path="offers" element={<SupplierOffersPage />} />
+                <Route path="offers/:offerId" element={<SupplierOfferDetailPage />} />
+                <Route path="redeem" element={<SupplierRedeemPage />} />
                 <Route path="profile" element={<SupplierProfilePage />} />
                 <Route path="settings" element={<SupplierSettingsPage />} />
               </Route>

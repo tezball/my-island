@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { SubscriptionProvider } from '../../context/SubscriptionContext';
+import { QRScanner } from './QRScanner';
+import { SubscriptionBanner } from './SubscriptionBanner';
 import clsx from 'clsx';
 
-export const SupplierLayout: React.FC = () => {
+const SupplierLayoutContent: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -12,7 +15,13 @@ export const SupplierLayout: React.FC = () => {
         navigate('/signin');
     };
 
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+    const handleScan = (claimId: string) => {
+        setIsScannerOpen(false);
+        navigate(`/supplier/redeem?id=${encodeURIComponent(claimId)}`);
+    };
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden relative">
@@ -46,9 +55,21 @@ export const SupplierLayout: React.FC = () => {
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
                     <SupplierNavLink to="/supplier" icon="dashboard" label="Dashboard" end />
-                    <SupplierNavLink to="/supplier/offers" icon="local_offer" label="Offers" />
+                    <SupplierNavLink to="/supplier/offers" icon="local_offer" label="My Offers" />
+                    <SupplierNavLink to="/supplier/redeem" icon="qr_code_scanner" label="Redeem Voucher" />
                     <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />
                     <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />
+
+                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                        <p className="px-3 text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Browse</p>
+                        <Link
+                            to="/offers"
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-[#111418] dark:hover:text-white transition-all duration-200"
+                        >
+                            <span className="material-symbols-outlined text-xl">storefront</span>
+                            View All Offers
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800">
@@ -84,7 +105,14 @@ export const SupplierLayout: React.FC = () => {
                         </button>
                         <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">Supplier Portal</h1>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsScannerOpen(true)}
+                            className="inline-flex items-center gap-2 px-3 py-2 bg-lime-500 hover:bg-lime-600 text-white font-semibold text-sm rounded-lg transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-lg">qr_code_scanner</span>
+                            <span className="hidden sm:inline">Scan Voucher</span>
+                        </button>
                         <Link to="/" className="text-sm font-medium text-gray-500 hover:text-lime-500 transition-colors flex items-center gap-1">
                             <span className="hidden md:inline">Go to Main Site</span>
                             <span className="md:hidden">Exit</span>
@@ -92,11 +120,27 @@ export const SupplierLayout: React.FC = () => {
                         </Link>
                     </div>
                 </header>
-                <div className="flex-1 overflow-y-auto p-8">
+                <SubscriptionBanner />
+                <div className="flex-1 overflow-y-auto p-4 md:p-8">
                     <Outlet />
                 </div>
             </main>
+
+            {/* QR Scanner Modal */}
+            <QRScanner
+                isOpen={isScannerOpen}
+                onScan={handleScan}
+                onClose={() => setIsScannerOpen(false)}
+            />
         </div>
+    );
+};
+
+export const SupplierLayout: React.FC = () => {
+    return (
+        <SubscriptionProvider>
+            <SupplierLayoutContent />
+        </SubscriptionProvider>
     );
 };
 

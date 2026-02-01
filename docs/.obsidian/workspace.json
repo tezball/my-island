@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00-Domain/07-Marketplace/domain_gap_analysis.md",
+                "file": "MVP_LAUNCH_CHECKLIST.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "domain_gap_analysis"
+              "title": "MVP_LAUNCH_CHECKLIST"
             }
           }
         ]
@@ -187,21 +187,25 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
-    "pm-owner-review-findings.md.tmp.8347.1769266862760",
-    "pm-owner-review-findings.md.tmp.8347.1769266856397",
-    "pm-owner-review-findings.md.tmp.8347.1769266842999",
-    "pm-owner-review-findings.md.tmp.8347.1769266836491",
-    "pm-owner-review-findings.md.tmp.8347.1769266807533",
-    "00-Domain/DOMAIN_MODEL.md.tmp.65238.1769263751869",
-    "00-Domain/DOMAIN_MODEL.md.tmp.65238.1769263733173",
-    "00-Domain/07-Marketplace/NOTES.md.tmp.65238.1769263725510",
-    "00-Domain/03-Identity/NOTES.md.tmp.65238.1769263703580",
-    "00-Domain/DOMAIN_MODEL.md.tmp.65238.1769263684111",
+    "MVP_LAUNCH_CHECKLIST.md.tmp.1401069.1769955357356",
+    "DDD_SYNC_PLAN.md",
+    "MVP_LAUNCH_CHECKLIST.md",
+    "MVP_LAUNCH_CHECKLIST.md.tmp.1401069.1769954901856",
+    "00-Domain/03-Identity/NOTES.md.tmp.361387.1769954095838",
+    "DDD_SYNC_PLAN.md.tmp.361387.1769954084276",
+    "DDD_SYNC_PLAN.md.tmp.361387.1769954076952",
+    "API_REFERENCE.md.tmp.361387.1769954070164",
+    "API_REFERENCE.md.tmp.361387.1769954063569",
+    "API_REFERENCE.md.tmp.361387.1769954058307",
+    "API_REFERENCE.md.tmp.361387.1769954047506",
+    "00-Domain/FAQ.md",
+    "00-Domain/FAQ.md.tmp.137132.1769953206404",
+    "00-Domain/DOMAIN_MODEL.md.tmp.137132.1769953177679",
+    "API_REFERENCE.md",
     "pm-owner-review-findings.md",
+    "00-Domain/07-Marketplace/domain_gap_analysis.md",
     "README.md",
     "00-Domain/Event Storm.canvas",
-    "00-Domain/07-Marketplace/domain_gap_analysis.md",
-    "pm-owner-review-findings.md.tmp.8347.1769262346602",
     "00-Domain/07-Marketplace/USER_STORIES.md",
     "00-Domain/07-Marketplace/NOTES.md",
     "00-Domain/06-Support/NOTES.md",
@@ -225,10 +229,6 @@
     "test-images/camping-night-campfire.jpg",
     "test-images/camping-mountain-view.jpg",
     "test-images/camping-lake-tent.jpg",
-    "01-Project-Management/ROADMAP.md",
-    "01-Project-Management/SNAG_LIST.md",
-    "01-Project-Management/README.md",
-    "01-Project-Management/BUG_FIX_PLAN.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
     "04-User-Flows/profile/profile-flow.canvas",
     "04-User-Flows/reviews/reviews-flow.canvas",

@@ -32,7 +32,7 @@ export const SavedPage: React.FC = () => {
     }
 
     return (
-        <main className="flex-1 flex flex-col pb-20">
+        <main className="flex-1 flex flex-col pb-20 max-w-7xl mx-auto w-full">
             <div className="px-4 py-6">
                 <h1 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">Saved</h1>
                 <p className="text-gray-500 mb-6">{savedLots.length} saved {savedLots.length === 1 ? 'place' : 'places'}</p>

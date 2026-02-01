@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-export type AccommodationType = 'tent' | 'glamping' | 'rv' | 'cabin';
+export type AccommodationType = 'tent' | 'touring' | 'glamping' | 'cabin' | 'mobile-home';
 
 export interface LotCounts {
     tent: number;
+    touring: number;
     glamping: number;
-    rv: number;
     cabin: number;
+    'mobile-home': number;
 }
 
 export interface OnboardingState {
@@ -32,9 +33,10 @@ const INITIAL_STATE: OnboardingState = {
     coverImageUrl: '',
     lotCounts: {
         tent: 0,
+        touring: 0,
         glamping: 0,
-        rv: 0,
         cabin: 0,
+        'mobile-home': 0,
     },
     campsiteAmenities: [],
     lotAmenities: [],
@@ -85,7 +87,7 @@ export const SupplierOnboardingProvider: React.FC<{ children: React.ReactNode }>
         localStorage.removeItem(STORAGE_KEY);
     }, []);
 
-    const totalLots = state.lotCounts.tent + state.lotCounts.glamping + state.lotCounts.rv + state.lotCounts.cabin;
+    const totalLots = state.lotCounts.tent + state.lotCounts.touring + state.lotCounts.glamping + state.lotCounts.cabin + state.lotCounts['mobile-home'];
 
     return (
         <SupplierOnboardingContext.Provider value={{ state, updateState, resetState, totalLots }}>

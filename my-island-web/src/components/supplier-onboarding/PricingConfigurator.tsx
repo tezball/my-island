@@ -13,9 +13,10 @@ interface PricingConfiguratorProps {
 
 const LOT_TYPE_LABELS: Record<AccommodationType, { label: string; icon: string }> = {
     tent: { label: 'Tent Pitches', icon: '🏕️' },
-    glamping: { label: 'Glamping Units', icon: '⛺' },
-    rv: { label: 'RV/Caravan', icon: '🚐' },
-    cabin: { label: 'Cabins/Lodges', icon: '🏠' },
+    touring: { label: 'Touring Pitches', icon: '🚐' },
+    glamping: { label: 'Glamping', icon: '⛺' },
+    cabin: { label: 'Cabins & Lodges', icon: '🏠' },
+    'mobile-home': { label: 'Mobile Homes', icon: '🏡' },
 };
 
 export const PricingConfigurator: React.FC<PricingConfiguratorProps> = ({

@@ -9,6 +9,16 @@ Partner offers and local experiences for guests.
 ```
 Supplier (Root)
 └── Offer[] (Entity)
+    └── OfferClaim[] (Entity, weak reference - owned by Guest)
+```
+
+### Voucher Flow
+```
+Guest claims Offer → OfferClaim created (status: CLAIMED)
+                           ↓
+Guest shows QR code → Supplier scans/verifies claim ID
+                           ↓
+Supplier redeems → OfferClaim updated (status: REDEEMED, redeemedAt set)
 ```
 
 **Supplier** (owned by Marketplace, linked to User in Identity)
@@ -23,6 +33,7 @@ Supplier (Root)
 | category | OfferCategory | Primary category |
 | location | String | Business location |
 | contactEmail | String | Business contact email |
+| contactPhone | String | Business contact phone |
 | active | Boolean | Currently accepting claims |
 | createdAt | Timestamp | Profile creation time |
 
@@ -41,7 +52,21 @@ Supplier (Root)
 | maxClaims | Integer | Total available claims (null = unlimited) |
 | claimCount | Integer | Current claims |
 | terms | String | Terms and conditions |
+| imageUrl | String | Optional promotional image URL |
 | active | Boolean | Currently visible |
+| createdAt | Timestamp | Offer creation time |
+
+**OfferClaim**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Unique identifier (used as voucher code) |
+| offerId | UUID | Reference to claimed Offer |
+| userId | UUID | Reference to Guest who claimed |
+| userName | String | Display name of Guest (denormalized) |
+| claimedAt | Timestamp | When the offer was claimed |
+| redeemedAt | Timestamp | When the voucher was redeemed (null if pending) |
+| status | ClaimStatus | Current state: CLAIMED, REDEEMED, or EXPIRED |
 
 ---
 
@@ -89,10 +114,25 @@ A user with `isSupplier=true` can create a `Supplier` profile here. See [Identit
 - `ATTRACTIONS` - Local attractions, museums
 - `TRANSPORT` - Car rental, bikes, shuttles
 
-### ClaimStatus
-- `CLAIMED` - Offer claimed, not yet used
-- `REDEEMED` - Offer used
-- `EXPIRED` - Claim expired (past validUntil)
+### ClaimStatus (State Machine)
+
+```
+┌─────────┐    redeem    ┌──────────┐
+│ CLAIMED │─────────────►│ REDEEMED │
+└─────────┘              └──────────┘
+     │
+     │ expires (validUntil passed)
+     ▼
+┌─────────┐
+│ EXPIRED │
+└─────────┘
+```
+
+| Status | Description |
+|--------|-------------|
+| CLAIMED | Offer claimed, voucher ready to use |
+| REDEEMED | Supplier has marked the voucher as used |
+| EXPIRED | Claim expired (past offer's validUntil date) |
 
 ---
 

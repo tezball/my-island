@@ -1,12 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ownerService, type OwnerDashboardData } from '../../services/ownerService';
+import {
+    ownerService,
+    type OwnerDashboardData,
+    type LotsDetailResponse,
+    type BookingsDetailResponse,
+    type RevenueDetailResponse,
+    type OccupancyDetailResponse,
+} from '../../services/ownerService';
+import { MetricDetailModal } from '../../components/supplier/metrics/MetricDetailModal';
+import {
+    LotsDetailTable,
+    BookingsDetailTable,
+    RevenueDetailView,
+    OccupancyDetailView,
+} from '../../components/owner/metrics';
+
+type MetricType = 'lots' | 'bookings' | 'revenue' | 'occupancy' | null;
 
 export const OwnerDashboardPage: React.FC = () => {
     const { user } = useAuth();
     const [data, setData] = useState<OwnerDashboardData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Modal state
+    const [activeMetric, setActiveMetric] = useState<MetricType>(null);
+    const [isModalLoading, setIsModalLoading] = useState(false);
+    const [lotsDetail, setLotsDetail] = useState<LotsDetailResponse | null>(null);
+    const [bookingsDetail, setBookingsDetail] = useState<BookingsDetailResponse | null>(null);
+    const [revenueDetail, setRevenueDetail] = useState<RevenueDetailResponse | null>(null);
+    const [occupancyDetail, setOccupancyDetail] = useState<OccupancyDetailResponse | null>(null);
 
     useEffect(() => {
         const loadData = async () => {
@@ -23,6 +47,76 @@ export const OwnerDashboardPage: React.FC = () => {
         loadData();
     }, [user]);
 
+    const handleMetricClick = async (metric: MetricType) => {
+        if (!user || !metric) return;
+
+        setActiveMetric(metric);
+        setIsModalLoading(true);
+
+        try {
+            switch (metric) {
+                case 'lots': {
+                    const lots = await ownerService.getLotsDetail(user.id);
+                    setLotsDetail(lots);
+                    break;
+                }
+                case 'bookings': {
+                    const bookings = await ownerService.getBookingsDetail(user.id);
+                    setBookingsDetail(bookings);
+                    break;
+                }
+                case 'revenue': {
+                    const revenue = await ownerService.getRevenueDetail(user.id);
+                    setRevenueDetail(revenue);
+                    break;
+                }
+                case 'occupancy': {
+                    const occupancy = await ownerService.getOccupancyDetail(user.id);
+                    setOccupancyDetail(occupancy);
+                    break;
+                }
+            }
+        } catch (error) {
+            console.error(`Failed to load ${metric} details:`, error);
+        } finally {
+            setIsModalLoading(false);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setActiveMetric(null);
+    };
+
+    const getModalConfig = () => {
+        switch (activeMetric) {
+            case 'lots':
+                return { title: 'Total Lots', icon: 'grid_view', iconColor: 'bg-primary' };
+            case 'bookings':
+                return { title: 'Upcoming Bookings', icon: 'calendar_month', iconColor: 'bg-blue-500' };
+            case 'revenue':
+                return { title: 'Revenue', icon: 'euro', iconColor: 'bg-purple-500' };
+            case 'occupancy':
+                return { title: 'Occupancy', icon: 'percent', iconColor: 'bg-amber-500' };
+            default:
+                return { title: '', icon: '', iconColor: '' };
+        }
+    };
+
+    const renderModalContent = () => {
+        switch (activeMetric) {
+            case 'lots':
+                return lotsDetail ? <LotsDetailTable data={lotsDetail} /> : null;
+            case 'bookings':
+                return bookingsDetail ? <BookingsDetailTable data={bookingsDetail} /> : null;
+            case 'revenue':
+                return revenueDetail ? <RevenueDetailView data={revenueDetail} /> : null;
+            case 'occupancy':
+                return occupancyDetail ? <OccupancyDetailView data={occupancyDetail} /> : null;
+            default:
+                return null;
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -32,6 +126,7 @@ export const OwnerDashboardPage: React.FC = () => {
     }
 
     const stats = data?.owner?.stats;
+    const modalConfig = getModalConfig();
 
     return (
         <div className="space-y-6">
@@ -52,12 +147,14 @@ export const OwnerDashboardPage: React.FC = () => {
                     label="Total Lots"
                     value={stats?.totalLots || data?.lots?.length || 0}
                     color="bg-primary"
+                    onClick={() => handleMetricClick('lots')}
                 />
                 <StatCard
                     icon="calendar_month"
                     label="Upcoming Bookings"
                     value={stats?.upcomingBookings || data?.upcomingCheckIns?.length || 0}
                     color="bg-blue-500"
+                    onClick={() => handleMetricClick('bookings')}
                 />
                 <StatCard
                     icon="euro"
@@ -65,6 +162,7 @@ export const OwnerDashboardPage: React.FC = () => {
                     value={`€${stats?.monthlyRevenue || 0}`}
                     color="bg-purple-500"
                     isText
+                    onClick={() => handleMetricClick('revenue')}
                 />
                 <StatCard
                     icon="percent"
@@ -72,6 +170,7 @@ export const OwnerDashboardPage: React.FC = () => {
                     value={`${stats?.occupancyRate || 0}%`}
                     color="bg-amber-500"
                     isText
+                    onClick={() => handleMetricClick('occupancy')}
                 />
             </div>
 
@@ -222,28 +321,59 @@ export const OwnerDashboardPage: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            {/* Metric Detail Modal */}
+            <MetricDetailModal
+                isOpen={activeMetric !== null}
+                onClose={handleCloseModal}
+                title={modalConfig.title}
+                icon={modalConfig.icon}
+                iconColor={modalConfig.iconColor}
+                isLoading={isModalLoading}
+            >
+                {renderModalContent()}
+            </MetricDetailModal>
         </div>
     );
 };
 
-const StatCard: React.FC<{ icon: string; label: string; value: number | string; color: string; isText?: boolean }> = ({
+interface StatCardProps {
+    icon: string;
+    label: string;
+    value: number | string;
+    color: string;
+    isText?: boolean;
+    onClick?: () => void;
+}
+
+const StatCard: React.FC<StatCardProps> = ({
     icon,
     label,
     value,
     color,
-    isText
+    isText,
+    onClick
 }) => (
-    <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-        <div className="flex items-center gap-3">
-            <div className={`size-10 rounded-lg ${color} flex items-center justify-center text-white shrink-0`}>
-                <span className="material-symbols-outlined text-xl">{icon}</span>
+    <button
+        type="button"
+        onClick={onClick}
+        className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-left w-full transition-all hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md cursor-pointer group"
+    >
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className={`size-10 rounded-lg ${color} flex items-center justify-center text-white shrink-0`}>
+                    <span className="material-symbols-outlined text-xl">{icon}</span>
+                </div>
+                <div className="min-w-0">
+                    <p className={`font-bold text-[#111418] dark:text-white truncate ${isText ? 'text-lg' : 'text-xl'}`}>{value}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{label}</p>
+                </div>
             </div>
-            <div className="min-w-0">
-                <p className={`font-bold text-[#111418] dark:text-white truncate ${isText ? 'text-lg' : 'text-xl'}`}>{value}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{label}</p>
-            </div>
+            <span className="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
+                chevron_right
+            </span>
         </div>
-    </div>
+    </button>
 );
 
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {

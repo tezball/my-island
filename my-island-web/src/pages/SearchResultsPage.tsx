@@ -3,21 +3,19 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MOCK_DB } from '../services/mockData';
 
 const TYPE_LABELS: Record<string, string> = {
-    tent: 'Tent Spots',
-    rv: 'Caravan/RV Pitches',
-    cabin: 'Cabins',
-    lodge: 'Lodges',
+    tent: 'Tent Pitches',
+    touring: 'Touring Pitches',
     glamping: 'Glamping',
+    cabin: 'Cabins & Lodges',
     'mobile-home': 'Mobile Homes',
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
     tent: 'Pitch your tent in scenic camping grounds with access to shared facilities.',
-    rv: 'Spacious pitches with electric hookup for caravans and motorhomes.',
-    cabin: 'Cozy wooden cabins with basic amenities for a comfortable stay.',
-    lodge: 'Spacious lodges with full amenities for the whole family.',
-    glamping: 'Luxury camping experience with premium amenities.',
-    'mobile-home': 'Fully equipped mobile homes with kitchen and living areas.',
+    touring: 'Spacious pitches with electric hookup for caravans, campervans, and motorhomes.',
+    glamping: 'Luxury camping experience in bell tents, yurts, pods, or safari tents.',
+    cabin: 'Cozy wooden cabins and lodges with amenities for a comfortable stay.',
+    'mobile-home': 'Fully equipped mobile homes (static caravans) with kitchen and living areas.',
 };
 
 interface GroupedAccommodation {

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { CreditCard, ExternalLink } from 'lucide-react';
+import { useSubscription } from '../../context/SubscriptionContext';
 
 export const SupplierSettingsPage: React.FC = () => {
     const [settings, setSettings] = useState({
@@ -91,6 +93,9 @@ export const SupplierSettingsPage: React.FC = () => {
                 </div>
             </div>
 
+            {/* Billing Section */}
+            <BillingSection />
+
             {/* Account Section */}
             <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
                 <h2 className="text-lg font-bold text-[#111418] dark:text-white mb-4">Account</h2>
@@ -141,6 +146,133 @@ export const SupplierSettingsPage: React.FC = () => {
                 >
                     {isSaving ? 'Saving...' : 'Save Settings'}
                 </button>
+            </div>
+        </div>
+    );
+};
+
+const BillingSection: React.FC = () => {
+    const { subscription, isLoading, redirectToCheckout, redirectToPortal } = useSubscription();
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    const handleManageBilling = async () => {
+        setIsRedirecting(true);
+        try {
+            await redirectToPortal();
+        } catch {
+            setIsRedirecting(false);
+        }
+    };
+
+    const handleSubscribe = async () => {
+        setIsRedirecting(true);
+        try {
+            await redirectToCheckout();
+        } catch {
+            setIsRedirecting(false);
+        }
+    };
+
+    const getStatusBadge = () => {
+        if (!subscription) return null;
+
+        const statusStyles: Record<string, string> = {
+            ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+            PAST_DUE: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+            CANCELED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+            UNPAID: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+            NONE: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400',
+        };
+
+        const statusLabels: Record<string, string> = {
+            ACTIVE: 'Active',
+            PAST_DUE: 'Past Due',
+            CANCELED: 'Canceled',
+            UNPAID: 'Unpaid',
+            NONE: 'Not Subscribed',
+        };
+
+        return (
+            <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${statusStyles[subscription.status]}`}>
+                {statusLabels[subscription.status]}
+            </span>
+        );
+    };
+
+    if (isLoading) {
+        return (
+            <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
+                <div className="animate-pulse">
+                    <div className="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+                    <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
+            <div className="flex items-center gap-3 mb-4">
+                <CreditCard className="w-5 h-5 text-lime-500" />
+                <h2 className="text-lg font-bold text-[#111418] dark:text-white">Billing</h2>
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex items-center justify-between py-2">
+                    <div>
+                        <p className="font-medium text-[#111418] dark:text-white">Subscription Status</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {subscription?.hasActiveSubscription
+                                ? 'Your subscription is active'
+                                : subscription?.hasLapsedSubscription
+                                ? 'Your subscription has ended'
+                                : 'No active subscription'}
+                        </p>
+                    </div>
+                    {getStatusBadge()}
+                </div>
+
+                {subscription?.currentPeriodEnd && subscription.hasActiveSubscription && (
+                    <div className="flex items-center justify-between py-2 border-t border-gray-100 dark:border-gray-800">
+                        <div>
+                            <p className="font-medium text-[#111418] dark:text-white">
+                                {subscription.cancelAtPeriodEnd ? 'Ends On' : 'Renews On'}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IE', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                })}
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                <div className="flex items-center justify-between py-2 border-t border-gray-100 dark:border-gray-800">
+                    <div>
+                        <p className="font-medium text-[#111418] dark:text-white">Monthly Plan</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">€1/month</p>
+                    </div>
+                    {subscription?.hasActiveSubscription || subscription?.hasLapsedSubscription ? (
+                        <button
+                            onClick={handleManageBilling}
+                            disabled={isRedirecting}
+                            className="inline-flex items-center gap-2 text-sm font-medium text-lime-600 hover:text-lime-700 transition-colors disabled:opacity-50"
+                        >
+                            {isRedirecting ? 'Loading...' : 'Manage Billing'}
+                            <ExternalLink className="w-4 h-4" />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleSubscribe}
+                            disabled={isRedirecting}
+                            className="px-4 py-2 text-sm font-medium text-white bg-lime-500 hover:bg-lime-600 rounded-lg transition-colors disabled:opacity-50"
+                        >
+                            {isRedirecting ? 'Loading...' : 'Subscribe Now'}
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { OwnerSubscriptionProvider } from '../../context/OwnerSubscriptionContext';
+import { OwnerSubscriptionBanner } from './OwnerSubscriptionBanner';
 import clsx from 'clsx';
 
-export const OwnerLayout: React.FC = () => {
+const OwnerLayoutContent: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -94,11 +96,20 @@ export const OwnerLayout: React.FC = () => {
                         </Link>
                     </div>
                 </header>
+                <OwnerSubscriptionBanner />
                 <div className="flex-1 overflow-y-auto p-4 md:p-8">
                     <Outlet />
                 </div>
             </main>
         </div>
+    );
+};
+
+export const OwnerLayout: React.FC = () => {
+    return (
+        <OwnerSubscriptionProvider>
+            <OwnerLayoutContent />
+        </OwnerSubscriptionProvider>
     );
 };
 

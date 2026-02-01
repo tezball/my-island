@@ -86,7 +86,8 @@ export const OffersPage: React.FC = () => {
         <div className="pb-24">
             {/* Header */}
             <div className="bg-gradient-to-r from-primary to-emerald-600 text-white py-8 px-4">
-                <h1 className="text-2xl font-bold">Local Offers</h1>
+                <div className="max-w-7xl mx-auto">
+                    <h1 className="text-2xl font-bold">Local Offers</h1>
                 <p className="text-white/80 mt-1">Exclusive discounts from local suppliers</p>
                 {user && (
                     <Link
@@ -97,10 +98,12 @@ export const OffersPage: React.FC = () => {
                         View My Vouchers
                     </Link>
                 )}
+                </div>
             </div>
 
             {/* Category Filter */}
-            <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
+            <div className="border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
+                <div className="max-w-7xl mx-auto px-4 py-4">
                 <div className="flex gap-2 min-w-max">
                     {categories.map((category) => (
                         <button
@@ -120,11 +123,12 @@ export const OffersPage: React.FC = () => {
                             {category === 'all' ? 'All Offers' : CATEGORY_LABELS[category] || category}
                         </button>
                     ))}
+                    </div>
                 </div>
             </div>
 
             {filteredOffers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center min-h-[40vh] p-4">
+                <div className="flex flex-col items-center justify-center min-h-[40vh] p-4 max-w-7xl mx-auto">
                     <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
                         <span className="material-symbols-outlined text-4xl text-gray-400">search_off</span>
                     </div>
@@ -132,7 +136,7 @@ export const OffersPage: React.FC = () => {
                     <p className="text-gray-500 text-center">Check back later for new deals</p>
                 </div>
             ) : (
-                <div className="px-4 py-4 grid gap-4 md:grid-cols-2">
+                <div className="px-4 py-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
                     {filteredOffers.map((offer) => (
                         <div
                             key={offer.id}

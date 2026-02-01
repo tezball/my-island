@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService } from '../../services/ownerService';
-import type { Booking } from '../../services/adminService';
+import type { Booking } from '../../types/booking';
 import clsx from 'clsx';
 
 export const OwnerBookingsPage: React.FC = () => {

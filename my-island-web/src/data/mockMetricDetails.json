@@ -1,0 +1,408 @@
+{
+  "suppliers": {
+    "supplier-green-acres": {
+      "activeOffers": [
+        {
+          "id": "offer-001",
+          "title": "10% Off Fresh Produce Hamper",
+          "category": "FOOD",
+          "discountPercent": 10,
+          "validFrom": "2026-01-01",
+          "validUntil": "2026-03-31",
+          "claimCount": 12,
+          "maxClaims": 50,
+          "status": "active"
+        },
+        {
+          "id": "offer-002",
+          "title": "Free Coffee with Any Purchase",
+          "category": "FOOD",
+          "discountPercent": 0,
+          "validFrom": "2026-01-01",
+          "validUntil": "2026-12-31",
+          "claimCount": 34,
+          "maxClaims": null,
+          "status": "active"
+        },
+        {
+          "id": "offer-003",
+          "title": "15% Off Artisan Cheese Selection",
+          "category": "FOOD",
+          "discountPercent": 15,
+          "validFrom": "2026-02-01",
+          "validUntil": "2026-02-28",
+          "claimCount": 5,
+          "maxClaims": 30,
+          "status": "near_limit"
+        }
+      ],
+      "allClaims": [
+        {
+          "id": "claim-001",
+          "userName": "The Smith Family",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-28T14:30:00Z",
+          "redeemedAt": "2026-01-29T10:15:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-002",
+          "userName": "Michael Murphy",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-27T09:45:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-003",
+          "userName": "Emma Walsh",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-26T16:20:00Z",
+          "redeemedAt": "2026-01-26T17:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-004",
+          "userName": "Patrick Byrne",
+          "offerTitle": "15% Off Artisan Cheese Selection",
+          "offerId": "offer-003",
+          "claimedAt": "2026-01-25T11:10:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-005",
+          "userName": "Aoife Kelly",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-24T08:30:00Z",
+          "redeemedAt": "2026-01-24T09:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-006",
+          "userName": "Ciaran Doyle",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-23T13:45:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        },
+        {
+          "id": "claim-007",
+          "userName": "Niamh Fitzgerald",
+          "offerTitle": "15% Off Artisan Cheese Selection",
+          "offerId": "offer-003",
+          "claimedAt": "2026-01-22T15:20:00Z",
+          "redeemedAt": "2026-01-23T10:30:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-008",
+          "userName": "Sean Connolly",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-21T07:55:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-009",
+          "userName": "Orla Ryan",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-20T12:00:00Z",
+          "redeemedAt": "2026-01-20T14:30:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-010",
+          "userName": "Declan McCarthy",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-19T10:15:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        },
+        {
+          "id": "claim-011",
+          "userName": "Roisin Lynch",
+          "offerTitle": "15% Off Artisan Cheese Selection",
+          "offerId": "offer-003",
+          "claimedAt": "2025-12-28T14:00:00Z",
+          "redeemedAt": "2025-12-29T11:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-012",
+          "userName": "Brian O'Neill",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2025-12-27T08:20:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        },
+        {
+          "id": "claim-013",
+          "userName": "Siobhan Healy",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2025-12-25T16:45:00Z",
+          "redeemedAt": "2025-12-26T09:30:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-014",
+          "userName": "Conor Brennan",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2025-12-24T11:30:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        },
+        {
+          "id": "claim-015",
+          "userName": "Aisling Dunne",
+          "offerTitle": "15% Off Artisan Cheese Selection",
+          "offerId": "offer-003",
+          "claimedAt": "2025-12-22T13:15:00Z",
+          "redeemedAt": "2025-12-22T15:00:00Z",
+          "status": "redeemed"
+        }
+      ],
+      "monthClaims": [
+        {
+          "id": "claim-001",
+          "userName": "The Smith Family",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-28T14:30:00Z",
+          "redeemedAt": "2026-01-29T10:15:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-002",
+          "userName": "Michael Murphy",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-27T09:45:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-003",
+          "userName": "Emma Walsh",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-26T16:20:00Z",
+          "redeemedAt": "2026-01-26T17:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-004",
+          "userName": "Patrick Byrne",
+          "offerTitle": "15% Off Artisan Cheese Selection",
+          "offerId": "offer-003",
+          "claimedAt": "2026-01-25T11:10:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-005",
+          "userName": "Aoife Kelly",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-24T08:30:00Z",
+          "redeemedAt": "2026-01-24T09:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-006",
+          "userName": "Ciaran Doyle",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-23T13:45:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        },
+        {
+          "id": "claim-007",
+          "userName": "Niamh Fitzgerald",
+          "offerTitle": "15% Off Artisan Cheese Selection",
+          "offerId": "offer-003",
+          "claimedAt": "2026-01-22T15:20:00Z",
+          "redeemedAt": "2026-01-23T10:30:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-008",
+          "userName": "Sean Connolly",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-21T07:55:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-009",
+          "userName": "Orla Ryan",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-20T12:00:00Z",
+          "redeemedAt": "2026-01-20T14:30:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-010",
+          "userName": "Declan McCarthy",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-19T10:15:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        },
+        {
+          "id": "claim-011",
+          "userName": "Fiona O'Brien",
+          "offerTitle": "Free Coffee with Any Purchase",
+          "offerId": "offer-002",
+          "claimedAt": "2026-01-18T09:00:00Z",
+          "redeemedAt": "2026-01-18T09:30:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-012",
+          "userName": "Eoin Gallagher",
+          "offerTitle": "10% Off Fresh Produce Hamper",
+          "offerId": "offer-001",
+          "claimedAt": "2026-01-15T14:20:00Z",
+          "redeemedAt": "2026-01-16T11:00:00Z",
+          "status": "redeemed"
+        }
+      ]
+    },
+    "supplier-wild-adventures": {
+      "activeOffers": [
+        {
+          "id": "offer-wa-1",
+          "title": "20% Off Kayaking Tours",
+          "category": "ACTIVITIES",
+          "discountPercent": 20,
+          "validFrom": "2026-01-01",
+          "validUntil": "2026-06-30",
+          "claimCount": 8,
+          "maxClaims": 50,
+          "status": "active"
+        },
+        {
+          "id": "offer-wa-2",
+          "title": "Family Hiking Package",
+          "category": "ACTIVITIES",
+          "discountPercent": 15,
+          "validFrom": "2026-01-15",
+          "validUntil": "2026-02-10",
+          "claimCount": 10,
+          "maxClaims": null,
+          "status": "expiring_soon"
+        }
+      ],
+      "allClaims": [
+        {
+          "id": "claim-wa-1",
+          "userName": "Tom Sullivan",
+          "offerTitle": "20% Off Kayaking Tours",
+          "offerId": "offer-wa-1",
+          "claimedAt": "2026-01-27T10:00:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-wa-2",
+          "userName": "Katie Moran",
+          "offerTitle": "Family Hiking Package",
+          "offerId": "offer-wa-2",
+          "claimedAt": "2026-01-26T15:30:00Z",
+          "redeemedAt": "2026-01-28T09:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-wa-3",
+          "userName": "Mark Collins",
+          "offerTitle": "20% Off Kayaking Tours",
+          "offerId": "offer-wa-1",
+          "claimedAt": "2026-01-25T11:15:00Z",
+          "redeemedAt": "2026-01-27T14:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-wa-4",
+          "userName": "Laura Power",
+          "offerTitle": "Family Hiking Package",
+          "offerId": "offer-wa-2",
+          "claimedAt": "2026-01-22T09:45:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-wa-5",
+          "userName": "David Nolan",
+          "offerTitle": "20% Off Kayaking Tours",
+          "offerId": "offer-wa-1",
+          "claimedAt": "2026-01-20T13:20:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        }
+      ],
+      "monthClaims": [
+        {
+          "id": "claim-wa-1",
+          "userName": "Tom Sullivan",
+          "offerTitle": "20% Off Kayaking Tours",
+          "offerId": "offer-wa-1",
+          "claimedAt": "2026-01-27T10:00:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-wa-2",
+          "userName": "Katie Moran",
+          "offerTitle": "Family Hiking Package",
+          "offerId": "offer-wa-2",
+          "claimedAt": "2026-01-26T15:30:00Z",
+          "redeemedAt": "2026-01-28T09:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-wa-3",
+          "userName": "Mark Collins",
+          "offerTitle": "20% Off Kayaking Tours",
+          "offerId": "offer-wa-1",
+          "claimedAt": "2026-01-25T11:15:00Z",
+          "redeemedAt": "2026-01-27T14:00:00Z",
+          "status": "redeemed"
+        },
+        {
+          "id": "claim-wa-4",
+          "userName": "Laura Power",
+          "offerTitle": "Family Hiking Package",
+          "offerId": "offer-wa-2",
+          "claimedAt": "2026-01-22T09:45:00Z",
+          "redeemedAt": null,
+          "status": "claimed"
+        },
+        {
+          "id": "claim-wa-5",
+          "userName": "David Nolan",
+          "offerTitle": "20% Off Kayaking Tours",
+          "offerId": "offer-wa-1",
+          "claimedAt": "2026-01-20T13:20:00Z",
+          "redeemedAt": null,
+          "status": "expired"
+        }
+      ]
+    }
+  }
+}

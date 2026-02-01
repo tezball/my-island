@@ -1,0 +1,105 @@
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { subscriptionService } from '../services/subscriptionService';
+import type { SubscriptionDto, SubscriptionStatus } from '../types/subscription';
+import { useAuth } from './AuthContext';
+
+interface SubscriptionContextType {
+  subscription: SubscriptionDto | null;
+  isLoading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+  redirectToCheckout: () => Promise<void>;
+  redirectToPortal: () => Promise<void>;
+}
+
+const defaultSubscription: SubscriptionDto = {
+  status: 'NONE' as SubscriptionStatus,
+  currentPeriodEnd: null,
+  cancelAtPeriodEnd: false,
+  hasActiveSubscription: false,
+  hasLapsedSubscription: false,
+  needsSubscription: true,
+};
+
+const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
+
+export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  const [subscription, setSubscription] = useState<SubscriptionDto | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    if (!user?.isSupplier) {
+      setSubscription(null);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await subscriptionService.getSubscriptionStatus();
+      setSubscription(data);
+    } catch (err) {
+      console.error('Failed to fetch subscription:', err);
+      setError('Failed to load subscription status');
+      setSubscription(defaultSubscription);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.isSupplier]);
+
+  useEffect(() => {
+    if (user?.isSupplier) {
+      refresh();
+    } else {
+      setSubscription(null);
+    }
+  }, [user?.isSupplier, refresh]);
+
+  const redirectToCheckout = async () => {
+    try {
+      const { checkoutUrl } = await subscriptionService.createCheckoutSession();
+      window.location.href = checkoutUrl;
+    } catch (err) {
+      console.error('Failed to create checkout session:', err);
+      setError('Failed to start checkout process');
+      throw err;
+    }
+  };
+
+  const redirectToPortal = async () => {
+    try {
+      const { portalUrl } = await subscriptionService.createPortalSession();
+      window.location.href = portalUrl;
+    } catch (err) {
+      console.error('Failed to create portal session:', err);
+      setError('Failed to open billing portal');
+      throw err;
+    }
+  };
+
+  return (
+    <SubscriptionContext.Provider
+      value={{
+        subscription,
+        isLoading,
+        error,
+        refresh,
+        redirectToCheckout,
+        redirectToPortal,
+      }}
+    >
+      {children}
+    </SubscriptionContext.Provider>
+  );
+};
+
+export const useSubscription = () => {
+  const context = useContext(SubscriptionContext);
+  if (context === undefined) {
+    throw new Error('useSubscription must be used within a SubscriptionProvider');
+  }
+  return context;
+};

@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
-type LotType = 'tent' | 'glamping' | 'rv' | 'cabin';
+type LotType = 'tent' | 'touring' | 'glamping' | 'cabin' | 'mobile-home';
 
 interface LotGridPreviewProps {
     type: LotType;
@@ -15,20 +15,25 @@ const TYPE_STYLES: Record<LotType, { shape: string; color: string; bgColor: stri
         color: 'bg-emerald-500',
         bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
     },
-    glamping: {
-        shape: 'rounded-lg rotate-45',
-        color: 'bg-amber-500',
-        bgColor: 'bg-amber-100 dark:bg-amber-900/30',
-    },
-    rv: {
+    touring: {
         shape: 'rounded-sm',
         color: 'bg-blue-500',
         bgColor: 'bg-blue-100 dark:bg-blue-900/30',
     },
-    cabin: {
-        shape: 'rounded-md',
+    glamping: {
+        shape: 'rounded-lg rotate-45',
         color: 'bg-purple-500',
         bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+    },
+    cabin: {
+        shape: 'rounded-md',
+        color: 'bg-amber-500',
+        bgColor: 'bg-amber-100 dark:bg-amber-900/30',
+    },
+    'mobile-home': {
+        shape: 'rounded',
+        color: 'bg-rose-500',
+        bgColor: 'bg-rose-100 dark:bg-rose-900/30',
     },
 };
 

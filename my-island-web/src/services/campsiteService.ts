@@ -1,5 +1,5 @@
 import { MOCK_DB } from './mockData';
-import type { Lot, Booking } from './adminService';
+import type { Lot, Booking } from '../types/booking';
 import type { User } from './authService';
 
 export interface CampsiteProfile extends User {

@@ -21,21 +21,27 @@ const LOT_TYPES: Array<{
         presets: [5, 10, 15, 20, 30],
     },
     {
-        type: 'glamping',
-        label: 'Glamping Units',
-        icon: '⛺',
-        presets: [2, 5, 10],
-    },
-    {
-        type: 'rv',
-        label: 'RV/Caravan Spots',
+        type: 'touring',
+        label: 'Touring Pitches',
         icon: '🚐',
         presets: [5, 10, 15],
     },
     {
+        type: 'glamping',
+        label: 'Glamping',
+        icon: '⛺',
+        presets: [2, 5, 10],
+    },
+    {
         type: 'cabin',
-        label: 'Cabins/Lodges',
+        label: 'Cabins & Lodges',
         icon: '🏠',
+        presets: [2, 5, 10],
+    },
+    {
+        type: 'mobile-home',
+        label: 'Mobile Homes',
+        icon: '🏡',
         presets: [2, 5, 10],
     },
 ];

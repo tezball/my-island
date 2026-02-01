@@ -1,6 +1,7 @@
 import { MOCK_DB } from './mockData';
-import type { Lot } from './adminService';
+import type { Lot } from '../types/booking';
 import mockOwnersData from '../data/mockOwners.json';
+import mockMetricDetails from '../data/mockMetricDetails.json';
 
 export type OfferCategory = 'FOOD' | 'ACTIVITIES' | 'GEAR' | 'ATTRACTIONS' | 'TRANSPORT';
 export type PropertyType = 'campsite' | 'glamping' | 'caravan-park' | 'mixed';
@@ -29,9 +30,10 @@ export interface CreatePropertyParams {
 
 export interface LotCounts {
     tent: number;
+    touring: number;
     glamping: number;
-    rv: number;
     cabin: number;
+    'mobile-home': number;
 }
 
 export interface CreateBulkLotsParams {
@@ -96,6 +98,7 @@ export interface OfferClaim {
     claimedAt: string;
     redeemedAt: string | null;
     status: 'claimed' | 'redeemed' | 'expired';
+    isTest?: boolean; // True if this is a supplier test claim
 }
 
 export interface SupplierDashboardStats {
@@ -103,6 +106,47 @@ export interface SupplierDashboardStats {
     totalClaims: number;
     thisMonthClaims: number;
     recentClaims: OfferClaim[];
+}
+
+export interface ActiveOfferDetail {
+    id: string;
+    title: string;
+    category: OfferCategory;
+    discountPercent: number;
+    validFrom: string;
+    validUntil: string;
+    claimCount: number;
+    maxClaims: number | null;
+    status: 'active' | 'expiring_soon' | 'near_limit';
+}
+
+export interface ClaimDetail {
+    id: string;
+    userName: string;
+    offerTitle: string;
+    offerId: string;
+    claimedAt: string;
+    redeemedAt: string | null;
+    status: 'claimed' | 'redeemed' | 'expired';
+}
+
+export interface ActiveOffersDetailResponse {
+    offers: ActiveOfferDetail[];
+    summary: {
+        total: number;
+        expiringSoon: number;
+        nearClaimLimit: number;
+    };
+}
+
+export interface ClaimsDetailResponse {
+    claims: ClaimDetail[];
+    summary: {
+        total: number;
+        redeemed: number;
+        pending: number;
+        expired: number;
+    };
 }
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -125,6 +169,11 @@ export const supplierService = {
     async getOffers(supplierId: string): Promise<Offer[]> {
         await delay(500);
         return MOCK_DB.offers?.filter(o => o.supplierId === supplierId) || [];
+    },
+
+    async getOfferById(offerId: string): Promise<Offer | null> {
+        await delay(400);
+        return MOCK_DB.offers?.find(o => o.id === offerId) || null;
     },
 
     async addOffer(offer: Omit<Offer, 'id' | 'claimCount' | 'createdAt'>): Promise<Offer> {
@@ -391,5 +440,129 @@ export const supplierService = {
 
         MOCK_DB.suppliers?.push(newSupplier);
         return newSupplier;
+    },
+
+    async getActiveOffersDetail(supplierId: string): Promise<ActiveOffersDetailResponse> {
+        await delay(500);
+        const supplierData = (mockMetricDetails.suppliers as Record<string, { activeOffers: ActiveOfferDetail[] }>)[supplierId];
+
+        if (!supplierData) {
+            return {
+                offers: [],
+                summary: { total: 0, expiringSoon: 0, nearClaimLimit: 0 }
+            };
+        }
+
+        const offers = supplierData.activeOffers;
+        return {
+            offers,
+            summary: {
+                total: offers.length,
+                expiringSoon: offers.filter(o => o.status === 'expiring_soon').length,
+                nearClaimLimit: offers.filter(o => o.status === 'near_limit').length
+            }
+        };
+    },
+
+    async getClaimsDetail(supplierId: string, period: 'all' | 'month'): Promise<ClaimsDetailResponse> {
+        await delay(500);
+        const supplierData = (mockMetricDetails.suppliers as Record<string, { allClaims: ClaimDetail[]; monthClaims: ClaimDetail[] }>)[supplierId];
+
+        if (!supplierData) {
+            return {
+                claims: [],
+                summary: { total: 0, redeemed: 0, pending: 0, expired: 0 }
+            };
+        }
+
+        const claims = period === 'all' ? supplierData.allClaims : supplierData.monthClaims;
+        return {
+            claims,
+            summary: {
+                total: claims.length,
+                redeemed: claims.filter(c => c.status === 'redeemed').length,
+                pending: claims.filter(c => c.status === 'claimed').length,
+                expired: claims.filter(c => c.status === 'expired').length
+            }
+        };
+    },
+
+    async redeemClaim(claimId: string): Promise<OfferClaim> {
+        await delay(500);
+        const index = MOCK_DB.offerClaims?.findIndex(c => c.id === claimId);
+        if (index === undefined || index === -1 || !MOCK_DB.offerClaims) {
+            throw new Error('Claim not found');
+        }
+
+        const claim = MOCK_DB.offerClaims[index];
+        if (claim.status !== 'claimed') {
+            throw new Error(`Cannot redeem: status is ${claim.status}`);
+        }
+
+        MOCK_DB.offerClaims[index] = {
+            ...claim,
+            status: 'redeemed',
+            redeemedAt: new Date().toISOString()
+        };
+
+        return MOCK_DB.offerClaims[index];
+    },
+
+    async getClaimById(claimId: string): Promise<{
+        claim: OfferClaim;
+        offer: Offer;
+        supplier: Supplier;
+    } | null> {
+        await delay(400);
+        const claim = MOCK_DB.offerClaims?.find(c => c.id === claimId);
+        if (!claim) return null;
+
+        const offer = MOCK_DB.offers?.find(o => o.id === claim.offerId);
+        if (!offer) return null;
+
+        const supplier = MOCK_DB.suppliers?.find(s => s.id === offer.supplierId);
+        if (!supplier) return null;
+
+        return { claim, offer, supplier };
+    },
+
+    // Test claim methods for suppliers to test their own offers
+    async claimOfferAsTest(offerId: string, supplier: Supplier): Promise<OfferClaim> {
+        await delay(500);
+
+        // Check if supplier already has a test claim for this offer
+        const existingTest = MOCK_DB.offerClaims?.find(
+            c => c.offerId === offerId && c.isTest === true
+        );
+        if (existingTest) {
+            throw new Error('A test claim already exists for this offer. Reset it first.');
+        }
+
+        const newClaim: OfferClaim = {
+            id: `test-claim-${Date.now()}`,
+            offerId,
+            userId: supplier.userId,
+            userName: `${supplier.businessName} (TEST)`,
+            claimedAt: new Date().toISOString(),
+            redeemedAt: null,
+            status: 'claimed',
+            isTest: true
+        };
+
+        MOCK_DB.offerClaims?.push(newClaim);
+        // Note: Test claims do NOT increment claimCount
+
+        return newClaim;
+    },
+
+    async resetTestClaim(claimId: string): Promise<void> {
+        await delay(400);
+        const index = MOCK_DB.offerClaims?.findIndex(c => c.id === claimId && c.isTest === true);
+        if (index === undefined || index === -1 || !MOCK_DB.offerClaims) {
+            throw new Error('Test claim not found');
+        }
+
+        // Remove the test claim entirely
+        MOCK_DB.offerClaims.splice(index, 1);
     }
 };

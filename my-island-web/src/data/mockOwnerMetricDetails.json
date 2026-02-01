@@ -1,0 +1,301 @@
+{
+  "owners": {
+    "nore-valley-owner": {
+      "lotsDetail": {
+        "summary": {
+          "total": 34,
+          "available": 28,
+          "unavailable": 6,
+          "byType": {
+            "tent": 12,
+            "touring": 8,
+            "glamping": 4,
+            "cabin": 6,
+            "mobile-home": 4
+          }
+        },
+        "lots": [
+          {
+            "id": "lot-001",
+            "name": "Riverside Pitch A1",
+            "type": "tent",
+            "pricePerNight": 35,
+            "isAvailable": true,
+            "amenities": ["Electric Hookup", "Fire Pit"]
+          },
+          {
+            "id": "lot-002",
+            "name": "Riverside Pitch A2",
+            "type": "tent",
+            "pricePerNight": 35,
+            "isAvailable": true,
+            "amenities": ["Electric Hookup"]
+          },
+          {
+            "id": "lot-003",
+            "name": "Forest View B1",
+            "type": "tent",
+            "pricePerNight": 40,
+            "isAvailable": false,
+            "amenities": ["Electric Hookup", "Fire Pit", "BBQ"]
+          },
+          {
+            "id": "lot-004",
+            "name": "Meadow Pitch C1",
+            "type": "tent",
+            "pricePerNight": 30,
+            "isAvailable": true,
+            "amenities": ["Fire Pit"]
+          },
+          {
+            "id": "lot-005",
+            "name": "RV Bay D1",
+            "type": "touring",
+            "pricePerNight": 55,
+            "isAvailable": true,
+            "amenities": ["Full Hookup", "Water Connection", "Waste Disposal"]
+          },
+          {
+            "id": "lot-006",
+            "name": "RV Bay D2",
+            "type": "touring",
+            "pricePerNight": 55,
+            "isAvailable": true,
+            "amenities": ["Full Hookup", "Water Connection", "Waste Disposal"]
+          },
+          {
+            "id": "lot-007",
+            "name": "Deluxe RV Bay E1",
+            "type": "touring",
+            "pricePerNight": 70,
+            "isAvailable": false,
+            "amenities": ["Full Hookup", "WiFi", "Cable TV", "Private Deck"]
+          },
+          {
+            "id": "lot-008",
+            "name": "Woodland Cabin 1",
+            "type": "cabin",
+            "pricePerNight": 120,
+            "isAvailable": true,
+            "amenities": ["Kitchen", "Bathroom", "Heating", "WiFi"]
+          },
+          {
+            "id": "lot-009",
+            "name": "Woodland Cabin 2",
+            "type": "cabin",
+            "pricePerNight": 120,
+            "isAvailable": false,
+            "amenities": ["Kitchen", "Bathroom", "Heating", "WiFi"]
+          },
+          {
+            "id": "lot-010",
+            "name": "Lakeside Lodge",
+            "type": "glamping",
+            "pricePerNight": 180,
+            "isAvailable": true,
+            "amenities": ["Full Kitchen", "Hot Tub", "Lake View", "BBQ", "WiFi"]
+          },
+          {
+            "id": "lot-011",
+            "name": "Sunset Lodge",
+            "type": "glamping",
+            "pricePerNight": 195,
+            "isAvailable": true,
+            "amenities": ["Full Kitchen", "Hot Tub", "Sunset View", "Fire Pit", "WiFi"]
+          },
+          {
+            "id": "lot-012",
+            "name": "Mobile Home Park 1",
+            "type": "mobile-home",
+            "pricePerNight": 95,
+            "isAvailable": true,
+            "amenities": ["Kitchen", "Bathroom", "TV", "Parking"]
+          }
+        ]
+      },
+      "bookingsDetail": {
+        "summary": {
+          "total": 75,
+          "confirmed": 58,
+          "pending": 12,
+          "cancelled": 5,
+          "checkInsThisWeek": 8,
+          "checkOutsThisWeek": 6
+        },
+        "bookings": [
+          {
+            "id": "booking-001",
+            "userName": "The O'Brien Family",
+            "lotName": "Lakeside Lodge",
+            "lotType": "glamping",
+            "startDate": "2026-02-01",
+            "endDate": "2026-02-05",
+            "status": "confirmed",
+            "totalPrice": 720,
+            "guests": 4
+          },
+          {
+            "id": "booking-002",
+            "userName": "Michael Murphy",
+            "lotName": "Woodland Cabin 1",
+            "lotType": "cabin",
+            "startDate": "2026-02-02",
+            "endDate": "2026-02-04",
+            "status": "confirmed",
+            "totalPrice": 240,
+            "guests": 2
+          },
+          {
+            "id": "booking-003",
+            "userName": "Emma Walsh",
+            "lotName": "RV Bay D1",
+            "lotType": "touring",
+            "startDate": "2026-02-03",
+            "endDate": "2026-02-07",
+            "status": "pending",
+            "totalPrice": 220,
+            "guests": 3
+          },
+          {
+            "id": "booking-004",
+            "userName": "Patrick Byrne",
+            "lotName": "Riverside Pitch A1",
+            "lotType": "tent",
+            "startDate": "2026-02-05",
+            "endDate": "2026-02-08",
+            "status": "confirmed",
+            "totalPrice": 105,
+            "guests": 2
+          },
+          {
+            "id": "booking-005",
+            "userName": "Aoife Kelly",
+            "lotName": "Sunset Lodge",
+            "lotType": "glamping",
+            "startDate": "2026-02-06",
+            "endDate": "2026-02-10",
+            "status": "confirmed",
+            "totalPrice": 780,
+            "guests": 6
+          },
+          {
+            "id": "booking-006",
+            "userName": "Ciaran Doyle",
+            "lotName": "Forest View B1",
+            "lotType": "tent",
+            "startDate": "2026-02-07",
+            "endDate": "2026-02-09",
+            "status": "pending",
+            "totalPrice": 80,
+            "guests": 2
+          },
+          {
+            "id": "booking-007",
+            "userName": "Niamh Fitzgerald",
+            "lotName": "Deluxe RV Bay E1",
+            "lotType": "touring",
+            "startDate": "2026-02-08",
+            "endDate": "2026-02-12",
+            "status": "confirmed",
+            "totalPrice": 280,
+            "guests": 4
+          },
+          {
+            "id": "booking-008",
+            "userName": "Sean Connolly",
+            "lotName": "Mobile Home Park 1",
+            "lotType": "mobile-home",
+            "startDate": "2026-02-10",
+            "endDate": "2026-02-14",
+            "status": "pending",
+            "totalPrice": 380,
+            "guests": 5
+          },
+          {
+            "id": "booking-009",
+            "userName": "Orla Ryan",
+            "lotName": "Woodland Cabin 2",
+            "lotType": "cabin",
+            "startDate": "2026-01-28",
+            "endDate": "2026-02-01",
+            "status": "confirmed",
+            "totalPrice": 480,
+            "guests": 3
+          },
+          {
+            "id": "booking-010",
+            "userName": "Declan McCarthy",
+            "lotName": "Meadow Pitch C1",
+            "lotType": "tent",
+            "startDate": "2026-01-30",
+            "endDate": "2026-02-02",
+            "status": "confirmed",
+            "totalPrice": 90,
+            "guests": 2
+          }
+        ]
+      },
+      "revenueDetail": {
+        "summary": {
+          "thisMonth": 24500,
+          "lastMonth": 21800,
+          "yearToDate": 24500,
+          "avgBookingValue": 185,
+          "monthOverMonthChange": 12.4
+        },
+        "monthlyTrend": [
+          { "month": "Aug", "revenue": 28500 },
+          { "month": "Sep", "revenue": 22300 },
+          { "month": "Oct", "revenue": 18900 },
+          { "month": "Nov", "revenue": 15200 },
+          { "month": "Dec", "revenue": 21800 },
+          { "month": "Jan", "revenue": 24500 }
+        ],
+        "byType": [
+          { "type": "glamping", "revenue": 9800, "percentage": 40 },
+          { "type": "cabin", "revenue": 5880, "percentage": 24 },
+          { "type": "touring", "revenue": 4410, "percentage": 18 },
+          { "type": "tent", "revenue": 2940, "percentage": 12 },
+          { "type": "mobile-home", "revenue": 1470, "percentage": 6 }
+        ],
+        "topLots": [
+          { "name": "Lakeside Lodge", "type": "glamping", "revenue": 5400, "bookings": 8 },
+          { "name": "Sunset Lodge", "type": "glamping", "revenue": 4400, "bookings": 6 },
+          { "name": "Woodland Cabin 1", "type": "cabin", "revenue": 3200, "bookings": 12 },
+          { "name": "Deluxe RV Bay E1", "type": "touring", "revenue": 2800, "bookings": 10 },
+          { "name": "Woodland Cabin 2", "type": "cabin", "revenue": 2680, "bookings": 11 }
+        ]
+      },
+      "occupancyDetail": {
+        "summary": {
+          "currentRate": 68,
+          "totalLots": 34,
+          "availableLots": 28,
+          "occupiedLots": 6,
+          "avgStayDuration": 3.2
+        },
+        "byType": [
+          { "type": "glamping", "total": 4, "occupied": 2, "rate": 50 },
+          { "type": "cabin", "total": 6, "occupied": 2, "rate": 33 },
+          { "type": "touring", "total": 8, "occupied": 1, "rate": 12 },
+          { "type": "tent", "total": 12, "occupied": 1, "rate": 8 },
+          { "type": "mobile-home", "total": 4, "occupied": 0, "rate": 0 }
+        ],
+        "weeklyTrend": [
+          { "day": "Mon", "rate": 62 },
+          { "day": "Tue", "rate": 58 },
+          { "day": "Wed", "rate": 55 },
+          { "day": "Thu", "rate": 60 },
+          { "day": "Fri", "rate": 78 },
+          { "day": "Sat", "rate": 92 },
+          { "day": "Sun", "rate": 71 }
+        ],
+        "peakDays": [
+          { "day": "Saturday", "avgRate": 92 },
+          { "day": "Friday", "avgRate": 78 },
+          { "day": "Sunday", "avgRate": 71 }
+        ]
+      }
+    }
+  }
+}

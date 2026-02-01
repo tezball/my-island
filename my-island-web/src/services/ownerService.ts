@@ -1,6 +1,240 @@
-import mockOwnersData from '../data/mockOwners.json';
-import { MOCK_DB } from './mockData';
-import type { Lot, Booking } from './adminService';
+import type { Lot, Booking } from '../types/booking';
+
+// API configuration
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+
+const getAuthHeaders = (): HeadersInit => {
+    const token = localStorage.getItem('token');
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+};
+
+// Logging utility with structured output
+const log = {
+    info: (message: string, data?: Record<string, unknown>) => {
+        console.log(`[OwnerService] ${message}`, data ? JSON.stringify(data) : '');
+    },
+    error: (message: string, error?: unknown, data?: Record<string, unknown>) => {
+        console.error(`[OwnerService] ERROR: ${message}`, {
+            error: error instanceof Error ? { message: error.message, stack: error.stack } : error,
+            ...data,
+        });
+    },
+    debug: (message: string, data?: Record<string, unknown>) => {
+        if (import.meta.env.DEV) {
+            console.debug(`[OwnerService] DEBUG: ${message}`, data ? JSON.stringify(data) : '');
+        }
+    },
+};
+
+// Metrics tracking
+interface ApiMetrics {
+    endpoint: string;
+    method: string;
+    durationMs: number;
+    status: 'success' | 'error';
+    statusCode?: number;
+    errorType?: string;
+    timestamp: string;
+}
+
+const metrics = {
+    history: [] as ApiMetrics[],
+    maxHistory: 100,
+
+    record(metric: Omit<ApiMetrics, 'timestamp'>) {
+        const entry: ApiMetrics = { ...metric, timestamp: new Date().toISOString() };
+        this.history.push(entry);
+        if (this.history.length > this.maxHistory) {
+            this.history.shift();
+        }
+        log.debug('API metric recorded', entry as unknown as Record<string, unknown>);
+    },
+
+    getStats() {
+        const total = this.history.length;
+        const errors = this.history.filter(m => m.status === 'error').length;
+        const avgDuration = total > 0
+            ? this.history.reduce((sum, m) => sum + m.durationMs, 0) / total
+            : 0;
+        return { total, errors, errorRate: total > 0 ? errors / total : 0, avgDurationMs: avgDuration };
+    },
+};
+
+// Custom error classes for better error handling
+export class OwnerServiceError extends Error {
+    readonly code: string;
+    readonly statusCode?: number;
+    readonly details?: Record<string, unknown>;
+
+    constructor(
+        message: string,
+        code: string,
+        statusCode?: number,
+        details?: Record<string, unknown>
+    ) {
+        super(message);
+        this.name = 'OwnerServiceError';
+        this.code = code;
+        this.statusCode = statusCode;
+        this.details = details;
+    }
+}
+
+export class NetworkError extends OwnerServiceError {
+    constructor(message: string, details?: Record<string, unknown>) {
+        super(message, 'NETWORK_ERROR', undefined, details);
+        this.name = 'NetworkError';
+    }
+}
+
+export class AuthenticationError extends OwnerServiceError {
+    constructor(message: string = 'Authentication required') {
+        super(message, 'AUTH_ERROR', 401);
+        this.name = 'AuthenticationError';
+    }
+}
+
+export class ApiError extends OwnerServiceError {
+    constructor(message: string, statusCode: number, details?: Record<string, unknown>) {
+        super(message, 'API_ERROR', statusCode, details);
+        this.name = 'ApiError';
+    }
+}
+
+// API response type for dashboard endpoint
+interface DashboardApiResponse {
+    totalLots: number;
+    activeLots: number;
+    upcomingBookings: number;
+    monthlyRevenue: number;
+    recentBookings: Array<{
+        id: number;
+        lotName: string;
+        guestName: string;
+        checkIn: string;  // "2025-06-15"
+        checkOut: string;
+        status: string;   // "CONFIRMED"
+    }>;
+}
+
+// Lot Detail Types
+export interface LotDetail {
+    id: string;
+    name: string;
+    type: 'tent' | 'touring' | 'glamping' | 'cabin' | 'mobile-home';
+    pricePerNight: number;
+    isAvailable: boolean;
+    amenities: string[];
+}
+
+export interface LotsDetailSummary {
+    total: number;
+    available: number;
+    unavailable: number;
+    byType: Record<string, number>;
+}
+
+export interface LotsDetailResponse {
+    summary: LotsDetailSummary;
+    lots: LotDetail[];
+}
+
+// Booking Detail Types
+export interface BookingDetail {
+    id: string;
+    userName: string;
+    lotName: string;
+    lotType: string;
+    startDate: string;
+    endDate: string;
+    status: 'confirmed' | 'pending' | 'cancelled' | 'checked_in' | 'completed';
+    totalPrice: number;
+    guests: number;
+}
+
+export interface BookingsDetailSummary {
+    total: number;
+    confirmed: number;
+    pending: number;
+    cancelled: number;
+    checkInsThisWeek: number;
+    checkOutsThisWeek: number;
+}
+
+export interface BookingsDetailResponse {
+    summary: BookingsDetailSummary;
+    bookings: BookingDetail[];
+}
+
+// Revenue Detail Types
+export interface MonthlyTrend {
+    month: string;
+    revenue: number;
+}
+
+export interface RevenueByType {
+    type: string;
+    revenue: number;
+    percentage: number;
+}
+
+export interface TopLot {
+    name: string;
+    type: string;
+    revenue: number;
+    bookings: number;
+}
+
+export interface RevenueDetailSummary {
+    thisMonth: number;
+    lastMonth: number;
+    yearToDate: number;
+    avgBookingValue: number;
+    monthOverMonthChange: number;
+}
+
+export interface RevenueDetailResponse {
+    summary: RevenueDetailSummary;
+    monthlyTrend: MonthlyTrend[];
+    byType: RevenueByType[];
+    topLots: TopLot[];
+}
+
+// Occupancy Detail Types
+export interface OccupancyByType {
+    type: string;
+    total: number;
+    occupied: number;
+    rate: number;
+}
+
+export interface WeeklyTrend {
+    day: string;
+    rate: number;
+}
+
+export interface PeakDay {
+    day: string;
+    avgRate: number;
+}
+
+export interface OccupancyDetailSummary {
+    currentRate: number;
+    totalLots: number;
+    availableLots: number;
+    occupiedLots: number;
+    avgStayDuration: number;
+}
+
+export interface OccupancyDetailResponse {
+    summary: OccupancyDetailSummary;
+    byType: OccupancyByType[];
+    weeklyTrend: WeeklyTrend[];
+    peakDays: PeakDay[];
+}
 
 export interface Owner {
     id: string;
@@ -38,126 +272,220 @@ export interface OwnerDashboardData {
     upcomingCheckOuts: Booking[];
 }
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// API response type for owner profile
+interface OwnerProfileApiResponse {
+    id: number;
+    propertyName: string;
+    county: string;
+    town: string;
+    propertyType: string;
+    description: string;
+    latitude: number | null;
+    longitude: number | null;
+    phone: string | null;
+    website: string | null;
+    amenities: Array<{ id: number; name: string; icon: string }>;
+    lotCount: number;
+}
 
-// In-memory store for new owners (simulating persistence)
-const createdOwners: Owner[] = [];
+// API response type for lot
+interface LotApiResponse {
+    id: number;
+    ownerId: number;
+    ownerPropertyName: string;
+    name: string;
+    lotType: string;
+    description: string;
+    pricePerNight: number;
+    maxGuests: number;
+    isActive: boolean;
+    imageUrl: string | null;
+    amenities: Array<{ id: number; name: string; icon: string }>;
+}
+
+// API response type for booking
+interface BookingApiResponse {
+    id: number;
+    userId: number;
+    userName: string;
+    lotId: number;
+    lotName: string;
+    campsiteName: string;
+    checkInDate: string;
+    checkOutDate: string;
+    numGuests: number;
+    totalPrice: number;
+    status: string;
+    specialRequests: string | null;
+    createdAt: string;
+}
+
+// Request types for lot CRUD
+export interface CreateLotRequest {
+    name: string;
+    lotType: string;
+    description: string;
+    pricePerNight: number;
+    maxGuests: number;
+    imageUrl?: string;
+    amenityIds?: number[];
+}
+
+export interface UpdateLotRequest {
+    name?: string;
+    lotType?: string;
+    description?: string;
+    pricePerNight?: number;
+    maxGuests?: number;
+    isActive?: boolean;
+    imageUrl?: string;
+    amenityIds?: number[];
+}
 
 export const ownerService = {
-    async getOwnerProfile(userId: string): Promise<Owner | null> {
-        await delay(500);
+    async getOwnerProfile(_userId: string): Promise<Owner | null> {
+        const endpoint = '/owner/profile';
+        const startTime = performance.now();
 
-        // Check mock JSON data
-        const mockOwner = mockOwnersData.owners.find(o => o.userId === userId);
-        if (mockOwner) {
-            return mockOwner as Owner;
+        log.info('Fetching owner profile', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
         }
 
-        // Check newly created owners
-        const created = createdOwners.find(o => o.userId === userId);
-        return created || null;
-    },
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
 
-    async getDashboardData(userId: string): Promise<OwnerDashboardData> {
-        await delay(600);
+        const durationMs = performance.now() - startTime;
 
-        const owner = await this.getOwnerProfile(userId);
-        const lots = MOCK_DB.lots.filter(l => l.ownerId === userId || l.ownerId === 'nore-valley-owner');
-
-        // Get bookings for owner's lots
-        const lotIds = lots.map(l => l.id);
-        const allBookings = MOCK_DB.bookings.filter(b => lotIds.includes(b.lotId));
-
-        // Parse date helper
-        const parseDate = (dateStr: string): Date => {
-            if (dateStr.includes('/')) {
-                const [d, m, y] = dateStr.split('/').map(Number);
-                return new Date(y, m - 1, d);
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
             }
-            return new Date(dateStr);
-        };
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
 
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
 
-        const nextWeek = new Date(today);
-        nextWeek.setDate(nextWeek.getDate() + 7);
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 403) {
+                throw new ApiError('You do not have permission to access this resource.', 403);
+            }
+            if (response.status === 404) {
+                // Owner profile not found - return null instead of throwing
+                return null;
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
 
-        // Upcoming check-ins (next 7 days)
-        const upcomingCheckIns = allBookings.filter(b => {
-            const start = parseDate(b.startDate);
-            return start >= today && start <= nextWeek && b.status === 'confirmed';
-        }).slice(0, 5);
+            throw new ApiError(
+                `Failed to fetch owner profile: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
 
-        // Upcoming check-outs (next 7 days)
-        const upcomingCheckOuts = allBookings.filter(b => {
-            const end = parseDate(b.endDate);
-            return end >= today && end <= nextWeek && (b.status === 'confirmed' || b.status === 'checked_in');
-        }).slice(0, 5);
+        let api: OwnerProfileApiResponse;
+        try {
+            api = await response.json();
+            log.debug('API response received', {
+                id: api.id,
+                propertyName: api.propertyName,
+                lotCount: api.lotCount,
+            });
+        } catch (error) {
+            log.error('Failed to parse API response', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'PARSE_ERROR',
+            });
+            throw new ApiError('Invalid response from server. Please try again.', response.status, {
+                parseError: error instanceof Error ? error.message : String(error),
+            });
+        }
 
-        // Recent bookings
-        const recentBookings = [...allBookings]
-            .sort((a, b) => {
-                return parseDate(b.startDate).getTime() - parseDate(a.startDate).getTime();
-            })
-            .slice(0, 10);
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
 
-        return {
-            owner,
-            recentBookings,
-            lots,
-            upcomingCheckIns,
-            upcomingCheckOuts,
-        };
-    },
+        log.info('Owner profile fetched successfully', {
+            durationMs: Math.round(durationMs),
+            ownerId: api.id,
+        });
 
-    async getOwnerLots(userId: string): Promise<Lot[]> {
-        await delay(500);
-        return MOCK_DB.lots.filter(l => l.ownerId === userId || l.ownerId === 'nore-valley-owner');
-    },
-
-    async getOwnerBookings(userId: string): Promise<Booking[]> {
-        await delay(500);
-        const lots = await this.getOwnerLots(userId);
-        const lotIds = lots.map(l => l.id);
-        return MOCK_DB.bookings.filter(b => lotIds.includes(b.lotId));
-    },
-
-    async createOwnerProfile(data: {
-        userId: string;
-        propertyName: string;
-        county: string;
-        town: string;
-        description: string;
-        coverImageUrl: string;
-        propertyType: string;
-        selectedAccommodationTypes: string[];
-        contactEmail?: string;
-        contactPhone?: string;
-    }): Promise<Owner> {
-        await delay(800);
-
-        const newOwner: Owner = {
-            id: `owner-${Math.random().toString(36).substr(2, 9)}`,
-            userId: data.userId,
-            propertyName: data.propertyName,
-            county: data.county,
-            town: data.town,
-            description: data.description,
-            coverImageUrl: data.coverImageUrl,
-            propertyType: data.propertyType,
-            selectedAccommodationTypes: data.selectedAccommodationTypes,
-            contactEmail: data.contactEmail || '',
-            contactPhone: data.contactPhone || '',
+        // Transform API response to frontend Owner type
+        const owner: Owner = {
+            id: String(api.id),
+            userId: _userId,
+            propertyName: api.propertyName,
+            county: api.county,
+            town: api.town,
+            description: api.description ?? '',
+            coverImageUrl: '',
+            propertyType: api.propertyType,
+            selectedAccommodationTypes: [],
+            contactEmail: '',
+            contactPhone: api.phone ?? '',
             active: true,
-            verified: false,
-            createdAt: new Date().toISOString(),
+            verified: true,
+            createdAt: '',
             stats: {
-                totalLots: 0,
-                activeLots: 0,
+                totalLots: api.lotCount,
+                activeLots: api.lotCount,
                 totalBookings: 0,
                 upcomingBookings: 0,
                 totalRevenue: 0,
@@ -166,15 +494,1157 @@ export const ownerService = {
             },
         };
 
-        createdOwners.push(newOwner);
-        return newOwner;
+        return owner;
     },
 
-    async updateOwnerProfile(ownerId: string, updates: Partial<Owner>): Promise<void> {
-        await delay(600);
-        const index = createdOwners.findIndex(o => o.id === ownerId);
-        if (index !== -1) {
-            createdOwners[index] = { ...createdOwners[index], ...updates };
+    async getDashboardData(_userId: string): Promise<OwnerDashboardData> {
+        const endpoint = '/owner/dashboard';
+        const startTime = performance.now();
+
+        log.info('Fetching dashboard data', { endpoint, userId: _userId });
+
+        // Check for auth token
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
         }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
+            }
+
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
+
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 403) {
+                throw new ApiError('You do not have permission to access this resource.', 403);
+            }
+            if (response.status === 404) {
+                throw new ApiError('Owner dashboard not found. Please complete your owner profile first.', 404);
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
+
+            throw new ApiError(
+                `Failed to fetch dashboard data: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
+
+        let api: DashboardApiResponse;
+        try {
+            api = await response.json();
+            log.debug('API response received', {
+                totalLots: api.totalLots,
+                activeLots: api.activeLots,
+                upcomingBookings: api.upcomingBookings,
+                recentBookingsCount: api.recentBookings?.length ?? 0,
+            });
+        } catch (error) {
+            log.error('Failed to parse API response', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'PARSE_ERROR',
+            });
+            throw new ApiError('Invalid response from server. Please try again.', response.status, {
+                parseError: error instanceof Error ? error.message : String(error),
+            });
+        }
+
+        // Record successful metric
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Dashboard data fetched successfully', {
+            durationMs: Math.round(durationMs),
+            totalLots: api.totalLots,
+            bookingsCount: api.recentBookings?.length ?? 0,
+        });
+
+        // Transform API response to frontend format
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const nextWeek = new Date(today);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+
+        // Transform API bookings to frontend Booking type
+        const bookings: Booking[] = (api.recentBookings ?? []).map(b => ({
+            id: String(b.id),
+            lotId: '',
+            lotName: b.lotName,
+            userId: '',
+            userName: b.guestName,
+            startDate: b.checkIn,
+            endDate: b.checkOut,
+            status: b.status.toLowerCase() as Booking['status'],
+            totalPrice: 0,
+        }));
+
+        log.debug('Transformed bookings', { count: bookings.length });
+
+        // Filter for check-ins in next 7 days
+        const upcomingCheckIns = bookings.filter(b => {
+            const checkIn = new Date(b.startDate);
+            return checkIn >= today && checkIn <= nextWeek && b.status === 'confirmed';
+        });
+
+        // Filter for check-outs in next 7 days
+        const upcomingCheckOuts = bookings.filter(b => {
+            const checkOut = new Date(b.endDate);
+            return checkOut >= today && checkOut <= nextWeek && (b.status === 'confirmed' || b.status === 'checked_in');
+        });
+
+        log.debug('Filtered check-ins/check-outs', {
+            upcomingCheckIns: upcomingCheckIns.length,
+            upcomingCheckOuts: upcomingCheckOuts.length,
+        });
+
+        // Build owner object with stats from API
+        const owner: Owner = {
+            id: '',
+            userId: '',
+            propertyName: '',
+            county: '',
+            town: '',
+            description: '',
+            coverImageUrl: '',
+            propertyType: '',
+            selectedAccommodationTypes: [],
+            contactEmail: '',
+            contactPhone: '',
+            active: true,
+            verified: true,
+            createdAt: '',
+            stats: {
+                totalLots: api.totalLots,
+                activeLots: api.activeLots,
+                totalBookings: 0,
+                upcomingBookings: api.upcomingBookings,
+                totalRevenue: 0,
+                monthlyRevenue: api.monthlyRevenue,
+                occupancyRate: api.totalLots > 0
+                    ? Math.round((api.activeLots / api.totalLots) * 100)
+                    : 0,
+            },
+        };
+
+        return {
+            owner,
+            recentBookings: bookings,
+            lots: [],
+            upcomingCheckIns,
+            upcomingCheckOuts,
+        };
+    },
+
+    // Expose metrics for debugging/monitoring
+    getMetrics() {
+        return metrics.getStats();
+    },
+
+    getMetricsHistory() {
+        return [...metrics.history];
+    },
+
+    async getOwnerLots(_userId: string): Promise<Lot[]> {
+        const endpoint = '/owner/lots';
+        const startTime = performance.now();
+
+        log.info('Fetching owner lots', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
+            }
+
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
+
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 403) {
+                throw new ApiError('You do not have permission to access this resource.', 403);
+            }
+            if (response.status === 404) {
+                throw new ApiError('Owner profile not found. Please complete your owner profile first.', 404);
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
+
+            throw new ApiError(
+                `Failed to fetch owner lots: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
+
+        let apiLots: LotApiResponse[];
+        try {
+            apiLots = await response.json();
+            log.debug('API response received', { lotCount: apiLots.length });
+        } catch (error) {
+            log.error('Failed to parse API response', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'PARSE_ERROR',
+            });
+            throw new ApiError('Invalid response from server. Please try again.', response.status, {
+                parseError: error instanceof Error ? error.message : String(error),
+            });
+        }
+
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Owner lots fetched successfully', {
+            durationMs: Math.round(durationMs),
+            lotCount: apiLots.length,
+        });
+
+        // Transform API response to frontend Lot type
+        const lots: Lot[] = apiLots.map(lot => ({
+            id: String(lot.id),
+            ownerId: String(lot.ownerId),
+            name: lot.name,
+            type: lot.lotType.toLowerCase().replace('_', '-') as Lot['type'],
+            pricePerNight: lot.pricePerNight,
+            description: lot.description ?? '',
+            lotAmenities: lot.amenities?.map(a => a.name) ?? [],
+            campsiteAmenities: [],
+            isAvailable: lot.isActive,
+            imageUrl: lot.imageUrl ?? undefined,
+        }));
+
+        return lots;
+    },
+
+    async getOwnerBookings(_userId: string): Promise<Booking[]> {
+        const endpoint = '/owner/bookings';
+        const startTime = performance.now();
+
+        log.info('Fetching owner bookings', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
+            }
+
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
+
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 403) {
+                throw new ApiError('You do not have permission to access this resource.', 403);
+            }
+            if (response.status === 404) {
+                throw new ApiError('Owner profile not found. Please complete your owner profile first.', 404);
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
+
+            throw new ApiError(
+                `Failed to fetch owner bookings: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
+
+        let apiBookings: BookingApiResponse[];
+        try {
+            apiBookings = await response.json();
+            log.debug('API response received', { bookingCount: apiBookings.length });
+        } catch (error) {
+            log.error('Failed to parse API response', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'PARSE_ERROR',
+            });
+            throw new ApiError('Invalid response from server. Please try again.', response.status, {
+                parseError: error instanceof Error ? error.message : String(error),
+            });
+        }
+
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Owner bookings fetched successfully', {
+            durationMs: Math.round(durationMs),
+            bookingCount: apiBookings.length,
+        });
+
+        // Transform API response to frontend Booking type
+        const bookings: Booking[] = apiBookings.map(b => ({
+            id: String(b.id),
+            userId: String(b.userId),
+            userName: b.userName,
+            lotId: String(b.lotId),
+            lotName: b.lotName,
+            startDate: b.checkInDate,
+            endDate: b.checkOutDate,
+            status: b.status.toLowerCase() as Booking['status'],
+            totalPrice: b.totalPrice,
+            details: b.specialRequests ?? undefined,
+        }));
+
+        return bookings;
+    },
+
+    async createLot(data: CreateLotRequest): Promise<Lot> {
+        const endpoint = '/owner/lots';
+        const startTime = performance.now();
+
+        log.info('Creating lot', { endpoint, lotName: data.name });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(data),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
+            }
+
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
+
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 400) {
+                throw new ApiError('Invalid lot data. Please check your input.', 400, { errorBody });
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
+
+            throw new ApiError(
+                `Failed to create lot: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
+
+        let apiLot: LotApiResponse;
+        try {
+            apiLot = await response.json();
+            log.debug('API response received', { lotId: apiLot.id });
+        } catch (error) {
+            log.error('Failed to parse API response', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs,
+                status: 'error',
+                errorType: 'PARSE_ERROR',
+            });
+            throw new ApiError('Invalid response from server. Please try again.', response.status, {
+                parseError: error instanceof Error ? error.message : String(error),
+            });
+        }
+
+        metrics.record({
+            endpoint,
+            method: 'POST',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Lot created successfully', {
+            durationMs: Math.round(durationMs),
+            lotId: apiLot.id,
+        });
+
+        return {
+            id: String(apiLot.id),
+            ownerId: String(apiLot.ownerId),
+            name: apiLot.name,
+            type: apiLot.lotType.toLowerCase().replace('_', '-') as Lot['type'],
+            pricePerNight: apiLot.pricePerNight,
+            description: apiLot.description ?? '',
+            lotAmenities: apiLot.amenities?.map(a => a.name) ?? [],
+            campsiteAmenities: [],
+            isAvailable: apiLot.isActive,
+            imageUrl: apiLot.imageUrl ?? undefined,
+        };
+    },
+
+    async updateLot(lotId: string, data: UpdateLotRequest): Promise<Lot> {
+        const endpoint = `/owner/lots/${lotId}`;
+        const startTime = performance.now();
+
+        log.info('Updating lot', { endpoint, lotId });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'PUT',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(data),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'PUT',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
+            }
+
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
+
+            metrics.record({
+                endpoint,
+                method: 'PUT',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 400) {
+                throw new ApiError('Invalid lot data. Please check your input.', 400, { errorBody });
+            }
+            if (response.status === 404) {
+                throw new ApiError('Lot not found.', 404);
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
+
+            throw new ApiError(
+                `Failed to update lot: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
+
+        let apiLot: LotApiResponse;
+        try {
+            apiLot = await response.json();
+            log.debug('API response received', { lotId: apiLot.id });
+        } catch (error) {
+            log.error('Failed to parse API response', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'PUT',
+                durationMs,
+                status: 'error',
+                errorType: 'PARSE_ERROR',
+            });
+            throw new ApiError('Invalid response from server. Please try again.', response.status, {
+                parseError: error instanceof Error ? error.message : String(error),
+            });
+        }
+
+        metrics.record({
+            endpoint,
+            method: 'PUT',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Lot updated successfully', {
+            durationMs: Math.round(durationMs),
+            lotId: apiLot.id,
+        });
+
+        return {
+            id: String(apiLot.id),
+            ownerId: String(apiLot.ownerId),
+            name: apiLot.name,
+            type: apiLot.lotType.toLowerCase().replace('_', '-') as Lot['type'],
+            pricePerNight: apiLot.pricePerNight,
+            description: apiLot.description ?? '',
+            lotAmenities: apiLot.amenities?.map(a => a.name) ?? [],
+            campsiteAmenities: [],
+            isAvailable: apiLot.isActive,
+            imageUrl: apiLot.imageUrl ?? undefined,
+        };
+    },
+
+    async deleteLot(lotId: string): Promise<void> {
+        const endpoint = `/owner/lots/${lotId}`;
+        const startTime = performance.now();
+
+        log.info('Deleting lot', { endpoint, lotId });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'DELETE',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'DELETE',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore error reading body
+            }
+
+            log.error('API returned error response', undefined, {
+                endpoint,
+                statusCode: response.status,
+                statusText: response.statusText,
+                durationMs,
+                errorBody,
+            });
+
+            metrics.record({
+                endpoint,
+                method: 'DELETE',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 400) {
+                throw new ApiError('Cannot delete lot with active bookings.', 400, { errorBody });
+            }
+            if (response.status === 404) {
+                throw new ApiError('Lot not found.', 404);
+            }
+            if (response.status >= 500) {
+                throw new ApiError('Server error. Please try again later.', response.status, { errorBody });
+            }
+
+            throw new ApiError(
+                `Failed to delete lot: ${response.statusText}`,
+                response.status,
+                { errorBody }
+            );
+        }
+
+        metrics.record({
+            endpoint,
+            method: 'DELETE',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Lot deleted successfully', {
+            durationMs: Math.round(durationMs),
+            lotId,
+        });
+    },
+
+    async getLotsDetail(_ownerId: string): Promise<LotsDetailResponse> {
+        const endpoint = '/owner/analytics/lots';
+        const startTime = performance.now();
+
+        log.info('Fetching lots detail analytics', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            throw new ApiError(`Failed to fetch lots analytics: ${response.statusText}`, response.status);
+        }
+
+        const data: LotsDetailResponse = await response.json();
+
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Lots detail analytics fetched successfully', { durationMs: Math.round(durationMs) });
+
+        return data;
+    },
+
+    async getBookingsDetail(_ownerId: string): Promise<BookingsDetailResponse> {
+        const endpoint = '/owner/analytics/bookings';
+        const startTime = performance.now();
+
+        log.info('Fetching bookings detail analytics', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            throw new ApiError(`Failed to fetch bookings analytics: ${response.statusText}`, response.status);
+        }
+
+        const data: BookingsDetailResponse = await response.json();
+
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Bookings detail analytics fetched successfully', { durationMs: Math.round(durationMs) });
+
+        return data;
+    },
+
+    async getRevenueDetail(_ownerId: string): Promise<RevenueDetailResponse> {
+        const endpoint = '/owner/analytics/revenue';
+        const startTime = performance.now();
+
+        log.info('Fetching revenue detail analytics', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            throw new ApiError(`Failed to fetch revenue analytics: ${response.statusText}`, response.status);
+        }
+
+        const data: RevenueDetailResponse = await response.json();
+
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Revenue detail analytics fetched successfully', { durationMs: Math.round(durationMs) });
+
+        return data;
+    },
+
+    async getOccupancyDetail(_ownerId: string): Promise<OccupancyDetailResponse> {
+        const endpoint = '/owner/analytics/occupancy';
+        const startTime = performance.now();
+
+        log.info('Fetching occupancy detail analytics', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            metrics.record({
+                endpoint,
+                method: 'GET',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            throw new ApiError(`Failed to fetch occupancy analytics: ${response.statusText}`, response.status);
+        }
+
+        const data: OccupancyDetailResponse = await response.json();
+
+        metrics.record({
+            endpoint,
+            method: 'GET',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Occupancy detail analytics fetched successfully', { durationMs: Math.round(durationMs) });
+
+        return data;
     },
 };

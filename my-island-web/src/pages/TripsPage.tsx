@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { campsiteService } from '../services/campsiteService';
-import type { Booking } from '../services/adminService';
+import type { Booking } from '../types/booking';
 import { Link } from 'react-router-dom';
 
 export const TripsPage: React.FC = () => {
@@ -190,7 +190,7 @@ export const TripsPage: React.FC = () => {
     const hasNoBookings = bookings.length === 0;
 
     return (
-        <div className="pb-24">
+        <div className="pb-24 max-w-7xl mx-auto w-full">
             {/* Header */}
             <div className="p-4 pt-6">
                 <h1 className="text-2xl font-bold text-[#111418] dark:text-white">My Trips</h1>

@@ -29,7 +29,7 @@ export const ProfilePage: React.FC = () => {
 
     return (
         <main className="flex-1 flex flex-col pt-4 pb-24 bg-background-light dark:bg-background-dark min-h-screen">
-            <div className="px-6 mb-8">
+            <div className="px-6 mb-8 max-w-7xl mx-auto w-full">
                 <h1 className="text-3xl font-bold text-[#111418] dark:text-white mb-6">Profile</h1>
 
                 <div className="flex items-center gap-4 mb-6">
@@ -95,34 +95,7 @@ export const ProfilePage: React.FC = () => {
                     </Link>
                 )}
 
-                <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 flex items-center gap-3 mb-8 border border-amber-200 dark:border-amber-900/50">
-                    <div className="size-10 rounded-full bg-amber-500 flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-white">card_giftcard</span>
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-[#111418] dark:text-gray-200 text-sm">10% discount available</h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">On your next booking over €100</p>
-                    </div>
-                </div>
-
                 <div className="flex flex-col gap-2">
-                    {user?.role === 'admin' && (
-                        <Link
-                            to="/admin"
-                            className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-orange-200 dark:border-orange-900/50 mb-2"
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className="size-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
-                                    <span className="material-symbols-outlined">admin_panel_settings</span>
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-[#111418] dark:text-white text-base">Admin Portal</h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Manage bookings & lots</p>
-                                </div>
-                            </div>
-                            <span className="material-symbols-outlined text-gray-400">chevron_right</span>
-                        </Link>
-                    )}
                     {user?.isOwner && (
                         <Link
                             to="/owner"

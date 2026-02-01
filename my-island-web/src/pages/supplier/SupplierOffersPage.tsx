@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supplierService, type Offer, type OfferCategory } from '../../services/supplierService';
 import { OfferFormModal } from '../../components/supplier/offers/OfferFormModal';
 
@@ -165,11 +166,24 @@ const OfferCard: React.FC<{
     onDelete: () => void;
     onToggleActive: () => void;
 }> = ({ offer, onEdit, onDelete, onToggleActive }) => {
+    const navigate = useNavigate();
     const isExpired = new Date(offer.validUntil) < new Date();
     const claimsRemaining = offer.maxClaims ? offer.maxClaims - offer.claimCount : null;
 
+    const handleCardClick = () => {
+        navigate(`/supplier/offers/${offer.id}`);
+    };
+
+    const handleActionClick = (e: React.MouseEvent, action: () => void) => {
+        e.stopPropagation();
+        action();
+    };
+
     return (
-        <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div
+            onClick={handleCardClick}
+            className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden cursor-pointer hover:border-lime-300 dark:hover:border-lime-700 hover:shadow-md transition-all"
+        >
             {/* Image */}
             {offer.imageUrl && (
                 <div
@@ -237,24 +251,24 @@ const OfferCard: React.FC<{
                     </div>
                     <div className="flex items-center gap-1">
                         <button
-                            onClick={onToggleActive}
+                            onClick={(e) => handleActionClick(e, onToggleActive)}
                             disabled={isExpired}
                             className="p-2 text-gray-500 hover:text-[#111418] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             title={offer.active ? 'Deactivate' : 'Activate'}
                         >
                             <span className="material-symbols-outlined text-xl">
-                                {offer.active ? 'visibility_off' : 'visibility'}
+                                {offer.active ? 'toggle_off' : 'toggle_on'}
                             </span>
                         </button>
                         <button
-                            onClick={onEdit}
+                            onClick={(e) => handleActionClick(e, onEdit)}
                             className="p-2 text-gray-500 hover:text-[#111418] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                             title="Edit"
                         >
                             <span className="material-symbols-outlined text-xl">edit</span>
                         </button>
                         <button
-                            onClick={onDelete}
+                            onClick={(e) => handleActionClick(e, onDelete)}
                             className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
                             title="Delete"
                         >

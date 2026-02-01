@@ -1,46 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
-import { type Lot } from '../services/adminService';
+import { type Lot } from '../types/booking';
 import { BookingModal } from '../components/booking/BookingModal';
 import { useSaved } from '../context/SavedContext';
 
 // Type configuration with display names and images
 const TYPE_CONFIG: Record<string, { label: string; pluralLabel: string; icon: string; defaultImage: string; description: string }> = {
     tent: {
-        label: 'Tent Spot',
-        pluralLabel: 'Tent Spots',
+        label: 'Tent Pitch',
+        pluralLabel: 'Tent Pitches',
         icon: 'camping',
         defaultImage: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=800',
         description: 'Pitch your tent in our scenic camping grounds with access to shared facilities.'
     },
-    rv: {
-        label: 'Caravan/RV Pitch',
-        pluralLabel: 'Caravan/RV Pitches',
+    touring: {
+        label: 'Touring Pitch',
+        pluralLabel: 'Touring Pitches',
         icon: 'rv_hookup',
         defaultImage: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800',
-        description: 'Spacious pitches with electric hookup for caravans and motorhomes.'
+        description: 'Spacious pitches with electric hookup for caravans, campervans, and motorhomes.'
+    },
+    glamping: {
+        label: 'Glamping',
+        pluralLabel: 'Glamping',
+        icon: 'cottage',
+        defaultImage: 'https://images.unsplash.com/photo-1618767689160-da3fb810aad7?auto=format&fit=crop&q=80&w=800',
+        description: 'Luxury camping experience in bell tents, yurts, pods, or safari tents.'
     },
     cabin: {
-        label: 'Cabin',
-        pluralLabel: 'Cabins',
+        label: 'Cabin & Lodge',
+        pluralLabel: 'Cabins & Lodges',
         icon: 'cabin',
-        defaultImage: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&q=80&w=800',
-        description: 'Cozy wooden cabins with basic amenities for a comfortable stay.'
-    },
-    lodge: {
-        label: 'Lodge',
-        pluralLabel: 'Lodges',
-        icon: 'house',
         defaultImage: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=800',
-        description: 'Spacious lodges with full amenities for the whole family.'
+        description: 'Cozy wooden cabins and lodges with amenities for a comfortable stay.'
     },
     'mobile-home': {
         label: 'Mobile Home',
         pluralLabel: 'Mobile Homes',
         icon: 'home',
         defaultImage: 'https://images.unsplash.com/photo-1566438480900-0609be27a4be?auto=format&fit=crop&q=80&w=800',
-        description: 'Fully equipped mobile homes with kitchen and living areas.'
+        description: 'Fully equipped mobile homes (static caravans) with kitchen and living areas.'
     }
 };
 

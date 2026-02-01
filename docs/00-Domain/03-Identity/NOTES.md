@@ -3,6 +3,25 @@
 ## Purpose
 User authentication, profiles, and preferences.
 
+## User Types
+
+The system supports 3 user types: **Guest**, **Owner**, and **Supplier**. Users can hold multiple roles simultaneously using boolean flags.
+
+### Multi-Role Capability
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `isOwner` | `false` | Can manage campsites and lots |
+| `isSupplier` | `false` | Can manage supplier offers |
+
+### Role Combinations
+- **Guest only**: Base user (default) - can browse, book, claim offers
+- **Owner**: Guest + `isOwner=true` - can manage campsites and lots
+- **Supplier**: Guest + `isSupplier=true` - can manage supplier offers
+- **Owner + Supplier**: Both flags true - runs campsite AND local business
+
+---
+
 ## Aggregates
 
 ### User Aggregate (Root)
@@ -20,6 +39,7 @@ User (Root)
 - `email`: String (Unique)
 - `name`: String
 - `avatar`: String
+- `role`: UserRole (GUEST, OWNER, SUPPLIER)
 - `isOwner`: Boolean
 - `isSupplier`: Boolean
 - `notificationPreferences`: NotificationPreferences

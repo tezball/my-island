@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { LotGridPreview } from './LotGridPreview';
 
-type LotType = 'tent' | 'glamping' | 'rv' | 'cabin';
+type LotType = 'tent' | 'touring' | 'glamping' | 'cabin' | 'mobile-home';
 
 interface LotTypeCounterProps {
     type: LotType;
@@ -15,9 +15,10 @@ interface LotTypeCounterProps {
 
 const TYPE_COLORS: Record<LotType, string> = {
     tent: 'text-emerald-600 dark:text-emerald-400',
-    glamping: 'text-amber-600 dark:text-amber-400',
-    rv: 'text-blue-600 dark:text-blue-400',
-    cabin: 'text-purple-600 dark:text-purple-400',
+    touring: 'text-blue-600 dark:text-blue-400',
+    glamping: 'text-purple-600 dark:text-purple-400',
+    cabin: 'text-amber-600 dark:text-amber-400',
+    'mobile-home': 'text-rose-600 dark:text-rose-400',
 };
 
 export const LotTypeCounter: React.FC<LotTypeCounterProps> = ({
