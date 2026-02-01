@@ -1,7 +1,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { MOCK_USERS } from '../services/authService';
+
+// Test accounts for development - all use password "password"
+const TEST_USERS = [
+    { email: 'norevalley@myisland.com', password: 'password', label: 'Nore Valley Park (Owner)' },
+    { email: 'farmshop@greenacres.ie', password: 'password', label: 'Green Acres Farm Shop (Supplier)' },
+    { email: 'family@example.com', password: 'password', label: 'Murphy Family (Guest)' },
+];
 
 export const SignInPage: React.FC = () => {
     const navigate = useNavigate();
@@ -55,7 +61,7 @@ export const SignInPage: React.FC = () => {
                         <select
                             className="w-full rounded-lg border-blue-200 dark:border-blue-800 bg-white dark:bg-[#1a2632] py-3 px-4 text-sm text-[#111418] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer appearance-none"
                             onChange={(e) => {
-                                const selectedUser = MOCK_USERS.find(u => u.email === e.target.value);
+                                const selectedUser = TEST_USERS.find(u => u.email === e.target.value);
                                 if (selectedUser) {
                                     setEmail(selectedUser.email);
                                     setPassword(selectedUser.password);
@@ -64,7 +70,7 @@ export const SignInPage: React.FC = () => {
                             defaultValue=""
                         >
                             <option value="" disabled>Select a test user...</option>
-                            {MOCK_USERS.map((user) => (
+                            {TEST_USERS.map((user) => (
                                 <option key={user.email} value={user.email}>
                                     {user.label}
                                 </option>

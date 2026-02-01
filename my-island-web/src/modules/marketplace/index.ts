@@ -51,16 +51,6 @@ export type {
   ClaimFilter,
 } from './repos';
 
-// Repositories - Mock implementations
-export {
-  MockSupplierRepository,
-  createMockSupplierRepository,
-  MockOfferRepository,
-  createMockOfferRepository,
-  MockOfferClaimRepository,
-  createMockOfferClaimRepository,
-} from './repos';
-
 // Events
 export {
   MarketplaceEventTypes,

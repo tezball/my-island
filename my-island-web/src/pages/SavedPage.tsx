@@ -1,13 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSaved } from '../context/SavedContext';
-import { MOCK_DB } from '../services/mockData';
 
 export const SavedPage: React.FC = () => {
     const navigate = useNavigate();
-    const { savedLots, toggleSaved, isSaved } = useSaved();
+    const { savedLots, toggleSaved, isSaved, isLoading } = useSaved();
 
-    const campsite = MOCK_DB.users.find(u => u.userProfile.id === 'nore-valley-owner')?.userProfile;
+    if (isLoading) {
+        return (
+            <main className="flex-1 flex flex-col items-center justify-center px-4 pb-20">
+                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                <p className="mt-4 text-gray-500">Loading saved places...</p>
+            </main>
+        );
+    }
 
     if (savedLots.length === 0) {
         return (
@@ -48,7 +54,7 @@ export const SavedPage: React.FC = () => {
                                 onClick={() => navigate(`/campsite/${lot.ownerId}`)}
                             >
                                 <img
-                                    src={lot.imageUrl}
+                                    src={lot.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800'}
                                     alt={lot.name}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
@@ -77,7 +83,7 @@ export const SavedPage: React.FC = () => {
                                 </h3>
                                 <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
                                     <span className="material-symbols-outlined text-sm">location_on</span>
-                                    {campsite?.name || 'Nore Valley Park'}, Kilkenny
+                                    Ireland
                                 </p>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                     {lot.description}

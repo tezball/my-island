@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { MOCK_DB } from '../services/mockData';
+import type { Lot } from '../types/booking';
+import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
 
 const TYPE_LABELS: Record<string, string> = {
     tent: 'Tent Pitches',
@@ -22,6 +23,7 @@ interface GroupedAccommodation {
     key: string; // ownerId-type
     ownerId: string;
     ownerName: string;
+    county: string;
     type: string;
     availableCount: number;
     totalCount: number;
@@ -42,24 +44,58 @@ export const SearchResultsPage: React.FC = () => {
 
     const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'name'>('price-low');
     const [selectedType, setSelectedType] = useState(type);
+    const [isLoading, setIsLoading] = useState(true);
+    const [campsites, setCampsites] = useState<CampsiteProfile[]>([]);
+    const [allLots, setAllLots] = useState<Lot[]>([]);
+
+    // Fetch campsites and lots from API
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                // Get all campsites
+                const campsitesData = await campsiteService.getAllCampsites();
+                setCampsites(campsitesData);
+
+                // Get lots for each campsite
+                const lotsPromises = campsitesData.map(campsite =>
+                    campsiteService.getCampsiteLots(campsite.id).catch(() => [])
+                );
+                const lotsArrays = await Promise.all(lotsPromises);
+                const allLotsData = lotsArrays.flat();
+                setAllLots(allLotsData);
+            } catch (error) {
+                console.error('[SearchResultsPage] Error fetching data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // Get unique types from lots
     const availableTypes = useMemo(() => {
-        const types = new Set(MOCK_DB.lots.map(lot => lot.type));
+        const types = new Set(allLots.map(lot => lot.type));
         return Array.from(types);
-    }, []);
+    }, [allLots]);
 
     // Get owner info helper
     const getOwnerName = (ownerId: string) => {
-        const owner = MOCK_DB.users.find(u => u.userProfile.id === ownerId);
-        return owner?.userProfile.name || 'Unknown Campsite';
+        const campsite = campsites.find(c => c.id === ownerId);
+        return campsite?.propertyName || campsite?.name || 'Unknown Campsite';
+    };
+
+    const getOwnerCounty = (ownerId: string) => {
+        const campsite = campsites.find(c => c.id === ownerId);
+        return campsite?.county || 'Ireland';
     };
 
     // Group lots by campsite + type
     const groupedAccommodations = useMemo(() => {
         const groups: Record<string, GroupedAccommodation> = {};
 
-        MOCK_DB.lots.forEach(lot => {
+        allLots.forEach(lot => {
             const key = `${lot.ownerId}-${lot.type}`;
 
             if (!groups[key]) {
@@ -67,6 +103,7 @@ export const SearchResultsPage: React.FC = () => {
                     key,
                     ownerId: lot.ownerId || 'unknown',
                     ownerName: getOwnerName(lot.ownerId || ''),
+                    county: getOwnerCounty(lot.ownerId || ''),
                     type: lot.type,
                     availableCount: 0,
                     totalCount: 0,
@@ -105,6 +142,14 @@ export const SearchResultsPage: React.FC = () => {
             results = results.filter(g => g.type === selectedType);
         }
 
+        // Filter by location (county)
+        if (location) {
+            results = results.filter(g =>
+                g.county.toLowerCase().includes(location.toLowerCase()) ||
+                g.ownerName.toLowerCase().includes(location.toLowerCase())
+            );
+        }
+
         // Filter to only show those with availability
         results = results.filter(g => g.availableCount > 0);
 
@@ -122,13 +167,28 @@ export const SearchResultsPage: React.FC = () => {
         }
 
         return results;
-    }, [selectedType, sortBy]);
+    }, [allLots, campsites, selectedType, location, sortBy]);
 
     const formatDate = (isoDate: string) => {
         if (!isoDate) return '';
         const date = new Date(isoDate);
         return date.toLocaleDateString('en-IE', { day: 'numeric', month: 'short' });
     };
+
+    if (isLoading) {
+        return (
+            <main className="flex-1 flex flex-col pb-20">
+                <div className="bg-primary text-white py-6 px-4">
+                    <div className="max-w-7xl mx-auto">
+                        <h1 className="text-2xl font-bold mb-2">Searching...</h1>
+                    </div>
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="flex-1 flex flex-col pb-20">
@@ -201,7 +261,7 @@ export const SearchResultsPage: React.FC = () => {
                             >
                                 <div className="aspect-[4/3] relative overflow-hidden">
                                     <img
-                                        src={accom.representativeImage}
+                                        src={accom.representativeImage || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800'}
                                         alt={`${TYPE_LABELS[accom.type]} at ${accom.ownerName}`}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     />
@@ -231,7 +291,7 @@ export const SearchResultsPage: React.FC = () => {
                                     </h3>
                                     <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
                                         <span className="material-symbols-outlined text-sm">location_on</span>
-                                        {accom.ownerName}, Kilkenny
+                                        {accom.ownerName}, {accom.county}
                                     </p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                         {TYPE_DESCRIPTIONS[accom.type] || 'Comfortable accommodation option.'}
