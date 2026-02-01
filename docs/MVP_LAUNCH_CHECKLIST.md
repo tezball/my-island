@@ -1,17 +1,22 @@
 # MVP Launch Checklist - My Island
 
 > **Generated**: 2026-02-01
-> **Status**: ✅ Approved - Ready for Implementation
+> **Last Updated**: 2026-02-01
+> **Status**: 🚧 In Progress - Core Features Complete
 
 ## Executive Summary
 
-The app has extensive frontend UI with **all data currently mocked in TypeScript/JSON files**. For MVP launch, the following must be DB-backed with realistic seeded data.
+~~The app has extensive frontend UI with **all data currently mocked in TypeScript/JSON files**.~~
+
+**UPDATE**: All frontend services now connect to real backend APIs. Core booking and marketplace flows are functional with real database-backed data.
 
 ### Legend
 - 🔴 **CRITICAL** - Must have for launch
 - 🟡 **IMPORTANT** - Should have for launch
 - 🟢 **NICE TO HAVE** - Post-MVP
-- ✅ **DECIDED** - Product owner decision made
+- ✅ **COMPLETE** - Implemented and tested
+- 🚧 **IN PROGRESS** - Partially complete
+- ⬜ **TODO** - Not started
 
 ---
 
@@ -19,7 +24,7 @@ The app has extensive frontend UI with **all data currently mocked in TypeScript
 
 | Area | Decision |
 |------|----------|
-| Image Storage | S3 (LocalStack for local dev) |
+| Image Storage | ✅ S3 (LocalStack for local dev) |
 | Booking Flow | Owner toggle - they choose instant or approval |
 | Voucher Expiry | Supplier sets expiry date when creating offer |
 | Guest Checkout | Must register (no guest checkout) |
@@ -36,102 +41,115 @@ The app has extensive frontend UI with **all data currently mocked in TypeScript
 ## 🔴 CRITICAL PATH - Must Have for Launch
 
 ### 1. Authentication & Users
-- [ ] Real JWT authentication via backend API
-- [ ] User registration with email verification
-- [ ] Password reset flow
-- [ ] Role-based access (Owner, Supplier, Guest flags)
-- [ ] **Seed**: 3+ test users per role with realistic Irish names
+- [x] Real JWT authentication via backend API ✅
+- [x] User registration ✅ (POST /auth/signup)
+- [ ] Email verification ⬜
+- [ ] Password reset flow ⬜
+- [x] Role-based access (Owner, Supplier, Guest flags) ✅
+- [x] Role upgrade endpoints (POST /auth/upgrade/owner, /auth/upgrade/supplier) ✅
+- [x] **Seed**: 3+ test users per role with realistic Irish names ✅
 
 ### 2. Owner - Core Booking System
 
-#### Lots Management
-- [ ] **Lots CRUD** - Create, Read, Update lots from DB
-  - Types: tent, touring, glamping, cabin, mobile-home
-  - Pricing per night
-  - Amenities (lot-level and campsite-level)
-  - Availability status
-  - ✅ Images uploaded to S3 (LocalStack for local dev)
+#### Lots Management ✅ COMPLETE
+- [x] **Lots CRUD** - Create, Read, Update, Delete lots from DB
+  - Types: tent, touring, glamping, cabin, mobile-home ✅
+  - Pricing per night ✅
+  - Amenities (lot-level and campsite-level) ✅
+  - Availability status ✅
+  - Images uploaded to S3 (LocalStack for local dev) ✅
+  - **Multi-image gallery support** ✅
 
-#### Bookings
-- [ ] **Bookings** - Real booking flow
-  - Guest creates booking → Owner sees it
-  - Status workflow: pending → confirmed → completed / cancelled
-  - Date validation (no double-booking)
-  - Price calculation
-  - ✅ Owner toggle for booking mode (instant vs approval required)
+#### Bookings ✅ COMPLETE
+- [x] **Bookings** - Real booking flow
+  - Guest creates booking → Owner sees it ✅
+  - Status workflow: pending → confirmed → completed / cancelled ✅
+  - Price calculation ✅
+  - Owner toggle for booking mode (instant vs approval required) ✅
+- [ ] Date validation (no double-booking) 🚧
 
-#### Dashboard Metrics
-- [ ] **Dashboard Metrics** from real data:
-  - Total Lots (count from DB)
-  - Upcoming Bookings (count from DB)
-  - Revenue This Month (sum from DB)
-  - Occupancy % (calculated)
+#### Dashboard Metrics ✅ COMPLETE
+- [x] **Dashboard Metrics** from real data:
+  - Total Lots (count from DB) ✅
+  - Upcoming Bookings (count from DB) ✅
+  - Revenue This Month (sum from DB) ✅
+  - Occupancy % (calculated) ✅
+- [x] **Analytics Endpoints** ✅
+  - GET /owner/analytics/lots ✅
+  - GET /owner/analytics/bookings ✅
+  - GET /owner/analytics/revenue ✅
+  - GET /owner/analytics/occupancy ✅
 
-#### Seed Data
-- [ ] **Seed**: 35+ lots, 75+ bookings across past/current/future dates
+#### Seed Data 🚧 PARTIAL
+- [x] **Seed**: 8 lots for Nore Valley Park
+- [ ] **Target**: 35+ lots, 75+ bookings across past/current/future dates
 
 ### 3. Supplier - Marketplace Core
 
-#### Supplier Profile
-- [ ] **Supplier Profile** - CRUD from DB
-  - Business name, description, category, location, contact
-  - Logo upload (S3)
-  - ✅ Categories: Food, Activities, Services, Experiences
+#### Supplier Profile ✅ COMPLETE
+- [x] **Supplier Profile** - CRUD from DB
+  - Business name, description, category, location, contact ✅
+  - Logo upload (S3) ✅
+  - Categories: FARM_SHOP, RESTAURANT, CAFE, PUB, ACTIVITY_PROVIDER, TOUR_OPERATOR, EQUIPMENT_RENTAL, SPA, ARTISAN, GROCERY, OTHER ✅
 
-#### Offers
-- [ ] **Offers CRUD** - Create, Read, Update, Delete
-  - Title, description, discount %, validity dates
-  - Max claims limit
-  - Active/inactive status
-  - Image upload (S3)
-  - ✅ Supplier sets expiry date - vouchers expire with the offer
+#### Offers ✅ COMPLETE
+- [x] **Offers CRUD** - Create, Read, Update, Delete
+  - Title, description, discount %, validity dates ✅
+  - Max claims limit ✅
+  - Active/inactive status ✅
+  - Image upload (S3) ✅
+  - Supplier sets expiry date - vouchers expire with the offer ✅
 
-#### Claims & Redemption
-- [ ] **Claims Tracking**
-  - Guest claims offer → creates claim record
-  - Claim statuses: claimed → redeemed / expired
-  - Claim count updates on offer
-- [ ] **Voucher Redemption**
-  - Look up by claim ID
-  - Mark as redeemed
-  - QR code generation (client-side)
+#### Claims & Redemption ✅ COMPLETE
+- [x] **Claims Tracking**
+  - Guest claims offer → creates claim record ✅
+  - Claim statuses: claimed → redeemed / expired ✅
+  - Claim count updates on offer ✅
+- [x] **Voucher Redemption**
+  - Look up by claim code ✅
+  - Validate before redeem ✅
+  - Mark as redeemed ✅
+  - QR code generation (client-side) ✅
+- [x] **Test Claims** - Suppliers can create/reset test claims ✅
 
-#### Dashboard Metrics
-- [ ] **Dashboard Metrics** from real data:
-  - Active Offers count
-  - Total Claims count
-  - This Month claims
+#### Dashboard Metrics ✅ COMPLETE
+- [x] **Dashboard Metrics** from real data:
+  - Active Offers count ✅
+  - Total Claims count ✅
+  - Pending/Redeemed counts ✅
+  - Recent Claims list ✅
 
-#### Seed Data
-- [ ] **Seed**: 3+ suppliers, 4+ offers each, 50+ claims
+#### Seed Data ✅ COMPLETE
+- [x] **Seed**: 17+ suppliers, 35+ offers, 50+ claims
 
-### 4. Guest - Browse & Book
-- [ ] **Search Campsites** - Filter by type, dates, price
-- [ ] **Lot Details Page** - Real lot data
-- [ ] **Booking Flow** - Create booking in DB
-  - ✅ Registration required (no guest checkout)
-- [ ] **Browse Offers** - From marketplace DB
-- [ ] **Claim Offer** - Create claim in DB
-- [ ] **My Vouchers** - List guest's claimed vouchers
-- [ ] **My Trips** - List guest's bookings
+### 4. Guest - Browse & Book ✅ COMPLETE
+- [x] **Search Campsites** - List from DB ✅
+- [x] **Lot Details Page** - Real lot data with images ✅
+- [x] **Booking Flow** - Create booking in DB ✅
+  - Registration required (no guest checkout) ✅
+- [x] **Browse Offers** - From marketplace DB ✅
+- [x] **Claim Offer** - Create claim in DB ✅
+- [x] **My Vouchers** - List guest's claimed vouchers (GET /marketplace/claims) ✅
+- [x] **My Trips** - List guest's bookings (GET /bookings) ✅
 
 ---
 
 ## 🟡 IMPORTANT - Should Have for Launch
 
 ### 5. Owner - Management Features
-- [ ] **Check-in/Check-out lists** - Today's arrivals/departures
-- [ ] **Booking approval** - Confirm pending bookings
-- [ ] **Property Details** - Editable campsite info
+- [x] **Check-in/Check-out lists** - Data available in dashboard ✅
+- [ ] **Booking approval** - Confirm pending bookings ⬜
+- [x] **Property Details** - Editable campsite info (PUT /owner/profile) ✅
+- [x] **Owner Preferences** - Booking settings (GET/PUT /owner/preferences) ✅
 
 ### 6. Supplier - Business Features
-- [ ] **Offer analytics** - Claims by offer, redemption rate
-- [ ] **Claim history** - Full list with filters
+- [x] **Offer analytics** - Claims by offer, computed from data ✅
+- [x] **Claim history** - Full list with filters (GET /supplier/claims) ✅
 
 ### 7. Notifications (In-App)
-- [ ] New booking notification for Owner
-- [ ] New claim notification for Supplier
-- [ ] Booking confirmation for Guest
+- [ ] New booking notification for Owner ⬜
+- [ ] New claim notification for Supplier ⬜
+- [ ] Booking confirmation for Guest ⬜
 - ✅ In-app only for MVP (email notifications post-MVP)
 
 ---
@@ -139,127 +157,174 @@ The app has extensive frontend UI with **all data currently mocked in TypeScript
 ## 🟢 NICE TO HAVE - Post-MVP
 
 ### 8. Calendar View
-- [ ] Interactive calendar for Owner
-- [ ] Availability calendar for Guests
+- [ ] Interactive calendar for Owner ⬜
+- [ ] Availability calendar for Guests ⬜
 
 ### 9. Subscriptions & Payments
-- [ ] ✅ Stripe + Stripe Connect
-- [ ] Owner subscription: €20/month
-- [ ] Supplier subscription: €1/month
+- [ ] ✅ Stripe + Stripe Connect (endpoints exist, not fully integrated)
+- [ ] Owner subscription: €20/month ⬜
+- [ ] Supplier subscription: €1/month ⬜
 - [ ] ✅ Guest payments handled in-app (platform collects, pays out to Owner)
 
 ### 10. Settings
-- [ ] Notification preferences (email toggles)
-- [ ] Booking preferences (instant booking, same-day, verification)
-- [ ] Payment/payout configuration
+- [x] Notification preferences (owner preferences) ✅
+- [x] Booking preferences (instant booking, same-day, verification) ✅
+- [ ] Payment/payout configuration ⬜
 
 ### 11. Advanced Features
-- [ ] Email notifications (AWS SES or similar)
-- [ ] Reviews and ratings
+- [ ] Email notifications (AWS SES or similar) ⬜
+- [ ] Reviews and ratings ⬜
 - [ ] ✅ Multi-property support (post-MVP, one owner = one property for now)
-- [ ] Analytics dashboards with charts
+- [ ] Analytics dashboards with charts ⬜
 
 ---
 
-## 📊 Seed Data Requirements
+## 📊 Seed Data Status
 
-| Entity | Count | Notes |
-|--------|-------|-------|
-| Users | 10+ | Mix of Owners, Suppliers, Guests |
-| Campsites/Properties | 2-3 | ✅ Broader Ireland |
-| Lots | 35+ per property | Mix of all 5 types |
-| Bookings | 75+ | Past, current, future dates |
-| Suppliers | 3+ | ✅ Food, Activities, Services, Experiences |
-| Offers | 4+ per supplier | Active, inactive, expiring |
-| Claims | 50+ | Mix of claimed, redeemed, expired |
+| Entity | Current | Target | Status |
+|--------|---------|--------|--------|
+| Users | 40+ | 10+ | ✅ Complete |
+| Campsites/Properties | 3 | 2-3 | ✅ Complete |
+| Lots | 70+ | 35+ | ✅ Complete |
+| Bookings | 16+ | 75+ | 🚧 Need more |
+| Suppliers | 17+ | 3+ | ✅ Complete |
+| Offers | 35+ | 12+ | ✅ Complete |
+| Claims | 50+ | 50+ | ✅ Complete |
 
 ---
 
-## 🏗️ Backend API Endpoints Needed
+## 🏗️ Backend API Endpoints Status
 
+### Auth ✅ COMPLETE
 ```
-# Auth
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/refresh
-POST /api/auth/forgot-password
-POST /api/auth/reset-password
-
-# Owner - Property & Lots
-GET    /api/owner/property
-PUT    /api/owner/property
-GET    /api/owner/lots
-POST   /api/owner/lots
-GET    /api/owner/lots/{id}
-PUT    /api/owner/lots/{id}
-DELETE /api/owner/lots/{id}
-
-# Owner - Bookings
-GET    /api/owner/bookings
-GET    /api/owner/bookings/{id}
-PUT    /api/owner/bookings/{id}/status
-GET    /api/owner/dashboard/metrics
-
-# Supplier - Profile
-GET    /api/supplier/profile
-PUT    /api/supplier/profile
-
-# Supplier - Offers
-GET    /api/supplier/offers
-POST   /api/supplier/offers
-GET    /api/supplier/offers/{id}
-PUT    /api/supplier/offers/{id}
-DELETE /api/supplier/offers/{id}
-
-# Supplier - Claims & Redemption
-GET    /api/supplier/claims
-GET    /api/supplier/claims/{id}
-POST   /api/supplier/redeem/{claimId}
-GET    /api/supplier/dashboard/metrics
-
-# Guest/Public - Campsites
-GET    /api/campsites
-GET    /api/campsites/{id}
-GET    /api/campsites/{id}/lots
-GET    /api/campsites/{id}/lots/{lotId}
-
-# Guest - Bookings
-POST   /api/bookings
-GET    /api/user/bookings
-GET    /api/user/bookings/{id}
-
-# Guest - Marketplace
-GET    /api/marketplace/offers
-GET    /api/marketplace/offers/{id}
-POST   /api/marketplace/offers/{id}/claim
-GET    /api/user/vouchers
-GET    /api/user/vouchers/{id}
-
-# File Upload
-POST   /api/upload/image
+POST /api/auth/signup           ✅ Implemented
+POST /api/auth/login            ✅ Implemented
+GET  /api/auth/me               ✅ Implemented
+POST /api/auth/upgrade/owner    ✅ Implemented
+POST /api/auth/upgrade/supplier ✅ Implemented
+POST /api/auth/forgot-password  ⬜ Not implemented
+POST /api/auth/reset-password   ⬜ Not implemented
 ```
 
+### Owner - Property & Lots ✅ COMPLETE
+```
+GET    /api/owner/profile       ✅ Implemented
+PUT    /api/owner/profile       ✅ Implemented
+GET    /api/owner/dashboard     ✅ Implemented
+GET    /api/owner/lots          ✅ Implemented
+POST   /api/owner/lots          ✅ Implemented
+PUT    /api/owner/lots/{id}     ✅ Implemented
+DELETE /api/owner/lots/{id}     ✅ Implemented
+GET    /api/owner/preferences   ✅ Implemented
+PUT    /api/owner/preferences   ✅ Implemented
+```
+
+### Owner - Bookings & Analytics ✅ COMPLETE
+```
+GET    /api/owner/bookings           ✅ Implemented
+GET    /api/owner/analytics/lots     ✅ Implemented
+GET    /api/owner/analytics/bookings ✅ Implemented
+GET    /api/owner/analytics/revenue  ✅ Implemented
+GET    /api/owner/analytics/occupancy ✅ Implemented
+```
+
+### Supplier - Profile & Offers ✅ COMPLETE
+```
+GET    /api/supplier/profile         ✅ Implemented
+PUT    /api/supplier/profile         ✅ Implemented
+GET    /api/supplier/dashboard       ✅ Implemented
+GET    /api/supplier/offers          ✅ Implemented
+POST   /api/supplier/offers          ✅ Implemented
+PUT    /api/supplier/offers/{id}     ✅ Implemented
+DELETE /api/supplier/offers/{id}     ✅ Implemented
+```
+
+### Supplier - Claims & Redemption ✅ COMPLETE
+```
+GET    /api/supplier/claims                  ✅ Implemented
+GET    /api/supplier/offers/{id}/claims      ✅ Implemented
+GET    /api/supplier/claims/test             ✅ Implemented
+POST   /api/supplier/offers/{id}/test-claim  ✅ Implemented
+DELETE /api/supplier/claims/test/{code}      ✅ Implemented
+GET    /api/supplier/redeem/validate/{code}  ✅ Implemented
+POST   /api/supplier/redeem/{code}           ✅ Implemented
+```
+
+### Guest/Public - Campsites ✅ COMPLETE
+```
+GET    /api/campsites                    ✅ Implemented
+GET    /api/campsites/{id}               ✅ Implemented
+GET    /api/campsites/{id}/lots          ✅ Implemented
+GET    /api/campsites/lots/{lotId}       ✅ Implemented
+GET    /api/campsites/counties           ✅ Implemented
+```
+
+### Guest - Bookings ✅ COMPLETE
+```
+GET    /api/bookings           ✅ Implemented (user's bookings)
+GET    /api/bookings/{id}      ✅ Implemented
+POST   /api/bookings           ✅ Implemented
+POST   /api/bookings/{id}/cancel ✅ Implemented
+```
+
+### Guest - Marketplace ✅ COMPLETE
+```
+GET    /api/marketplace/offers        ✅ Implemented
+GET    /api/marketplace/offers/{id}   ✅ Implemented
+POST   /api/marketplace/offers/claim  ✅ Implemented
+GET    /api/marketplace/claims        ✅ Implemented (user's vouchers)
+GET    /api/marketplace/suppliers     ✅ Implemented
+```
+
+### File Upload ✅ COMPLETE
+```
+POST   /api/images/{entityType}/{entityId}     ✅ Upload image
+GET    /api/images/{entityType}/{entityId}     ✅ Get all images
+GET    /api/images/{entityType}/{entityId}/primary ✅ Get primary
+PATCH  /api/images/{imageId}/primary           ✅ Set as primary
+PATCH  /api/images/{imageId}/order             ✅ Update order
+DELETE /api/images/{imageId}                   ✅ Delete image
+```
+
 ---
 
-## 🛠️ Infrastructure Requirements
+## 🛠️ Infrastructure Status
 
-### Local Development
-- PostgreSQL 17 (via Docker)
-- LocalStack for S3 emulation
-- Kafka (existing)
+### Local Development ✅ COMPLETE
+- [x] PostgreSQL 17 (via Docker) ✅
+- [x] LocalStack for S3 emulation ✅
+- [x] Kafka (existing) ✅
+- [x] Docker Compose orchestration ✅
 
 ### Production (Future)
-- AWS S3 for image storage
-- Stripe + Stripe Connect for payments
-- Email service (AWS SES or similar)
+- [ ] AWS S3 for image storage ⬜
+- [ ] Stripe + Stripe Connect for payments ⬜
+- [ ] Email service (AWS SES or similar) ⬜
 
 ---
 
-## Next Steps
+## ✅ Completed Steps
 
 1. ~~Review and answer the NEEDS INPUT items~~ ✅ Complete
-2. Create Flyway migrations for any missing tables
-3. Add S3/LocalStack configuration to docker-compose
-4. Implement API endpoints (start with Auth → Owner → Supplier → Guest)
-5. Connect frontend services to real API
-6. Generate realistic seed data for broader Ireland
+2. ~~Create Flyway migrations for any missing tables~~ ✅ Complete (entity_images table added)
+3. ~~Add S3/LocalStack configuration to docker-compose~~ ✅ Complete
+4. ~~Implement API endpoints~~ ✅ Complete (Auth, Owner, Supplier, Guest)
+5. ~~Connect frontend services to real API~~ ✅ Complete (all services use real APIs)
+6. Generate realistic seed data for broader Ireland 🚧 Partial (need more bookings)
+
+## 📋 Remaining Tasks for MVP
+
+### High Priority
+1. [ ] Add more seed bookings (target: 75+)
+2. [ ] Implement booking approval endpoint
+3. [ ] Add date conflict validation for bookings
+
+### Medium Priority
+4. [ ] Password reset flow
+5. [ ] Email verification
+6. [ ] In-app notifications
+
+### Lower Priority (Post-MVP)
+7. [ ] Calendar view
+8. [ ] Stripe integration
+9. [ ] Email notifications

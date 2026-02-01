@@ -631,15 +631,72 @@ export const supplierService = {
     },
 
     // Guest voucher functions
-    async getUserVouchers(userId: string): Promise<(OfferClaim & { offer: Offer; supplier: Supplier })[]> {
-        // TODO: Connect to GET /api/user/vouchers when available
-        log.debug('getUserVouchers called', { userId });
-        return [];
+    async getUserVouchers(_userId: string): Promise<(OfferClaim & { offer: Offer; supplier: Supplier })[]> {
+        log.info('Fetching user vouchers');
+
+        // Fetch user's claims
+        const apiClaims = await apiRequest<OfferClaimApiResponse[]>('/marketplace/claims');
+
+        if (apiClaims.length === 0) {
+            return [];
+        }
+
+        // Fetch all offers to get full details (discount, description, etc.)
+        const apiOffers = await apiRequest<OfferApiResponse[]>('/marketplace/offers');
+        const offersMap = new Map(apiOffers.map(o => [o.id, o]));
+
+        // Combine claims with offer and supplier details
+        return apiClaims.map(claim => {
+            const offerApi = offersMap.get(claim.offerId);
+
+            // Build offer object from claim + offer data
+            const offer: Offer = offerApi
+                ? transformOffer(offerApi)
+                : {
+                    id: String(claim.offerId),
+                    supplierId: '',
+                    title: claim.offerTitle,
+                    description: '',
+                    category: 'FOOD' as OfferCategory,
+                    discountPercent: 0,
+                    validFrom: '',
+                    validUntil: claim.expiresAt,
+                    maxClaims: null,
+                    claimCount: 0,
+                    terms: '',
+                    active: true,
+                    createdAt: '',
+                };
+
+            // Build supplier object
+            const supplier: Supplier = {
+                id: offerApi ? String(offerApi.supplierId) : '',
+                userId: '',
+                businessName: claim.supplierName,
+                description: '',
+                logo: '',
+                category: 'FOOD' as OfferCategory,
+                location: '',
+                contactEmail: '',
+                contactPhone: '',
+                active: true,
+                createdAt: '',
+            };
+
+            return {
+                ...transformClaim(claim),
+                offer,
+                supplier,
+            };
+        });
     },
 
     async claimOffer(offerId: string, _userId: string, _userName: string): Promise<OfferClaim> {
-        const api = await apiRequest<OfferClaimApiResponse>(`/marketplace/offers/${offerId}/claim`, {
+        const api = await apiRequest<OfferClaimApiResponse>('/marketplace/offers/claim', {
             method: 'POST',
+            body: {
+                offerId: parseInt(offerId, 10),
+            },
         });
         return transformClaim(api);
     },
@@ -666,10 +723,39 @@ export const supplierService = {
 
     // Property functions (for onboarding)
     async createProperty(params: CreatePropertyParams): Promise<Property> {
-        // TODO: Connect to real API when available
-        log.info('createProperty called', { params: params.propertyName });
-        const newProperty: Property = {
-            id: `property-${Math.random().toString(36).substr(2, 9)}`,
+        log.info('Creating property via API', { propertyName: params.propertyName });
+
+        // Map frontend property type to backend enum
+        const propertyTypeMap: Record<string, string> = {
+            'campsite': 'CAMPSITE',
+            'glamping': 'GLAMPING',
+            'caravan-park': 'CARAVAN_PARK',
+            'mixed': 'MIXED',
+        };
+
+        const response = await apiRequest<{
+            token: string;
+            user: { id: number; isOwner: boolean };
+        }>('/auth/upgrade/owner', {
+            method: 'POST',
+            body: {
+                propertyName: params.propertyName,
+                county: params.county,
+                town: params.town,
+                propertyType: propertyTypeMap[params.propertyType] || 'CAMPSITE',
+                description: params.description,
+            },
+        });
+
+        // Update token if a new one was issued
+        if (response.token) {
+            localStorage.setItem('token', response.token);
+        }
+
+        log.info('Property created successfully', { userId: response.user.id });
+
+        return {
+            id: String(response.user.id),
             userId: params.userId,
             propertyName: params.propertyName,
             county: params.county,
@@ -679,20 +765,122 @@ export const supplierService = {
             propertyType: params.propertyType,
             createdAt: new Date().toISOString(),
         };
-        return newProperty;
     },
 
     async createBulkLots(params: CreateBulkLotsParams): Promise<Lot[]> {
-        // TODO: Connect to real API when available
-        log.info('createBulkLots called', { userId: params.userId });
-        return [];
+        log.info('Creating bulk lots via API', { lotCounts: params.lotCounts });
+
+        const lotTypes: Array<{ type: keyof LotCounts; apiType: string }> = [
+            { type: 'tent', apiType: 'TENT' },
+            { type: 'touring', apiType: 'TOURING' },
+            { type: 'glamping', apiType: 'GLAMPING' },
+            { type: 'cabin', apiType: 'CABIN' },
+            { type: 'mobile-home', apiType: 'MOBILE_HOME' },
+        ];
+
+        const createdLots: Lot[] = [];
+
+        for (const { type, apiType } of lotTypes) {
+            const count = params.lotCounts[type] || 0;
+            const price = params.typePricing?.[type] || params.basePricePerNight;
+
+            for (let i = 1; i <= count; i++) {
+                try {
+                    const response = await apiRequest<{
+                        id: number;
+                        ownerId: number;
+                        name: string;
+                        lotType: string;
+                        description: string;
+                        pricePerNight: number;
+                        maxGuests: number;
+                        isActive: boolean;
+                        imageUrl: string | null;
+                        amenities: Array<{ id: number; name: string }>;
+                    }>('/owner/lots', {
+                        method: 'POST',
+                        body: {
+                            name: `${type.charAt(0).toUpperCase() + type.slice(1)} ${i}`,
+                            lotType: apiType,
+                            description: `${type.charAt(0).toUpperCase() + type.slice(1)} pitch ${i}`,
+                            pricePerNight: price,
+                            maxGuests: type === 'tent' ? 4 : type === 'glamping' ? 2 : 6,
+                        },
+                    });
+
+                    createdLots.push({
+                        id: String(response.id),
+                        ownerId: String(response.ownerId),
+                        name: response.name,
+                        type: type as Lot['type'],
+                        pricePerNight: response.pricePerNight,
+                        description: response.description || '',
+                        lotAmenities: params.lotAmenities,
+                        campsiteAmenities: params.campsiteAmenities,
+                        isAvailable: response.isActive,
+                        imageUrl: response.imageUrl || undefined,
+                    });
+                } catch (error) {
+                    log.error(`Failed to create lot ${type} ${i}`, error);
+                    // Continue with other lots even if one fails
+                }
+            }
+        }
+
+        log.info('Bulk lots created', { totalCreated: createdLots.length });
+        return createdLots;
     },
 
     async createSupplierBusiness(params: CreateSupplierBusinessParams): Promise<Supplier> {
-        // TODO: Connect to real API when available
-        log.info('createSupplierBusiness called', { businessName: params.businessName });
-        const newSupplier: Supplier = {
-            id: `supplier-${Math.random().toString(36).substr(2, 9)}`,
+        log.info('Creating supplier business via API', { businessName: params.businessName });
+
+        // Map frontend business type to backend SupplierCategory enum
+        // Valid backend values: FARM_SHOP, RESTAURANT, CAFE, PUB, ACTIVITY_PROVIDER,
+        //                       TOUR_OPERATOR, EQUIPMENT_RENTAL, SPA, ARTISAN, GROCERY, OTHER
+        const categoryMap: Record<string, string> = {
+            'food': 'FARM_SHOP',
+            'farm_shop': 'FARM_SHOP',
+            'restaurant': 'RESTAURANT',
+            'cafe': 'CAFE',
+            'pub': 'PUB',
+            'activities': 'ACTIVITY_PROVIDER',
+            'activity_provider': 'ACTIVITY_PROVIDER',
+            'tour_operator': 'TOUR_OPERATOR',
+            'services': 'EQUIPMENT_RENTAL',
+            'equipment_rental': 'EQUIPMENT_RENTAL',
+            'experiences': 'TOUR_OPERATOR',
+            'spa': 'SPA',
+            'artisan': 'ARTISAN',
+            'grocery': 'GROCERY',
+            'other': 'OTHER',
+        };
+
+        const response = await apiRequest<{
+            token: string;
+            user: { id: number; isSupplier: boolean };
+        }>('/auth/upgrade/supplier', {
+            method: 'POST',
+            body: {
+                businessName: params.businessName,
+                category: categoryMap[params.businessType.toLowerCase()] || 'FOOD',
+                description: params.description,
+                county: params.county,
+                town: params.town,
+                phone: params.contactPhone,
+                website: params.website,
+                logoUrl: params.logoUrl,
+            },
+        });
+
+        // Update token if a new one was issued
+        if (response.token) {
+            localStorage.setItem('token', response.token);
+        }
+
+        log.info('Supplier business created successfully', { userId: response.user.id });
+
+        return {
+            id: String(response.user.id),
             userId: params.userId,
             businessName: params.businessName,
             description: params.description,
@@ -704,7 +892,6 @@ export const supplierService = {
             active: true,
             createdAt: new Date().toISOString(),
         };
-        return newSupplier;
     },
 
     async getActiveOffersDetail(_supplierId: string): Promise<ActiveOffersDetailResponse> {
@@ -814,9 +1001,12 @@ export const supplierService = {
         return transformClaim(api);
     },
 
-    async resetTestClaim(_claimId: string): Promise<void> {
-        // Test claims reset - not implemented in backend yet
-        log.info('resetTestClaim called - not implemented');
+    async resetTestClaim(claimCode: string): Promise<void> {
+        log.info('Resetting test claim', { claimCode });
+        await apiRequest<void>(`/supplier/claims/test/${claimCode}`, {
+            method: 'DELETE',
+        });
+        log.info('Test claim reset successfully', { claimCode });
     },
 
     // Expose metrics for debugging/monitoring

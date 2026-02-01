@@ -251,9 +251,9 @@ INSERT INTO suppliers (user_id, business_name, category, description, county, to
 -- Offers (Multiple offers per supplier)
 INSERT INTO offers (supplier_id, title, description, discount_type, discount_value, min_purchase, terms_conditions, valid_from, valid_until, max_claims, is_active) VALUES
     -- Green Acres Farm Shop
-    (1, '10% Off Fresh Produce', 'Get 10% off all fresh fruit and vegetables', 'PERCENTAGE', 10.00, 10.00, 'Valid on fresh produce only. Cannot be combined with other offers.', '2025-01-01', '2025-12-31', 500, TRUE),
-    (1, 'Free Cheese Tasting', 'Complimentary cheese tasting with any purchase over €20', 'FREE_ITEM', 0.00, 20.00, 'One tasting per customer per visit.', '2025-01-01', '2025-12-31', 300, TRUE),
-    (1, 'Breakfast Basket Deal', 'Farm breakfast basket for 2 - save €5', 'FIXED_AMOUNT', 5.00, 25.00, 'Includes eggs, bacon, sausages, and fresh bread. Pre-order by 4pm previous day.', '2025-01-01', '2025-12-31', 200, TRUE),
+    (1, '10% Off Fresh Produce', 'Get 10% off all fresh fruit and vegetables', 'PERCENTAGE', 10.00, 10.00, 'Valid on fresh produce only. Cannot be combined with other offers.', '2025-01-01', '2027-12-31', 500, TRUE),
+    (1, 'Free Cheese Tasting', 'Complimentary cheese tasting with any purchase over €20', 'FREE_ITEM', 0.00, 20.00, 'One tasting per customer per visit.', '2025-01-01', '2027-12-31', 300, TRUE),
+    (1, 'Breakfast Basket Deal', 'Farm breakfast basket for 2 - save €5', 'FIXED_AMOUNT', 5.00, 25.00, 'Includes eggs, bacon, sausages, and fresh bread. Pre-order by 4pm previous day.', '2025-01-01', '2027-12-31', 200, TRUE),
 
     -- Wild Water Kayaks
     (2, '€10 Off Kayak Rental', 'Save €10 on any half-day or full-day kayak rental', 'FIXED_AMOUNT', 10.00, 30.00, 'Valid for single or double kayaks. Booking required.', '2025-04-01', '2025-09-30', 150, TRUE),
@@ -279,64 +279,64 @@ INSERT INTO offers (supplier_id, title, description, discount_type, discount_val
     (6, 'Early Bird Special', '25% off dawn fishing trips', 'PERCENTAGE', 25.00, 100.00, 'Depart 5am, return by noon. Coffee and sandwiches included.', '2025-04-01', '2025-08-31', 50, TRUE),
 
     -- Durrus Farmhouse Cheese
-    (7, 'Cheese Board for Two', '€8 off artisan cheese platter', 'FIXED_AMOUNT', 8.00, 28.00, 'Selection of 5 cheeses with crackers and chutney.', '2025-01-01', '2025-12-31', 200, TRUE),
+    (7, 'Cheese Board for Two', '€8 off artisan cheese platter', 'FIXED_AMOUNT', 8.00, 28.00, 'Selection of 5 cheeses with crackers and chutney.', '2025-01-01', '2027-12-31', 200, TRUE),
     (7, 'Farm Tour & Tasting', 'Free tour with cheese purchase over €30', 'FREE_ITEM', 0.00, 30.00, 'Tours run 11am and 3pm daily. Booking recommended.', '2025-04-01', '2025-10-31', 150, TRUE),
 
     -- Annascaul Bakery
-    (8, 'Baker''s Breakfast Deal', '15% off full Irish breakfast', 'PERCENTAGE', 15.00, 12.00, 'Served until 11:30am. Vegetarian option available.', '2025-01-01', '2025-12-31', 500, TRUE),
-    (8, 'Fresh Bread Bundle', 'Buy 2 loaves, get sourdough half price', 'PERCENTAGE', 50.00, 8.00, 'Baked fresh each morning. While stocks last.', '2025-01-01', '2025-12-31', 400, TRUE),
+    (8, 'Baker''s Breakfast Deal', '15% off full Irish breakfast', 'PERCENTAGE', 15.00, 12.00, 'Served until 11:30am. Vegetarian option available.', '2025-01-01', '2027-12-31', 500, TRUE),
+    (8, 'Fresh Bread Bundle', 'Buy 2 loaves, get sourdough half price', 'PERCENTAGE', 50.00, 8.00, 'Baked fresh each morning. While stocks last.', '2025-01-01', '2027-12-31', 400, TRUE),
 
     -- O'Connors Pub
-    (9, 'Seafood Chowder & Guinness', '€5 off our famous combo', 'FIXED_AMOUNT', 5.00, 18.00, 'Award-winning chowder with fresh soda bread.', '2025-01-01', '2025-12-31', 500, TRUE),
-    (9, 'Traditional Music Night', 'Free Irish coffee with dinner', 'FREE_ITEM', 0.00, 25.00, 'Valid Fri-Sun when music session is on.', '2025-01-01', '2025-12-31', 300, TRUE),
+    (9, 'Seafood Chowder & Guinness', '€5 off our famous combo', 'FIXED_AMOUNT', 5.00, 18.00, 'Award-winning chowder with fresh soda bread.', '2025-01-01', '2027-12-31', 500, TRUE),
+    (9, 'Traditional Music Night', 'Free Irish coffee with dinner', 'FREE_ITEM', 0.00, 25.00, 'Valid Fri-Sun when music session is on.', '2025-01-01', '2027-12-31', 300, TRUE),
 
     -- Aran Islands Knitwear
-    (10, '€20 Off Aran Sweaters', 'Discount on hand-knitted sweaters', 'FIXED_AMOUNT', 20.00, 120.00, 'Valid on full-price items only. One per customer.', '2025-01-01', '2025-12-31', 100, TRUE),
-    (10, 'Free Scarf with Purchase', 'Complimentary wool scarf with sweater purchase', 'FREE_ITEM', 0.00, 150.00, 'Choice of 3 colors. While stocks last.', '2025-01-01', '2025-12-31', 50, TRUE),
+    (10, '€20 Off Aran Sweaters', 'Discount on hand-knitted sweaters', 'FIXED_AMOUNT', 20.00, 120.00, 'Valid on full-price items only. One per customer.', '2025-01-01', '2027-12-31', 100, TRUE),
+    (10, 'Free Scarf with Purchase', 'Complimentary wool scarf with sweater purchase', 'FREE_ITEM', 0.00, 150.00, 'Choice of 3 colors. While stocks last.', '2025-01-01', '2027-12-31', 50, TRUE),
 
     -- Westport Pottery
-    (11, 'Pottery Workshop Discount', '€10 off 2-hour pottery experience', 'FIXED_AMOUNT', 10.00, 45.00, 'Create your own piece to take home. All materials included.', '2025-01-01', '2025-12-31', 200, TRUE),
-    (11, '15% Off Gallery Purchases', 'Discount on handcrafted pottery', 'PERCENTAGE', 15.00, 30.00, 'Valid in-store only. Not valid with other offers.', '2025-01-01', '2025-12-31', 300, TRUE),
+    (11, 'Pottery Workshop Discount', '€10 off 2-hour pottery experience', 'FIXED_AMOUNT', 10.00, 45.00, 'Create your own piece to take home. All materials included.', '2025-01-01', '2027-12-31', 200, TRUE),
+    (11, '15% Off Gallery Purchases', 'Discount on handcrafted pottery', 'PERCENTAGE', 15.00, 30.00, 'Valid in-store only. Not valid with other offers.', '2025-01-01', '2027-12-31', 300, TRUE),
 
     -- Dingle Distillery
-    (12, 'Distillery Tour & Tasting', '€5 off guided tour with whiskey flight', 'FIXED_AMOUNT', 5.00, 25.00, 'Tours run hourly 10am-5pm. Over 18s only.', '2025-01-01', '2025-12-31', 400, TRUE),
-    (12, 'Exclusive Bottle Purchase', '10% off cask-strength whiskey', 'PERCENTAGE', 10.00, 80.00, 'Distillery exclusive. Not available elsewhere.', '2025-01-01', '2025-12-31', 100, TRUE),
+    (12, 'Distillery Tour & Tasting', '€5 off guided tour with whiskey flight', 'FIXED_AMOUNT', 5.00, 25.00, 'Tours run hourly 10am-5pm. Over 18s only.', '2025-01-01', '2027-12-31', 400, TRUE),
+    (12, 'Exclusive Bottle Purchase', '10% off cask-strength whiskey', 'PERCENTAGE', 10.00, 80.00, 'Distillery exclusive. Not available elsewhere.', '2025-01-01', '2027-12-31', 100, TRUE),
 
     -- Skelligs Chocolate
-    (13, 'Chocolate Making Workshop', 'Book for 2, pay for 1', 'BUY_ONE_GET_ONE', 0.00, 35.00, '90-minute workshop. Take home your creations.', '2025-01-01', '2025-12-31', 80, TRUE),
-    (13, 'Free Hot Chocolate', 'Complimentary drink with €15 purchase', 'FREE_ITEM', 0.00, 15.00, 'Made with our signature chocolate. Cafe seating available.', '2025-01-01', '2025-12-31', 500, TRUE),
+    (13, 'Chocolate Making Workshop', 'Book for 2, pay for 1', 'BUY_ONE_GET_ONE', 0.00, 35.00, '90-minute workshop. Take home your creations.', '2025-01-01', '2027-12-31', 80, TRUE),
+    (13, 'Free Hot Chocolate', 'Complimentary drink with €15 purchase', 'FREE_ITEM', 0.00, 15.00, 'Made with our signature chocolate. Cafe seating available.', '2025-01-01', '2027-12-31', 500, TRUE),
 
     -- Wild Irish Seaweed
     (14, 'Seaweed Foraging Walk', '€10 off guided coastal foraging', 'FIXED_AMOUNT', 10.00, 40.00, '2-hour walk with expert guide. Taste as you go!', '2025-04-01', '2025-09-30', 100, TRUE),
-    (14, 'Seaweed Spa Treatment', '20% off kelp wrap experience', 'PERCENTAGE', 20.00, 60.00, '45-minute treatment. Booking essential.', '2025-01-01', '2025-12-31', 150, TRUE),
+    (14, 'Seaweed Spa Treatment', '20% off kelp wrap experience', 'PERCENTAGE', 20.00, 60.00, '45-minute treatment. Booking essential.', '2025-01-01', '2027-12-31', 150, TRUE),
 
     -- Blasket Island Ferries
     (15, 'Island Explorer Ticket', '€5 off return ferry crossing', 'FIXED_AMOUNT', 5.00, 40.00, 'Includes dolphin watching. Weather dependent.', '2025-04-01', '2025-09-30', 300, TRUE),
     (15, 'Guided Island Walk', 'Free guided walk with ferry booking', 'FREE_ITEM', 0.00, 45.00, '2-hour walk through abandoned village. Fascinating history.', '2025-05-01', '2025-08-31', 150, TRUE),
 
     -- Burren Yoga
-    (16, 'Day Retreat Special', '€15 off full day yoga retreat', 'FIXED_AMOUNT', 15.00, 85.00, 'Includes lunch and herbal tea. All levels.', '2025-01-01', '2025-12-31', 100, TRUE),
+    (16, 'Day Retreat Special', '€15 off full day yoga retreat', 'FIXED_AMOUNT', 15.00, 85.00, 'Includes lunch and herbal tea. All levels.', '2025-01-01', '2027-12-31', 100, TRUE),
     (16, 'Sunrise Yoga Session', 'Free mat hire with drop-in class', 'FREE_ITEM', 0.00, 15.00, 'Classes 7am daily in summer months.', '2025-05-01', '2025-09-30', 200, TRUE),
 
     -- Irish Hawking Club
-    (17, 'Falconry Experience', '€20 off private hawk walk', 'FIXED_AMOUNT', 20.00, 120.00, '2-hour experience with Harris hawk. Unforgettable!', '2025-01-01', '2025-12-31', 100, TRUE),
-    (17, 'Owl Encounter', 'Kids fly an owl for half price', 'PERCENTAGE', 50.00, 45.00, '30-minute session with barn owl. Ages 8+.', '2025-01-01', '2025-12-31', 80, TRUE),
+    (17, 'Falconry Experience', '€20 off private hawk walk', 'FIXED_AMOUNT', 20.00, 120.00, '2-hour experience with Harris hawk. Unforgettable!', '2025-01-01', '2027-12-31', 100, TRUE),
+    (17, 'Owl Encounter', 'Kids fly an owl for half price', 'PERCENTAGE', 50.00, 45.00, '30-minute session with barn owl. Ages 8+.', '2025-01-01', '2027-12-31', 80, TRUE),
 
     -- Lahinch Golf
     (18, 'Weekday Green Fees', '€25 off Monday-Thursday rounds', 'FIXED_AMOUNT', 25.00, 120.00, 'Championship Old Course. Handicap cert required.', '2025-03-01', '2025-10-31', 200, TRUE),
     (18, 'Twilight Golf Special', '50% off after 4pm', 'PERCENTAGE', 50.00, 60.00, 'Castle Course only. Last tee time 5pm.', '2025-05-01', '2025-08-31', 150, TRUE),
 
     -- Kinsale Seafood Restaurant
-    (19, 'Early Bird Menu', '20% off 3-course dinner before 7pm', 'PERCENTAGE', 20.00, 45.00, 'Reservations required. Set menu.', '2025-01-01', '2025-12-31', 300, TRUE),
-    (19, 'Seafood Platter for 2', '€15 off our signature sharing platter', 'FIXED_AMOUNT', 15.00, 75.00, 'Includes lobster, crab, oysters, and prawns.', '2025-01-01', '2025-12-31', 150, TRUE),
+    (19, 'Early Bird Menu', '20% off 3-course dinner before 7pm', 'PERCENTAGE', 20.00, 45.00, 'Reservations required. Set menu.', '2025-01-01', '2027-12-31', 300, TRUE),
+    (19, 'Seafood Platter for 2', '€15 off our signature sharing platter', 'FIXED_AMOUNT', 15.00, 75.00, 'Includes lobster, crab, oysters, and prawns.', '2025-01-01', '2027-12-31', 150, TRUE),
 
     -- Badger & Dodo Coffee
-    (20, 'Coffee & Pastry Deal', 'Free pastry with any specialty coffee', 'FREE_ITEM', 0.00, 5.00, 'Valid until noon. Choice of croissant or muffin.', '2025-01-01', '2025-12-31', 500, TRUE),
-    (20, 'Coffee Bag Discount', '€3 off 250g bag of beans', 'FIXED_AMOUNT', 3.00, 12.00, 'Single-origin roasted locally. Grind to order.', '2025-01-01', '2025-12-31', 300, TRUE),
+    (20, 'Coffee & Pastry Deal', 'Free pastry with any specialty coffee', 'FREE_ITEM', 0.00, 5.00, 'Valid until noon. Choice of croissant or muffin.', '2025-01-01', '2027-12-31', 500, TRUE),
+    (20, 'Coffee Bag Discount', '€3 off 250g bag of beans', 'FIXED_AMOUNT', 3.00, 12.00, 'Single-origin roasted locally. Grind to order.', '2025-01-01', '2027-12-31', 300, TRUE),
 
     -- Woodland Spa
-    (21, 'Forest Bathing Experience', '€20 off guided forest therapy', 'FIXED_AMOUNT', 20.00, 65.00, '2-hour mindful walk in ancient woodland.', '2025-01-01', '2025-12-31', 100, TRUE),
-    (21, 'Spa Day Package', '25% off full day package', 'PERCENTAGE', 25.00, 150.00, 'Includes treatment, lunch, and outdoor hot tub.', '2025-01-01', '2025-12-31', 80, TRUE);
+    (21, 'Forest Bathing Experience', '€20 off guided forest therapy', 'FIXED_AMOUNT', 20.00, 65.00, '2-hour mindful walk in ancient woodland.', '2025-01-01', '2027-12-31', 100, TRUE),
+    (21, 'Spa Day Package', '25% off full day package', 'PERCENTAGE', 25.00, 150.00, 'Includes treatment, lunch, and outdoor hot tub.', '2025-01-01', '2027-12-31', 80, TRUE);
 
 -- Sample Bookings (More diverse bookings)
 INSERT INTO bookings (user_id, lot_id, check_in_date, check_out_date, num_guests, total_price, status, special_requests) VALUES

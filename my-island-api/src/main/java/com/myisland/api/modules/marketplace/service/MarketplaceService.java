@@ -176,6 +176,27 @@ public class MarketplaceService {
     }
 
     @Transactional
+    public void resetTestClaim(Long userId, String claimCode) {
+        Supplier supplier = supplierRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found"));
+
+        OfferClaim claim = offerClaimRepository.findByClaimCode(claimCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found with code: " + claimCode));
+
+        if (!claim.getOffer().getSupplier().getId().equals(supplier.getId())) {
+            throw new BadRequestException("Claim does not belong to this supplier");
+        }
+
+        if (!claim.isTest()) {
+            throw new BadRequestException("Cannot reset non-test claims");
+        }
+
+        // Reset the test claim by deleting it
+        offerClaimRepository.delete(claim);
+        log.info("Reset (deleted) test claim {} by supplier {}", claimCode, supplier.getId());
+    }
+
+    @Transactional
     public OfferClaimDto redeemClaim(Long userId, String claimCode) {
         Supplier supplier = supplierRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found"));

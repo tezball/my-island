@@ -126,6 +126,16 @@ public class SupplierController {
                 .body(marketplaceService.createTestClaim(userDetails.getUserId(), offerId));
     }
 
+    @DeleteMapping("/claims/test/{claimCode}")
+    @Operation(summary = "Reset (delete) a test claim")
+    public ResponseEntity<Void> resetTestClaim(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable String claimCode
+    ) {
+        marketplaceService.resetTestClaim(userDetails.getUserId(), claimCode);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/redeem/validate/{claimCode}")
     @Operation(summary = "Validate a claim code without redeeming")
     public ResponseEntity<OfferClaimDto> validateClaim(

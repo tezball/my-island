@@ -12,6 +12,8 @@ import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
+import com.myisland.api.shared.storage.EntityImage;
+import com.myisland.api.shared.storage.EntityImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,13 +37,16 @@ public class OwnerService {
     private final LotRepository lotRepository;
     private final AmenityRepository amenityRepository;
     private final BookingRepository bookingRepository;
+    private final EntityImageService entityImageService;
 
     public OwnerService(OwnerRepository ownerRepository, LotRepository lotRepository,
-                        AmenityRepository amenityRepository, BookingRepository bookingRepository) {
+                        AmenityRepository amenityRepository, BookingRepository bookingRepository,
+                        EntityImageService entityImageService) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
         this.amenityRepository = amenityRepository;
         this.bookingRepository = bookingRepository;
+        this.entityImageService = entityImageService;
     }
 
     @Transactional(readOnly = true)
@@ -97,8 +102,16 @@ public class OwnerService {
     public List<LotDto> getOwnerLots(Long userId) {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
-        return lotRepository.findByOwnerId(owner.getId()).stream()
-                .map(LotDto::from)
+
+        List<Lot> lots = lotRepository.findByOwnerId(owner.getId());
+        List<Long> lotIds = lots.stream().map(Lot::getId).toList();
+
+        // Batch load all images for these lots
+        Map<Long, List<EntityImage>> imagesByLotId = entityImageService
+                .getImagesForEntities(EntityImage.EntityType.LOT, lotIds);
+
+        return lots.stream()
+                .map(lot -> LotDto.from(lot, imagesByLotId.getOrDefault(lot.getId(), List.of())))
                 .toList();
     }
 

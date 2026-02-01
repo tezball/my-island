@@ -1,6 +1,7 @@
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/MyIslandApiApplication.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/config/AsyncConfig.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/config/KafkaConfig.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/config/S3Config.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/config/SecurityConfig.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/config/StripeConfig.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/config/StripeProperties.java
@@ -82,3 +83,8 @@
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/exceptions/ConflictException.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/exceptions/GlobalExceptionHandler.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/exceptions/ResourceNotFoundException.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/storage/EntityImage.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/storage/EntityImageRepository.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/storage/EntityImageService.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/storage/ImageUploadController.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/storage/ImageUploadService.java

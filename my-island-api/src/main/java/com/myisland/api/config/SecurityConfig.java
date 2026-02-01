@@ -56,6 +56,12 @@ public class SecurityConfig {
                         // Public campsite endpoints
                         .requestMatchers(HttpMethod.GET, "/campsites/**").permitAll()
 
+                        // Public marketplace endpoints (browse offers, suppliers)
+                        .requestMatchers(HttpMethod.GET, "/marketplace/offers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/marketplace/offers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/marketplace/suppliers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/marketplace/suppliers/**").permitAll()
+
                         // Owner endpoints
                         .requestMatchers("/owner/**").hasRole("OWNER")
 

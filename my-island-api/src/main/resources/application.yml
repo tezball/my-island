@@ -7,6 +7,12 @@ spring:
   application:
     name: my-island-api
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/myisland}
     username: ${SPRING_DATASOURCE_USERNAME:myisland}
@@ -55,6 +61,14 @@ stripe:
   supplier-cancel-url: ${STRIPE_SUPPLIER_CANCEL_URL:http://localhost:5173/supplier?subscription=canceled}
   owner-success-url: ${STRIPE_OWNER_SUCCESS_URL:http://localhost:5173/owner?subscription=success}
   owner-cancel-url: ${STRIPE_OWNER_CANCEL_URL:http://localhost:5173/owner?subscription=canceled}
+
+aws:
+  s3:
+    endpoint: ${AWS_S3_ENDPOINT:}
+    bucket: ${AWS_S3_BUCKET:myisland-images}
+  region: ${AWS_REGION:eu-west-1}
+  access-key-id: ${AWS_ACCESS_KEY_ID:test}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY:test}
 
 management:
   endpoints:
