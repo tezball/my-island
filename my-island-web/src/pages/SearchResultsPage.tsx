@@ -28,9 +28,11 @@ interface GroupedAccommodation {
     availableCount: number;
     totalCount: number;
     minPrice: number;
-    maxPrice: number;
     representativeImage: string;
     amenities: string[];
+    latitude?: number;
+    longitude?: number;
+    distance?: number;
 }
 
 export const SearchResultsPage: React.FC = () => {
@@ -44,9 +46,50 @@ export const SearchResultsPage: React.FC = () => {
 
     const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'name'>('price-low');
     const [selectedType, setSelectedType] = useState(type);
+    const [selectedCounty, setSelectedCounty] = useState('');
+    const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+    const [searchRadius, setSearchRadius] = useState<number>(50); // km
     const [isLoading, setIsLoading] = useState(true);
     const [campsites, setCampsites] = useState<CampsiteProfile[]>([]);
     const [allLots, setAllLots] = useState<Lot[]>([]);
+
+    // Haversine formula to calculate distance in km
+    const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371; // Radius of the earth in km
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in km
+    };
+
+    const deg2rad = (deg: number) => {
+        return deg * (Math.PI / 180);
+    };
+
+    const handleUseLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                    // Reset county filter when using location
+                    setSelectedCounty('');
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    alert("Unable to retrieve your location. Please check browser permissions.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    };
 
     // Fetch campsites and lots from API
     useEffect(() => {
@@ -80,6 +123,12 @@ export const SearchResultsPage: React.FC = () => {
         return Array.from(types);
     }, [allLots]);
 
+    // Get unique counties
+    const availableCounties = useMemo(() => {
+        const counties = new Set(campsites.map(c => c.county).filter(Boolean));
+        return Array.from(counties).sort();
+    }, [campsites]);
+
     // Get owner info helper
     const getOwnerName = (ownerId: string) => {
         const campsite = campsites.find(c => c.id === ownerId);
@@ -95,10 +144,12 @@ export const SearchResultsPage: React.FC = () => {
     const groupedAccommodations = useMemo(() => {
         const groups: Record<string, GroupedAccommodation> = {};
 
+        // 1. Group lots
         allLots.forEach(lot => {
             const key = `${lot.ownerId}-${lot.type}`;
 
             if (!groups[key]) {
+                const campsite = campsites.find(c => c.id === (lot.ownerId || ''));
                 groups[key] = {
                     key,
                     ownerId: lot.ownerId || 'unknown',
@@ -110,7 +161,9 @@ export const SearchResultsPage: React.FC = () => {
                     minPrice: lot.pricePerNight,
                     maxPrice: lot.pricePerNight,
                     representativeImage: lot.imageUrl || '',
-                    amenities: []
+                    amenities: [],
+                    latitude: campsite?.latitude || undefined,
+                    longitude: campsite?.longitude || undefined
                 };
             }
 
@@ -122,14 +175,15 @@ export const SearchResultsPage: React.FC = () => {
             group.minPrice = Math.min(group.minPrice, lot.pricePerNight);
             group.maxPrice = Math.max(group.maxPrice, lot.pricePerNight);
 
-            // Collect unique amenities (combine lot and campsite amenities)
-            [...lot.lotAmenities, ...lot.campsiteAmenities].forEach(amenity => {
-                if (!group.amenities.includes(amenity)) {
-                    group.amenities.push(amenity);
-                }
-            });
+            // Collect unique amenities
+            if (lot.lotAmenities && Array.isArray(lot.lotAmenities)) {
+                lot.lotAmenities.forEach(a => { if (!group.amenities.includes(a)) group.amenities.push(a); });
+            }
+            if (lot.campsiteAmenities && Array.isArray(lot.campsiteAmenities)) {
+                lot.campsiteAmenities.forEach(a => { if (!group.amenities.includes(a)) group.amenities.push(a); });
+            }
 
-            // Use first available lot's image, or first lot if none available
+            // Representative image
             if (lot.isAvailable && lot.imageUrl && !groups[key].representativeImage) {
                 groups[key].representativeImage = lot.imageUrl;
             }
@@ -137,12 +191,29 @@ export const SearchResultsPage: React.FC = () => {
 
         let results = Object.values(groups);
 
-        // Filter by type
+        // 2. Filter by type
         if (selectedType) {
             results = results.filter(g => g.type === selectedType);
         }
 
-        // Filter by location (county)
+        // 3. Filter by county (only if no user location)
+        if (selectedCounty && !userLocation) {
+            results = results.filter(g => g.county === selectedCounty);
+        }
+
+        // 4. Filter by Radius (if user location set)
+        if (userLocation) {
+            results = results.filter(g => {
+                if (g.latitude && g.longitude) {
+                    const dist = calculateDistance(userLocation.lat, userLocation.lng, g.latitude, g.longitude);
+                    g.distance = dist;
+                    return dist <= searchRadius;
+                }
+                return false;
+            });
+        }
+
+        // 5. Filter by text search location
         if (location) {
             results = results.filter(g =>
                 g.county.toLowerCase().includes(location.toLowerCase()) ||
@@ -150,10 +221,10 @@ export const SearchResultsPage: React.FC = () => {
             );
         }
 
-        // Filter to only show those with availability
+        // 6. Filter available
         results = results.filter(g => g.availableCount > 0);
 
-        // Sort
+        // 7. Sort
         switch (sortBy) {
             case 'price-low':
                 results.sort((a, b) => a.minPrice - b.minPrice);
@@ -167,7 +238,7 @@ export const SearchResultsPage: React.FC = () => {
         }
 
         return results;
-    }, [allLots, campsites, selectedType, location, sortBy]);
+    }, [allLots, campsites, selectedType, selectedCounty, location, sortBy, userLocation, searchRadius]);
 
     const formatDate = (isoDate: string) => {
         if (!isoDate) return '';
@@ -221,6 +292,55 @@ export const SearchResultsPage: React.FC = () => {
                                 <option key={t} value={t}>{TYPE_LABELS[t] || t}</option>
                             ))}
                         </select>
+                    </div>
+
+                    {/* Location/County Filter */}
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Location:</label>
+                        {!userLocation ? (
+                            <div className="flex gap-2">
+                                <select
+                                    value={selectedCounty}
+                                    onChange={(e) => setSelectedCounty(e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm"
+                                >
+                                    <option value="">All Counties</option>
+                                    {availableCounties.map(c => (
+                                        <option key={c} value={c}>{c}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    onClick={handleUseLocation}
+                                    className="flex items-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg text-sm transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-sm">my_location</span>
+                                    Near Me
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-primary font-medium flex items-center gap-1 bg-primary/10 px-2 py-1.5 rounded-lg border border-primary/20">
+                                    <span className="material-symbols-outlined text-sm">my_location</span>
+                                    Using Current Location
+                                    <button
+                                        onClick={() => setUserLocation(null)}
+                                        className="ml-1 hover:bg-primary/20 rounded-full p-0.5"
+                                    >
+                                        <span className="material-symbols-outlined text-xs">close</span>
+                                    </button>
+                                </span>
+                                <select
+                                    value={searchRadius}
+                                    onChange={(e) => setSearchRadius(Number(e.target.value))}
+                                    className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm"
+                                >
+                                    <option value={10}>10 km</option>
+                                    <option value={20}>20 km</option>
+                                    <option value={50}>50 km</option>
+                                    <option value={100}>100 km</option>
+                                </select>
+                            </div>
+                        )}
                     </div>
 
                     {/* Sort */}
@@ -292,6 +412,11 @@ export const SearchResultsPage: React.FC = () => {
                                     <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
                                         <span className="material-symbols-outlined text-sm">location_on</span>
                                         {accom.ownerName}, {accom.county}
+                                        {accom.distance && (
+                                            <span className="ml-2 text-primary text-xs font-semibold bg-primary/5 px-1.5 py-0.5 rounded">
+                                                {Math.round(accom.distance)} km
+                                            </span>
+                                        )}
                                     </p>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                         {TYPE_DESCRIPTIONS[accom.type] || 'Comfortable accommodation option.'}

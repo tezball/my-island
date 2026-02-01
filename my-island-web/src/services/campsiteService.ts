@@ -102,6 +102,8 @@ export interface CampsiteProfile extends User {
     description?: string;
     amenities?: string[];
     lotCount?: number;
+    latitude?: number | null;
+    longitude?: number | null;
 }
 
 // Helper function for API calls
@@ -187,6 +189,8 @@ function transformCampsite(api: OwnerApiResponse): CampsiteProfile {
         description: api.description,
         amenities: api.amenities.map(a => a.name),
         lotCount: api.lotCount,
+        latitude: api.latitude,
+        longitude: api.longitude,
         avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(api.propertyName)}&background=059669&color=fff`,
     };
 }

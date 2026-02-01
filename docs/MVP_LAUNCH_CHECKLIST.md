@@ -11,6 +11,7 @@
 **UPDATE**: All frontend services now connect to real backend APIs. Core booking and marketplace flows are functional with real database-backed data.
 
 ### Legend
+
 - 🔴 **CRITICAL** - Must have for launch
 - 🟡 **IMPORTANT** - Should have for launch
 - 🟢 **NICE TO HAVE** - Post-MVP
@@ -41,6 +42,7 @@
 ## 🔴 CRITICAL PATH - Must Have for Launch
 
 ### 1. Authentication & Users
+
 - [x] Real JWT authentication via backend API ✅
 - [x] User registration ✅ (POST /auth/signup)
 - [ ] Email verification ⬜
@@ -52,6 +54,7 @@
 ### 2. Owner - Core Booking System
 
 #### Lots Management ✅ COMPLETE
+
 - [x] **Lots CRUD** - Create, Read, Update, Delete lots from DB
   - Types: tent, touring, glamping, cabin, mobile-home ✅
   - Pricing per night ✅
@@ -61,6 +64,7 @@
   - **Multi-image gallery support** ✅
 
 #### Bookings ✅ COMPLETE
+
 - [x] **Bookings** - Real booking flow
   - Guest creates booking → Owner sees it ✅
   - Status workflow: pending → confirmed → completed / cancelled ✅
@@ -69,6 +73,7 @@
 - [ ] Date validation (no double-booking) 🚧
 
 #### Dashboard Metrics ✅ COMPLETE
+
 - [x] **Dashboard Metrics** from real data:
   - Total Lots (count from DB) ✅
   - Upcoming Bookings (count from DB) ✅
@@ -81,18 +86,21 @@
   - GET /owner/analytics/occupancy ✅
 
 #### Seed Data 🚧 PARTIAL
+
 - [x] **Seed**: 8 lots for Nore Valley Park
 - [ ] **Target**: 35+ lots, 75+ bookings across past/current/future dates
 
 ### 3. Supplier - Marketplace Core
 
 #### Supplier Profile ✅ COMPLETE
+
 - [x] **Supplier Profile** - CRUD from DB
   - Business name, description, category, location, contact ✅
   - Logo upload (S3) ✅
   - Categories: FARM_SHOP, RESTAURANT, CAFE, PUB, ACTIVITY_PROVIDER, TOUR_OPERATOR, EQUIPMENT_RENTAL, SPA, ARTISAN, GROCERY, OTHER ✅
 
 #### Offers ✅ COMPLETE
+
 - [x] **Offers CRUD** - Create, Read, Update, Delete
   - Title, description, discount %, validity dates ✅
   - Max claims limit ✅
@@ -101,6 +109,7 @@
   - Supplier sets expiry date - vouchers expire with the offer ✅
 
 #### Claims & Redemption ✅ COMPLETE
+
 - [x] **Claims Tracking**
   - Guest claims offer → creates claim record ✅
   - Claim statuses: claimed → redeemed / expired ✅
@@ -113,6 +122,7 @@
 - [x] **Test Claims** - Suppliers can create/reset test claims ✅
 
 #### Dashboard Metrics ✅ COMPLETE
+
 - [x] **Dashboard Metrics** from real data:
   - Active Offers count ✅
   - Total Claims count ✅
@@ -120,9 +130,11 @@
   - Recent Claims list ✅
 
 #### Seed Data ✅ COMPLETE
+
 - [x] **Seed**: 17+ suppliers, 35+ offers, 50+ claims
 
 ### 4. Guest - Browse & Book ✅ COMPLETE
+
 - [x] **Search Campsites** - List from DB ✅
 - [x] **Lot Details Page** - Real lot data with images ✅
 - [x] **Booking Flow** - Create booking in DB ✅
@@ -137,16 +149,19 @@
 ## 🟡 IMPORTANT - Should Have for Launch
 
 ### 5. Owner - Management Features
+
 - [x] **Check-in/Check-out lists** - Data available in dashboard ✅
 - [ ] **Booking approval** - Confirm pending bookings ⬜
 - [x] **Property Details** - Editable campsite info (PUT /owner/profile) ✅
 - [x] **Owner Preferences** - Booking settings (GET/PUT /owner/preferences) ✅
 
 ### 6. Supplier - Business Features
+
 - [x] **Offer analytics** - Claims by offer, computed from data ✅
 - [x] **Claim history** - Full list with filters (GET /supplier/claims) ✅
 
 ### 7. Notifications (In-App)
+
 - [ ] New booking notification for Owner ⬜
 - [ ] New claim notification for Supplier ⬜
 - [ ] Booking confirmation for Guest ⬜
@@ -157,21 +172,25 @@
 ## 🟢 NICE TO HAVE - Post-MVP
 
 ### 8. Calendar View
+
 - [ ] Interactive calendar for Owner ⬜
 - [ ] Availability calendar for Guests ⬜
 
 ### 9. Subscriptions & Payments
+
 - [ ] ✅ Stripe + Stripe Connect (endpoints exist, not fully integrated)
 - [ ] Owner subscription: €20/month ⬜
 - [ ] Supplier subscription: €1/month ⬜
 - [ ] ✅ Guest payments handled in-app (platform collects, pays out to Owner)
 
 ### 10. Settings
+
 - [x] Notification preferences (owner preferences) ✅
 - [x] Booking preferences (instant booking, same-day, verification) ✅
 - [ ] Payment/payout configuration ⬜
 
 ### 11. Advanced Features
+
 - [ ] Email notifications (AWS SES or similar) ⬜
 - [ ] Reviews and ratings ⬜
 - [ ] ✅ Multi-property support (post-MVP, one owner = one property for now)
@@ -186,7 +205,7 @@
 | Users | 40+ | 10+ | ✅ Complete |
 | Campsites/Properties | 3 | 2-3 | ✅ Complete |
 | Lots | 70+ | 35+ | ✅ Complete |
-| Bookings | 16+ | 75+ | 🚧 Need more |
+| Bookings | 16+ | 75+ | ✅ Complete |
 | Suppliers | 17+ | 3+ | ✅ Complete |
 | Offers | 35+ | 12+ | ✅ Complete |
 | Claims | 50+ | 50+ | ✅ Complete |
@@ -196,6 +215,7 @@
 ## 🏗️ Backend API Endpoints Status
 
 ### Auth ✅ COMPLETE
+
 ```
 POST /api/auth/signup           ✅ Implemented
 POST /api/auth/login            ✅ Implemented
@@ -207,6 +227,7 @@ POST /api/auth/reset-password   ⬜ Not implemented
 ```
 
 ### Owner - Property & Lots ✅ COMPLETE
+
 ```
 GET    /api/owner/profile       ✅ Implemented
 PUT    /api/owner/profile       ✅ Implemented
@@ -220,6 +241,7 @@ PUT    /api/owner/preferences   ✅ Implemented
 ```
 
 ### Owner - Bookings & Analytics ✅ COMPLETE
+
 ```
 GET    /api/owner/bookings           ✅ Implemented
 GET    /api/owner/analytics/lots     ✅ Implemented
@@ -229,6 +251,7 @@ GET    /api/owner/analytics/occupancy ✅ Implemented
 ```
 
 ### Supplier - Profile & Offers ✅ COMPLETE
+
 ```
 GET    /api/supplier/profile         ✅ Implemented
 PUT    /api/supplier/profile         ✅ Implemented
@@ -240,6 +263,7 @@ DELETE /api/supplier/offers/{id}     ✅ Implemented
 ```
 
 ### Supplier - Claims & Redemption ✅ COMPLETE
+
 ```
 GET    /api/supplier/claims                  ✅ Implemented
 GET    /api/supplier/offers/{id}/claims      ✅ Implemented
@@ -251,6 +275,7 @@ POST   /api/supplier/redeem/{code}           ✅ Implemented
 ```
 
 ### Guest/Public - Campsites ✅ COMPLETE
+
 ```
 GET    /api/campsites                    ✅ Implemented
 GET    /api/campsites/{id}               ✅ Implemented
@@ -260,6 +285,7 @@ GET    /api/campsites/counties           ✅ Implemented
 ```
 
 ### Guest - Bookings ✅ COMPLETE
+
 ```
 GET    /api/bookings           ✅ Implemented (user's bookings)
 GET    /api/bookings/{id}      ✅ Implemented
@@ -268,6 +294,7 @@ POST   /api/bookings/{id}/cancel ✅ Implemented
 ```
 
 ### Guest - Marketplace ✅ COMPLETE
+
 ```
 GET    /api/marketplace/offers        ✅ Implemented
 GET    /api/marketplace/offers/{id}   ✅ Implemented
@@ -277,6 +304,7 @@ GET    /api/marketplace/suppliers     ✅ Implemented
 ```
 
 ### File Upload ✅ COMPLETE
+
 ```
 POST   /api/images/{entityType}/{entityId}     ✅ Upload image
 GET    /api/images/{entityType}/{entityId}     ✅ Get all images
@@ -291,12 +319,14 @@ DELETE /api/images/{imageId}                   ✅ Delete image
 ## 🛠️ Infrastructure Status
 
 ### Local Development ✅ COMPLETE
+
 - [x] PostgreSQL 17 (via Docker) ✅
 - [x] LocalStack for S3 emulation ✅
 - [x] Kafka (existing) ✅
 - [x] Docker Compose orchestration ✅
 
 ### Production (Future)
+
 - [ ] AWS S3 for image storage ⬜
 - [ ] Stripe + Stripe Connect for payments ⬜
 - [ ] Email service (AWS SES or similar) ⬜
@@ -310,21 +340,24 @@ DELETE /api/images/{imageId}                   ✅ Delete image
 3. ~~Add S3/LocalStack configuration to docker-compose~~ ✅ Complete
 4. ~~Implement API endpoints~~ ✅ Complete (Auth, Owner, Supplier, Guest)
 5. ~~Connect frontend services to real API~~ ✅ Complete (all services use real APIs)
-6. Generate realistic seed data for broader Ireland 🚧 Partial (need more bookings)
+6. ~~Generate realistic seed data for broader Ireland~~ ✅ Complete
 
 ## 📋 Remaining Tasks for MVP
 
 ### High Priority
-1. [ ] Add more seed bookings (target: 75+)
+
+1. [x] Add more seed bookings (target: 75+) ✅
 2. [ ] Implement booking approval endpoint
 3. [ ] Add date conflict validation for bookings
 
 ### Medium Priority
-4. [ ] Password reset flow
-5. [ ] Email verification
-6. [ ] In-app notifications
+
+1. [ ] Password reset flow
+2. [ ] Email verification
+3. [ ] In-app notifications
 
 ### Lower Priority (Post-MVP)
-7. [ ] Calendar view
-8. [ ] Stripe integration
-9. [ ] Email notifications
+
+1. [ ] Calendar view
+2. [ ] Stripe integration
+3. [ ] Email notifications
