@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard, ExternalLink } from 'lucide-react';
+import { CreditCard, ExternalLink, Star } from 'lucide-react';
 import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 import { ownerPreferencesService } from '../../services/ownerPreferencesService';
+import { ownerService } from '../../services/ownerService';
+import { ownerSubscriptionApi } from '../../services/subscriptionApi';
 import type { OwnerPreferences } from '../../services/ownerPreferencesService';
+import { SubscriptionFormModal } from '../../components/subscription/SubscriptionForm';
+import { ConnectOnboarding } from '../../components/owner/ConnectOnboarding';
 
 export const OwnerSettingsPage: React.FC = () => {
     const [preferences, setPreferences] = useState<OwnerPreferences | null>(null);
@@ -87,6 +91,9 @@ export const OwnerSettingsPage: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Featured Promotion Section */}
+                <FeaturedPromotionSection />
+
                 {/* Billing Section */}
                 <BillingSection />
 
@@ -114,24 +121,72 @@ export const OwnerSettingsPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-                    <h2 className="text-base font-bold text-[#111418] dark:text-white mb-4">Payment Settings</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                        Configure your payout preferences
-                    </p>
-                    <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium">
-                        <span className="material-symbols-outlined text-lg">account_balance</span>
-                        Configure Payouts
-                    </button>
-                </div>
+                {/* Payout Settings Section */}
+                <ConnectOnboarding userType="owner" />
             </div>
         </div>
     );
 };
 
+const FeaturedPromotionSection: React.FC = () => {
+    const [purchasing, setPurchasing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handlePurchaseFeatured = async (duration: '7_DAYS' | '30_DAYS') => {
+        setPurchasing(true);
+        setError(null);
+        try {
+            const response = await ownerService.purchaseFeatured(duration);
+            window.location.href = response.checkoutUrl;
+        } catch (err) {
+            console.error('Failed to start checkout:', err);
+            setError('Failed to start checkout. Please try again.');
+            setPurchasing(false);
+        }
+    };
+
+    return (
+        <div className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800/50 p-6">
+            <div className="flex items-center gap-3 mb-4">
+                <Star className="w-5 h-5 text-yellow-600" />
+                <h2 className="text-base font-bold text-[#111418] dark:text-white">Get Featured on Homepage</h2>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Boost your visibility by appearing in the featured campsites section on our homepage.
+                Featured campsites get more views and bookings.
+            </p>
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
+                    {error}
+                </div>
+            )}
+            <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                    onClick={() => handlePurchaseFeatured('7_DAYS')}
+                    disabled={purchasing}
+                    className="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {purchasing ? 'Loading...' : '7 Days - \u20AC9.99'}
+                </button>
+                <button
+                    onClick={() => handlePurchaseFeatured('30_DAYS')}
+                    disabled={purchasing}
+                    className="flex-1 bg-primary text-white px-4 py-3 rounded-lg font-semibold hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {purchasing ? 'Loading...' : '30 Days - \u20AC29.99'}
+                </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                Promotion time is added to any existing featured period.
+            </p>
+        </div>
+    );
+};
+
 const BillingSection: React.FC = () => {
-    const { subscription, isLoading, redirectToCheckout, redirectToPortal } = useOwnerSubscription();
+    const { subscription, isLoading, refresh, redirectToPortal } = useOwnerSubscription();
     const [isRedirecting, setIsRedirecting] = useState(false);
+    const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
     const handleManageBilling = async () => {
         setIsRedirecting(true);
@@ -142,13 +197,13 @@ const BillingSection: React.FC = () => {
         }
     };
 
-    const handleSubscribe = async () => {
-        setIsRedirecting(true);
-        try {
-            await redirectToCheckout();
-        } catch {
-            setIsRedirecting(false);
-        }
+    const handleSubscribe = () => {
+        setShowSubscriptionModal(true);
+    };
+
+    const handleSubscriptionSuccess = () => {
+        setShowSubscriptionModal(false);
+        refresh();
     };
 
     const getStatusBadge = () => {
@@ -244,14 +299,23 @@ const BillingSection: React.FC = () => {
                     ) : (
                         <button
                             onClick={handleSubscribe}
-                            disabled={isRedirecting}
-                            className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-emerald-600 rounded-lg transition-colors disabled:opacity-50"
+                            className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-emerald-600 rounded-lg transition-colors"
                         >
-                            {isRedirecting ? 'Loading...' : 'Subscribe Now'}
+                            Subscribe Now
                         </button>
                     )}
                 </div>
             </div>
+
+            <SubscriptionFormModal
+                isOpen={showSubscriptionModal}
+                onClose={() => setShowSubscriptionModal(false)}
+                onSuccess={handleSubscriptionSuccess}
+                createSetupIntent={ownerSubscriptionApi.createSetupIntent}
+                confirmSubscription={ownerSubscriptionApi.confirmSubscription}
+                pricePerMonth="€20"
+                planName="Owner Plan"
+            />
         </div>
     );
 };

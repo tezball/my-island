@@ -1,11 +1,16 @@
 package com.myisland.api.modules.marketplace.controller;
 
 import com.myisland.api.config.StripeProperties;
+import com.myisland.api.modules.accommodation.service.FeaturedPromotionService;
 import com.myisland.api.modules.accommodation.service.OwnerSubscriptionService;
+import com.myisland.api.modules.marketplace.service.StripeConnectService;
 import com.myisland.api.modules.marketplace.service.SubscriptionService;
+import com.myisland.api.modules.marketplace.service.SupplierFeaturedPromotionService;
 import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Account;
 import com.stripe.model.Event;
 import com.stripe.model.Subscription;
+import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.slf4j.Logger;
@@ -23,14 +28,23 @@ public class StripeWebhookController {
 
     private final SubscriptionService supplierSubscriptionService;
     private final OwnerSubscriptionService ownerSubscriptionService;
+    private final FeaturedPromotionService ownerFeaturedPromotionService;
+    private final SupplierFeaturedPromotionService supplierFeaturedPromotionService;
+    private final StripeConnectService stripeConnectService;
     private final StripeProperties stripeProperties;
 
     public StripeWebhookController(
             SubscriptionService supplierSubscriptionService,
             OwnerSubscriptionService ownerSubscriptionService,
+            FeaturedPromotionService ownerFeaturedPromotionService,
+            SupplierFeaturedPromotionService supplierFeaturedPromotionService,
+            StripeConnectService stripeConnectService,
             StripeProperties stripeProperties) {
         this.supplierSubscriptionService = supplierSubscriptionService;
         this.ownerSubscriptionService = ownerSubscriptionService;
+        this.ownerFeaturedPromotionService = ownerFeaturedPromotionService;
+        this.supplierFeaturedPromotionService = supplierFeaturedPromotionService;
+        this.stripeConnectService = stripeConnectService;
         this.stripeProperties = stripeProperties;
     }
 
@@ -69,6 +83,19 @@ public class StripeWebhookController {
                             .getObject().orElseThrow();
                     supplierSubscriptionService.handleSubscriptionDeleted(subscription);
                     ownerSubscriptionService.handleSubscriptionDeleted(subscription);
+                }
+                case "checkout.session.completed" -> {
+                    Session session = (Session) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Handle featured promotion purchases for both owners and suppliers
+                    ownerFeaturedPromotionService.handleFeaturedCheckoutCompleted(session);
+                    supplierFeaturedPromotionService.handleFeaturedCheckoutCompleted(session);
+                }
+                case "account.updated" -> {
+                    Account account = (Account) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Handle Connect account status updates
+                    stripeConnectService.handleAccountUpdated(account);
                 }
                 default -> log.debug("Unhandled event type: {}", event.getType());
             }

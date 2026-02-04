@@ -34,14 +34,23 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | **Offer**                 | A promotional deal from a Supplier for Guests.                                                                  |
 | **Review**                | Guest feedback submitted after completing a Booking.                                                            |
 
+### Subscription Terms
+
+| Term | Definition |
+|------|-------------|
+| **Subscription** | Monthly recurring payment required for Owners and Suppliers to access premium features. |
+| **Featured Promotion** | One-time payment (7 days €9.99 or 30 days €29.99) to promote a property or business on the homepage/marketplace. |
+| **Connect Account** | Stripe Connect Express account that enables Owners/Suppliers to receive payouts from bookings and offer redemptions. |
+| **Payouts Enabled** | Status indicating a Connect account has completed onboarding and can receive payments. |
+
 ### User Roles
 
 | Role | Description |
 |------|-------------|
 | **Anonymous User** | Can browse campsites and search. Cannot book or save favorites. |
 | **Guest** | Registered user. Can book, save favorites, receive notifications, and write reviews. |
-| **Owner** | Registered user with `isOwner=true`. Manages campsites, lots, bookings, and responds to reviews. |
-| **Supplier** | Registered user with `isSupplier=true`. Creates and manages promotional offers. |
+| **Owner** | Registered user with `isOwner=true`. Manages campsites, lots, bookings, and responds to reviews. Requires subscription to receive bookings and access analytics. Can set up Stripe Connect to receive booking payments. |
+| **Supplier** | Registered user with `isSupplier=true`. Creates and manages promotional offers. Requires subscription to create offers. Can set up Stripe Connect to receive offer redemption payments. |
 
 ---
 
@@ -121,11 +130,36 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 
 **Key Operations**:
 - Create supplier profile
-- Publish offers
+- Publish offers (requires active subscription)
 - Browse marketplace (query available offers)
 - View offer details
 - Claim offers (Guest claims offer, receives voucher)
 - Redeem claims (Supplier marks voucher as used)
+- Purchase featured promotion
+
+### 8. Subscription Context
+**Purpose**: Manage recurring subscriptions, one-time promotions, and payment collection.
+
+**Aggregates**: Subscription, SetupIntent, ConnectAccount
+
+**Key Operations**:
+- Create setup intent for card collection
+- Confirm subscription with payment method
+- Create checkout session (legacy redirect flow)
+- Handle webhook events (subscription created, updated, deleted, account.updated)
+- Check subscription status
+- Purchase featured promotion
+- Expire featured listings (scheduled job)
+
+### 9. Payout Context
+**Purpose**: Enable Owners and Suppliers to receive payments via Stripe Connect.
+
+**Key Operations**:
+- Create Connect Express account
+- Generate onboarding link
+- Check onboarding status
+- Verify payouts enabled
+- Handle account.updated webhooks
 
 ---
 
@@ -267,6 +301,70 @@ User (Root)
 | provider | SocialProvider | OAuth provider |
 | email | String | External account email |
 | connected | Boolean | Currently linked |
+
+---
+
+### Owner Aggregate
+
+```
+Owner (Root)
+├── Campsite[] (Entity, cross-aggregate reference)
+├── Subscription (Value Object)
+└── ConnectAccount (Value Object)
+```
+
+**Owner**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Unique identifier |
+| userId | UUID | Reference to User |
+| propertyName | String | Business/property display name |
+| propertyType | PropertyType | Type of accommodation business |
+| subscriptionStatus | SubscriptionStatus | Current subscription state |
+| stripeCustomerId | String | Stripe customer ID for billing |
+| stripeSubscriptionId | String | Active subscription ID |
+| currentPeriodEnd | Timestamp | Subscription renewal date |
+| cancelAtPeriodEnd | Boolean | Will cancel at period end |
+| featured | Boolean | Promoted on homepage |
+| featuredUntil | Timestamp | When featured expires |
+| stripeConnectAccountId | String | Stripe Connect account for payouts |
+| connectOnboardingComplete | Boolean | Has completed onboarding |
+| payoutsEnabled | Boolean | Can receive payments |
+
+---
+
+### Supplier Aggregate
+
+```
+Supplier (Root)
+├── Offer[] (Entity)
+├── Subscription (Value Object)
+└── ConnectAccount (Value Object)
+```
+
+**Supplier**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | UUID | Unique identifier |
+| userId | UUID | Reference to User |
+| businessName | String | Business display name |
+| description | String | Business description |
+| category | SupplierCategory | Type of business |
+| location | String | Business location |
+| phone | String | Contact phone |
+| website | String | Business website URL |
+| subscriptionStatus | SubscriptionStatus | Current subscription state |
+| stripeCustomerId | String | Stripe customer ID for billing |
+| stripeSubscriptionId | String | Active subscription ID |
+| currentPeriodEnd | Timestamp | Subscription renewal date |
+| cancelAtPeriodEnd | Boolean | Will cancel at period end |
+| featured | Boolean | Promoted in marketplace |
+| featuredUntil | Timestamp | When featured expires |
+| stripeConnectAccountId | String | Stripe Connect account for payouts |
+| connectOnboardingComplete | Boolean | Has completed onboarding |
+| payoutsEnabled | Boolean | Can receive payments |
 
 ---
 
@@ -475,6 +573,16 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 | APPLE_PAY | Apple Pay |
 | GOOGLE_PAY | Google Pay |
 
+### SubscriptionStatus
+
+| Status | Description |
+|--------|-------------|
+| NONE | Never subscribed |
+| ACTIVE | Subscription is active and current |
+| PAST_DUE | Payment failed, in grace period |
+| CANCELED | Subscription was canceled |
+| UNPAID | Payment failed, subscription suspended |
+
 ### SocialProvider
 
 | Provider | Description |
@@ -515,6 +623,26 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 2. **Category Ratings**: Each category (cleanliness, location, value, facilities) must be 1-5
 3. **Immutable After Owner Response**: Reviews cannot be edited after owner responds
 
+### Subscription & Featured Rules
+
+1. **Owner Subscription Required for Bookings**: Owners must have an active subscription to receive new bookings
+2. **Owner Subscription Required for Analytics**: Owners must have an active subscription to access analytics (lots, bookings, revenue, occupancy)
+3. **Owner Subscription Required for Lot Creation**: Owners must have an active subscription to create new lots
+4. **Owner Property Visibility**: Owner properties remain visible in search even without subscription (but cannot receive bookings)
+5. **Supplier Subscription Required for Offers**: Suppliers must have an active subscription to create new offers
+6. **Featured Duration Options**: Featured promotions available for 7 days (€9.99) or 30 days (€29.99)
+7. **Featured Extension**: If already featured, new purchases extend from current expiry date
+8. **Featured Expiry**: Featured listings automatically expire via hourly scheduled job
+
+### Payout Rules
+
+1. **Connect Account Creation**: A Connect Express account is created when Owner/Supplier initiates payout setup
+2. **Onboarding Required**: Connect accounts must complete Stripe-hosted onboarding to verify identity and bank details
+3. **Payouts Enabled**: Payouts are only enabled after Stripe verifies the account (via webhook)
+4. **One Connect Account**: Each Owner/Supplier can have at most one Connect account
+5. **Booking Payouts**: (Future) Owners receive payouts for confirmed bookings minus platform fee
+6. **Offer Redemption Payouts**: (Future) Suppliers receive payouts for redeemed offers minus platform fee
+
 ---
 
 ## Domain Events
@@ -531,6 +659,14 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 | `TicketCreated` | Support ticket opened | Staff queue |
 | `OfferClaimed` | Guest claims offer | Supplier notification |
 | `OfferRedeemed` | Supplier marks claim as used | Analytics, Guest notification |
+| `SubscriptionCreated` | New subscription started | Notification, Feature unlock |
+| `SubscriptionUpdated` | Subscription status changed | Notification |
+| `SubscriptionDeleted` | Subscription canceled | Feature lock, Notification |
+| `FeaturedPurchased` | Featured promotion purchased | Homepage/Marketplace listing |
+| `FeaturedExpired` | Featured promotion expired | Remove from featured list |
+| `ConnectAccountCreated` | Connect account created | Begin onboarding flow |
+| `ConnectOnboardingComplete` | Connect onboarding finished | Enable payouts |
+| `PayoutsEnabled` | Stripe confirms payouts ready | Notification |
 
 ---
 

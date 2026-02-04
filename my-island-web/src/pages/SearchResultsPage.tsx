@@ -28,6 +28,7 @@ interface GroupedAccommodation {
     availableCount: number;
     totalCount: number;
     minPrice: number;
+    maxPrice: number;
     representativeImage: string;
     amenities: string[];
     latitude?: number;

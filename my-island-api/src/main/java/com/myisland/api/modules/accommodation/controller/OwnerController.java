@@ -1,9 +1,19 @@
 package com.myisland.api.modules.accommodation.controller;
 
 import com.myisland.api.modules.accommodation.dto.*;
+import com.myisland.api.modules.accommodation.service.FeaturedPromotionService;
 import com.myisland.api.modules.accommodation.service.OwnerService;
+import com.myisland.api.modules.accommodation.service.OwnerSubscriptionService;
 import com.myisland.api.modules.booking.dto.BookingDto;
+import com.myisland.api.modules.marketplace.dto.ConfirmSubscriptionRequest;
+import com.myisland.api.modules.marketplace.dto.ConnectStatusDto;
+import com.myisland.api.modules.marketplace.dto.CreateCheckoutSessionResponse;
+import com.myisland.api.modules.marketplace.dto.CreatePortalSessionResponse;
+import com.myisland.api.modules.marketplace.dto.OnboardingLinkResponse;
+import com.myisland.api.modules.marketplace.dto.SetupIntentResponse;
+import com.myisland.api.modules.marketplace.service.StripeConnectService;
 import com.myisland.api.security.CustomUserDetails;
+import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,9 +31,16 @@ import java.util.Map;
 public class OwnerController {
 
     private final OwnerService ownerService;
+    private final OwnerSubscriptionService ownerSubscriptionService;
+    private final FeaturedPromotionService featuredPromotionService;
+    private final StripeConnectService stripeConnectService;
 
-    public OwnerController(OwnerService ownerService) {
+    public OwnerController(OwnerService ownerService, OwnerSubscriptionService ownerSubscriptionService,
+                           FeaturedPromotionService featuredPromotionService, StripeConnectService stripeConnectService) {
         this.ownerService = ownerService;
+        this.ownerSubscriptionService = ownerSubscriptionService;
+        this.featuredPromotionService = featuredPromotionService;
+        this.stripeConnectService = stripeConnectService;
     }
 
     @GetMapping("/profile")
@@ -144,5 +161,86 @@ public class OwnerController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ResponseEntity.ok(ownerService.getOccupancyAnalytics(userDetails.getUserId()));
+    }
+
+    @PostMapping("/featured/purchase")
+    @Operation(summary = "Purchase featured promotion")
+    public ResponseEntity<Map<String, String>> purchaseFeatured(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody PurchaseFeaturedRequest request
+    ) throws StripeException {
+        String checkoutUrl = featuredPromotionService.createFeaturedCheckout(
+                userDetails.getUserId(),
+                request.duration()
+        );
+        return ResponseEntity.ok(Map.of("checkoutUrl", checkoutUrl));
+    }
+
+    // Subscription endpoints
+    @GetMapping("/subscription")
+    @Operation(summary = "Get owner subscription status")
+    public ResponseEntity<OwnerSubscriptionDto> getSubscription(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(ownerSubscriptionService.getSubscriptionStatus(owner.id()));
+    }
+
+    @PostMapping("/subscription/setup-intent")
+    @Operation(summary = "Create setup intent for card collection")
+    public ResponseEntity<SetupIntentResponse> createSetupIntent(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(ownerSubscriptionService.createSetupIntent(owner.id(), userDetails.getUsername()));
+    }
+
+    @PostMapping("/subscription/confirm")
+    @Operation(summary = "Confirm subscription with payment method")
+    public ResponseEntity<OwnerSubscriptionDto> confirmSubscription(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody ConfirmSubscriptionRequest request
+    ) throws StripeException {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(ownerSubscriptionService.confirmSubscription(owner.id(), request));
+    }
+
+    @PostMapping("/subscription/checkout")
+    @Operation(summary = "Create checkout session (legacy redirect flow)")
+    public ResponseEntity<CreateCheckoutSessionResponse> createCheckoutSession(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(ownerSubscriptionService.createCheckoutSession(owner.id(), userDetails.getUsername()));
+    }
+
+    @PostMapping("/subscription/portal")
+    @Operation(summary = "Create billing portal session")
+    public ResponseEntity<CreatePortalSessionResponse> createPortalSession(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(ownerSubscriptionService.createPortalSession(owner.id()));
+    }
+
+    // Stripe Connect endpoints
+    @GetMapping("/connect/status")
+    @Operation(summary = "Get Connect account status")
+    public ResponseEntity<ConnectStatusDto> getConnectStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(stripeConnectService.getOwnerConnectStatus(owner.id()));
+    }
+
+    @PostMapping("/connect/onboard")
+    @Operation(summary = "Start Connect onboarding")
+    public ResponseEntity<OnboardingLinkResponse> startConnectOnboarding(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String returnUrl,
+            @RequestParam String refreshUrl
+    ) throws StripeException {
+        OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
+        return ResponseEntity.ok(stripeConnectService.createOwnerOnboardingLink(owner.id(), returnUrl, refreshUrl));
     }
 }

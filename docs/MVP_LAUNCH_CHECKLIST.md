@@ -347,7 +347,7 @@ DELETE /api/images/{imageId}                   ✅ Delete image
 ### High Priority
 
 1. [x] Add more seed bookings (target: 75+) ✅
-2. [ ] Implement booking approval endpoint
+2. [x] Implement booking approval endpoint ✅
 3. [ ] Add date conflict validation for bookings
 
 ### Medium Priority

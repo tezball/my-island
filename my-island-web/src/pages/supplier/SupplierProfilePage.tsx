@@ -224,6 +224,7 @@ export const SupplierProfilePage: React.FC = () => {
                         value={formData.businessName}
                         onChange={(e) => setFormData(prev => ({ ...prev, businessName: e.target.value }))}
                         className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
+                        placeholder="e.g. The Green Campsite"
                         required
                     />
                 </div>
@@ -283,6 +284,7 @@ export const SupplierProfilePage: React.FC = () => {
                             value={formData.contactEmail}
                             onChange={(e) => setFormData(prev => ({ ...prev, contactEmail: e.target.value }))}
                             className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
+                            placeholder="e.g. contact@example.com"
                         />
                     </div>
                     <div>
@@ -294,6 +296,7 @@ export const SupplierProfilePage: React.FC = () => {
                             value={formData.contactPhone}
                             onChange={(e) => setFormData(prev => ({ ...prev, contactPhone: e.target.value }))}
                             className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
+                            placeholder="e.g. +353 87 123 4567"
                         />
                     </div>
                 </div>

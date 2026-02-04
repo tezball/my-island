@@ -1,6 +1,7 @@
 package com.myisland.api.modules.booking.service;
 
 import com.myisland.api.modules.accommodation.entity.Lot;
+import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.LotRepository;
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.CreateBookingRequest;
@@ -32,7 +33,7 @@ public class BookingService {
     private final ApplicationEventPublisher eventPublisher;
 
     public BookingService(BookingRepository bookingRepository, LotRepository lotRepository,
-                          UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
+            UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
@@ -68,6 +69,13 @@ public class BookingService {
 
         if (!lot.isActive()) {
             throw new BadRequestException("Lot is not available for booking");
+        }
+
+        // Check owner subscription - owners must have active subscription to receive
+        // bookings
+        Owner owner = lot.getOwner();
+        if (!owner.hasActiveSubscription()) {
+            throw new BadRequestException("This property is not currently accepting bookings.");
         }
 
         if (request.checkOutDate().isBefore(request.checkInDate()) ||
@@ -111,9 +119,14 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingDto confirmBooking(Long bookingId) {
+    public BookingDto confirmBooking(Long bookingId, Long ownerId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        // Verify the user is the owner of the lot
+        if (!booking.getLot().getOwner().getUser().getId().equals(ownerId)) {
+            throw new BadRequestException("You are not authorized to confirm this booking");
+        }
 
         if (booking.getStatus() != Booking.BookingStatus.PENDING) {
             throw new BadRequestException("Only pending bookings can be confirmed");

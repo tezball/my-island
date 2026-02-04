@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 import {
     ownerService,
     type OwnerDashboardData,
@@ -21,8 +22,11 @@ type MetricType = 'lots' | 'bookings' | 'revenue' | 'occupancy' | null;
 
 export const OwnerDashboardPage: React.FC = () => {
     const { user } = useAuth();
+    const { subscription, isLoading: subscriptionLoading, redirectToCheckout } = useOwnerSubscription();
     const [data, setData] = useState<OwnerDashboardData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
 
     // Modal state
     const [activeMetric, setActiveMetric] = useState<MetricType>(null);
@@ -49,6 +53,11 @@ export const OwnerDashboardPage: React.FC = () => {
 
     const handleMetricClick = async (metric: MetricType) => {
         if (!user || !metric) return;
+
+        // Require subscription for analytics
+        if (!hasActiveSubscription) {
+            return;
+        }
 
         setActiveMetric(metric);
         setIsModalLoading(true);
@@ -130,6 +139,28 @@ export const OwnerDashboardPage: React.FC = () => {
 
     return (
         <div className="space-y-6">
+            {/* Limited Access Mode Warning */}
+            {!subscriptionLoading && !hasActiveSubscription && (
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-xl">lock</span>
+                        <div className="flex-1">
+                            <h3 className="font-medium text-amber-800 dark:text-amber-200">Limited Access Mode</h3>
+                            <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                                Your property is visible to guests but cannot receive new bookings. Subscribe to unlock all features including analytics, lot management, and the ability to accept bookings.
+                            </p>
+                            <button
+                                onClick={redirectToCheckout}
+                                className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-lg">credit_card</span>
+                                Subscribe Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Welcome Section */}
             <div>
                 <h1 className="text-2xl font-bold text-[#111418] dark:text-white mb-1">
@@ -148,6 +179,7 @@ export const OwnerDashboardPage: React.FC = () => {
                     value={stats?.totalLots || data?.lots?.length || 0}
                     color="bg-primary"
                     onClick={() => handleMetricClick('lots')}
+                    locked={!hasActiveSubscription}
                 />
                 <StatCard
                     icon="calendar_month"
@@ -155,6 +187,7 @@ export const OwnerDashboardPage: React.FC = () => {
                     value={stats?.upcomingBookings || data?.upcomingCheckIns?.length || 0}
                     color="bg-blue-500"
                     onClick={() => handleMetricClick('bookings')}
+                    locked={!hasActiveSubscription}
                 />
                 <StatCard
                     icon="euro"
@@ -163,6 +196,7 @@ export const OwnerDashboardPage: React.FC = () => {
                     color="bg-purple-500"
                     isText
                     onClick={() => handleMetricClick('revenue')}
+                    locked={!hasActiveSubscription}
                 />
                 <StatCard
                     icon="percent"
@@ -171,6 +205,7 @@ export const OwnerDashboardPage: React.FC = () => {
                     color="bg-amber-500"
                     isText
                     onClick={() => handleMetricClick('occupancy')}
+                    locked={!hasActiveSubscription}
                 />
             </div>
 
@@ -217,11 +252,28 @@ export const OwnerDashboardPage: React.FC = () => {
                             {data.upcomingCheckIns.map((booking) => (
                                 <div key={booking.id} className="p-4 flex items-center justify-between">
                                     <div className="flex items-center gap-3 min-w-0">
-                                        <div className="size-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
-                                            <span className="material-symbols-outlined text-green-600 dark:text-green-400 text-lg">login</span>
+                                        <div className={`size-10 rounded-full flex items-center justify-center shrink-0 ${
+                                            booking.status === 'pending'
+                                                ? 'bg-yellow-100 dark:bg-yellow-900/30'
+                                                : 'bg-green-100 dark:bg-green-900/30'
+                                        }`}>
+                                            <span className={`material-symbols-outlined text-lg ${
+                                                booking.status === 'pending'
+                                                    ? 'text-yellow-600 dark:text-yellow-400'
+                                                    : 'text-green-600 dark:text-green-400'
+                                            }`}>
+                                                {booking.status === 'pending' ? 'pending_actions' : 'login'}
+                                            </span>
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-sm font-medium text-[#111418] dark:text-white truncate">{booking.userName}</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-medium text-[#111418] dark:text-white truncate">{booking.userName}</p>
+                                                {booking.status === 'pending' && (
+                                                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                                        PENDING
+                                                    </span>
+                                                )}
+                                            </div>
                                             <p className="text-xs text-gray-500 truncate">{booking.lotName}</p>
                                         </div>
                                     </div>
@@ -344,6 +396,7 @@ interface StatCardProps {
     color: string;
     isText?: boolean;
     onClick?: () => void;
+    locked?: boolean;
 }
 
 const StatCard: React.FC<StatCardProps> = ({
@@ -352,16 +405,28 @@ const StatCard: React.FC<StatCardProps> = ({
     value,
     color,
     isText,
-    onClick
+    onClick,
+    locked = false
 }) => (
     <button
         type="button"
-        onClick={onClick}
-        className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-left w-full transition-all hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md cursor-pointer group"
+        onClick={locked ? undefined : onClick}
+        disabled={locked}
+        className={`bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 text-left w-full transition-all group relative ${
+            locked
+                ? 'cursor-not-allowed opacity-75'
+                : 'hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md cursor-pointer'
+        }`}
+        title={locked ? 'Subscribe to access analytics' : undefined}
     >
+        {locked && (
+            <div className="absolute top-2 right-2">
+                <span className="material-symbols-outlined text-gray-400 text-lg">lock</span>
+            </div>
+        )}
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className={`size-10 rounded-lg ${color} flex items-center justify-center text-white shrink-0`}>
+                <div className={`size-10 rounded-lg ${locked ? 'bg-gray-400' : color} flex items-center justify-center text-white shrink-0`}>
                     <span className="material-symbols-outlined text-xl">{icon}</span>
                 </div>
                 <div className="min-w-0">
@@ -369,9 +434,11 @@ const StatCard: React.FC<StatCardProps> = ({
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{label}</p>
                 </div>
             </div>
-            <span className="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
-                chevron_right
-            </span>
+            {!locked && (
+                <span className="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">
+                    chevron_right
+                </span>
+            )}
         </div>
     </button>
 );

@@ -2,8 +2,12 @@ package com.myisland.api.modules.marketplace.controller;
 
 import com.myisland.api.modules.marketplace.dto.*;
 import com.myisland.api.modules.marketplace.service.MarketplaceService;
+import com.myisland.api.modules.marketplace.service.StripeConnectService;
+import com.myisland.api.modules.marketplace.service.SubscriptionService;
+import com.myisland.api.modules.marketplace.service.SupplierFeaturedPromotionService;
 import com.myisland.api.modules.marketplace.service.SupplierService;
 import com.myisland.api.security.CustomUserDetails;
+import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,10 +26,18 @@ public class SupplierController {
 
     private final SupplierService supplierService;
     private final MarketplaceService marketplaceService;
+    private final SubscriptionService subscriptionService;
+    private final SupplierFeaturedPromotionService featuredPromotionService;
+    private final StripeConnectService stripeConnectService;
 
-    public SupplierController(SupplierService supplierService, MarketplaceService marketplaceService) {
+    public SupplierController(SupplierService supplierService, MarketplaceService marketplaceService,
+                              SubscriptionService subscriptionService, SupplierFeaturedPromotionService featuredPromotionService,
+                              StripeConnectService stripeConnectService) {
         this.supplierService = supplierService;
         this.marketplaceService = marketplaceService;
+        this.subscriptionService = subscriptionService;
+        this.featuredPromotionService = featuredPromotionService;
+        this.stripeConnectService = stripeConnectService;
     }
 
     @GetMapping("/profile")
@@ -152,5 +164,84 @@ public class SupplierController {
             @PathVariable String claimCode
     ) {
         return ResponseEntity.ok(marketplaceService.redeemClaim(userDetails.getUserId(), claimCode));
+    }
+
+    @PostMapping("/featured/purchase")
+    @Operation(summary = "Purchase featured promotion for supplier")
+    public ResponseEntity<Map<String, String>> purchaseFeatured(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody PurchaseFeaturedRequest request
+    ) throws StripeException {
+        String checkoutUrl = featuredPromotionService.createFeaturedCheckout(
+                userDetails.getUserId(), request.duration());
+        return ResponseEntity.ok(Map.of("checkoutUrl", checkoutUrl));
+    }
+
+    // Subscription endpoints
+    @GetMapping("/subscription")
+    @Operation(summary = "Get supplier subscription status")
+    public ResponseEntity<SubscriptionDto> getSubscription(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(subscriptionService.getSubscriptionStatus(supplier.id()));
+    }
+
+    @PostMapping("/subscription/setup-intent")
+    @Operation(summary = "Create setup intent for card collection")
+    public ResponseEntity<SetupIntentResponse> createSetupIntent(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(subscriptionService.createSetupIntent(supplier.id(), userDetails.getUsername()));
+    }
+
+    @PostMapping("/subscription/confirm")
+    @Operation(summary = "Confirm subscription with payment method")
+    public ResponseEntity<SubscriptionDto> confirmSubscription(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody ConfirmSubscriptionRequest request
+    ) throws StripeException {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(subscriptionService.confirmSubscription(supplier.id(), request));
+    }
+
+    @PostMapping("/subscription/checkout")
+    @Operation(summary = "Create checkout session (legacy redirect flow)")
+    public ResponseEntity<CreateCheckoutSessionResponse> createCheckoutSession(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(subscriptionService.createCheckoutSession(supplier.id(), userDetails.getUsername()));
+    }
+
+    @PostMapping("/subscription/portal")
+    @Operation(summary = "Create billing portal session")
+    public ResponseEntity<CreatePortalSessionResponse> createPortalSession(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(subscriptionService.createPortalSession(supplier.id()));
+    }
+
+    // Stripe Connect endpoints
+    @GetMapping("/connect/status")
+    @Operation(summary = "Get Connect account status")
+    public ResponseEntity<ConnectStatusDto> getConnectStatus(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) throws StripeException {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(stripeConnectService.getSupplierConnectStatus(supplier.id()));
+    }
+
+    @PostMapping("/connect/onboard")
+    @Operation(summary = "Start Connect onboarding")
+    public ResponseEntity<OnboardingLinkResponse> startConnectOnboarding(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String returnUrl,
+            @RequestParam String refreshUrl
+    ) throws StripeException {
+        SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
+        return ResponseEntity.ok(stripeConnectService.createSupplierOnboardingLink(supplier.id(), returnUrl, refreshUrl));
     }
 }

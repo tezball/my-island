@@ -1,10 +1,12 @@
 package com.myisland.api.modules.accommodation.service;
 
+import com.myisland.api.modules.accommodation.controller.CampsiteController.BookedDateRange;
 import com.myisland.api.modules.accommodation.dto.LotDto;
 import com.myisland.api.modules.accommodation.dto.OwnerDto;
 import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.LotRepository;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
+import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +20,12 @@ public class CampsiteService {
 
     private final OwnerRepository ownerRepository;
     private final LotRepository lotRepository;
+    private final BookingRepository bookingRepository;
 
-    public CampsiteService(OwnerRepository ownerRepository, LotRepository lotRepository) {
+    public CampsiteService(OwnerRepository ownerRepository, LotRepository lotRepository, BookingRepository bookingRepository) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     public List<OwnerDto> getAllCampsites() {
@@ -68,5 +72,21 @@ public class CampsiteService {
         return lotRepository.findById(lotId)
                 .map(LotDto::from)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
+    }
+
+    public List<OwnerDto> getFeaturedCampsites() {
+        return ownerRepository.findFeaturedOwners().stream()
+                .map(OwnerDto::from)
+                .toList();
+    }
+
+    public List<BookedDateRange> getBookedDates(Long lotId) {
+        lotRepository.findById(lotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
+
+        // Get bookings from today onwards that are not cancelled
+        return bookingRepository.findByLotIdAndCheckOutDateAfter(lotId, LocalDate.now()).stream()
+                .map(booking -> new BookedDateRange(booking.getCheckInDate(), booking.getCheckOutDate()))
+                .toList();
     }
 }

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Lot } from '../../types/booking';
 import { useAuth } from '../../context/AuthContext';
 import { campsiteService } from '../../services/campsiteService';
-import { DateInput } from '../ui/DateInput';
+import { AvailabilityCalendar } from '../ui/AvailabilityCalendar';
 
 interface BookingModalProps {
     lot: Lot;
@@ -30,9 +30,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [wantsPower, setWantsPower] = useState(false);
+    const [specialRequests, setSpecialRequests] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
+    const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+    const [bookedDates, setBookedDates] = useState<Array<{ checkIn: string; checkOut: string }>>([]);
+    const [isLoadingDates, setIsLoadingDates] = useState(false);
 
     // Handle escape key to close modal
     const handleEscapeKey = useCallback((e: KeyboardEvent) => {
@@ -59,10 +65,70 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
             setStartDate('');
             setEndDate('');
             setWantsPower(false);
+            setSpecialRequests('');
             setConfirmation(null);
             setError(null);
+            setIsAvailable(null);
+            setBookedDates([]);
         }
     }, [isOpen]);
+
+    // Fetch booked dates when modal opens
+    useEffect(() => {
+        const fetchBookedDates = async () => {
+            if (!isOpen || !lot.id) return;
+
+            setIsLoadingDates(true);
+            try {
+                const dates = await campsiteService.getBookedDates(lot.id);
+                setBookedDates(dates);
+            } catch (err) {
+                console.error('Failed to fetch booked dates:', err);
+                // Don't block the modal if this fails
+            } finally {
+                setIsLoadingDates(false);
+            }
+        };
+
+        fetchBookedDates();
+    }, [isOpen, lot.id]);
+
+    // Check availability when dates change
+    useEffect(() => {
+        const checkAvailability = async () => {
+            if (!startDate || !endDate || !lot.ownerId) {
+                setIsAvailable(null);
+                return;
+            }
+
+            setIsCheckingAvailability(true);
+            setError(null);
+
+            try {
+                const checkIn = new Date(startDate);
+                const checkOut = new Date(endDate);
+                const availableLots = await campsiteService.getAvailableLots(
+                    lot.ownerId,
+                    checkIn,
+                    checkOut
+                );
+                const lotIsAvailable = availableLots.some(availableLot => availableLot.id === lot.id);
+                setIsAvailable(lotIsAvailable);
+
+                if (!lotIsAvailable) {
+                    setError('This accommodation is not available for the selected dates. Please choose different dates.');
+                }
+            } catch (err) {
+                console.error('Failed to check availability:', err);
+                // Don't block booking if availability check fails - backend will validate
+                setIsAvailable(null);
+            } finally {
+                setIsCheckingAvailability(false);
+            }
+        };
+
+        checkAvailability();
+    }, [startDate, endDate, lot.id, lot.ownerId]);
 
     if (!isOpen) return null;
 
@@ -75,21 +141,26 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
         return diffDays > 0 ? diffDays : 0;
     };
 
-    // Handle start date change - clear end date if it's before the new start date
-    const handleStartDateChange = (newStartDate: string) => {
-        setStartDate(newStartDate);
-        // If end date is before or equal to new start date, clear it
-        if (endDate && newStartDate >= endDate) {
-            setEndDate('');
-        }
-    };
+    // Handle date selection from calendar
+    // First click = check-in, second click = check-out
+    const handleDateSelect = (date: string) => {
+        setError(null);
+        setIsAvailable(null);
 
-    // Calculate minimum check-out date (day after check-in)
-    const getMinCheckoutDate = () => {
-        if (!startDate) return undefined;
-        const nextDay = new Date(startDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        return nextDay.toISOString().split('T')[0];
+        if (!startDate || (startDate && endDate)) {
+            // No dates selected OR both dates selected - start fresh with check-in
+            setStartDate(date);
+            setEndDate('');
+        } else if (startDate && !endDate) {
+            // Check-in selected, now selecting check-out
+            if (date <= startDate) {
+                // If selected date is before or same as check-in, make it the new check-in
+                setStartDate(date);
+            } else {
+                // Set as check-out
+                setEndDate(date);
+            }
+        }
     };
 
     // Format date to DD/MM/YYYY
@@ -115,6 +186,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
         setIsSubmitting(true);
         setError(null);
 
+        const powerDetails = isTent && wantsPower ? 'Includes Power Hookup (+€5/night)' : '';
+        const combinedDetails = [powerDetails, specialRequests].filter(Boolean).join('\n');
+
         try {
             await campsiteService.createBooking({
                 userId: user.id,
@@ -124,7 +198,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                 startDate: formatDate(startDate),
                 endDate: formatDate(endDate),
                 totalPrice,
-                details: isTent && wantsPower ? 'Includes Power Hookup (+€5/night)' : undefined
+                details: combinedDetails || undefined
             });
 
             // Generate a mock booking ID
@@ -139,193 +213,123 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                 nights: days,
                 totalPrice,
                 guestName: user.name,
-                details: isTent && wantsPower ? 'Includes Power Hookup (+€5/night)' : undefined
+                details: combinedDetails || undefined
             });
         } catch (err) {
             console.error('Booking failed:', err);
-            setError('Failed to submit booking. Please try again.');
+            // Show specific error message from API if available
+            const errorMessage = err instanceof Error ? err.message : 'Failed to submit booking. Please try again.';
+            setError(errorMessage);
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    // Handle backdrop click to close modal
-    const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        // Only close if clicking the backdrop itself, not the modal content
-        if (e.target === e.currentTarget) {
-            onClose();
-        }
-    };
-
-    // Confirmation View
+    // Confirmation view
     if (confirmation) {
         return (
-            <div
-                className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                onClick={handleBackdropClick}
-            >
-                <div
-                    className="bg-white dark:bg-[#1a2632] rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10"
-                    >
-                        <span className="material-symbols-outlined">close</span>
-                    </button>
-
-                    {/* Success Icon */}
-                    <div className="flex justify-center mb-4">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary text-4xl">check_circle</span>
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+                <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="material-symbols-outlined text-3xl text-green-600">check_circle</span>
                         </div>
-                    </div>
+                        <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">Booking Confirmed!</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-6">Your reservation has been submitted.</p>
 
-                    <h2 className="text-2xl font-bold text-center mb-2 text-[#111418] dark:text-white">
-                        Booking Confirmed!
-                    </h2>
-                    <p className="text-gray-500 text-sm text-center mb-6">
-                        Your reservation has been successfully submitted
-                    </p>
-
-                    {/* Booking Reference */}
-                    <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-4">
-                        <div className="text-center">
-                            <span className="text-xs text-gray-500 uppercase tracking-wide">Booking Reference</span>
-                            <p className="text-xl font-bold text-primary mt-1">{confirmation.bookingId}</p>
-                        </div>
-                    </div>
-
-                    {/* Booking Summary */}
-                    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-3">
-                        <h3 className="font-semibold text-[#111418] dark:text-white mb-3">Booking Summary</h3>
-
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">Accommodation</span>
-                            <span className="text-sm font-medium text-[#111418] dark:text-white">{confirmation.lotName}</span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">Guest</span>
-                            <span className="text-sm font-medium text-[#111418] dark:text-white">{confirmation.guestName}</span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">Check-in</span>
-                            <span className="text-sm font-medium text-[#111418] dark:text-white">{confirmation.checkIn}</span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">Check-out</span>
-                            <span className="text-sm font-medium text-[#111418] dark:text-white">{confirmation.checkOut}</span>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">Duration</span>
-                            <span className="text-sm font-medium text-[#111418] dark:text-white">{confirmation.nights} night{confirmation.nights > 1 ? 's' : ''}</span>
-                        </div>
-
-                        {confirmation.details && (
-                            <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-600 dark:text-gray-400">Extras</span>
-                                <span className="text-sm font-medium text-[#111418] dark:text-white flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-yellow-500 text-sm">bolt</span>
-                                    Electric Hookup
-                                </span>
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 text-left space-y-3 mb-6">
+                            <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Booking ID</span>
+                                <span className="font-medium text-[#111418] dark:text-white">{confirmation.bookingId}</span>
                             </div>
-                        )}
-
-                        <div className="border-t border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                            <div className="flex justify-between items-center">
-                                <span className="font-semibold text-[#111418] dark:text-white">Total Paid</span>
-                                <span className="text-xl font-bold text-primary">€{confirmation.totalPrice}</span>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Location</span>
+                                <span className="font-medium text-[#111418] dark:text-white">{confirmation.lotName}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Check-in</span>
+                                <span className="font-medium text-[#111418] dark:text-white">{confirmation.checkIn}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600 dark:text-gray-400">Check-out</span>
+                                <span className="font-medium text-[#111418] dark:text-white">{confirmation.checkOut}</span>
+                            </div>
+                            <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-3">
+                                <span className="text-gray-600 dark:text-gray-400">Total</span>
+                                <span className="font-bold text-primary text-lg">€{confirmation.totalPrice}</span>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Info Note */}
-                    <div className="flex items-start gap-2 mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <span className="material-symbols-outlined text-blue-500 text-sm mt-0.5">info</span>
-                        <p className="text-xs text-blue-700 dark:text-blue-300">
-                            A confirmation email has been sent to your registered email address with all the details.
-                        </p>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-3 mt-6">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="flex-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-[#111418] dark:text-white font-semibold py-3 rounded-xl transition-all"
-                        >
-                            Close
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                onClose();
-                                navigate('/trips');
-                            }}
-                            className="flex-1 bg-primary hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition-all shadow-md"
-                        >
-                            View My Trips
-                        </button>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={onClose}
+                                className="flex-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-[#111418] dark:text-white font-medium py-3 rounded-xl transition-all"
+                            >
+                                Close
+                            </button>
+                            <button
+                                onClick={() => navigate('/trips')}
+                                className="flex-1 bg-primary hover:bg-emerald-600 text-white font-medium py-3 rounded-xl transition-all"
+                            >
+                                View My Trips
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         );
     }
 
-    // Booking Form View
+    // Booking form view
     return (
-        <div
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-            onClick={handleBackdropClick}
-        >
-            <div
-                className="bg-white dark:bg-[#1a2632] rounded-2xl w-full max-w-md p-6 shadow-2xl relative"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 z-10"
-                >
-                    <span className="material-symbols-outlined">close</span>
-                </button>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
+                {/* Header */}
+                <div className="sticky top-0 bg-white dark:bg-gray-900 p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-[#111418] dark:text-white">Book Your Stay</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+                        <span className="material-symbols-outlined text-gray-500">close</span>
+                    </button>
+                </div>
 
-                <h2 className="text-2xl font-bold mb-1 text-[#111418] dark:text-white">Book {typeLabel || lot.name}</h2>
-                <p className="text-gray-500 text-sm mb-6">
-                    {minPrice && minPrice < lot.pricePerNight ? `From €${minPrice}` : `€${lot.pricePerNight}`} per night
-                </p>
+                {/* Lot Info */}
+                <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+                    <h3 className="font-semibold text-[#111418] dark:text-white">{typeLabel || lot.name}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        From €{minPrice || lot.pricePerNight}/night
+                    </p>
+                </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Check-in</label>
-                            <DateInput
-                                required
-                                className="w-full p-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white"
-                                value={startDate}
-                                onChange={handleStartDateChange}
-                                placeholder="Select date"
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="p-4 space-y-4">
+                    {/* Date Selection Calendar */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Select Dates
+                        </label>
+                        {isLoadingDates ? (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            </div>
+                        ) : (
+                            <AvailabilityCalendar
+                                bookedDates={bookedDates}
+                                selectedCheckIn={startDate}
+                                selectedCheckOut={endDate}
+                                onDateSelect={handleDateSelect}
                             />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Check-out</label>
-                            <DateInput
-                                required
-                                className="w-full p-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white"
-                                value={endDate}
-                                onChange={setEndDate}
-                                minDate={getMinCheckoutDate()}
-                                placeholder="Select date"
-                            />
-                        </div>
+                        )}
+                        {/* Date selection hint */}
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            {!startDate
+                                ? 'Tap a date to select check-in'
+                                : !endDate
+                                    ? 'Now tap a date for check-out'
+                                    : 'Tap any date to start over'}
+                        </p>
                     </div>
 
+                    {/* Power Option for Tents */}
                     {lot.type === 'tent' && (
                         <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
                             <input
@@ -343,6 +347,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         </div>
                     )}
 
+                    {/* Special Requests */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Special Requests</label>
+                        <textarea
+                            className="w-full p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:outline-none transition-all resize-none"
+                            rows={3}
+                            placeholder="Any special requests? (e.g. near amenities, quiet area)"
+                            value={specialRequests}
+                            onChange={(e) => setSpecialRequests(e.target.value)}
+                        />
+                    </div>
+
+                    {/* Price Summary */}
                     <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl">
                         {(startDate && endDate) && (
                             <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
@@ -358,6 +375,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         </div>
                     </div>
 
+                    {/* Error Message */}
                     {error && (
                         <div className="text-red-600 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-lg flex items-center gap-2">
                             <span className="material-symbols-outlined text-sm">error</span>
@@ -365,6 +383,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         </div>
                     )}
 
+                    {/* Sign-in Warning */}
                     {!user && (
                         <div className="text-amber-600 text-sm bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg flex items-center gap-2">
                             <span className="material-symbols-outlined text-sm">warning</span>
@@ -372,12 +391,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         </div>
                     )}
 
+                    {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={isSubmitting || !user || days === 0}
+                        disabled={isSubmitting || !user || days === 0 || isAvailable === false || isCheckingAvailability}
                         className="w-full bg-primary hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2"
                     >
-                        {isSubmitting ? 'Processing...' : 'Confirm Booking'}
+                        {isCheckingAvailability ? 'Checking availability...' : isSubmitting ? 'Processing...' : 'Confirm Booking'}
                     </button>
                 </form>
             </div>

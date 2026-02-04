@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -85,6 +86,26 @@ public class Owner extends BaseEntity {
 
     @Column(name = "require_guest_verification")
     private boolean requireGuestVerification = true;
+
+    // Featured promotion fields
+    @Column(name = "is_featured", nullable = false)
+    private boolean isFeatured = false;
+
+    @Column(name = "featured_until")
+    private LocalDateTime featuredUntil;
+
+    @Column(name = "featured_purchase_id")
+    private String featuredPurchaseId;
+
+    // Stripe Connect fields
+    @Column(name = "stripe_connect_account_id")
+    private String stripeConnectAccountId;
+
+    @Column(name = "connect_onboarding_complete", nullable = false)
+    private boolean connectOnboardingComplete = false;
+
+    @Column(name = "payouts_enabled", nullable = false)
+    private boolean payoutsEnabled = false;
 
     public enum SubscriptionStatus {
         NONE,       // Never subscribed
@@ -228,4 +249,29 @@ public class Owner extends BaseEntity {
 
     public boolean isRequireGuestVerification() { return requireGuestVerification; }
     public void setRequireGuestVerification(boolean requireGuestVerification) { this.requireGuestVerification = requireGuestVerification; }
+
+    // Featured promotion getters and setters
+    public boolean isFeatured() { return isFeatured; }
+    public void setFeatured(boolean isFeatured) { this.isFeatured = isFeatured; }
+
+    public LocalDateTime getFeaturedUntil() { return featuredUntil; }
+    public void setFeaturedUntil(LocalDateTime featuredUntil) { this.featuredUntil = featuredUntil; }
+
+    public String getFeaturedPurchaseId() { return featuredPurchaseId; }
+    public void setFeaturedPurchaseId(String featuredPurchaseId) { this.featuredPurchaseId = featuredPurchaseId; }
+
+    // Helper method for checking active featured status
+    public boolean isCurrentlyFeatured() {
+        return isFeatured && featuredUntil != null && featuredUntil.isAfter(LocalDateTime.now());
+    }
+
+    // Stripe Connect getters and setters
+    public String getStripeConnectAccountId() { return stripeConnectAccountId; }
+    public void setStripeConnectAccountId(String stripeConnectAccountId) { this.stripeConnectAccountId = stripeConnectAccountId; }
+
+    public boolean isConnectOnboardingComplete() { return connectOnboardingComplete; }
+    public void setConnectOnboardingComplete(boolean connectOnboardingComplete) { this.connectOnboardingComplete = connectOnboardingComplete; }
+
+    public boolean isPayoutsEnabled() { return payoutsEnabled; }
+    public void setPayoutsEnabled(boolean payoutsEnabled) { this.payoutsEnabled = payoutsEnabled; }
 }

@@ -1,16 +1,23 @@
 package com.myisland.api.modules.marketplace.service;
 
 import com.myisland.api.config.StripeProperties;
+import com.myisland.api.modules.marketplace.dto.ConfirmSubscriptionRequest;
 import com.myisland.api.modules.marketplace.dto.CreateCheckoutSessionResponse;
 import com.myisland.api.modules.marketplace.dto.CreatePortalSessionResponse;
+import com.myisland.api.modules.marketplace.dto.SetupIntentResponse;
 import com.myisland.api.modules.marketplace.dto.SubscriptionDto;
 import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
+import com.stripe.model.PaymentMethod;
+import com.stripe.model.SetupIntent;
 import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.PaymentMethodAttachParams;
+import com.stripe.param.SetupIntentCreateParams;
+import com.stripe.param.SubscriptionCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +50,18 @@ public class SubscriptionService {
     public CreateCheckoutSessionResponse createCheckoutSession(Long supplierId, String userEmail) throws StripeException {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
+
+        // Dev mode: directly activate subscription and redirect to success URL
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Activating subscription directly for supplier {}", supplierId);
+            supplier.setStripeCustomerId("cus_dev_supplier_" + supplierId);
+            supplier.setStripeSubscriptionId("sub_dev_supplier_" + supplierId);
+            supplier.setSubscriptionStatus(Supplier.SubscriptionStatus.ACTIVE);
+            supplier.setSubscriptionCurrentPeriodEnd(Instant.now().plusSeconds(30 * 24 * 60 * 60)); // 30 days
+            supplier.setSubscriptionCancelAtPeriodEnd(false);
+            supplierRepository.save(supplier);
+            return new CreateCheckoutSessionResponse(stripeProperties.getSupplierSuccessUrl());
+        }
 
         // Create or get Stripe customer
         String customerId = supplier.getStripeCustomerId();
@@ -81,9 +100,136 @@ public class SubscriptionService {
     }
 
     @Transactional
+    public SetupIntentResponse createSetupIntent(Long supplierId, String userEmail) throws StripeException {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+
+        // Dev mode: return mock data
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Returning mock setup intent for supplier {}", supplierId);
+            String customerId = supplier.getStripeCustomerId();
+            if (customerId == null) {
+                customerId = "cus_dev_supplier_" + supplierId;
+                supplier.setStripeCustomerId(customerId);
+                supplierRepository.save(supplier);
+            }
+            return new SetupIntentResponse(
+                    "seti_dev_supplier_" + supplierId + "_secret",
+                    customerId,
+                    stripeProperties.getPublishableKey(),
+                    true
+            );
+        }
+
+        // Create or get Stripe customer
+        String customerId = supplier.getStripeCustomerId();
+        if (customerId == null) {
+            Customer customer = Customer.create(
+                    CustomerCreateParams.builder()
+                            .setEmail(userEmail)
+                            .setName(supplier.getBusinessName())
+                            .putMetadata("supplier_id", supplierId.toString())
+                            .build()
+            );
+            customerId = customer.getId();
+            supplier.setStripeCustomerId(customerId);
+            supplierRepository.save(supplier);
+        }
+
+        // Create SetupIntent
+        SetupIntentCreateParams params = SetupIntentCreateParams.builder()
+                .setCustomer(customerId)
+                .addPaymentMethodType("card")
+                .putMetadata("supplier_id", supplierId.toString())
+                .build();
+
+        SetupIntent setupIntent = SetupIntent.create(params);
+        log.info("Created setup intent {} for supplier {}", setupIntent.getId(), supplierId);
+
+        return new SetupIntentResponse(
+                setupIntent.getClientSecret(),
+                customerId,
+                stripeProperties.getPublishableKey(),
+                false
+        );
+    }
+
+    @Transactional
+    public SubscriptionDto confirmSubscription(Long supplierId, ConfirmSubscriptionRequest request) throws StripeException {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new RuntimeException("Supplier not found"));
+
+        // Dev mode: directly activate subscription
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Activating subscription directly for supplier {}", supplierId);
+            supplier.setStripeSubscriptionId("sub_dev_supplier_" + supplierId);
+            supplier.setSubscriptionStatus(Supplier.SubscriptionStatus.ACTIVE);
+            supplier.setSubscriptionCurrentPeriodEnd(Instant.now().plusSeconds(30 * 24 * 60 * 60)); // 30 days
+            supplier.setSubscriptionCancelAtPeriodEnd(false);
+            supplierRepository.save(supplier);
+            return SubscriptionDto.from(supplier);
+        }
+
+        if (supplier.getStripeCustomerId() == null) {
+            throw new RuntimeException("No Stripe customer found for this supplier");
+        }
+
+        // Attach payment method to customer
+        PaymentMethod paymentMethod = PaymentMethod.retrieve(request.paymentMethodId());
+        paymentMethod.attach(
+                PaymentMethodAttachParams.builder()
+                        .setCustomer(supplier.getStripeCustomerId())
+                        .build()
+        );
+
+        // Set as default payment method
+        Customer customer = Customer.retrieve(supplier.getStripeCustomerId());
+        customer.update(
+                com.stripe.param.CustomerUpdateParams.builder()
+                        .setInvoiceSettings(
+                                com.stripe.param.CustomerUpdateParams.InvoiceSettings.builder()
+                                        .setDefaultPaymentMethod(request.paymentMethodId())
+                                        .build()
+                        )
+                        .build()
+        );
+
+        // Create subscription
+        SubscriptionCreateParams params = SubscriptionCreateParams.builder()
+                .setCustomer(supplier.getStripeCustomerId())
+                .addItem(
+                        SubscriptionCreateParams.Item.builder()
+                                .setPrice(stripeProperties.getSupplierPriceId())
+                                .build()
+                )
+                .setDefaultPaymentMethod(request.paymentMethodId())
+                .putMetadata("supplier_id", supplierId.toString())
+                .build();
+
+        Subscription subscription = Subscription.create(params);
+        log.info("Created subscription {} for supplier {}", subscription.getId(), supplierId);
+
+        // Update supplier with subscription details
+        supplier.setStripeSubscriptionId(subscription.getId());
+        supplier.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
+        supplier.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        supplier.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
+        supplierRepository.save(supplier);
+
+        return SubscriptionDto.from(supplier);
+    }
+
+    @Transactional
     public CreatePortalSessionResponse createPortalSession(Long supplierId) throws StripeException {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
+
+        // Dev mode: redirect to settings page (no real Stripe portal)
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Returning mock portal URL for supplier {}", supplierId);
+            String returnUrl = stripeProperties.getSupplierSuccessUrl().replace("?subscription=success", "/settings");
+            return new CreatePortalSessionResponse(returnUrl);
+        }
 
         if (supplier.getStripeCustomerId() == null) {
             throw new RuntimeException("No Stripe customer found for this supplier");

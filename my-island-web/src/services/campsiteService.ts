@@ -55,7 +55,7 @@ interface OwnerApiResponse {
     propertyName: string;
     county: string;
     town: string;
-    propertyType: string;
+    propertyType: 'CAMPSITE' | 'GLAMPING' | 'CARAVAN_PARK' | 'MIXED';
     description: string;
     latitude: number | null;
     longitude: number | null;
@@ -63,6 +63,9 @@ interface OwnerApiResponse {
     website: string | null;
     amenities: Array<{ id: number; name: string; category: string }>;
     lotCount: number;
+    isFeatured: boolean;
+    featuredUntil: string | null;
+    isAcceptingBookings: boolean;
 }
 
 interface LotApiResponse {
@@ -99,11 +102,17 @@ export interface CampsiteProfile extends User {
     propertyName?: string;
     county?: string;
     town?: string;
+    propertyType?: string;
     description?: string;
     amenities?: string[];
     lotCount?: number;
     latitude?: number | null;
     longitude?: number | null;
+    isFeatured?: boolean;
+    featuredUntil?: string;
+    isAcceptingBookings?: boolean;
+    phone?: string | null;
+    website?: string | null;
 }
 
 // Helper function for API calls
@@ -151,22 +160,32 @@ async function apiRequest<T>(
             throw new NotFoundError();
         }
 
-        let errorBody: string | undefined;
+        let errorMessage = 'Request failed';
         try {
-            errorBody = await response.text();
+            const errorBody = await response.text();
+            // Try to parse as JSON first
+            try {
+                const errorJson = JSON.parse(errorBody);
+                // Extract message from common error response formats
+                errorMessage = errorJson.message || errorJson.error || errorJson.detail || errorBody;
+            } catch {
+                // If not JSON, use the raw text if it looks like a message
+                if (errorBody && errorBody.length < 500) {
+                    errorMessage = errorBody;
+                }
+            }
+            log.error('API error', undefined, {
+                endpoint,
+                statusCode: response.status,
+                errorBody,
+                durationMs
+            });
         } catch {
-            // Ignore
+            // Ignore body reading errors
         }
 
-        log.error('API error', undefined, {
-            endpoint,
-            statusCode: response.status,
-            errorBody,
-            durationMs
-        });
-
         throw new CampsiteServiceError(
-            'Request failed',
+            errorMessage,
             'API_ERROR',
             response.status
         );
@@ -186,12 +205,18 @@ function transformCampsite(api: OwnerApiResponse): CampsiteProfile {
         propertyName: api.propertyName,
         county: api.county,
         town: api.town,
+        propertyType: api.propertyType,
         description: api.description,
         amenities: api.amenities.map(a => a.name),
         lotCount: api.lotCount,
         latitude: api.latitude,
         longitude: api.longitude,
         avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(api.propertyName)}&background=059669&color=fff`,
+        isFeatured: api.isFeatured,
+        featuredUntil: api.featuredUntil ?? undefined,
+        isAcceptingBookings: api.isAcceptingBookings,
+        phone: api.phone,
+        website: api.website,
     };
 }
 
@@ -266,6 +291,11 @@ export const campsiteService = {
         return apiCampsites.map(transformCampsite);
     },
 
+    async getFeaturedCampsites(): Promise<CampsiteProfile[]> {
+        const apiCampsites = await apiRequest<OwnerApiResponse[]>('/campsites/featured');
+        return apiCampsites.map(transformCampsite);
+    },
+
     async getCampsiteById(id: string): Promise<CampsiteProfile | undefined> {
         try {
             const apiCampsite = await apiRequest<OwnerApiResponse>(`/campsites/${id}`);
@@ -311,6 +341,10 @@ export const campsiteService = {
             }
             throw error;
         }
+    },
+
+    async getBookedDates(lotId: string): Promise<Array<{ checkIn: string; checkOut: string }>> {
+        return apiRequest<Array<{ checkIn: string; checkOut: string }>>(`/campsites/lots/${lotId}/booked-dates`);
     },
 
     async createBooking(booking: Omit<Booking, 'id' | 'status'>): Promise<Booking> {

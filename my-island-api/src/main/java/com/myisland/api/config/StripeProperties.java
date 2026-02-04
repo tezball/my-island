@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class StripeProperties {
 
     private String apiKey;
+    private String publishableKey;
     private String webhookSecret;
     private String supplierPriceId;
     private String ownerPriceId;
@@ -15,9 +16,15 @@ public class StripeProperties {
     private String supplierCancelUrl;
     private String ownerSuccessUrl;
     private String ownerCancelUrl;
+    private String featuredSuccessUrl;
+    private String featuredCancelUrl;
+    private boolean devMode;
 
     public String getApiKey() { return apiKey; }
     public void setApiKey(String apiKey) { this.apiKey = apiKey; }
+
+    public String getPublishableKey() { return publishableKey; }
+    public void setPublishableKey(String publishableKey) { this.publishableKey = publishableKey; }
 
     public String getWebhookSecret() { return webhookSecret; }
     public void setWebhookSecret(String webhookSecret) { this.webhookSecret = webhookSecret; }
@@ -39,4 +46,13 @@ public class StripeProperties {
 
     public String getOwnerCancelUrl() { return ownerCancelUrl; }
     public void setOwnerCancelUrl(String ownerCancelUrl) { this.ownerCancelUrl = ownerCancelUrl; }
+
+    public String getFeaturedSuccessUrl() { return featuredSuccessUrl; }
+    public void setFeaturedSuccessUrl(String featuredSuccessUrl) { this.featuredSuccessUrl = featuredSuccessUrl; }
+
+    public String getFeaturedCancelUrl() { return featuredCancelUrl; }
+    public void setFeaturedCancelUrl(String featuredCancelUrl) { this.featuredCancelUrl = featuredCancelUrl; }
+
+    public boolean isDevMode() { return devMode; }
+    public void setDevMode(boolean devMode) { this.devMode = devMode; }
 }

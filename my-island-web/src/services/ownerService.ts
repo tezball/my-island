@@ -646,10 +646,10 @@ export const ownerService = {
 
         log.debug('Transformed bookings', { count: bookings.length });
 
-        // Filter for check-ins in next 7 days
+        // Filter for check-ins in next 7 days (include pending so owners can see new requests)
         const upcomingCheckIns = bookings.filter(b => {
             const checkIn = new Date(b.startDate);
-            return checkIn >= today && checkIn <= nextWeek && b.status === 'confirmed';
+            return checkIn >= today && checkIn <= nextWeek && (b.status === 'confirmed' || b.status === 'pending');
         });
 
         // Filter for check-outs in next 7 days
@@ -1646,5 +1646,177 @@ export const ownerService = {
         log.info('Occupancy detail analytics fetched successfully', { durationMs: Math.round(durationMs) });
 
         return data;
+    },
+
+    async purchaseFeatured(duration: '7_DAYS' | '30_DAYS'): Promise<{ checkoutUrl: string }> {
+        const endpoint = '/owner/featured/purchase';
+        const startTime = performance.now();
+
+        log.info('Initiating featured promotion purchase', { endpoint, duration });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs: performance.now() - startTime,
+                status: 'error',
+                errorType: 'AUTH_ERROR',
+            });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            log.debug('Making API request', { url: `${API_BASE}${endpoint}` });
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ duration }),
+            });
+        } catch (error) {
+            const durationMs = performance.now() - startTime;
+            log.error('Network error during fetch', error, { endpoint, durationMs });
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs,
+                status: 'error',
+                errorType: 'NETWORK_ERROR',
+            });
+            throw new NetworkError(
+                'Unable to connect to the server. Please check your internet connection.',
+                { originalError: error instanceof Error ? error.message : String(error) }
+            );
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            let errorBody: string | undefined;
+            try {
+                errorBody = await response.text();
+            } catch {
+                // Ignore
+            }
+
+            metrics.record({
+                endpoint,
+                method: 'POST',
+                durationMs,
+                status: 'error',
+                statusCode: response.status,
+                errorType: 'API_ERROR',
+            });
+
+            if (response.status === 401) {
+                throw new AuthenticationError('Session expired. Please sign in again.');
+            }
+            if (response.status === 400) {
+                throw new ApiError('Invalid duration. Please select 7 days or 30 days.', 400, { errorBody });
+            }
+            throw new ApiError(`Failed to initiate featured purchase: ${response.statusText}`, response.status, { errorBody });
+        }
+
+        const data: { checkoutUrl: string } = await response.json();
+
+        metrics.record({
+            endpoint,
+            method: 'POST',
+            durationMs,
+            status: 'success',
+            statusCode: response.status,
+        });
+
+        log.info('Featured promotion checkout created successfully', { durationMs: Math.round(durationMs) });
+
+        return data;
+    },
+
+    async confirmBooking(bookingId: string): Promise<Booking> {
+        const endpoint = `/bookings/${bookingId}/confirm`;
+
+        log.info('Confirming booking', { endpoint, bookingId });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            log.error('Network error', error, { endpoint });
+            throw new NetworkError('Unable to connect to server');
+        }
+
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to confirm booking: ${response.statusText}`, response.status);
+        }
+
+        const apiBooking: BookingApiResponse = await response.json();
+
+        return {
+            id: String(apiBooking.id),
+            userId: String(apiBooking.userId),
+            userName: apiBooking.userName,
+            lotId: String(apiBooking.lotId),
+            lotName: apiBooking.lotName,
+            startDate: apiBooking.checkInDate,
+            endDate: apiBooking.checkOutDate,
+            status: apiBooking.status.toLowerCase() as Booking['status'],
+            totalPrice: apiBooking.totalPrice,
+            details: apiBooking.specialRequests ?? undefined,
+        };
+    },
+
+    async cancelBooking(bookingId: string): Promise<Booking> {
+        const endpoint = `/bookings/${bookingId}/cancel`;
+
+        log.info('Cancelling booking', { endpoint, bookingId });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            log.error('Network error', error, { endpoint });
+            throw new NetworkError('Unable to connect to server');
+        }
+
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to cancel booking: ${response.statusText}`, response.status);
+        }
+
+        const apiBooking: BookingApiResponse = await response.json();
+
+        return {
+            id: String(apiBooking.id),
+            userId: String(apiBooking.userId),
+            userName: apiBooking.userName,
+            lotId: String(apiBooking.lotId),
+            lotName: apiBooking.lotName,
+            startDate: apiBooking.checkInDate,
+            endDate: apiBooking.checkOutDate,
+            status: apiBooking.status.toLowerCase() as Booking['status'],
+            totalPrice: apiBooking.totalPrice,
+            details: apiBooking.specialRequests ?? undefined,
+        };
     },
 };

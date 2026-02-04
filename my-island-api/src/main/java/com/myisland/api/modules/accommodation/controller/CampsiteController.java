@@ -29,6 +29,12 @@ public class CampsiteController {
         return ResponseEntity.ok(campsiteService.getAllCampsites());
     }
 
+    @GetMapping("/featured")
+    @Operation(summary = "Get featured campsites")
+    public ResponseEntity<List<OwnerDto>> getFeaturedCampsites() {
+        return ResponseEntity.ok(campsiteService.getFeaturedCampsites());
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get campsite by ID")
     public ResponseEntity<OwnerDto> getCampsiteById(@PathVariable Long id) {
@@ -68,4 +74,12 @@ public class CampsiteController {
     public ResponseEntity<LotDto> getLotById(@PathVariable Long lotId) {
         return ResponseEntity.ok(campsiteService.getLotById(lotId));
     }
+
+    @GetMapping("/lots/{lotId}/booked-dates")
+    @Operation(summary = "Get booked date ranges for a lot")
+    public ResponseEntity<List<BookedDateRange>> getBookedDates(@PathVariable Long lotId) {
+        return ResponseEntity.ok(campsiteService.getBookedDates(lotId));
+    }
+
+    public record BookedDateRange(LocalDate checkIn, LocalDate checkOut) {}
 }

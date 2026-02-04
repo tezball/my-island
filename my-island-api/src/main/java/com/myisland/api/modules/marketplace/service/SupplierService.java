@@ -119,6 +119,11 @@ public class SupplierService {
         Supplier supplier = supplierRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
 
+        // Require active subscription to create offers
+        if (!supplier.hasActiveSubscription()) {
+            throw new BadRequestException("An active subscription is required to create offers.");
+        }
+
         if (request.validUntil().isBefore(request.validFrom())) {
             throw new BadRequestException("Valid until date must be after valid from date");
         }

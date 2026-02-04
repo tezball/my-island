@@ -14,4 +14,5 @@
 - As an Owner, I want to view upcoming bookings.
 - As an Owner, I want to check guests in when they arrive.
 - As an Owner, I want to mark bookings as completed after the stay.
+- As an Owner, I want to approve or reject pending bookings.
 - As an Owner, I want to see a breakdown of earnings for each booking.

@@ -1,46 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateInput } from '../components/ui/DateInput';
+import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
 
 const CATEGORIES = [
-    { id: 'tent', icon: 'camping', label: 'Tent Pitches' },
-    { id: 'touring', icon: 'rv_hookup', label: 'Touring Pitches' },
-    { id: 'glamping', icon: 'cottage', label: 'Glamping' },
-    { id: 'cabin', icon: 'cabin', label: 'Cabins & Lodges' },
-    { id: 'mobile-home', icon: 'home', label: 'Mobile Homes' },
+    { id: 'tent', icon: 'camping', label: 'Tent Pitches', image: 'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?auto=format&fit=crop&q=80&w=600' },
+    { id: 'touring', icon: 'rv_hookup', label: 'Touring Pitches', image: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=600' },
+    { id: 'glamping', icon: 'cottage', label: 'Glamping', image: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=600' },
+    { id: 'cabin', icon: 'cabin', label: 'Cabins & Lodges', image: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=600' },
+    { id: 'mobile-home', icon: 'home', label: 'Mobile Homes', image: 'https://images.unsplash.com/photo-1566438480900-0609be27a4be?auto=format&fit=crop&q=80&w=600' },
 ];
 
-// In a real app, these would come from an API. Valid logic for now is to show Nore Valley data.
-const FEATURED = [
-    {
-        id: 'nore-valley-owner',
-        title: 'Kilkenny',
-        location: 'Kilkenny',
-        count: 1,
-        price: 30,
-        image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800'
-    }
-];
+// County images for featured destinations
+const COUNTY_IMAGES: Record<string, string> = {
+    'Cork': 'https://images.unsplash.com/photo-1590089415225-401ed6f9db8e?auto=format&fit=crop&q=80&w=800',
+    'Kerry': 'https://images.unsplash.com/photo-1564959130747-897fb406b9af?auto=format&fit=crop&q=80&w=800',
+    'Clare': 'https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&q=80&w=800',
+    'Galway': 'https://images.unsplash.com/photo-1569429593410-b498b3fb3387?auto=format&fit=crop&q=80&w=800',
+    'Donegal': 'https://images.unsplash.com/photo-1575986767340-5d17ae767ab0?auto=format&fit=crop&q=80&w=800',
+    'Wicklow': 'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&q=80&w=800',
+    'Mayo': 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800',
+    'Waterford': 'https://images.unsplash.com/photo-1558981001-792f6c0d5068?auto=format&fit=crop&q=80&w=800',
+    'Kilkenny': 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800',
+    'Wexford': 'https://images.unsplash.com/photo-1590089415225-401ed6f9db8e?auto=format&fit=crop&q=80&w=800',
+    'default': 'https://images.unsplash.com/photo-1499678329028-101435549a4e?auto=format&fit=crop&q=80&w=800',
+};
 
-const POPULAR = [
-    {
-        id: 'nore-valley-owner',
-        name: "Nore Valley Park",
-        location: "Kilkenny",
-        distance: "2.5km",
-        rating: 4.8,
-        price: 30,
-        tag: "Family",
-        tagColor: "orange",
-        image: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800"
-    }
-];
+// Campsite placeholder images based on property type
+const CAMPSITE_IMAGES: Record<string, string[]> = {
+    'CAMPSITE': [
+        'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?auto=format&fit=crop&q=80&w=800',
+    ],
+    'GLAMPING': [
+        'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?auto=format&fit=crop&q=80&w=800',
+    ],
+};
+
+interface CountyStats {
+    county: string;
+    count: number;
+    image: string;
+}
 
 export const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const [location, setLocation] = useState('');
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
+    const [campsites, setCampsites] = useState<CampsiteProfile[]>([]);
+    const [counties, setCounties] = useState<string[]>([]);
+    const [countyStats, setCountyStats] = useState<CountyStats[]>([]);
+    const [featuredCampsites, setFeaturedCampsites] = useState<CampsiteProfile[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [campsitesData, countiesData, featuredData] = await Promise.all([
+                    campsiteService.getAllCampsites(),
+                    campsiteService.getCounties(),
+                    campsiteService.getFeaturedCampsites(),
+                ]);
+                setCampsites(campsitesData);
+                setCounties(countiesData);
+                setFeaturedCampsites(featuredData);
+
+                // Calculate county stats
+                const stats = countiesData.map(county => ({
+                    county,
+                    count: campsitesData.filter(c => c.county === county).length,
+                    image: COUNTY_IMAGES[county] || COUNTY_IMAGES['default'],
+                })).filter(s => s.count > 0).sort((a, b) => b.count - a.count);
+                setCountyStats(stats);
+            } catch (error) {
+                console.error('Failed to fetch campsites:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const handleSearch = () => {
         const params = new URLSearchParams();
@@ -54,11 +98,10 @@ export const HomePage: React.FC = () => {
         navigate(`/search?type=${categoryId}`);
     };
 
-    const handleDestinationClick = (locationName: string) => {
-        navigate(`/search?location=${encodeURIComponent(locationName)}`);
+    const handleDestinationClick = (county: string) => {
+        navigate(`/search?location=${encodeURIComponent(county)}`);
     };
 
-    // Handle check-in date change - clear check-out if it's before new check-in
     const handleCheckInChange = (newCheckIn: string) => {
         setCheckIn(newCheckIn);
         if (checkOut && newCheckIn >= checkOut) {
@@ -66,7 +109,6 @@ export const HomePage: React.FC = () => {
         }
     };
 
-    // Get minimum checkout date (day after check-in)
     const getMinCheckoutDate = () => {
         if (!checkIn) return undefined;
         const nextDay = new Date(checkIn);
@@ -74,12 +116,31 @@ export const HomePage: React.FC = () => {
         return nextDay.toISOString().split('T')[0];
     };
 
+    const getCampsiteImage = (campsite: CampsiteProfile, index: number): string => {
+        const propertyType = campsite.propertyType || 'CAMPSITE';
+        const images = CAMPSITE_IMAGES[propertyType] || CAMPSITE_IMAGES['CAMPSITE'];
+        return images[index % images.length];
+    };
+
+    // Fallback: if no featured campsites, show top 8 by lot count
+    const displayFeaturedCampsites = featuredCampsites.length > 0
+        ? featuredCampsites
+        : [...campsites].sort((a, b) => (b.lotCount || 0) - (a.lotCount || 0)).slice(0, 8);
+
+    // Get top destinations (counties with most campsites)
+    const topDestinations = countyStats.slice(0, 6);
+
     return (
         <main className="flex-1 flex flex-col gap-6 pt-4 pb-20">
-            {/* Search Section */}
+            {/* Hero Search Section */}
             <section className="bg-primary pb-8 pt-4 px-4 desktop:pt-8 -mt-4 mb-8">
                 <div className="max-w-7xl mx-auto">
-                    <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white leading-tight">Find your next stay</h1>
+                    <h1 className="text-3xl md:text-5xl font-bold mb-2 text-white leading-tight">
+                        Discover Ireland's outdoors
+                    </h1>
+                    <p className="text-lg text-white/80 mb-6">
+                        {loading ? 'Loading...' : `${campsites.length} campsites across ${counties.length} counties`}
+                    </p>
                     <div className="bg-white dark:bg-[#1a2632] rounded-lg p-1 gap-1 flex flex-col md:flex-row shadow-lg border-4 border-yellow-400">
                         {/* Location Input */}
                         <div className="relative w-full flex-1 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-700">
@@ -88,11 +149,17 @@ export const HomePage: React.FC = () => {
                             </div>
                             <input
                                 className="block w-full p-4 pl-10 text-base text-gray-900 bg-transparent outline-none dark:text-white placeholder:text-gray-500"
-                                placeholder="Where are you going?"
+                                placeholder="Try 'Galway' or 'Cork'"
                                 type="text"
+                                list="county-suggestions"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                             />
+                            <datalist id="county-suggestions">
+                                {counties.map(county => (
+                                    <option key={county} value={county} />
+                                ))}
+                            </datalist>
                         </div>
 
                         {/* Check-in Date */}
@@ -132,8 +199,8 @@ export const HomePage: React.FC = () => {
                 </div>
             </section>
 
-            <div className="max-w-7xl mx-auto w-full flex flex-col gap-8 px-4 pb-12">
-                {/* Categories */}
+            <div className="max-w-7xl mx-auto w-full flex flex-col gap-10 px-4 pb-12">
+                {/* Browse by property type */}
                 <section>
                     <h3 className="text-xl font-bold text-[#111418] dark:text-white mb-4">Browse by property type</h3>
                     <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
@@ -145,13 +212,7 @@ export const HomePage: React.FC = () => {
                             >
                                 <div className="w-full aspect-[4/3] rounded-lg overflow-hidden relative">
                                     <img
-                                        src={
-                                            cat.id === 'tent' ? 'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?auto=format&fit=crop&q=80&w=600' :
-                                                cat.id === 'touring' ? 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=600' :
-                                                    cat.id === 'glamping' ? 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=600' :
-                                                        cat.id === 'cabin' ? 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=600' :
-                                                            'https://images.unsplash.com/photo-1566438480900-0609be27a4be?auto=format&fit=crop&q=80&w=600'
-                                        }
+                                        src={cat.image}
                                         alt={cat.label}
                                         className="w-full h-full object-cover transition-transform group-hover:scale-105"
                                     />
@@ -162,7 +223,7 @@ export const HomePage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* Featured Destinations */}
+                {/* Trending Destinations */}
                 <section>
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-xl font-bold text-[#111418] dark:text-white">Trending destinations</h3>
@@ -173,59 +234,174 @@ export const HomePage: React.FC = () => {
                             See all
                         </button>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {FEATURED.map((item, i) => (
-                            <div
-                                key={i}
-                                onClick={() => handleDestinationClick(item.location)}
-                                className="relative h-[270px] rounded-lg overflow-hidden group cursor-pointer shadow-sm"
-                            >
-                                <img
-                                    alt={item.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    src={item.image}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                <div className="absolute top-4 left-4">
-                                    <h4 className="text-white text-2xl font-bold drop-shadow-md">{item.title}</h4>
-                                    <img src="https://flagcdn.com/ie.svg" alt="Ireland" className="w-6 h-4 mt-2" />
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="h-[270px] rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {topDestinations.map((dest) => (
+                                <div
+                                    key={dest.county}
+                                    onClick={() => handleDestinationClick(dest.county)}
+                                    className="relative h-[270px] rounded-lg overflow-hidden group cursor-pointer shadow-sm"
+                                >
+                                    <img
+                                        alt={dest.county}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        src={dest.image}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                                        <h4 className="text-white text-2xl font-bold drop-shadow-md">{dest.county}</h4>
+                                        <p className="text-white/80 text-sm mt-1">
+                                            {dest.count} {dest.count === 1 ? 'campsite' : 'campsites'}
+                                        </p>
+                                    </div>
+                                    <div className="absolute top-4 right-4">
+                                        <img src="https://flagcdn.com/ie.svg" alt="Ireland" className="w-8 h-6 rounded shadow-sm" />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* Featured Campsites */}
+                <section>
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-xl font-bold text-[#111418] dark:text-white">
+                                {featuredCampsites.length > 0 ? 'Featured campsites' : 'Popular campsites'}
+                            </h3>
+                            {featuredCampsites.length > 0 && (
+                                <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                                    PROMOTED
+                                </span>
+                            )}
+                        </div>
+                        <button
+                            onClick={() => navigate('/search')}
+                            className="text-sm font-semibold text-primary hover:underline"
+                        >
+                            View all {campsites.length} campsites
+                        </button>
+                    </div>
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="flex flex-col gap-2">
+                                    <div className="aspect-square rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                                    <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                                    <div className="h-3 w-1/2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {displayFeaturedCampsites.map((campsite, index) => (
+                                <div
+                                    key={campsite.id}
+                                    onClick={() => navigate(`/campsite/${campsite.id}`)}
+                                    className="flex flex-col gap-2 cursor-pointer group"
+                                >
+                                    <div className="aspect-square rounded-lg overflow-hidden relative">
+                                        <img
+                                            alt={campsite.propertyName}
+                                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                            src={getCampsiteImage(campsite, index)}
+                                        />
+                                        {campsite.isFeatured && (
+                                            <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                                                <span className="material-symbols-outlined text-sm">star</span>
+                                                Featured
+                                            </div>
+                                        )}
+                                        {!campsite.isFeatured && campsite.lotCount && campsite.lotCount > 5 && (
+                                            <div className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                {campsite.lotCount} pitches
+                                            </div>
+                                        )}
+                                        <button
+                                            className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                // TODO: Save to favorites
+                                            }}
+                                        >
+                                            <span className="material-symbols-outlined text-gray-600 text-xl">favorite_border</span>
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">
+                                            {campsite.propertyName}
+                                        </h4>
+                                        <p className="text-gray-500 text-sm flex items-center gap-1">
+                                            <span className="material-symbols-outlined text-sm">location_on</span>
+                                            {campsite.town}, {campsite.county}
+                                        </p>
+                                        {campsite.amenities && campsite.amenities.length > 0 && (
+                                            <div className="flex gap-1 mt-2 flex-wrap">
+                                                {campsite.amenities.slice(0, 3).map((amenity, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded"
+                                                    >
+                                                        {amenity}
+                                                    </span>
+                                                ))}
+                                                {campsite.amenities.length > 3 && (
+                                                    <span className="text-xs text-gray-400">
+                                                        +{campsite.amenities.length - 3}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* Explore by Region CTA */}
+                <section className="bg-gradient-to-r from-primary to-emerald-600 rounded-2xl p-8 text-white">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <h3 className="text-2xl font-bold mb-2">Explore all of Ireland</h3>
+                            <p className="text-white/80">
+                                From the Wild Atlantic Way to the sunny Southeast, discover unique camping experiences across {counties.length} counties.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => navigate('/search')}
+                            className="bg-white text-primary font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap"
+                        >
+                            Explore all campsites
+                        </button>
                     </div>
                 </section>
 
-                {/* Popular Homes aka "Homes guests love" */}
-                <section>
-                    <h3 className="text-xl font-bold text-[#111418] dark:text-white mb-4">Homes guests love</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {POPULAR.map((item, i) => (
-                            <div
-                                key={i}
-                                onClick={() => navigate(`/campsite/${item.id}`)}
-                                className="flex flex-col gap-2 cursor-pointer group"
-                            >
-                                <div className="aspect-square rounded-lg overflow-hidden relative">
-                                    <img alt={item.name} className="w-full h-full object-cover" src={item.image} />
-                                    <div className="absolute top-2 right-2 bg-white rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm">
-                                        <span className="text-sm font-bold text-[#111418]">{item.rating}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">{item.name}</h4>
-                                    <p className="text-gray-500 text-sm">{item.location}</p>
-                                    <div className="flex items-center gap-1 mt-1">
-                                        <span className="bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-r-lg rounded-tl-lg">Genius</span>
-                                    </div>
-                                    <div className="mt-1 text-right md:text-left">
-                                        <span className="text-sm font-medium">Starting from </span>
-                                        <span className="text-lg font-bold text-[#111418] dark:text-white">€{item.price}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                {/* More Counties Grid */}
+                {countyStats.length > 6 && (
+                    <section>
+                        <h3 className="text-xl font-bold text-[#111418] dark:text-white mb-4">More destinations</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                            {countyStats.slice(6, 18).map((dest) => (
+                                <button
+                                    key={dest.county}
+                                    onClick={() => handleDestinationClick(dest.county)}
+                                    className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-4 text-left transition-colors"
+                                >
+                                    <div className="font-semibold text-[#111418] dark:text-white">{dest.county}</div>
+                                    <div className="text-sm text-gray-500">{dest.count} sites</div>
+                                </button>
+                            ))}
+                        </div>
+                    </section>
+                )}
             </div>
         </main>
     );

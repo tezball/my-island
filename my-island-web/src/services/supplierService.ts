@@ -1017,4 +1017,16 @@ export const supplierService = {
     getMetricsHistory() {
         return [...metrics.history];
     },
+
+    async purchaseFeatured(duration: '7_DAYS' | '30_DAYS'): Promise<{ checkoutUrl: string }> {
+        log.info('Initiating supplier featured promotion purchase', { duration });
+
+        const response = await apiRequest<{ checkoutUrl: string }>('/supplier/featured/purchase', {
+            method: 'POST',
+            body: { duration },
+        });
+
+        log.info('Supplier featured promotion checkout created successfully');
+        return response;
+    },
 };

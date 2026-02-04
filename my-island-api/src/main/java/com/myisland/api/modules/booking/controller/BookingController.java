@@ -28,8 +28,7 @@ public class BookingController {
     @GetMapping
     @Operation(summary = "Get current user's bookings")
     public ResponseEntity<List<BookingDto>> getUserBookings(
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(bookingService.getUserBookings(userDetails.getUserId()));
     }
 
@@ -37,8 +36,7 @@ public class BookingController {
     @Operation(summary = "Get booking by ID")
     public ResponseEntity<BookingDto> getBookingById(
             @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(bookingService.getBookingById(id, userDetails.getUserId()));
     }
 
@@ -46,8 +44,7 @@ public class BookingController {
     @Operation(summary = "Create a new booking")
     public ResponseEntity<BookingDto> createBooking(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody CreateBookingRequest request
-    ) {
+            @Valid @RequestBody CreateBookingRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(bookingService.createBooking(userDetails.getUserId(), request));
     }
@@ -56,8 +53,15 @@ public class BookingController {
     @Operation(summary = "Cancel a booking")
     public ResponseEntity<BookingDto> cancelBooking(
             @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(bookingService.cancelBooking(id, userDetails.getUserId()));
+    }
+
+    @PutMapping("/{id}/confirm")
+    @Operation(summary = "Confirm a booking (Owner only)")
+    public ResponseEntity<BookingDto> confirmBooking(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(bookingService.confirmBooking(id, userDetails.getUserId()));
     }
 }

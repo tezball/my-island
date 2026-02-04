@@ -1,5 +1,6 @@
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/accommodation/CampsiteControllerTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/booking/BookingControllerTest.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/booking/BookingControllerUnitTests.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/identity/AuthControllerTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/marketplace/MarketplaceControllerTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/support/BddTest.java

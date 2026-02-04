@@ -63,6 +63,7 @@ export const CampsiteDetailsPage: React.FC = () => {
     const [selectedLot, setSelectedLot] = useState<Lot | null>(null);
     const [selectedTypeLabel, setSelectedTypeLabel] = useState<string>('');
     const [selectedMinPrice, setSelectedMinPrice] = useState<number | undefined>(undefined);
+    const [showContactInfo, setShowContactInfo] = useState(false);
     const { isSaved, toggleSaved } = useSaved();
 
     useEffect(() => {
@@ -249,7 +250,15 @@ export const CampsiteDetailsPage: React.FC = () => {
                                         </div>
                                     )}
 
-                                    {isAvailable ? (
+                                    {campsite.isAcceptingBookings === false ? (
+                                        <button
+                                            onClick={() => setShowContactInfo(true)}
+                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <span className="material-symbols-outlined text-xl">call</span>
+                                            Contact Us
+                                        </button>
+                                    ) : isAvailable ? (
                                         <button
                                             className="w-full bg-primary hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
                                             onClick={() => {
@@ -265,7 +274,7 @@ export const CampsiteDetailsPage: React.FC = () => {
                                             disabled
                                             className="w-full bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-bold py-3 px-4 rounded-xl cursor-not-allowed"
                                         >
-                                            Not Available
+                                            Fully Booked
                                         </button>
                                     )}
                                 </div>
@@ -283,6 +292,80 @@ export const CampsiteDetailsPage: React.FC = () => {
                     typeLabel={selectedTypeLabel}
                     minPrice={selectedMinPrice}
                 />
+            )}
+
+            {/* Contact Info Modal */}
+            {showContactInfo && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowContactInfo(false)}>
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-bold text-[#111418] dark:text-white">Contact {campsite.name}</h2>
+                            <button onClick={() => setShowContactInfo(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+                                <span className="material-symbols-outlined text-gray-500">close</span>
+                            </button>
+                        </div>
+
+                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            This property is not currently accepting online bookings. Please contact them directly to inquire about availability.
+                        </p>
+
+                        <div className="space-y-4">
+                            {/* Location */}
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                <span className="material-symbols-outlined text-primary">location_on</span>
+                                <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Location</p>
+                                    <p className="font-medium text-[#111418] dark:text-white">{campsite.town}, {campsite.county}</p>
+                                </div>
+                            </div>
+
+                            {/* Phone */}
+                            {campsite.phone && (
+                                <a
+                                    href={`tel:${campsite.phone}`}
+                                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-primary">call</span>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
+                                        <p className="font-medium text-[#111418] dark:text-white">{campsite.phone}</p>
+                                    </div>
+                                </a>
+                            )}
+
+                            {/* Website */}
+                            {campsite.website && (
+                                <a
+                                    href={campsite.website.startsWith('http') ? campsite.website : `https://${campsite.website}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                    <span className="material-symbols-outlined text-primary">language</span>
+                                    <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Website</p>
+                                        <p className="font-medium text-[#111418] dark:text-white">{campsite.website}</p>
+                                    </div>
+                                </a>
+                            )}
+
+                            {/* No contact info available */}
+                            {!campsite.phone && !campsite.website && (
+                                <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                                    <span className="material-symbols-outlined text-4xl mb-2">info</span>
+                                    <p>No contact information available.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            onClick={() => setShowContactInfo(false)}
+                            className="w-full mt-6 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-[#111418] dark:text-white font-medium py-3 rounded-xl transition-all"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
             )}
         </main>
     );

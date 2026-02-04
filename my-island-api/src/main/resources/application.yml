@@ -54,6 +54,7 @@ jwt:
 
 stripe:
   api-key: ${STRIPE_API_KEY:sk_test_placeholder}
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_placeholder}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_placeholder}
   supplier-price-id: ${STRIPE_SUPPLIER_PRICE_ID:price_supplier_placeholder}
   owner-price-id: ${STRIPE_OWNER_PRICE_ID:price_owner_placeholder}
@@ -61,6 +62,7 @@ stripe:
   supplier-cancel-url: ${STRIPE_SUPPLIER_CANCEL_URL:http://localhost:5173/supplier?subscription=canceled}
   owner-success-url: ${STRIPE_OWNER_SUCCESS_URL:http://localhost:5173/owner?subscription=success}
   owner-cancel-url: ${STRIPE_OWNER_CANCEL_URL:http://localhost:5173/owner?subscription=canceled}
+  dev-mode: ${STRIPE_DEV_MODE:true}
 
 aws:
   s3:

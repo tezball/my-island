@@ -120,6 +120,9 @@ public class OwnerService {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
 
+        // Require active subscription to create lots
+        requireActiveSubscription(owner);
+
         Set<Amenity> amenities = new HashSet<>();
         if (request.amenityIds() != null && !request.amenityIds().isEmpty()) {
             amenities.addAll(amenityRepository.findAllById(request.amenityIds()));
@@ -301,6 +304,9 @@ public class OwnerService {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
 
+        // Require active subscription to access analytics
+        requireActiveSubscription(owner);
+
         List<Lot> lots = lotRepository.findByOwnerId(owner.getId());
 
         int available = (int) lots.stream().filter(Lot::isActive).count();
@@ -337,6 +343,9 @@ public class OwnerService {
     public BookingsDetailResponse getBookingsAnalytics(Long userId) {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        // Require active subscription to access analytics
+        requireActiveSubscription(owner);
 
         List<Booking> allBookings = bookingRepository.findByOwnerId(owner.getId());
 
@@ -395,6 +404,9 @@ public class OwnerService {
     public RevenueDetailResponse getRevenueAnalytics(Long userId) {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        // Require active subscription to access analytics
+        requireActiveSubscription(owner);
 
         List<Booking> allBookings = bookingRepository.findByOwnerId(owner.getId());
 
@@ -507,6 +519,9 @@ public class OwnerService {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
 
+        // Require active subscription to access analytics
+        requireActiveSubscription(owner);
+
         List<Lot> lots = lotRepository.findByOwnerId(owner.getId());
         List<Booking> activeBookings = bookingRepository.findByOwnerIdAndDateRange(
                 owner.getId(), LocalDate.now(), LocalDate.now());
@@ -614,5 +629,14 @@ public class OwnerService {
                 .toList();
 
         return new OccupancyDetailResponse(summary, byType, weeklyTrend, peakDays);
+    }
+
+    /**
+     * Helper method to enforce subscription requirement for premium features.
+     */
+    private void requireActiveSubscription(Owner owner) {
+        if (!owner.hasActiveSubscription()) {
+            throw new BadRequestException("An active subscription is required to access this feature.");
+        }
     }
 }

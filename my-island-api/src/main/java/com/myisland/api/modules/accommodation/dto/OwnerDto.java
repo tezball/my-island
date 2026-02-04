@@ -3,6 +3,7 @@ package com.myisland.api.modules.accommodation.dto;
 import com.myisland.api.modules.accommodation.entity.Owner;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,10 @@ public record OwnerDto(
         String phone,
         String website,
         Set<AmenityDto> amenities,
-        int lotCount
+        int lotCount,
+        boolean isFeatured,
+        LocalDateTime featuredUntil,
+        boolean isAcceptingBookings
 ) {
     public static OwnerDto from(Owner owner) {
         return new OwnerDto(
@@ -35,7 +39,10 @@ public record OwnerDto(
                 owner.getAmenities().stream()
                         .map(AmenityDto::from)
                         .collect(Collectors.toSet()),
-                owner.getLots().size()
+                owner.getLots().size(),
+                owner.isCurrentlyFeatured(),
+                owner.getFeaturedUntil(),
+                owner.hasActiveSubscription()
         );
     }
 }

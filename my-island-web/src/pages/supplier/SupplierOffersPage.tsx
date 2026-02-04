@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { supplierService, type Offer, type OfferCategory } from '../../services/supplierService';
 import { OfferFormModal } from '../../components/supplier/offers/OfferFormModal';
+import { useSubscription } from '../../context/SubscriptionContext';
 
 const CATEGORY_LABELS: Record<OfferCategory, string> = {
     FOOD: 'Food & Drink',
@@ -17,8 +18,10 @@ export const SupplierOffersPage: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
     const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
+    const { subscription, isLoading: subscriptionLoading } = useSubscription();
 
     const supplierId = 'supplier-green-acres'; // TODO: Get from auth context
+    const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
 
     useEffect(() => {
         loadOffers();
@@ -80,6 +83,28 @@ export const SupplierOffersPage: React.FC = () => {
 
     return (
         <div className="space-y-6">
+            {/* Subscription Warning */}
+            {!subscriptionLoading && !hasActiveSubscription && (
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-xl">warning</span>
+                        <div className="flex-1">
+                            <h3 className="font-medium text-amber-800 dark:text-amber-200">Subscription Required</h3>
+                            <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                                You need an active subscription to create new offers. Subscribe now to start promoting your business to guests.
+                            </p>
+                            <Link
+                                to="/supplier/settings"
+                                className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-amber-700 dark:text-amber-300 hover:text-amber-800 dark:hover:text-amber-200 transition-colors"
+                            >
+                                Go to Settings
+                                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -93,7 +118,13 @@ export const SupplierOffersPage: React.FC = () => {
                         setEditingOffer(null);
                         setIsModalOpen(true);
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
+                    disabled={!hasActiveSubscription}
+                    className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg transition-colors text-sm font-medium ${
+                        hasActiveSubscription
+                            ? 'bg-lime-500 text-white hover:bg-lime-600'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    }`}
+                    title={hasActiveSubscription ? 'Create a new offer' : 'Subscribe to create offers'}
                 >
                     <span className="material-symbols-outlined text-lg">add</span>
                     Create Offer
@@ -134,14 +165,28 @@ export const SupplierOffersPage: React.FC = () => {
                 <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center">
                     <span className="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-4">local_offer</span>
                     <h3 className="text-lg font-medium text-[#111418] dark:text-white mb-2">No offers yet</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">Create your first offer to attract guests</p>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
-                    >
-                        <span className="material-symbols-outlined text-lg">add</span>
-                        Create Offer
-                    </button>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
+                        {hasActiveSubscription
+                            ? 'Create your first offer to attract guests'
+                            : 'Subscribe to start creating offers for guests'}
+                    </p>
+                    {hasActiveSubscription ? (
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
+                        >
+                            <span className="material-symbols-outlined text-lg">add</span>
+                            Create Offer
+                        </button>
+                    ) : (
+                        <Link
+                            to="/supplier/settings"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
+                        >
+                            <span className="material-symbols-outlined text-lg">credit_card</span>
+                            Subscribe Now
+                        </Link>
+                    )}
                 </div>
             )}
 

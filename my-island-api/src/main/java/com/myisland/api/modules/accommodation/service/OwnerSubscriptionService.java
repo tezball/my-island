@@ -4,13 +4,20 @@ import com.myisland.api.config.StripeProperties;
 import com.myisland.api.modules.accommodation.dto.OwnerSubscriptionDto;
 import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
+import com.myisland.api.modules.marketplace.dto.ConfirmSubscriptionRequest;
 import com.myisland.api.modules.marketplace.dto.CreateCheckoutSessionResponse;
 import com.myisland.api.modules.marketplace.dto.CreatePortalSessionResponse;
+import com.myisland.api.modules.marketplace.dto.SetupIntentResponse;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
+import com.stripe.model.PaymentMethod;
+import com.stripe.model.SetupIntent;
 import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.PaymentMethodAttachParams;
+import com.stripe.param.SetupIntentCreateParams;
+import com.stripe.param.SubscriptionCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +50,18 @@ public class OwnerSubscriptionService {
     public CreateCheckoutSessionResponse createCheckoutSession(Long ownerId, String userEmail) throws StripeException {
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        // Dev mode: directly activate subscription and redirect to success URL
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Activating subscription directly for owner {}", ownerId);
+            owner.setStripeCustomerId("cus_dev_" + ownerId);
+            owner.setStripeSubscriptionId("sub_dev_" + ownerId);
+            owner.setSubscriptionStatus(Owner.SubscriptionStatus.ACTIVE);
+            owner.setSubscriptionCurrentPeriodEnd(Instant.now().plusSeconds(30 * 24 * 60 * 60)); // 30 days
+            owner.setSubscriptionCancelAtPeriodEnd(false);
+            ownerRepository.save(owner);
+            return new CreateCheckoutSessionResponse(stripeProperties.getOwnerSuccessUrl());
+        }
 
         // Create or get Stripe customer
         String customerId = owner.getStripeCustomerId();
@@ -81,9 +100,136 @@ public class OwnerSubscriptionService {
     }
 
     @Transactional
+    public SetupIntentResponse createSetupIntent(Long ownerId, String userEmail) throws StripeException {
+        Owner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        // Dev mode: return mock data
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Returning mock setup intent for owner {}", ownerId);
+            String customerId = owner.getStripeCustomerId();
+            if (customerId == null) {
+                customerId = "cus_dev_" + ownerId;
+                owner.setStripeCustomerId(customerId);
+                ownerRepository.save(owner);
+            }
+            return new SetupIntentResponse(
+                    "seti_dev_" + ownerId + "_secret",
+                    customerId,
+                    stripeProperties.getPublishableKey(),
+                    true
+            );
+        }
+
+        // Create or get Stripe customer
+        String customerId = owner.getStripeCustomerId();
+        if (customerId == null) {
+            Customer customer = Customer.create(
+                    CustomerCreateParams.builder()
+                            .setEmail(userEmail)
+                            .setName(owner.getPropertyName())
+                            .putMetadata("owner_id", ownerId.toString())
+                            .build()
+            );
+            customerId = customer.getId();
+            owner.setStripeCustomerId(customerId);
+            ownerRepository.save(owner);
+        }
+
+        // Create SetupIntent
+        SetupIntentCreateParams params = SetupIntentCreateParams.builder()
+                .setCustomer(customerId)
+                .addPaymentMethodType("card")
+                .putMetadata("owner_id", ownerId.toString())
+                .build();
+
+        SetupIntent setupIntent = SetupIntent.create(params);
+        log.info("Created setup intent {} for owner {}", setupIntent.getId(), ownerId);
+
+        return new SetupIntentResponse(
+                setupIntent.getClientSecret(),
+                customerId,
+                stripeProperties.getPublishableKey(),
+                false
+        );
+    }
+
+    @Transactional
+    public OwnerSubscriptionDto confirmSubscription(Long ownerId, ConfirmSubscriptionRequest request) throws StripeException {
+        Owner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        // Dev mode: directly activate subscription
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Activating subscription directly for owner {}", ownerId);
+            owner.setStripeSubscriptionId("sub_dev_" + ownerId);
+            owner.setSubscriptionStatus(Owner.SubscriptionStatus.ACTIVE);
+            owner.setSubscriptionCurrentPeriodEnd(Instant.now().plusSeconds(30 * 24 * 60 * 60)); // 30 days
+            owner.setSubscriptionCancelAtPeriodEnd(false);
+            ownerRepository.save(owner);
+            return OwnerSubscriptionDto.from(owner);
+        }
+
+        if (owner.getStripeCustomerId() == null) {
+            throw new RuntimeException("No Stripe customer found for this owner");
+        }
+
+        // Attach payment method to customer
+        PaymentMethod paymentMethod = PaymentMethod.retrieve(request.paymentMethodId());
+        paymentMethod.attach(
+                PaymentMethodAttachParams.builder()
+                        .setCustomer(owner.getStripeCustomerId())
+                        .build()
+        );
+
+        // Set as default payment method
+        Customer customer = Customer.retrieve(owner.getStripeCustomerId());
+        customer.update(
+                com.stripe.param.CustomerUpdateParams.builder()
+                        .setInvoiceSettings(
+                                com.stripe.param.CustomerUpdateParams.InvoiceSettings.builder()
+                                        .setDefaultPaymentMethod(request.paymentMethodId())
+                                        .build()
+                        )
+                        .build()
+        );
+
+        // Create subscription
+        SubscriptionCreateParams params = SubscriptionCreateParams.builder()
+                .setCustomer(owner.getStripeCustomerId())
+                .addItem(
+                        SubscriptionCreateParams.Item.builder()
+                                .setPrice(stripeProperties.getOwnerPriceId())
+                                .build()
+                )
+                .setDefaultPaymentMethod(request.paymentMethodId())
+                .putMetadata("owner_id", ownerId.toString())
+                .build();
+
+        Subscription subscription = Subscription.create(params);
+        log.info("Created subscription {} for owner {}", subscription.getId(), ownerId);
+
+        // Update owner with subscription details
+        owner.setStripeSubscriptionId(subscription.getId());
+        owner.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
+        owner.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        owner.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
+        ownerRepository.save(owner);
+
+        return OwnerSubscriptionDto.from(owner);
+    }
+
+    @Transactional
     public CreatePortalSessionResponse createPortalSession(Long ownerId) throws StripeException {
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
+
+        // Dev mode: redirect to settings page (no real Stripe portal)
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Returning mock portal URL for owner {}", ownerId);
+            String returnUrl = stripeProperties.getOwnerSuccessUrl().replace("?subscription=success", "/settings");
+            return new CreatePortalSessionResponse(returnUrl);
+        }
 
         if (owner.getStripeCustomerId() == null) {
             throw new RuntimeException("No Stripe customer found for this owner");

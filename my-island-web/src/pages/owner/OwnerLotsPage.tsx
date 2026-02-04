@@ -17,6 +17,7 @@ export const OwnerLotsPage: React.FC = () => {
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'available' | 'unavailable'>('all');
+    const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
     useEffect(() => {
         const loadLots = async () => {
@@ -33,9 +34,19 @@ export const OwnerLotsPage: React.FC = () => {
         loadLots();
     }, [user]);
 
+    // Calculate counts by type
+    const typeCounts = lots.reduce((acc, lot) => {
+        const type = lot.type || 'tent';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
     const filteredLots = lots.filter(lot => {
-        if (filter === 'available') return lot.isAvailable;
-        if (filter === 'unavailable') return !lot.isAvailable;
+        // Filter by availability
+        if (filter === 'available' && !lot.isAvailable) return false;
+        if (filter === 'unavailable' && lot.isAvailable) return false;
+        // Filter by type
+        if (typeFilter && lot.type !== typeFilter) return false;
         return true;
     });
 
@@ -52,7 +63,13 @@ export const OwnerLotsPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-[#111418] dark:text-white">My Lots</h1>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">{lots.length} total lots</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                        {typeFilter || filter !== 'all' ? (
+                            <>Showing {filteredLots.length} of {lots.length} lots</>
+                        ) : (
+                            <>{lots.length} total lots</>
+                        )}
+                    </p>
                 </div>
                 <button className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#20d85f] transition-colors text-sm font-medium w-full sm:w-auto">
                     <span className="material-symbols-outlined text-lg">add</span>
@@ -60,7 +77,52 @@ export const OwnerLotsPage: React.FC = () => {
                 </button>
             </div>
 
-            {/* Filters */}
+            {/* Type Filter */}
+            {Object.keys(typeCounts).length > 0 && (
+                <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">By Type</h2>
+                        {typeFilter && (
+                            <button
+                                onClick={() => setTypeFilter(null)}
+                                className="text-xs text-primary hover:text-emerald-600 font-medium"
+                            >
+                                Clear filter
+                            </button>
+                        )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {Object.entries(LOT_TYPE_INFO).map(([type, info]) => {
+                            const count = typeCounts[type] || 0;
+                            if (count === 0) return null;
+                            const isActive = typeFilter === type;
+                            return (
+                                <button
+                                    key={type}
+                                    onClick={() => setTypeFilter(isActive ? null : type)}
+                                    className={clsx(
+                                        'inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all',
+                                        isActive
+                                            ? 'bg-primary text-white ring-2 ring-primary ring-offset-2 dark:ring-offset-[#1a2632]'
+                                            : `${info.color} hover:opacity-80`
+                                    )}
+                                >
+                                    <span>{info.icon}</span>
+                                    <span>{info.label}</span>
+                                    <span className={clsx(
+                                        'px-1.5 py-0.5 rounded-full text-xs font-bold',
+                                        isActive ? 'bg-white/20' : 'bg-black/10'
+                                    )}>
+                                        {count}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* Availability Filters */}
             <div className="flex gap-2 overflow-x-auto pb-2">
                 {(['all', 'available', 'unavailable'] as const).map((f) => (
                     <button

@@ -2,6 +2,8 @@ package com.myisland.api.modules.marketplace.dto;
 
 import com.myisland.api.modules.marketplace.entity.Supplier;
 
+import java.time.LocalDateTime;
+
 public record SupplierDto(
         Long id,
         String businessName,
@@ -14,7 +16,9 @@ public record SupplierDto(
         String website,
         String logoUrl,
         boolean isVerified,
-        int offerCount
+        int offerCount,
+        boolean isFeatured,
+        LocalDateTime featuredUntil
 ) {
     public static SupplierDto from(Supplier supplier) {
         return new SupplierDto(
@@ -29,7 +33,9 @@ public record SupplierDto(
                 supplier.getWebsite(),
                 supplier.getLogoUrl(),
                 supplier.isVerified(),
-                supplier.getOffers().size()
+                supplier.getOffers().size(),
+                supplier.isCurrentlyFeatured(),
+                supplier.getFeaturedUntil()
         );
     }
 }

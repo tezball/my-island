@@ -38,6 +38,32 @@ export const OwnerBookingsPage: React.FC = () => {
         completed: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400',
     };
 
+    const handleConfirm = async (bookingId: string) => {
+        try {
+            await ownerService.confirmBooking(bookingId);
+            setBookings(prev => prev.map(b =>
+                b.id === bookingId ? { ...b, status: 'confirmed' } : b
+            ));
+        } catch (error) {
+            console.error('Failed to confirm booking:', error);
+            alert('Failed to confirm booking. Please try again.');
+        }
+    };
+
+    const handleReject = async (bookingId: string) => {
+        if (!confirm('Are you sure you want to reject this booking?')) return;
+
+        try {
+            await ownerService.cancelBooking(bookingId);
+            setBookings(prev => prev.map(b =>
+                b.id === bookingId ? { ...b, status: 'cancelled' } : b
+            ));
+        } catch (error) {
+            console.error('Failed to reject booking:', error);
+            alert('Failed to reject booking. Please try again.');
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -98,6 +124,26 @@ export const OwnerBookingsPage: React.FC = () => {
                         </div>
                         {booking.details && (
                             <p className="text-xs text-gray-400 mt-2">{booking.details}</p>
+                        )}
+
+                        {/* Action Buttons for Pending Bookings */}
+                        {booking.status === 'pending' && (
+                            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                                <button
+                                    onClick={() => handleConfirm(booking.id)}
+                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-lg">check</span>
+                                    Confirm
+                                </button>
+                                <button
+                                    onClick={() => handleReject(booking.id)}
+                                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-400 text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-lg">close</span>
+                                    Reject
+                                </button>
+                            </div>
                         )}
                     </div>
                 ))}
