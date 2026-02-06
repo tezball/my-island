@@ -28,8 +28,6 @@ public class LoginSteps {
 
     @When("I enter email {string} and password {string}")
     public void i_enter_email_and_password(String email, String password) {
-        System.out.println("Current URL: " + getDriver().getCurrentUrl());
-        // System.out.println("Page Source: " + getDriver().getPageSource());
         WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
         WebElement emailInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
         emailInput.clear();
@@ -42,9 +40,6 @@ public class LoginSteps {
 
     @When("I click the login button")
     public void i_click_the_login_button() {
-        // Based on SignInPage.tsx, button is "Sign In".
-        // Using xpath to be safe or css selector compatible with Tailwind.
-        // The button has "Sign In" text.
         WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
         WebElement button = wait
                 .until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(), 'Sign In')]")));
@@ -59,8 +54,6 @@ public class LoginSteps {
 
     @Then("I should see {string} in the header")
     public void i_should_see_in_the_header(String text) {
-        // Assuming the header contains the user's name or some welcome message.
-        // I will search for the text in the body for now as a catch-all.
         boolean present = new WebDriverWait(getDriver(), Duration.ofSeconds(10))
                 .until(ExpectedConditions.textToBePresentInElementLocated(By.tagName("body"), text));
         assertTrue(present, "Expected text '" + text + "' not found on page.");

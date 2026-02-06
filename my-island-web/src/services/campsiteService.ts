@@ -2,7 +2,7 @@ import type { Lot, Booking } from '../types/booking';
 import type { User } from './authService';
 
 // API configuration
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // Logging utility
 const log = {

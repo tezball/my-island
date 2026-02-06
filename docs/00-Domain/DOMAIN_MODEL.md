@@ -14,6 +14,20 @@ tags:
 
 This document defines the domain objects, states, bounded contexts, and ubiquitous language for the my-island camping/glamping booking platform.
 
+## Implementation Status
+
+| Context | Status | Notes |
+|---------|--------|-------|
+| Accommodation | Implemented | Campsite, Lot, Amenity, Image management, Owner onboarding |
+| Booking | Implemented | Booking CRUD, Stripe payment intents (authorize/capture), trip viewing |
+| Identity | Partially implemented | Email auth, password reset, email verification, profile editing. No social auth or account deletion |
+| Review | Not yet built | No entities, endpoints, or UI |
+| Communication | Not yet built | Kafka events published but no notification delivery to users |
+| Support | Not yet built | No entities, endpoints, or UI |
+| Marketplace | Implemented | Supplier onboarding, Offer CRUD, Claim/Redeem with QR codes, test claims |
+| Subscription | Implemented | Stripe subscriptions for Owners and Suppliers, featured promotions |
+| Payout | Implemented | Stripe Connect Express onboarding for Owners and Suppliers |
+
 ---
 
 ## Ubiquitous Language
@@ -59,7 +73,9 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 ### 1. Accommodation Context
 **Purpose**: Manage campsite inventory, lots, and availability.
 
-**Aggregates**: Campsite, Lot, Extra, LotAvailability, CheckInInstructions
+**Aggregates**: Campsite (as Owner), Lot, Amenity, EntityImage
+
+> **Not yet built**: Extra, LotAvailability (date blocking), CheckInInstructions
 
 **Key Operations**:
 - Create/update campsite details
@@ -70,55 +86,63 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 ### 2. Booking Context
 **Purpose**: Handle the reservation lifecycle from search to completion.
 
-**Aggregates**: Booking, BookingExtra
+**Aggregates**: Booking
+
+> **Not yet built**: BookingExtra (extras system)
 
 **Key Operations**:
 - Create booking
-- Add extras to booking
-- Process payment
-- Check-in guest
-- Cancel booking
-- Complete stay
+- Process payment (Stripe authorize/capture)
+- Cancel booking (backend only, no UI yet)
+- Confirm booking (owner approves, payment captured)
+
+> **Not yet built**: Add extras to booking, check-in guest, manual completion
 
 ### 3. Identity Context
 **Purpose**: User authentication, profiles, and preferences.
 
-**Aggregates**: User, LinkedAccount, NotificationPreferences
+**Aggregates**: User
+
+> **Not yet built**: LinkedAccount, full NotificationPreferences
 
 **Key Operations**:
-- Register/login
-- Link social accounts
-- Update profile
-- Manage notification settings
-- Delete account
+- Register/login via email
+- Password reset via email link
+- Email verification
+- Update profile (name)
+- Upgrade to Owner or Supplier
 
-### 4. Review Context
+> **Not yet built**: Social login, link social accounts, delete account, update photo/bio
+
+### 4. Review Context — *Not Yet Built*
 **Purpose**: Guest feedback and ratings system.
 
 **Aggregates**: Review
 
-**Key Operations**:
+**Key Operations** (planned):
 - Submit review (post-checkout only)
 - Rate by category
 - Owner response
 - Mark as helpful
 
-### 5. Communication Context
+### 5. Communication Context — *Not Yet Built*
 **Purpose**: Messaging between guests and hosts.
+
+> Kafka events are published for key actions (BookingCreated, BookingConfirmed, etc.) but no consumer delivers notifications to end users.
 
 **Aggregates**: Message, Notification
 
-**Key Operations**:
+**Key Operations** (planned):
 - Send/receive messages
 - System notifications
 - Booking reminders
 
-### 6. Support Context
+### 6. Support Context — *Not Yet Built*
 **Purpose**: Customer service and issue resolution.
 
 **Aggregates**: SupportTicket, TicketMessage
 
-**Key Operations**:
+**Key Operations** (planned):
 - Create ticket
 - Staff response
 - Resolve/close ticket
@@ -167,49 +191,62 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 
 ### Campsite Aggregate
 
+> **Note**: In the current implementation, the Owner entity serves as the Campsite root (one owner = one campsite). The `Campsite` concept maps to the Owner's property.
+
 ```
-Campsite (Root)
-├── Location (Value Object)
+Owner / Campsite (Root)
+├── Location (county, town, lat/lng)
 ├── Lot[] (Entity)
-│   └── LotType (Enum)
-├── Extra[] (Entity)
-├── Facility[] (Enum)
-├── CheckInInstructions (Entity)
-└── Review[] (Entity, weak reference)
+│   ├── LotType (Enum)
+│   └── Amenity[] (ManyToMany)
+├── Amenity[] (ManyToMany, property-level)
+├── EntityImage[] (Entity)
+├── Extra[] (Entity)              — NOT YET BUILT
+├── CheckInInstructions (Entity)  — NOT YET BUILT
+└── Review[] (weak reference)     — NOT YET BUILT
 ```
 
-**Campsite**
+**Owner / Campsite**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Unique identifier |
-| name | String | Display name |
+| id | Long | Unique identifier |
+| userId | Long | Reference to User |
+| propertyName | String | Display name |
+| propertyType | PropertyType | Type of accommodation business |
 | description | String | Long description |
-| location | Location | Address and coordinates |
-| images | String[] | Photo URLs |
-| rating | Decimal | Average review score (1.00-5.00) |
-| reviewCount | Integer | Total number of reviews |
-| pricePerNight | Decimal | Starting price (for display) |
-| facilities | Facility[] | Available amenities |
-| ownerId | UUID | Reference to User |
-| featured | Boolean | Promoted on homepage |
-| active | Boolean | Published/visible |
+| county | String | County location |
+| town | String | Town location |
+| latitude | BigDecimal | GPS latitude |
+| longitude | BigDecimal | GPS longitude |
+| phone | String | Contact phone |
+| website | String | Business website URL |
+| isFeatured | Boolean | Promoted on homepage |
+| featuredUntil | DateTime | When featured expires |
+| isAcceptingBookings | Boolean | Whether online booking is enabled |
+| lots | Lot[] | OneToMany |
+| amenities | Amenity[] | ManyToMany |
+
+> **Not in current implementation**: rating, reviewCount (requires Review module)
 
 **Lot**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Unique identifier |
-| campsiteId | UUID | Parent campsite |
+| id | Long | Unique identifier |
+| ownerId | Long | Parent owner/campsite |
 | name | String | Lot name (e.g., "Pitch A1") |
-| type | LotType | Accommodation type |
-| capacity | Integer | Maximum guests |
-| pricePerNight | Decimal | Base price |
-| images | String[] | Photo URLs |
-| amenities | String[] | Lot-specific amenities |
-| available | Boolean | Currently bookable |
+| lotType | LotType | Accommodation type (TENT, CAMPERVAN, GLAMPING, CABIN, TREEHOUSE, YURT, POD) |
+| description | String | Lot description |
+| maxGuests | Integer | Maximum guests (default 2) |
+| pricePerNight | BigDecimal | Base price |
+| isActive | Boolean | Currently bookable |
+| imageUrl | String | Legacy single image URL |
+| amenities | Amenity[] | ManyToMany, lot-specific amenities |
 
-**Extra**
+> Images are now managed via the EntityImage system (multi-image with primary selection).
+
+**Extra** — *Not Yet Built*
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -221,37 +258,42 @@ Campsite (Root)
 | perNight | Boolean | Charged per night vs. per stay |
 | available | Boolean | Currently offered |
 
+> The frontend has a hardcoded "Electric Hookup" add-on for tent pitches, but no backend Extra entity exists.
+
 ---
 
 ### Booking Aggregate
 
 ```
 Booking (Root)
-├── BookingExtra[] (Entity)
-├── Message[] (Entity, cross-aggregate reference)
-└── Payment (Value Object, implicit)
+├── Payment fields (embedded)
+├── BookingExtra[] (Entity)    — NOT YET BUILT
+└── Message[] (cross-ref)      — NOT YET BUILT
 ```
 
 **Booking**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Unique identifier |
-| userId | UUID | Guest who booked |
-| lotId | UUID | Reserved lot |
-| checkIn | Date | Arrival date |
-| checkOut | Date | Departure date |
-| guests | Integer | Number of guests |
+| id | Long | Unique identifier |
+| userId | Long | Guest who booked |
+| lotId | Long | Reserved lot |
+| checkInDate | LocalDate | Arrival date |
+| checkOutDate | LocalDate | Departure date |
+| numGuests | Integer | Number of guests (default 1) |
 | status | BookingStatus | Current state |
-| lotPrice | Decimal | Accommodation cost |
-| extrasPrice | Decimal | Sum of extras |
-| serviceFee | Decimal | Platform fee |
-| totalPrice | Decimal | Final amount |
+| totalPrice | BigDecimal | Final amount |
 | specialRequests | String | Guest notes |
-| cancellationReason | String | If cancelled |
+| stripePaymentIntentId | String | Stripe payment intent ID |
+| paymentStatus | PaymentStatus | NONE, AUTHORIZED, CAPTURED, RELEASED, REFUNDED, FAILED |
+| paymentCapturedAt | Instant | When payment was captured |
+| refundAmount | BigDecimal | Refund amount if applicable |
+| serviceFee | BigDecimal | Platform fee |
+| chargeTotal | BigDecimal | Total charge amount |
+| stripeTransferId | String | Stripe transfer ID for owner payout |
 | createdAt | Timestamp | Booking creation time |
 
-**BookingExtra**
+**BookingExtra** — *Not Yet Built*
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -260,7 +302,7 @@ Booking (Root)
 | extraId | UUID | Reference to Extra |
 | quantity | Integer | Amount ordered |
 | unitPrice | Decimal | Price at time of booking |
-| totalPrice | Decimal | quantity × unitPrice |
+| totalPrice | Decimal | quantity x unitPrice |
 
 ---
 
@@ -268,9 +310,9 @@ Booking (Root)
 
 ```
 User (Root)
-├── NotificationPreferences (Value Object)
-├── LinkedAccount[] (Entity)
-└── Favorite[] (Entity)
+├── LinkedAccount[] (Entity)               — NOT YET BUILT
+├── NotificationPreferences (Value Object) — NOT YET BUILT (Owner has partial prefs)
+└── Favorite[] (Entity)                    — Frontend-only via SavedContext/localStorage
 ```
 
 > **Note**: The `Supplier` entity is owned by the **Marketplace Context**, not Identity.
@@ -280,19 +322,24 @@ User (Root)
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Unique identifier |
+| id | Long | Unique identifier |
 | email | String | Login email (unique) |
 | passwordHash | String | Encrypted password |
 | name | String | Display name |
-| avatar | String | Profile image URL |
-| phone | String | Contact number |
-| bio | String | About me |
+| role | UserRole | Primary role (GUEST, OWNER, SUPPLIER) |
 | isOwner | Boolean | Has campsite management access |
 | isSupplier | Boolean | Has supplier dashboard access |
-| notificationPreferences | NotificationPreferences | Embedded settings |
+| emailVerified | Boolean | Email verification status |
+| emailVerificationToken | String | Token for email verification |
+| emailVerificationTokenExpiry | DateTime | Token expiry |
+| passwordResetToken | String | Token for password reset |
+| passwordResetTokenExpiry | DateTime | Token expiry |
 | createdAt | Timestamp | Account creation |
+| updatedAt | Timestamp | Last update |
 
-**LinkedAccount**
+> **Not in current implementation**: avatar (uses UI Avatars service), phone, bio, NotificationPreferences on User entity (Owner entity has partial preference fields)
+
+**LinkedAccount** — *Not Yet Built*
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -368,14 +415,14 @@ Supplier (Root)
 
 ---
 
-### Review Aggregate
+### Review Aggregate — *Not Yet Built*
 
 ```
 Review (Root)
 └── ReviewCategories (Value Object)
 ```
 
-**Review**
+**Review** (planned)
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -392,14 +439,14 @@ Review (Root)
 
 ---
 
-### Support Aggregate
+### Support Aggregate — *Not Yet Built*
 
 ```
 SupportTicket (Root)
 └── TicketMessage[] (Entity)
 ```
 
-**SupportTicket**
+**SupportTicket** (planned)
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -447,28 +494,29 @@ SupportTicket (Root)
 ### BookingStatus (State Machine)
 
 ```
-┌─────────┐    confirm    ┌───────────┐   check-in   ┌────────────┐  check-out  ┌───────────┐
-│ PENDING │──────────────►│ CONFIRMED │─────────────►│ CHECKED_IN │────────────►│ COMPLETED │
-└─────────┘               └───────────┘              └────────────┘             └───────────┘
-     │                          │                          │
-     │        cancel            │       cancel             │
-     └──────────────────────────┴──────────────────────────┘
-                                │
-                                ▼
-                          ┌───────────┐
-                          │ CANCELLED │
-                          └───────────┘
+┌─────────────────┐   payment    ┌─────────┐   confirm    ┌───────────┐             ┌───────────┐
+│ PENDING_PAYMENT │─────────────►│ PENDING │──────────────►│ CONFIRMED │────────────►│ COMPLETED │
+└─────────────────┘              └─────────┘               └───────────┘             └───────────┘
+         │                            │                          │
+         │ payment fails              │        cancel            │       cancel
+         ▼                            └──────────────────────────┘
+┌────────────────┐                                               │
+│ PAYMENT_FAILED │                                               ▼
+└────────────────┘                                         ┌───────────┐
+                                                           │ CANCELLED │
+                                                           └───────────┘
 ```
 
 | Status | Description |
 |--------|-------------|
-| PENDING | Booking created, awaiting payment confirmation |
-| CONFIRMED | Payment received, reservation secured |
-| CHECKED_IN | Guest has arrived |
-| COMPLETED | Stay finished, eligible for review |
-| CANCELLED | Booking cancelled by guest or owner |
+| PENDING_PAYMENT | Booking created, awaiting payment authorization |
+| PENDING | Payment authorized, awaiting owner confirmation |
+| CONFIRMED | Owner confirmed, payment captured |
+| COMPLETED | Stay completed |
+| CANCELLED | Booking cancelled |
+| PAYMENT_FAILED | Payment authorization failed |
 
-### TicketStatus
+### TicketStatus — *Not Yet Built*
 
 ```
 ┌──────┐   assign   ┌─────────────┐   resolve   ┌──────────┐   close   ┌────────┐
@@ -483,7 +531,9 @@ SupportTicket (Root)
 | RESOLVED | Issue addressed, awaiting confirmation |
 | CLOSED | Ticket finalized |
 
-### AvailabilityStatus
+### AvailabilityStatus — *Not Yet Built as Separate Entity*
+
+> The current implementation uses booking date overlap checks to prevent double bookings. There is no separate availability table or manual date blocking for owners.
 
 | Status | Description |
 |--------|-------------|
@@ -494,17 +544,17 @@ SupportTicket (Root)
 
 ### LotType
 
-Simplified to 5 types that reflect the Irish camping/glamping market:
+7 types covering the Irish camping/glamping market:
 
 | Type | Label | Description | Examples |
 |------|-------|-------------|----------|
 | TENT | Tent Pitches | Designated spots where guests pitch their own tent. Access to shared facilities (toilets, showers). | Grass pitch, hardstanding pitch |
-| TOURING | Touring Pitches | Pitches for caravans, campervans, and motorhomes. Typically include electric hookup, may have water/waste connections. | Caravan pitch, campervan spot, motorhome bay |
-| GLAMPING | Glamping | Pre-pitched luxury camping accommodation. Guests arrive to a ready setup with beds, furniture, and amenities. | Bell tent, yurt, safari tent, camping pod, geodesic dome |
-| CABIN | Cabins & Lodges | Wooden or permanent structures with beds and basic amenities. May include private bathroom, kitchenette, or heating. | Wooden cabin, lodge, treehouse, shepherd's hut |
-| MOBILE_HOME | Mobile Homes | Static caravans or mobile homes with full amenities. Self-contained units with kitchen, bathroom, and living areas. | Static caravan, holiday home, park home |
-
-> **Design Decision**: These 5 types cover 95%+ of Irish camping accommodations while remaining simple for both owners (when listing) and guests (when searching). Previous 12-type model was overly granular for the Irish market.
+| CAMPERVAN | Campervan Pitches | Pitches for campervans and motorhomes. Typically include electric hookup, may have water/waste connections. | Campervan spot, motorhome bay |
+| GLAMPING | Glamping | Pre-pitched luxury camping accommodation. Guests arrive to a ready setup with beds, furniture, and amenities. | Bell tent, safari tent, geodesic dome |
+| CABIN | Cabins & Lodges | Wooden or permanent structures with beds and basic amenities. May include private bathroom, kitchenette, or heating. | Wooden cabin, lodge, shepherd's hut |
+| TREEHOUSE | Treehouses | Elevated accommodation built in or around trees. Unique glamping experience. | Treehouse cabin, elevated pod |
+| YURT | Yurts | Circular tent structures with wooden frames. Traditional glamping option. | Traditional yurt, luxury yurt |
+| POD | Camping Pods | Small, insulated wooden pods for shelter. Compact camping alternative. | Camping pod, micro-lodge |
 
 ### Facility
 
@@ -583,7 +633,7 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 | CANCELED | Subscription was canceled |
 | UNPAID | Payment failed, subscription suspended |
 
-### SocialProvider
+### SocialProvider — *Not Yet Built*
 
 | Provider | Description |
 |----------|-------------|
@@ -599,25 +649,25 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 
 1. **Date Validation**: `checkOut` must be after `checkIn`
 2. **Guest Capacity**: `guests` cannot exceed `lot.capacity`
-3. **Availability Check**: All dates in range must have `AvailabilityStatus.AVAILABLE`
-4. **One Review Per Booking**: A booking can have at most one associated review
-5. **Review Eligibility**: Reviews can only be submitted when `status = COMPLETED`
+3. **Availability Check**: Booking dates must not overlap with existing bookings on the same lot
+4. **One Review Per Booking**: A booking can have at most one associated review *(requires Review module)*
+5. **Review Eligibility**: Reviews can only be submitted when `status = COMPLETED` *(requires Review module)*
 6. **Cancellation Window**: Defined by campsite policy (not enforced in domain)
-7. **Price Locking**: Extra prices are captured at booking time (`unitPrice`)
+7. **Price Locking**: Extra prices are captured at booking time (`unitPrice`) *(requires Extras system)*
 
 ### Campsite Rules
 
 1. **Owner Relationship**: Every campsite must have exactly one owner
 2. **Active Lots Required**: A campsite needs at least one active lot to be bookable
-3. **Rating Calculation**: `rating = average(reviews[].rating)`, updated on new review
+3. **Rating Calculation**: `rating = average(reviews[].rating)`, updated on new review *(requires Review module)*
 
 ### User Rules
 
 1. **Unique Email**: No two users can share the same email
 2. **Role Independence**: A user can be both Owner and Supplier simultaneously
-3. **Linked Account Constraint**: One linked account per provider per user
+3. **Linked Account Constraint**: One linked account per provider per user *(requires LinkedAccount entity)*
 
-### Review Rules
+### Review Rules *(requires Review module)*
 
 1. **Rating Range**: Overall rating must be 1-5
 2. **Category Ratings**: Each category (cleanliness, location, value, facilities) must be 1-5
@@ -672,15 +722,17 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 
 ## Entity Relationships
 
+> Solid lines = implemented. Dashed descriptions = not yet built.
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ IDENTITY CONTEXT                                                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ User (1) ──────────────────── (0..*) LinkedAccount                          │
+│ User                                                                        │
 │   │                                                                         │
-│   ├──── (0..*) Favorite                                                     │
-│   │                                                                         │
-│   └──── (0..*) Notification                                                 │
+│   ├──── (0..*) LinkedAccount          — NOT YET BUILT                       │
+│   ├──── (0..*) Favorite               — Frontend-only (localStorage)        │
+│   └──── (0..*) Notification           — NOT YET BUILT                       │
 └─────────────────────────────────────────────────────────────────────────────┘
       │
       │ userId references
@@ -688,27 +740,30 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ ACCOMMODATION CONTEXT                                                       │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ User (isOwner=true) ─────── (0..*) Campsite                                 │
+│ User (isOwner=true) ─────── (0..1) Owner                                    │
 │                                      │                                      │
-│                                      ├── (1..*) Lot ─── (0..*) Availability │
-│                                      ├── (0..*) Extra                       │
-│                                      └── (0..1) CheckInInstructions         │
+│                                      ├── (0..*) Lot ── (0..*) Amenity       │
+│                                      ├── (0..*) Amenity (property-level)    │
+│                                      ├── (0..*) EntityImage                 │
+│                                      ├── (0..*) Extra          — NOT YET BUILT
+│                                      └── (0..1) CheckInInstr.  — NOT YET BUILT
 └─────────────────────────────────────────────────────────────────────────────┘
       │
-      │ lotId, extraId references
+      │ lotId references
       ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ BOOKING CONTEXT                                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ User ─────── (0..*) Booking ─────────────────────────────────── (1) Lot     │
 │                      │                                                      │
-│                      ├── (0..*) BookingExtra ── (1) Extra                   │
-│                      ├── (0..*) Message                                     │
-│                      └── (0..1) Review                                      │
+│                      ├── Payment fields (embedded)                          │
+│                      ├── (0..*) BookingExtra       — NOT YET BUILT          │
+│                      ├── (0..*) Message            — NOT YET BUILT          │
+│                      └── (0..1) Review             — NOT YET BUILT          │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ SUPPORT CONTEXT                                                             │
+│ SUPPORT CONTEXT — NOT YET BUILT                                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ User ─────── (0..*) SupportTicket ── (0..*) TicketMessage                   │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -727,19 +782,19 @@ Simplified to 5 types that reflect the Irish camping/glamping market:
 ## Aggregate Invariants
 
 ### Campsite Aggregate
-- `rating` must equal the average of all associated review ratings
-- `reviewCount` must equal the count of associated reviews
 - `lots` cannot be empty for an active campsite
+- `rating` must equal the average of all associated review ratings *(requires Review module)*
+- `reviewCount` must equal the count of associated reviews *(requires Review module)*
 
 ### Booking Aggregate
-- `totalPrice = lotPrice + extrasPrice + serviceFee`
-- `extrasPrice = sum(bookingExtras[].totalPrice)`
-- Status transitions must follow the state machine
+- `totalPrice` captures final amount at booking time
+- Status transitions must follow the state machine (PENDING_PAYMENT → PENDING → CONFIRMED → COMPLETED)
+- `totalPrice = lotPrice + extrasPrice + serviceFee` *(extrasPrice requires Extras system)*
 
 ### User Aggregate
-- At most one `LinkedAccount` per `SocialProvider`
-- `NotificationPreferences` must never be null
+- At most one `LinkedAccount` per `SocialProvider` *(requires LinkedAccount entity)*
+- `NotificationPreferences` must never be null *(requires full NotificationPreferences implementation)*
 
-### Review Aggregate
+### Review Aggregate *(requires Review module)*
 - `bookingId` must reference a booking with `status = COMPLETED`
 - One review per booking (unique constraint)

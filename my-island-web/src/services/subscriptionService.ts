@@ -1,6 +1,6 @@
 import type { SubscriptionDto, CreateCheckoutSessionResponse, CreatePortalSessionResponse } from '../types/subscription';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');

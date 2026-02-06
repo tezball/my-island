@@ -1,6 +1,14 @@
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/RunCucumberTests.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/hooks/WebDriverHooks.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/AccommodationSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/AuthSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/BookingSteps.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/LoginSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/MarketplaceSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/NavigationSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/PasswordResetSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/SearchSteps.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/e2e/steps/TripSteps.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/accommodation/CampsiteControllerTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/booking/BookingControllerTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/booking/BookingControllerUnitTests.java
