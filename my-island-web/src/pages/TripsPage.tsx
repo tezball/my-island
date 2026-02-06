@@ -9,6 +9,9 @@ export const TripsPage: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+    const [cancellingBookingId, setCancellingBookingId] = useState<string | null>(null);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const [cancelError, setCancelError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -31,6 +34,28 @@ export const TripsPage: React.FC = () => {
         const [d, m, y] = dateStr.split('/');
         return new Date(`${y}-${m}-${d}`);
     };
+
+    const handleCancelBooking = async () => {
+        if (!cancellingBookingId) return;
+        setIsCancelling(true);
+        setCancelError(null);
+        try {
+            await campsiteService.cancelBooking(cancellingBookingId);
+            setBookings(prev =>
+                prev.map(b =>
+                    b.id === cancellingBookingId ? { ...b, status: 'cancelled' as const } : b
+                )
+            );
+            setCancellingBookingId(null);
+        } catch {
+            setCancelError('Failed to cancel booking. Please try again.');
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
+    const isCancellable = (status: Booking['status']) =>
+        status === 'pending' || status === 'pending_payment' || status === 'confirmed';
 
     // Categorize bookings
     const now = new Date();
@@ -148,13 +173,21 @@ export const TripsPage: React.FC = () => {
 
                 {/* Card Footer */}
                 {!isPast && booking.status !== 'cancelled' && (
-                    <div className="px-4 pb-4">
+                    <div className="px-4 pb-4 flex gap-2">
                         <button
                             onClick={() => setSelectedBooking(booking)}
-                            className="w-full py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
+                            className="flex-1 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
                         >
                             View Details
                         </button>
+                        {isCancellable(booking.status) && (
+                            <button
+                                onClick={() => { setCancelError(null); setCancellingBookingId(booking.id); }}
+                                className="flex-1 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 transition-colors"
+                            >
+                                Cancel Booking
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
@@ -257,6 +290,49 @@ export const TripsPage: React.FC = () => {
                             </div>
                         </section>
                     )}
+                </div>
+            )}
+
+            {/* Cancel Confirmation Dialog */}
+            {cancellingBookingId && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-[#1a2632] rounded-2xl shadow-2xl max-w-sm w-full p-6">
+                        <div className="flex items-center justify-center w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full mx-auto mb-4">
+                            <span className="material-symbols-outlined text-red-600 dark:text-red-400">warning</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-[#111418] dark:text-white text-center mb-2">
+                            Cancel Booking
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-center text-sm mb-6">
+                            Are you sure you want to cancel this booking? This action cannot be undone.
+                        </p>
+                        {cancelError && (
+                            <p className="text-red-600 dark:text-red-400 text-sm text-center mb-4">{cancelError}</p>
+                        )}
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setCancellingBookingId(null)}
+                                disabled={isCancelling}
+                                className="flex-1 py-2.5 text-sm font-semibold text-[#111418] dark:text-white border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                            >
+                                Keep Booking
+                            </button>
+                            <button
+                                onClick={handleCancelBooking}
+                                disabled={isCancelling}
+                                className="flex-1 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                {isCancelling ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                        Cancelling...
+                                    </>
+                                ) : (
+                                    'Cancel Booking'
+                                )}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 

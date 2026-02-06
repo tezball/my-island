@@ -13,7 +13,7 @@ const TOTAL_STEPS = 4;
 const SUPPLIER_STEP_LABELS = ['Business Type', 'Details', 'Review', 'Payment'];
 
 const BecomeSupplierContent: React.FC = () => {
-    const { user, isAuthenticated, upgradeToSupplier } = useAuth();
+    const { user, isAuthenticated, patchUser } = useAuth();
     const { state } = useSupplierBusinessOnboarding();
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,7 @@ const BecomeSupplierContent: React.FC = () => {
                 servicesOffered: state.servicesOffered,
             });
 
-            await upgradeToSupplier();
+            patchUser({ isSupplier: true });
             // Don't reset state yet - go to payment step
             nextStep();
         } catch (error) {

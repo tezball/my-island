@@ -10,6 +10,7 @@ interface AuthContextType {
     logout: () => Promise<void>;
     upgradeToOwner: () => Promise<void>;
     upgradeToSupplier: () => Promise<void>;
+    patchUser: (updates: Partial<User>) => void;
     requestPasswordReset: (email: string) => Promise<void>;
     resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
@@ -96,6 +97,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const patchUser = (updates: Partial<User>) => {
+        if (!user) return;
+        const newUser = { ...user, ...updates };
+        setUser(newUser);
+        localStorage.setItem('user', JSON.stringify(newUser));
+    };
+
     const requestPasswordReset = async (email: string) => {
         setIsLoading(true);
         try {
@@ -115,7 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, signup, logout, upgradeToOwner, upgradeToSupplier, requestPasswordReset, resetPassword }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, signup, logout, upgradeToOwner, upgradeToSupplier, patchUser, requestPasswordReset, resetPassword }}>
             {children}
         </AuthContext.Provider>
     );
