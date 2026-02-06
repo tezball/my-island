@@ -78,7 +78,7 @@ public class OwnerSubscriptionService {
             ownerRepository.save(owner);
         }
 
-        // Create checkout session for €20/month owner subscription
+        // Create checkout session for €15/month owner subscription
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .setCustomer(customerId)

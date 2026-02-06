@@ -285,7 +285,7 @@ const BillingSection: React.FC = () => {
                 <div className="flex items-center justify-between py-2 border-t border-gray-100 dark:border-gray-800">
                     <div>
                         <p className="font-medium text-[#111418] dark:text-white">Monthly Plan</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">€20/month</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">€15/month</p>
                     </div>
                     {subscription?.hasActiveSubscription || subscription?.hasLapsedSubscription ? (
                         <button
@@ -313,7 +313,7 @@ const BillingSection: React.FC = () => {
                 onSuccess={handleSubscriptionSuccess}
                 createSetupIntent={ownerSubscriptionApi.createSetupIntent}
                 confirmSubscription={ownerSubscriptionApi.confirmSubscription}
-                pricePerMonth="€20"
+                pricePerMonth="€15"
                 planName="Owner Plan"
             />
         </div>

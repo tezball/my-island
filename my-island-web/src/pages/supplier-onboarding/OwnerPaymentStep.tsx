@@ -31,7 +31,7 @@ export const OwnerPaymentStep: React.FC<OwnerPaymentStepProps> = ({ onBack }) =>
           Activate your subscription
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Start hosting campers for just €20/month
+          Start hosting campers for just €15/month
         </p>
       </div>
 
@@ -39,7 +39,7 @@ export const OwnerPaymentStep: React.FC<OwnerPaymentStepProps> = ({ onBack }) =>
         {/* Pricing Card */}
         <div className="bg-gradient-to-br from-primary to-emerald-600 rounded-xl p-6 text-white">
           <div className="flex items-baseline gap-1 mb-2">
-            <span className="text-4xl font-bold">€20</span>
+            <span className="text-4xl font-bold">€15</span>
             <span className="text-xl">/month</span>
           </div>
           <p className="text-emerald-100 text-sm mb-4">

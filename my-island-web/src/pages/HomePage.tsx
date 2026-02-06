@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateInput } from '../components/ui/DateInput';
 import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
+import { supplierService, type Offer, type Supplier } from '../services/supplierService';
 
 const CATEGORIES = [
     { id: 'tent', icon: 'camping', label: 'Tent Pitches', image: 'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?auto=format&fit=crop&q=80&w=600' },
@@ -56,19 +57,22 @@ export const HomePage: React.FC = () => {
     const [counties, setCounties] = useState<string[]>([]);
     const [countyStats, setCountyStats] = useState<CountyStats[]>([]);
     const [featuredCampsites, setFeaturedCampsites] = useState<CampsiteProfile[]>([]);
+    const [supplierOffers, setSupplierOffers] = useState<(Offer & { supplier: Supplier })[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [campsitesData, countiesData, featuredData] = await Promise.all([
+                const [campsitesData, countiesData, featuredData, offersData] = await Promise.all([
                     campsiteService.getAllCampsites(),
                     campsiteService.getCounties(),
                     campsiteService.getFeaturedCampsites(),
+                    supplierService.getAllActiveOffers().catch(() => []),
                 ]);
                 setCampsites(campsitesData);
                 setCounties(countiesData);
                 setFeaturedCampsites(featuredData);
+                setSupplierOffers(offersData);
 
                 // Calculate county stats
                 const stats = countiesData.map(county => ({
@@ -122,10 +126,18 @@ export const HomePage: React.FC = () => {
         return images[index % images.length];
     };
 
-    // Fallback: if no featured campsites, show top 8 by lot count
-    const displayFeaturedCampsites = featuredCampsites.length > 0
+    // Fallback: if no featured campsites, show top by lot count — max 4
+    const displayFeaturedCampsites = (featuredCampsites.length > 0
         ? featuredCampsites
-        : [...campsites].sort((a, b) => (b.lotCount || 0) - (a.lotCount || 0)).slice(0, 8);
+        : [...campsites].sort((a, b) => (b.lotCount || 0) - (a.lotCount || 0))
+    ).slice(0, 4);
+
+    // Deduplicate suppliers from offers, max 4
+    const displaySuppliers = supplierOffers.reduce<(Offer & { supplier: Supplier })[]>((acc, o) => {
+        if (acc.length >= 4) return acc;
+        if (!acc.some(x => x.supplier.id === o.supplier.id)) acc.push(o);
+        return acc;
+    }, []);
 
     // Get top destinations (counties with most campsites)
     const topDestinations = countyStats.slice(0, 6);
@@ -223,6 +235,131 @@ export const HomePage: React.FC = () => {
                     </div>
                 </section>
 
+                {/* Featured Campsites */}
+                {!loading && displayFeaturedCampsites.length > 0 && (
+                    <section>
+                        <div className="flex justify-between items-center mb-4">
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-xl font-bold text-[#111418] dark:text-white">
+                                    {featuredCampsites.length > 0 ? 'Featured campsites' : 'Popular campsites'}
+                                </h3>
+                                {featuredCampsites.length > 0 && (
+                                    <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                                        PROMOTED
+                                    </span>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => navigate('/search')}
+                                className="text-sm font-semibold text-primary hover:underline"
+                            >
+                                View all
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {displayFeaturedCampsites.map((campsite, index) => (
+                                <div
+                                    key={campsite.id}
+                                    onClick={() => navigate(`/campsite/${campsite.id}`)}
+                                    className="flex flex-col gap-2 cursor-pointer group"
+                                >
+                                    <div className="aspect-square rounded-lg overflow-hidden relative">
+                                        <img
+                                            alt={campsite.propertyName}
+                                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                            src={getCampsiteImage(campsite, index)}
+                                        />
+                                        {campsite.isFeatured && (
+                                            <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                                                <span className="material-symbols-outlined text-sm">star</span>
+                                                Featured
+                                            </div>
+                                        )}
+                                        {!campsite.isFeatured && campsite.lotCount && campsite.lotCount > 5 && (
+                                            <div className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
+                                                {campsite.lotCount} pitches
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">
+                                            {campsite.propertyName}
+                                        </h4>
+                                        <p className="text-gray-500 text-sm flex items-center gap-1">
+                                            <span className="material-symbols-outlined text-sm">location_on</span>
+                                            {campsite.town}, {campsite.county}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Featured Suppliers */}
+                {!loading && displaySuppliers.length > 0 && (
+                    <section>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-bold text-[#111418] dark:text-white">Local suppliers & experiences</h3>
+                            <button
+                                onClick={() => navigate('/marketplace')}
+                                className="text-sm font-semibold text-primary hover:underline"
+                            >
+                                Browse marketplace
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {displaySuppliers.map((item) => (
+                                <div
+                                    key={item.supplier.id}
+                                    onClick={() => navigate('/marketplace')}
+                                    className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden cursor-pointer group hover:shadow-md transition-shadow"
+                                >
+                                    {item.imageUrl ? (
+                                        <div className="aspect-[16/9] overflow-hidden">
+                                            <img
+                                                src={item.imageUrl}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="aspect-[16/9] bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-4xl text-white/60">storefront</span>
+                                        </div>
+                                    )}
+                                    <div className="p-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            {item.supplier.logo ? (
+                                                <img
+                                                    src={item.supplier.logo}
+                                                    alt={item.supplier.businessName}
+                                                    className="w-8 h-8 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-primary text-sm">storefront</span>
+                                                </div>
+                                            )}
+                                            <span className="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">
+                                                {item.supplier.businessName}
+                                            </span>
+                                        </div>
+                                        <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">
+                                            {item.title}
+                                        </h4>
+                                        {item.discountPercent > 0 && (
+                                            <span className="inline-block mt-2 text-xs font-bold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">
+                                                {item.discountPercent}% off
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* Trending Destinations */}
                 <section>
                     <div className="flex justify-between items-center mb-4">
@@ -262,103 +399,6 @@ export const HomePage: React.FC = () => {
                                     </div>
                                     <div className="absolute top-4 right-4">
                                         <img src="https://flagcdn.com/ie.svg" alt="Ireland" className="w-8 h-6 rounded shadow-sm" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* Featured Campsites */}
-                <section>
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-xl font-bold text-[#111418] dark:text-white">
-                                {featuredCampsites.length > 0 ? 'Featured campsites' : 'Popular campsites'}
-                            </h3>
-                            {featuredCampsites.length > 0 && (
-                                <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full">
-                                    PROMOTED
-                                </span>
-                            )}
-                        </div>
-                        <button
-                            onClick={() => navigate('/search')}
-                            className="text-sm font-semibold text-primary hover:underline"
-                        >
-                            View all {campsites.length} campsites
-                        </button>
-                    </div>
-                    {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="flex flex-col gap-2">
-                                    <div className="aspect-square rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
-                                    <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-                                    <div className="h-3 w-1/2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {displayFeaturedCampsites.map((campsite, index) => (
-                                <div
-                                    key={campsite.id}
-                                    onClick={() => navigate(`/campsite/${campsite.id}`)}
-                                    className="flex flex-col gap-2 cursor-pointer group"
-                                >
-                                    <div className="aspect-square rounded-lg overflow-hidden relative">
-                                        <img
-                                            alt={campsite.propertyName}
-                                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                                            src={getCampsiteImage(campsite, index)}
-                                        />
-                                        {campsite.isFeatured && (
-                                            <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-sm">star</span>
-                                                Featured
-                                            </div>
-                                        )}
-                                        {!campsite.isFeatured && campsite.lotCount && campsite.lotCount > 5 && (
-                                            <div className="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
-                                                {campsite.lotCount} pitches
-                                            </div>
-                                        )}
-                                        <button
-                                            className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // TODO: Save to favorites
-                                            }}
-                                        >
-                                            <span className="material-symbols-outlined text-gray-600 text-xl">favorite_border</span>
-                                        </button>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">
-                                            {campsite.propertyName}
-                                        </h4>
-                                        <p className="text-gray-500 text-sm flex items-center gap-1">
-                                            <span className="material-symbols-outlined text-sm">location_on</span>
-                                            {campsite.town}, {campsite.county}
-                                        </p>
-                                        {campsite.amenities && campsite.amenities.length > 0 && (
-                                            <div className="flex gap-1 mt-2 flex-wrap">
-                                                {campsite.amenities.slice(0, 3).map((amenity, i) => (
-                                                    <span
-                                                        key={i}
-                                                        className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded"
-                                                    >
-                                                        {amenity}
-                                                    </span>
-                                                ))}
-                                                {campsite.amenities.length > 3 && (
-                                                    <span className="text-xs text-gray-400">
-                                                        +{campsite.amenities.length - 3}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             ))}

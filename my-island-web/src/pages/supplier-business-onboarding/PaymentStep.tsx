@@ -31,7 +31,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({ onBack }) => {
           Activate your subscription
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Start reaching campers for just €1/month
+          Start reaching campers for just €5/month
         </p>
       </div>
 
@@ -39,7 +39,7 @@ export const PaymentStep: React.FC<PaymentStepProps> = ({ onBack }) => {
         {/* Pricing Card */}
         <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white">
           <div className="flex items-baseline gap-1 mb-2">
-            <span className="text-4xl font-bold">€1</span>
+            <span className="text-4xl font-bold">€5</span>
             <span className="text-xl">/month</span>
           </div>
           <p className="text-purple-100 text-sm mb-4">
