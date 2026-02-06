@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import {
     supplierService,
     type Offer,
@@ -22,6 +23,7 @@ type ClaimFilter = 'all' | 'claimed' | 'redeemed' | 'expired';
 export const SupplierOfferDetailPage: React.FC = () => {
     const { offerId } = useParams<{ offerId: string }>();
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [offer, setOffer] = useState<Offer | null>(null);
     const [claims, setClaims] = useState<OfferClaim[]>([]);
@@ -35,7 +37,7 @@ export const SupplierOfferDetailPage: React.FC = () => {
     const [resettingClaimId, setResettingClaimId] = useState<string | null>(null);
     const [supplier, setSupplier] = useState<Supplier | null>(null);
 
-    const supplierId = 'supplier-green-acres'; // TODO: Get from auth context
+    const supplierId = user?.id ?? '';
 
     useEffect(() => {
         loadData();

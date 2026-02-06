@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supplierService, type Offer, type Supplier, type OfferClaim } from '../../services/supplierService';
 import { useAuth } from '../../context/AuthContext';
 
-type RedeemState = 'loading' | 'valid' | 'already_redeemed' | 'expired' | 'not_found' | 'wrong_supplier' | 'redeeming' | 'success';
+type RedeemState = 'loading' | 'valid' | 'already_redeemed' | 'expired' | 'not_found' | 'redeeming' | 'success';
 
 interface ClaimData {
     claim: OfferClaim;
@@ -36,14 +36,6 @@ export const SupplierRedeemPage: React.FC = () => {
             }
 
             setClaimData(data);
-
-            // Check if this claim belongs to the logged-in supplier
-            // For now, we're using a hardcoded supplier ID - in production, get from auth
-            const currentSupplierId = 'supplier-green-acres'; // TODO: Get from auth context
-            if (data.supplier.id !== currentSupplierId) {
-                setState('wrong_supplier');
-                return;
-            }
 
             // Check claim status
             if (data.claim.status === 'redeemed') {
@@ -313,39 +305,6 @@ export const SupplierRedeemPage: React.FC = () => {
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-
-                        {renderManualEntry()}
-                    </div>
-                );
-
-            case 'wrong_supplier':
-                return (
-                    <div className="space-y-6">
-                        <div className="flex justify-center">
-                            <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-                                <span className="material-symbols-outlined text-4xl text-red-600 dark:text-red-400">
-                                    block
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="text-center">
-                            <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">
-                                Wrong Supplier
-                            </h2>
-                            <p className="text-gray-500 dark:text-gray-400">
-                                This voucher belongs to a different supplier.
-                            </p>
-                        </div>
-
-                        {claimData && (
-                            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
-                                <p className="text-sm text-gray-500">This voucher is for:</p>
-                                <p className="font-semibold text-[#111418] dark:text-white">
-                                    {claimData.supplier.businessName}
-                                </p>
                             </div>
                         )}
 

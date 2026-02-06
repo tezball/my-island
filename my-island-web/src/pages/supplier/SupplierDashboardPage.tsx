@@ -29,15 +29,13 @@ export const SupplierDashboardPage: React.FC = () => {
     const [offersData, setOffersData] = useState<ActiveOffersDetailResponse | null>(null);
     const [claimsData, setClaimsData] = useState<ClaimsDetailResponse | null>(null);
 
-    const supplierId = 'supplier-green-acres'; // TODO: Use actual supplier ID
-
     useEffect(() => {
         const loadData = async () => {
             if (!user) return;
             try {
                 const [supplierData, statsData] = await Promise.all([
                     supplierService.getSupplierProfile(user.id),
-                    supplierService.getDashboardStats(supplierId)
+                    supplierService.getDashboardStats(user.id)
                 ]);
                 setSupplier(supplierData);
                 setStats(statsData);
@@ -56,11 +54,11 @@ export const SupplierDashboardPage: React.FC = () => {
             setFilterLoading(true);
             try {
                 if (activeFilter === 'offers') {
-                    const data = await supplierService.getActiveOffersDetail(supplierId);
+                    const data = await supplierService.getActiveOffersDetail(user?.id ?? '');
                     setOffersData(data);
                 } else {
                     const period = activeFilter === 'claims-all' ? 'all' : 'month';
-                    const data = await supplierService.getClaimsDetail(supplierId, period);
+                    const data = await supplierService.getClaimsDetail(user?.id ?? '', period);
                     setClaimsData(data);
                 }
             } catch (error) {

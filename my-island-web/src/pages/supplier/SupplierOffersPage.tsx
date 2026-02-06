@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { supplierService, type Offer, type OfferCategory } from '../../services/supplierService';
 import { OfferFormModal } from '../../components/supplier/offers/OfferFormModal';
 import { useSubscription } from '../../context/SubscriptionContext';
@@ -13,6 +14,7 @@ const CATEGORY_LABELS: Record<OfferCategory, string> = {
 };
 
 export const SupplierOffersPage: React.FC = () => {
+    const { user } = useAuth();
     const [offers, setOffers] = useState<Offer[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +22,7 @@ export const SupplierOffersPage: React.FC = () => {
     const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all');
     const { subscription, isLoading: subscriptionLoading } = useSubscription();
 
-    const supplierId = 'supplier-green-acres'; // TODO: Get from auth context
+    const supplierId = user?.id ?? '';
     const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
 
     useEffect(() => {
