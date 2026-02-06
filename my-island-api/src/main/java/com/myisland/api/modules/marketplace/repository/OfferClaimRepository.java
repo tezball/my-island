@@ -32,4 +32,13 @@ public interface OfferClaimRepository extends JpaRepository<OfferClaim, Long> {
     long countBySupplierIdAndStatus(Long supplierId, OfferClaim.ClaimStatus status);
 
     boolean existsByOfferIdAndUserIdAndIsTestFalse(Long offerId, Long userId);
+
+    @Query("""
+            SELECT c FROM OfferClaim c
+            JOIN FETCH c.user
+            JOIN FETCH c.offer o
+            JOIN FETCH o.supplier
+            WHERE c.id = :id
+            """)
+    Optional<OfferClaim> findByIdWithDetails(Long id);
 }

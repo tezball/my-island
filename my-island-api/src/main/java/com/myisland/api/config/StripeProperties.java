@@ -18,6 +18,9 @@ public class StripeProperties {
     private String ownerCancelUrl;
     private String featuredSuccessUrl;
     private String featuredCancelUrl;
+    private String bookingSuccessUrl;
+    private String bookingCancelUrl;
+    private double serviceFeePercent;
     private boolean devMode;
 
     public String getApiKey() { return apiKey; }
@@ -52,6 +55,15 @@ public class StripeProperties {
 
     public String getFeaturedCancelUrl() { return featuredCancelUrl; }
     public void setFeaturedCancelUrl(String featuredCancelUrl) { this.featuredCancelUrl = featuredCancelUrl; }
+
+    public String getBookingSuccessUrl() { return bookingSuccessUrl; }
+    public void setBookingSuccessUrl(String bookingSuccessUrl) { this.bookingSuccessUrl = bookingSuccessUrl; }
+
+    public String getBookingCancelUrl() { return bookingCancelUrl; }
+    public void setBookingCancelUrl(String bookingCancelUrl) { this.bookingCancelUrl = bookingCancelUrl; }
+
+    public double getServiceFeePercent() { return serviceFeePercent; }
+    public void setServiceFeePercent(double serviceFeePercent) { this.serviceFeePercent = serviceFeePercent; }
 
     public boolean isDevMode() { return devMode; }
     public void setDevMode(boolean devMode) { this.devMode = devMode; }

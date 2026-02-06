@@ -10,10 +10,11 @@ import com.myisland.api.shared.events.BookingEvent;
 import com.myisland.api.shared.events.OfferEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDateTime;
 
@@ -34,10 +35,10 @@ public class EventPublisher {
         this.offerClaimRepository = offerClaimRepository;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
     public void handleBookingEvent(BookingEvent event) {
-        Booking booking = bookingRepository.findById(event.getBookingId()).orElse(null);
+        Booking booking = bookingRepository.findByIdWithDetails(event.getBookingId()).orElse(null);
         if (booking == null) {
             log.warn("Booking not found for event: {}", event.getBookingId());
             return;
@@ -71,10 +72,10 @@ public class EventPublisher {
         log.info("Published booking event: {} to topic: {}", event.getType(), topic);
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async
     public void handleOfferEvent(OfferEvent event) {
-        OfferClaim claim = offerClaimRepository.findById(event.getClaimId()).orElse(null);
+        OfferClaim claim = offerClaimRepository.findByIdWithDetails(event.getClaimId()).orElse(null);
         if (claim == null) {
             log.warn("Offer claim not found for event: {}", event.getClaimId());
             return;

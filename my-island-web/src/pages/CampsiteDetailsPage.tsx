@@ -114,13 +114,22 @@ export const CampsiteDetailsPage: React.FC = () => {
             // Use the first available lot as representative, or first lot if none available
             const representativeLot = availableLots[0] || typeLots[0];
 
+            // Prefer uploaded images over legacy imageUrl
+            const getPrimaryImage = (lot: Lot | undefined): string => {
+                if (!lot) return TYPE_CONFIG[type]?.defaultImage || '';
+                const primary = lot.images?.find(i => i.isPrimary);
+                if (primary) return primary.url;
+                if (lot.images && lot.images.length > 0) return lot.images[0].url;
+                return lot.imageUrl || TYPE_CONFIG[type]?.defaultImage || '';
+            };
+
             return {
                 type,
                 lots: typeLots,
                 availableCount: availableLots.length,
                 minPrice: Math.min(...prices),
                 maxPrice: Math.max(...prices),
-                representativeImage: representativeLot?.imageUrl || TYPE_CONFIG[type]?.defaultImage || '',
+                representativeImage: getPrimaryImage(representativeLot),
                 representativeLot,
                 commonAmenities: Array.from(allAmenities).slice(0, 4)
             };

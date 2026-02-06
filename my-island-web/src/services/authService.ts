@@ -348,4 +348,27 @@ export const authService = {
         log.info('User upgraded to supplier', { userId: user.id, durationMs: Math.round(durationMs) });
         return user;
     },
+    async requestPasswordReset(email: string): Promise<void> {
+        const startTime = performance.now();
+        log.info('Password reset requested', { email });
+
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // Mock success - in production this would call an API
+        log.info('Password reset email sent', { email, durationMs: Math.round(performance.now() - startTime) });
+        return Promise.resolve();
+    },
+
+    async resetPassword(token: string, newPassword: string): Promise<void> {
+        const startTime = performance.now();
+        log.info('Password reset attempt', { token });
+
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // Mock success
+        log.info('Password reset successful', { durationMs: Math.round(performance.now() - startTime), newPasswordLength: newPassword.length });
+        return Promise.resolve();
+    },
 };

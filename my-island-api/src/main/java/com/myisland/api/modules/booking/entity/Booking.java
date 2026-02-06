@@ -6,6 +6,7 @@ import com.myisland.api.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -34,13 +35,50 @@ public class Booking extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BookingStatus status = BookingStatus.PENDING;
+    private BookingStatus status = BookingStatus.PENDING_PAYMENT;
 
     @Column(name = "special_requests", columnDefinition = "TEXT")
     private String specialRequests;
 
+    // Payment fields
+    @Column(name = "stripe_payment_intent_id")
+    private String stripePaymentIntentId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status")
+    private PaymentStatus paymentStatus = PaymentStatus.NONE;
+
+    @Column(name = "payment_captured_at")
+    private Instant paymentCapturedAt;
+
+    @Column(name = "refund_amount", precision = 10, scale = 2)
+    private BigDecimal refundAmount;
+
+    @Column(name = "service_fee", precision = 10, scale = 2)
+    private BigDecimal serviceFee;
+
+    @Column(name = "charge_total", precision = 10, scale = 2)
+    private BigDecimal chargeTotal;
+
+    @Column(name = "stripe_transfer_id")
+    private String stripeTransferId;
+
     public enum BookingStatus {
-        PENDING, CONFIRMED, CANCELLED, COMPLETED
+        PENDING_PAYMENT,  // Booking created, awaiting payment authorization
+        PENDING,          // Payment authorized, awaiting owner confirmation
+        CONFIRMED,        // Owner confirmed, payment captured
+        CANCELLED,        // Booking cancelled
+        COMPLETED,        // Stay completed
+        PAYMENT_FAILED    // Payment authorization failed
+    }
+
+    public enum PaymentStatus {
+        NONE,       // No payment initiated
+        AUTHORIZED, // Payment authorized (hold placed)
+        CAPTURED,   // Payment captured (charged)
+        RELEASED,   // Authorization released (no charge)
+        REFUNDED,   // Payment refunded
+        FAILED      // Payment failed
     }
 
     public Booking() {}
@@ -56,8 +94,10 @@ public class Booking extends BaseEntity {
         private LocalDate checkOutDate;
         private int numGuests = 1;
         private BigDecimal totalPrice;
-        private BookingStatus status = BookingStatus.PENDING;
+        private BookingStatus status = BookingStatus.PENDING_PAYMENT;
         private String specialRequests;
+        private BigDecimal serviceFee;
+        private BigDecimal chargeTotal;
 
         public Builder user(User user) { this.user = user; return this; }
         public Builder lot(Lot lot) { this.lot = lot; return this; }
@@ -67,6 +107,8 @@ public class Booking extends BaseEntity {
         public Builder totalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; return this; }
         public Builder status(BookingStatus status) { this.status = status; return this; }
         public Builder specialRequests(String specialRequests) { this.specialRequests = specialRequests; return this; }
+        public Builder serviceFee(BigDecimal serviceFee) { this.serviceFee = serviceFee; return this; }
+        public Builder chargeTotal(BigDecimal chargeTotal) { this.chargeTotal = chargeTotal; return this; }
 
         public Booking build() {
             Booking booking = new Booking();
@@ -78,6 +120,8 @@ public class Booking extends BaseEntity {
             booking.totalPrice = this.totalPrice;
             booking.status = this.status;
             booking.specialRequests = this.specialRequests;
+            booking.serviceFee = this.serviceFee;
+            booking.chargeTotal = this.chargeTotal;
             return booking;
         }
     }
@@ -106,4 +150,26 @@ public class Booking extends BaseEntity {
 
     public String getSpecialRequests() { return specialRequests; }
     public void setSpecialRequests(String specialRequests) { this.specialRequests = specialRequests; }
+
+    // Payment getters and setters
+    public String getStripePaymentIntentId() { return stripePaymentIntentId; }
+    public void setStripePaymentIntentId(String stripePaymentIntentId) { this.stripePaymentIntentId = stripePaymentIntentId; }
+
+    public PaymentStatus getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
+
+    public Instant getPaymentCapturedAt() { return paymentCapturedAt; }
+    public void setPaymentCapturedAt(Instant paymentCapturedAt) { this.paymentCapturedAt = paymentCapturedAt; }
+
+    public BigDecimal getRefundAmount() { return refundAmount; }
+    public void setRefundAmount(BigDecimal refundAmount) { this.refundAmount = refundAmount; }
+
+    public BigDecimal getServiceFee() { return serviceFee; }
+    public void setServiceFee(BigDecimal serviceFee) { this.serviceFee = serviceFee; }
+
+    public BigDecimal getChargeTotal() { return chargeTotal; }
+    public void setChargeTotal(BigDecimal chargeTotal) { this.chargeTotal = chargeTotal; }
+
+    public String getStripeTransferId() { return stripeTransferId; }
+    public void setStripeTransferId(String stripeTransferId) { this.stripeTransferId = stripeTransferId; }
 }

@@ -80,6 +80,7 @@ interface LotApiResponse {
     isActive: boolean;
     imageUrl: string | null;
     amenities: Array<{ id: number; name: string; category: string }>;
+    images?: Array<{ id: number; url: string; altText: string | null; displayOrder: number; isPrimary: boolean }>;
 }
 
 interface BookingApiResponse {
@@ -93,7 +94,10 @@ interface BookingApiResponse {
     checkOutDate: string;
     numGuests: number;
     totalPrice: number;
+    serviceFee: number | null;
+    chargeTotal: number | null;
     status: string;
+    paymentStatus: string | null;
     specialRequests: string | null;
     createdAt: string;
 }
@@ -250,16 +254,35 @@ function transformLot(api: LotApiResponse): Lot {
         campsiteAmenities,
         isAvailable: api.isActive,
         imageUrl: api.imageUrl || undefined,
+        images: api.images?.map(img => ({
+            id: img.id,
+            url: img.url,
+            altText: img.altText,
+            displayOrder: img.displayOrder,
+            isPrimary: img.isPrimary,
+        })),
     };
 }
 
 function transformBooking(api: BookingApiResponse): Booking {
     // Map API status to frontend status
     const statusMap: Record<string, Booking['status']> = {
+        'PENDING_PAYMENT': 'pending_payment',
         'PENDING': 'pending',
         'CONFIRMED': 'confirmed',
         'CANCELLED': 'cancelled',
         'COMPLETED': 'completed',
+        'PAYMENT_FAILED': 'payment_failed',
+    };
+
+    // Map API payment status to frontend payment status
+    const paymentStatusMap: Record<string, Booking['paymentStatus']> = {
+        'NONE': 'none',
+        'AUTHORIZED': 'authorized',
+        'CAPTURED': 'captured',
+        'RELEASED': 'released',
+        'REFUNDED': 'refunded',
+        'FAILED': 'failed',
     };
 
     // Format dates from ISO to DD/MM/YYYY for frontend compatibility
@@ -281,6 +304,9 @@ function transformBooking(api: BookingApiResponse): Booking {
         endDate: formatDate(api.checkOutDate),
         status: statusMap[api.status] || 'pending',
         totalPrice: api.totalPrice,
+        serviceFee: api.serviceFee ?? undefined,
+        chargeTotal: api.chargeTotal ?? undefined,
+        paymentStatus: api.paymentStatus ? paymentStatusMap[api.paymentStatus] : undefined,
         details: api.specialRequests || undefined,
     };
 }

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Lot } from '../../types/booking';
+import type { Lot, Booking } from '../../types/booking';
 import { useAuth } from '../../context/AuthContext';
 import { campsiteService } from '../../services/campsiteService';
 import { AvailabilityCalendar } from '../ui/AvailabilityCalendar';
+import { PaymentForm } from './PaymentForm';
 
 interface BookingModalProps {
     lot: Lot;
@@ -20,19 +21,25 @@ interface BookingConfirmation {
     checkOut: string;
     nights: number;
     totalPrice: number;
+    serviceFee: number;
+    chargeTotal: number;
     guestName: string;
     details?: string;
 }
 
+type ModalStep = 'booking' | 'payment' | 'confirmation';
+
 export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose, typeLabel, minPrice }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const [step, setStep] = useState<ModalStep>('booking');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [wantsPower, setWantsPower] = useState(false);
     const [specialRequests, setSpecialRequests] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [createdBooking, setCreatedBooking] = useState<Booking | null>(null);
     const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
@@ -62,10 +69,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
     // Reset form when modal closes
     useEffect(() => {
         if (!isOpen) {
+            setStep('booking');
             setStartDate('');
             setEndDate('');
             setWantsPower(false);
             setSpecialRequests('');
+            setCreatedBooking(null);
             setConfirmation(null);
             setError(null);
             setIsAvailable(null);
@@ -190,7 +199,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
         const combinedDetails = [powerDetails, specialRequests].filter(Boolean).join('\n');
 
         try {
-            await campsiteService.createBooking({
+            const booking = await campsiteService.createBooking({
                 userId: user.id,
                 userName: user.name,
                 lotId: lot.id,
@@ -201,20 +210,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                 details: combinedDetails || undefined
             });
 
-            // Generate a mock booking ID
-            const bookingId = `BK-${Date.now().toString(36).toUpperCase()}`;
-
-            // Set confirmation data
-            setConfirmation({
-                bookingId,
-                lotName: lot.name,
-                checkIn: formatDate(startDate),
-                checkOut: formatDate(endDate),
-                nights: days,
-                totalPrice,
-                guestName: user.name,
-                details: combinedDetails || undefined
-            });
+            // Store the created booking and move to payment step
+            setCreatedBooking(booking);
+            setStep('payment');
         } catch (err) {
             console.error('Booking failed:', err);
             // Show specific error message from API if available
@@ -225,8 +223,37 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
         }
     };
 
+    const handlePaymentSuccess = () => {
+        if (!createdBooking || !user) return;
+
+        // Set confirmation data
+        setConfirmation({
+            bookingId: createdBooking.id,
+            lotName: lot.name,
+            checkIn: formatDate(startDate),
+            checkOut: formatDate(endDate),
+            nights: days,
+            totalPrice: createdBooking.totalPrice,
+            serviceFee: createdBooking.serviceFee || 0,
+            chargeTotal: createdBooking.chargeTotal || createdBooking.totalPrice,
+            guestName: user.name,
+            details: createdBooking.details
+        });
+        setStep('confirmation');
+    };
+
+    const handlePaymentError = (errorMsg: string) => {
+        setError(errorMsg);
+    };
+
+    const handlePaymentCancel = () => {
+        // Go back to booking step
+        setStep('booking');
+        setCreatedBooking(null);
+    };
+
     // Confirmation view
-    if (confirmation) {
+    if (step === 'confirmation' && confirmation) {
         return (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
                 <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
@@ -234,13 +261,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                             <span className="material-symbols-outlined text-3xl text-green-600">check_circle</span>
                         </div>
-                        <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">Booking Confirmed!</h2>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6">Your reservation has been submitted.</p>
+                        <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">Payment Authorized!</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-6">
+                            Your card has been authorized. You'll only be charged when the owner confirms your booking.
+                        </p>
 
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 text-left space-y-3 mb-6">
                             <div className="flex justify-between">
                                 <span className="text-gray-600 dark:text-gray-400">Booking ID</span>
-                                <span className="font-medium text-[#111418] dark:text-white">{confirmation.bookingId}</span>
+                                <span className="font-medium text-[#111418] dark:text-white">#{confirmation.bookingId}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-600 dark:text-gray-400">Location</span>
@@ -254,10 +283,27 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                                 <span className="text-gray-600 dark:text-gray-400">Check-out</span>
                                 <span className="font-medium text-[#111418] dark:text-white">{confirmation.checkOut}</span>
                             </div>
-                            <div className="flex justify-between border-t border-gray-200 dark:border-gray-700 pt-3">
-                                <span className="text-gray-600 dark:text-gray-400">Total</span>
-                                <span className="font-bold text-primary text-lg">€{confirmation.totalPrice}</span>
+                            <div className="border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500 dark:text-gray-400">Accommodation ({confirmation.nights} nights)</span>
+                                    <span className="text-gray-700 dark:text-gray-300">€{confirmation.totalPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500 dark:text-gray-400">Service fee</span>
+                                    <span className="text-gray-700 dark:text-gray-300">€{confirmation.serviceFee.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">Authorized amount</span>
+                                    <span className="font-bold text-primary text-lg">€{confirmation.chargeTotal.toFixed(2)}</span>
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg mb-6">
+                            <p className="text-xs text-blue-600 dark:text-blue-400">
+                                <span className="material-symbols-outlined text-xs align-middle mr-1">info</span>
+                                The owner will review your booking. If confirmed, your card will be charged. If declined, the authorization will be released.
+                            </p>
                         </div>
 
                         <div className="flex gap-3">
@@ -274,6 +320,54 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                                 View My Trips
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Payment step view
+    if (step === 'payment' && createdBooking) {
+        return (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+                <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
+                    {/* Header */}
+                    <div className="sticky top-0 bg-white dark:bg-gray-900 p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handlePaymentCancel}
+                                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-gray-500">arrow_back</span>
+                            </button>
+                            <h2 className="text-xl font-bold text-[#111418] dark:text-white">Secure Payment</h2>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+                            <span className="material-symbols-outlined text-gray-500">close</span>
+                        </button>
+                    </div>
+
+                    {/* Booking Summary */}
+                    <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                        <div className="flex items-center gap-3">
+                            <span className="material-symbols-outlined text-primary">calendar_month</span>
+                            <div>
+                                <p className="font-medium text-[#111418] dark:text-white">{lot.name}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    {formatDate(startDate)} - {formatDate(endDate)} ({days} nights)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Payment Form */}
+                    <div className="p-4">
+                        <PaymentForm
+                            bookingId={createdBooking.id}
+                            onPaymentSuccess={handlePaymentSuccess}
+                            onPaymentError={handlePaymentError}
+                            onCancel={handlePaymentCancel}
+                        />
                     </div>
                 </div>
             </div>
@@ -373,6 +467,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                             <span className="text-gray-600 dark:text-gray-300 font-medium">Total Price ({days} nights)</span>
                             <span className="text-xl font-bold text-primary">€{totalPrice}</span>
                         </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            + service fee calculated at checkout
+                        </p>
                     </div>
 
                     {/* Error Message */}
@@ -397,7 +494,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         disabled={isSubmitting || !user || days === 0 || isAvailable === false || isCheckingAvailability}
                         className="w-full bg-primary hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2"
                     >
-                        {isCheckingAvailability ? 'Checking availability...' : isSubmitting ? 'Processing...' : 'Confirm Booking'}
+                        {isCheckingAvailability ? 'Checking availability...' : isSubmitting ? 'Processing...' : 'Continue to Payment'}
                     </button>
                 </form>
             </div>

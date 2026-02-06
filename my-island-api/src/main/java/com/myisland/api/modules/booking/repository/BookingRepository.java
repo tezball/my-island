@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -17,7 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByLotId(Long lotId);
 
-    @Query("SELECT b FROM Booking b WHERE b.lot.id = :lotId AND b.checkOutDate > :date AND b.status != 'CANCELLED'")
+    @Query("SELECT b FROM Booking b WHERE b.lot.id = :lotId AND b.checkOutDate > :date AND b.status NOT IN ('CANCELLED', 'PENDING_PAYMENT', 'PAYMENT_FAILED')")
     List<Booking> findByLotIdAndCheckOutDateAfter(Long lotId, LocalDate date);
 
     @Query("""
@@ -32,7 +33,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("""
             SELECT b FROM Booking b
             WHERE b.lot.id = :lotId
-            AND b.status != 'CANCELLED'
+            AND b.status NOT IN ('CANCELLED', 'PENDING_PAYMENT', 'PAYMENT_FAILED')
             AND b.checkInDate < :checkOut
             AND b.checkOutDate > :checkIn
             """)
@@ -50,4 +51,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.lot.owner.id = :ownerId AND b.status = :status")
     long countByOwnerIdAndStatus(Long ownerId, Booking.BookingStatus status);
+
+    Optional<Booking> findByStripePaymentIntentId(String stripePaymentIntentId);
+
+    @Query("""
+            SELECT b FROM Booking b
+            JOIN FETCH b.user
+            JOIN FETCH b.lot l
+            JOIN FETCH l.owner
+            WHERE b.id = :id
+            """)
+    Optional<Booking> findByIdWithDetails(Long id);
 }

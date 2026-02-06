@@ -2,8 +2,11 @@ package com.myisland.api.modules.booking.controller;
 
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.CreateBookingRequest;
+import com.myisland.api.modules.booking.dto.PaymentIntentResponse;
+import com.myisland.api.modules.booking.service.BookingPaymentService;
 import com.myisland.api.modules.booking.service.BookingService;
 import com.myisland.api.security.CustomUserDetails;
+import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -20,9 +23,11 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final BookingPaymentService bookingPaymentService;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, BookingPaymentService bookingPaymentService) {
         this.bookingService = bookingService;
+        this.bookingPaymentService = bookingPaymentService;
     }
 
     @GetMapping
@@ -64,4 +69,39 @@ public class BookingController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(bookingService.confirmBooking(id, userDetails.getUserId()));
     }
+
+    @PostMapping("/{id}/payment/intent")
+    @Operation(summary = "Create a payment intent for a booking")
+    public ResponseEntity<PaymentIntentResponse> createPaymentIntent(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) throws StripeException {
+        return ResponseEntity.ok(bookingPaymentService.createPaymentIntent(id, userDetails.getUserId()));
+    }
+
+    @GetMapping("/{id}/payment/status")
+    @Operation(summary = "Get payment status for a booking")
+    public ResponseEntity<PaymentStatusResponse> getPaymentStatus(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        BookingDto booking = bookingService.getBookingById(id, userDetails.getUserId());
+        return ResponseEntity.ok(new PaymentStatusResponse(
+                booking.status(),
+                booking.paymentStatus(),
+                booking.chargeTotal()
+        ));
+    }
+
+    @PostMapping("/{id}/payment/simulate-success")
+    @Operation(summary = "Simulate payment success (dev mode only)")
+    public ResponseEntity<BookingDto> simulatePaymentSuccess(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(bookingService.simulatePaymentSuccess(id, userDetails.getUserId()));
+    }
+
+    public record PaymentStatusResponse(
+            String bookingStatus,
+            String paymentStatus,
+            java.math.BigDecimal chargeTotal
+    ) {}
 }

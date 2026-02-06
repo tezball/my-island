@@ -124,7 +124,7 @@ export const SignInPage: React.FC = () => {
                                 <span className="material-symbols-outlined text-xl">visibility_off</span>
                             </button>
                         </div>
-                        <Link to="#" className="text-primary hover:text-[#20d85f] text-xs font-bold transition-colors self-end mt-1">Forgot Password?</Link>
+                        <Link to="/forgot-password" className="text-primary hover:text-[#20d85f] text-xs font-bold transition-colors self-end mt-1">Forgot Password?</Link>
                     </div>
                 </form>
             </main>

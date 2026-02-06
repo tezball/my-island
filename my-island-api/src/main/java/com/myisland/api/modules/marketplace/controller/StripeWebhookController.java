@@ -3,13 +3,17 @@ package com.myisland.api.modules.marketplace.controller;
 import com.myisland.api.config.StripeProperties;
 import com.myisland.api.modules.accommodation.service.FeaturedPromotionService;
 import com.myisland.api.modules.accommodation.service.OwnerSubscriptionService;
+import com.myisland.api.modules.booking.service.BookingPaymentService;
 import com.myisland.api.modules.marketplace.service.StripeConnectService;
 import com.myisland.api.modules.marketplace.service.SubscriptionService;
 import com.myisland.api.modules.marketplace.service.SupplierFeaturedPromotionService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Account;
+import com.stripe.model.Charge;
 import com.stripe.model.Event;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.Subscription;
+import com.stripe.model.Transfer;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -31,6 +35,7 @@ public class StripeWebhookController {
     private final FeaturedPromotionService ownerFeaturedPromotionService;
     private final SupplierFeaturedPromotionService supplierFeaturedPromotionService;
     private final StripeConnectService stripeConnectService;
+    private final BookingPaymentService bookingPaymentService;
     private final StripeProperties stripeProperties;
 
     public StripeWebhookController(
@@ -39,12 +44,14 @@ public class StripeWebhookController {
             FeaturedPromotionService ownerFeaturedPromotionService,
             SupplierFeaturedPromotionService supplierFeaturedPromotionService,
             StripeConnectService stripeConnectService,
+            BookingPaymentService bookingPaymentService,
             StripeProperties stripeProperties) {
         this.supplierSubscriptionService = supplierSubscriptionService;
         this.ownerSubscriptionService = ownerSubscriptionService;
         this.ownerFeaturedPromotionService = ownerFeaturedPromotionService;
         this.supplierFeaturedPromotionService = supplierFeaturedPromotionService;
         this.stripeConnectService = stripeConnectService;
+        this.bookingPaymentService = bookingPaymentService;
         this.stripeProperties = stripeProperties;
     }
 
@@ -96,6 +103,43 @@ public class StripeWebhookController {
                             .getObject().orElseThrow();
                     // Handle Connect account status updates
                     stripeConnectService.handleAccountUpdated(account);
+                }
+                case "payment_intent.succeeded" -> {
+                    PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Handle booking payment authorization success
+                    bookingPaymentService.handlePaymentIntentSucceeded(paymentIntent);
+                }
+                case "payment_intent.payment_failed" -> {
+                    PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Handle booking payment failure
+                    bookingPaymentService.handlePaymentIntentFailed(paymentIntent);
+                }
+                case "charge.captured" -> {
+                    Charge charge = (Charge) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Confirm payment capture for booking
+                    String paymentIntentId = charge.getPaymentIntent();
+                    if (paymentIntentId != null) {
+                        bookingPaymentService.handleChargeCaptured(paymentIntentId);
+                    }
+                }
+                case "charge.refunded" -> {
+                    Charge charge = (Charge) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Record refund for booking
+                    String paymentIntentId = charge.getPaymentIntent();
+                    if (paymentIntentId != null) {
+                        bookingPaymentService.handleChargeRefunded(paymentIntentId, charge.getAmountRefunded());
+                    }
+                }
+                case "transfer.created" -> {
+                    Transfer transfer = (Transfer) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    // Record owner payout
+                    String bookingId = transfer.getMetadata().get("booking_id");
+                    bookingPaymentService.handleTransferCreated(transfer.getId(), bookingId);
                 }
                 default -> log.debug("Unhandled event type: {}", event.getType());
             }

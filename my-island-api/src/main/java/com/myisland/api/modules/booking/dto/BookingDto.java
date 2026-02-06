@@ -17,7 +17,10 @@ public record BookingDto(
         LocalDate checkOutDate,
         int numGuests,
         BigDecimal totalPrice,
+        BigDecimal serviceFee,
+        BigDecimal chargeTotal,
         String status,
+        String paymentStatus,
         String specialRequests,
         LocalDateTime createdAt
 ) {
@@ -33,7 +36,10 @@ public record BookingDto(
                 booking.getCheckOutDate(),
                 booking.getNumGuests(),
                 booking.getTotalPrice(),
+                booking.getServiceFee(),
+                booking.getChargeTotal(),
                 booking.getStatus().name(),
+                booking.getPaymentStatus() != null ? booking.getPaymentStatus().name() : "NONE",
                 booking.getSpecialRequests(),
                 booking.getCreatedAt()
         );

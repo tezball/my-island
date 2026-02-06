@@ -12,6 +12,7 @@ com/myisland/api/modules/accommodation/dto/OccupancyDetailResponse$PeakDay.class
 com/myisland/api/shared/storage/EntityImage$EntityType.class
 com/myisland/api/modules/marketplace/dto/CreateCheckoutSessionResponse.class
 com/myisland/api/modules/accommodation/entity/Lot.class
+com/myisland/api/modules/booking/entity/Booking$PaymentStatus.class
 com/myisland/api/modules/marketplace/entity/Supplier$SupplierCategory.class
 com/myisland/api/modules/accommodation/service/OwnerService$1.class
 com/myisland/api/modules/accommodation/dto/LotDto.class
@@ -40,10 +41,12 @@ com/myisland/api/modules/accommodation/entity/Amenity$AmenityCategory.class
 com/myisland/api/shared/events/kafka/EventPublisher.class
 com/myisland/api/shared/events/kafka/KafkaUserEvent.class
 com/myisland/api/security/CustomUserDetails.class
+com/myisland/api/modules/marketplace/dto/SetupIntentResponse.class
 com/myisland/api/modules/identity/dto/SignupRequest.class
 com/myisland/api/modules/marketplace/service/MarketplaceService.class
 com/myisland/api/shared/exceptions/ConflictException.class
 com/myisland/api/security/JwtProvider.class
+com/myisland/api/modules/marketplace/dto/ConnectStatusDto.class
 com/myisland/api/modules/booking/dto/BookingDto.class
 com/myisland/api/shared/storage/EntityImageService.class
 com/myisland/api/modules/accommodation/dto/OccupancyDetailResponse$OccupancyByType.class
@@ -77,6 +80,7 @@ com/myisland/api/modules/accommodation/controller/CampsiteController.class
 com/myisland/api/modules/marketplace/entity/Supplier.class
 com/myisland/api/modules/accommodation/dto/LotDto$ImageDto.class
 com/myisland/api/shared/storage/ImageUploadController$UpdateOrderRequest.class
+com/myisland/api/modules/marketplace/service/StripeConnectService.class
 com/myisland/api/modules/accommodation/dto/LotsDetailResponse$LotDetail.class
 com/myisland/api/shared/events/OfferEvent.class
 com/myisland/api/modules/accommodation/dto/UpdateOwnerRequest.class
@@ -84,6 +88,7 @@ com/myisland/api/modules/identity/entity/User$UserRole.class
 com/myisland/api/modules/marketplace/repository/OfferRepository.class
 com/myisland/api/modules/accommodation/dto/OccupancyDetailResponse$WeeklyTrend.class
 com/myisland/api/modules/marketplace/dto/ClaimOfferRequest.class
+com/myisland/api/modules/accommodation/controller/CampsiteController$BookedDateRange.class
 com/myisland/api/modules/accommodation/dto/RevenueDetailResponse$MonthlyTrend.class
 com/myisland/api/modules/identity/dto/UpgradeToSupplierRequest.class
 com/myisland/api/modules/accommodation/repository/OwnerRepository.class
@@ -92,8 +97,11 @@ com/myisland/api/modules/booking/repository/BookingRepository.class
 com/myisland/api/modules/accommodation/entity/Owner.class
 com/myisland/api/modules/accommodation/entity/Amenity$Builder.class
 com/myisland/api/shared/exceptions/GlobalExceptionHandler.class
+com/myisland/api/modules/marketplace/controller/SupplierController.class
 com/myisland/api/modules/accommodation/entity/Owner$Builder.class
 com/myisland/api/modules/booking/service/BookingService.class
+com/myisland/api/modules/marketplace/dto/OnboardingLinkResponse.class
+com/myisland/api/modules/booking/service/BookingPaymentService.class
 com/myisland/api/modules/identity/service/AuthService.class
 com/myisland/api/modules/marketplace/scheduler/SupplierFeaturedExpiryScheduler.class
 com/myisland/api/modules/marketplace/dto/SupplierDto.class
@@ -105,6 +113,7 @@ com/myisland/api/modules/marketplace/repository/SupplierRepository.class
 com/myisland/api/config/StripeConfig.class
 com/myisland/api/shared/exceptions/ResourceNotFoundException.class
 com/myisland/api/security/JwtAuthenticationFilter.class
+com/myisland/api/modules/booking/dto/PaymentIntentResponse.class
 com/myisland/api/modules/marketplace/controller/MarketplaceController.class
 com/myisland/api/shared/events/kafka/KafkaOfferEvent.class
 com/myisland/api/modules/marketplace/service/SupplierService.class
@@ -127,10 +136,13 @@ com/myisland/api/shared/events/BookingEvent.class
 com/myisland/api/shared/storage/ImageUploadController$EntityImageDto.class
 com/myisland/api/config/StripeProperties.class
 com/myisland/api/modules/marketplace/dto/UpdateOfferRequest.class
+com/myisland/api/modules/booking/controller/BookingController$PaymentStatusResponse.class
 com/myisland/api/modules/marketplace/entity/OfferClaim$ClaimStatus.class
 com/myisland/api/config/KafkaConfig.class
+com/myisland/api/modules/marketplace/dto/ConfirmSubscriptionRequest.class
 com/myisland/api/modules/marketplace/entity/Offer$DiscountType.class
 com/myisland/api/modules/accommodation/entity/Amenity.class
 com/myisland/api/modules/identity/repository/UserRepository.class
+com/myisland/api/modules/accommodation/controller/OwnerController.class
 com/myisland/api/modules/marketplace/controller/StripeWebhookController.class
 com/myisland/api/modules/accommodation/repository/LotRepository.class

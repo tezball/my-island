@@ -34,8 +34,10 @@
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/controller/BookingController.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/dto/BookingDto.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/dto/CreateBookingRequest.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/dto/PaymentIntentResponse.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/entity/Booking.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/repository/BookingRepository.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/service/BookingPaymentService.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/booking/service/BookingService.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/controller/AuthController.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/AuthRequest.java
@@ -81,6 +83,14 @@
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/security/JwtProvider.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/security/UserDetailsServiceImpl.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/domain/BaseEntity.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/BookingEmailData.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/EmailNotificationService.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/EmailSender.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/EmailService.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/EmailTemplateRenderer.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/JavaMailEmailSender.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/OfferClaimEmailData.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/email/ThymeleafEmailTemplateRenderer.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/events/BookingEvent.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/events/OfferEvent.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/shared/events/kafka/EventConsumer.java

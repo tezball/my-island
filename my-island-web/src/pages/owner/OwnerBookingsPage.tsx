@@ -46,13 +46,10 @@ export const OwnerBookingsPage: React.FC = () => {
             ));
         } catch (error) {
             console.error('Failed to confirm booking:', error);
-            alert('Failed to confirm booking. Please try again.');
         }
     };
 
     const handleReject = async (bookingId: string) => {
-        if (!confirm('Are you sure you want to reject this booking?')) return;
-
         try {
             await ownerService.cancelBooking(bookingId);
             setBookings(prev => prev.map(b =>
@@ -60,7 +57,6 @@ export const OwnerBookingsPage: React.FC = () => {
             ));
         } catch (error) {
             console.error('Failed to reject booking:', error);
-            alert('Failed to reject booking. Please try again.');
         }
     };
 

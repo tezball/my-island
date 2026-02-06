@@ -35,11 +35,13 @@ public class ImageUploadController {
             @RequestParam(value = "primary", defaultValue = "false") boolean setAsPrimary,
             @RequestParam(value = "altText", required = false) String altText
     ) throws IOException {
-        log.info("Uploading image for {} {}", entityType, entityId);
+        log.info("Upload request: entityType={}, entityId={}, file={}, size={}, contentType={}, primary={}",
+                entityType, entityId, file.getOriginalFilename(), file.getSize(), file.getContentType(), setAsPrimary);
 
         EntityImage.EntityType type = parseEntityType(entityType);
         EntityImage image = entityImageService.uploadImage(type, entityId, file, setAsPrimary, altText);
 
+        log.info("Upload complete: imageId={}, url={}", image.getId(), image.getUrl());
         return ResponseEntity.ok(toDto(image));
     }
 

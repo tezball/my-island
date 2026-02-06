@@ -848,10 +848,14 @@ export const supplierService = {
             'tour_operator': 'TOUR_OPERATOR',
             'services': 'EQUIPMENT_RENTAL',
             'equipment_rental': 'EQUIPMENT_RENTAL',
+            'rentals': 'EQUIPMENT_RENTAL',
             'experiences': 'TOUR_OPERATOR',
             'spa': 'SPA',
+            'wellness': 'SPA',
             'artisan': 'ARTISAN',
             'grocery': 'GROCERY',
+            'retail': 'ARTISAN',
+            'transport': 'OTHER',
             'other': 'OTHER',
         };
 
@@ -862,7 +866,7 @@ export const supplierService = {
             method: 'POST',
             body: {
                 businessName: params.businessName,
-                category: categoryMap[params.businessType.toLowerCase()] || 'FOOD',
+                category: categoryMap[params.businessType.toLowerCase()] || 'OTHER',
                 description: params.description,
                 county: params.county,
                 town: params.town,

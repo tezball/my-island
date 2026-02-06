@@ -9,10 +9,15 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 
 @Configuration
 public class S3Config {
+
+    private static final Logger log = LoggerFactory.getLogger(S3Config.class);
 
     @Value("${aws.s3.endpoint:}")
     private String endpoint;
@@ -36,7 +41,10 @@ public class S3Config {
                 .forcePathStyle(true);
 
         if (endpoint != null && !endpoint.isBlank()) {
+            log.info("Configuring S3 client with custom endpoint: {}, region: {}", endpoint, region);
             builder.endpointOverride(URI.create(endpoint));
+        } else {
+            log.info("Configuring S3 client with default AWS endpoint, region: {}", region);
         }
 
         return builder.build();

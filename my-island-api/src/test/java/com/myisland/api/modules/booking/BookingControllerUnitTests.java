@@ -65,7 +65,10 @@ public class BookingControllerUnitTests {
                                 java.time.LocalDate.now().plusDays(2),
                                 2,
                                 java.math.BigDecimal.valueOf(100),
+                                java.math.BigDecimal.valueOf(10),
+                                java.math.BigDecimal.valueOf(110),
                                 "CONFIRMED",
+                                "PAID",
                                 "Special Request",
                                 java.time.LocalDateTime.now());
                 given(bookingService.confirmBooking(eq(bookingId), eq(userId))).willReturn(mockBooking);

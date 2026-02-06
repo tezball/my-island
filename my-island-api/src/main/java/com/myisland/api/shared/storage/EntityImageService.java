@@ -36,6 +36,9 @@ public class EntityImageService {
             boolean setAsPrimary,
             String altText
     ) throws IOException {
+        log.info("Starting image upload for {} {} (file={}, size={}, primary={})",
+                entityType, entityId, file.getOriginalFilename(), file.getSize(), setAsPrimary);
+
         // Determine folder based on entity type
         String folder = entityType.name().toLowerCase() + "s";
 

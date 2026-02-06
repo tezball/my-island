@@ -301,6 +301,7 @@ interface LotApiResponse {
     isActive: boolean;
     imageUrl: string | null;
     amenities: Array<{ id: number; name: string; icon: string }>;
+    images?: Array<{ id: number; url: string; altText: string | null; displayOrder: number; isPrimary: boolean }>;
 }
 
 // API response type for booking
@@ -655,7 +656,7 @@ export const ownerService = {
         // Filter for check-outs in next 7 days
         const upcomingCheckOuts = bookings.filter(b => {
             const checkOut = new Date(b.endDate);
-            return checkOut >= today && checkOut <= nextWeek && (b.status === 'confirmed' || b.status === 'checked_in');
+            return checkOut >= today && checkOut <= nextWeek && b.status === 'confirmed';
         });
 
         log.debug('Filtered check-ins/check-outs', {
@@ -841,6 +842,13 @@ export const ownerService = {
             campsiteAmenities: [],
             isAvailable: lot.isActive,
             imageUrl: lot.imageUrl ?? undefined,
+            images: lot.images?.map(img => ({
+                id: img.id,
+                url: img.url,
+                altText: img.altText,
+                displayOrder: img.displayOrder,
+                isPrimary: img.isPrimary,
+            })),
         }));
 
         return lots;
@@ -1111,6 +1119,13 @@ export const ownerService = {
             campsiteAmenities: [],
             isAvailable: apiLot.isActive,
             imageUrl: apiLot.imageUrl ?? undefined,
+            images: apiLot.images?.map(img => ({
+                id: img.id,
+                url: img.url,
+                altText: img.altText,
+                displayOrder: img.displayOrder,
+                isPrimary: img.isPrimary,
+            })),
         };
     },
 
@@ -1246,6 +1261,13 @@ export const ownerService = {
             campsiteAmenities: [],
             isAvailable: apiLot.isActive,
             imageUrl: apiLot.imageUrl ?? undefined,
+            images: apiLot.images?.map(img => ({
+                id: img.id,
+                url: img.url,
+                altText: img.altText,
+                displayOrder: img.displayOrder,
+                isPrimary: img.isPrimary,
+            })),
         };
     },
 

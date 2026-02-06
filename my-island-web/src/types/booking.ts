@@ -1,3 +1,6 @@
+export type BookingStatus = 'pending_payment' | 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'payment_failed';
+export type PaymentStatus = 'none' | 'authorized' | 'captured' | 'released' | 'refunded' | 'failed';
+
 export interface Booking {
     id: string;
     userId: string;
@@ -6,9 +9,28 @@ export interface Booking {
     lotName: string;
     startDate: string;
     endDate: string;
-    status: 'confirmed' | 'pending' | 'cancelled' | 'checked_in' | 'completed';
+    status: BookingStatus;
     totalPrice: number;
+    serviceFee?: number;
+    chargeTotal?: number;
+    paymentStatus?: PaymentStatus;
     details?: string; // For extras like Power, etc.
+}
+
+export interface PaymentIntentResponse {
+    clientSecret: string;
+    paymentIntentId: string;
+    publishableKey: string;
+    amount: number;
+    devMode: boolean;
+}
+
+export interface LotImage {
+    id: number;
+    url: string;
+    altText: string | null;
+    displayOrder: number;
+    isPrimary: boolean;
 }
 
 export interface Lot {
@@ -22,4 +44,5 @@ export interface Lot {
     campsiteAmenities: string[];  // Shared facilities available to guests (e.g., Free Showers, WiFi)
     isAvailable: boolean;
     imageUrl?: string;
+    images?: LotImage[];
 }

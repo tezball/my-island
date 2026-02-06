@@ -1,15 +1,37 @@
 package com.myisland.api.shared.events.kafka;
 
 import com.myisland.api.config.KafkaConfig;
+import com.myisland.api.modules.accommodation.entity.Owner;
+import com.myisland.api.modules.accommodation.repository.OwnerRepository;
+import com.myisland.api.modules.marketplace.entity.Supplier;
+import com.myisland.api.modules.marketplace.repository.SupplierRepository;
+import com.myisland.api.shared.email.BookingEmailData;
+import com.myisland.api.shared.email.EmailNotificationService;
+import com.myisland.api.shared.email.OfferClaimEmailData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class EventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(EventConsumer.class);
+
+    private final EmailNotificationService emailService;
+    private final OwnerRepository ownerRepository;
+    private final SupplierRepository supplierRepository;
+
+    public EventConsumer(
+            EmailNotificationService emailService,
+            OwnerRepository ownerRepository,
+            SupplierRepository supplierRepository) {
+        this.emailService = emailService;
+        this.ownerRepository = ownerRepository;
+        this.supplierRepository = supplierRepository;
+    }
 
     @KafkaListener(
             topics = KafkaConfig.BOOKING_CREATED_TOPIC,
@@ -18,8 +40,20 @@ public class EventConsumer {
     public void handleBookingCreated(KafkaBookingEvent event) {
         log.info("Received booking created event: bookingId={}, user={}, lot={}",
                 event.bookingId(), event.userName(), event.lotName());
-        // TODO: Send notification email to owner about new booking
-        // TODO: Send confirmation email to guest
+
+        BookingEmailData bookingData = createBookingEmailData(event);
+
+        // Send notification email to owner
+        Optional<Owner> ownerOpt = ownerRepository.findById(event.ownerId());
+        ownerOpt.ifPresent(owner -> {
+            String ownerEmail = owner.getUser().getEmail();
+            emailService.sendBookingCreatedToOwner(ownerEmail, bookingData);
+            log.info("Sent booking notification to owner: {}", ownerEmail);
+        });
+
+        // Send confirmation email to guest
+        emailService.sendBookingCreatedToGuest(event.userEmail(), bookingData);
+        log.info("Sent booking confirmation to guest: {}", event.userEmail());
     }
 
     @KafkaListener(
@@ -29,7 +63,12 @@ public class EventConsumer {
     public void handleBookingConfirmed(KafkaBookingEvent event) {
         log.info("Received booking confirmed event: bookingId={}, user={}, lot={}",
                 event.bookingId(), event.userName(), event.lotName());
-        // TODO: Send confirmation email to guest with booking details
+
+        BookingEmailData bookingData = createBookingEmailData(event);
+
+        // Send confirmation email to guest with booking details
+        emailService.sendBookingConfirmedToGuest(event.userEmail(), bookingData);
+        log.info("Sent booking confirmed email to guest: {}", event.userEmail());
     }
 
     @KafkaListener(
@@ -39,8 +78,20 @@ public class EventConsumer {
     public void handleBookingCancelled(KafkaBookingEvent event) {
         log.info("Received booking cancelled event: bookingId={}, user={}, lot={}",
                 event.bookingId(), event.userName(), event.lotName());
-        // TODO: Send cancellation notification to owner
-        // TODO: Send cancellation confirmation to guest
+
+        BookingEmailData bookingData = createBookingEmailData(event);
+
+        // Send cancellation notification to owner
+        Optional<Owner> ownerOpt = ownerRepository.findById(event.ownerId());
+        ownerOpt.ifPresent(owner -> {
+            String ownerEmail = owner.getUser().getEmail();
+            emailService.sendBookingCancelledToOwner(ownerEmail, bookingData);
+            log.info("Sent cancellation notification to owner: {}", ownerEmail);
+        });
+
+        // Send cancellation confirmation to guest
+        emailService.sendBookingCancelledToGuest(event.userEmail(), bookingData);
+        log.info("Sent cancellation confirmation to guest: {}", event.userEmail());
     }
 
     @KafkaListener(
@@ -54,8 +105,20 @@ public class EventConsumer {
         }
         log.info("Received offer claimed event: claimId={}, offer={}, supplier={}",
                 event.claimId(), event.offerTitle(), event.supplierName());
-        // TODO: Send notification to supplier about new claim
-        // TODO: Send voucher email to guest
+
+        OfferClaimEmailData claimData = createClaimEmailData(event);
+
+        // Send notification to supplier about new claim
+        Optional<Supplier> supplierOpt = supplierRepository.findById(event.supplierId());
+        supplierOpt.ifPresent(supplier -> {
+            String supplierEmail = supplier.getUser().getEmail();
+            emailService.sendOfferClaimedToSupplier(supplierEmail, claimData);
+            log.info("Sent claim notification to supplier: {}", supplierEmail);
+        });
+
+        // Send voucher email to guest
+        emailService.sendVoucherToGuest(event.userEmail(), claimData);
+        log.info("Sent voucher to guest: {}", event.userEmail());
     }
 
     @KafkaListener(
@@ -69,8 +132,7 @@ public class EventConsumer {
         }
         log.info("Received offer redeemed event: claimId={}, offer={}, supplier={}",
                 event.claimId(), event.offerTitle(), event.supplierName());
-        // TODO: Track redemption analytics
-        // TODO: Update supplier metrics
+        // Analytics tracking - no email needed for redemption
     }
 
     @KafkaListener(
@@ -80,6 +142,34 @@ public class EventConsumer {
     public void handleUserRegistered(KafkaUserEvent event) {
         log.info("Received user registered event: userId={}, email={}",
                 event.userId(), event.email());
-        // TODO: Send welcome email to new user
+
+        // Send welcome email to new user
+        emailService.sendWelcomeEmail(event.email(), event.name());
+        log.info("Sent welcome email to: {}", event.email());
+    }
+
+    private BookingEmailData createBookingEmailData(KafkaBookingEvent event) {
+        return new BookingEmailData(
+                event.bookingId(),
+                event.userName(),
+                event.userEmail(),
+                event.lotName(),
+                event.ownerPropertyName(),
+                event.checkInDate(),
+                event.checkOutDate(),
+                event.numGuests(),
+                event.totalPrice()
+        );
+    }
+
+    private OfferClaimEmailData createClaimEmailData(KafkaOfferEvent event) {
+        return new OfferClaimEmailData(
+                event.claimId(),
+                event.offerTitle(),
+                event.supplierName(),
+                event.userName(),
+                event.userEmail(),
+                event.claimCode()
+        );
     }
 }

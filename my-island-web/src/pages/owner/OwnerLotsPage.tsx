@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService } from '../../services/ownerService';
 import type { Lot } from '../../types/booking';
+import { LotFormModal } from '../../components/owner/LotFormModal';
 import clsx from 'clsx';
 
 const LOT_TYPE_INFO: Record<string, { label: string; icon: string; color: string }> = {
@@ -12,27 +13,38 @@ const LOT_TYPE_INFO: Record<string, { label: string; icon: string; color: string
     'mobile-home': { label: 'Mobile Home', icon: '🏠', color: 'bg-rose-100 text-rose-700' },
 };
 
+function getLotImageUrl(lot: Lot): string {
+    const primaryImage = lot.images?.find(i => i.isPrimary);
+    if (primaryImage) return primaryImage.url;
+    if (lot.images && lot.images.length > 0) return lot.images[0].url;
+    if (lot.imageUrl) return lot.imageUrl;
+    return 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=400';
+}
+
 export const OwnerLotsPage: React.FC = () => {
     const { user } = useAuth();
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'available' | 'unavailable'>('all');
     const [typeFilter, setTypeFilter] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingLot, setEditingLot] = useState<Lot | null>(null);
+
+    const loadLots = useCallback(async () => {
+        if (!user) return;
+        try {
+            const data = await ownerService.getOwnerLots(user.id);
+            setLots(data);
+        } catch (error) {
+            console.error('Failed to load lots:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [user]);
 
     useEffect(() => {
-        const loadLots = async () => {
-            if (!user) return;
-            try {
-                const data = await ownerService.getOwnerLots(user.id);
-                setLots(data);
-            } catch (error) {
-                console.error('Failed to load lots:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
         loadLots();
-    }, [user]);
+    }, [loadLots]);
 
     // Calculate counts by type
     const typeCounts = lots.reduce((acc, lot) => {
@@ -71,7 +83,13 @@ export const OwnerLotsPage: React.FC = () => {
                         )}
                     </p>
                 </div>
-                <button className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#20d85f] transition-colors text-sm font-medium w-full sm:w-auto">
+                <button
+                    onClick={() => {
+                        setEditingLot(null);
+                        setIsModalOpen(true);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#20d85f] transition-colors text-sm font-medium w-full sm:w-auto"
+                >
                     <span className="material-symbols-outlined text-lg">add</span>
                     Add New Lot
                 </button>
@@ -151,7 +169,7 @@ export const OwnerLotsPage: React.FC = () => {
                         >
                             <div
                                 className="h-32 bg-cover bg-center"
-                                style={{ backgroundImage: `url("${lot.imageUrl || 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=400'}")` }}
+                                style={{ backgroundImage: `url("${getLotImageUrl(lot)}")` }}
                             >
                                 <div className="p-3 flex justify-between items-start">
                                     <span className={clsx('text-xs font-medium px-2 py-1 rounded-full', typeInfo.color)}>
@@ -172,7 +190,13 @@ export const OwnerLotsPage: React.FC = () => {
                                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{lot.description}</p>
                                 <div className="flex items-center justify-between">
                                     <span className="text-lg font-bold text-primary">€{lot.pricePerNight}<span className="text-xs text-gray-400 font-normal">/night</span></span>
-                                    <button className="text-sm font-medium text-gray-500 hover:text-primary transition-colors">
+                                    <button
+                                        onClick={() => {
+                                            setEditingLot(lot);
+                                            setIsModalOpen(true);
+                                        }}
+                                        className="text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+                                    >
                                         Edit
                                     </button>
                                 </div>
@@ -188,6 +212,16 @@ export const OwnerLotsPage: React.FC = () => {
                     <p className="text-gray-500 dark:text-gray-400">No lots found</p>
                 </div>
             )}
+
+            <LotFormModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setEditingLot(null);
+                }}
+                lot={editingLot}
+                onSaved={() => loadLots()}
+            />
         </div>
     );
 };

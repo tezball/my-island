@@ -48,13 +48,22 @@ public class ImageUploadService {
         String extension = getExtension(originalFilename);
         String key = folder + "/" + UUID.randomUUID() + extension;
 
+        log.info("Uploading image: {} ({} bytes, type={}) to bucket={}, key={}",
+                originalFilename, file.getSize(), file.getContentType(), bucketName, key);
+
         PutObjectRequest putRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(file.getContentType())
                 .build();
 
-        s3Client.putObject(putRequest, RequestBody.fromBytes(file.getBytes()));
+        try {
+            s3Client.putObject(putRequest, RequestBody.fromBytes(file.getBytes()));
+        } catch (Exception e) {
+            log.error("S3 upload failed for key={} bucket={} endpoint={}: {}",
+                    key, bucketName, s3Endpoint, e.getMessage(), e);
+            throw e;
+        }
 
         log.info("Uploaded image: {} to {}", originalFilename, key);
 
@@ -73,13 +82,19 @@ public class ImageUploadService {
     }
 
     public void deleteImage(String key) {
+        log.info("Deleting image from S3: bucket={}, key={}", bucketName, key);
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
 
-        s3Client.deleteObject(deleteRequest);
-        log.info("Deleted image: {}", key);
+        try {
+            s3Client.deleteObject(deleteRequest);
+            log.info("Deleted image: {}", key);
+        } catch (Exception e) {
+            log.error("S3 delete failed for key={} bucket={}: {}", key, bucketName, e.getMessage(), e);
+            throw e;
+        }
     }
 
     public String getPublicUrl(String key) {

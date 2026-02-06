@@ -39,15 +39,17 @@ export const SupplierOffersPage: React.FC = () => {
         }
     };
 
-    const handleSave = async (offerData: Omit<Offer, 'id' | 'claimCount' | 'createdAt'>) => {
+    const handleSave = async (offerData: Omit<Offer, 'id' | 'claimCount' | 'createdAt'>): Promise<Offer | void> => {
+        let saved: Offer | undefined;
         if (editingOffer) {
             await supplierService.updateOffer(editingOffer.id, offerData);
         } else {
-            await supplierService.addOffer(offerData);
+            saved = await supplierService.addOffer(offerData);
         }
         await loadOffers();
         setIsModalOpen(false);
         setEditingOffer(null);
+        return saved;
     };
 
     const handleEdit = (offer: Offer) => {

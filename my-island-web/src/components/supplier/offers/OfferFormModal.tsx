@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Offer, OfferCategory } from '../../../services/supplierService';
+import { uploadImage, validateFile } from '../../../services/imageService';
 
 interface OfferFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     offer?: Offer | null;
-    onSave: (offer: Omit<Offer, 'id' | 'claimCount' | 'createdAt'>) => Promise<void>;
+    onSave: (offer: Omit<Offer, 'id' | 'claimCount' | 'createdAt'>) => Promise<Offer | void>;
     supplierId: string;
 }
 
@@ -39,6 +40,8 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isDragging, setIsDragging] = useState(false);
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isEditMode = !!offer;
@@ -77,8 +80,17 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
             }
             setErrors({});
             setIsDragging(false);
+            setPendingFile(null);
+            setPreviewUrl(null);
         }
     }, [isOpen, offer]);
+
+    // Clean up object URL on unmount or when preview changes
+    useEffect(() => {
+        return () => {
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+        };
+    }, [previewUrl]);
 
     const validate = (): boolean => {
         const newErrors: Record<string, string> = {};
@@ -107,27 +119,24 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
     };
 
     const handleFileSelect = (file: File) => {
-        if (!file.type.startsWith('image/')) {
-            setErrors(prev => ({ ...prev, image: 'Please select an image file' }));
-            return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            setErrors(prev => ({ ...prev, image: 'Image must be less than 5MB' }));
+        const validationError = validateFile(file);
+        if (validationError) {
+            setErrors(prev => ({ ...prev, image: validationError }));
             return;
         }
 
         setErrors(prev => {
-            const { image, ...rest } = prev;
+            const { image: _, ...rest } = prev;
             return rest;
         });
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const result = e.target?.result as string;
-            setFormData(prev => ({ ...prev, imageUrl: result }));
-        };
-        reader.readAsDataURL(file);
+        // Clean up old preview
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+
+        const newPreviewUrl = URL.createObjectURL(file);
+        setPendingFile(file);
+        setPreviewUrl(newPreviewUrl);
+        setFormData(prev => ({ ...prev, imageUrl: '' }));
     };
 
     const handleDrop = (e: React.DragEvent) => {
@@ -158,11 +167,16 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
     };
 
     const handleRemoveImage = () => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPendingFile(null);
+        setPreviewUrl(null);
         setFormData(prev => ({ ...prev, imageUrl: '' }));
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
     };
+
+    const displayImageUrl = previewUrl || formData.imageUrl;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -171,7 +185,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
 
         setIsSubmitting(true);
         try {
-            await onSave({
+            const savedOffer = await onSave({
                 supplierId,
                 title: formData.title.trim(),
                 description: formData.description.trim(),
@@ -184,6 +198,16 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                 imageUrl: formData.imageUrl || undefined,
                 active: formData.active
             });
+
+            // Upload pending file if we have one and got an offer ID back
+            if (pendingFile && savedOffer && savedOffer.id) {
+                try {
+                    await uploadImage('OFFER', savedOffer.id, pendingFile, { primary: true });
+                } catch (err) {
+                    console.error('Failed to upload offer image:', err);
+                }
+            }
+
             onClose();
         } catch (error) {
             console.error('Failed to save offer:', error);
@@ -338,10 +362,10 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                                 Offer Image
                             </label>
 
-                            {formData.imageUrl ? (
+                            {displayImageUrl ? (
                                 <div className="relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
                                     <img
-                                        src={formData.imageUrl}
+                                        src={displayImageUrl}
                                         alt="Offer preview"
                                         className="w-full h-40 object-cover"
                                         onError={(e) => {
@@ -351,7 +375,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                                     <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs text-white/80 truncate max-w-[200px]">
-                                                {formData.imageUrl.startsWith('data:') ? 'Uploaded image' : 'External image'}
+                                                {pendingFile ? pendingFile.name : 'Uploaded image'}
                                             </span>
                                             <div className="flex items-center gap-1">
                                                 <button
@@ -395,7 +419,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                                         <span className="font-medium text-lime-600 dark:text-lime-400">Click to upload</span> or drag and drop
                                     </p>
                                     <p className="text-xs text-gray-500 dark:text-gray-500">
-                                        PNG, JPG, GIF up to 5MB
+                                        JPEG, PNG, GIF, WebP up to 10MB
                                     </p>
                                 </div>
                             )}
@@ -403,7 +427,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                accept="image/*"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
                                 onChange={handleFileInputChange}
                                 className="hidden"
                             />

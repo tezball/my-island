@@ -3,5 +3,7 @@
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/booking/BookingControllerUnitTests.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/identity/AuthControllerTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/modules/marketplace/MarketplaceControllerTest.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/shared/email/EmailServiceTest.java
+/home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/shared/events/kafka/EventConsumerEmailTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/support/BddTest.java
 /home/tezball/projects/my-island/my-island-api/src/test/java/com/myisland/api/support/TestContainersConfig.java

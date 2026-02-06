@@ -11,11 +11,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "Authentication", description = "User authentication and registration endpoints")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService authService;
 
@@ -32,6 +36,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Authenticate and get JWT token")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+        logger.info("User {} is attempting to login", request.email());
         return ResponseEntity.ok(authService.login(request));
     }
 
@@ -45,8 +50,7 @@ public class AuthController {
     @GetMapping("/me")
     @Operation(summary = "Get current user profile")
     public ResponseEntity<AuthResponse.UserDto> getCurrentUser(
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = authService.getCurrentUser(userDetails.getUserId());
         return ResponseEntity.ok(AuthResponse.UserDto.from(user));
     }
@@ -55,8 +59,7 @@ public class AuthController {
     @Operation(summary = "Upgrade current user to property owner")
     public ResponseEntity<AuthResponse> upgradeToOwner(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody UpgradeToOwnerRequest request
-    ) {
+            @Valid @RequestBody UpgradeToOwnerRequest request) {
         return ResponseEntity.ok(authService.upgradeToOwner(userDetails.getUserId(), request));
     }
 
@@ -64,8 +67,7 @@ public class AuthController {
     @Operation(summary = "Upgrade current user to supplier")
     public ResponseEntity<AuthResponse> upgradeToSupplier(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody UpgradeToSupplierRequest request
-    ) {
+            @Valid @RequestBody UpgradeToSupplierRequest request) {
         return ResponseEntity.ok(authService.upgradeToSupplier(userDetails.getUserId(), request));
     }
 }
