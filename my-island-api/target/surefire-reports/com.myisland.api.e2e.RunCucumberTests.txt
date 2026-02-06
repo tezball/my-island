@@ -1,4 +1,44 @@
 -------------------------------------------------------------------------------
 Test set: com.myisland.api.e2e.RunCucumberTests
 -------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 56.29 s -- in com.myisland.api.e2e.RunCucumberTests
+Tests run: 10, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 78.26 s <<< FAILURE! -- in com.myisland.api.e2e.RunCucumberTests
+Create Booking.Book a lot via search results -- Time elapsed: 21.40 s <<< ERROR!
+org.openqa.selenium.TimeoutException: 
+Expected condition failed: waiting for element to be clickable: By.xpath: //div[contains(@class, 'grid-cols-7')]//button[not(@disabled) and normalize-space(text())='8'] (tried for 10 second(s) with 500 milliseconds interval)
+Build info: version: '4.25.0', revision: '8a8aea2337'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.14.0-37-generic', java.version: '25.0.1'
+Driver info: org.openqa.selenium.remote.RemoteWebDriver
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 130.0.6723.69, chrome: {chromedriverVersion: 130.0.6723.69 (3ec172b971b9..., userDataDir: /tmp/.org.chromium.Chromium...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:44467}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), se:bidiEnabled: false, se:cdp: ws://172.17.0.4:4444/sessio..., se:cdpVersion: 130.0.6723.69, se:containerName: , se:noVncPort: 7900, se:vnc: ws://172.17.0.4:4444/sessio..., se:vncEnabled: true, se:vncLocalAddress: ws://172.17.0.4:7900, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+Session ID: 82b2c332dbd484453c1cef27e98b3579
+	at org.openqa.selenium.support.ui.WebDriverWait.timeoutException(WebDriverWait.java:84)
+	at org.openqa.selenium.support.ui.FluentWait.until(FluentWait.java:228)
+	at com.myisland.api.e2e.steps.BookingSteps.selectCalendarDate(BookingSteps.java:92)
+	at com.myisland.api.e2e.steps.BookingSteps.i_select_a_check_in_date_days_from_now(BookingSteps.java:59)
+	at ✽.I select a check-in date 30 days from now(classpath:features/booking/create_booking.feature:17)
+
+Browse Offers.Browse and filter offers -- Time elapsed: 14.08 s <<< ERROR!
+org.openqa.selenium.TimeoutException: 
+Expected condition failed: waiting for text ('Local Offers') to be present in element found by By.tagName: body (tried for 10 second(s) with 500 milliseconds interval)
+Build info: version: '4.25.0', revision: '8a8aea2337'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.14.0-37-generic', java.version: '25.0.1'
+Driver info: org.openqa.selenium.remote.RemoteWebDriver
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 130.0.6723.69, chrome: {chromedriverVersion: 130.0.6723.69 (3ec172b971b9..., userDataDir: /tmp/.org.chromium.Chromium...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:40237}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), se:bidiEnabled: false, se:cdp: ws://172.17.0.4:4444/sessio..., se:cdpVersion: 130.0.6723.69, se:containerName: , se:noVncPort: 7900, se:vnc: ws://172.17.0.4:4444/sessio..., se:vncEnabled: true, se:vncLocalAddress: ws://172.17.0.4:7900, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+Session ID: cb5af4c7d1d7afa315ce83c20f09a69f
+	at org.openqa.selenium.support.ui.WebDriverWait.timeoutException(WebDriverWait.java:84)
+	at org.openqa.selenium.support.ui.FluentWait.until(FluentWait.java:228)
+	at com.myisland.api.e2e.steps.NavigationSteps.i_should_see_the_text(NavigationSteps.java:65)
+	at ✽.I should see the text "Local Offers"(classpath:features/marketplace/browse_offers.feature:10)
+
+Claim Offer.Claim an offer and see it in vouchers -- Time elapsed: 14.37 s <<< ERROR!
+org.openqa.selenium.TimeoutException: 
+Expected condition failed: waiting for com.myisland.api.e2e.steps.MarketplaceSteps$$Lambda/0x0000000013907738@73e45afe (tried for 10 second(s) with 500 milliseconds interval)
+Build info: version: '4.25.0', revision: '8a8aea2337'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.14.0-37-generic', java.version: '25.0.1'
+Driver info: org.openqa.selenium.remote.RemoteWebDriver
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 130.0.6723.69, chrome: {chromedriverVersion: 130.0.6723.69 (3ec172b971b9..., userDataDir: /tmp/.org.chromium.Chromium...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:32773}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), se:bidiEnabled: false, se:cdp: ws://172.17.0.4:4444/sessio..., se:cdpVersion: 130.0.6723.69, se:containerName: , se:noVncPort: 7900, se:vnc: ws://172.17.0.4:4444/sessio..., se:vncEnabled: true, se:vncLocalAddress: ws://172.17.0.4:7900, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+Session ID: 8e336f5eb2f7523fc110c8066a62cebb
+	at org.openqa.selenium.support.ui.WebDriverWait.timeoutException(WebDriverWait.java:84)
+	at org.openqa.selenium.support.ui.FluentWait.until(FluentWait.java:228)
+	at com.myisland.api.e2e.steps.MarketplaceSteps.i_click_the_button_on_the_first_offer(MarketplaceSteps.java:67)
+	at ✽.I click the "Claim Offer" button on the first offer(classpath:features/marketplace/claim_offer.feature:10)
+

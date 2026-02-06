@@ -236,7 +236,7 @@ Owner / Campsite (Root)
 | id | Long | Unique identifier |
 | ownerId | Long | Parent owner/campsite |
 | name | String | Lot name (e.g., "Pitch A1") |
-| lotType | LotType | Accommodation type (TENT, CAMPERVAN, GLAMPING, CABIN, TREEHOUSE, YURT, POD) |
+| lotType | LotType | Accommodation type (TENT, TOURING, GLAMPING, CABIN, MOBILE_HOME) |
 | description | String | Lot description |
 | maxGuests | Integer | Maximum guests (default 2) |
 | pricePerNight | BigDecimal | Base price |
@@ -544,17 +544,15 @@ SupportTicket (Root)
 
 ### LotType
 
-7 types covering the Irish camping/glamping market:
+5 types covering the Irish camping/glamping market:
 
 | Type | Label | Description | Examples |
 |------|-------|-------------|----------|
-| TENT | Tent Pitches | Designated spots where guests pitch their own tent. Access to shared facilities (toilets, showers). | Grass pitch, hardstanding pitch |
-| CAMPERVAN | Campervan Pitches | Pitches for campervans and motorhomes. Typically include electric hookup, may have water/waste connections. | Campervan spot, motorhome bay |
-| GLAMPING | Glamping | Pre-pitched luxury camping accommodation. Guests arrive to a ready setup with beds, furniture, and amenities. | Bell tent, safari tent, geodesic dome |
-| CABIN | Cabins & Lodges | Wooden or permanent structures with beds and basic amenities. May include private bathroom, kitchenette, or heating. | Wooden cabin, lodge, shepherd's hut |
-| TREEHOUSE | Treehouses | Elevated accommodation built in or around trees. Unique glamping experience. | Treehouse cabin, elevated pod |
-| YURT | Yurts | Circular tent structures with wooden frames. Traditional glamping option. | Traditional yurt, luxury yurt |
-| POD | Camping Pods | Small, insulated wooden pods for shelter. Compact camping alternative. | Camping pod, micro-lodge |
+| TENT | Tent Pitch | Designated spots where guests pitch their own tent. Access to shared facilities (toilets, showers). | Grass pitch, hardstanding pitch |
+| TOURING | Touring Pitch | Pitches for campervans, caravans, and motorhomes. Typically include electric hookup, may have water/waste connections. | Campervan spot, motorhome bay, caravan pitch |
+| GLAMPING | Glamping | Pre-pitched luxury camping accommodation. Guests arrive to a ready setup with beds, furniture, and amenities. | Bell tent, safari tent, yurt, pod, geodesic dome |
+| CABIN | Cabin & Lodge | Wooden or permanent structures with beds and basic amenities. May include private bathroom, kitchenette, or heating. | Wooden cabin, lodge, treehouse, shepherd's hut |
+| MOBILE_HOME | Mobile Home | Static caravan or mobile home accommodation with full amenities. | Static caravan, mobile home, holiday home |
 
 ### Facility
 

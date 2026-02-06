@@ -10,6 +10,7 @@ const TEST_USERS = [
     // Subscribed Suppliers
     { email: 'farmshop@greenacres.ie', password: 'password', label: 'Green Acres Farm Shop (Supplier - Subscribed)' },
     { email: 'info@aillweefarmshop.ie', password: 'password', label: 'Aillwee Farm Shop & Cheese (Supplier - Subscribed)' },
+    { email: 'info@murphygeneralstore.ie', password: 'password', label: 'Murphy General Store (Supplier - Subscribed)' },
     // No Subscription (for testing subscription gates)
     { email: 'bookings@loughdergcamping.ie', password: 'password', label: 'Lough Derg Lakeside (Owner - No Sub)' },
     { email: 'hello@dinglekayak.ie', password: 'password', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },

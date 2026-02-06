@@ -7,6 +7,7 @@ export const BottomNav: React.FC = () => {
         <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a2632] border-t border-gray-200 dark:border-gray-800 px-6 py-2 z-50">
             <div className="flex justify-between items-center max-w-lg mx-auto">
                 <NavItem to="/" icon="search" label="Search" />
+                <NavItem to="/marketplace" icon="storefront" label="Marketplace" />
                 <NavItem to="/saved" icon="favorite" label="Saved" />
                 <NavItem to="/trips" icon="luggage" label="Trips" />
                 <NavItem to="/profile" icon="person" label="Profile" />

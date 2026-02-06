@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MVP_LAUNCH_CHECKLIST.md",
+                "file": "DDD_VERIFICATION_REPORT.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "MVP_LAUNCH_CHECKLIST"
+              "title": "DDD_VERIFICATION_REPORT"
             }
           }
         ]
@@ -185,22 +185,22 @@
       "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "e4a632610aa52cf7",
+  "active": "fa52abc0471d0032",
   "lastOpenFiles": [
+    "00-Domain/01-Accommodation/NOTES.md.tmp.584089.1770401447893",
+    "00-Domain/DOMAIN_MODEL.md.tmp.584089.1770401443743",
+    "00-Domain/DOMAIN_MODEL.md.tmp.584089.1770401430213",
+    "MVP_LAUNCH_CHECKLIST.md",
     "MVP_LAUNCH_CHECKLIST.md.tmp.1401069.1769962748092",
     "MVP_LAUNCH_CHECKLIST.md.tmp.1401069.1769955357356",
     "DDD_SYNC_PLAN.md",
-    "MVP_LAUNCH_CHECKLIST.md",
     "MVP_LAUNCH_CHECKLIST.md.tmp.1401069.1769954901856",
     "00-Domain/03-Identity/NOTES.md.tmp.361387.1769954095838",
     "DDD_SYNC_PLAN.md.tmp.361387.1769954084276",
     "DDD_SYNC_PLAN.md.tmp.361387.1769954076952",
     "API_REFERENCE.md.tmp.361387.1769954070164",
     "API_REFERENCE.md.tmp.361387.1769954063569",
-    "API_REFERENCE.md.tmp.361387.1769954058307",
-    "API_REFERENCE.md.tmp.361387.1769954047506",
     "00-Domain/FAQ.md",
-    "00-Domain/FAQ.md.tmp.137132.1769953206404",
     "API_REFERENCE.md",
     "pm-owner-review-findings.md",
     "00-Domain/07-Marketplace/domain_gap_analysis.md",

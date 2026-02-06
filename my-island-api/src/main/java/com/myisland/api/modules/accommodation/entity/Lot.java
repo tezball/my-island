@@ -46,7 +46,7 @@ public class Lot extends BaseEntity {
     private Set<Amenity> amenities = new HashSet<>();
 
     public enum LotType {
-        TENT, CAMPERVAN, GLAMPING, CABIN, TREEHOUSE, YURT, POD
+        TENT, TOURING, GLAMPING, CABIN, MOBILE_HOME
     }
 
     public Lot() {}

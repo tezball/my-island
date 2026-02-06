@@ -84,7 +84,7 @@ function App() {
               <Route path="/trips" element={<TripsPage />} />
               <Route path="/search" element={<SearchResultsPage />} />
               <Route path="/vouchers" element={<VouchersPage />} />
-              <Route path="/offers" element={<OffersPage />} />
+              <Route path="/marketplace" element={<OffersPage />} />
             </Routes>
           </Layout>
 

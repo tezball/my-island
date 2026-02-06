@@ -29,6 +29,10 @@ export const OffersPage: React.FC = () => {
     const [claimingId, setClaimingId] = useState<string | null>(null);
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
+    // Modal State
+    const [selectedOffer, setSelectedOffer] = useState<OfferWithSupplier | null>(null);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
     useEffect(() => {
         const fetchOffers = async () => {
             try {
@@ -43,21 +47,31 @@ export const OffersPage: React.FC = () => {
         fetchOffers();
     }, []);
 
-    const handleClaim = async (offer: OfferWithSupplier) => {
+    const handleClaim = async (e?: React.MouseEvent) => {
+        e?.stopPropagation(); // Prevent closing details modal if clicked inside
+
         if (!user) {
             navigate('/signin');
             return;
         }
 
-        setClaimingId(offer.id);
+        const offerToClaim = selectedOffer;
+        if (!offerToClaim) return;
+
+        setClaimingId(offerToClaim.id);
         try {
-            await supplierService.claimOffer(offer.id, user.id, user.name || 'Guest');
-            // Redirect to vouchers page after claiming
-            navigate('/vouchers');
+            await supplierService.claimOffer(offerToClaim.id, user.id, user.name || 'Guest');
+            setShowSuccessModal(true);
+            setSelectedOffer(null); // Close details modal
         } catch (error) {
             console.error('Failed to claim offer:', error);
+        } finally {
             setClaimingId(null);
         }
+    };
+
+    const openOfferDetails = (offer: OfferWithSupplier) => {
+        setSelectedOffer(offer);
     };
 
     const filteredOffers = offers.filter(o => {
@@ -88,41 +102,40 @@ export const OffersPage: React.FC = () => {
             <div className="bg-gradient-to-r from-primary to-emerald-600 text-white py-8 px-4">
                 <div className="max-w-7xl mx-auto">
                     <h1 className="text-2xl font-bold">Local Offers</h1>
-                <p className="text-white/80 mt-1">Exclusive discounts from local suppliers</p>
-                {user && (
-                    <Link
-                        to="/vouchers"
-                        className="inline-flex items-center gap-2 mt-4 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    >
-                        <span className="material-symbols-outlined text-sm">local_offer</span>
-                        View My Vouchers
-                    </Link>
-                )}
+                    <p className="text-white/80 mt-1">Exclusive discounts from local suppliers</p>
+                    {user && (
+                        <Link
+                            to="/vouchers"
+                            className="inline-flex items-center gap-2 mt-4 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-sm">local_offer</span>
+                            View My Vouchers
+                        </Link>
+                    )}
                 </div>
             </div>
 
             {/* Category Filter */}
             <div className="border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
                 <div className="max-w-7xl mx-auto px-4 py-4">
-                <div className="flex gap-2 min-w-max">
-                    {categories.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => setCategoryFilter(category)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${
-                                categoryFilter === category
-                                    ? 'bg-primary text-white'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-                            }`}
-                        >
-                            {category !== 'all' && (
-                                <span className="material-symbols-outlined text-sm">
-                                    {CATEGORY_ICONS[category] || 'store'}
-                                </span>
-                            )}
-                            {category === 'all' ? 'All Offers' : CATEGORY_LABELS[category] || category}
-                        </button>
-                    ))}
+                    <div className="flex gap-2 min-w-max">
+                        {categories.map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => setCategoryFilter(category)}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${categoryFilter === category
+                                        ? 'bg-primary text-white'
+                                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                    }`}
+                            >
+                                {category !== 'all' && (
+                                    <span className="material-symbols-outlined text-sm">
+                                        {CATEGORY_ICONS[category] || 'store'}
+                                    </span>
+                                )}
+                                {category === 'all' ? 'All Offers' : CATEGORY_LABELS[category] || category}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -140,7 +153,8 @@ export const OffersPage: React.FC = () => {
                     {filteredOffers.map((offer) => (
                         <div
                             key={offer.id}
-                            className="bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+                            onClick={() => openOfferDetails(offer)}
+                            className="bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow group"
                         >
                             {/* Offer Image */}
                             {offer.imageUrl && (
@@ -148,9 +162,9 @@ export const OffersPage: React.FC = () => {
                                     <img
                                         src={offer.imageUrl}
                                         alt={offer.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 hover:opacity-90"
                                     />
-                                    <div className="absolute top-3 right-3 bg-primary text-white font-bold px-3 py-1 rounded-lg">
+                                    <div className="absolute top-3 right-3 bg-primary text-white font-bold px-3 py-1 rounded-lg shadow-sm">
                                         {offer.discountPercent === 0 ? 'FREE' : `${offer.discountPercent}% OFF`}
                                     </div>
                                 </div>
@@ -166,7 +180,7 @@ export const OffersPage: React.FC = () => {
                                 </div>
 
                                 {/* Title & Description */}
-                                <h3 className="font-bold text-lg text-[#111418] dark:text-white mb-2">
+                                <h3 className="font-bold text-lg text-[#111418] dark:text-white mb-2 group-hover:text-primary transition-colors">
                                     {offer.title}
                                 </h3>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
@@ -177,7 +191,7 @@ export const OffersPage: React.FC = () => {
                                 <div className="flex flex-wrap gap-3 text-xs text-gray-500 mb-4">
                                     <span className="flex items-center gap-1">
                                         <span className="material-symbols-outlined text-sm">event</span>
-                                        Valid {formatDate(offer.validFrom)} - {formatDate(offer.validUntil)}
+                                        Until {formatDate(offer.validUntil)}
                                     </span>
                                     {offer.maxClaims && (
                                         <span className="flex items-center gap-1">
@@ -187,29 +201,130 @@ export const OffersPage: React.FC = () => {
                                     )}
                                 </div>
 
-                                {/* Claim Button */}
-                                <button
-                                    onClick={() => handleClaim(offer)}
-                                    disabled={claimingId === offer.id}
-                                    className="w-full bg-primary hover:bg-emerald-600 disabled:bg-gray-400 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
-                                >
-                                    {claimingId === offer.id ? (
-                                        <>
-                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                            Claiming...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="material-symbols-outlined text-sm">add</span>
-                                            Claim Offer
-                                        </>
-                                    )}
-                                </button>
+                                {/* View Details Button (Visual Cue) */}
+                                <div className="w-full bg-gray-100 dark:bg-gray-800 text-center py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                    View Details
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
+
+            {/* Offer Details Modal */}
+            {selectedOffer && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div
+                        className="bg-white dark:bg-[#1a2632] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setSelectedOffer(null)}
+                            className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-colors backdrop-blur-md"
+                        >
+                            <span className="material-symbols-outlined text-xl">close</span>
+                        </button>
+
+                        <div className="max-h-[85vh] overflow-y-auto">
+                            {selectedOffer.imageUrl && (
+                                <div className="h-56 bg-gray-200 relative">
+                                    <img
+                                        src={selectedOffer.imageUrl}
+                                        alt={selectedOffer.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute bottom-4 left-4 bg-primary text-white font-bold px-3 py-1 rounded-lg shadow-lg">
+                                        {selectedOffer.discountPercent === 0 ? 'FREE' : `${selectedOffer.discountPercent}% OFF`}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="p-6">
+                                <div className="flex items-center gap-2 mb-3 text-sm text-gray-500">
+                                    <span className="font-semibold text-primary">{selectedOffer.supplier.businessName}</span>
+                                    <span>•</span>
+                                    <span>{CATEGORY_LABELS[selectedOffer.category]}</span>
+                                </div>
+
+                                <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-4">
+                                    {selectedOffer.title}
+                                </h2>
+
+                                <div className="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 text-sm mb-6">
+                                    <p className="whitespace-pre-wrap">{selectedOffer.description}</p>
+                                </div>
+
+                                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 mb-6 space-y-3">
+                                    <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                                        <span className="material-symbols-outlined text-lg">calendar_month</span>
+                                        <div>
+                                            <p className="font-medium text-[#111418] dark:text-white">Valid Period</p>
+                                            <p>{formatDate(selectedOffer.validFrom)} - {formatDate(selectedOffer.validUntil)}</p>
+                                        </div>
+                                    </div>
+                                    {selectedOffer.terms && (
+                                        <div className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+                                            <span className="material-symbols-outlined text-lg">description</span>
+                                            <div>
+                                                <p className="font-medium text-[#111418] dark:text-white">Terms & Conditions</p>
+                                                <p className="text-xs">{selectedOffer.terms}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={() => handleClaim()}
+                                    disabled={claimingId === selectedOffer.id}
+                                    className="w-full bg-primary hover:bg-emerald-600 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 text-lg"
+                                >
+                                    {claimingId === selectedOffer.id ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                            Claiming...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="material-symbols-outlined">add_circle</span>
+                                            Claim This Offer
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white dark:bg-[#1a2632] rounded-2xl w-full max-w-sm p-6 text-center animate-in zoom-in-95 duration-200">
+                        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="material-symbols-outlined text-3xl">check_circle</span>
+                        </div>
+                        <h2 className="text-xl font-bold text-[#111418] dark:text-white mb-2">Offer Claimed!</h2>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
+                            This voucher has been added to your wallet. Use it when visiting the supplier.
+                        </p>
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={() => navigate('/vouchers')}
+                                className="w-full bg-primary hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition-colors"
+                            >
+                                View My Wallet
+                            </button>
+                            <button
+                                onClick={() => setShowSuccessModal(false)}
+                                className="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-[#111418] dark:text-white font-semibold py-3 rounded-xl transition-colors"
+                            >
+                                Continue Browsing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+
