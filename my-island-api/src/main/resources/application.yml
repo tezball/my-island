@@ -88,6 +88,7 @@ aws:
   secret-access-key: ${AWS_SECRET_ACCESS_KEY:test}
 
 myisland:
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
   email:
     from: ${EMAIL_FROM:noreply@myisland.ie}
 

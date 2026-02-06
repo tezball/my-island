@@ -1,22 +1,23 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const ResetPasswordPage: React.FC = () => {
     const navigate = useNavigate();
     const { resetPassword } = useAuth();
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token');
     const [password, setPassword] = React.useState('');
     const [confirmPassword, setConfirmPassword] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState('');
     const [success, setSuccess] = React.useState(false);
 
-    // Mock token from URL in a real app
-    const token = "mock-token";
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        if (!token) return;
 
         if (password !== confirmPassword) {
             setError('Passwords do not match');
@@ -36,12 +37,33 @@ export const ResetPasswordPage: React.FC = () => {
             setTimeout(() => {
                 navigate('/signin');
             }, 2000);
-        } catch (err) {
-            setError('Failed to reset password. Please try again.');
+        } catch {
+            setError('Invalid or expired reset link. Please request a new one.');
         } finally {
             setIsLoading(false);
         }
     };
+
+    if (!token) {
+        return (
+            <div className="relative mx-auto flex h-screen max-w-md w-full flex-col overflow-hidden bg-white dark:bg-[#1a2632] shadow-xl sm:rounded-xl sm:h-[90vh] sm:my-[5vh]">
+                <main className="flex flex-1 flex-col items-center justify-center p-6 text-center">
+                    <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+                        <span className="material-symbols-outlined text-4xl text-red-600 dark:text-red-400">error</span>
+                    </div>
+                    <h1 className="text-[#111418] dark:text-white text-2xl font-bold mb-2">
+                        Invalid Reset Link
+                    </h1>
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">
+                        This password reset link is invalid. Please request a new one.
+                    </p>
+                    <Link to="/forgot-password" className="text-primary font-semibold hover:underline">
+                        Request new reset link
+                    </Link>
+                </main>
+            </div>
+        );
+    }
 
     if (success) {
         return (

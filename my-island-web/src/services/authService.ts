@@ -26,6 +26,7 @@ export interface User {
     avatarUrl?: string;
     isOwner?: boolean;
     isSupplier?: boolean;
+    emailVerified?: boolean;
 }
 
 export interface AuthResponse {
@@ -45,6 +46,7 @@ interface AuthApiResponse {
         role: string;
         isOwner: boolean;
         isSupplier: boolean;
+        emailVerified: boolean;
     };
 }
 
@@ -84,6 +86,7 @@ function transformUser(apiUser: AuthApiResponse['user']): User {
         avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(apiUser.name)}&background=059669&color=fff`,
         isOwner: apiUser.isOwner,
         isSupplier: apiUser.isSupplier,
+        emailVerified: apiUser.emailVerified,
     };
 }
 
@@ -349,26 +352,54 @@ export const authService = {
         return user;
     },
     async requestPasswordReset(email: string): Promise<void> {
-        const startTime = performance.now();
         log.info('Password reset requested', { email });
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        // Mock success - in production this would call an API
-        log.info('Password reset email sent', { email, durationMs: Math.round(performance.now() - startTime) });
-        return Promise.resolve();
+        try {
+            await fetch(`${API_BASE}/auth/forgot-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+        } catch (error) {
+            log.error('Network error during password reset request', error);
+            throw new NetworkError();
+        }
+        // Always resolve — API returns 200 even for unknown emails
     },
 
     async resetPassword(token: string, newPassword: string): Promise<void> {
-        const startTime = performance.now();
-        log.info('Password reset attempt', { token });
+        log.info('Password reset attempt');
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}/auth/reset-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, newPassword }),
+            });
+        } catch (error) {
+            log.error('Network error during password reset', error);
+            throw new NetworkError();
+        }
 
-        // Mock success
-        log.info('Password reset successful', { durationMs: Math.round(performance.now() - startTime), newPasswordLength: newPassword.length });
-        return Promise.resolve();
+        if (!response.ok) {
+            throw new AuthServiceError('Invalid or expired reset link', 'RESET_ERROR', response.status);
+        }
+    },
+
+    async verifyEmail(token: string): Promise<void> {
+        log.info('Email verification attempt');
+
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}/auth/verify-email?token=${encodeURIComponent(token)}`);
+        } catch (error) {
+            log.error('Network error during email verification', error);
+            throw new NetworkError();
+        }
+
+        if (!response.ok) {
+            throw new AuthServiceError('Invalid or expired verification link', 'VERIFY_ERROR', response.status);
+        }
     },
 };

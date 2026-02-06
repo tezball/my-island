@@ -8,6 +8,7 @@ import com.myisland.api.modules.identity.repository.UserRepository;
 import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import com.myisland.api.security.JwtProvider;
+import com.myisland.api.shared.email.EmailService;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ConflictException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
@@ -20,6 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 public class AuthService {
 
@@ -31,16 +35,19 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final EmailService emailService;
 
     public AuthService(UserRepository userRepository, OwnerRepository ownerRepository,
                        SupplierRepository supplierRepository, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
+                       AuthenticationManager authenticationManager, JwtProvider jwtProvider,
+                       EmailService emailService) {
         this.userRepository = userRepository;
         this.ownerRepository = ownerRepository;
         this.supplierRepository = supplierRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -58,6 +65,8 @@ public class AuthService {
 
         user = userRepository.save(user);
         log.info("New user registered: {}", user.getEmail());
+
+        sendEmailVerification(user);
 
         String token = jwtProvider.generateToken(user.getEmail());
         return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user));
@@ -147,6 +156,58 @@ public class AuthService {
 
         String token = jwtProvider.generateToken(user.getEmail());
         return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user));
+    }
+
+    public void requestPasswordReset(ForgotPasswordRequest request) {
+        userRepository.findByEmail(request.email()).ifPresent(user -> {
+            String token = UUID.randomUUID().toString();
+            user.setPasswordResetToken(token);
+            user.setPasswordResetTokenExpiry(LocalDateTime.now().plusHours(1));
+            userRepository.save(user);
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getName(), token);
+            log.info("Password reset email sent to: {}", user.getEmail());
+        });
+    }
+
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByPasswordResetToken(request.token())
+                .orElseThrow(() -> new BadRequestException("Invalid or expired reset link"));
+
+        if (user.getPasswordResetTokenExpiry() == null || user.getPasswordResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Invalid or expired reset link");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setPasswordResetToken(null);
+        user.setPasswordResetTokenExpiry(null);
+        userRepository.save(user);
+        log.info("Password reset successful for: {}", user.getEmail());
+    }
+
+    public void sendEmailVerification(User user) {
+        String token = UUID.randomUUID().toString();
+        user.setEmailVerificationToken(token);
+        user.setEmailVerificationTokenExpiry(LocalDateTime.now().plusHours(24));
+        userRepository.save(user);
+        emailService.sendEmailVerificationEmail(user.getEmail(), user.getName(), token);
+        log.info("Email verification sent to: {}", user.getEmail());
+    }
+
+    @Transactional
+    public void verifyEmail(String token) {
+        User user = userRepository.findByEmailVerificationToken(token)
+                .orElseThrow(() -> new BadRequestException("Invalid or expired verification link"));
+
+        if (user.getEmailVerificationTokenExpiry() == null || user.getEmailVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Invalid or expired verification link");
+        }
+
+        user.setEmailVerified(true);
+        user.setEmailVerificationToken(null);
+        user.setEmailVerificationTokenExpiry(null);
+        userRepository.save(user);
+        log.info("Email verified for: {}", user.getEmail());
     }
 
     public User getCurrentUser(Long userId) {

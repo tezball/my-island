@@ -34,11 +34,12 @@ import { VouchersPage } from './pages/VouchersPage';
 import { OffersPage } from './pages/OffersPage';
 import { BecomeHostPage } from './pages/supplier-onboarding';
 import { BecomeSupplierPage } from './pages/supplier-business-onboarding';
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const hideNavRoutes = ['/signin', '/signup', '/forgot-password', '/reset-password', '/personalize', '/become-a-host', '/become-a-supplier'];
+  const hideNavRoutes = ['/signin', '/signup', '/forgot-password', '/reset-password', '/personalize', '/become-a-host', '/become-a-supplier', '/verify-email'];
   const isOwnerRoute = location.pathname.startsWith('/owner');
   const isSupplierRoute = location.pathname.startsWith('/supplier');
   const isBecomeHostRoute = location.pathname.startsWith('/become-a-host');
@@ -71,6 +72,7 @@ function App() {
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
               <Route path="/personalize" element={<PersonalizationPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/details" element={<PersonalDetailsPage />} />

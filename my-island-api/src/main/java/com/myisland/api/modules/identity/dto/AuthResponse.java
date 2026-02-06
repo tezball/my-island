@@ -18,7 +18,8 @@ public record AuthResponse(
             String name,
             String role,
             boolean isOwner,
-            boolean isSupplier
+            boolean isSupplier,
+            boolean emailVerified
     ) {
         public static UserDto from(User user) {
             return new UserDto(
@@ -27,7 +28,8 @@ public record AuthResponse(
                     user.getName(),
                     user.getRole().name(),
                     user.isOwner(),
-                    user.isSupplier()
+                    user.isSupplier(),
+                    user.isEmailVerified()
             );
         }
     }

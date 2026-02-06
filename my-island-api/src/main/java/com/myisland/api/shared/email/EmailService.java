@@ -2,6 +2,7 @@ package com.myisland.api.shared.email;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -13,6 +14,9 @@ public class EmailService implements EmailNotificationService {
 
     private final EmailSender emailSender;
     private final EmailTemplateRenderer templateRenderer;
+
+    @Value("${myisland.frontend-url}")
+    private String frontendUrl;
 
     public EmailService(EmailSender emailSender, EmailTemplateRenderer templateRenderer) {
         this.emailSender = emailSender;
@@ -74,6 +78,24 @@ public class EmailService implements EmailNotificationService {
         Context context = createClaimContext(claimData);
 
         sendEmail(guestEmail, "Your Voucher - " + claimData.offerTitle(), "voucher", context);
+    }
+
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String userName, String token) {
+        Context context = new Context();
+        context.setVariable("userName", userName);
+        context.setVariable("resetLink", frontendUrl + "/reset-password?token=" + token);
+
+        sendEmail(toEmail, "Reset Your Password - My Island", "password-reset", context);
+    }
+
+    @Async
+    public void sendEmailVerificationEmail(String toEmail, String userName, String token) {
+        Context context = new Context();
+        context.setVariable("userName", userName);
+        context.setVariable("verifyLink", frontendUrl + "/verify-email?token=" + token);
+
+        sendEmail(toEmail, "Verify Your Email - My Island", "email-verification", context);
     }
 
     private Context createBookingContext(BookingEmailData bookingData) {

@@ -42,6 +42,8 @@
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/controller/AuthController.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/AuthRequest.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/AuthResponse.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/ForgotPasswordRequest.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/ResetPasswordRequest.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/SignupRequest.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/UpgradeToOwnerRequest.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/identity/dto/UpgradeToSupplierRequest.java

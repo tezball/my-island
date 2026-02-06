@@ -55,6 +55,27 @@ public class AuthController {
         return ResponseEntity.ok(AuthResponse.UserDto.from(user));
     }
 
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Request a password reset email")
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.requestPasswordReset(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    @Operation(summary = "Reset password using token from email")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/verify-email")
+    @Operation(summary = "Verify email address using token from email")
+    public ResponseEntity<Void> verifyEmail(@RequestParam String token) {
+        authService.verifyEmail(token);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/upgrade/owner")
     @Operation(summary = "Upgrade current user to property owner")
     public ResponseEntity<AuthResponse> upgradeToOwner(
