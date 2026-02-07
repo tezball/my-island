@@ -52,6 +52,7 @@ const OwnerLayoutContent: React.FC = () => {
                     <OwnerNavLink to="/owner/lots" icon="grid_view" label="My Lots" />
                     <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />
                     <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />
+                    <OwnerNavLink to="/owner/reviews" icon="rate_review" label="Reviews" />
                     <OwnerNavLink to="/owner/property" icon="home" label="Property Details" />
                     <OwnerNavLink to="/owner/settings" icon="settings" label="Settings" />
                 </div>

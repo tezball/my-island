@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
 import { type Lot } from '../types/booking';
 import { BookingModal } from '../components/booking/BookingModal';
+import { ReviewsSection } from '../components/review/ReviewsSection';
 import { useSaved } from '../context/SavedContext';
 
 // Type configuration with display names and images
@@ -290,6 +291,11 @@ export const CampsiteDetailsPage: React.FC = () => {
                             </div>
                         );
                     })}
+                </div>
+
+                {/* Reviews Section */}
+                <div className="mt-10">
+                    <ReviewsSection campsiteId={id!} campsiteRating={campsite.rating} reviewCount={campsite.reviewCount} />
                 </div>
             </div>
 

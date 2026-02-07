@@ -66,6 +66,8 @@ interface OwnerApiResponse {
     isFeatured: boolean;
     featuredUntil: string | null;
     isAcceptingBookings: boolean;
+    rating: number | null;
+    reviewCount: number;
 }
 
 interface LotApiResponse {
@@ -117,6 +119,8 @@ export interface CampsiteProfile extends User {
     isAcceptingBookings?: boolean;
     phone?: string | null;
     website?: string | null;
+    rating?: number | null;
+    reviewCount?: number;
 }
 
 // Helper function for API calls
@@ -221,6 +225,8 @@ function transformCampsite(api: OwnerApiResponse): CampsiteProfile {
         isAcceptingBookings: api.isAcceptingBookings,
         phone: api.phone,
         website: api.website,
+        rating: api.rating,
+        reviewCount: api.reviewCount,
     };
 }
 

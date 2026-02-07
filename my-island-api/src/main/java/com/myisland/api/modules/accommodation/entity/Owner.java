@@ -107,6 +107,13 @@ public class Owner extends BaseEntity {
     @Column(name = "payouts_enabled", nullable = false)
     private boolean payoutsEnabled = false;
 
+    // Review rating fields
+    @Column(precision = 2, scale = 1)
+    private BigDecimal rating;
+
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount = 0;
+
     public enum SubscriptionStatus {
         NONE,       // Never subscribed
         ACTIVE,     // Subscription is active
@@ -274,4 +281,11 @@ public class Owner extends BaseEntity {
 
     public boolean isPayoutsEnabled() { return payoutsEnabled; }
     public void setPayoutsEnabled(boolean payoutsEnabled) { this.payoutsEnabled = payoutsEnabled; }
+
+    // Review rating getters and setters
+    public BigDecimal getRating() { return rating; }
+    public void setRating(BigDecimal rating) { this.rating = rating; }
+
+    public int getReviewCount() { return reviewCount; }
+    public void setReviewCount(int reviewCount) { this.reviewCount = reviewCount; }
 }

@@ -14,6 +14,9 @@ import com.myisland.api.modules.marketplace.dto.CreatePortalSessionResponse;
 import com.myisland.api.modules.marketplace.dto.OnboardingLinkResponse;
 import com.myisland.api.modules.marketplace.dto.SetupIntentResponse;
 import com.myisland.api.modules.marketplace.service.StripeConnectService;
+import com.myisland.api.modules.review.dto.OwnerReviewResponseRequest;
+import com.myisland.api.modules.review.dto.ReviewDto;
+import com.myisland.api.modules.review.service.ReviewService;
 import com.myisland.api.security.CustomUserDetails;
 import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,15 +40,17 @@ public class OwnerController {
     private final FeaturedPromotionService featuredPromotionService;
     private final StripeConnectService stripeConnectService;
     private final BookingService bookingService;
+    private final ReviewService reviewService;
 
     public OwnerController(OwnerService ownerService, OwnerSubscriptionService ownerSubscriptionService,
                            FeaturedPromotionService featuredPromotionService, StripeConnectService stripeConnectService,
-                           BookingService bookingService) {
+                           BookingService bookingService, ReviewService reviewService) {
         this.ownerService = ownerService;
         this.ownerSubscriptionService = ownerSubscriptionService;
         this.featuredPromotionService = featuredPromotionService;
         this.stripeConnectService = stripeConnectService;
         this.bookingService = bookingService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping("/profile")
@@ -339,5 +344,24 @@ public class OwnerController {
     ) throws StripeException {
         OwnerDto owner = ownerService.getOwnerProfile(userDetails.getUserId());
         return ResponseEntity.ok(stripeConnectService.createOwnerOnboardingLink(owner.id(), returnUrl, refreshUrl));
+    }
+
+    // Review endpoints
+    @GetMapping("/reviews")
+    @Operation(summary = "Get all reviews for owner's campsite")
+    public ResponseEntity<List<ReviewDto>> getReviews(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(reviewService.getOwnerReviews(userDetails.getUserId()));
+    }
+
+    @PutMapping("/reviews/{reviewId}/respond")
+    @Operation(summary = "Respond to a review")
+    public ResponseEntity<ReviewDto> respondToReview(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long reviewId,
+            @Valid @RequestBody OwnerReviewResponseRequest request
+    ) {
+        return ResponseEntity.ok(reviewService.respondToReview(userDetails.getUserId(), reviewId, request));
     }
 }

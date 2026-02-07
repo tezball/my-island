@@ -22,7 +22,9 @@ public record OwnerDto(
         int lotCount,
         boolean isFeatured,
         LocalDateTime featuredUntil,
-        boolean isAcceptingBookings
+        boolean isAcceptingBookings,
+        BigDecimal rating,
+        int reviewCount
 ) {
     public static OwnerDto from(Owner owner) {
         return new OwnerDto(
@@ -42,7 +44,9 @@ public record OwnerDto(
                 owner.getLots().size(),
                 owner.isCurrentlyFeatured(),
                 owner.getFeaturedUntil(),
-                owner.hasActiveSubscription()
+                owner.hasActiveSubscription(),
+                owner.getRating(),
+                owner.getReviewCount()
         );
     }
 }

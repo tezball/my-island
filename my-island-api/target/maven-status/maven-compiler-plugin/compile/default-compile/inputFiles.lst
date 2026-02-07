@@ -90,6 +90,14 @@
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/marketplace/service/SubscriptionService.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/marketplace/service/SupplierFeaturedPromotionService.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/marketplace/service/SupplierService.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/controller/ReviewController.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/dto/CreateReviewRequest.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/dto/OwnerReviewResponseRequest.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/dto/ReviewDto.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/dto/ReviewEligibilityDto.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/entity/Review.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/repository/ReviewRepository.java
+/home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/modules/review/service/ReviewService.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/security/CustomUserDetails.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/security/JwtAuthenticationFilter.java
 /home/tezball/projects/my-island/my-island-api/src/main/java/com/myisland/api/security/JwtProvider.java

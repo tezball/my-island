@@ -34,6 +34,8 @@ interface GroupedAccommodation {
     latitude?: number;
     longitude?: number;
     distance?: number;
+    rating?: number | null;
+    reviewCount?: number;
 }
 
 export const SearchResultsPage: React.FC = () => {
@@ -164,7 +166,9 @@ export const SearchResultsPage: React.FC = () => {
                     representativeImage: lot.imageUrl || '',
                     amenities: [],
                     latitude: campsite?.latitude || undefined,
-                    longitude: campsite?.longitude || undefined
+                    longitude: campsite?.longitude || undefined,
+                    rating: campsite?.rating,
+                    reviewCount: campsite?.reviewCount,
                 };
             }
 
@@ -410,15 +414,23 @@ export const SearchResultsPage: React.FC = () => {
                                     <h3 className="font-bold text-lg text-[#111418] dark:text-white mb-1 group-hover:text-primary transition-colors">
                                         {TYPE_LABELS[accom.type] || accom.type}
                                     </h3>
-                                    <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-sm">location_on</span>
-                                        {accom.ownerName}, {accom.county}
-                                        {accom.distance && (
-                                            <span className="ml-2 text-primary text-xs font-semibold bg-primary/5 px-1.5 py-0.5 rounded">
-                                                {Math.round(accom.distance)} km
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <p className="text-sm text-gray-500 flex items-center gap-1">
+                                            <span className="material-symbols-outlined text-sm">location_on</span>
+                                            {accom.ownerName}, {accom.county}
+                                            {accom.distance && (
+                                                <span className="ml-2 text-primary text-xs font-semibold bg-primary/5 px-1.5 py-0.5 rounded">
+                                                    {Math.round(accom.distance)} km
+                                                </span>
+                                            )}
+                                        </p>
+                                        {accom.rating && (
+                                            <span className="flex items-center gap-0.5 text-sm">
+                                                <span className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                                <span className="font-semibold">{accom.rating.toFixed(1)}</span>
                                             </span>
                                         )}
-                                    </p>
+                                    </div>
                                     <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                         {TYPE_DESCRIPTIONS[accom.type] || 'Comfortable accommodation option.'}
                                     </p>

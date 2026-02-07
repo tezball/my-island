@@ -285,10 +285,19 @@ export const HomePage: React.FC = () => {
                                         <h4 className="font-bold text-[#111418] dark:text-white line-clamp-1 group-hover:underline">
                                             {campsite.propertyName}
                                         </h4>
-                                        <p className="text-gray-500 text-sm flex items-center gap-1">
-                                            <span className="material-symbols-outlined text-sm">location_on</span>
-                                            {campsite.town}, {campsite.county}
-                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-gray-500 text-sm flex items-center gap-1">
+                                                <span className="material-symbols-outlined text-sm">location_on</span>
+                                                {campsite.town}, {campsite.county}
+                                            </p>
+                                            {campsite.rating && (
+                                                <span className="flex items-center gap-0.5 text-sm">
+                                                    <span className="material-symbols-outlined text-amber-400 text-base" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                                                    <span className="font-semibold text-[#111418] dark:text-white">{campsite.rating.toFixed(1)}</span>
+                                                    <span className="text-gray-400">({campsite.reviewCount})</span>
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
