@@ -39,6 +39,7 @@ public class ReviewService {
         this.userRepository = userRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<ReviewDto> getReviewsByOwner(Long ownerId) {
         return reviewRepository.findByOwnerIdWithDetails(ownerId).stream()
                 .map(ReviewDto::from)
@@ -104,6 +105,7 @@ public class ReviewService {
         return ReviewDto.from(review);
     }
 
+    @Transactional(readOnly = true)
     public ReviewEligibilityDto checkEligibility(Long userId, Long ownerId) {
         List<Booking> bookings = bookingRepository.findByOwnerId(ownerId).stream()
                 .filter(b -> b.getUser() != null && b.getUser().getId().equals(userId))
@@ -125,6 +127,7 @@ public class ReviewService {
         return new ReviewEligibilityDto(canReview, eligibleBookings);
     }
 
+    @Transactional(readOnly = true)
     public List<ReviewDto> getOwnerReviews(Long userId) {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner not found"));
