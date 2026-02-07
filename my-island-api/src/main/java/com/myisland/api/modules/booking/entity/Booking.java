@@ -1,6 +1,7 @@
 package com.myisland.api.modules.booking.entity;
 
 import com.myisland.api.modules.accommodation.entity.Lot;
+import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.shared.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 public class Booking extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,10 +64,33 @@ public class Booking extends BaseEntity {
     @Column(name = "stripe_transfer_id")
     private String stripeTransferId;
 
+    // Manual booking fields
+    @Column(name = "guest_name")
+    private String guestName;
+
+    @Column(name = "guest_email")
+    private String guestEmail;
+
+    @Column(name = "guest_phone")
+    private String guestPhone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "booking_source", nullable = false)
+    private BookingSource bookingSource = BookingSource.ONLINE;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_owner_id")
+    private Owner createdByOwner;
+
+    public enum BookingSource {
+        ONLINE, DIRECT, PHONE, WALKIN
+    }
+
     public enum BookingStatus {
         PENDING_PAYMENT,  // Booking created, awaiting payment authorization
         PENDING,          // Payment authorized, awaiting owner confirmation
         CONFIRMED,        // Owner confirmed, payment captured
+        CHECKED_IN,       // Guest has checked in
         CANCELLED,        // Booking cancelled
         COMPLETED,        // Stay completed
         PAYMENT_FAILED    // Payment authorization failed
@@ -98,6 +122,11 @@ public class Booking extends BaseEntity {
         private String specialRequests;
         private BigDecimal serviceFee;
         private BigDecimal chargeTotal;
+        private String guestName;
+        private String guestEmail;
+        private String guestPhone;
+        private BookingSource bookingSource = BookingSource.ONLINE;
+        private Owner createdByOwner;
 
         public Builder user(User user) { this.user = user; return this; }
         public Builder lot(Lot lot) { this.lot = lot; return this; }
@@ -109,6 +138,11 @@ public class Booking extends BaseEntity {
         public Builder specialRequests(String specialRequests) { this.specialRequests = specialRequests; return this; }
         public Builder serviceFee(BigDecimal serviceFee) { this.serviceFee = serviceFee; return this; }
         public Builder chargeTotal(BigDecimal chargeTotal) { this.chargeTotal = chargeTotal; return this; }
+        public Builder guestName(String guestName) { this.guestName = guestName; return this; }
+        public Builder guestEmail(String guestEmail) { this.guestEmail = guestEmail; return this; }
+        public Builder guestPhone(String guestPhone) { this.guestPhone = guestPhone; return this; }
+        public Builder bookingSource(BookingSource bookingSource) { this.bookingSource = bookingSource; return this; }
+        public Builder createdByOwner(Owner createdByOwner) { this.createdByOwner = createdByOwner; return this; }
 
         public Booking build() {
             Booking booking = new Booking();
@@ -122,6 +156,11 @@ public class Booking extends BaseEntity {
             booking.specialRequests = this.specialRequests;
             booking.serviceFee = this.serviceFee;
             booking.chargeTotal = this.chargeTotal;
+            booking.guestName = this.guestName;
+            booking.guestEmail = this.guestEmail;
+            booking.guestPhone = this.guestPhone;
+            booking.bookingSource = this.bookingSource;
+            booking.createdByOwner = this.createdByOwner;
             return booking;
         }
     }
@@ -172,4 +211,20 @@ public class Booking extends BaseEntity {
 
     public String getStripeTransferId() { return stripeTransferId; }
     public void setStripeTransferId(String stripeTransferId) { this.stripeTransferId = stripeTransferId; }
+
+    // Manual booking getters and setters
+    public String getGuestName() { return guestName; }
+    public void setGuestName(String guestName) { this.guestName = guestName; }
+
+    public String getGuestEmail() { return guestEmail; }
+    public void setGuestEmail(String guestEmail) { this.guestEmail = guestEmail; }
+
+    public String getGuestPhone() { return guestPhone; }
+    public void setGuestPhone(String guestPhone) { this.guestPhone = guestPhone; }
+
+    public BookingSource getBookingSource() { return bookingSource; }
+    public void setBookingSource(BookingSource bookingSource) { this.bookingSource = bookingSource; }
+
+    public Owner getCreatedByOwner() { return createdByOwner; }
+    public void setCreatedByOwner(Owner createdByOwner) { this.createdByOwner = createdByOwner; }
 }

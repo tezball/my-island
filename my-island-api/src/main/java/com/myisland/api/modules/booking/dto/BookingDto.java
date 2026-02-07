@@ -22,13 +22,17 @@ public record BookingDto(
         String status,
         String paymentStatus,
         String specialRequests,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String guestName,
+        String guestEmail,
+        String guestPhone,
+        String bookingSource
 ) {
     public static BookingDto from(Booking booking) {
         return new BookingDto(
                 booking.getId(),
-                booking.getUser().getId(),
-                booking.getUser().getName(),
+                booking.getUser() != null ? booking.getUser().getId() : null,
+                booking.getUser() != null ? booking.getUser().getName() : booking.getGuestName(),
                 booking.getLot().getId(),
                 booking.getLot().getName(),
                 booking.getLot().getOwner().getPropertyName(),
@@ -41,7 +45,11 @@ public record BookingDto(
                 booking.getStatus().name(),
                 booking.getPaymentStatus() != null ? booking.getPaymentStatus().name() : "NONE",
                 booking.getSpecialRequests(),
-                booking.getCreatedAt()
+                booking.getCreatedAt(),
+                booking.getGuestName(),
+                booking.getGuestEmail(),
+                booking.getGuestPhone(),
+                booking.getBookingSource() != null ? booking.getBookingSource().name() : null
         );
     }
 }

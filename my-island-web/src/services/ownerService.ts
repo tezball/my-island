@@ -1,4 +1,4 @@
-import type { Lot, Booking } from '../types/booking';
+import type { Lot, Booking, BlockedPeriod, CreateBlockedPeriodRequest, SeasonalPricingRule, CreateSeasonalPricingRuleRequest } from '../types/booking';
 
 // API configuration
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -307,7 +307,7 @@ interface LotApiResponse {
 // API response type for booking
 interface BookingApiResponse {
     id: number;
-    userId: number;
+    userId: number | null;
     userName: string;
     lotId: number;
     lotName: string;
@@ -319,6 +319,10 @@ interface BookingApiResponse {
     status: string;
     specialRequests: string | null;
     createdAt: string;
+    guestName: string | null;
+    guestEmail: string | null;
+    guestPhone: string | null;
+    bookingSource: string | null;
 }
 
 // Request types for lot CRUD
@@ -976,7 +980,7 @@ export const ownerService = {
         // Transform API response to frontend Booking type
         const bookings: Booking[] = apiBookings.map(b => ({
             id: String(b.id),
-            userId: String(b.userId),
+            userId: String(b.userId ?? ''),
             userName: b.userName,
             lotId: String(b.lotId),
             lotName: b.lotName,
@@ -985,6 +989,10 @@ export const ownerService = {
             status: b.status.toLowerCase() as Booking['status'],
             totalPrice: b.totalPrice,
             details: b.specialRequests ?? undefined,
+            guestName: b.guestName ?? undefined,
+            guestEmail: b.guestEmail ?? undefined,
+            guestPhone: b.guestPhone ?? undefined,
+            bookingSource: b.bookingSource ?? undefined,
         }));
 
         return bookings;
@@ -1756,6 +1764,90 @@ export const ownerService = {
         return data;
     },
 
+    async checkInBooking(bookingId: string): Promise<Booking> {
+        const endpoint = `/owner/bookings/${bookingId}/check-in`;
+
+        log.info('Checking in booking', { endpoint, bookingId });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            log.error('Network error', error, { endpoint });
+            throw new NetworkError('Unable to connect to server');
+        }
+
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to check in booking: ${response.statusText}`, response.status);
+        }
+
+        const apiBooking: BookingApiResponse = await response.json();
+
+        return {
+            id: String(apiBooking.id),
+            userId: String(apiBooking.userId),
+            userName: apiBooking.userName,
+            lotId: String(apiBooking.lotId),
+            lotName: apiBooking.lotName,
+            startDate: apiBooking.checkInDate,
+            endDate: apiBooking.checkOutDate,
+            status: apiBooking.status.toLowerCase() as Booking['status'],
+            totalPrice: apiBooking.totalPrice,
+            details: apiBooking.specialRequests ?? undefined,
+        };
+    },
+
+    async checkOutBooking(bookingId: string): Promise<Booking> {
+        const endpoint = `/owner/bookings/${bookingId}/check-out`;
+
+        log.info('Checking out booking', { endpoint, bookingId });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            log.error('Network error', error, { endpoint });
+            throw new NetworkError('Unable to connect to server');
+        }
+
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to check out booking: ${response.statusText}`, response.status);
+        }
+
+        const apiBooking: BookingApiResponse = await response.json();
+
+        return {
+            id: String(apiBooking.id),
+            userId: String(apiBooking.userId),
+            userName: apiBooking.userName,
+            lotId: String(apiBooking.lotId),
+            lotName: apiBooking.lotName,
+            startDate: apiBooking.checkInDate,
+            endDate: apiBooking.checkOutDate,
+            status: apiBooking.status.toLowerCase() as Booking['status'],
+            totalPrice: apiBooking.totalPrice,
+            details: apiBooking.specialRequests ?? undefined,
+        };
+    },
+
     async confirmBooking(bookingId: string): Promise<Booking> {
         const endpoint = `/bookings/${bookingId}/confirm`;
 
@@ -1839,6 +1931,166 @@ export const ownerService = {
             status: apiBooking.status.toLowerCase() as Booking['status'],
             totalPrice: apiBooking.totalPrice,
             details: apiBooking.specialRequests ?? undefined,
+        };
+    },
+
+    // --- Blocked Periods ---
+
+    async getBlockedPeriods(): Promise<BlockedPeriod[]> {
+        const endpoint = '/owner/blocked-periods';
+        const response = await fetch(`${API_BASE}${endpoint}`, { headers: getAuthHeaders() });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to fetch blocked periods`, response.status);
+        }
+        const data: Array<{ id: number; lotId: number; lotName: string; startDate: string; endDate: string; reason: string | null; createdAt: string }> = await response.json();
+        return data.map(bp => ({
+            id: String(bp.id),
+            lotId: String(bp.lotId),
+            lotName: bp.lotName,
+            startDate: bp.startDate,
+            endDate: bp.endDate,
+            reason: bp.reason ?? undefined,
+            createdAt: bp.createdAt,
+        }));
+    },
+
+    async createBlockedPeriod(data: CreateBlockedPeriodRequest): Promise<BlockedPeriod> {
+        const endpoint = '/owner/blocked-periods';
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            const errorBody = await response.text().catch(() => '');
+            throw new ApiError(errorBody || `Failed to create blocked period`, response.status);
+        }
+        const bp: { id: number; lotId: number; lotName: string; startDate: string; endDate: string; reason: string | null; createdAt: string } = await response.json();
+        return {
+            id: String(bp.id),
+            lotId: String(bp.lotId),
+            lotName: bp.lotName,
+            startDate: bp.startDate,
+            endDate: bp.endDate,
+            reason: bp.reason ?? undefined,
+            createdAt: bp.createdAt,
+        };
+    },
+
+    async deleteBlockedPeriod(id: string): Promise<void> {
+        const endpoint = `/owner/blocked-periods/${id}`;
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders(),
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to delete blocked period`, response.status);
+        }
+    },
+
+    // --- Seasonal Pricing Rules ---
+
+    async getPricingRules(): Promise<SeasonalPricingRule[]> {
+        const endpoint = '/owner/pricing-rules';
+        const response = await fetch(`${API_BASE}${endpoint}`, { headers: getAuthHeaders() });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to fetch pricing rules`, response.status);
+        }
+        const data: Array<{ id: number; lotType: string; name: string; startDate: string; endDate: string; pricePerNight: number; createdAt: string }> = await response.json();
+        return data.map(rule => ({
+            id: String(rule.id),
+            lotType: rule.lotType.toLowerCase().replace('_', '-'),
+            name: rule.name,
+            startDate: rule.startDate,
+            endDate: rule.endDate,
+            pricePerNight: rule.pricePerNight,
+            createdAt: rule.createdAt,
+        }));
+    },
+
+    async createPricingRule(data: CreateSeasonalPricingRuleRequest): Promise<SeasonalPricingRule> {
+        const endpoint = '/owner/pricing-rules';
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+                ...data,
+                lotType: data.lotType.toUpperCase().replace('-', '_'),
+            }),
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            const errorBody = await response.text().catch(() => '');
+            throw new ApiError(errorBody || `Failed to create pricing rule`, response.status);
+        }
+        const rule: { id: number; lotType: string; name: string; startDate: string; endDate: string; pricePerNight: number; createdAt: string } = await response.json();
+        return {
+            id: String(rule.id),
+            lotType: rule.lotType.toLowerCase().replace('_', '-'),
+            name: rule.name,
+            startDate: rule.startDate,
+            endDate: rule.endDate,
+            pricePerNight: rule.pricePerNight,
+            createdAt: rule.createdAt,
+        };
+    },
+
+    async deletePricingRule(id: string): Promise<void> {
+        const endpoint = `/owner/pricing-rules/${id}`;
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders(),
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to delete pricing rule`, response.status);
+        }
+    },
+
+    // --- Manual Booking ---
+
+    async createManualBooking(data: {
+        lotId: number;
+        checkInDate: string;
+        checkOutDate: string;
+        numGuests: number;
+        guestName: string;
+        guestEmail?: string;
+        guestPhone?: string;
+        specialRequests?: string;
+        bookingSource: string;
+    }): Promise<Booking> {
+        const endpoint = '/owner/bookings';
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            const errorBody = await response.text().catch(() => '');
+            throw new ApiError(errorBody || `Failed to create manual booking`, response.status);
+        }
+        const apiBooking: BookingApiResponse = await response.json();
+        return {
+            id: String(apiBooking.id),
+            userId: String(apiBooking.userId ?? ''),
+            userName: apiBooking.userName,
+            lotId: String(apiBooking.lotId),
+            lotName: apiBooking.lotName,
+            startDate: apiBooking.checkInDate,
+            endDate: apiBooking.checkOutDate,
+            status: apiBooking.status.toLowerCase() as Booking['status'],
+            totalPrice: apiBooking.totalPrice,
+            details: apiBooking.specialRequests ?? undefined,
+            guestName: apiBooking.guestName ?? undefined,
+            guestEmail: apiBooking.guestEmail ?? undefined,
+            guestPhone: apiBooking.guestPhone ?? undefined,
+            bookingSource: apiBooking.bookingSource ?? undefined,
         };
     },
 };

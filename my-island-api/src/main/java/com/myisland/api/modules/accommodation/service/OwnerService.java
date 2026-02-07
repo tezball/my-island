@@ -3,13 +3,19 @@ package com.myisland.api.modules.accommodation.service;
 import com.myisland.api.modules.accommodation.dto.*;
 import com.myisland.api.modules.accommodation.entity.Amenity;
 import com.myisland.api.modules.accommodation.entity.Lot;
+import com.myisland.api.modules.accommodation.entity.LotBlockedPeriod;
 import com.myisland.api.modules.accommodation.entity.Owner;
+import com.myisland.api.modules.accommodation.entity.SeasonalPricingRule;
 import com.myisland.api.modules.accommodation.repository.AmenityRepository;
+import com.myisland.api.modules.accommodation.repository.LotBlockedPeriodRepository;
 import com.myisland.api.modules.accommodation.repository.LotRepository;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
+import com.myisland.api.modules.accommodation.repository.SeasonalPricingRuleRepository;
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
+import com.myisland.api.modules.identity.entity.User;
+import com.myisland.api.modules.identity.repository.UserRepository;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import com.myisland.api.shared.storage.EntityImage;
@@ -38,15 +44,24 @@ public class OwnerService {
     private final AmenityRepository amenityRepository;
     private final BookingRepository bookingRepository;
     private final EntityImageService entityImageService;
+    private final LotBlockedPeriodRepository blockedPeriodRepository;
+    private final UserRepository userRepository;
+    private final SeasonalPricingRuleRepository pricingRuleRepository;
 
     public OwnerService(OwnerRepository ownerRepository, LotRepository lotRepository,
                         AmenityRepository amenityRepository, BookingRepository bookingRepository,
-                        EntityImageService entityImageService) {
+                        EntityImageService entityImageService,
+                        LotBlockedPeriodRepository blockedPeriodRepository,
+                        UserRepository userRepository,
+                        SeasonalPricingRuleRepository pricingRuleRepository) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
         this.amenityRepository = amenityRepository;
         this.bookingRepository = bookingRepository;
         this.entityImageService = entityImageService;
+        this.blockedPeriodRepository = blockedPeriodRepository;
+        this.userRepository = userRepository;
+        this.pricingRuleRepository = pricingRuleRepository;
     }
 
     @Transactional(readOnly = true)
@@ -241,7 +256,7 @@ public class OwnerService {
                         .map(b -> Map.of(
                                 "id", b.getId(),
                                 "lotName", b.getLot().getName(),
-                                "guestName", b.getUser().getName(),
+                                "guestName", b.getUser() != null ? b.getUser().getName() : (b.getGuestName() != null ? b.getGuestName() : "Walk-in"),
                                 "checkIn", b.getCheckInDate(),
                                 "checkOut", b.getCheckOutDate(),
                                 "status", b.getStatus().name()
@@ -297,6 +312,121 @@ public class OwnerService {
         return bookings.stream()
                 .map(BookingDto::from)
                 .toList();
+    }
+
+    // --- Blocked Periods ---
+
+    @Transactional(readOnly = true)
+    public List<BlockedPeriodDto> getBlockedPeriods(Long userId) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        return blockedPeriodRepository.findByOwnerId(owner.getId()).stream()
+                .map(BlockedPeriodDto::from)
+                .toList();
+    }
+
+    @Transactional
+    public BlockedPeriodDto createBlockedPeriod(Long userId, CreateBlockedPeriodRequest request) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+
+        Lot lot = lotRepository.findById(request.lotId())
+                .orElseThrow(() -> new ResourceNotFoundException("Lot", request.lotId()));
+
+        if (!lot.getOwner().getId().equals(owner.getId())) {
+            throw new BadRequestException("Lot does not belong to this owner");
+        }
+
+        if (request.endDate().isBefore(request.startDate()) || request.endDate().isEqual(request.startDate())) {
+            throw new BadRequestException("End date must be after start date");
+        }
+
+        LotBlockedPeriod bp = new LotBlockedPeriod();
+        bp.setLot(lot);
+        bp.setStartDate(request.startDate());
+        bp.setEndDate(request.endDate());
+        bp.setReason(request.reason());
+        bp.setCreatedBy(user);
+
+        bp = blockedPeriodRepository.save(bp);
+        log.info("Created blocked period {} for lot {}", bp.getId(), lot.getId());
+
+        return BlockedPeriodDto.from(bp);
+    }
+
+    @Transactional
+    public void deleteBlockedPeriod(Long userId, Long blockedPeriodId) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        LotBlockedPeriod bp = blockedPeriodRepository.findById(blockedPeriodId)
+                .orElseThrow(() -> new ResourceNotFoundException("Blocked period", blockedPeriodId));
+
+        if (!bp.getLot().getOwner().getId().equals(owner.getId())) {
+            throw new BadRequestException("Blocked period does not belong to this owner");
+        }
+
+        blockedPeriodRepository.delete(bp);
+        log.info("Deleted blocked period {}", blockedPeriodId);
+    }
+
+    // --- Seasonal Pricing Rules ---
+
+    @Transactional(readOnly = true)
+    public List<SeasonalPricingRuleDto> getPricingRules(Long userId) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        return pricingRuleRepository.findByOwnerId(owner.getId()).stream()
+                .map(SeasonalPricingRuleDto::from)
+                .toList();
+    }
+
+    @Transactional
+    public SeasonalPricingRuleDto createPricingRule(Long userId, CreateSeasonalPricingRuleRequest request) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        if (request.endDate().isBefore(request.startDate()) || request.endDate().isEqual(request.startDate())) {
+            throw new BadRequestException("End date must be after start date");
+        }
+
+        Lot.LotType lotType;
+        try {
+            lotType = Lot.LotType.valueOf(request.lotType());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid lot type: " + request.lotType());
+        }
+
+        SeasonalPricingRule rule = new SeasonalPricingRule();
+        rule.setOwner(owner);
+        rule.setLotType(lotType);
+        rule.setName(request.name());
+        rule.setStartDate(request.startDate());
+        rule.setEndDate(request.endDate());
+        rule.setPricePerNight(request.pricePerNight());
+
+        rule = pricingRuleRepository.save(rule);
+        log.info("Created pricing rule {} for owner {}", rule.getId(), owner.getId());
+
+        return SeasonalPricingRuleDto.from(rule);
+    }
+
+    @Transactional
+    public void deletePricingRule(Long userId, Long ruleId) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        SeasonalPricingRule rule = pricingRuleRepository.findById(ruleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pricing rule", ruleId));
+
+        if (!rule.getOwner().getId().equals(owner.getId())) {
+            throw new BadRequestException("Pricing rule does not belong to this owner");
+        }
+
+        pricingRuleRepository.delete(rule);
+        log.info("Deleted pricing rule {}", ruleId);
     }
 
     @Transactional(readOnly = true)
@@ -386,7 +516,7 @@ public class OwnerService {
         List<BookingsDetailResponse.BookingDetail> bookingDetails = allBookings.stream()
                 .map(b -> new BookingsDetailResponse.BookingDetail(
                         b.getId(),
-                        b.getUser().getName(),
+                        b.getUser() != null ? b.getUser().getName() : (b.getGuestName() != null ? b.getGuestName() : "Walk-in"),
                         b.getLot().getName(),
                         b.getLot().getLotType().name().toLowerCase().replace("_", "-"),
                         b.getCheckInDate(),
@@ -528,7 +658,7 @@ public class OwnerService {
 
         int totalLots = lots.size();
         int occupiedLots = (int) activeBookings.stream()
-                .filter(b -> b.getStatus() == Booking.BookingStatus.CONFIRMED)
+                .filter(b -> b.getStatus() == Booking.BookingStatus.CONFIRMED || b.getStatus() == Booking.BookingStatus.CHECKED_IN)
                 .map(b -> b.getLot().getId())
                 .distinct()
                 .count();
@@ -564,7 +694,7 @@ public class OwnerService {
             typeStats.get(type)[0]++;
         }
         for (Booking b : activeBookings) {
-            if (b.getStatus() == Booking.BookingStatus.CONFIRMED) {
+            if (b.getStatus() == Booking.BookingStatus.CONFIRMED || b.getStatus() == Booking.BookingStatus.CHECKED_IN) {
                 String type = b.getLot().getLotType().name().toLowerCase().replace("_", "-");
                 if (typeStats.containsKey(type)) {
                     typeStats.get(type)[1]++;
@@ -591,7 +721,7 @@ public class OwnerService {
             List<Booking> dayBookings = bookingRepository.findByOwnerIdAndDateRange(
                     owner.getId(), day, day);
             long occupiedOnDay = dayBookings.stream()
-                    .filter(b -> b.getStatus() == Booking.BookingStatus.CONFIRMED)
+                    .filter(b -> b.getStatus() == Booking.BookingStatus.CONFIRMED || b.getStatus() == Booking.BookingStatus.CHECKED_IN)
                     .map(b -> b.getLot().getId())
                     .distinct()
                     .count();

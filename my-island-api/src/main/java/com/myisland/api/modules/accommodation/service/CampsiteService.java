@@ -4,6 +4,7 @@ import com.myisland.api.modules.accommodation.controller.CampsiteController.Book
 import com.myisland.api.modules.accommodation.dto.LotDto;
 import com.myisland.api.modules.accommodation.dto.OwnerDto;
 import com.myisland.api.modules.accommodation.entity.Owner;
+import com.myisland.api.modules.accommodation.repository.LotBlockedPeriodRepository;
 import com.myisland.api.modules.accommodation.repository.LotRepository;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.booking.repository.BookingRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,11 +23,14 @@ public class CampsiteService {
     private final OwnerRepository ownerRepository;
     private final LotRepository lotRepository;
     private final BookingRepository bookingRepository;
+    private final LotBlockedPeriodRepository blockedPeriodRepository;
 
-    public CampsiteService(OwnerRepository ownerRepository, LotRepository lotRepository, BookingRepository bookingRepository) {
+    public CampsiteService(OwnerRepository ownerRepository, LotRepository lotRepository,
+                           BookingRepository bookingRepository, LotBlockedPeriodRepository blockedPeriodRepository) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
         this.bookingRepository = bookingRepository;
+        this.blockedPeriodRepository = blockedPeriodRepository;
     }
 
     public List<OwnerDto> getAllCampsites() {
@@ -85,8 +90,18 @@ public class CampsiteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
 
         // Get bookings from today onwards that are not cancelled
-        return bookingRepository.findByLotIdAndCheckOutDateAfter(lotId, LocalDate.now()).stream()
-                .map(booking -> new BookedDateRange(booking.getCheckInDate(), booking.getCheckOutDate()))
-                .toList();
+        List<BookedDateRange> dates = new ArrayList<>(
+                bookingRepository.findByLotIdAndCheckOutDateAfter(lotId, LocalDate.now()).stream()
+                        .map(booking -> new BookedDateRange(booking.getCheckInDate(), booking.getCheckOutDate()))
+                        .toList()
+        );
+
+        // Include blocked periods as unavailable dates
+        blockedPeriodRepository.findByLotId(lotId).stream()
+                .filter(bp -> !bp.getEndDate().isBefore(LocalDate.now()))
+                .map(bp -> new BookedDateRange(bp.getStartDate(), bp.getEndDate()))
+                .forEach(dates::add);
+
+        return dates;
     }
 }

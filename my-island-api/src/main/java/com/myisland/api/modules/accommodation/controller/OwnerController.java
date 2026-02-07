@@ -5,6 +5,8 @@ import com.myisland.api.modules.accommodation.service.FeaturedPromotionService;
 import com.myisland.api.modules.accommodation.service.OwnerService;
 import com.myisland.api.modules.accommodation.service.OwnerSubscriptionService;
 import com.myisland.api.modules.booking.dto.BookingDto;
+import com.myisland.api.modules.booking.dto.CreateManualBookingRequest;
+import com.myisland.api.modules.booking.service.BookingService;
 import com.myisland.api.modules.marketplace.dto.ConfirmSubscriptionRequest;
 import com.myisland.api.modules.marketplace.dto.ConnectStatusDto;
 import com.myisland.api.modules.marketplace.dto.CreateCheckoutSessionResponse;
@@ -34,13 +36,16 @@ public class OwnerController {
     private final OwnerSubscriptionService ownerSubscriptionService;
     private final FeaturedPromotionService featuredPromotionService;
     private final StripeConnectService stripeConnectService;
+    private final BookingService bookingService;
 
     public OwnerController(OwnerService ownerService, OwnerSubscriptionService ownerSubscriptionService,
-                           FeaturedPromotionService featuredPromotionService, StripeConnectService stripeConnectService) {
+                           FeaturedPromotionService featuredPromotionService, StripeConnectService stripeConnectService,
+                           BookingService bookingService) {
         this.ownerService = ownerService;
         this.ownerSubscriptionService = ownerSubscriptionService;
         this.featuredPromotionService = featuredPromotionService;
         this.stripeConnectService = stripeConnectService;
+        this.bookingService = bookingService;
     }
 
     @GetMapping("/profile")
@@ -129,6 +134,90 @@ public class OwnerController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ResponseEntity.ok(ownerService.getOwnerBookings(userDetails.getUserId()));
+    }
+
+    @PostMapping("/bookings")
+    @Operation(summary = "Create a manual booking")
+    public ResponseEntity<BookingDto> createManualBooking(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody CreateManualBookingRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(bookingService.createManualBooking(userDetails.getUserId(), request));
+    }
+
+    @GetMapping("/pricing-rules")
+    @Operation(summary = "Get all seasonal pricing rules")
+    public ResponseEntity<List<SeasonalPricingRuleDto>> getPricingRules(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(ownerService.getPricingRules(userDetails.getUserId()));
+    }
+
+    @PostMapping("/pricing-rules")
+    @Operation(summary = "Create a seasonal pricing rule")
+    public ResponseEntity<SeasonalPricingRuleDto> createPricingRule(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody CreateSeasonalPricingRuleRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ownerService.createPricingRule(userDetails.getUserId(), request));
+    }
+
+    @DeleteMapping("/pricing-rules/{id}")
+    @Operation(summary = "Delete a seasonal pricing rule")
+    public ResponseEntity<Void> deletePricingRule(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id
+    ) {
+        ownerService.deletePricingRule(userDetails.getUserId(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/blocked-periods")
+    @Operation(summary = "Get all blocked periods for owner's lots")
+    public ResponseEntity<List<BlockedPeriodDto>> getBlockedPeriods(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(ownerService.getBlockedPeriods(userDetails.getUserId()));
+    }
+
+    @PostMapping("/blocked-periods")
+    @Operation(summary = "Create a blocked period")
+    public ResponseEntity<BlockedPeriodDto> createBlockedPeriod(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody CreateBlockedPeriodRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ownerService.createBlockedPeriod(userDetails.getUserId(), request));
+    }
+
+    @DeleteMapping("/blocked-periods/{id}")
+    @Operation(summary = "Delete a blocked period")
+    public ResponseEntity<Void> deleteBlockedPeriod(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id
+    ) {
+        ownerService.deleteBlockedPeriod(userDetails.getUserId(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/bookings/{bookingId}/check-in")
+    @Operation(summary = "Check in a booking")
+    public ResponseEntity<BookingDto> checkInBooking(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookingId
+    ) {
+        return ResponseEntity.ok(bookingService.checkInBooking(bookingId, userDetails.getUserId()));
+    }
+
+    @PutMapping("/bookings/{bookingId}/check-out")
+    @Operation(summary = "Check out a booking")
+    public ResponseEntity<BookingDto> checkOutBooking(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookingId
+    ) {
+        return ResponseEntity.ok(bookingService.checkOutBooking(bookingId, userDetails.getUserId()));
     }
 
     @GetMapping("/analytics/lots")

@@ -46,9 +46,9 @@ public class EventPublisher {
 
         KafkaBookingEvent kafkaEvent = new KafkaBookingEvent(
                 booking.getId(),
-                booking.getUser().getId(),
-                booking.getUser().getName(),
-                booking.getUser().getEmail(),
+                booking.getUser() != null ? booking.getUser().getId() : null,
+                booking.getUser() != null ? booking.getUser().getName() : booking.getGuestName(),
+                booking.getUser() != null ? booking.getUser().getEmail() : booking.getGuestEmail(),
                 booking.getLot().getId(),
                 booking.getLot().getName(),
                 booking.getLot().getOwner().getId(),
@@ -66,6 +66,7 @@ public class EventPublisher {
             case CONFIRMED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC;
             case CANCELLED -> KafkaConfig.BOOKING_CANCELLED_TOPIC;
             case COMPLETED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
+            case CHECKED_IN, CHECKED_OUT -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
         };
 
         kafkaTemplate.send(topic, booking.getId().toString(), kafkaEvent);

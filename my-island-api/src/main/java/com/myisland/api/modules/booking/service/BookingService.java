@@ -2,10 +2,15 @@ package com.myisland.api.modules.booking.service;
 
 import com.myisland.api.config.StripeProperties;
 import com.myisland.api.modules.accommodation.entity.Lot;
+import com.myisland.api.modules.accommodation.entity.LotBlockedPeriod;
 import com.myisland.api.modules.accommodation.entity.Owner;
+import com.myisland.api.modules.accommodation.repository.LotBlockedPeriodRepository;
 import com.myisland.api.modules.accommodation.repository.LotRepository;
+import com.myisland.api.modules.accommodation.service.PricingService;
+import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.CreateBookingRequest;
+import com.myisland.api.modules.booking.dto.CreateManualBookingRequest;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
@@ -22,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -36,16 +40,24 @@ public class BookingService {
     private final ApplicationEventPublisher eventPublisher;
     private final BookingPaymentService bookingPaymentService;
     private final StripeProperties stripeProperties;
+    private final LotBlockedPeriodRepository blockedPeriodRepository;
+    private final PricingService pricingService;
+    private final OwnerRepository ownerRepository;
 
     public BookingService(BookingRepository bookingRepository, LotRepository lotRepository,
             UserRepository userRepository, ApplicationEventPublisher eventPublisher,
-            BookingPaymentService bookingPaymentService, StripeProperties stripeProperties) {
+            BookingPaymentService bookingPaymentService, StripeProperties stripeProperties,
+            LotBlockedPeriodRepository blockedPeriodRepository, PricingService pricingService,
+            OwnerRepository ownerRepository) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
         this.eventPublisher = eventPublisher;
         this.bookingPaymentService = bookingPaymentService;
         this.stripeProperties = stripeProperties;
+        this.blockedPeriodRepository = blockedPeriodRepository;
+        this.pricingService = pricingService;
+        this.ownerRepository = ownerRepository;
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +72,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
-        if (!booking.getUser().getId().equals(userId)) {
+        if (booking.getUser() == null || !booking.getUser().getId().equals(userId)) {
             throw new BadRequestException("Booking does not belong to this user");
         }
 
@@ -102,9 +114,15 @@ public class BookingService {
             throw new BadRequestException("Lot is not available for the selected dates");
         }
 
-        // Calculate total price (owner's asking price)
-        long nights = ChronoUnit.DAYS.between(request.checkInDate(), request.checkOutDate());
-        BigDecimal totalPrice = lot.getPricePerNight().multiply(BigDecimal.valueOf(nights));
+        // Check for blocked periods
+        List<LotBlockedPeriod> blockedPeriods = blockedPeriodRepository.findOverlappingBlocks(
+                lot.getId(), request.checkInDate(), request.checkOutDate());
+        if (!blockedPeriods.isEmpty()) {
+            throw new BadRequestException("Lot is blocked for the selected dates");
+        }
+
+        // Calculate total price using seasonal pricing rules (falls back to base price)
+        BigDecimal totalPrice = pricingService.calculateTotalPrice(lot, request.checkInDate(), request.checkOutDate());
 
         // Calculate service fee (added on top, platform keeps this)
         BigDecimal serviceFee = totalPrice.multiply(BigDecimal.valueOf(stripeProperties.getServiceFeePercent()))
@@ -181,7 +199,7 @@ public class BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
         // Allow cancellation by either the guest who made the booking OR the lot owner
-        boolean isGuest = booking.getUser().getId().equals(userId);
+        boolean isGuest = booking.getUser() != null && booking.getUser().getId().equals(userId);
         boolean isOwner = booking.getLot().getOwner().getUser().getId().equals(userId);
 
         if (!isGuest && !isOwner) {
@@ -228,7 +246,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
-        if (!booking.getUser().getId().equals(userId)) {
+        if (booking.getUser() == null || !booking.getUser().getId().equals(userId)) {
             throw new BadRequestException("Booking does not belong to this user");
         }
 
@@ -246,6 +264,50 @@ public class BookingService {
         return BookingDto.from(booking);
     }
 
+    @Transactional
+    public BookingDto checkInBooking(Long bookingId, Long ownerId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        if (!booking.getLot().getOwner().getUser().getId().equals(ownerId)) {
+            throw new BadRequestException("You are not authorized to check in this booking");
+        }
+
+        if (booking.getStatus() != Booking.BookingStatus.CONFIRMED) {
+            throw new BadRequestException("Only confirmed bookings can be checked in");
+        }
+
+        booking.setStatus(Booking.BookingStatus.CHECKED_IN);
+        booking = bookingRepository.save(booking);
+        log.info("Checked in booking: {}", bookingId);
+
+        eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CHECKED_IN));
+
+        return BookingDto.from(booking);
+    }
+
+    @Transactional
+    public BookingDto checkOutBooking(Long bookingId, Long ownerId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        if (!booking.getLot().getOwner().getUser().getId().equals(ownerId)) {
+            throw new BadRequestException("You are not authorized to check out this booking");
+        }
+
+        if (booking.getStatus() != Booking.BookingStatus.CHECKED_IN) {
+            throw new BadRequestException("Only checked-in bookings can be checked out");
+        }
+
+        booking.setStatus(Booking.BookingStatus.COMPLETED);
+        booking = bookingRepository.save(booking);
+        log.info("Checked out booking: {}", bookingId);
+
+        eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CHECKED_OUT));
+
+        return BookingDto.from(booking);
+    }
+
     @Transactional(readOnly = true)
     public List<BookingDto> getAllBookings() {
         return bookingRepository.findAll().stream()
@@ -258,5 +320,88 @@ public class BookingService {
         return bookingRepository.findByOwnerId(ownerId).stream()
                 .map(BookingDto::from)
                 .toList();
+    }
+
+    @Transactional
+    public BookingDto createManualBooking(Long userId, CreateManualBookingRequest request) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        Lot lot = lotRepository.findById(request.lotId())
+                .orElseThrow(() -> new ResourceNotFoundException("Lot", request.lotId()));
+
+        // Verify lot belongs to this owner
+        if (!lot.getOwner().getId().equals(owner.getId())) {
+            throw new BadRequestException("Lot does not belong to this owner");
+        }
+
+        if (request.checkOutDate().isBefore(request.checkInDate()) ||
+                request.checkOutDate().isEqual(request.checkInDate())) {
+            throw new BadRequestException("Check-out date must be after check-in date");
+        }
+
+        if (request.numGuests() > lot.getMaxGuests()) {
+            throw new BadRequestException("Number of guests exceeds lot capacity of " + lot.getMaxGuests());
+        }
+
+        // Check for overlapping bookings
+        List<Booking> overlapping = bookingRepository.findOverlappingBookings(
+                lot.getId(), request.checkInDate(), request.checkOutDate());
+        if (!overlapping.isEmpty()) {
+            throw new BadRequestException("Lot is not available for the selected dates");
+        }
+
+        // Check for blocked periods
+        List<LotBlockedPeriod> blockedPeriods = blockedPeriodRepository.findOverlappingBlocks(
+                lot.getId(), request.checkInDate(), request.checkOutDate());
+        if (!blockedPeriods.isEmpty()) {
+            throw new BadRequestException("Lot is blocked for the selected dates");
+        }
+
+        // Calculate total price using seasonal pricing
+        BigDecimal totalPrice = pricingService.calculateTotalPrice(lot, request.checkInDate(), request.checkOutDate());
+
+        // Determine booking source
+        Booking.BookingSource source = Booking.BookingSource.DIRECT;
+        if (request.bookingSource() != null) {
+            try {
+                source = Booking.BookingSource.valueOf(request.bookingSource());
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Invalid booking source: " + request.bookingSource());
+            }
+        }
+
+        // Optionally look up existing user by email
+        User user = null;
+        if (request.guestEmail() != null && !request.guestEmail().isBlank()) {
+            user = userRepository.findByEmail(request.guestEmail()).orElse(null);
+        }
+
+        Booking booking = Booking.builder()
+                .user(user)
+                .lot(lot)
+                .checkInDate(request.checkInDate())
+                .checkOutDate(request.checkOutDate())
+                .numGuests(request.numGuests())
+                .totalPrice(totalPrice)
+                .status(Booking.BookingStatus.CONFIRMED)
+                .specialRequests(request.specialRequests())
+                .guestName(request.guestName())
+                .guestEmail(request.guestEmail())
+                .guestPhone(request.guestPhone())
+                .bookingSource(source)
+                .createdByOwner(owner)
+                .build();
+
+        // No payment for manual bookings
+        booking.setPaymentStatus(Booking.PaymentStatus.NONE);
+
+        booking = bookingRepository.save(booking);
+        log.info("Created manual booking: {} by owner: {} for guest: {} at lot: {} (total: {})",
+                booking.getId(), owner.getId(), request.guestName(), lot.getId(), totalPrice);
+
+        eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CREATED));
+
+        return BookingDto.from(booking);
     }
 }

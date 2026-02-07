@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService } from '../../services/ownerService';
-import type { Booking } from '../../types/booking';
+import type { Booking, Lot } from '../../types/booking';
+import { ManualBookingModal } from '../../components/owner/ManualBookingModal';
 import clsx from 'clsx';
 
 export const OwnerBookingsPage: React.FC = () => {
     const { user } = useAuth();
     const [bookings, setBookings] = useState<Booking[]>([]);
+    const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'cancelled'>('all');
+    const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'checked_in' | 'cancelled'>('all');
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     useEffect(() => {
-        const loadBookings = async () => {
+        const loadData = async () => {
             if (!user) return;
             try {
-                const data = await ownerService.getOwnerBookings(user.id);
-                setBookings(data);
+                const [bookingsData, lotsData] = await Promise.all([
+                    ownerService.getOwnerBookings(user.id),
+                    ownerService.getOwnerLots(user.id),
+                ]);
+                setBookings(bookingsData);
+                setLots(lotsData);
             } catch (error) {
-                console.error('Failed to load bookings:', error);
+                console.error('Failed to load data:', error);
             } finally {
                 setIsLoading(false);
             }
         };
-        loadBookings();
+        loadData();
     }, [user]);
 
     const filteredBookings = bookings.filter(b => {
@@ -36,6 +43,28 @@ export const OwnerBookingsPage: React.FC = () => {
         cancelled: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
         checked_in: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
         completed: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400',
+    };
+
+    const handleCheckIn = async (bookingId: string) => {
+        try {
+            await ownerService.checkInBooking(bookingId);
+            setBookings(prev => prev.map(b =>
+                b.id === bookingId ? { ...b, status: 'checked_in' as const } : b
+            ));
+        } catch (error) {
+            console.error('Failed to check in booking:', error);
+        }
+    };
+
+    const handleCheckOut = async (bookingId: string) => {
+        try {
+            await ownerService.checkOutBooking(bookingId);
+            setBookings(prev => prev.map(b =>
+                b.id === bookingId ? { ...b, status: 'completed' as const } : b
+            ));
+        } catch (error) {
+            console.error('Failed to check out booking:', error);
+        }
     };
 
     const handleConfirm = async (bookingId: string) => {
@@ -60,6 +89,11 @@ export const OwnerBookingsPage: React.FC = () => {
         }
     };
 
+    const handleCreateBooking = async (data: Parameters<typeof ownerService.createManualBooking>[0]) => {
+        const newBooking = await ownerService.createManualBooking(data);
+        setBookings(prev => [newBooking, ...prev]);
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -70,14 +104,23 @@ export const OwnerBookingsPage: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Bookings</h1>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">{bookings.length} total bookings</p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Bookings</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">{bookings.length} total bookings</p>
+                </div>
+                <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-emerald-600 transition-colors flex items-center gap-1.5"
+                >
+                    <span className="material-symbols-outlined text-lg">add</span>
+                    Create Booking
+                </button>
             </div>
 
             {/* Filters */}
             <div className="flex gap-2 overflow-x-auto pb-2">
-                {(['all', 'confirmed', 'pending', 'cancelled'] as const).map((f) => (
+                {(['all', 'confirmed', 'pending', 'checked_in', 'cancelled'] as const).map((f) => (
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
@@ -88,7 +131,7 @@ export const OwnerBookingsPage: React.FC = () => {
                                 : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                         )}
                     >
-                        {f.charAt(0).toUpperCase() + f.slice(1)}
+                        {f === 'checked_in' ? 'Checked In' : f.charAt(0).toUpperCase() + f.slice(1)}
                     </button>
                 ))}
             </div>
@@ -102,7 +145,14 @@ export const OwnerBookingsPage: React.FC = () => {
                     >
                         <div className="flex items-start justify-between mb-3">
                             <div>
-                                <h3 className="font-bold text-[#111418] dark:text-white">{booking.userName}</h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-bold text-[#111418] dark:text-white">{booking.userName}</h3>
+                                    {booking.bookingSource && booking.bookingSource !== 'ONLINE' && (
+                                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                            {booking.bookingSource}
+                                        </span>
+                                    )}
+                                </div>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">{booking.lotName}</p>
                             </div>
                             <span className={clsx('text-xs font-medium px-2 py-1 rounded-full', statusStyles[booking.status])}>
@@ -141,6 +191,32 @@ export const OwnerBookingsPage: React.FC = () => {
                                 </button>
                             </div>
                         )}
+
+                        {/* Check In Button for Confirmed Bookings */}
+                        {booking.status === 'confirmed' && (
+                            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                                <button
+                                    onClick={() => handleCheckIn(booking.id)}
+                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-lg">login</span>
+                                    Check In
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Check Out Button for Checked In Bookings */}
+                        {booking.status === 'checked_in' && (
+                            <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                                <button
+                                    onClick={() => handleCheckOut(booking.id)}
+                                    className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-lg">logout</span>
+                                    Check Out
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -151,6 +227,13 @@ export const OwnerBookingsPage: React.FC = () => {
                     <p className="text-gray-500 dark:text-gray-400">No bookings found</p>
                 </div>
             )}
+
+            <ManualBookingModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onSubmit={handleCreateBooking}
+                lots={lots}
+            />
         </div>
     );
 };

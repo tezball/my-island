@@ -27,9 +27,14 @@ public interface LotRepository extends JpaRepository<Lot, Long> {
             WHERE l.isActive = true
             AND l.id NOT IN (
                 SELECT b.lot.id FROM Booking b
-                WHERE b.status != 'CANCELLED'
+                WHERE b.status NOT IN ('CANCELLED', 'PENDING_PAYMENT', 'PAYMENT_FAILED')
                 AND b.checkInDate < :checkOut
                 AND b.checkOutDate > :checkIn
+            )
+            AND l.id NOT IN (
+                SELECT bp.lot.id FROM LotBlockedPeriod bp
+                WHERE bp.startDate < :checkOut
+                AND bp.endDate > :checkIn
             )
             """)
     List<Lot> findAvailableLots(LocalDate checkIn, LocalDate checkOut);
@@ -40,9 +45,14 @@ public interface LotRepository extends JpaRepository<Lot, Long> {
             AND l.isActive = true
             AND l.id NOT IN (
                 SELECT b.lot.id FROM Booking b
-                WHERE b.status != 'CANCELLED'
+                WHERE b.status NOT IN ('CANCELLED', 'PENDING_PAYMENT', 'PAYMENT_FAILED')
                 AND b.checkInDate < :checkOut
                 AND b.checkOutDate > :checkIn
+            )
+            AND l.id NOT IN (
+                SELECT bp.lot.id FROM LotBlockedPeriod bp
+                WHERE bp.startDate < :checkOut
+                AND bp.endDate > :checkIn
             )
             """)
     List<Lot> findAvailableLotsByOwner(Long ownerId, LocalDate checkIn, LocalDate checkOut);

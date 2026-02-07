@@ -22,6 +22,6 @@ public class BookingEvent extends ApplicationEvent {
     }
 
     public enum Type {
-        CREATED, CONFIRMED, CANCELLED, COMPLETED
+        CREATED, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED, COMPLETED
     }
 }

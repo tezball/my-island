@@ -9,4 +9,6 @@ public interface EmailNotificationService {
     void sendBookingCancelledToGuest(String guestEmail, BookingEmailData bookingData);
     void sendOfferClaimedToSupplier(String supplierEmail, OfferClaimEmailData claimData);
     void sendVoucherToGuest(String guestEmail, OfferClaimEmailData claimData);
+    void sendPasswordResetEmail(String toEmail, String userName, String token);
+    void sendEmailVerificationEmail(String toEmail, String userName, String token);
 }

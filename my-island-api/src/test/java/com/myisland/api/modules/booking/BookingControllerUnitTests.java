@@ -70,7 +70,8 @@ public class BookingControllerUnitTests {
                                 "CONFIRMED",
                                 "PAID",
                                 "Special Request",
-                                java.time.LocalDateTime.now());
+                                java.time.LocalDateTime.now(),
+                                null, null, null, null);
                 given(bookingService.confirmBooking(eq(bookingId), eq(userId))).willReturn(mockBooking);
 
                 CustomUserDetails userDetails = new CustomUserDetails(

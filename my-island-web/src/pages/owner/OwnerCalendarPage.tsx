@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService } from '../../services/ownerService';
-import type { Booking, Lot } from '../../types/booking';
+import type { Booking, Lot, BlockedPeriod } from '../../types/booking';
+import { BlockDatesModal } from '../../components/owner/BlockDatesModal';
+import { ManualBookingModal } from '../../components/owner/ManualBookingModal';
 import clsx from 'clsx';
 
 const STATUS_COLORS: Record<string, { dot: string; bg: string; text: string; badge: string }> = {
@@ -63,7 +65,10 @@ export const OwnerCalendarPage: React.FC = () => {
     const { user } = useAuth();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [lots, setLots] = useState<Lot[]>([]);
+    const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showBlockModal, setShowBlockModal] = useState(false);
+    const [showCreateBookingModal, setShowCreateBookingModal] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(() => {
         const now = new Date();
         return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -78,12 +83,14 @@ export const OwnerCalendarPage: React.FC = () => {
         const load = async () => {
             if (!user) return;
             try {
-                const [b, l] = await Promise.all([
+                const [b, l, bp] = await Promise.all([
                     ownerService.getOwnerBookings(user.id),
                     ownerService.getOwnerLots(user.id),
+                    ownerService.getBlockedPeriods(),
                 ]);
                 setBookings(b);
                 setLots(l);
+                setBlockedPeriods(bp);
             } catch (error) {
                 console.error('Failed to load calendar data:', error);
             } finally {
@@ -116,6 +123,26 @@ export const OwnerCalendarPage: React.FC = () => {
         }
         return map;
     }, [filteredBookings]);
+
+    // Build date -> blocked periods map
+    const dateBlockedMap = useMemo(() => {
+        const map = new Map<string, BlockedPeriod[]>();
+        const filtered = selectedLotId ? blockedPeriods.filter(bp => bp.lotId === selectedLotId) : blockedPeriods;
+        for (const bp of filtered) {
+            const start = new Date(bp.startDate + 'T00:00:00');
+            const end = new Date(bp.endDate + 'T00:00:00');
+            for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+                const key = toDateStr(d);
+                const existing = map.get(key);
+                if (existing) {
+                    existing.push(bp);
+                } else {
+                    map.set(key, [bp]);
+                }
+            }
+        }
+        return map;
+    }, [blockedPeriods, selectedLotId]);
 
     // Summary stats for current month
     const stats = useMemo(() => {
@@ -179,6 +206,34 @@ export const OwnerCalendarPage: React.FC = () => {
         setSelectedDate(null);
     };
 
+    const handleCheckIn = async (bookingId: string) => {
+        setActionLoading(bookingId);
+        try {
+            await ownerService.checkInBooking(bookingId);
+            setBookings(prev => prev.map(b =>
+                b.id === bookingId ? { ...b, status: 'checked_in' as const } : b
+            ));
+        } catch (error) {
+            console.error('Failed to check in booking:', error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleCheckOut = async (bookingId: string) => {
+        setActionLoading(bookingId);
+        try {
+            await ownerService.checkOutBooking(bookingId);
+            setBookings(prev => prev.map(b =>
+                b.id === bookingId ? { ...b, status: 'completed' as const } : b
+            ));
+        } catch (error) {
+            console.error('Failed to check out booking:', error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     const handleConfirm = async (bookingId: string) => {
         setActionLoading(bookingId);
         try {
@@ -218,9 +273,27 @@ export const OwnerCalendarPage: React.FC = () => {
     return (
         <div className="space-y-4">
             {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Calendar</h1>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">View your bookings across all lots</p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Calendar</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">View your bookings across all lots</p>
+                </div>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setShowCreateBookingModal(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                        <span className="material-symbols-outlined text-lg">add</span>
+                        Create Booking
+                    </button>
+                    <button
+                        onClick={() => setShowBlockModal(true)}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                        <span className="material-symbols-outlined text-lg">block</span>
+                        Block Dates
+                    </button>
+                </div>
             </div>
 
             {/* Summary Stats - Desktop only */}
@@ -351,6 +424,8 @@ export const OwnerCalendarPage: React.FC = () => {
 
                                 const { day, dateStr } = cell;
                                 const dayBookings = dateBookingsMap.get(dateStr) ?? [];
+                                const dayBlocked = dateBlockedMap.get(dateStr) ?? [];
+                                const isBlocked = dayBlocked.length > 0;
                                 const isToday = dateStr === todayStr;
                                 const isSelected = dateStr === selectedDate;
 
@@ -363,6 +438,8 @@ export const OwnerCalendarPage: React.FC = () => {
                                             'min-h-[2.75rem] md:min-h-[4.5rem] rounded-lg p-1 text-left transition-colors relative flex flex-col',
                                             isSelected
                                                 ? 'bg-primary/10 ring-2 ring-primary'
+                                                : isBlocked
+                                                ? 'bg-gray-100 dark:bg-gray-800/80'
                                                 : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
                                             isToday && !isSelected && 'ring-2 ring-primary/50'
                                         )}
@@ -421,9 +498,11 @@ export const OwnerCalendarPage: React.FC = () => {
                         <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                             {[
                                 { label: 'Confirmed', color: 'bg-green-500' },
+                                { label: 'Checked In', color: 'bg-blue-500' },
                                 { label: 'Pending', color: 'bg-amber-500' },
                                 { label: 'Cancelled', color: 'bg-red-500' },
                                 { label: 'Completed', color: 'bg-gray-400' },
+                                { label: 'Blocked', color: 'bg-gray-600' },
                             ].map(item => (
                                 <div key={item.label} className="flex items-center gap-1.5">
                                     <div className={clsx('w-2.5 h-2.5 rounded-full', item.color)} />
@@ -456,9 +535,46 @@ export const OwnerCalendarPage: React.FC = () => {
                                     </button>
                                 </div>
 
-                                {bookingsForSelectedDate.length === 0 ? (
+                                {/* Blocked periods for this day */}
+                                {selectedDate && (dateBlockedMap.get(selectedDate) ?? []).length > 0 && (
+                                    <div className="mb-3 space-y-2">
+                                        {(dateBlockedMap.get(selectedDate) ?? []).map(bp => (
+                                            <div key={bp.id} className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
+                                                <div className="flex items-start justify-between">
+                                                    <div>
+                                                        <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                                            <span className="material-symbols-outlined text-sm align-middle mr-1">block</span>
+                                                            Blocked: {bp.lotName}
+                                                        </p>
+                                                        {bp.reason && (
+                                                            <p className="text-xs text-gray-500 mt-0.5">{bp.reason}</p>
+                                                        )}
+                                                        <p className="text-xs text-gray-400 mt-0.5">
+                                                            {formatDate(bp.startDate)} - {formatDate(bp.endDate)}
+                                                        </p>
+                                                    </div>
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                await ownerService.deleteBlockedPeriod(bp.id);
+                                                                setBlockedPeriods(prev => prev.filter(p => p.id !== bp.id));
+                                                            } catch (error) {
+                                                                console.error('Failed to remove blocked period:', error);
+                                                            }
+                                                        }}
+                                                        className="text-xs text-red-500 hover:text-red-600 font-medium"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {bookingsForSelectedDate.length === 0 && (!selectedDate || (dateBlockedMap.get(selectedDate) ?? []).length === 0) ? (
                                     <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No bookings on this day</p>
-                                ) : (
+                                ) : bookingsForSelectedDate.length === 0 ? null : (
                                     <div className="space-y-3">
                                         {bookingsForSelectedDate.map(booking => (
                                             <div
@@ -508,6 +624,32 @@ export const OwnerCalendarPage: React.FC = () => {
                                                         </button>
                                                     </div>
                                                 )}
+
+                                                {booking.status === 'confirmed' && (
+                                                    <div className="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        <button
+                                                            onClick={() => handleCheckIn(booking.id)}
+                                                            disabled={actionLoading === booking.id}
+                                                            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-medium py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                                        >
+                                                            <span className="material-symbols-outlined text-sm">login</span>
+                                                            Check In
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                {booking.status === 'checked_in' && (
+                                                    <div className="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                                                        <button
+                                                            onClick={() => handleCheckOut(booking.id)}
+                                                            disabled={actionLoading === booking.id}
+                                                            className="flex-1 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white text-xs font-medium py-1.5 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                                        >
+                                                            <span className="material-symbols-outlined text-sm">logout</span>
+                                                            Check Out
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
@@ -517,6 +659,28 @@ export const OwnerCalendarPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            <BlockDatesModal
+                isOpen={showBlockModal}
+                onClose={() => setShowBlockModal(false)}
+                onSubmit={async (data) => {
+                    const bp = await ownerService.createBlockedPeriod(data);
+                    setBlockedPeriods(prev => [...prev, bp]);
+                }}
+                lots={lots}
+                preselectedDate={selectedDate ?? undefined}
+            />
+
+            <ManualBookingModal
+                isOpen={showCreateBookingModal}
+                onClose={() => setShowCreateBookingModal(false)}
+                onSubmit={async (data) => {
+                    const newBooking = await ownerService.createManualBooking(data);
+                    setBookings(prev => [...prev, newBooking]);
+                }}
+                lots={lots}
+                preselectedDate={selectedDate ?? undefined}
+            />
         </div>
     );
 };

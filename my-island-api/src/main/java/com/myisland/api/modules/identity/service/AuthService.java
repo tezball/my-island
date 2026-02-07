@@ -8,7 +8,7 @@ import com.myisland.api.modules.identity.repository.UserRepository;
 import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import com.myisland.api.security.JwtProvider;
-import com.myisland.api.shared.email.EmailService;
+import com.myisland.api.shared.email.EmailNotificationService;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ConflictException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
@@ -35,12 +35,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
-    private final EmailService emailService;
+    private final EmailNotificationService emailService;
 
     public AuthService(UserRepository userRepository, OwnerRepository ownerRepository,
                        SupplierRepository supplierRepository, PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager, JwtProvider jwtProvider,
-                       EmailService emailService) {
+                       EmailNotificationService emailService) {
         this.userRepository = userRepository;
         this.ownerRepository = ownerRepository;
         this.supplierRepository = supplierRepository;

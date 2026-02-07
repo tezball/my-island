@@ -1,4 +1,4 @@
-export type BookingStatus = 'pending_payment' | 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'payment_failed';
+export type BookingStatus = 'pending_payment' | 'pending' | 'confirmed' | 'checked_in' | 'cancelled' | 'completed' | 'payment_failed';
 export type PaymentStatus = 'none' | 'authorized' | 'captured' | 'released' | 'refunded' | 'failed';
 
 export interface Booking {
@@ -15,6 +15,10 @@ export interface Booking {
     chargeTotal?: number;
     paymentStatus?: PaymentStatus;
     details?: string; // For extras like Power, etc.
+    guestName?: string;
+    guestEmail?: string;
+    guestPhone?: string;
+    bookingSource?: string;
 }
 
 export interface PaymentIntentResponse {
@@ -31,6 +35,41 @@ export interface LotImage {
     altText: string | null;
     displayOrder: number;
     isPrimary: boolean;
+}
+
+export interface BlockedPeriod {
+    id: string;
+    lotId: string;
+    lotName: string;
+    startDate: string;
+    endDate: string;
+    reason?: string;
+    createdAt: string;
+}
+
+export interface CreateBlockedPeriodRequest {
+    lotId: number;
+    startDate: string;
+    endDate: string;
+    reason?: string;
+}
+
+export interface SeasonalPricingRule {
+    id: string;
+    lotType: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    pricePerNight: number;
+    createdAt: string;
+}
+
+export interface CreateSeasonalPricingRuleRequest {
+    lotType: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    pricePerNight: number;
 }
 
 export interface Lot {
