@@ -302,6 +302,23 @@ public class OwnerService {
     }
 
     @Transactional(readOnly = true)
+    public Map<String, List<BookingDto>> getTodayMovements(Long userId) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        LocalDate today = LocalDate.now();
+        List<BookingDto> arrivals = bookingRepository.findTodayArrivals(owner.getId(), today)
+                .stream().map(BookingDto::from).toList();
+        List<BookingDto> departures = bookingRepository.findTodayDepartures(owner.getId(), today)
+                .stream().map(BookingDto::from).toList();
+
+        log.info("Today's movements for owner {}: {} arrivals, {} departures",
+                owner.getId(), arrivals.size(), departures.size());
+
+        return Map.of("arrivals", arrivals, "departures", departures);
+    }
+
+    @Transactional(readOnly = true)
     public List<BookingDto> getOwnerBookings(Long userId) {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));

@@ -5,3 +5,4 @@ export { OwnerCalendarPage } from './OwnerCalendarPage';
 export { OwnerPropertyPage } from './OwnerPropertyPage';
 export { OwnerSettingsPage } from './OwnerSettingsPage';
 export { OwnerPricingPage } from './OwnerPricingPage';
+export { OwnerTodayPage } from './OwnerTodayPage';

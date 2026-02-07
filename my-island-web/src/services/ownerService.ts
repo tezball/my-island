@@ -993,6 +993,7 @@ export const ownerService = {
             guestEmail: b.guestEmail ?? undefined,
             guestPhone: b.guestPhone ?? undefined,
             bookingSource: b.bookingSource ?? undefined,
+            numGuests: b.numGuests,
         }));
 
         return bookings;
@@ -1803,6 +1804,7 @@ export const ownerService = {
             status: apiBooking.status.toLowerCase() as Booking['status'],
             totalPrice: apiBooking.totalPrice,
             details: apiBooking.specialRequests ?? undefined,
+            numGuests: apiBooking.numGuests,
         };
     },
 
@@ -1845,6 +1847,7 @@ export const ownerService = {
             status: apiBooking.status.toLowerCase() as Booking['status'],
             totalPrice: apiBooking.totalPrice,
             details: apiBooking.specialRequests ?? undefined,
+            numGuests: apiBooking.numGuests,
         };
     },
 
@@ -1888,6 +1891,7 @@ export const ownerService = {
             status: apiBooking.status.toLowerCase() as Booking['status'],
             totalPrice: apiBooking.totalPrice,
             details: apiBooking.specialRequests ?? undefined,
+            numGuests: apiBooking.numGuests,
         };
     },
 
@@ -1931,6 +1935,7 @@ export const ownerService = {
             status: apiBooking.status.toLowerCase() as Booking['status'],
             totalPrice: apiBooking.totalPrice,
             details: apiBooking.specialRequests ?? undefined,
+            numGuests: apiBooking.numGuests,
         };
     },
 
@@ -2051,6 +2056,69 @@ export const ownerService = {
         }
     },
 
+    // --- Today's Arrivals/Departures ---
+
+    async getTodayMovements(): Promise<{ arrivals: Booking[]; departures: Booking[] }> {
+        const endpoint = '/owner/bookings/today';
+        const startTime = performance.now();
+
+        log.info('Fetching today\'s movements', { endpoint });
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            log.error('No auth token found', undefined, { endpoint });
+            throw new AuthenticationError('No authentication token found. Please sign in.');
+        }
+
+        let response: Response;
+        try {
+            response = await fetch(`${API_BASE}${endpoint}`, {
+                headers: getAuthHeaders(),
+            });
+        } catch (error) {
+            log.error('Network error', error, { endpoint });
+            throw new NetworkError('Unable to connect to server');
+        }
+
+        const durationMs = performance.now() - startTime;
+
+        if (!response.ok) {
+            if (response.status === 401) throw new AuthenticationError();
+            throw new ApiError(`Failed to fetch today's movements: ${response.statusText}`, response.status);
+        }
+
+        const data: { arrivals: BookingApiResponse[]; departures: BookingApiResponse[] } = await response.json();
+
+        const mapBooking = (b: BookingApiResponse): Booking => ({
+            id: String(b.id),
+            userId: String(b.userId ?? ''),
+            userName: b.userName,
+            lotId: String(b.lotId),
+            lotName: b.lotName,
+            startDate: b.checkInDate,
+            endDate: b.checkOutDate,
+            status: b.status.toLowerCase() as Booking['status'],
+            totalPrice: b.totalPrice,
+            details: b.specialRequests ?? undefined,
+            guestName: b.guestName ?? undefined,
+            guestEmail: b.guestEmail ?? undefined,
+            guestPhone: b.guestPhone ?? undefined,
+            bookingSource: b.bookingSource ?? undefined,
+            numGuests: b.numGuests,
+        });
+
+        log.info('Today\'s movements fetched', {
+            durationMs: Math.round(durationMs),
+            arrivals: data.arrivals.length,
+            departures: data.departures.length,
+        });
+
+        return {
+            arrivals: data.arrivals.map(mapBooking),
+            departures: data.departures.map(mapBooking),
+        };
+    },
+
     // --- Manual Booking ---
 
     async createManualBooking(data: {
@@ -2091,6 +2159,7 @@ export const ownerService = {
             guestEmail: apiBooking.guestEmail ?? undefined,
             guestPhone: apiBooking.guestPhone ?? undefined,
             bookingSource: apiBooking.bookingSource ?? undefined,
+            numGuests: apiBooking.numGuests,
         };
     },
 };

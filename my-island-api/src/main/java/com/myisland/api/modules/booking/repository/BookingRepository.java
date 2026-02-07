@@ -52,6 +52,30 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT COUNT(b) FROM Booking b WHERE b.lot.owner.id = :ownerId AND b.status = :status")
     long countByOwnerIdAndStatus(Long ownerId, Booking.BookingStatus status);
 
+    @Query("""
+            SELECT b FROM Booking b
+            LEFT JOIN FETCH b.user
+            JOIN FETCH b.lot l
+            JOIN FETCH l.owner
+            WHERE l.owner.id = :ownerId
+            AND b.checkInDate = :date
+            AND b.status IN ('CONFIRMED', 'PENDING')
+            ORDER BY l.name ASC
+            """)
+    List<Booking> findTodayArrivals(Long ownerId, LocalDate date);
+
+    @Query("""
+            SELECT b FROM Booking b
+            LEFT JOIN FETCH b.user
+            JOIN FETCH b.lot l
+            JOIN FETCH l.owner
+            WHERE l.owner.id = :ownerId
+            AND b.checkOutDate = :date
+            AND b.status = 'CHECKED_IN'
+            ORDER BY l.name ASC
+            """)
+    List<Booking> findTodayDepartures(Long ownerId, LocalDate date);
+
     Optional<Booking> findByStripePaymentIntentId(String stripePaymentIntentId);
 
     @Query("""

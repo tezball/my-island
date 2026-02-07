@@ -48,6 +48,7 @@ const OwnerLayoutContent: React.FC = () => {
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
                     <OwnerNavLink to="/owner" icon="dashboard" label="Dashboard" end />
+                    <OwnerNavLink to="/owner/today" icon="today" label="Today" />
                     <OwnerNavLink to="/owner/lots" icon="grid_view" label="My Lots" />
                     <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />
                     <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />

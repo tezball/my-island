@@ -128,6 +128,14 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.updateOwnerPreferences(userDetails.getUserId(), preferences));
     }
 
+    @GetMapping("/bookings/today")
+    @Operation(summary = "Get today's arrivals and departures")
+    public ResponseEntity<Map<String, List<BookingDto>>> getTodayMovements(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(ownerService.getTodayMovements(userDetails.getUserId()));
+    }
+
     @GetMapping("/bookings")
     @Operation(summary = "Get all bookings for owner's lots")
     public ResponseEntity<List<BookingDto>> getBookings(

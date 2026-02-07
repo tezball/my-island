@@ -19,6 +19,7 @@ export interface Booking {
     guestEmail?: string;
     guestPhone?: string;
     bookingSource?: string;
+    numGuests?: number;
 }
 
 export interface PaymentIntentResponse {
