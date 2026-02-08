@@ -90,7 +90,7 @@ public class FeaturedPromotionService {
         Map<String, String> metadata = session.getMetadata();
 
         // Only process featured promotions
-        if (!"featured_promotion".equals(metadata.get("type"))) {
+        if (metadata == null || !"featured_promotion".equals(metadata.get("type"))) {
             return;
         }
 

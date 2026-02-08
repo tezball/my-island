@@ -132,7 +132,8 @@ public class BookingPaymentService {
 
     @Transactional
     public void handlePaymentIntentSucceeded(PaymentIntent paymentIntent) {
-        String bookingIdStr = paymentIntent.getMetadata().get("booking_id");
+        var metadata = paymentIntent.getMetadata();
+        String bookingIdStr = metadata != null ? metadata.get("booking_id") : null;
         if (bookingIdStr == null) {
             log.debug("Payment intent {} has no booking_id metadata, skipping", paymentIntent.getId());
             return;
@@ -160,7 +161,8 @@ public class BookingPaymentService {
 
     @Transactional
     public void handlePaymentIntentFailed(PaymentIntent paymentIntent) {
-        String bookingIdStr = paymentIntent.getMetadata().get("booking_id");
+        var failedMetadata = paymentIntent.getMetadata();
+        String bookingIdStr = failedMetadata != null ? failedMetadata.get("booking_id") : null;
         if (bookingIdStr == null) {
             return;
         }

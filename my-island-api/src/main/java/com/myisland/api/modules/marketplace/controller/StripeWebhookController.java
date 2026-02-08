@@ -138,7 +138,8 @@ public class StripeWebhookController {
                     Transfer transfer = (Transfer) event.getDataObjectDeserializer()
                             .getObject().orElseThrow();
                     // Record owner payout
-                    String bookingId = transfer.getMetadata().get("booking_id");
+                    var transferMetadata = transfer.getMetadata();
+                    String bookingId = transferMetadata != null ? transferMetadata.get("booking_id") : null;
                     bookingPaymentService.handleTransferCreated(transfer.getId(), bookingId);
                 }
                 default -> log.debug("Unhandled event type: {}", event.getType());

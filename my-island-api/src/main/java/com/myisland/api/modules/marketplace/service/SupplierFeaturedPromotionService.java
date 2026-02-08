@@ -90,7 +90,7 @@ public class SupplierFeaturedPromotionService {
         Map<String, String> metadata = session.getMetadata();
 
         // Only process supplier featured promotions
-        if (!"supplier_featured_promotion".equals(metadata.get("type"))) {
+        if (metadata == null || !"supplier_featured_promotion".equals(metadata.get("type"))) {
             return;
         }
 

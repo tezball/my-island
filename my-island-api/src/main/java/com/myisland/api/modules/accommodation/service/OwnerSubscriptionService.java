@@ -78,12 +78,13 @@ public class OwnerSubscriptionService {
             ownerRepository.save(owner);
         }
 
-        // Create checkout session for €15/month owner subscription
+        // Create checkout session for €15/month owner subscription (card only)
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .setCustomer(customerId)
                 .setSuccessUrl(stripeProperties.getOwnerSuccessUrl())
                 .setCancelUrl(stripeProperties.getOwnerCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setPrice(stripeProperties.getOwnerPriceId())
@@ -212,7 +213,7 @@ public class OwnerSubscriptionService {
         // Update owner with subscription details
         owner.setStripeSubscriptionId(subscription.getId());
         owner.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
-        owner.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        owner.setSubscriptionCurrentPeriodEnd(extractPeriodEnd(subscription));
         owner.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
         ownerRepository.save(owner);
 
@@ -260,7 +261,7 @@ public class OwnerSubscriptionService {
         Owner owner = ownerOpt.get();
         owner.setStripeSubscriptionId(subscription.getId());
         owner.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
-        owner.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        owner.setSubscriptionCurrentPeriodEnd(extractPeriodEnd(subscription));
         owner.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
         ownerRepository.save(owner);
 
@@ -279,7 +280,7 @@ public class OwnerSubscriptionService {
 
         Owner owner = ownerOpt.get();
         owner.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
-        owner.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        owner.setSubscriptionCurrentPeriodEnd(extractPeriodEnd(subscription));
         owner.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
         ownerRepository.save(owner);
 
@@ -302,6 +303,16 @@ public class OwnerSubscriptionService {
         ownerRepository.save(owner);
 
         log.info("Subscription deleted for owner {}", owner.getId());
+    }
+
+    private Instant extractPeriodEnd(Subscription subscription) {
+        // Stripe API 2025-03-31+ removed current_period_end from Subscription
+        Long periodEnd = subscription.getCurrentPeriodEnd();
+        if (periodEnd != null) {
+            return Instant.ofEpochSecond(periodEnd);
+        }
+        // Fallback: 30 days from now
+        return Instant.now().plusSeconds(30L * 24 * 60 * 60);
     }
 
     private Owner.SubscriptionStatus mapStripeStatus(String stripeStatus) {

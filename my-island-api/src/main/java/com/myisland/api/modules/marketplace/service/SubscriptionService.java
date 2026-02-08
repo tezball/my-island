@@ -78,12 +78,13 @@ public class SubscriptionService {
             supplierRepository.save(supplier);
         }
 
-        // Create checkout session
+        // Create checkout session (card only)
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                 .setCustomer(customerId)
                 .setSuccessUrl(stripeProperties.getSupplierSuccessUrl())
                 .setCancelUrl(stripeProperties.getSupplierCancelUrl())
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setPrice(stripeProperties.getSupplierPriceId())
@@ -212,7 +213,7 @@ public class SubscriptionService {
         // Update supplier with subscription details
         supplier.setStripeSubscriptionId(subscription.getId());
         supplier.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
-        supplier.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        supplier.setSubscriptionCurrentPeriodEnd(extractPeriodEnd(subscription));
         supplier.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
         supplierRepository.save(supplier);
 
@@ -260,7 +261,7 @@ public class SubscriptionService {
         Supplier supplier = supplierOpt.get();
         supplier.setStripeSubscriptionId(subscription.getId());
         supplier.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
-        supplier.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        supplier.setSubscriptionCurrentPeriodEnd(extractPeriodEnd(subscription));
         supplier.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
         supplierRepository.save(supplier);
 
@@ -279,7 +280,7 @@ public class SubscriptionService {
 
         Supplier supplier = supplierOpt.get();
         supplier.setSubscriptionStatus(mapStripeStatus(subscription.getStatus()));
-        supplier.setSubscriptionCurrentPeriodEnd(Instant.ofEpochSecond(subscription.getCurrentPeriodEnd()));
+        supplier.setSubscriptionCurrentPeriodEnd(extractPeriodEnd(subscription));
         supplier.setSubscriptionCancelAtPeriodEnd(subscription.getCancelAtPeriodEnd());
         supplierRepository.save(supplier);
 
@@ -302,6 +303,14 @@ public class SubscriptionService {
         supplierRepository.save(supplier);
 
         log.info("Subscription deleted for supplier {}", supplier.getId());
+    }
+
+    private Instant extractPeriodEnd(Subscription subscription) {
+        Long periodEnd = subscription.getCurrentPeriodEnd();
+        if (periodEnd != null) {
+            return Instant.ofEpochSecond(periodEnd);
+        }
+        return Instant.now().plusSeconds(30L * 24 * 60 * 60);
     }
 
     private Supplier.SubscriptionStatus mapStripeStatus(String stripeStatus) {
