@@ -8,6 +8,7 @@ interface OfferFormModalProps {
     offer?: Offer | null;
     onSave: (offer: Omit<Offer, 'id' | 'claimCount' | 'createdAt'>) => Promise<Offer | void>;
     supplierId: string;
+    defaultCategory?: OfferCategory;
 }
 
 const CATEGORIES: { value: OfferCategory; label: string }[] = [
@@ -23,7 +24,8 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
     onClose,
     offer,
     onSave,
-    supplierId
+    supplierId,
+    defaultCategory = 'FOOD'
 }) => {
     const [formData, setFormData] = useState({
         title: '',
@@ -68,7 +70,7 @@ export const OfferFormModal: React.FC<OfferFormModalProps> = ({
                 setFormData({
                     title: '',
                     description: '',
-                    category: 'FOOD',
+                    category: defaultCategory,
                     discountPercent: 10,
                     validFrom: today,
                     validUntil: nextMonth.toISOString().split('T')[0],

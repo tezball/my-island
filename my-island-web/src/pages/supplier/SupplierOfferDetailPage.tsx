@@ -196,13 +196,14 @@ export const SupplierOfferDetailPage: React.FC = () => {
         const remaining = offer.maxClaims ? offer.maxClaims - offer.claimCount : null;
 
         return {
-            totalClaims: offer.claimCount,
+            totalClaims: claims.length,
             remaining,
             redemptionRate
         };
     }, [offer, claims]);
 
     const isExpired = offer ? new Date(offer.validUntil) < new Date() : false;
+    const isNotOnMarketplace = isExpired || (offer ? !offer.active : false);
 
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('en-IE', {
@@ -215,7 +216,8 @@ export const SupplierOfferDetailPage: React.FC = () => {
     const formatDateShort = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('en-IE', {
             day: 'numeric',
-            month: 'short'
+            month: 'short',
+            year: 'numeric'
         });
     };
 
@@ -302,6 +304,23 @@ export const SupplierOfferDetailPage: React.FC = () => {
                     </button>
                 </div>
             </div>
+
+            {/* Marketplace Visibility Warning */}
+            {isNotOnMarketplace && (
+                <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                        <span className="material-symbols-outlined text-gray-500">visibility_off</span>
+                        <div>
+                            <h3 className="font-semibold text-gray-700 dark:text-gray-300">Not visible on marketplace</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {isExpired
+                                    ? 'This offer has expired and is no longer visible to guests.'
+                                    : 'This offer is inactive and hidden from guests.'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Test Offer Banner */}
             {offer.active && !isExpired && (

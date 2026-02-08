@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { supplierService, type Offer, type OfferCategory } from '../../services/supplierService';
+import { supplierService, type Offer, type OfferCategory, type Supplier } from '../../services/supplierService';
 import { OfferFormModal } from '../../components/supplier/offers/OfferFormModal';
 import { useSubscription } from '../../context/SubscriptionContext';
 
@@ -16,6 +16,7 @@ const CATEGORY_LABELS: Record<OfferCategory, string> = {
 export const SupplierOffersPage: React.FC = () => {
     const { user } = useAuth();
     const [offers, setOffers] = useState<Offer[]>([]);
+    const [supplier, setSupplier] = useState<Supplier | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingOffer, setEditingOffer] = useState<Offer | null>(null);
@@ -32,8 +33,12 @@ export const SupplierOffersPage: React.FC = () => {
     const loadOffers = async () => {
         setIsLoading(true);
         try {
-            const data = await supplierService.getOffers(supplierId);
+            const [data, profile] = await Promise.all([
+                supplierService.getOffers(supplierId),
+                supplierService.getSupplierProfile(supplierId),
+            ]);
             setOffers(data);
+            setSupplier(profile);
         } catch (error) {
             console.error('Failed to load offers:', error);
         } finally {
@@ -204,6 +209,7 @@ export const SupplierOffersPage: React.FC = () => {
                 offer={editingOffer}
                 onSave={handleSave}
                 supplierId={supplierId}
+                defaultCategory={supplier?.category}
             />
         </div>
     );
@@ -278,9 +284,9 @@ const OfferCard: React.FC<{
                     <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
                         <span className="material-symbols-outlined text-lg">event</span>
                         <span>
-                            {new Date(offer.validFrom).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
+                            {new Date(offer.validFrom).toLocaleDateString('en-IE', { day: 'numeric', month: 'short', year: 'numeric' })}
                             {' - '}
-                            {new Date(offer.validUntil).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' })}
+                            {new Date(offer.validUntil).toLocaleDateString('en-IE', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </span>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +84,7 @@ public class SupplierService {
         Supplier supplier = supplierRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
 
-        List<Offer> activeOffers = offerRepository.findActiveOffersBySupplierId(supplier.getId(), LocalDate.now());
+        List<Offer> activeOffers = offerRepository.findBySupplierIdAndIsActiveTrue(supplier.getId());
         long totalClaims = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(), OfferClaim.ClaimStatus.CLAIMED);
         long totalRedeemed = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(), OfferClaim.ClaimStatus.REDEEMED);
 

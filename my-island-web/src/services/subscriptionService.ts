@@ -1,52 +1,16 @@
+import { apiRequest } from './apiClient';
 import type { SubscriptionDto, CreateCheckoutSessionResponse, CreatePortalSessionResponse } from '../types/subscription';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
 export const subscriptionService = {
-  async getSubscriptionStatus(): Promise<SubscriptionDto> {
-    const response = await fetch(`${API_BASE}/supplier/subscription`, {
-      method: 'GET',
-      headers: getAuthHeaders(),
-    });
+    async getSubscriptionStatus(): Promise<SubscriptionDto> {
+        return apiRequest<SubscriptionDto>('/supplier/subscription');
+    },
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch subscription status');
-    }
+    async createCheckoutSession(): Promise<CreateCheckoutSessionResponse> {
+        return apiRequest<CreateCheckoutSessionResponse>('/supplier/subscription/checkout', { method: 'POST' });
+    },
 
-    return response.json();
-  },
-
-  async createCheckoutSession(): Promise<CreateCheckoutSessionResponse> {
-    const response = await fetch(`${API_BASE}/supplier/subscription/checkout`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to create checkout session');
-    }
-
-    return response.json();
-  },
-
-  async createPortalSession(): Promise<CreatePortalSessionResponse> {
-    const response = await fetch(`${API_BASE}/supplier/subscription/portal`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to create portal session');
-    }
-
-    return response.json();
-  },
+    async createPortalSession(): Promise<CreatePortalSessionResponse> {
+        return apiRequest<CreatePortalSessionResponse>('/supplier/subscription/portal', { method: 'POST' });
+    },
 };

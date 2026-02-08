@@ -1,46 +1,17 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+import { apiRequest } from './apiClient';
+import type { OwnerPreferences } from '../types/owner';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
-export interface OwnerPreferences {
-  emailNotificationsBookings: boolean;
-  weeklySummaryReports: boolean;
-  instantBooking: boolean;
-  allowSameDayBookings: boolean;
-  requireGuestVerification: boolean;
-}
+// Re-export for backward compatibility
+export type { OwnerPreferences } from '../types/owner';
 
 export const ownerPreferencesService = {
-  async getPreferences(): Promise<OwnerPreferences> {
-    const response = await fetch(`${API_BASE}/owner/preferences`, {
-      method: 'GET',
-      headers: getAuthHeaders(),
-    });
+    async getPreferences(): Promise<OwnerPreferences> {
+        return apiRequest<OwnerPreferences>('/owner/preferences');
+    },
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch owner preferences');
-    }
-
-    return response.json();
-  },
-
-  async updatePreferences(preferences: OwnerPreferences): Promise<OwnerPreferences> {
-    const response = await fetch(`${API_BASE}/owner/preferences`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(preferences),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update owner preferences');
-    }
-
-    return response.json();
-  },
+    async updatePreferences(preferences: OwnerPreferences): Promise<OwnerPreferences> {
+        return apiRequest<OwnerPreferences>('/owner/preferences', {
+            method: 'PUT', body: preferences,
+        });
+    },
 };

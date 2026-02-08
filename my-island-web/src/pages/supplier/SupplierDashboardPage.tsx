@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useSubscription } from '../../context/SubscriptionContext';
 import {
     supplierService,
     type SupplierDashboardStats,
@@ -17,9 +18,11 @@ type ClaimSubFilter = 'all' | 'claimed' | 'redeemed' | 'expired';
 
 export const SupplierDashboardPage: React.FC = () => {
     const { user } = useAuth();
+    const { subscription } = useSubscription();
     const [stats, setStats] = useState<SupplierDashboardStats | null>(null);
     const [supplier, setSupplier] = useState<Supplier | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
 
     // Filter state
     const [activeFilter, setActiveFilter] = useState<FilterType>('offers');
@@ -263,13 +266,23 @@ export const SupplierDashboardPage: React.FC = () => {
             <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6">
                 <h2 className="text-lg font-bold text-[#111418] dark:text-white mb-4">Quick Actions</h2>
                 <div className="flex flex-wrap gap-3">
-                    <Link
-                        to="/supplier/offers"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
-                    >
-                        <span className="material-symbols-outlined text-lg">add</span>
-                        Create New Offer
-                    </Link>
+                    {hasActiveSubscription ? (
+                        <Link
+                            to="/supplier/offers"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
+                        >
+                            <span className="material-symbols-outlined text-lg">add</span>
+                            Create New Offer
+                        </Link>
+                    ) : (
+                        <Link
+                            to="/supplier/settings"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600 transition-colors text-sm font-medium"
+                        >
+                            <span className="material-symbols-outlined text-lg">credit_card</span>
+                            Subscribe to Create Offers
+                        </Link>
+                    )}
                     <Link
                         to="/supplier/profile"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
@@ -278,7 +291,7 @@ export const SupplierDashboardPage: React.FC = () => {
                         Edit Profile
                     </Link>
                     <Link
-                        to="/offers"
+                        to="/marketplace"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
                     >
                         <span className="material-symbols-outlined text-lg">storefront</span>
@@ -390,7 +403,8 @@ const OffersListView: React.FC<{ offers: ActiveOfferDetail[] }> = ({ offers }) =
     const formatDateShort = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('en-IE', {
             day: 'numeric',
-            month: 'short'
+            month: 'short',
+            year: 'numeric'
         });
     };
 

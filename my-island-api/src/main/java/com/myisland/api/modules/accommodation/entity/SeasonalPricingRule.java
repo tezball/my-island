@@ -32,6 +32,35 @@ public class SeasonalPricingRule extends BaseEntity {
 
     public SeasonalPricingRule() {}
 
+    public static Builder builder() { return new Builder(); }
+
+    public static class Builder {
+        private Owner owner;
+        private Lot.LotType lotType;
+        private String name;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private BigDecimal pricePerNight;
+
+        public Builder owner(Owner owner) { this.owner = owner; return this; }
+        public Builder lotType(Lot.LotType lotType) { this.lotType = lotType; return this; }
+        public Builder name(String name) { this.name = name; return this; }
+        public Builder startDate(LocalDate startDate) { this.startDate = startDate; return this; }
+        public Builder endDate(LocalDate endDate) { this.endDate = endDate; return this; }
+        public Builder pricePerNight(BigDecimal pricePerNight) { this.pricePerNight = pricePerNight; return this; }
+
+        public SeasonalPricingRule build() {
+            SeasonalPricingRule rule = new SeasonalPricingRule();
+            rule.owner = owner;
+            rule.lotType = lotType;
+            rule.name = name;
+            rule.startDate = startDate;
+            rule.endDate = endDate;
+            rule.pricePerNight = pricePerNight;
+            return rule;
+        }
+    }
+
     public Owner getOwner() { return owner; }
     public void setOwner(Owner owner) { this.owner = owner; }
 

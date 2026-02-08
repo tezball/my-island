@@ -12,6 +12,7 @@ import com.myisland.api.modules.marketplace.dto.ConnectStatusDto;
 import com.myisland.api.modules.marketplace.dto.CreateCheckoutSessionResponse;
 import com.myisland.api.modules.marketplace.dto.CreatePortalSessionResponse;
 import com.myisland.api.modules.marketplace.dto.OnboardingLinkResponse;
+import com.myisland.api.modules.marketplace.dto.PurchaseFeaturedRequest;
 import com.myisland.api.modules.marketplace.dto.SetupIntentResponse;
 import com.myisland.api.modules.marketplace.service.StripeConnectService;
 import com.myisland.api.modules.review.dto.OwnerReviewResponseRequest;

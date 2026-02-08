@@ -1,52 +1,5 @@
+import { apiRequest } from './apiClient';
 import type { Review, CreateReviewRequest, ReviewEligibility, EligibleBooking } from '../types/review';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
-
-class ReviewServiceError extends Error {
-    readonly statusCode?: number;
-    constructor(message: string, statusCode?: number) {
-        super(message);
-        this.name = 'ReviewServiceError';
-        this.statusCode = statusCode;
-    }
-}
-
-async function apiRequest<T>(
-    endpoint: string,
-    options: { method?: string; body?: unknown; requiresAuth?: boolean } = {}
-): Promise<T> {
-    const { method = 'GET', body, requiresAuth = false } = options;
-
-    const headers: HeadersInit = { 'Content-Type': 'application/json' };
-
-    if (requiresAuth) {
-        const token = localStorage.getItem('token');
-        if (!token) throw new ReviewServiceError('Authentication required', 401);
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-        method,
-        headers,
-        body: body ? JSON.stringify(body) : undefined,
-    });
-
-    if (!response.ok) {
-        let errorMessage = 'Request failed';
-        try {
-            const errorBody = await response.text();
-            try {
-                const errorJson = JSON.parse(errorBody);
-                errorMessage = errorJson.message || errorJson.error || errorBody;
-            } catch {
-                if (errorBody && errorBody.length < 500) errorMessage = errorBody;
-            }
-        } catch { /* ignore */ }
-        throw new ReviewServiceError(errorMessage, response.status);
-    }
-
-    return response.json();
-}
 
 interface ReviewApiResponse {
     id: number;
@@ -62,17 +15,15 @@ interface ReviewApiResponse {
     createdAt: string;
 }
 
-interface EligibleBookingApiResponse {
-    bookingId: number;
-    lotName: string;
-    checkInDate: string;
-    checkOutDate: string;
-    alreadyReviewed: boolean;
-}
-
 interface ReviewEligibilityApiResponse {
     canReview: boolean;
-    eligibleBookings: EligibleBookingApiResponse[];
+    eligibleBookings: Array<{
+        bookingId: number;
+        lotName: string;
+        checkInDate: string;
+        checkOutDate: string;
+        alreadyReviewed: boolean;
+    }>;
 }
 
 function transformReview(api: ReviewApiResponse): Review {
@@ -106,38 +57,30 @@ function transformEligibility(api: ReviewEligibilityApiResponse): ReviewEligibil
 
 export const reviewService = {
     async getCampsiteReviews(ownerId: string): Promise<Review[]> {
-        const data = await apiRequest<ReviewApiResponse[]>(`/reviews/campsite/${ownerId}`);
+        const data = await apiRequest<ReviewApiResponse[]>(`/reviews/campsite/${ownerId}`, { requiresAuth: false });
         return data.map(transformReview);
     },
 
     async checkEligibility(ownerId: string): Promise<ReviewEligibility> {
-        const data = await apiRequest<ReviewEligibilityApiResponse>(`/reviews/eligibility/${ownerId}`, {
-            requiresAuth: true,
-        });
+        const data = await apiRequest<ReviewEligibilityApiResponse>(`/reviews/eligibility/${ownerId}`);
         return transformEligibility(data);
     },
 
     async createReview(request: CreateReviewRequest): Promise<Review> {
         const data = await apiRequest<ReviewApiResponse>('/reviews', {
-            method: 'POST',
-            requiresAuth: true,
-            body: request,
+            method: 'POST', body: request,
         });
         return transformReview(data);
     },
 
     async getOwnerReviews(): Promise<Review[]> {
-        const data = await apiRequest<ReviewApiResponse[]>('/owner/reviews', {
-            requiresAuth: true,
-        });
+        const data = await apiRequest<ReviewApiResponse[]>('/owner/reviews');
         return data.map(transformReview);
     },
 
     async respondToReview(reviewId: string, response: string): Promise<Review> {
         const data = await apiRequest<ReviewApiResponse>(`/owner/reviews/${reviewId}/respond`, {
-            method: 'PUT',
-            requiresAuth: true,
-            body: { response },
+            method: 'PUT', body: { response },
         });
         return transformReview(data);
     },

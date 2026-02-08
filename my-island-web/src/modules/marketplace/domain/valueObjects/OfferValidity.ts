@@ -54,7 +54,7 @@ export function getDaysUntilExpiry(validity: OfferValidity): number {
 /**
  * Checks if the offer is expiring soon (within the specified days)
  */
-export function isExpiringSoon(validity: OfferValidity, withinDays: number = 7): boolean {
+export function isExpiringSoon(validity: OfferValidity, withinDays: number = 30): boolean {
   const daysRemaining = getDaysUntilExpiry(validity);
   return daysRemaining > 0 && daysRemaining <= withinDays;
 }

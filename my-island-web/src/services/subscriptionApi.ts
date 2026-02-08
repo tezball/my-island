@@ -1,12 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
-
-const getAuthHeaders = (): HeadersInit => {
-    const token = localStorage.getItem('token');
-    return {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-};
+import { apiRequest } from './apiClient';
 
 export interface SetupIntentResponse {
     clientSecret: string;
@@ -36,136 +28,68 @@ export interface OnboardingLinkResponse {
     devMode: boolean;
 }
 
-// Owner subscription API
 export const ownerSubscriptionApi = {
     async getSubscription(): Promise<SubscriptionStatus> {
-        const response = await fetch(`${API_BASE}/owner/subscription`, {
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to fetch subscription');
-        return response.json();
+        return apiRequest<SubscriptionStatus>('/owner/subscription');
     },
 
     async createSetupIntent(): Promise<SetupIntentResponse> {
-        const response = await fetch(`${API_BASE}/owner/subscription/setup-intent`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to create setup intent');
-        return response.json();
+        return apiRequest<SetupIntentResponse>('/owner/subscription/setup-intent', { method: 'POST' });
     },
 
     async confirmSubscription(paymentMethodId: string): Promise<SubscriptionStatus> {
-        const response = await fetch(`${API_BASE}/owner/subscription/confirm`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify({ paymentMethodId }),
+        return apiRequest<SubscriptionStatus>('/owner/subscription/confirm', {
+            method: 'POST', body: { paymentMethodId },
         });
-        if (!response.ok) throw new Error('Failed to confirm subscription');
-        return response.json();
     },
 
     async createCheckoutSession(): Promise<{ checkoutUrl: string }> {
-        const response = await fetch(`${API_BASE}/owner/subscription/checkout`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to create checkout session');
-        return response.json();
+        return apiRequest<{ checkoutUrl: string }>('/owner/subscription/checkout', { method: 'POST' });
     },
 
     async createPortalSession(): Promise<{ portalUrl: string }> {
-        const response = await fetch(`${API_BASE}/owner/subscription/portal`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to create portal session');
-        return response.json();
+        return apiRequest<{ portalUrl: string }>('/owner/subscription/portal', { method: 'POST' });
     },
 
-    // Connect API
     async getConnectStatus(): Promise<ConnectStatus> {
-        const response = await fetch(`${API_BASE}/owner/connect/status`, {
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to fetch connect status');
-        return response.json();
+        return apiRequest<ConnectStatus>('/owner/connect/status');
     },
 
     async startConnectOnboarding(returnUrl: string, refreshUrl: string): Promise<OnboardingLinkResponse> {
         const params = new URLSearchParams({ returnUrl, refreshUrl });
-        const response = await fetch(`${API_BASE}/owner/connect/onboard?${params}`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to start connect onboarding');
-        return response.json();
+        return apiRequest<OnboardingLinkResponse>(`/owner/connect/onboard?${params}`, { method: 'POST' });
     },
 };
 
-// Supplier subscription API
 export const supplierSubscriptionApi = {
     async getSubscription(): Promise<SubscriptionStatus> {
-        const response = await fetch(`${API_BASE}/supplier/subscription`, {
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to fetch subscription');
-        return response.json();
+        return apiRequest<SubscriptionStatus>('/supplier/subscription');
     },
 
     async createSetupIntent(): Promise<SetupIntentResponse> {
-        const response = await fetch(`${API_BASE}/supplier/subscription/setup-intent`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to create setup intent');
-        return response.json();
+        return apiRequest<SetupIntentResponse>('/supplier/subscription/setup-intent', { method: 'POST' });
     },
 
     async confirmSubscription(paymentMethodId: string): Promise<SubscriptionStatus> {
-        const response = await fetch(`${API_BASE}/supplier/subscription/confirm`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify({ paymentMethodId }),
+        return apiRequest<SubscriptionStatus>('/supplier/subscription/confirm', {
+            method: 'POST', body: { paymentMethodId },
         });
-        if (!response.ok) throw new Error('Failed to confirm subscription');
-        return response.json();
     },
 
     async createCheckoutSession(): Promise<{ checkoutUrl: string }> {
-        const response = await fetch(`${API_BASE}/supplier/subscription/checkout`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to create checkout session');
-        return response.json();
+        return apiRequest<{ checkoutUrl: string }>('/supplier/subscription/checkout', { method: 'POST' });
     },
 
     async createPortalSession(): Promise<{ portalUrl: string }> {
-        const response = await fetch(`${API_BASE}/supplier/subscription/portal`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to create portal session');
-        return response.json();
+        return apiRequest<{ portalUrl: string }>('/supplier/subscription/portal', { method: 'POST' });
     },
 
-    // Connect API
     async getConnectStatus(): Promise<ConnectStatus> {
-        const response = await fetch(`${API_BASE}/supplier/connect/status`, {
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to fetch connect status');
-        return response.json();
+        return apiRequest<ConnectStatus>('/supplier/connect/status');
     },
 
     async startConnectOnboarding(returnUrl: string, refreshUrl: string): Promise<OnboardingLinkResponse> {
         const params = new URLSearchParams({ returnUrl, refreshUrl });
-        const response = await fetch(`${API_BASE}/supplier/connect/onboard?${params}`, {
-            method: 'POST',
-            headers: getAuthHeaders(),
-        });
-        if (!response.ok) throw new Error('Failed to start connect onboarding');
-        return response.json();
+        return apiRequest<OnboardingLinkResponse>(`/supplier/connect/onboard?${params}`, { method: 'POST' });
     },
 };

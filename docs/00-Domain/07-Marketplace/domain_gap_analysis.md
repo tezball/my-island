@@ -39,4 +39,4 @@ The Event Storm largely covers the core "Push Notification" and "Claim" flow. Re
 
 ## Remaining Work
 1. Implement push notification for new offers (30km radius logic)
-2. Migrate service layer to DDD module structure (see `DDD_SYNC_PLAN.md` Phase 2)
+2. Migrate service layer to DDD module structure

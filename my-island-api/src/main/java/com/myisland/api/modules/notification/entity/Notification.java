@@ -48,6 +48,26 @@ public class Notification extends BaseEntity {
         this.link = link;
     }
 
+    public static Builder builder() { return new Builder(); }
+
+    public static class Builder {
+        private User user;
+        private NotificationType type;
+        private String title;
+        private String message;
+        private String link;
+
+        public Builder user(User user) { this.user = user; return this; }
+        public Builder type(NotificationType type) { this.type = type; return this; }
+        public Builder title(String title) { this.title = title; return this; }
+        public Builder message(String message) { this.message = message; return this; }
+        public Builder link(String link) { this.link = link; return this; }
+
+        public Notification build() {
+            return new Notification(user, type, title, message, link);
+        }
+    }
+
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
     public NotificationType getType() { return type; }

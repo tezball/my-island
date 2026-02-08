@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+import { API_BASE, getAuthHeaders } from './apiClient';
 
 export type EntityType = 'LOT' | 'OFFER' | 'SUPPLIER' | 'OWNER' | 'USER';
 
@@ -20,12 +20,8 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export function validateFile(file: File): string | null {
-    if (!ALLOWED_TYPES.includes(file.type)) {
-        return 'File must be a JPEG, PNG, GIF, or WebP image.';
-    }
-    if (file.size > MAX_FILE_SIZE) {
-        return 'File must be less than 10MB.';
-    }
+    if (!ALLOWED_TYPES.includes(file.type)) return 'File must be a JPEG, PNG, GIF, or WebP image.';
+    if (file.size > MAX_FILE_SIZE) return 'File must be less than 10MB.';
     return null;
 }
 
@@ -39,7 +35,7 @@ export async function uploadImage(
     entityType: EntityType,
     entityId: string,
     file: File,
-    options?: { primary?: boolean; altText?: string }
+    options?: { primary?: boolean; altText?: string },
 ): Promise<EntityImage> {
     const token = getAuthToken();
     const formData = new FormData();
@@ -67,9 +63,8 @@ export async function uploadImage(
 }
 
 export async function getImages(entityType: EntityType, entityId: string): Promise<EntityImage[]> {
-    const token = getAuthToken();
     const response = await fetch(`${API_BASE}/images/${entityType}/${entityId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: getAuthHeaders(),
     });
 
     if (!response.ok) {
@@ -87,9 +82,7 @@ export async function deleteImage(imageId: number): Promise<void> {
         headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!response.ok) {
-        throw new Error(`Failed to delete image (${response.status})`);
-    }
+    if (!response.ok) throw new Error(`Failed to delete image (${response.status})`);
 }
 
 export async function setPrimaryImage(imageId: number): Promise<EntityImage> {
@@ -99,9 +92,7 @@ export async function setPrimaryImage(imageId: number): Promise<EntityImage> {
         headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!response.ok) {
-        throw new Error(`Failed to set primary image (${response.status})`);
-    }
+    if (!response.ok) throw new Error(`Failed to set primary image (${response.status})`);
 
     return response.json();
 }

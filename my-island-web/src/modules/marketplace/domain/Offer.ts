@@ -234,7 +234,7 @@ export class Offer extends Entity<OfferId, OfferProps> {
       return OfferStatus.NEAR_LIMIT;
     }
 
-    if (isExpiringSoon(this.props.validity, 7)) {
+    if (isExpiringSoon(this.props.validity, 30)) {
       return OfferStatus.EXPIRING_SOON;
     }
 

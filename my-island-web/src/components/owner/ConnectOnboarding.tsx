@@ -169,7 +169,7 @@ export const ConnectOnboarding: React.FC<ConnectOnboardingProps> = ({ userType }
                 // No account yet
                 <div className="space-y-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Set up your payout account to receive payments from bookings. We use Stripe to securely process payments.
+                        Set up your payout account to receive payments{userType === 'owner' ? ' from bookings' : ' from offer redemptions'}. We use Stripe to securely process payments.
                     </p>
 
                     <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">

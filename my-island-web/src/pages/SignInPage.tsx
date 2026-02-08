@@ -5,17 +5,17 @@ import { useAuth } from '../context/AuthContext';
 // Test accounts for development - all use password "password"
 const TEST_USERS = [
     // Subscribed Owners
-    { email: 'norevalley@myisland.com', password: 'password', label: 'Nore Valley Park (Owner - Subscribed)' },
-    { email: 'hello@burrenglampingvillage.ie', password: 'password', label: 'Burren Glamping Village (Owner - Subscribed)' },
+    { email: 'norevalley@myisland.com', password: 'NoreValley2025!Secured', label: 'Nore Valley Park (Owner - Subscribed)' },
+    { email: 'hello@burrenglampingvillage.ie', password: 'BurrenGlamp$99Safe', label: 'Burren Glamping Village (Owner - Subscribed)' },
     // Subscribed Suppliers
-    { email: 'farmshop@greenacres.ie', password: 'password', label: 'Green Acres Farm Shop (Supplier - Subscribed)' },
-    { email: 'info@aillweefarmshop.ie', password: 'password', label: 'Aillwee Farm Shop & Cheese (Supplier - Subscribed)' },
-    { email: 'info@murphygeneralstore.ie', password: 'password', label: 'Murphy General Store (Supplier - Subscribed)' },
+    { email: 'farmshop@greenacres.ie', password: 'GreenAcres#Farm2025', label: 'Green Acres Farm Shop (Supplier - Subscribed)' },
+    { email: 'info@aillweefarmshop.ie', password: 'AillweeCh33se!Secure', label: 'Aillwee Farm Shop & Cheese (Supplier - Subscribed)' },
+    { email: 'info@murphygeneralstore.ie', password: 'MurphyGen$Store88', label: 'Murphy General Store (Supplier - Subscribed)' },
     // No Subscription (for testing subscription gates)
-    { email: 'bookings@loughdergcamping.ie', password: 'password', label: 'Lough Derg Lakeside (Owner - No Sub)' },
-    { email: 'hello@dinglekayak.ie', password: 'password', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },
+    { email: 'bookings@loughdergcamping.ie', password: 'LoughDerg!Camp2025', label: 'Lough Derg Lakeside (Owner - No Sub)' },
+    { email: 'hello@dinglekayak.ie', password: 'W@v3R!d3r$K3rrry#2026', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },
     // Guest
-    { email: 'family@example.com', password: 'password', label: 'Murphy Family (Guest)' },
+    { email: 'family@example.com', password: 'MurphyFamily!Trip2025', label: 'Murphy Family (Guest)' },
 ];
 
 export const SignInPage: React.FC = () => {

@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { SubscriptionProvider } from '../../context/SubscriptionContext';
 import { QRScanner } from './QRScanner';
 import { SubscriptionBanner } from './SubscriptionBanner';
 import clsx from 'clsx';
 
+const PAGE_TITLES: Record<string, string> = {
+    '/supplier': 'Dashboard',
+    '/supplier/offers': 'My Offers',
+    '/supplier/redeem': 'Redeem Voucher',
+    '/supplier/profile': 'Business Profile',
+    '/supplier/settings': 'Settings',
+};
+
 const SupplierLayoutContent: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const pageTitle = PAGE_TITLES[location.pathname] || (location.pathname.startsWith('/supplier/offers/') ? 'Offer Details' : 'Supplier Portal');
 
     const handleLogout = async () => {
         await logout();
@@ -63,7 +73,7 @@ const SupplierLayoutContent: React.FC = () => {
                     <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                         <p className="px-3 text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Browse</p>
                         <Link
-                            to="/offers"
+                            to="/marketplace"
                             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-[#111418] dark:hover:text-white transition-all duration-200"
                         >
                             <span className="material-symbols-outlined text-xl">storefront</span>
@@ -103,7 +113,7 @@ const SupplierLayoutContent: React.FC = () => {
                         >
                             <span className="material-symbols-outlined text-2xl">menu</span>
                         </button>
-                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">Supplier Portal</h1>
+                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">{pageTitle}</h1>
                     </div>
                     <div className="flex items-center gap-3">
                         <button
