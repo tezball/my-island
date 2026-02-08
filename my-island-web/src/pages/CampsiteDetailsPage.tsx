@@ -162,7 +162,12 @@ export const CampsiteDetailsPage: React.FC = () => {
             {/* Hero Header */}
             <div className="h-64 md:h-80 relative bg-gray-900">
                 <img
-                    src={campsite.avatarUrl || 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=1600'}
+                    src={
+                        lots[0]?.images?.find(i => i.isPrimary)?.url
+                        || lots[0]?.images?.[0]?.url
+                        || lots[0]?.imageUrl
+                        || 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=1600'
+                    }
                     alt={campsite.name}
                     className="w-full h-full object-cover opacity-60"
                 />
@@ -171,7 +176,7 @@ export const CampsiteDetailsPage: React.FC = () => {
                         <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">{campsite.name}</h1>
                         <p className="text-gray-200 text-lg flex items-center gap-2">
                             <span className="material-symbols-outlined">location_on</span>
-                            Bennettsbridge, Kilkenny
+                            {campsite.town}{campsite.town && campsite.county ? ', ' : ''}{campsite.county}
                         </p>
                     </div>
                 </div>

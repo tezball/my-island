@@ -190,15 +190,33 @@ export const OwnerLotsPage: React.FC = () => {
                                 <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{lot.description}</p>
                                 <div className="flex items-center justify-between">
                                     <span className="text-lg font-bold text-primary">€{lot.pricePerNight}<span className="text-xs text-gray-400 font-normal">/night</span></span>
-                                    <button
-                                        onClick={() => {
-                                            setEditingLot(lot);
-                                            setIsModalOpen(true);
-                                        }}
-                                        className="text-sm font-medium text-gray-500 hover:text-primary transition-colors"
-                                    >
-                                        Edit
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setEditingLot(lot);
+                                                setIsModalOpen(true);
+                                            }}
+                                            className="text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={async () => {
+                                                if (window.confirm(`Delete "${lot.name}"? This cannot be undone.`)) {
+                                                    try {
+                                                        await ownerService.deleteLot(lot.id);
+                                                        setLots(prev => prev.filter(l => l.id !== lot.id));
+                                                    } catch (err) {
+                                                        console.error('Failed to delete lot:', err);
+                                                    }
+                                                }
+                                            }}
+                                            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                                            title="Delete lot"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

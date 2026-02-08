@@ -1,13 +1,27 @@
 import React from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { OwnerSubscriptionProvider } from '../../context/OwnerSubscriptionContext';
 import { OwnerSubscriptionBanner } from './OwnerSubscriptionBanner';
 import clsx from 'clsx';
 
+const PAGE_TITLES: Record<string, string> = {
+    '/owner': 'Dashboard',
+    '/owner/today': 'Today',
+    '/owner/lots': 'My Lots',
+    '/owner/bookings': 'Bookings',
+    '/owner/calendar': 'Calendar',
+    '/owner/reviews': 'Reviews',
+    '/owner/property': 'Property Details',
+    '/owner/pricing': 'Pricing',
+    '/owner/settings': 'Settings',
+};
+
 const OwnerLayoutContent: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const pageTitle = PAGE_TITLES[location.pathname] || 'Owner Portal';
 
     const handleLogout = async () => {
         await logout();
@@ -88,7 +102,7 @@ const OwnerLayoutContent: React.FC = () => {
                         >
                             <span className="material-symbols-outlined text-2xl">menu</span>
                         </button>
-                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">Owner Portal</h1>
+                        <h1 className="text-xl font-bold text-[#111418] dark:text-white truncate">{pageTitle}</h1>
                     </div>
                     <div className="flex items-center gap-4">
                         <Link to="/" className="text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1">

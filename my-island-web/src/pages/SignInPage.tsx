@@ -76,7 +76,7 @@ export const SignInPage: React.FC = () => {
                                     setPassword(selectedUser.password);
                                 }
                             }}
-                            defaultValue=""
+                            value={email}
                         >
                             <option value="" disabled>Select a test user...</option>
                             {TEST_USERS.map((user) => (

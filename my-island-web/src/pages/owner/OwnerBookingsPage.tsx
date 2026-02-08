@@ -10,8 +10,11 @@ export const OwnerBookingsPage: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'checked_in' | 'cancelled'>('all');
+    const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'checked_in' | 'completed' | 'cancelled'>('all');
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const PAGE_SIZE = 15;
 
     useEffect(() => {
         const loadData = async () => {
@@ -33,9 +36,17 @@ export const OwnerBookingsPage: React.FC = () => {
     }, [user]);
 
     const filteredBookings = bookings.filter(b => {
-        if (filter === 'all') return true;
-        return b.status === filter;
+        if (filter !== 'all' && b.status !== filter) return false;
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            if (!b.userName.toLowerCase().includes(q) && !b.lotName.toLowerCase().includes(q)) return false;
+        }
+        return true;
     });
+
+    const totalPages = Math.max(1, Math.ceil(filteredBookings.length / PAGE_SIZE));
+    const safePage = Math.min(currentPage, totalPages);
+    const paginatedBookings = filteredBookings.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
     const statusStyles: Record<string, string> = {
         confirmed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
@@ -118,12 +129,24 @@ export const OwnerBookingsPage: React.FC = () => {
                 </button>
             </div>
 
+            {/* Search */}
+            <div className="relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+                <input
+                    type="text"
+                    placeholder="Search by guest or lot name..."
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] text-sm text-[#111418] dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                />
+            </div>
+
             {/* Filters */}
             <div className="flex gap-2 overflow-x-auto pb-2">
-                {(['all', 'confirmed', 'pending', 'checked_in', 'cancelled'] as const).map((f) => (
+                {(['all', 'confirmed', 'pending', 'checked_in', 'completed', 'cancelled'] as const).map((f) => (
                     <button
                         key={f}
-                        onClick={() => setFilter(f)}
+                        onClick={() => { setFilter(f); setCurrentPage(1); }}
                         className={clsx(
                             'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
                             filter === f
@@ -138,7 +161,7 @@ export const OwnerBookingsPage: React.FC = () => {
 
             {/* Bookings List - Mobile Friendly */}
             <div className="space-y-3">
-                {filteredBookings.map((booking) => (
+                {paginatedBookings.map((booking) => (
                     <div
                         key={booking.id}
                         className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4"
@@ -220,6 +243,31 @@ export const OwnerBookingsPage: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            {/* Pagination */}
+            {filteredBookings.length > PAGE_SIZE && (
+                <div className="flex items-center justify-between pt-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Showing {(safePage - 1) * PAGE_SIZE + 1}-{Math.min(safePage * PAGE_SIZE, filteredBookings.length)} of {filteredBookings.length}
+                    </p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={safePage <= 1}
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={safePage >= totalPages}
+                            className="px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {filteredBookings.length === 0 && (
                 <div className="text-center py-12">

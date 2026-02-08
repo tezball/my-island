@@ -352,9 +352,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         <div className="flex items-center gap-3">
                             <span className="material-symbols-outlined text-primary">calendar_month</span>
                             <div>
-                                <p className="font-medium text-[#111418] dark:text-white">{lot.name}</p>
+                                <p className="font-medium text-[#111418] dark:text-white">{typeLabel || lot.name}</p>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    {formatDate(startDate)} - {formatDate(endDate)} ({days} nights)
+                                    {formatDate(startDate)} - {formatDate(endDate)} ({days} nights) &middot; €{totalPrice}
                                 </p>
                             </div>
                         </div>
