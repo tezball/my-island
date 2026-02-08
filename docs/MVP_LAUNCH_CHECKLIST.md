@@ -45,8 +45,8 @@
 
 - [x] Real JWT authentication via backend API ✅
 - [x] User registration ✅ (POST /auth/signup)
-- [ ] Email verification ⬜
-- [ ] Password reset flow ⬜
+- [x] Email verification ✅
+- [x] Password reset flow ✅
 - [x] Role-based access (Owner, Supplier, Guest flags) ✅
 - [x] Role upgrade endpoints (POST /auth/upgrade/owner, /auth/upgrade/supplier) ✅
 - [x] **Seed**: 3+ test users per role with realistic Irish names ✅
@@ -70,7 +70,7 @@
   - Status workflow: pending → confirmed → completed / cancelled ✅
   - Price calculation ✅
   - Owner toggle for booking mode (instant vs approval required) ✅
-- [ ] Date validation (no double-booking) 🚧
+- [x] Date validation (no double-booking) ✅
 
 #### Dashboard Metrics ✅ COMPLETE
 
@@ -160,11 +160,11 @@
 - [x] **Offer analytics** - Claims by offer, computed from data ✅
 - [x] **Claim history** - Full list with filters (GET /supplier/claims) ✅
 
-### 7. Notifications (In-App)
+### 7. Notifications (In-App) ✅ COMPLETE
 
-- [ ] New booking notification for Owner ⬜
-- [ ] New claim notification for Supplier ⬜
-- [ ] Booking confirmation for Guest ⬜
+- [x] New booking notification for Owner ✅
+- [x] New claim notification for Supplier ✅
+- [x] Booking confirmation for Guest ✅
 - ✅ In-app only for MVP (email notifications post-MVP)
 
 ---
@@ -348,13 +348,13 @@ DELETE /api/images/{imageId}                   ✅ Delete image
 
 1. [x] Add more seed bookings (target: 75+) ✅
 2. [x] Implement booking approval endpoint ✅
-3. [ ] Add date conflict validation for bookings
+3. [x] Add date conflict validation for bookings ✅
 
 ### Medium Priority
 
-1. [ ] Password reset flow
-2. [ ] Email verification
-3. [ ] In-app notifications
+1. [x] Password reset flow ✅
+2. [x] Email verification ✅
+3. [x] In-app notifications ✅
 
 ### Lower Priority (Post-MVP)
 
