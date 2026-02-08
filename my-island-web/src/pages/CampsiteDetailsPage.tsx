@@ -5,6 +5,9 @@ import { type Lot } from '../types/booking';
 import { BookingModal } from '../components/booking/BookingModal';
 import { ReviewsSection } from '../components/review/ReviewsSection';
 import { useSaved } from '../context/SavedContext';
+import { getImages, type EntityImage } from '../services/imageService';
+import { CampsiteImageGallery } from '../components/ui/CampsiteImageGallery';
+import { CampsiteMap } from '../components/ui/CampsiteMap';
 
 // Type configuration with display names and images
 const TYPE_CONFIG: Record<string, { label: string; pluralLabel: string; icon: string; defaultImage: string; description: string }> = {
@@ -65,6 +68,7 @@ export const CampsiteDetailsPage: React.FC = () => {
     const [selectedTypeLabel, setSelectedTypeLabel] = useState<string>('');
     const [selectedMinPrice, setSelectedMinPrice] = useState<number | undefined>(undefined);
     const [showContactInfo, setShowContactInfo] = useState(false);
+    const [campsiteImages, setCampsiteImages] = useState<EntityImage[]>([]);
     const { isSaved, toggleSaved } = useSaved();
 
     useEffect(() => {
@@ -83,6 +87,14 @@ export const CampsiteDetailsPage: React.FC = () => {
             setCampsite(profile);
             const campsiteLots = await campsiteService.getCampsiteLots(campsiteId);
             setLots(campsiteLots);
+
+            // Load campsite-level (owner) images
+            try {
+                const imgs = await getImages('OWNER', campsiteId);
+                setCampsiteImages(imgs);
+            } catch {
+                setCampsiteImages([]);
+            }
         } catch (error) {
             console.error('Failed to load campsite data:', error);
         } finally {
@@ -163,7 +175,9 @@ export const CampsiteDetailsPage: React.FC = () => {
             <div className="h-64 md:h-80 relative bg-gray-900">
                 <img
                     src={
-                        lots[0]?.images?.find(i => i.isPrimary)?.url
+                        campsiteImages.find(i => i.isPrimary)?.url
+                        || campsiteImages[0]?.url
+                        || lots[0]?.images?.find(i => i.isPrimary)?.url
                         || lots[0]?.images?.[0]?.url
                         || lots[0]?.imageUrl
                         || 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=1600'
@@ -201,7 +215,30 @@ export const CampsiteDetailsPage: React.FC = () => {
                             <span className="material-symbols-outlined text-primary">shower</span> Hot Showers
                         </div>
                     </div>
+
+                    {/* Image Gallery */}
+                    {campsiteImages.length > 0 && (
+                        <CampsiteImageGallery images={campsiteImages} campsiteName={campsite.name} embedded />
+                    )}
                 </div>
+
+                {/* Map */}
+                {campsite.latitude && campsite.longitude && (
+                    <div className="mb-10 bg-white dark:bg-[#1a2632] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                        <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-4">Location</h2>
+                        <CampsiteMap
+                            latitude={campsite.latitude}
+                            longitude={campsite.longitude}
+                            name={campsite.name}
+                        />
+                        {(campsite.town || campsite.county) && (
+                            <p className="text-gray-500 dark:text-gray-400 text-sm mt-3 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-base">location_on</span>
+                                {campsite.town}{campsite.town && campsite.county ? ', ' : ''}{campsite.county}
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 {/* Accommodation Options */}
                 <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-6">Accommodation Options</h2>

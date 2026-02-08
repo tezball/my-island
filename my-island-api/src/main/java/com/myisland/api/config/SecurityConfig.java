@@ -53,6 +53,9 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/webhooks/**").permitAll()
 
+                        // Public image endpoints
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+
                         // Public campsite endpoints
                         .requestMatchers(HttpMethod.GET, "/campsites/**").permitAll()
 

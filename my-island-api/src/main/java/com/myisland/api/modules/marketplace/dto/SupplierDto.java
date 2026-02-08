@@ -16,11 +16,12 @@ public record SupplierDto(
         String contactEmail,
         String website,
         String logoUrl,
+        Double latitude,
+        Double longitude,
         boolean isVerified,
         int offerCount,
         boolean isFeatured,
-        LocalDateTime featuredUntil
-) {
+        LocalDateTime featuredUntil) {
     public static SupplierDto from(Supplier supplier) {
         return new SupplierDto(
                 supplier.getId(),
@@ -34,10 +35,11 @@ public record SupplierDto(
                 supplier.getUser() != null ? supplier.getUser().getEmail() : null,
                 supplier.getWebsite(),
                 supplier.getLogoUrl(),
+                supplier.getLatitude(),
+                supplier.getLongitude(),
                 supplier.isVerified(),
                 supplier.getOffers().size(),
                 supplier.isCurrentlyFeatured(),
-                supplier.getFeaturedUntil()
-        );
+                supplier.getFeaturedUntil());
     }
 }

@@ -42,6 +42,12 @@ public class Supplier extends BaseEntity {
     @Column(name = "logo_url", length = 500)
     private String logoUrl;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified = false;
 
@@ -86,11 +92,11 @@ public class Supplier extends BaseEntity {
     private boolean payoutsEnabled = false;
 
     public enum SubscriptionStatus {
-        NONE,       // Never subscribed
-        ACTIVE,     // Subscription is active
-        PAST_DUE,   // Payment failed, in grace period
-        CANCELED,   // Subscription was canceled
-        UNPAID      // Payment failed, subscription suspended
+        NONE, // Never subscribed
+        ACTIVE, // Subscription is active
+        PAST_DUE, // Payment failed, in grace period
+        CANCELED, // Subscription was canceled
+        UNPAID // Payment failed, subscription suspended
     }
 
     public enum SupplierCategory {
@@ -99,7 +105,8 @@ public class Supplier extends BaseEntity {
         SPA, ARTISAN, GROCERY, OTHER
     }
 
-    public Supplier() {}
+    public Supplier() {
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -116,19 +123,74 @@ public class Supplier extends BaseEntity {
         private String phone;
         private String website;
         private String logoUrl;
+        private Double latitude;
+        private Double longitude;
         private boolean isVerified = false;
 
-        public Builder user(User user) { this.user = user; return this; }
-        public Builder businessName(String businessName) { this.businessName = businessName; return this; }
-        public Builder category(SupplierCategory category) { this.category = category; return this; }
-        public Builder description(String description) { this.description = description; return this; }
-        public Builder county(String county) { this.county = county; return this; }
-        public Builder town(String town) { this.town = town; return this; }
-        public Builder address(String address) { this.address = address; return this; }
-        public Builder phone(String phone) { this.phone = phone; return this; }
-        public Builder website(String website) { this.website = website; return this; }
-        public Builder logoUrl(String logoUrl) { this.logoUrl = logoUrl; return this; }
-        public Builder isVerified(boolean isVerified) { this.isVerified = isVerified; return this; }
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder businessName(String businessName) {
+            this.businessName = businessName;
+            return this;
+        }
+
+        public Builder category(SupplierCategory category) {
+            this.category = category;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder county(String county) {
+            this.county = county;
+            return this;
+        }
+
+        public Builder town(String town) {
+            this.town = town;
+            return this;
+        }
+
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder website(String website) {
+            this.website = website;
+            return this;
+        }
+
+        public Builder logoUrl(String logoUrl) {
+            this.logoUrl = logoUrl;
+            return this;
+        }
+
+        public Builder latitude(Double latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder longitude(Double longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public Builder isVerified(boolean isVerified) {
+            this.isVerified = isVerified;
+            return this;
+        }
 
         public Supplier build() {
             Supplier supplier = new Supplier();
@@ -142,63 +204,166 @@ public class Supplier extends BaseEntity {
             supplier.phone = this.phone;
             supplier.website = this.website;
             supplier.logoUrl = this.logoUrl;
+            supplier.latitude = this.latitude;
+            supplier.longitude = this.longitude;
             supplier.isVerified = this.isVerified;
             return supplier;
         }
     }
 
     // Getters and Setters
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public User getUser() {
+        return user;
+    }
 
-    public String getBusinessName() { return businessName; }
-    public void setBusinessName(String businessName) { this.businessName = businessName; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public SupplierCategory getCategory() { return category; }
-    public void setCategory(SupplierCategory category) { this.category = category; }
+    public String getBusinessName() {
+        return businessName;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setBusinessName(String businessName) {
+        this.businessName = businessName;
+    }
 
-    public String getCounty() { return county; }
-    public void setCounty(String county) { this.county = county; }
+    public SupplierCategory getCategory() {
+        return category;
+    }
 
-    public String getTown() { return town; }
-    public void setTown(String town) { this.town = town; }
+    public void setCategory(SupplierCategory category) {
+        this.category = category;
+    }
 
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getWebsite() { return website; }
-    public void setWebsite(String website) { this.website = website; }
+    public String getCounty() {
+        return county;
+    }
 
-    public String getLogoUrl() { return logoUrl; }
-    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+    public void setCounty(String county) {
+        this.county = county;
+    }
 
-    public boolean isVerified() { return isVerified; }
-    public void setVerified(boolean verified) { isVerified = verified; }
+    public String getTown() {
+        return town;
+    }
 
-    public Set<Offer> getOffers() { return offers; }
-    public void setOffers(Set<Offer> offers) { this.offers = offers; }
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
+    public Set<Offer> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(Set<Offer> offers) {
+        this.offers = offers;
+    }
 
     // Subscription getters and setters
-    public String getStripeCustomerId() { return stripeCustomerId; }
-    public void setStripeCustomerId(String stripeCustomerId) { this.stripeCustomerId = stripeCustomerId; }
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
 
-    public String getStripeSubscriptionId() { return stripeSubscriptionId; }
-    public void setStripeSubscriptionId(String stripeSubscriptionId) { this.stripeSubscriptionId = stripeSubscriptionId; }
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
+    }
 
-    public SubscriptionStatus getSubscriptionStatus() { return subscriptionStatus; }
-    public void setSubscriptionStatus(SubscriptionStatus subscriptionStatus) { this.subscriptionStatus = subscriptionStatus; }
+    public String getStripeSubscriptionId() {
+        return stripeSubscriptionId;
+    }
 
-    public Instant getSubscriptionCurrentPeriodEnd() { return subscriptionCurrentPeriodEnd; }
-    public void setSubscriptionCurrentPeriodEnd(Instant subscriptionCurrentPeriodEnd) { this.subscriptionCurrentPeriodEnd = subscriptionCurrentPeriodEnd; }
+    public void setStripeSubscriptionId(String stripeSubscriptionId) {
+        this.stripeSubscriptionId = stripeSubscriptionId;
+    }
 
-    public boolean isSubscriptionCancelAtPeriodEnd() { return subscriptionCancelAtPeriodEnd; }
-    public void setSubscriptionCancelAtPeriodEnd(boolean subscriptionCancelAtPeriodEnd) { this.subscriptionCancelAtPeriodEnd = subscriptionCancelAtPeriodEnd; }
+    public SubscriptionStatus getSubscriptionStatus() {
+        return subscriptionStatus;
+    }
+
+    public void setSubscriptionStatus(SubscriptionStatus subscriptionStatus) {
+        this.subscriptionStatus = subscriptionStatus;
+    }
+
+    public Instant getSubscriptionCurrentPeriodEnd() {
+        return subscriptionCurrentPeriodEnd;
+    }
+
+    public void setSubscriptionCurrentPeriodEnd(Instant subscriptionCurrentPeriodEnd) {
+        this.subscriptionCurrentPeriodEnd = subscriptionCurrentPeriodEnd;
+    }
+
+    public boolean isSubscriptionCancelAtPeriodEnd() {
+        return subscriptionCancelAtPeriodEnd;
+    }
+
+    public void setSubscriptionCancelAtPeriodEnd(boolean subscriptionCancelAtPeriodEnd) {
+        this.subscriptionCancelAtPeriodEnd = subscriptionCancelAtPeriodEnd;
+    }
 
     // Helper methods
     public boolean hasActiveSubscription() {
@@ -216,14 +381,29 @@ public class Supplier extends BaseEntity {
     }
 
     // Featured promotion getters and setters
-    public boolean isFeatured() { return isFeatured; }
-    public void setFeatured(boolean isFeatured) { this.isFeatured = isFeatured; }
+    public boolean isFeatured() {
+        return isFeatured;
+    }
 
-    public LocalDateTime getFeaturedUntil() { return featuredUntil; }
-    public void setFeaturedUntil(LocalDateTime featuredUntil) { this.featuredUntil = featuredUntil; }
+    public void setFeatured(boolean isFeatured) {
+        this.isFeatured = isFeatured;
+    }
 
-    public String getFeaturedPurchaseId() { return featuredPurchaseId; }
-    public void setFeaturedPurchaseId(String featuredPurchaseId) { this.featuredPurchaseId = featuredPurchaseId; }
+    public LocalDateTime getFeaturedUntil() {
+        return featuredUntil;
+    }
+
+    public void setFeaturedUntil(LocalDateTime featuredUntil) {
+        this.featuredUntil = featuredUntil;
+    }
+
+    public String getFeaturedPurchaseId() {
+        return featuredPurchaseId;
+    }
+
+    public void setFeaturedPurchaseId(String featuredPurchaseId) {
+        this.featuredPurchaseId = featuredPurchaseId;
+    }
 
     // Helper method for checking active featured status
     public boolean isCurrentlyFeatured() {
@@ -231,12 +411,27 @@ public class Supplier extends BaseEntity {
     }
 
     // Stripe Connect getters and setters
-    public String getStripeConnectAccountId() { return stripeConnectAccountId; }
-    public void setStripeConnectAccountId(String stripeConnectAccountId) { this.stripeConnectAccountId = stripeConnectAccountId; }
+    public String getStripeConnectAccountId() {
+        return stripeConnectAccountId;
+    }
 
-    public boolean isConnectOnboardingComplete() { return connectOnboardingComplete; }
-    public void setConnectOnboardingComplete(boolean connectOnboardingComplete) { this.connectOnboardingComplete = connectOnboardingComplete; }
+    public void setStripeConnectAccountId(String stripeConnectAccountId) {
+        this.stripeConnectAccountId = stripeConnectAccountId;
+    }
 
-    public boolean isPayoutsEnabled() { return payoutsEnabled; }
-    public void setPayoutsEnabled(boolean payoutsEnabled) { this.payoutsEnabled = payoutsEnabled; }
+    public boolean isConnectOnboardingComplete() {
+        return connectOnboardingComplete;
+    }
+
+    public void setConnectOnboardingComplete(boolean connectOnboardingComplete) {
+        this.connectOnboardingComplete = connectOnboardingComplete;
+    }
+
+    public boolean isPayoutsEnabled() {
+        return payoutsEnabled;
+    }
+
+    public void setPayoutsEnabled(boolean payoutsEnabled) {
+        this.payoutsEnabled = payoutsEnabled;
+    }
 }

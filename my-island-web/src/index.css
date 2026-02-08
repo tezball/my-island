@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
 /* Disable dark mode by effectively redefining the variant to a non-existent class */

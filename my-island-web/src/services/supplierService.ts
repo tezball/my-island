@@ -32,6 +32,8 @@ interface SupplierApiResponse {
     website: string;
     logoUrl: string;
     isVerified: boolean;
+    latitude?: number;
+    longitude?: number;
     offerCount: number;
 }
 
@@ -123,6 +125,8 @@ function transformSupplier(api: SupplierApiResponse): Supplier {
         contactEmail: api.contactEmail ?? '',
         contactPhone: api.phone ?? '',
         active: true,
+        latitude: api.latitude,
+        longitude: api.longitude,
         createdAt: '',
     };
 }
@@ -204,6 +208,8 @@ export const supplierService = {
                 description: updates.description,
                 phone: updates.contactPhone,
                 logoUrl: updates.logo,
+                latitude: updates.latitude,
+                longitude: updates.longitude,
             },
         });
     },
@@ -441,14 +447,14 @@ export const supplierService = {
 
     async getActiveOffersDetail(_supplierId: string): Promise<ActiveOffersDetailResponse> {
         const offers = await this.getOffers(_supplierId);
-        const now = new Date();
-        const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 30, 23, 59, 59);
+        const today = new Date().toISOString().split('T')[0];
+        const cutoff = new Date(new Date(today).getTime() + 31 * 24 * 60 * 60 * 1000)
+            .toISOString().split('T')[0];
 
         const activeOffers = offers.filter(o => o.active);
         const offerDetails: ActiveOfferDetail[] = activeOffers.map(o => {
-            const validUntil = new Date(o.validUntil);
             const nearLimit = o.maxClaims ? o.claimCount >= o.maxClaims * 0.8 : false;
-            const expiringSoon = validUntil <= cutoff;
+            const expiringSoon = o.validUntil <= cutoff;
             return {
                 id: o.id, title: o.title, category: o.category,
                 discountPercent: o.discountPercent,

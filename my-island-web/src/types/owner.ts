@@ -12,6 +12,9 @@ export interface Owner {
     selectedAccommodationTypes: string[];
     contactEmail: string;
     contactPhone: string;
+    website: string;
+    latitude: number | null;
+    longitude: number | null;
     active: boolean;
     verified: boolean;
     createdAt: string;

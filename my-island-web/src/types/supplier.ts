@@ -12,6 +12,8 @@ export interface Supplier {
     contactEmail: string;
     contactPhone: string;
     active: boolean;
+    latitude?: number;
+    longitude?: number;
     createdAt: string;
 }
 

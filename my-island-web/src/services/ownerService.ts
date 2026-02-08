@@ -144,6 +144,9 @@ function transformOwnerProfile(api: OwnerProfileApiResponse, userId: string): Ow
         selectedAccommodationTypes: [],
         contactEmail: '',
         contactPhone: api.phone ?? '',
+        website: api.website ?? '',
+        latitude: api.latitude ?? null,
+        longitude: api.longitude ?? null,
         active: true,
         verified: true,
         createdAt: '',
@@ -237,6 +240,7 @@ export const ownerService = {
             id: '', userId: '', propertyName: '', county: '', town: '',
             description: '', coverImageUrl: '', propertyType: '',
             selectedAccommodationTypes: [], contactEmail: '', contactPhone: '',
+            website: '', latitude: null, longitude: null,
             active: true, verified: true, createdAt: '', stats,
         };
 
@@ -389,6 +393,8 @@ export const ownerService = {
         description?: string;
         phone?: string;
         website?: string;
+        latitude?: number | null;
+        longitude?: number | null;
     }): Promise<void> {
         await apiRequest<OwnerProfileApiResponse>('/owner/profile', {
             method: 'PUT', body: data,

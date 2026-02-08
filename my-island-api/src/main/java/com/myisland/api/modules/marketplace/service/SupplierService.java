@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class SupplierService {
     private final OfferClaimRepository offerClaimRepository;
 
     public SupplierService(SupplierRepository supplierRepository, OfferRepository offerRepository,
-                           OfferClaimRepository offerClaimRepository) {
+            OfferClaimRepository offerClaimRepository) {
         this.supplierRepository = supplierRepository;
         this.offerRepository = offerRepository;
         this.offerClaimRepository = offerClaimRepository;
@@ -73,6 +72,12 @@ public class SupplierService {
         if (request.logoUrl() != null) {
             supplier.setLogoUrl(request.logoUrl());
         }
+        if (request.latitude() != null) {
+            supplier.setLatitude(request.latitude());
+        }
+        if (request.longitude() != null) {
+            supplier.setLongitude(request.longitude());
+        }
 
         supplier = supplierRepository.save(supplier);
         log.info("Updated supplier profile: {}", supplier.getId());
@@ -85,8 +90,10 @@ public class SupplierService {
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
 
         List<Offer> activeOffers = offerRepository.findBySupplierIdAndIsActiveTrue(supplier.getId());
-        long totalClaims = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(), OfferClaim.ClaimStatus.CLAIMED);
-        long totalRedeemed = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(), OfferClaim.ClaimStatus.REDEEMED);
+        long totalClaims = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(),
+                OfferClaim.ClaimStatus.CLAIMED);
+        long totalRedeemed = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(),
+                OfferClaim.ClaimStatus.REDEEMED);
 
         List<OfferClaim> recentClaims = offerClaimRepository.findBySupplierIdOrderByClaimedAtDesc(supplier.getId())
                 .stream()
@@ -101,8 +108,7 @@ public class SupplierService {
                 "totalRedeemed", totalRedeemed,
                 "recentClaims", recentClaims.stream()
                         .map(OfferClaimDto::from)
-                        .toList()
-        );
+                        .toList());
     }
 
     @Transactional(readOnly = true)
