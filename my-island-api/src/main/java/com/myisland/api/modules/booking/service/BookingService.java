@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -91,11 +92,20 @@ public class BookingService {
             throw new BadRequestException("Lot is not available for booking");
         }
 
-        // Check owner subscription - owners must have active subscription to receive
-        // bookings
+        // Check owner subscription - owners must have active subscription to receive bookings
         Owner owner = lot.getOwner();
         if (!owner.hasActiveSubscription()) {
             throw new BadRequestException("This property is not currently accepting bookings.");
+        }
+
+        // Toggle 5: Require guest email verification
+        if (owner.isRequireGuestVerification() && !user.isEmailVerified()) {
+            throw new BadRequestException("Email verification is required to book at this property. Please verify your email address first.");
+        }
+
+        // Toggle 4: Reject same-day bookings if disabled
+        if (request.checkInDate().isEqual(LocalDate.now()) && !owner.isAllowSameDayBookings()) {
+            throw new BadRequestException("This property does not accept same-day bookings. Please select a future date.");
         }
 
         if (request.checkOutDate().isBefore(request.checkInDate()) ||
@@ -254,12 +264,20 @@ public class BookingService {
             throw new BadRequestException("Booking is not awaiting payment");
         }
 
-        // Simulate successful payment authorization
-        booking.setStatus(Booking.BookingStatus.PENDING);
-        booking.setPaymentStatus(Booking.PaymentStatus.AUTHORIZED);
-        booking = bookingRepository.save(booking);
-
-        log.info("Dev mode: Simulated payment success for booking {}", bookingId);
+        Owner owner = booking.getLot().getOwner();
+        if (owner.isInstantBooking()) {
+            // Auto-confirm for instant booking owners
+            booking.setStatus(Booking.BookingStatus.CONFIRMED);
+            booking.setPaymentStatus(Booking.PaymentStatus.CAPTURED);
+            booking = bookingRepository.save(booking);
+            eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CONFIRMED));
+            log.info("Dev mode: Simulated payment success and auto-confirmed booking {}", bookingId);
+        } else {
+            booking.setStatus(Booking.BookingStatus.PENDING);
+            booking.setPaymentStatus(Booking.PaymentStatus.AUTHORIZED);
+            booking = bookingRepository.save(booking);
+            log.info("Dev mode: Simulated payment success for booking {}", bookingId);
+        }
 
         return BookingDto.from(booking);
     }

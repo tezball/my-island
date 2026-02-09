@@ -35,4 +35,7 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
     @Modifying
     @Query("UPDATE Owner o SET o.isFeatured = false WHERE o.isFeatured = true AND o.featuredUntil < :now")
     int expireFeaturedListings(@Param("now") LocalDateTime now);
+
+    @Query("SELECT o FROM Owner o JOIN FETCH o.user WHERE o.weeklySummaryReports = true")
+    List<Owner> findByWeeklySummaryReportsTrue();
 }

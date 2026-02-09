@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          UserDetailsService userDetailsService) {
+            UserDetailsService userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetailsService = userDetailsService;
     }
@@ -61,6 +61,7 @@ public class SecurityConfig {
 
                         // Public review endpoints
                         .requestMatchers(HttpMethod.GET, "/reviews/campsite/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/reviews/supplier/**").permitAll()
 
                         // Public marketplace endpoints (browse offers, suppliers)
                         .requestMatchers(HttpMethod.GET, "/marketplace/offers").permitAll()
@@ -75,8 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/supplier/**").hasRole("SUPPLIER")
 
                         // All other endpoints require authentication
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

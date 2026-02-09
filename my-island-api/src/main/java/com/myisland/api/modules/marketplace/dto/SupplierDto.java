@@ -2,6 +2,7 @@ package com.myisland.api.modules.marketplace.dto;
 
 import com.myisland.api.modules.marketplace.entity.Supplier;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record SupplierDto(
@@ -21,7 +22,9 @@ public record SupplierDto(
         boolean isVerified,
         int offerCount,
         boolean isFeatured,
-        LocalDateTime featuredUntil) {
+        LocalDateTime featuredUntil,
+        BigDecimal rating,
+        int reviewCount) {
     public static SupplierDto from(Supplier supplier) {
         return new SupplierDto(
                 supplier.getId(),
@@ -40,6 +43,8 @@ public record SupplierDto(
                 supplier.isVerified(),
                 supplier.getOffers().size(),
                 supplier.isCurrentlyFeatured(),
-                supplier.getFeaturedUntil());
+                supplier.getFeaturedUntil(),
+                supplier.getRating(),
+                supplier.getReviewCount());
     }
 }

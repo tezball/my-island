@@ -8,6 +8,7 @@ import com.myisland.api.modules.booking.entity.Booking.BookingStatus;
 import com.myisland.api.modules.booking.entity.Booking.PaymentStatus;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
+import com.myisland.api.shared.events.BookingEvent;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
@@ -23,6 +24,7 @@ import com.stripe.param.RefundCreateParams;
 import com.stripe.param.TransferCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +40,13 @@ public class BookingPaymentService {
 
     private final BookingRepository bookingRepository;
     private final StripeProperties stripeProperties;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public BookingPaymentService(BookingRepository bookingRepository, StripeProperties stripeProperties) {
+    public BookingPaymentService(BookingRepository bookingRepository, StripeProperties stripeProperties,
+                                  ApplicationEventPublisher eventPublisher) {
         this.bookingRepository = bookingRepository;
         this.stripeProperties = stripeProperties;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -152,11 +157,34 @@ public class BookingPaymentService {
             return;
         }
 
-        booking.setStatus(BookingStatus.PENDING);
-        booking.setPaymentStatus(PaymentStatus.AUTHORIZED);
-        bookingRepository.save(booking);
+        Owner owner = booking.getLot().getOwner();
+        if (owner.isInstantBooking()) {
+            // Auto-confirm: capture payment and set CONFIRMED immediately
+            booking.setStatus(BookingStatus.CONFIRMED);
+            booking.setPaymentStatus(PaymentStatus.AUTHORIZED);
+            bookingRepository.save(booking);
 
-        log.info("Payment authorized for booking {}, status updated to PENDING", bookingId);
+            try {
+                capturePayment(bookingId);
+            } catch (StripeException e) {
+                log.error("Failed to capture payment for instant booking {}: {}", bookingId, e.getMessage());
+            }
+
+            try {
+                createOwnerPayout(bookingId);
+            } catch (StripeException e) {
+                log.error("Failed to create payout for instant booking {}: {}", bookingId, e.getMessage());
+            }
+
+            eventPublisher.publishEvent(new BookingEvent(this, bookingId, BookingEvent.Type.CONFIRMED));
+            log.info("Payment authorized and auto-confirmed for instant booking {}", bookingId);
+        } else {
+            booking.setStatus(BookingStatus.PENDING);
+            booking.setPaymentStatus(PaymentStatus.AUTHORIZED);
+            bookingRepository.save(booking);
+
+            log.info("Payment authorized for booking {}, status updated to PENDING", bookingId);
+        }
     }
 
     @Transactional

@@ -17,6 +17,8 @@ export interface Supplier {
     website?: string;
     address?: string;
     isVerified?: boolean;
+    rating?: number;
+    reviewCount?: number;
     createdAt: string;
 }
 

@@ -43,12 +43,16 @@ public class EventConsumer {
 
         BookingEmailData bookingData = createBookingEmailData(event);
 
-        // Send notification email to owner
+        // Send notification email to owner (if they have email notifications enabled)
         Optional<Owner> ownerOpt = ownerRepository.findById(event.ownerId());
         ownerOpt.ifPresent(owner -> {
-            String ownerEmail = owner.getUser().getEmail();
-            emailService.sendBookingCreatedToOwner(ownerEmail, bookingData);
-            log.info("Sent booking notification to owner: {}", ownerEmail);
+            if (owner.isEmailNotificationsBookings()) {
+                String ownerEmail = owner.getUser().getEmail();
+                emailService.sendBookingCreatedToOwner(ownerEmail, bookingData);
+                log.info("Sent booking notification to owner: {}", ownerEmail);
+            } else {
+                log.info("Skipping booking created email for owner {} (notifications disabled)", owner.getId());
+            }
         });
 
         // Send confirmation email to guest
@@ -81,12 +85,16 @@ public class EventConsumer {
 
         BookingEmailData bookingData = createBookingEmailData(event);
 
-        // Send cancellation notification to owner
+        // Send cancellation notification to owner (if they have email notifications enabled)
         Optional<Owner> ownerOpt = ownerRepository.findById(event.ownerId());
         ownerOpt.ifPresent(owner -> {
-            String ownerEmail = owner.getUser().getEmail();
-            emailService.sendBookingCancelledToOwner(ownerEmail, bookingData);
-            log.info("Sent cancellation notification to owner: {}", ownerEmail);
+            if (owner.isEmailNotificationsBookings()) {
+                String ownerEmail = owner.getUser().getEmail();
+                emailService.sendBookingCancelledToOwner(ownerEmail, bookingData);
+                log.info("Sent cancellation notification to owner: {}", ownerEmail);
+            } else {
+                log.info("Skipping booking cancelled email for owner {} (notifications disabled)", owner.getId());
+            }
         });
 
         // Send cancellation confirmation to guest

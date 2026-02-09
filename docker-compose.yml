@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U myisland -d myisland"]
+      test: [ "CMD-SHELL", "pg_isready -U myisland -d myisland" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,7 +25,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,7 +47,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     healthcheck:
-      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -69,10 +69,10 @@ services:
     image: axllent/mailpit:latest
     container_name: myisland-mailpit
     ports:
-      - "1025:1025"  # SMTP
-      - "8025:8025"  # Web UI
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8025/api/v1/messages"]
+      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:8025/api/v1/messages" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -90,7 +90,7 @@ services:
       - localstack_data:/var/lib/localstack
       - ./localstack-init:/etc/localstack/init/ready.d
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:4566/_localstack/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -122,7 +122,7 @@ services:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3

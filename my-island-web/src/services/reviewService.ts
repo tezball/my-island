@@ -1,5 +1,5 @@
 import { apiRequest } from './apiClient';
-import type { Review, CreateReviewRequest, ReviewEligibility, EligibleBooking } from '../types/review';
+import type { Review, CreateReviewRequest, ReviewEligibility, EligibleBooking, SupplierReview, CreateSupplierReviewRequest, SupplierReviewEligibility, EligibleClaim } from '../types/review';
 
 interface ReviewApiResponse {
     id: number;
@@ -55,6 +55,60 @@ function transformEligibility(api: ReviewEligibilityApiResponse): ReviewEligibil
     };
 }
 
+// --- Supplier Review API types ---
+
+interface SupplierReviewApiResponse {
+    id: number;
+    userId: number;
+    userName: string;
+    supplierId: number;
+    offerClaimId: number;
+    offerTitle: string;
+    rating: number;
+    comment: string;
+    supplierResponse: string | null;
+    supplierResponseAt: string | null;
+    createdAt: string;
+}
+
+interface SupplierReviewEligibilityApiResponse {
+    canReview: boolean;
+    eligibleClaims: Array<{
+        claimId: number;
+        offerTitle: string;
+        redeemedAt: string;
+        alreadyReviewed: boolean;
+    }>;
+}
+
+function transformSupplierReview(api: SupplierReviewApiResponse): SupplierReview {
+    return {
+        id: String(api.id),
+        userId: String(api.userId),
+        userName: api.userName,
+        supplierId: String(api.supplierId),
+        offerClaimId: String(api.offerClaimId),
+        offerTitle: api.offerTitle,
+        rating: api.rating,
+        comment: api.comment,
+        supplierResponse: api.supplierResponse ?? undefined,
+        supplierResponseAt: api.supplierResponseAt ?? undefined,
+        createdAt: api.createdAt,
+    };
+}
+
+function transformSupplierEligibility(api: SupplierReviewEligibilityApiResponse): SupplierReviewEligibility {
+    return {
+        canReview: api.canReview,
+        eligibleClaims: api.eligibleClaims.map((ec): EligibleClaim => ({
+            claimId: String(ec.claimId),
+            offerTitle: ec.offerTitle,
+            redeemedAt: ec.redeemedAt,
+            alreadyReviewed: ec.alreadyReviewed,
+        })),
+    };
+}
+
 export const reviewService = {
     async getCampsiteReviews(ownerId: string): Promise<Review[]> {
         const data = await apiRequest<ReviewApiResponse[]>(`/reviews/campsite/${ownerId}`, { requiresAuth: false });
@@ -83,5 +137,36 @@ export const reviewService = {
             method: 'PUT', body: { response },
         });
         return transformReview(data);
+    },
+
+    // --- Supplier Review Functions ---
+
+    async getSupplierReviews(supplierId: string): Promise<SupplierReview[]> {
+        const data = await apiRequest<SupplierReviewApiResponse[]>(`/reviews/supplier/${supplierId}`, { requiresAuth: false });
+        return data.map(transformSupplierReview);
+    },
+
+    async checkSupplierEligibility(supplierId: string): Promise<SupplierReviewEligibility> {
+        const data = await apiRequest<SupplierReviewEligibilityApiResponse>(`/reviews/supplier/eligibility/${supplierId}`);
+        return transformSupplierEligibility(data);
+    },
+
+    async createSupplierReview(request: CreateSupplierReviewRequest): Promise<SupplierReview> {
+        const data = await apiRequest<SupplierReviewApiResponse>('/reviews/supplier', {
+            method: 'POST', body: request,
+        });
+        return transformSupplierReview(data);
+    },
+
+    async getMySupplierReviews(): Promise<SupplierReview[]> {
+        const data = await apiRequest<SupplierReviewApiResponse[]>('/supplier/reviews');
+        return data.map(transformSupplierReview);
+    },
+
+    async respondToSupplierReview(reviewId: string, response: string): Promise<SupplierReview> {
+        const data = await apiRequest<SupplierReviewApiResponse>(`/supplier/reviews/${reviewId}/respond`, {
+            method: 'PUT', body: { response },
+        });
+        return transformSupplierReview(data);
     },
 };

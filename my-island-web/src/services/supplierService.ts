@@ -35,6 +35,8 @@ interface SupplierApiResponse {
     latitude?: number;
     longitude?: number;
     offerCount: number;
+    rating?: number | null;
+    reviewCount?: number;
 }
 
 interface OfferApiResponse {
@@ -130,6 +132,8 @@ function transformSupplier(api: SupplierApiResponse): Supplier {
         website: api.website ?? undefined,
         address: api.address ?? undefined,
         isVerified: api.isVerified ?? false,
+        rating: api.rating ?? undefined,
+        reviewCount: api.reviewCount ?? undefined,
         createdAt: '',
     };
 }

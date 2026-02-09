@@ -4,6 +4,7 @@ import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -90,6 +91,13 @@ public class Supplier extends BaseEntity {
 
     @Column(name = "payouts_enabled", nullable = false)
     private boolean payoutsEnabled = false;
+
+    // Review rating fields
+    @Column(precision = 2, scale = 1)
+    private BigDecimal rating;
+
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount = 0;
 
     public enum SubscriptionStatus {
         NONE, // Never subscribed
@@ -433,5 +441,22 @@ public class Supplier extends BaseEntity {
 
     public void setPayoutsEnabled(boolean payoutsEnabled) {
         this.payoutsEnabled = payoutsEnabled;
+    }
+
+    // Review rating getters and setters
+    public BigDecimal getRating() {
+        return rating;
+    }
+
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
+    }
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(int reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }

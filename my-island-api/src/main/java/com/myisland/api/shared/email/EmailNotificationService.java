@@ -11,4 +11,5 @@ public interface EmailNotificationService {
     void sendVoucherToGuest(String guestEmail, OfferClaimEmailData claimData);
     void sendPasswordResetEmail(String toEmail, String userName, String token);
     void sendEmailVerificationEmail(String toEmail, String userName, String token);
+    void sendWeeklySummaryToOwner(String ownerEmail, WeeklySummaryEmailData data);
 }

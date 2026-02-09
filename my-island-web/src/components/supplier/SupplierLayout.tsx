@@ -10,6 +10,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/supplier': 'Dashboard',
     '/supplier/offers': 'My Offers',
     '/supplier/redeem': 'Redeem Voucher',
+    '/supplier/reviews': 'Reviews',
     '/supplier/profile': 'Business Profile',
     '/supplier/settings': 'Settings',
 };
@@ -67,6 +68,7 @@ const SupplierLayoutContent: React.FC = () => {
                     <SupplierNavLink to="/supplier" icon="dashboard" label="Dashboard" end />
                     <SupplierNavLink to="/supplier/offers" icon="local_offer" label="My Offers" />
                     <SupplierNavLink to="/supplier/redeem" icon="qr_code_scanner" label="Redeem Voucher" />
+                    <SupplierNavLink to="/supplier/reviews" icon="rate_review" label="Reviews" />
                     <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />
                     <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />
 

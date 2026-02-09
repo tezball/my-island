@@ -3,6 +3,7 @@ package com.myisland.api.modules.marketplace.scheduler;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ public class SupplierFeaturedExpiryScheduler {
     }
 
     @Scheduled(cron = "0 0 * * * *") // Every hour at minute 0
+    @SchedulerLock(name = "expireSupplierFeaturedListings", lockAtLeastFor = "5m")
     @Transactional
     public void expireFeaturedListings() {
         LocalDateTime now = LocalDateTime.now();

@@ -20,6 +20,7 @@ import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
 import { SupplierOffersPage } from './pages/supplier/SupplierOffersPage';
 import { SupplierOfferDetailPage } from './pages/supplier/SupplierOfferDetailPage';
 import { SupplierRedeemPage } from './pages/supplier/SupplierRedeemPage';
+import { SupplierReviewsPage } from './pages/supplier/SupplierReviewsPage';
 import { SupplierProfilePage } from './pages/supplier/SupplierProfilePage';
 import { SupplierSettingsPage } from './pages/supplier/SupplierSettingsPage';
 import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
@@ -115,6 +116,7 @@ function App() {
                 <Route path="offers" element={<SupplierOffersPage />} />
                 <Route path="offers/:offerId" element={<SupplierOfferDetailPage />} />
                 <Route path="redeem" element={<SupplierRedeemPage />} />
+                <Route path="reviews" element={<SupplierReviewsPage />} />
                 <Route path="profile" element={<SupplierProfilePage />} />
                 <Route path="settings" element={<SupplierSettingsPage />} />
               </Route>

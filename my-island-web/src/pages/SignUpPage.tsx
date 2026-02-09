@@ -8,6 +8,7 @@ export const SignUpPage: React.FC = () => {
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+    const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
 
@@ -113,12 +114,12 @@ export const SignUpPage: React.FC = () => {
                                 className="block w-full rounded-xl border-0 bg-background-light dark:bg-background-dark py-4 px-4 text-[#111418] dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-[#1a2632] transition-all placeholder:text-gray-400 sm:text-sm sm:leading-6 pr-12"
                                 id="password"
                                 placeholder="Min. 8 characters"
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            <button className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-gray-500 hover:text-[#111418] dark:hover:text-white transition-colors" type="button">
-                                <span className="material-symbols-outlined text-xl">visibility_off</span>
+                            <button className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-gray-500 hover:text-[#111418] dark:hover:text-white transition-colors" type="button" onClick={() => setShowPassword(!showPassword)}>
+                                <span className="material-symbols-outlined text-xl">{showPassword ? 'visibility' : 'visibility_off'}</span>
                             </button>
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 pl-1">Must contain at least 8 characters</p>

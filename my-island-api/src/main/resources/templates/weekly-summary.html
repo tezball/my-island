@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Weekly Summary</title>
+</head>
+<body style="font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f6f7f8;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #059669; margin: 0; font-size: 24px;">Weekly Summary</h1>
+                <p style="color: #6b7280; margin: 8px 0 0 0; font-size: 14px;"
+                   th:text="${#temporals.format(weekStart, 'dd MMM')} + ' - ' + ${#temporals.format(weekEnd, 'dd MMM yyyy')}">
+                    03 Feb - 09 Feb 2026
+                </p>
+            </div>
+
+            <p style="color: #111418; font-size: 16px; line-height: 1.6;">
+                Hi <span th:text="${ownerName}">Owner</span>, here's your weekly overview for
+                <strong th:text="${propertyName}">My Property</strong>.
+            </p>
+
+            <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: #111418; margin: 0 0 15px 0; font-size: 18px;">Last 7 Days</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; color: #6b7280;">New Bookings</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="${newBookingsCount}">5</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e5e7eb;">
+                        <td style="padding: 8px 0; color: #6b7280;">Revenue</td>
+                        <td style="padding: 8px 0; color: #059669; text-align: right; font-weight: 700; font-size: 18px;" th:text="'€' + ${#numbers.formatDecimal(totalRevenue, 1, 2)}">€750.00</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: #111418; margin: 0 0 15px 0; font-size: 18px;">Next 7 Days</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; color: #6b7280;">Upcoming Arrivals</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="${upcomingArrivals}">3</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e5e7eb;">
+                        <td style="padding: 8px 0; color: #6b7280;">Upcoming Departures</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="${upcomingDepartures}">2</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <a th:href="${dashboardUrl}" style="display: inline-block; background: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                    View Dashboard
+                </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                You're receiving this because you have weekly summary reports enabled.
+                You can turn this off in your Settings.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

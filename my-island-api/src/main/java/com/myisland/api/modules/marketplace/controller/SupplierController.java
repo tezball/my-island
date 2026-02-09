@@ -6,6 +6,9 @@ import com.myisland.api.modules.marketplace.service.StripeConnectService;
 import com.myisland.api.modules.marketplace.service.SubscriptionService;
 import com.myisland.api.modules.marketplace.service.SupplierFeaturedPromotionService;
 import com.myisland.api.modules.marketplace.service.SupplierService;
+import com.myisland.api.modules.review.dto.SupplierReviewDto;
+import com.myisland.api.modules.review.dto.SupplierReviewResponseRequest;
+import com.myisland.api.modules.review.service.SupplierReviewService;
 import com.myisland.api.security.CustomUserDetails;
 import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,15 +32,17 @@ public class SupplierController {
     private final SubscriptionService subscriptionService;
     private final SupplierFeaturedPromotionService featuredPromotionService;
     private final StripeConnectService stripeConnectService;
+    private final SupplierReviewService supplierReviewService;
 
     public SupplierController(SupplierService supplierService, MarketplaceService marketplaceService,
                               SubscriptionService subscriptionService, SupplierFeaturedPromotionService featuredPromotionService,
-                              StripeConnectService stripeConnectService) {
+                              StripeConnectService stripeConnectService, SupplierReviewService supplierReviewService) {
         this.supplierService = supplierService;
         this.marketplaceService = marketplaceService;
         this.subscriptionService = subscriptionService;
         this.featuredPromotionService = featuredPromotionService;
         this.stripeConnectService = stripeConnectService;
+        this.supplierReviewService = supplierReviewService;
     }
 
     @GetMapping("/profile")
@@ -243,5 +248,24 @@ public class SupplierController {
     ) throws StripeException {
         SupplierDto supplier = supplierService.getSupplierProfile(userDetails.getUserId());
         return ResponseEntity.ok(stripeConnectService.createSupplierOnboardingLink(supplier.id(), returnUrl, refreshUrl));
+    }
+
+    // Review endpoints
+    @GetMapping("/reviews")
+    @Operation(summary = "Get all reviews for supplier's business")
+    public ResponseEntity<List<SupplierReviewDto>> getReviews(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(supplierReviewService.getSupplierReviews(userDetails.getUserId()));
+    }
+
+    @PutMapping("/reviews/{reviewId}/respond")
+    @Operation(summary = "Respond to a review")
+    public ResponseEntity<SupplierReviewDto> respondToReview(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long reviewId,
+            @Valid @RequestBody SupplierReviewResponseRequest request
+    ) {
+        return ResponseEntity.ok(supplierReviewService.respondToReview(userDetails.getUserId(), reviewId, request));
     }
 }

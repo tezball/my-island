@@ -98,6 +98,22 @@ public class EmailService implements EmailNotificationService {
         sendEmail(toEmail, "Verify Your Email - My Island", "email-verification", context);
     }
 
+    @Async
+    public void sendWeeklySummaryToOwner(String ownerEmail, WeeklySummaryEmailData data) {
+        Context context = new Context();
+        context.setVariable("ownerName", data.ownerName());
+        context.setVariable("propertyName", data.propertyName());
+        context.setVariable("newBookingsCount", data.newBookingsCount());
+        context.setVariable("totalRevenue", data.totalRevenue());
+        context.setVariable("upcomingArrivals", data.upcomingArrivals());
+        context.setVariable("upcomingDepartures", data.upcomingDepartures());
+        context.setVariable("weekStart", data.weekStart());
+        context.setVariable("weekEnd", data.weekEnd());
+        context.setVariable("dashboardUrl", frontendUrl + "/owner/dashboard");
+
+        sendEmail(ownerEmail, "Your Weekly Summary - " + data.propertyName(), "weekly-summary", context);
+    }
+
     private Context createBookingContext(BookingEmailData bookingData) {
         Context context = new Context();
         context.setVariable("bookingId", bookingData.bookingId());

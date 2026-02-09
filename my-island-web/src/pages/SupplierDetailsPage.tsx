@@ -5,6 +5,7 @@ import { supplierService, type Supplier, type Offer } from '../services/supplier
 import { getImages, type EntityImage } from '../services/imageService';
 import { CampsiteImageGallery } from '../components/ui/CampsiteImageGallery';
 import { CampsiteMap } from '../components/ui/CampsiteMap';
+import { SupplierReviewsSection } from '../components/review/SupplierReviewsSection';
 
 const CATEGORY_LABELS: Record<string, string> = {
     FOOD: 'Food & Drink',
@@ -285,6 +286,13 @@ export const SupplierDetailsPage: React.FC = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Reviews Section */}
+                <SupplierReviewsSection
+                    supplierId={supplier.id}
+                    supplierRating={supplier.rating}
+                    reviewCount={supplier.reviewCount}
+                />
 
                 {/* Back link */}
                 <div className="pt-4">

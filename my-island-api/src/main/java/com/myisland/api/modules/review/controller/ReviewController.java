@@ -1,9 +1,8 @@
 package com.myisland.api.modules.review.controller;
 
-import com.myisland.api.modules.review.dto.CreateReviewRequest;
-import com.myisland.api.modules.review.dto.ReviewDto;
-import com.myisland.api.modules.review.dto.ReviewEligibilityDto;
+import com.myisland.api.modules.review.dto.*;
 import com.myisland.api.modules.review.service.ReviewService;
+import com.myisland.api.modules.review.service.SupplierReviewService;
 import com.myisland.api.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,9 +20,11 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final SupplierReviewService supplierReviewService;
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService, SupplierReviewService supplierReviewService) {
         this.reviewService = reviewService;
+        this.supplierReviewService = supplierReviewService;
     }
 
     @GetMapping("/campsite/{ownerId}")
@@ -49,5 +50,32 @@ public class ReviewController {
             @PathVariable Long ownerId
     ) {
         return ResponseEntity.ok(reviewService.checkEligibility(userDetails.getUserId(), ownerId));
+    }
+
+    // --- Supplier Review Endpoints ---
+
+    @GetMapping("/supplier/{supplierId}")
+    @Operation(summary = "Get all reviews for a supplier")
+    public ResponseEntity<List<SupplierReviewDto>> getSupplierReviews(@PathVariable Long supplierId) {
+        return ResponseEntity.ok(supplierReviewService.getReviewsBySupplier(supplierId));
+    }
+
+    @PostMapping("/supplier")
+    @Operation(summary = "Submit a review for a redeemed offer")
+    public ResponseEntity<SupplierReviewDto> createSupplierReview(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody CreateSupplierReviewRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(supplierReviewService.createReview(userDetails.getUserId(), request));
+    }
+
+    @GetMapping("/supplier/eligibility/{supplierId}")
+    @Operation(summary = "Check if user can review a supplier")
+    public ResponseEntity<SupplierReviewEligibilityDto> checkSupplierEligibility(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long supplierId
+    ) {
+        return ResponseEntity.ok(supplierReviewService.checkEligibility(userDetails.getUserId(), supplierId));
     }
 }
