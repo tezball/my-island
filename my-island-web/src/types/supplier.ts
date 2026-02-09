@@ -14,6 +14,9 @@ export interface Supplier {
     active: boolean;
     latitude?: number;
     longitude?: number;
+    website?: string;
+    address?: string;
+    isVerified?: boolean;
     createdAt: string;
 }
 

@@ -176,7 +176,13 @@ export const OffersPage: React.FC = () => {
                                     <span className="material-symbols-outlined text-primary text-sm">
                                         {CATEGORY_ICONS[offer.category] || 'store'}
                                     </span>
-                                    <span className="text-sm text-gray-500">{offer.supplier.businessName}</span>
+                                    <Link
+                                        to={`/marketplace/supplier/${offer.supplier.id}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="text-sm text-gray-500 hover:text-primary hover:underline transition-colors"
+                                    >
+                                        {offer.supplier.businessName}
+                                    </Link>
                                 </div>
 
                                 {/* Title & Description */}
@@ -241,7 +247,12 @@ export const OffersPage: React.FC = () => {
 
                             <div className="p-6">
                                 <div className="flex items-center gap-2 mb-3 text-sm text-gray-500">
-                                    <span className="font-semibold text-primary">{selectedOffer.supplier.businessName}</span>
+                                    <Link
+                                        to={`/marketplace/supplier/${selectedOffer.supplier.id}`}
+                                        className="font-semibold text-primary hover:underline"
+                                    >
+                                        {selectedOffer.supplier.businessName}
+                                    </Link>
                                     <span>•</span>
                                     <span>{CATEGORY_LABELS[selectedOffer.category]}</span>
                                 </div>

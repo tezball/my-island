@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supplierService, type Supplier, type OfferCategory } from '../../services/supplierService';
+import { getImages, type EntityImage } from '../../services/imageService';
+import { ImageUpload } from '../../components/ui/ImageUpload';
 
 const CATEGORIES: { value: OfferCategory; label: string }[] = [
     { value: 'FOOD', label: 'Food & Drink' },
@@ -18,6 +21,11 @@ export const SupplierProfilePage: React.FC = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [imageError, setImageError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [supplierImages, setSupplierImages] = useState<EntityImage[]>([]);
+    const [latitude, setLatitude] = useState('');
+    const [longitude, setLongitude] = useState('');
+    const [geoLoading, setGeoLoading] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         businessName: '',
         description: '',
@@ -44,6 +52,14 @@ export const SupplierProfilePage: React.FC = () => {
                         contactEmail: data.contactEmail,
                         contactPhone: data.contactPhone
                     });
+                    setLatitude(data.latitude != null ? String(data.latitude) : '');
+                    setLongitude(data.longitude != null ? String(data.longitude) : '');
+                    try {
+                        const imgs = await getImages('SUPPLIER', data.id);
+                        setSupplierImages(imgs);
+                    } catch {
+                        setSupplierImages([]);
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load profile:', error);
@@ -93,9 +109,20 @@ export const SupplierProfilePage: React.FC = () => {
         e.preventDefault();
         if (!supplier) return;
 
+        setSaveError(null);
+
+        if (!latitude || !longitude) {
+            setSaveError('Latitude and longitude are required. Use the "Use current location" button or enter coordinates manually.');
+            return;
+        }
+
         setIsSaving(true);
         try {
-            await supplierService.updateSupplierProfile(supplier.id, formData);
+            await supplierService.updateSupplierProfile(supplier.id, {
+                ...formData,
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+            });
             setShowSuccess(true);
             setTimeout(() => setShowSuccess(false), 3000);
         } catch (error) {
@@ -273,6 +300,78 @@ export const SupplierProfilePage: React.FC = () => {
                     />
                 </div>
 
+                {/* Location Coordinates */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Location Coordinates *
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                        Right-click your location on Google Maps to copy coordinates, or use your current location
+                    </p>
+
+                    <button
+                        type="button"
+                        disabled={geoLoading}
+                        onClick={() => {
+                            if (!navigator.geolocation) {
+                                setSaveError('Geolocation is not supported by your browser.');
+                                return;
+                            }
+                            setGeoLoading(true);
+                            navigator.geolocation.getCurrentPosition(
+                                (pos) => {
+                                    setLatitude(pos.coords.latitude.toFixed(6));
+                                    setLongitude(pos.coords.longitude.toFixed(6));
+                                    setGeoLoading(false);
+                                },
+                                (err) => {
+                                    setSaveError('Could not get location: ' + err.message);
+                                    setGeoLoading(false);
+                                },
+                                { enableHighAccuracy: true, timeout: 10000 }
+                            );
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 mb-3 text-sm font-medium text-lime-600 border border-lime-500 rounded-lg hover:bg-lime-50 dark:hover:bg-lime-900/20 transition-colors disabled:opacity-50"
+                    >
+                        {geoLoading ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-lime-500" />
+                                Getting location...
+                            </>
+                        ) : (
+                            <>
+                                <span className="material-symbols-outlined text-lg">my_location</span>
+                                Use current location
+                            </>
+                        )}
+                    </button>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Latitude *</label>
+                            <input
+                                type="number"
+                                step="0.000001"
+                                placeholder="e.g. 52.6541"
+                                value={latitude}
+                                onChange={(e) => setLatitude(e.target.value)}
+                                className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Longitude *</label>
+                            <input
+                                type="number"
+                                step="0.000001"
+                                placeholder="e.g. -7.2448"
+                                value={longitude}
+                                onChange={(e) => setLongitude(e.target.value)}
+                                className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 {/* Contact Info */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -301,6 +400,15 @@ export const SupplierProfilePage: React.FC = () => {
                     </div>
                 </div>
 
+                {saveError && (
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                            <span className="material-symbols-outlined">error</span>
+                            <span className="text-sm font-medium">{saveError}</span>
+                        </div>
+                    </div>
+                )}
+
                 {/* Save Button */}
                 <div className="pt-4">
                     <button
@@ -312,6 +420,37 @@ export const SupplierProfilePage: React.FC = () => {
                     </button>
                 </div>
             </form>
+
+            {/* Business Photos */}
+            {supplier && (
+                <div className="mt-10">
+                    <h2 className="text-xl font-bold text-[#111418] dark:text-white mb-2">Business Photos</h2>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                        Upload photos of your business to show on your public profile
+                    </p>
+                    <ImageUpload
+                        entityType="SUPPLIER"
+                        entityId={supplier.id}
+                        images={supplierImages}
+                        onImagesChange={setSupplierImages}
+                        maxImages={8}
+                    />
+                </div>
+            )}
+
+            {/* View Public Profile Link */}
+            {supplier && (
+                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <Link
+                        to={`/marketplace/supplier/${supplier.id}`}
+                        className="inline-flex items-center gap-2 text-lime-600 dark:text-lime-400 hover:text-lime-700 dark:hover:text-lime-300 font-medium transition-colors"
+                    >
+                        <span className="material-symbols-outlined text-lg">visibility</span>
+                        View Public Profile
+                        <span className="material-symbols-outlined text-lg">open_in_new</span>
+                    </Link>
+                </div>
+            )}
         </div>
     );
 };

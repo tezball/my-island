@@ -23,6 +23,7 @@ import { SupplierRedeemPage } from './pages/supplier/SupplierRedeemPage';
 import { SupplierProfilePage } from './pages/supplier/SupplierProfilePage';
 import { SupplierSettingsPage } from './pages/supplier/SupplierSettingsPage';
 import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
+import { SupplierDetailsPage } from './pages/SupplierDetailsPage';
 import { TripsPage } from './pages/TripsPage';
 import { SearchResultsPage } from './pages/SearchResultsPage';
 import { SavedPage } from './pages/SavedPage';
@@ -85,6 +86,7 @@ function App() {
               <Route path="/search" element={<SearchResultsPage />} />
               <Route path="/vouchers" element={<VouchersPage />} />
               <Route path="/marketplace" element={<OffersPage />} />
+              <Route path="/marketplace/supplier/:id" element={<SupplierDetailsPage />} />
             </Routes>
           </Layout>
 

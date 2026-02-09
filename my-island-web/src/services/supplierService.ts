@@ -127,6 +127,9 @@ function transformSupplier(api: SupplierApiResponse): Supplier {
         active: true,
         latitude: api.latitude,
         longitude: api.longitude,
+        website: api.website ?? undefined,
+        address: api.address ?? undefined,
+        isVerified: api.isVerified ?? false,
         createdAt: '',
     };
 }
@@ -189,6 +192,21 @@ function transformLot(api: LotApiResponse): Lot {
 // --- Service ---
 
 export const supplierService = {
+    async getPublicSupplier(id: string): Promise<Supplier | null> {
+        try {
+            const api = await apiRequest<SupplierApiResponse>(`/marketplace/suppliers/${id}`, { requiresAuth: false });
+            return transformSupplier(api);
+        } catch (error) {
+            if (error instanceof ApiError && error.statusCode === 404) return null;
+            throw error;
+        }
+    },
+
+    async getPublicSupplierOffers(id: string): Promise<Offer[]> {
+        const apiOffers = await apiRequest<OfferApiResponse[]>(`/marketplace/suppliers/${id}/offers`, { requiresAuth: false });
+        return apiOffers.map(transformOffer);
+    },
+
     async getSupplierProfile(_userId: string): Promise<Supplier | null> {
         try {
             const api = await apiRequest<SupplierApiResponse>('/supplier/profile');

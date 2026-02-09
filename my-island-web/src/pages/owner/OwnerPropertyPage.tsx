@@ -64,6 +64,12 @@ export const OwnerPropertyPage: React.FC = () => {
         setIsSaving(true);
         setSaveMessage(null);
 
+        if (!latitude || !longitude) {
+            setSaveMessage({ type: 'error', text: 'Latitude and longitude are required. Use the "Use current location" button or enter coordinates manually.' });
+            setIsSaving(false);
+            return;
+        }
+
         try {
             await ownerService.updateOwnerProfile({
                 propertyName,
@@ -189,7 +195,7 @@ export const OwnerPropertyPage: React.FC = () => {
 
                 {/* Location */}
                 <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
-                    <h2 className="text-lg font-bold text-[#111418] dark:text-white">Location</h2>
+                    <h2 className="text-lg font-bold text-[#111418] dark:text-white">Location *</h2>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                         Right-click your property on Google Maps to copy coordinates, or use your current location
                     </p>
@@ -233,7 +239,7 @@ export const OwnerPropertyPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className={labelClass}>Latitude</label>
+                            <label className={labelClass}>Latitude *</label>
                             <input
                                 type="number"
                                 step="0.000001"
@@ -244,7 +250,7 @@ export const OwnerPropertyPage: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className={labelClass}>Longitude</label>
+                            <label className={labelClass}>Longitude *</label>
                             <input
                                 type="number"
                                 step="0.000001"
