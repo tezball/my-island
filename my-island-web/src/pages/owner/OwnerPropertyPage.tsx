@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService, type Owner } from '../../services/ownerService';
 import { ImageUpload } from '../../components/ui/ImageUpload';
@@ -103,9 +104,18 @@ export const OwnerPropertyPage: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Property Details</h1>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Manage your property information and photos</p>
+            <div className="flex items-start justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Property Details</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">Manage your property information and photos</p>
+                </div>
+                <Link
+                    to={`/campsite/${owner.id}`}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
+                >
+                    <span className="material-symbols-outlined text-lg">visibility</span>
+                    View as Guest
+                </Link>
             </div>
 
             <form onSubmit={handleSave} className="space-y-6">
