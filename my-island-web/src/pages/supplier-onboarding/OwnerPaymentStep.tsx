@@ -1,28 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CreditCard, Shield, Check } from 'lucide-react';
-import { ownerSubscriptionService } from '../../services/ownerSubscriptionService';
+import { ownerSubscriptionApi } from '../../services/subscriptionApi';
+import { SubscriptionFormModal } from '../../components/subscription/SubscriptionForm';
 
 interface OwnerPaymentStepProps {
   onBack: () => void;
 }
 
 export const OwnerPaymentStep: React.FC<OwnerPaymentStepProps> = ({ onBack }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleContinueToPayment = async () => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const { checkoutUrl } = await ownerSubscriptionService.createCheckoutSession();
-      window.location.href = checkoutUrl;
-    } catch (err) {
-      console.error('Failed to create checkout session:', err);
-      setError('Failed to start payment process. Please try again.');
-      setIsLoading(false);
-    }
-  };
+  const navigate = useNavigate();
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   return (
     <div className="flex flex-col h-full">
@@ -107,40 +95,44 @@ export const OwnerPaymentStep: React.FC<OwnerPaymentStepProps> = ({ onBack }) =>
             </div>
           </div>
         </div>
-
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-300 text-sm">
-            {error}
-          </div>
-        )}
       </div>
 
-      <div className="pt-4 mt-auto flex gap-3">
+      <div className="pt-4 mt-auto space-y-3">
+        <div className="flex gap-3">
+          <button
+            onClick={onBack}
+            className="flex-1 py-4 rounded-xl font-bold text-[#111418] dark:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          >
+            Back
+          </button>
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="flex-1 py-4 rounded-xl font-bold text-white bg-primary hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+          >
+            <CreditCard className="w-5 h-5" />
+            Continue to Payment
+          </button>
+        </div>
         <button
-          onClick={onBack}
-          disabled={isLoading}
-          className="flex-1 py-4 rounded-xl font-bold text-[#111418] dark:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+          onClick={() => navigate('/owner')}
+          className="w-full text-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors py-2"
         >
-          Back
-        </button>
-        <button
-          onClick={handleContinueToPayment}
-          disabled={isLoading}
-          className="flex-1 py-4 rounded-xl font-bold text-white bg-primary hover:bg-emerald-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {isLoading ? (
-            <>
-              <span className="animate-spin material-symbols-outlined text-lg">progress_activity</span>
-              Loading...
-            </>
-          ) : (
-            <>
-              <CreditCard className="w-5 h-5" />
-              Continue to Payment
-            </>
-          )}
+          Skip for now, I'll subscribe later
         </button>
       </div>
+
+      <SubscriptionFormModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={() => {
+          setShowPaymentModal(false);
+          navigate('/owner');
+        }}
+        createSetupIntent={ownerSubscriptionApi.createSetupIntent}
+        confirmSubscription={ownerSubscriptionApi.confirmSubscription}
+        pricePerMonth="€15"
+        planName="Owner Plan"
+      />
     </div>
   );
 };

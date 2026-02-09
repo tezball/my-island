@@ -14,7 +14,7 @@ import { supplierService } from '../../services/supplierService';
 const TOTAL_STEPS = 6;
 
 const BecomeHostContent: React.FC = () => {
-    const { user, isAuthenticated, upgradeToOwner } = useAuth();
+    const { user, isAuthenticated, patchUser } = useAuth();
     const { state } = useSupplierOnboarding();
     const [currentStep, setCurrentStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -59,8 +59,8 @@ const BecomeHostContent: React.FC = () => {
                 typePricing: state.typePricing,
             });
 
-            await upgradeToOwner();
-            // Don't reset state yet - go to payment step
+            // createProperty already called /auth/upgrade/owner, just update local auth state
+            patchUser({ isOwner: true });
             nextStep();
         } catch (error) {
             console.error('Failed to create property:', error);

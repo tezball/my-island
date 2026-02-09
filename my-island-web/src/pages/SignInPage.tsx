@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Test accounts for development - all use password "password"
+// Test accounts for development
 const TEST_USERS = [
     // Subscribed Owners
     { email: 'norevalley@myisland.com', password: 'NoreValley2025!Secured', label: 'Nore Valley Park (Owner - Subscribed)' },
@@ -10,7 +10,6 @@ const TEST_USERS = [
     // Subscribed Suppliers
     { email: 'farmshop@greenacres.ie', password: 'GreenAcres#Farm2025', label: 'Green Acres Farm Shop (Supplier - Subscribed)' },
     { email: 'info@aillweefarmshop.ie', password: 'AillweeCh33se!Secure', label: 'Aillwee Farm Shop & Cheese (Supplier - Subscribed)' },
-    { email: 'info@murphygeneralstore.ie', password: 'MurphyGen$Store88', label: 'Murphy General Store (Supplier - Subscribed)' },
     // No Subscription (for testing subscription gates)
     { email: 'bookings@loughdergcamping.ie', password: 'LoughDerg!Camp2025', label: 'Lough Derg Lakeside (Owner - No Sub)' },
     { email: 'hello@dinglekayak.ie', password: 'W@v3R!d3r$K3rrry#2026', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },
