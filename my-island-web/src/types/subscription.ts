@@ -14,5 +14,6 @@ export interface CreateCheckoutSessionResponse {
 }
 
 export interface CreatePortalSessionResponse {
-  portalUrl: string;
+  portalUrl: string | null;
+  devMode?: boolean;
 }

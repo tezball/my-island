@@ -162,7 +162,7 @@ export const SupplierSettingsPage: React.FC = () => {
 };
 
 const BillingSection: React.FC = () => {
-    const { subscription, isLoading, refresh, redirectToPortal } = useSubscription();
+    const { subscription, isLoading, error, refresh, redirectToPortal } = useSubscription();
     const [isRedirecting, setIsRedirecting] = useState(false);
     const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
@@ -171,6 +171,8 @@ const BillingSection: React.FC = () => {
         try {
             await redirectToPortal();
         } catch {
+            // error is set in context
+        } finally {
             setIsRedirecting(false);
         }
     };
@@ -227,6 +229,12 @@ const BillingSection: React.FC = () => {
                 <CreditCard className="w-5 h-5 text-lime-500" />
                 <h2 className="text-lg font-bold text-[#111418] dark:text-white">Billing</h2>
             </div>
+
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-400">
+                    {error}
+                </div>
+            )}
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between py-2">

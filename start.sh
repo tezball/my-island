@@ -197,6 +197,14 @@ start_backend() {
 
     cd "$SCRIPT_DIR/my-island-api"
 
+    # Load environment variables from .env file
+    if [ -f "$SCRIPT_DIR/.env" ]; then
+        log_info "Loading environment variables from .env..."
+        set -a
+        source "$SCRIPT_DIR/.env"
+        set +a
+    fi
+
     # Compile and start
     log_info "Compiling and starting backend..."
     nohup ./mvnw spring-boot:run \

@@ -225,11 +225,10 @@ public class OwnerSubscriptionService {
         Owner owner = ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-        // Dev mode: redirect to settings page (no real Stripe portal)
+        // Dev mode: no real Stripe portal available
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Returning mock portal URL for owner {}", ownerId);
-            String returnUrl = stripeProperties.getOwnerSuccessUrl().replace("?subscription=success", "/settings");
-            return new CreatePortalSessionResponse(returnUrl);
+            log.info("Dev mode: Billing portal not available for owner {}", ownerId);
+            return new CreatePortalSessionResponse(null, true);
         }
 
         if (owner.getStripeCustomerId() == null) {

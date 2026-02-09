@@ -225,11 +225,10 @@ public class SubscriptionService {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
 
-        // Dev mode: redirect to settings page (no real Stripe portal)
+        // Dev mode: no real Stripe portal available
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Returning mock portal URL for supplier {}", supplierId);
-            String returnUrl = stripeProperties.getSupplierSuccessUrl().replace("?subscription=success", "/settings");
-            return new CreatePortalSessionResponse(returnUrl);
+            log.info("Dev mode: Billing portal not available for supplier {}", supplierId);
+            return new CreatePortalSessionResponse(null, true);
         }
 
         if (supplier.getStripeCustomerId() == null) {

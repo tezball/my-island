@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { subscriptionService } from '../services/subscriptionService';
+import { supplierSubscriptionApi } from '../services/subscriptionApi';
+import { SubscriptionFormModal } from '../components/subscription/SubscriptionForm';
 import type { SubscriptionDto, SubscriptionStatus } from '../types/subscription';
 import { useAuth } from './AuthContext';
 
@@ -28,6 +30,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [subscription, setSubscription] = useState<SubscriptionDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!user?.isSupplier) {
@@ -59,19 +62,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [user?.isSupplier, refresh]);
 
   const redirectToCheckout = async () => {
-    try {
-      const { checkoutUrl } = await subscriptionService.createCheckoutSession();
-      window.location.href = checkoutUrl;
-    } catch (err) {
-      console.error('Failed to create checkout session:', err);
-      setError('Failed to start checkout process');
-      throw err;
-    }
+    setShowSubscriptionForm(true);
   };
 
   const redirectToPortal = async () => {
     try {
-      const { portalUrl } = await subscriptionService.createPortalSession();
+      const { portalUrl, devMode } = await subscriptionService.createPortalSession();
+      if (devMode || !portalUrl) {
+        setError('Billing portal is not available in development mode');
+        return;
+      }
       window.location.href = portalUrl;
     } catch (err) {
       console.error('Failed to create portal session:', err);
@@ -92,6 +92,18 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       }}
     >
       {children}
+      <SubscriptionFormModal
+        isOpen={showSubscriptionForm}
+        onClose={() => setShowSubscriptionForm(false)}
+        onSuccess={async () => {
+          setShowSubscriptionForm(false);
+          await refresh();
+        }}
+        createSetupIntent={supplierSubscriptionApi.createSetupIntent}
+        confirmSubscription={supplierSubscriptionApi.confirmSubscription}
+        pricePerMonth="€5"
+        planName="Supplier Plan"
+      />
     </SubscriptionContext.Provider>
   );
 };
