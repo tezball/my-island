@@ -280,6 +280,13 @@ main() {
         exit 1
     fi
 
+    # Clean log files first so we only keep logs from this run
+    log_step "Deleting old log files..."
+    rm -f "$SCRIPT_DIR"/logs/*.log 2>/dev/null || true
+    mkdir -p "$SCRIPT_DIR/logs"
+    log_success "Log files cleaned"
+    echo ""
+
     # Stop everything
     stop_all_services
     echo ""
