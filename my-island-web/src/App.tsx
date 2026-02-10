@@ -34,6 +34,7 @@ import { PaymentDetailsPage } from './pages/profile/PaymentDetailsPage';
 import { NotificationsPage } from './pages/profile/NotificationsPage';
 import { VouchersPage } from './pages/VouchersPage';
 import { OffersPage } from './pages/OffersPage';
+import { ExplorePage } from './pages/ExplorePage';
 import { BecomeHostPage } from './pages/supplier-onboarding';
 import { BecomeSupplierPage } from './pages/supplier-business-onboarding';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
@@ -87,6 +88,7 @@ function App() {
               <Route path="/search" element={<SearchResultsPage />} />
               <Route path="/vouchers" element={<VouchersPage />} />
               <Route path="/marketplace" element={<OffersPage />} />
+              <Route path="/explore" element={<ExplorePage />} />
               <Route path="/marketplace/supplier/:id" element={<SupplierDetailsPage />} />
             </Routes>
           </Layout>

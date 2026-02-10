@@ -425,10 +425,11 @@ export const HomePage: React.FC = () => {
                             </p>
                         </div>
                         <button
-                            onClick={() => navigate('/search')}
-                            className="bg-white text-primary font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap"
+                            onClick={() => navigate('/explore')}
+                            className="bg-white text-primary font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center gap-2"
                         >
-                            Explore all campsites
+                            <span className="material-symbols-outlined text-lg">map</span>
+                            Explore the map
                         </button>
                     </div>
                 </section>

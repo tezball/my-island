@@ -196,6 +196,11 @@ function transformLot(api: LotApiResponse): Lot {
 // --- Service ---
 
 export const supplierService = {
+    async getAllSuppliers(): Promise<Supplier[]> {
+        const data = await apiRequest<SupplierApiResponse[]>('/marketplace/suppliers', { requiresAuth: false });
+        return data.map(transformSupplier);
+    },
+
     async getPublicSupplier(id: string): Promise<Supplier | null> {
         try {
             const api = await apiRequest<SupplierApiResponse>(`/marketplace/suppliers/${id}`, { requiresAuth: false });

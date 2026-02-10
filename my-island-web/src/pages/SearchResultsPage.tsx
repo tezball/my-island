@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import type { Lot } from '../types/booking';
 import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
 
@@ -361,6 +361,15 @@ export const SearchResultsPage: React.FC = () => {
                             <option value="name">Name</option>
                         </select>
                     </div>
+
+                    {/* Map View */}
+                    <Link
+                        to={`/explore${selectedCounty ? `?county=${encodeURIComponent(selectedCounty)}` : ''}`}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-emerald-600 transition-colors ml-auto"
+                    >
+                        <span className="material-symbols-outlined text-sm">map</span>
+                        Map View
+                    </Link>
                 </div>
 
                 {/* Results */}
