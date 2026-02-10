@@ -99,8 +99,16 @@ public class Supplier extends BaseEntity {
     @Column(name = "review_count", nullable = false)
     private int reviewCount = 0;
 
+    // Trial fields
+    @Column(name = "trial_ends_at")
+    private Instant trialEndsAt;
+
+    @Column(name = "trial_used", nullable = false)
+    private boolean trialUsed = false;
+
     public enum SubscriptionStatus {
         NONE, // Never subscribed
+        TRIALING, // Free trial period
         ACTIVE, // Subscription is active
         PAST_DUE, // Payment failed, in grace period
         CANCELED, // Subscription was canceled
@@ -375,7 +383,13 @@ public class Supplier extends BaseEntity {
 
     // Helper methods
     public boolean hasActiveSubscription() {
-        return subscriptionStatus == SubscriptionStatus.ACTIVE;
+        if (subscriptionStatus == SubscriptionStatus.ACTIVE) {
+            return true;
+        }
+        if (subscriptionStatus == SubscriptionStatus.TRIALING) {
+            return trialEndsAt != null && trialEndsAt.isAfter(Instant.now());
+        }
+        return false;
     }
 
     public boolean hasLapsedSubscription() {
@@ -385,7 +399,47 @@ public class Supplier extends BaseEntity {
     }
 
     public boolean needsSubscription() {
-        return subscriptionStatus == SubscriptionStatus.NONE;
+        if (subscriptionStatus == SubscriptionStatus.NONE) {
+            return true;
+        }
+        if (subscriptionStatus == SubscriptionStatus.TRIALING) {
+            return trialEndsAt == null || !trialEndsAt.isAfter(Instant.now());
+        }
+        return false;
+    }
+
+    public boolean isTrialing() {
+        return subscriptionStatus == SubscriptionStatus.TRIALING
+                && trialEndsAt != null && trialEndsAt.isAfter(Instant.now());
+    }
+
+    public Integer getTrialDaysRemaining() {
+        if (!isTrialing()) return null;
+        long seconds = java.time.Duration.between(Instant.now(), trialEndsAt).getSeconds();
+        return Math.max(0, (int) (seconds / 86400));
+    }
+
+    public void startTrial() {
+        this.subscriptionStatus = SubscriptionStatus.TRIALING;
+        this.trialEndsAt = Instant.now().plus(java.time.Duration.ofDays(14));
+        this.trialUsed = true;
+    }
+
+    // Trial getters and setters
+    public Instant getTrialEndsAt() {
+        return trialEndsAt;
+    }
+
+    public void setTrialEndsAt(Instant trialEndsAt) {
+        this.trialEndsAt = trialEndsAt;
+    }
+
+    public boolean isTrialUsed() {
+        return trialUsed;
+    }
+
+    public void setTrialUsed(boolean trialUsed) {
+        this.trialUsed = trialUsed;
     }
 
     // Featured promotion getters and setters

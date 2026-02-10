@@ -10,7 +10,9 @@ public record OwnerSubscriptionDto(
         boolean cancelAtPeriodEnd,
         boolean hasActiveSubscription,
         boolean hasLapsedSubscription,
-        boolean needsSubscription
+        boolean needsSubscription,
+        boolean isTrialing,
+        Integer trialDaysRemaining
 ) {
     public static OwnerSubscriptionDto from(Owner owner) {
         return new OwnerSubscriptionDto(
@@ -19,7 +21,9 @@ public record OwnerSubscriptionDto(
                 owner.isSubscriptionCancelAtPeriodEnd(),
                 owner.hasActiveSubscription(),
                 owner.hasLapsedSubscription(),
-                owner.needsSubscription()
+                owner.needsSubscription(),
+                owner.isTrialing(),
+                owner.getTrialDaysRemaining()
         );
     }
 }

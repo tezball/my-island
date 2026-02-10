@@ -108,6 +108,7 @@ public class AuthService {
                 .website(request.website())
                 .build();
 
+        owner.startTrial();
         ownerRepository.save(owner);
 
         user.setOwner(true);
@@ -144,6 +145,7 @@ public class AuthService {
                 .logoUrl(request.logoUrl())
                 .build();
 
+        supplier.startTrial();
         supplierRepository.save(supplier);
 
         user.setSupplier(true);

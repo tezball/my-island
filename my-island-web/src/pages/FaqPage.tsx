@@ -6,9 +6,10 @@ const PlanCard: React.FC<{
     price: string;
     period: string;
     color: string;
+    subtitle?: string;
     freeFeatures: string[];
     paidFeatures: string[];
-}> = ({ title, price, period, color, freeFeatures, paidFeatures }) => (
+}> = ({ title, price, period, color, subtitle, freeFeatures, paidFeatures }) => (
     <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex-1">
         <div className={`${color} px-6 py-5 text-white`}>
             <h3 className="text-lg font-bold">{title}</h3>
@@ -16,6 +17,7 @@ const PlanCard: React.FC<{
                 <span className="text-3xl font-bold">{price}</span>
                 <span className="text-sm opacity-80">/{period}</span>
             </div>
+            {subtitle && <p className="text-sm opacity-90 mt-1">{subtitle}</p>}
         </div>
         <div className="p-6 space-y-6">
             <div>
@@ -95,10 +97,12 @@ export const FaqPage: React.FC = () => {
                         price="€15"
                         period="month"
                         color="bg-primary"
+                        subtitle="Includes 14-day free trial"
                         freeFeatures={[
                             'List your property',
                             'Manage lots',
                             'Edit property details',
+                            'Guest reviews & responses',
                             'Access settings & billing',
                         ]}
                         paidFeatures={[
@@ -106,7 +110,6 @@ export const FaqPage: React.FC = () => {
                             'Create manual bookings',
                             'Calendar & today view',
                             'Dashboard analytics',
-                            'Guest reviews & responses',
                             'Seasonal pricing rules',
                         ]}
                     />
@@ -115,6 +118,7 @@ export const FaqPage: React.FC = () => {
                         price="€5"
                         period="month"
                         color="bg-lime-600"
+                        subtitle="Includes 14-day free trial"
                         freeFeatures={[
                             'Business profile',
                             'Dashboard overview',
@@ -145,7 +149,7 @@ export const FaqPage: React.FC = () => {
                     />
                     <FaqItem
                         question="Can I use the platform without a subscription?"
-                        answer="Yes! Both owners and suppliers get access to core features for free. Owners can list their property and manage lots, while suppliers can set up their profile and redeem vouchers. Premium features like booking management and offer creation require a subscription."
+                        answer="Yes! When you sign up as an owner or supplier, you get a 14-day free trial with full access to all premium features — no credit card required. After the trial, core features remain free. Owners can list their property and manage lots, while suppliers can set up their profile and redeem vouchers. Premium features like booking management and offer creation require a subscription."
                     />
                     <FaqItem
                         question="What payment methods do you accept?"

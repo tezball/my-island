@@ -191,6 +191,7 @@ const BillingSection: React.FC = () => {
 
         const statusStyles: Record<string, string> = {
             ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+            TRIALING: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
             PAST_DUE: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
             CANCELED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
             UNPAID: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
@@ -199,6 +200,7 @@ const BillingSection: React.FC = () => {
 
         const statusLabels: Record<string, string> = {
             ACTIVE: 'Active',
+            TRIALING: 'Free Trial',
             PAST_DUE: 'Past Due',
             CANCELED: 'Canceled',
             UNPAID: 'Unpaid',
@@ -241,7 +243,9 @@ const BillingSection: React.FC = () => {
                     <div>
                         <p className="font-medium text-[#111418] dark:text-white">Subscription Status</p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {subscription?.hasActiveSubscription
+                            {subscription?.isTrialing
+                                ? `Free trial \u2014 ${subscription.trialDaysRemaining ?? 0} days remaining`
+                                : subscription?.hasActiveSubscription
                                 ? 'Your subscription is active'
                                 : subscription?.hasLapsedSubscription
                                 ? 'Your subscription has ended'

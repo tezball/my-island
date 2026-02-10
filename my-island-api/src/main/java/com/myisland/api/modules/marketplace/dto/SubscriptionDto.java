@@ -10,7 +10,9 @@ public record SubscriptionDto(
         boolean cancelAtPeriodEnd,
         boolean hasActiveSubscription,
         boolean hasLapsedSubscription,
-        boolean needsSubscription
+        boolean needsSubscription,
+        boolean isTrialing,
+        Integer trialDaysRemaining
 ) {
     public static SubscriptionDto from(Supplier supplier) {
         return new SubscriptionDto(
@@ -19,7 +21,9 @@ public record SubscriptionDto(
                 supplier.isSubscriptionCancelAtPeriodEnd(),
                 supplier.hasActiveSubscription(),
                 supplier.hasLapsedSubscription(),
-                supplier.needsSubscription()
+                supplier.needsSubscription(),
+                supplier.isTrialing(),
+                supplier.getTrialDaysRemaining()
         );
     }
 }

@@ -1,4 +1,4 @@
-export type SubscriptionStatus = 'NONE' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'UNPAID';
+export type SubscriptionStatus = 'NONE' | 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'UNPAID';
 
 export interface SubscriptionDto {
   status: SubscriptionStatus;
@@ -7,6 +7,8 @@ export interface SubscriptionDto {
   hasActiveSubscription: boolean;
   hasLapsedSubscription: boolean;
   needsSubscription: boolean;
+  isTrialing: boolean;
+  trialDaysRemaining: number | null;
 }
 
 export interface CreateCheckoutSessionResponse {

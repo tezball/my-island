@@ -21,6 +21,8 @@ const defaultSubscription: SubscriptionDto = {
   hasActiveSubscription: false,
   hasLapsedSubscription: false,
   needsSubscription: true,
+  isTrialing: false,
+  trialDaysRemaining: null,
 };
 
 const OwnerSubscriptionContext = createContext<OwnerSubscriptionContextType | undefined>(undefined);

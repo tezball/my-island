@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CreditCard } from 'lucide-react';
+import { AlertTriangle, Clock, CreditCard } from 'lucide-react';
 import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 
 export const OwnerSubscriptionBanner: React.FC = () => {
@@ -7,6 +7,30 @@ export const OwnerSubscriptionBanner: React.FC = () => {
 
   if (isLoading || !subscription) {
     return null;
+  }
+
+  // Show trial banner
+  if (subscription.isTrialing) {
+    const days = subscription.trialDaysRemaining ?? 0;
+    return (
+      <div className="bg-blue-50 border-blue-200 border-b px-4 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Clock className="w-5 h-5 text-blue-500 flex-shrink-0" />
+            <p className="text-blue-800 text-sm font-medium">
+              You have {days} {days === 1 ? 'day' : 'days'} left in your free trial. Subscribe to keep access.
+            </p>
+          </div>
+          <button
+            onClick={redirectToCheckout}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 whitespace-nowrap transition-colors"
+          >
+            <CreditCard className="w-4 h-4" />
+            Subscribe Now
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // Show nothing for active subscriptions

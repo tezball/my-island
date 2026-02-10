@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,4 +39,6 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
 
     @Query("SELECT o FROM Owner o JOIN FETCH o.user WHERE o.weeklySummaryReports = true")
     List<Owner> findByWeeklySummaryReportsTrue();
+
+    List<Owner> findBySubscriptionStatusAndTrialEndsAtBefore(Owner.SubscriptionStatus status, Instant now);
 }
