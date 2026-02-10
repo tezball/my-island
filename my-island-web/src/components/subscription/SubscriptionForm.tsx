@@ -325,6 +325,7 @@ const PaymentForm: React.FC<{
                 <div className="p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800">
                     <CardElement
                         options={{
+                            hidePostalCode: true,
                             style: {
                                 base: {
                                     fontSize: '16px',

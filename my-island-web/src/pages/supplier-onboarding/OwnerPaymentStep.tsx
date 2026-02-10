@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, Shield, Check } from 'lucide-react';
+import { Clock, CreditCard, Check, ArrowRight } from 'lucide-react';
 import { ownerSubscriptionApi } from '../../services/subscriptionApi';
 import { SubscriptionFormModal } from '../../components/subscription/SubscriptionForm';
 
@@ -14,110 +14,79 @@ export const OwnerPaymentStep: React.FC<OwnerPaymentStepProps> = ({ onBack }) =>
 
   return (
     <div className="flex flex-col h-full">
-      <div className="mb-6">
+      <div className="mb-6 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
+          <Check className="w-7 h-7 text-green-600 dark:text-green-400" />
+        </div>
         <h1 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">
-          Activate your subscription
+          Your property is live!
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Start hosting campers for just €15/month
+          Choose how you'd like to get started
         </p>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto no-scrollbar pb-4">
-        {/* Pricing Card */}
-        <div className="bg-gradient-to-br from-primary to-emerald-600 rounded-xl p-6 text-white">
-          <div className="flex items-baseline gap-1 mb-2">
-            <span className="text-4xl font-bold">€15</span>
-            <span className="text-xl">/month</span>
+      <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar pb-4">
+        {/* Option 1: Free Trial (Recommended) */}
+        <button
+          onClick={() => navigate('/owner')}
+          className="w-full text-left bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-5 hover:border-blue-400 dark:hover:border-blue-500 transition-colors group"
+        >
+          <div className="flex items-start justify-between">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg shrink-0 mt-0.5">
+                <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-bold text-[#111418] dark:text-white">Start Free Trial</h3>
+                  <span className="text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                    Recommended
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  14-day free trial — Full access to all features, no credit card required.
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-blue-400 dark:text-blue-500 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
           </div>
-          <p className="text-emerald-100 text-sm mb-4">
-            Professional hosting plan
-          </p>
-          <ul className="space-y-2">
-            <li className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4" />
-              Unlimited lot listings
-            </li>
-            <li className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4" />
-              Booking management dashboard
-            </li>
-            <li className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4" />
-              Calendar availability sync
-            </li>
-            <li className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4" />
-              Guest messaging
-            </li>
-            <li className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4" />
-              Performance analytics
-            </li>
-            <li className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4" />
-              Cancel anytime
-            </li>
-          </ul>
-        </div>
+        </button>
 
-        {/* Security Info */}
-        <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-              <Shield className="w-5 h-5 text-green-600 dark:text-green-400" />
+        {/* Option 2: Subscribe Now */}
+        <button
+          onClick={() => setShowPaymentModal(true)}
+          className="w-full text-left bg-white dark:bg-[#1a2632] border-2 border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary dark:hover:border-primary transition-colors group"
+        >
+          <div className="flex items-start justify-between">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg shrink-0 mt-0.5">
+                <CreditCard className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#111418] dark:text-white mb-1">Subscribe Now</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  €15/month — Start your subscription today.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-[#111418] dark:text-white text-sm mb-1">
-                Secure payment
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Powered by Stripe. Your payment details are encrypted and secure. Cancel your subscription anytime from your dashboard.
-              </p>
-            </div>
+            <ArrowRight className="w-5 h-5 text-gray-400 dark:text-gray-500 shrink-0 mt-2 group-hover:translate-x-0.5 transition-transform" />
           </div>
-        </div>
-
-        {/* Payment Methods */}
-        <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <h3 className="font-bold text-[#111418] dark:text-white text-sm mb-3">
-            Accepted payment methods
-          </h3>
-          <div className="flex gap-2">
-            <div className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400">
-              Visa
-            </div>
-            <div className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400">
-              Mastercard
-            </div>
-            <div className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-400">
-              American Express
-            </div>
-          </div>
-        </div>
+        </button>
       </div>
 
       <div className="pt-4 mt-auto space-y-3">
-        <div className="flex gap-3">
-          <button
-            onClick={onBack}
-            className="flex-1 py-4 rounded-xl font-bold text-[#111418] dark:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-          >
-            Back
-          </button>
-          <button
-            onClick={() => setShowPaymentModal(true)}
-            className="flex-1 py-4 rounded-xl font-bold text-white bg-primary hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
-          >
-            <CreditCard className="w-5 h-5" />
-            Continue to Payment
-          </button>
-        </div>
+        <button
+          onClick={onBack}
+          className="w-full py-4 rounded-xl font-bold text-[#111418] dark:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        >
+          Back
+        </button>
         <button
           onClick={() => navigate('/owner')}
           className="w-full text-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors py-2"
         >
-          Skip for now, I'll subscribe later
+          Skip for now
         </button>
       </div>
 

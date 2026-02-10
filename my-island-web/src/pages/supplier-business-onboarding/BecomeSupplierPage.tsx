@@ -10,7 +10,7 @@ import { PaymentStep } from './PaymentStep';
 import { supplierService } from '../../services/supplierService';
 
 const TOTAL_STEPS = 4;
-const SUPPLIER_STEP_LABELS = ['Business Type', 'Details', 'Review', 'Payment'];
+const SUPPLIER_STEP_LABELS = ['Business Type', 'Details', 'Review', 'Get Started'];
 
 const BecomeSupplierContent: React.FC = () => {
     const { user, isAuthenticated, patchUser } = useAuth();
