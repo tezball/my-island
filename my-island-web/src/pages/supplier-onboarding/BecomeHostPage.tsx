@@ -26,10 +26,8 @@ const BecomeHostContent: React.FC = () => {
     const getPropertyType = () => {
         const types = state.selectedAccommodationTypes;
         if (types.length === 0) return 'campsite';
-        if (types.length > 1) return 'mixed';
-        if (types.includes('tent')) return 'campsite';
         if (types.includes('glamping')) return 'glamping';
-        if (types.includes('touring')) return 'caravan-park';
+        if (types.includes('touring')) return 'holiday-park';
         return 'campsite';
     };
 

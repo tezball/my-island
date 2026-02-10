@@ -370,7 +370,8 @@ export const supplierService = {
     async createProperty(params: CreatePropertyParams): Promise<Property> {
         const propertyTypeMap: Record<string, string> = {
             'campsite': 'CAMPSITE', 'glamping': 'GLAMPING',
-            'caravan-park': 'CARAVAN_PARK', 'mixed': 'MIXED',
+            'holiday-park': 'HOLIDAY_PARK', 'farm': 'FARM',
+            'woodland': 'WOODLAND',
         };
 
         const response = await apiRequest<{
