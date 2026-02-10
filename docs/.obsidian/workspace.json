@@ -11,17 +11,14 @@
             "id": "e4a632610aa52cf7",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "Graph for all pages.canvas",
-                "viewState": {
-                  "x": 1598.6078887758622,
-                  "y": 4958.633674147077,
-                  "zoom": -1.6000000000000005
-                }
+                "file": "ROADMAP.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "Graph for all pages"
+              "icon": "lucide-file",
+              "title": "ROADMAP"
             }
           }
         ]
@@ -190,6 +187,8 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "README.md",
+    "Graph for all pages.canvas",
     "Graph for all pages.canvas.tmp.6999.1770677481634",
     "screenshots/supplier-settings.png",
     "screenshots/supplier-profile.png",
@@ -208,7 +207,6 @@
     "node_modules/playwright-core/types/structs.d.ts",
     "node_modules/playwright-core/types/protocol.d.ts",
     "node_modules/playwright-core/types",
-    "node_modules/playwright-core/index.d.ts",
     "node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
     "node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
     "node_modules/playwright-core/README.md",
@@ -222,7 +220,6 @@
     "node_modules/playwright/lib/agents/playwright-test-coverage.prompt.md",
     "supplier-portal-mvp-issues.md",
     "Graph for all pages.md",
-    "Graph for all pages.canvas",
     "ROADMAP.md",
     "MVP_LAUNCH_CHECKLIST.md",
     "DDD_SYNC_PLAN.md",
@@ -230,7 +227,6 @@
     "API_REFERENCE.md",
     "pm-owner-review-findings.md",
     "00-Domain/07-Marketplace/domain_gap_analysis.md",
-    "README.md",
     "00-Domain/Event Storm.canvas",
     "00-Domain/07-Marketplace/USER_STORIES.md",
     "00-Domain/07-Marketplace/NOTES.md",

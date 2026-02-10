@@ -212,6 +212,18 @@ export const HomePage: React.FC = () => {
             </section>
 
             <div className="max-w-7xl mx-auto w-full flex flex-col gap-10 px-4 pb-12">
+                {/* Explore Map CTA */}
+                <button
+                    onClick={() => navigate('/explore')}
+                    className="w-full flex items-center justify-between bg-primary/5 dark:bg-primary/10 hover:bg-primary/10 dark:hover:bg-primary/20 border border-primary/20 rounded-xl px-4 py-3 transition-colors group"
+                >
+                    <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-primary text-xl">map</span>
+                        <span className="text-sm font-semibold text-[#111418] dark:text-white">Explore all of Ireland on the map</span>
+                    </div>
+                    <span className="material-symbols-outlined text-primary text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                </button>
+
                 {/* Browse by property type */}
                 <section>
                     <h3 className="text-xl font-bold text-[#111418] dark:text-white mb-4">Browse by property type</h3>
@@ -413,25 +425,6 @@ export const HomePage: React.FC = () => {
                             ))}
                         </div>
                     )}
-                </section>
-
-                {/* Explore by Region CTA */}
-                <section className="bg-gradient-to-r from-primary to-emerald-600 rounded-2xl p-8 text-white">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div>
-                            <h3 className="text-2xl font-bold mb-2">Explore all of Ireland</h3>
-                            <p className="text-white/80">
-                                From the Wild Atlantic Way to the sunny Southeast, discover unique camping experiences across {counties.length} counties.
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => navigate('/explore')}
-                            className="bg-white text-primary font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap flex items-center gap-2"
-                        >
-                            <span className="material-symbols-outlined text-lg">map</span>
-                            Explore the map
-                        </button>
-                    </div>
                 </section>
 
                 {/* More Counties Grid */}
