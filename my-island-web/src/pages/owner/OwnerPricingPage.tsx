@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 import { ownerService } from '../../services/ownerService';
 import { PricingRuleModal } from '../../components/owner/PricingRuleModal';
+import { SubscriptionGate } from '../../components/owner/SubscriptionGate';
 import type { SeasonalPricingRule, CreateSeasonalPricingRuleRequest } from '../../types/booking';
 
 const LOT_TYPE_LABELS: Record<string, string> = {
@@ -12,6 +14,8 @@ const LOT_TYPE_LABELS: Record<string, string> = {
 };
 
 export const OwnerPricingPage: React.FC = () => {
+    const { subscription } = useOwnerSubscription();
+    const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
     const [rules, setRules] = useState<SeasonalPricingRule[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -89,12 +93,20 @@ export const OwnerPricingPage: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-emerald-600 transition-colors"
+                    disabled={!hasActiveSubscription}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        hasActiveSubscription
+                            ? 'text-white bg-primary hover:bg-emerald-600'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    }`}
+                    title={hasActiveSubscription ? 'Add a pricing rule' : 'Subscribe to manage pricing'}
                 >
+                    {!hasActiveSubscription && <span className="material-symbols-outlined text-sm mr-1 align-middle">lock</span>}
                     Add Rule
                 </button>
             </div>
 
+            <SubscriptionGate>
             {rules.length === 0 ? (
                 <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center">
                     <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-3 block">payments</span>
@@ -148,6 +160,8 @@ export const OwnerPricingPage: React.FC = () => {
                     ))}
                 </div>
             )}
+
+            </SubscriptionGate>
 
             <PricingRuleModal
                 isOpen={showModal}

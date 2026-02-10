@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ownerService } from '../../services/ownerService';
 import type { Booking } from '../../types/booking';
+import { SubscriptionGate } from '../../components/owner/SubscriptionGate';
 import clsx from 'clsx';
 
 export const OwnerTodayPage: React.FC = () => {
@@ -78,83 +79,85 @@ export const OwnerTodayPage: React.FC = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate}</p>
             </div>
 
-            {/* Summary strip */}
-            <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3">
-                    <div className="size-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+            <SubscriptionGate>
+                {/* Summary strip */}
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3">
+                        <div className="size-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-green-600 dark:text-green-400">login</span>
+                        </div>
+                        <div>
+                            <p className="text-2xl font-bold text-[#111418] dark:text-white">{arrivals.length}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Arrivals</p>
+                        </div>
+                    </div>
+                    <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3">
+                        <div className="size-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400">logout</span>
+                        </div>
+                        <div>
+                            <p className="text-2xl font-bold text-[#111418] dark:text-white">{departures.length}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Departures</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Arrivals section */}
+                <section>
+                    <div className="flex items-center gap-2 mb-3">
                         <span className="material-symbols-outlined text-green-600 dark:text-green-400">login</span>
+                        <h2 className="text-lg font-semibold text-[#111418] dark:text-white">Arrivals</h2>
                     </div>
-                    <div>
-                        <p className="text-2xl font-bold text-[#111418] dark:text-white">{arrivals.length}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Arrivals</p>
-                    </div>
-                </div>
-                <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3">
-                    <div className="size-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    {arrivals.length === 0 ? (
+                        <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center">
+                            <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">event_available</span>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">No arrivals today</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {arrivals.map(booking => (
+                                <BookingCard
+                                    key={booking.id}
+                                    booking={booking}
+                                    actionLabel="Check In"
+                                    actionColor="bg-blue-600 hover:bg-blue-700"
+                                    onAction={() => handleCheckIn(booking.id)}
+                                    isLoading={actionLoading === booking.id}
+                                    sourceStyles={sourceStyles}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* Departures section */}
+                <section>
+                    <div className="flex items-center gap-2 mb-3">
                         <span className="material-symbols-outlined text-amber-600 dark:text-amber-400">logout</span>
+                        <h2 className="text-lg font-semibold text-[#111418] dark:text-white">Departures</h2>
                     </div>
-                    <div>
-                        <p className="text-2xl font-bold text-[#111418] dark:text-white">{departures.length}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Departures</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Arrivals section */}
-            <section>
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="material-symbols-outlined text-green-600 dark:text-green-400">login</span>
-                    <h2 className="text-lg font-semibold text-[#111418] dark:text-white">Arrivals</h2>
-                </div>
-                {arrivals.length === 0 ? (
-                    <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center">
-                        <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">event_available</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">No arrivals today</p>
-                    </div>
-                ) : (
-                    <div className="space-y-3">
-                        {arrivals.map(booking => (
-                            <BookingCard
-                                key={booking.id}
-                                booking={booking}
-                                actionLabel="Check In"
-                                actionColor="bg-blue-600 hover:bg-blue-700"
-                                onAction={() => handleCheckIn(booking.id)}
-                                isLoading={actionLoading === booking.id}
-                                sourceStyles={sourceStyles}
-                            />
-                        ))}
-                    </div>
-                )}
-            </section>
-
-            {/* Departures section */}
-            <section>
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="material-symbols-outlined text-amber-600 dark:text-amber-400">logout</span>
-                    <h2 className="text-lg font-semibold text-[#111418] dark:text-white">Departures</h2>
-                </div>
-                {departures.length === 0 ? (
-                    <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center">
-                        <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">event_busy</span>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">No departures today</p>
-                    </div>
-                ) : (
-                    <div className="space-y-3">
-                        {departures.map(booking => (
-                            <BookingCard
-                                key={booking.id}
-                                booking={booking}
-                                actionLabel="Check Out"
-                                actionColor="bg-amber-600 hover:bg-amber-700"
-                                onAction={() => handleCheckOut(booking.id)}
-                                isLoading={actionLoading === booking.id}
-                                sourceStyles={sourceStyles}
-                            />
-                        ))}
-                    </div>
-                )}
-            </section>
+                    {departures.length === 0 ? (
+                        <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center">
+                            <span className="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">event_busy</span>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">No departures today</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {departures.map(booking => (
+                                <BookingCard
+                                    key={booking.id}
+                                    booking={booking}
+                                    actionLabel="Check Out"
+                                    actionColor="bg-amber-600 hover:bg-amber-700"
+                                    onAction={() => handleCheckOut(booking.id)}
+                                    isLoading={actionLoading === booking.id}
+                                    sourceStyles={sourceStyles}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </SubscriptionGate>
         </div>
     );
 };

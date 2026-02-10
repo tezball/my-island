@@ -135,9 +135,6 @@ public class OwnerService {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
 
-        // Require active subscription to create lots
-        requireActiveSubscription(owner);
-
         Set<Amenity> amenities = new HashSet<>();
         if (request.amenityIds() != null && !request.amenityIds().isEmpty()) {
             amenities.addAll(amenityRepository.findAllById(request.amenityIds()));

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 import { ownerService } from '../../services/ownerService';
 import type { Booking, Lot } from '../../types/booking';
 import { ManualBookingModal } from '../../components/owner/ManualBookingModal';
+import { SubscriptionGate } from '../../components/owner/SubscriptionGate';
 import clsx from 'clsx';
 
 export const OwnerBookingsPage: React.FC = () => {
     const { user } = useAuth();
+    const { subscription } = useOwnerSubscription();
+    const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -122,13 +126,20 @@ export const OwnerBookingsPage: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-emerald-600 transition-colors flex items-center gap-1.5"
+                    disabled={!hasActiveSubscription}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
+                        hasActiveSubscription
+                            ? 'text-white bg-primary hover:bg-emerald-600'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    }`}
+                    title={hasActiveSubscription ? 'Create a new booking' : 'Subscribe to create bookings'}
                 >
-                    <span className="material-symbols-outlined text-lg">add</span>
+                    <span className="material-symbols-outlined text-lg">{hasActiveSubscription ? 'add' : 'lock'}</span>
                     Create Booking
                 </button>
             </div>
 
+            <SubscriptionGate>
             {/* Search */}
             <div className="relative">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
@@ -275,6 +286,8 @@ export const OwnerBookingsPage: React.FC = () => {
                     <p className="text-gray-500 dark:text-gray-400">No bookings found</p>
                 </div>
             )}
+
+            </SubscriptionGate>
 
             <ManualBookingModal
                 isOpen={showCreateModal}

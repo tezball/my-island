@@ -345,6 +345,10 @@ public class BookingService {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
 
+        if (!owner.hasActiveSubscription()) {
+            throw new BadRequestException("An active subscription is required to create manual bookings.");
+        }
+
         Lot lot = lotRepository.findById(request.lotId())
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", request.lotId()));
 

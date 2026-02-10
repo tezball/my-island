@@ -220,20 +220,34 @@ export const OwnerDashboardPage: React.FC = () => {
                         <span className="material-symbols-outlined text-lg">add</span>
                         Add New Lot
                     </Link>
-                    <Link
-                        to="/owner/calendar"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
-                    >
-                        <span className="material-symbols-outlined text-lg">calendar_month</span>
-                        View Calendar
-                    </Link>
-                    <Link
-                        to="/owner/bookings"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
-                    >
-                        <span className="material-symbols-outlined text-lg">edit_calendar</span>
-                        Create Booking
-                    </Link>
+                    {hasActiveSubscription ? (
+                        <Link
+                            to="/owner/calendar"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                        >
+                            <span className="material-symbols-outlined text-lg">calendar_month</span>
+                            View Calendar
+                        </Link>
+                    ) : (
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-lg text-sm font-medium cursor-not-allowed opacity-60">
+                            <span className="material-symbols-outlined text-lg">lock</span>
+                            View Calendar
+                        </span>
+                    )}
+                    {hasActiveSubscription ? (
+                        <Link
+                            to="/owner/bookings"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+                        >
+                            <span className="material-symbols-outlined text-lg">edit_calendar</span>
+                            Create Booking
+                        </Link>
+                    ) : (
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 rounded-lg text-sm font-medium cursor-not-allowed opacity-60">
+                            <span className="material-symbols-outlined text-lg">lock</span>
+                            Create Booking
+                        </span>
+                    )}
                     <Link
                         to="/owner/property"
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { reviewService } from '../../services/reviewService';
 import type { Review } from '../../types/review';
 import { StarDisplay } from '../../components/review/StarRating';
+import { SubscriptionGate } from '../../components/owner/SubscriptionGate';
 
 export const OwnerReviewsPage: React.FC = () => {
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -79,6 +80,7 @@ export const OwnerReviewsPage: React.FC = () => {
                 </div>
             </div>
 
+            <SubscriptionGate>
             {reviews.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800">
                     <span className="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-3">rate_review</span>
@@ -151,6 +153,7 @@ export const OwnerReviewsPage: React.FC = () => {
                     ))}
                 </div>
             )}
+            </SubscriptionGate>
         </div>
     );
 };

@@ -39,6 +39,7 @@ import { JournalPage } from './pages/JournalPage';
 import { BecomeHostPage } from './pages/supplier-onboarding';
 import { BecomeSupplierPage } from './pages/supplier-business-onboarding';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
+import { FaqPage } from './pages/FaqPage';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -92,6 +93,7 @@ function App() {
               <Route path="/explore" element={<ExplorePage />} />
               <Route path="/journal" element={<JournalPage />} />
               <Route path="/marketplace/supplier/:id" element={<SupplierDetailsPage />} />
+              <Route path="/faq" element={<FaqPage />} />
             </Routes>
           </Layout>
 

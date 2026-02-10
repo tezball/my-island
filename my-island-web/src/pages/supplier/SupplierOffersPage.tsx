@@ -167,6 +167,7 @@ export const SupplierOffersPage: React.FC = () => {
                             onEdit={() => handleEdit(offer)}
                             onDelete={() => handleDelete(offer.id)}
                             onToggleActive={() => handleToggleActive(offer)}
+                            hasActiveSubscription={hasActiveSubscription}
                         />
                     ))}
                 </div>
@@ -220,7 +221,8 @@ const OfferCard: React.FC<{
     onEdit: () => void;
     onDelete: () => void;
     onToggleActive: () => void;
-}> = ({ offer, onEdit, onDelete, onToggleActive }) => {
+    hasActiveSubscription?: boolean;
+}> = ({ offer, onEdit, onDelete, onToggleActive, hasActiveSubscription = true }) => {
     const navigate = useNavigate();
     const isExpired = new Date(offer.validUntil) < new Date();
     const claimsRemaining = offer.maxClaims ? offer.maxClaims - offer.claimCount : null;
@@ -307,12 +309,12 @@ const OfferCard: React.FC<{
                     <div className="flex items-center gap-1">
                         <button
                             onClick={(e) => handleActionClick(e, onToggleActive)}
-                            disabled={isExpired}
+                            disabled={isExpired || (!offer.active && !hasActiveSubscription)}
                             className="p-2 text-gray-500 hover:text-[#111418] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            title={offer.active ? 'Deactivate' : 'Activate'}
+                            title={!offer.active && !hasActiveSubscription ? 'Subscribe to activate offers' : offer.active ? 'Deactivate' : 'Activate'}
                         >
                             <span className="material-symbols-outlined text-xl">
-                                {offer.active ? 'toggle_off' : 'toggle_on'}
+                                {!offer.active && !hasActiveSubscription ? 'lock' : offer.active ? 'toggle_off' : 'toggle_on'}
                             </span>
                         </button>
                         <button

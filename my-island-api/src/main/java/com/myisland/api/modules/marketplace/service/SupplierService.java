@@ -193,6 +193,9 @@ public class SupplierService {
             offer.setMaxClaims(request.maxClaims());
         }
         if (request.isActive() != null) {
+            if (request.isActive() && !supplier.hasActiveSubscription()) {
+                throw new BadRequestException("An active subscription is required to activate offers.");
+            }
             offer.setActive(request.isActive());
         }
         if (request.imageUrl() != null) {

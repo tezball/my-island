@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 import { ownerService } from '../../services/ownerService';
 import type { Booking, Lot, BlockedPeriod } from '../../types/booking';
 import { BlockDatesModal } from '../../components/owner/BlockDatesModal';
 import { ManualBookingModal } from '../../components/owner/ManualBookingModal';
+import { SubscriptionGate } from '../../components/owner/SubscriptionGate';
 import clsx from 'clsx';
 
 const STATUS_COLORS: Record<string, { dot: string; bg: string; text: string; badge: string }> = {
@@ -63,6 +65,8 @@ function statusLabel(status: string): string {
 
 export const OwnerCalendarPage: React.FC = () => {
     const { user } = useAuth();
+    const { subscription } = useOwnerSubscription();
+    const hasActiveSubscription = subscription?.hasActiveSubscription ?? false;
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [lots, setLots] = useState<Lot[]>([]);
     const [blockedPeriods, setBlockedPeriods] = useState<BlockedPeriod[]>([]);
@@ -281,21 +285,34 @@ export const OwnerCalendarPage: React.FC = () => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setShowCreateBookingModal(true)}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
+                        disabled={!hasActiveSubscription}
+                        className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                            hasActiveSubscription
+                                ? 'bg-primary hover:bg-emerald-600 text-white'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                        }`}
+                        title={hasActiveSubscription ? 'Create a new booking' : 'Subscribe to create bookings'}
                     >
-                        <span className="material-symbols-outlined text-lg">add</span>
+                        <span className="material-symbols-outlined text-lg">{hasActiveSubscription ? 'add' : 'lock'}</span>
                         Create Booking
                     </button>
                     <button
                         onClick={() => setShowBlockModal(true)}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
+                        disabled={!hasActiveSubscription}
+                        className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                            hasActiveSubscription
+                                ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                                : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                        }`}
+                        title={hasActiveSubscription ? 'Block dates' : 'Subscribe to block dates'}
                     >
-                        <span className="material-symbols-outlined text-lg">block</span>
+                        <span className="material-symbols-outlined text-lg">{hasActiveSubscription ? 'block' : 'lock'}</span>
                         Block Dates
                     </button>
                 </div>
             </div>
 
+            <SubscriptionGate>
             {/* Summary Stats - Desktop only */}
             <div className="hidden md:grid md:grid-cols-3 gap-4">
                 <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
@@ -659,6 +676,8 @@ export const OwnerCalendarPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            </SubscriptionGate>
 
             <BlockDatesModal
                 isOpen={showBlockModal}
