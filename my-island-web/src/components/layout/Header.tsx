@@ -98,14 +98,6 @@ export const Header: React.FC = () => {
                             </div>
                         </Link>
                         <div className="flex items-center justify-end gap-3">
-                            {!user.isSupplier && !user.isOwner && !user.isStaff && (
-                                <Link
-                                    to="/become-a-host"
-                                    className="hidden md:inline-flex items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800 px-4 py-2 text-sm font-bold text-[#111418] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mr-2"
-                                >
-                                    Become a Host
-                                </Link>
-                            )}
                             {/* Notification Bell */}
                             <div className="relative" ref={dropdownRef}>
                                 <button

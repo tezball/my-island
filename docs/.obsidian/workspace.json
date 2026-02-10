@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "STRIPE_AUDIT.md",
+                "file": "ROADMAP.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STRIPE_AUDIT"
+              "title": "ROADMAP"
             }
           }
         ]
@@ -187,6 +187,9 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "STRIPE_AUDIT.md",
+    "ROADMAP.md.tmp.129909.1770749373795",
+    "ROADMAP.md.tmp.129909.1770749366981",
     "00-Domain/DOMAIN_MODEL.md.tmp.129909.1770744496337",
     "00-Domain/DOMAIN_MODEL.md.tmp.129909.1770744488778",
     "00-Domain/DOMAIN_MODEL.md.tmp.129909.1770744481993",
@@ -195,11 +198,7 @@
     "00-Domain/DOMAIN_MODEL.md.tmp.129909.1770744460568",
     "STRIPE_AUDIT.md.tmp.129909.1770742912688",
     "STRIPE_AUDIT.md.tmp.129909.1770742911801",
-    "STRIPE_AUDIT.md.tmp.129909.1770742904655",
-    "STRIPE_AUDIT.md.tmp.129909.1770742903166",
-    "STRIPE_AUDIT.md.tmp.129909.1770742901633",
     "00-Domain/DOMAIN_MODEL.md",
-    "STRIPE_AUDIT.md",
     "ROADMAP.md",
     "README.md",
     "Graph for all pages.canvas",

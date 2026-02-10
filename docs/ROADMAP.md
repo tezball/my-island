@@ -12,7 +12,7 @@ These are the remaining features needed before launch. Items are ordered by prio
 | 2 | **Automated pre-arrival email** | TODO | Confirmation + directions sent to guests after booking |
 | 3 | **Lot status lifecycle** | TODO | Available → Booked → Checked-in → Checked-out → Cleaning → Available, visible on calendar/lot grid |
 | 4 | **Booking modifications** | TODO | Change dates or move guest to different lot without cancel/rebook |
-| 5 | **Staff accounts with roles** | TODO | Invite team with role-based permissions: Manager, Receptionist, Groundskeeper |
+| 5 | **Staff accounts with roles** | DONE | Preset roles (Manager, Receptionist, Groundskeeper, Viewer, Associate, Redeemer) with per-section ACL |
 
 ### Should Have (Post-Launch Priority)
 
@@ -67,3 +67,7 @@ For reference, these features are implemented and working:
 | Image upload system (lots, offers, suppliers) | Media |
 | Supplier marketplace + offer management | Marketplace |
 | Explore map | Discovery |
+| Staff accounts with preset roles | Staff & Permissions |
+| Role-based sidebar/page ACL (owner + supplier) | Staff & Permissions |
+| Staff invite with role selector | Staff & Permissions |
+| Inline role editing on staff management page | Staff & Permissions |
