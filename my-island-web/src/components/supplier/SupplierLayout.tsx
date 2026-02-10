@@ -12,6 +12,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/supplier/redeem': 'Redeem Voucher',
     '/supplier/reviews': 'Reviews',
     '/supplier/profile': 'Business Profile',
+    '/supplier/staff': 'Staff',
     '/supplier/settings': 'Settings',
 };
 
@@ -70,6 +71,9 @@ const SupplierLayoutContent: React.FC = () => {
                     <SupplierNavLink to="/supplier/redeem" icon="qr_code_scanner" label="Redeem Voucher" />
                     <SupplierNavLink to="/supplier/reviews" icon="rate_review" label="Reviews" />
                     <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />
+                    {user?.isSupplier && (
+                        <SupplierNavLink to="/supplier/staff" icon="group" label="Staff" />
+                    )}
                     <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />
 
                     <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">

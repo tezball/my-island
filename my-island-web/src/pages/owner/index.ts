@@ -7,3 +7,4 @@ export { OwnerSettingsPage } from './OwnerSettingsPage';
 export { OwnerPricingPage } from './OwnerPricingPage';
 export { OwnerTodayPage } from './OwnerTodayPage';
 export { OwnerReviewsPage } from './OwnerReviewsPage';
+export { OwnerStaffPage } from './OwnerStaffPage';

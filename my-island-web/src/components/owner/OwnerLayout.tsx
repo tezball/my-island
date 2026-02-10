@@ -14,6 +14,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/owner/reviews': 'Reviews',
     '/owner/property': 'Property Details',
     '/owner/pricing': 'Pricing',
+    '/owner/staff': 'Staff',
     '/owner/settings': 'Settings',
 };
 
@@ -68,6 +69,9 @@ const OwnerLayoutContent: React.FC = () => {
                     <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />
                     <OwnerNavLink to="/owner/reviews" icon="rate_review" label="Reviews" />
                     <OwnerNavLink to="/owner/property" icon="home" label="Property Details" />
+                    {user?.isOwner && (
+                        <OwnerNavLink to="/owner/staff" icon="group" label="Staff" />
+                    )}
                     <OwnerNavLink to="/owner/settings" icon="settings" label="Settings" />
                 </div>
 

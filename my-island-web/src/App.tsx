@@ -13,7 +13,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SavedProvider } from './context/SavedContext';
 import { OwnerGuard } from './components/auth/OwnerGuard';
 import { OwnerLayout } from './components/owner/OwnerLayout';
-import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage } from './pages/owner';
+import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage } from './pages/owner';
 import { SupplierGuard } from './components/auth/SupplierGuard';
 import { SupplierLayout } from './components/supplier/SupplierLayout';
 import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
@@ -23,6 +23,7 @@ import { SupplierRedeemPage } from './pages/supplier/SupplierRedeemPage';
 import { SupplierReviewsPage } from './pages/supplier/SupplierReviewsPage';
 import { SupplierProfilePage } from './pages/supplier/SupplierProfilePage';
 import { SupplierSettingsPage } from './pages/supplier/SupplierSettingsPage';
+import { SupplierStaffPage } from './pages/supplier/SupplierStaffPage';
 import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
 import { SupplierDetailsPage } from './pages/SupplierDetailsPage';
 import { TripsPage } from './pages/TripsPage';
@@ -107,6 +108,7 @@ function App() {
                 <Route path="reviews" element={<OwnerReviewsPage />} />
                 <Route path="property" element={<OwnerPropertyPage />} />
                 <Route path="pricing" element={<OwnerPricingPage />} />
+                <Route path="staff" element={<OwnerStaffPage />} />
                 <Route path="settings" element={<OwnerSettingsPage />} />
               </Route>
             </Route>
@@ -122,6 +124,7 @@ function App() {
                 <Route path="redeem" element={<SupplierRedeemPage />} />
                 <Route path="reviews" element={<SupplierReviewsPage />} />
                 <Route path="profile" element={<SupplierProfilePage />} />
+                <Route path="staff" element={<SupplierStaffPage />} />
                 <Route path="settings" element={<SupplierSettingsPage />} />
               </Route>
             </Route>

@@ -7,12 +7,8 @@ import { ownerSubscriptionApi } from '../../services/subscriptionApi';
 import type { OwnerPreferences } from '../../services/ownerPreferencesService';
 import { SubscriptionFormModal } from '../../components/subscription/SubscriptionForm';
 import { ConnectOnboarding } from '../../components/owner/ConnectOnboarding';
-import { StaffManagement } from '../../components/staff/StaffManagement';
-import { ownerStaffService } from '../../services/staffService';
-import { useAuth } from '../../context/AuthContext';
 
 export const OwnerSettingsPage: React.FC = () => {
-    const { user } = useAuth();
     const [preferences, setPreferences] = useState<OwnerPreferences | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -124,15 +120,6 @@ export const OwnerSettingsPage: React.FC = () => {
                         />
                     </div>
                 </div>
-
-                {/* Staff Members — only visible to actual owners, not staff */}
-                {user?.isOwner && (
-                    <StaffManagement
-                        listStaff={ownerStaffService.list}
-                        addStaff={ownerStaffService.add}
-                        removeStaff={ownerStaffService.remove}
-                    />
-                )}
 
                 {/* Payout Settings Section */}
                 <ConnectOnboarding userType="owner" />
