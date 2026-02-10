@@ -19,6 +19,7 @@ public record AuthResponse(
             String role,
             boolean isOwner,
             boolean isSupplier,
+            boolean isStaff,
             boolean emailVerified
     ) {
         public static UserDto from(User user) {
@@ -29,6 +30,7 @@ public record AuthResponse(
                     user.getRole().name(),
                     user.isOwner(),
                     user.isSupplier(),
+                    user.isStaff(),
                     user.isEmailVerified()
             );
         }

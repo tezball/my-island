@@ -36,11 +36,12 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final EmailNotificationService emailService;
+    private final StaffService staffService;
 
     public AuthService(UserRepository userRepository, OwnerRepository ownerRepository,
                        SupplierRepository supplierRepository, PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager, JwtProvider jwtProvider,
-                       EmailNotificationService emailService) {
+                       EmailNotificationService emailService, StaffService staffService) {
         this.userRepository = userRepository;
         this.ownerRepository = ownerRepository;
         this.supplierRepository = supplierRepository;
@@ -48,6 +49,7 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
         this.emailService = emailService;
+        this.staffService = staffService;
     }
 
     @Transactional
@@ -65,6 +67,11 @@ public class AuthService {
 
         user = userRepository.save(user);
         log.info("New user registered: {}", user.getEmail());
+
+        // Activate any pending staff invitations for this email
+        staffService.activateStaffOnSignup(user);
+        // Re-read user in case staff activation changed flags
+        user = userRepository.findById(user.getId()).orElse(user);
 
         sendEmailVerification(user);
 

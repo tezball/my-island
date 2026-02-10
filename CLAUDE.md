@@ -87,7 +87,7 @@ my-island-api/src/main/java/com/myisland/api/
 │   ├── events/            # Application events, Kafka events
 │   └── exceptions/        # Global exception handler
 └── modules/
-    ├── identity/          # User, Auth, JWT endpoints
+    ├── identity/          # User, Auth, Staff, JWT endpoints
     ├── accommodation/     # Owner, Lot, Amenity
     ├── booking/           # Booking entity and service
     └── marketplace/       # Supplier, Offer, Claim
@@ -139,7 +139,7 @@ All passwords are `password`.
 | farmshop@greenacres.ie | Supplier |
 | family@example.com | Guest |
 
-**Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner` and `isSupplier` flags.
+**Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner` and `isSupplier` flags. Staff users (`isStaff=true`) gain access to the portals of the Owner/Supplier who invited them.
 
 ## Database
 
@@ -172,3 +172,5 @@ Key endpoints:
 - `POST /api/bookings` - Create booking
 - `GET /api/marketplace/offers` - Browse offers
 - `POST /api/supplier/redeem/{code}` - Redeem voucher
+- `GET/POST/DELETE /api/owner/staff` - Manage owner staff members
+- `GET/POST/DELETE /api/supplier/staff` - Manage supplier staff members

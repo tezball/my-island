@@ -5,8 +5,12 @@ import { supplierService } from '../../services/supplierService';
 import { supplierSubscriptionApi } from '../../services/subscriptionApi';
 import { SubscriptionFormModal } from '../../components/subscription/SubscriptionForm';
 import { ConnectOnboarding } from '../../components/owner/ConnectOnboarding';
+import { StaffManagement } from '../../components/staff/StaffManagement';
+import { supplierStaffService } from '../../services/staffService';
+import { useAuth } from '../../context/AuthContext';
 
 export const SupplierSettingsPage: React.FC = () => {
+    const { user } = useAuth();
     const [settings, setSettings] = useState({
         emailNotifications: true,
         newClaimAlerts: true,
@@ -105,6 +109,18 @@ export const SupplierSettingsPage: React.FC = () => {
 
             {/* Payout Settings Section */}
             <ConnectOnboarding userType="supplier" />
+
+            {/* Staff Members — only visible to actual suppliers, not staff */}
+            {user?.isSupplier && (
+                <div className="mb-6">
+                    <StaffManagement
+                        listStaff={supplierStaffService.list}
+                        addStaff={supplierStaffService.add}
+                        removeStaff={supplierStaffService.remove}
+                        accentColor="lime"
+                    />
+                </div>
+            )}
 
             {/* Account Section */}
             <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">

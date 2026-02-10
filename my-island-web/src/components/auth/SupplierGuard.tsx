@@ -13,7 +13,7 @@ export const SupplierGuard: React.FC = () => {
         return <Navigate to="/signin" replace />;
     }
 
-    if (!user.isSupplier) {
+    if (!user.isSupplier && !user.isStaff) {
         return <Navigate to="/" replace />;
     }
 

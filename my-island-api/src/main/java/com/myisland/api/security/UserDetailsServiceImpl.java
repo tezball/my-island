@@ -34,6 +34,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user.isSupplier()) {
             authorities.add(new SimpleGrantedAuthority("ROLE_SUPPLIER"));
         }
+        if (user.isStaff()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_STAFF"));
+        }
 
         return new CustomUserDetails(
                 user.getId(),

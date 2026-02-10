@@ -28,6 +28,9 @@ public class User extends BaseEntity {
     @Column(name = "is_supplier", nullable = false)
     private boolean isSupplier = false;
 
+    @Column(name = "is_staff", nullable = false)
+    private boolean isStaff = false;
+
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
@@ -44,7 +47,7 @@ public class User extends BaseEntity {
     private LocalDateTime passwordResetTokenExpiry;
 
     public enum UserRole {
-        GUEST, OWNER, SUPPLIER
+        GUEST, OWNER, SUPPLIER, STAFF
     }
 
     public User() {}
@@ -101,6 +104,9 @@ public class User extends BaseEntity {
 
     public boolean isSupplier() { return isSupplier; }
     public void setSupplier(boolean supplier) { isSupplier = supplier; }
+
+    public boolean isStaff() { return isStaff; }
+    public void setStaff(boolean staff) { isStaff = staff; }
 
     public boolean isEmailVerified() { return emailVerified; }
     public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }

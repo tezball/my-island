@@ -73,11 +73,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/discovery/pois").permitAll()
                         .requestMatchers(HttpMethod.GET, "/discovery/pois/**").permitAll()
 
-                        // Owner endpoints
-                        .requestMatchers("/owner/**").hasRole("OWNER")
+                        // Owner endpoints (accessible by owners and staff)
+                        .requestMatchers("/owner/**").hasAnyRole("OWNER", "STAFF")
 
-                        // Supplier endpoints
-                        .requestMatchers("/supplier/**").hasRole("SUPPLIER")
+                        // Supplier endpoints (accessible by suppliers and staff)
+                        .requestMatchers("/supplier/**").hasAnyRole("SUPPLIER", "STAFF")
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated())

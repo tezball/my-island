@@ -75,7 +75,7 @@ export const ProfilePage: React.FC = () => {
                 </Link>
 
                 <div className="flex flex-col gap-2">
-                    {user?.isOwner && (
+                    {(user?.isOwner || user?.isStaff) && (
                         <Link
                             to="/owner"
                             className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-blue-200 dark:border-blue-900/50 mb-2"
@@ -86,13 +86,15 @@ export const ProfilePage: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-[#111418] dark:text-white text-base">Owner Portal</h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Manage your property & bookings</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {user?.isOwner ? 'Manage your property & bookings' : 'Staff access'}
+                                    </p>
                                 </div>
                             </div>
                             <span className="material-symbols-outlined text-gray-400">chevron_right</span>
                         </Link>
                     )}
-                    {user?.isSupplier && (
+                    {(user?.isSupplier || user?.isStaff) && (
                         <Link
                             to="/supplier"
                             className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-purple-200 dark:border-purple-900/50 mb-2"
@@ -103,7 +105,9 @@ export const ProfilePage: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-[#111418] dark:text-white text-base">Supplier Portal</h3>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">Manage offers & business</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {user?.isSupplier ? 'Manage offers & business' : 'Staff access'}
+                                    </p>
                                 </div>
                             </div>
                             <span className="material-symbols-outlined text-gray-400">chevron_right</span>
@@ -136,7 +140,7 @@ export const ProfilePage: React.FC = () => {
                         Log out
                     </button>
 
-                    {(!user?.isOwner || !user?.isSupplier) && (
+                    {!user?.isStaff && (!user?.isOwner || !user?.isSupplier) && (
                         <>
                             <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
                                 <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 px-1">Grow with My Island</h3>

@@ -65,6 +65,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | **Guest** | Registered user. Can book, save favorites, receive notifications, and write reviews. |
 | **Owner** | Registered user with `isOwner=true`. Manages campsites, lots, bookings, and responds to reviews. Requires subscription to receive bookings and access analytics. Can set up Stripe Connect to receive booking payments. |
 | **Supplier** | Registered user with `isSupplier=true`. Creates and manages promotional offers. Requires subscription to create offers. Can set up Stripe Connect to receive offer redemption payments. |
+| **Staff** | Registered user with `isStaff=true`. Granted access to Owner and/or Supplier portals via staff membership. Full portal access (ACL deferred). |
 
 ---
 
@@ -310,6 +311,7 @@ Booking (Root)
 
 ```
 User (Root)
+├── StaffMember[] (Entity)                 — Staff memberships for Owner/Supplier portals
 ├── LinkedAccount[] (Entity)               — NOT YET BUILT
 ├── NotificationPreferences (Value Object) — NOT YET BUILT (Owner has partial prefs)
 └── Favorite[] (Entity)                    — Frontend-only via SavedContext/localStorage
@@ -326,9 +328,10 @@ User (Root)
 | email | String | Login email (unique) |
 | passwordHash | String | Encrypted password |
 | name | String | Display name |
-| role | UserRole | Primary role (GUEST, OWNER, SUPPLIER) |
+| role | UserRole | Primary role (GUEST, OWNER, SUPPLIER, STAFF) |
 | isOwner | Boolean | Has campsite management access |
 | isSupplier | Boolean | Has supplier dashboard access |
+| isStaff | Boolean | Has staff access via StaffMember membership |
 | emailVerified | Boolean | Email verification status |
 | emailVerificationToken | String | Token for email verification |
 | emailVerificationTokenExpiry | DateTime | Token expiry |
@@ -338,6 +341,21 @@ User (Root)
 | updatedAt | Timestamp | Last update |
 
 > **Not in current implementation**: avatar (uses UI Avatars service), phone, bio, NotificationPreferences on User entity (Owner entity has partial preference fields)
+
+**StaffMember**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| email | String | Whitelisted email (always set) |
+| ownerId | Long | Reference to Owner (nullable) |
+| supplierId | Long | Reference to Supplier (nullable) |
+| userId | Long | Reference to User (null if not yet signed up) |
+| status | StaffStatus | INVITED (pending signup) or ACTIVE (linked) |
+| createdAt | Timestamp | When invitation was created |
+| updatedAt | Timestamp | Last update |
+
+> At least one of `ownerId` or `supplierId` must be set. When a user signs up with a matching email, the membership is auto-activated and `isStaff` is set on the User.
 
 **LinkedAccount** — *Not Yet Built*
 
@@ -677,6 +695,8 @@ SupportTicket (Root)
 1. **Unique Email**: No two users can share the same email
 2. **Role Independence**: A user can be both Owner and Supplier simultaneously
 3. **Linked Account Constraint**: One linked account per provider per user *(requires LinkedAccount entity)*
+4. **Staff Auto-Activation**: When a user signs up, any pending StaffMember invitations matching their email are auto-activated
+5. **Staff Flag Lifecycle**: `isStaff` is set to true when any membership is activated, set to false when all memberships are removed
 
 ### Review Rules *(requires Review module)*
 
@@ -741,6 +761,7 @@ SupportTicket (Root)
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ User                                                                        │
 │   │                                                                         │
+│   ├──── (0..*) StaffMember ── (0..1) Owner / (0..1) Supplier               │
 │   ├──── (0..*) LinkedAccount          — NOT YET BUILT                       │
 │   ├──── (0..*) Favorite               — Frontend-only (localStorage)        │
 │   └──── (0..*) Notification           — NOT YET BUILT                       │

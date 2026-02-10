@@ -13,7 +13,7 @@ export const OwnerGuard: React.FC = () => {
         return <Navigate to="/signin" replace />;
     }
 
-    if (!user.isOwner) {
+    if (!user.isOwner && !user.isStaff) {
         return <Navigate to="/" replace />;
     }
 

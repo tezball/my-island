@@ -5,5 +5,6 @@ export interface User {
     avatarUrl?: string;
     isOwner?: boolean;
     isSupplier?: boolean;
+    isStaff?: boolean;
     emailVerified?: boolean;
 }

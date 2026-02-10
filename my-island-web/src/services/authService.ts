@@ -22,6 +22,7 @@ interface AuthApiResponse {
         role: string;
         isOwner: boolean;
         isSupplier: boolean;
+        isStaff: boolean;
         emailVerified: boolean;
     };
 }
@@ -34,6 +35,7 @@ function transformUser(apiUser: AuthApiResponse['user']): User {
         avatarUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(apiUser.name)}&background=059669&color=fff`,
         isOwner: apiUser.isOwner,
         isSupplier: apiUser.isSupplier,
+        isStaff: apiUser.isStaff,
         emailVerified: apiUser.emailVerified,
     };
 }
