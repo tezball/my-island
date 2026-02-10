@@ -65,7 +65,7 @@ class CampsiteControllerTest extends BddTest {
                 .propertyName("Test Campsite")
                 .county("Kerry")
                 .town("Killarney")
-                .propertyType(Owner.PropertyType.CAMPSITE)
+                .propertyType(Owner.PropertyType.TENT)
                 .description("A beautiful test campsite")
                 .build());
 
@@ -112,7 +112,7 @@ class CampsiteControllerTest extends BddTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.propertyName").value("Test Campsite"))
                     .andExpect(jsonPath("$.county").value("Kerry"))
-                    .andExpect(jsonPath("$.propertyType").value("CAMPSITE"));
+                    .andExpect(jsonPath("$.propertyType").value("TENT"));
         }
 
         @Test

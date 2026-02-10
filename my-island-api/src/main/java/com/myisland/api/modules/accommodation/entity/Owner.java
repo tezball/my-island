@@ -131,7 +131,7 @@ public class Owner extends BaseEntity {
     }
 
     public enum PropertyType {
-        CAMPSITE, GLAMPING, HOLIDAY_PARK, FARM, WOODLAND
+        TENT, TOURING, GLAMPING, CABIN, MOBILE_HOME
     }
 
     public Owner() {}

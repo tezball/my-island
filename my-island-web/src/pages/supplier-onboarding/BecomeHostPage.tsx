@@ -25,10 +25,9 @@ const BecomeHostContent: React.FC = () => {
     // Derive property type from selected accommodation types
     const getPropertyType = () => {
         const types = state.selectedAccommodationTypes;
-        if (types.length === 0) return 'campsite';
-        if (types.includes('glamping')) return 'glamping';
-        if (types.includes('touring')) return 'holiday-park';
-        return 'campsite';
+        if (types.length === 0) return 'tent';
+        // Use the first selected type as the property type
+        return types[0];
     };
 
     const handleCreateProperty = async () => {

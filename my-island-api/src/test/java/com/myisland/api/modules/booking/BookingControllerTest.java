@@ -75,7 +75,7 @@ class BookingControllerTest extends BddTest {
                                 .user(ownerUser)
                                 .propertyName("Booking Test Campsite")
                                 .county("Cork")
-                                .propertyType(Owner.PropertyType.CAMPSITE)
+                                .propertyType(Owner.PropertyType.TENT)
                                 .build());
 
                 // Create lot

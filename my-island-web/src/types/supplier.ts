@@ -1,5 +1,5 @@
 export type OfferCategory = 'FOOD' | 'ACTIVITIES' | 'GEAR' | 'ATTRACTIONS' | 'TRANSPORT';
-export type PropertyType = 'campsite' | 'glamping' | 'holiday-park' | 'farm' | 'woodland';
+export type PropertyType = 'tent' | 'touring' | 'glamping' | 'cabin' | 'mobile-home';
 
 export interface Supplier {
     id: string;

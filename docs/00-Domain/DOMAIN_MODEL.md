@@ -542,6 +542,18 @@ SupportTicket (Root)
 | BLOCKED | Owner has blocked this date |
 | MAINTENANCE | Unavailable for maintenance |
 
+### PropertyType
+
+5 types classifying the primary accommodation style of a property. Matches LotType values:
+
+| Type | Label | Description |
+|------|-------|-------------|
+| TENT | Tent Pitches | Properties primarily offering designated spots for guests to pitch tents |
+| TOURING | Touring Pitches | Properties primarily offering pitches for caravans, campervans, and motorhomes |
+| GLAMPING | Glamping | Properties primarily offering pre-pitched luxury accommodation (bell tents, yurts, pods, safari tents) |
+| CABIN | Cabins & Lodges | Properties primarily offering wooden cabins, lodges, or tiny homes |
+| MOBILE_HOME | Mobile Homes | Properties primarily offering static caravans or mobile homes with full amenities |
+
 ### LotType
 
 5 types covering the Irish camping/glamping market:
@@ -626,6 +638,7 @@ SupportTicket (Root)
 | Status | Description |
 |--------|-------------|
 | NONE | Never subscribed |
+| TRIALING | 14-day free trial active (auto-started on owner/supplier upgrade) |
 | ACTIVE | Subscription is active and current |
 | PAST_DUE | Payment failed, in grace period |
 | CANCELED | Subscription was canceled |
