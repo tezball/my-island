@@ -69,6 +69,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/marketplace/suppliers").permitAll()
                         .requestMatchers(HttpMethod.GET, "/marketplace/suppliers/**").permitAll()
 
+                        // Public discovery endpoints (browse POIs)
+                        .requestMatchers(HttpMethod.GET, "/discovery/pois").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/discovery/pois/**").permitAll()
+
                         // Owner endpoints
                         .requestMatchers("/owner/**").hasRole("OWNER")
 

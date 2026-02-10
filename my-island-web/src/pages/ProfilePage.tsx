@@ -59,6 +59,22 @@ export const ProfilePage: React.FC = () => {
                     <span className="material-symbols-outlined text-primary">chevron_right</span>
                 </Link>
 
+                <Link
+                    to="/journal"
+                    className="bg-gradient-to-r from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20 rounded-xl p-4 flex items-center justify-between mb-4 border border-cyan-200 dark:border-cyan-800/50"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="size-12 rounded-full bg-cyan-500 flex items-center justify-center shrink-0">
+                            <span className="material-symbols-outlined text-white">explore</span>
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-[#111418] dark:text-white text-base">Travel Journal</h3>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">Track your Irish adventures</p>
+                        </div>
+                    </div>
+                    <span className="material-symbols-outlined text-cyan-500">chevron_right</span>
+                </Link>
+
                 {!user?.isOwner && (
                     <Link
                         to="/become-a-host"

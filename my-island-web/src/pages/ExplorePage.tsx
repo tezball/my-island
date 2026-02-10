@@ -1,19 +1,25 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { campsiteService, type CampsiteProfile } from '../services/campsiteService';
 import { supplierService, type Supplier } from '../services/supplierService';
+import { discoveryService } from '../services/discoveryService';
+import { useAuth } from '../context/AuthContext';
 import { ExploreMap } from '../components/explore/ExploreMap';
 import { ExploreFilterPanel } from '../components/explore/ExploreFilterPanel';
 import type { ExploreFilters, MapMarker } from '../types/explore';
-import { campsiteToMarker, supplierToMarker } from '../types/explore';
+import { campsiteToMarker, supplierToMarker, poiToMarker } from '../types/explore';
+import type { Poi, UserPoiVisit, VisitStatus } from '../types/discovery';
 
 export const ExplorePage: React.FC = () => {
     const [searchParams] = useSearchParams();
+    const { user } = useAuth();
     const initialCounty = searchParams.get('county') || '';
     const initialType = searchParams.get('type') || '';
 
     const [campsites, setCampsites] = useState<CampsiteProfile[]>([]);
     const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+    const [pois, setPois] = useState<Poi[]>([]);
+    const [userVisits, setUserVisits] = useState<UserPoiVisit[]>([]);
     const [counties, setCounties] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [filterOpen, setFilterOpen] = useState(false);
@@ -21,8 +27,10 @@ export const ExplorePage: React.FC = () => {
     const [filters, setFilters] = useState<ExploreFilters>({
         showCampsites: true,
         showSuppliers: !initialType, // hide suppliers if a property type filter was passed
+        showPois: true,
         propertyType: initialType,
         supplierCategory: '',
+        poiCategory: '',
         county: initialCounty,
         searchText: '',
     });
@@ -30,14 +38,21 @@ export const ExplorePage: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [campsitesData, countiesData, suppliersData] = await Promise.all([
+                const [campsitesData, countiesData, suppliersData, poisData] = await Promise.all([
                     campsiteService.getAllCampsites(),
                     campsiteService.getCounties(),
                     supplierService.getAllSuppliers().catch(() => []),
+                    discoveryService.getAllPois().catch(() => []),
                 ]);
                 setCampsites(campsitesData);
                 setCounties(countiesData);
                 setSuppliers(suppliersData);
+                setPois(poisData);
+
+                if (user) {
+                    const visits = await discoveryService.getUserVisits().catch(() => []);
+                    setUserVisits(visits);
+                }
             } catch (error) {
                 console.error('Failed to fetch explore data:', error);
             } finally {
@@ -45,6 +60,35 @@ export const ExplorePage: React.FC = () => {
             }
         };
         fetchData();
+    }, [user]);
+
+    const visitMap = useMemo(() => {
+        const map = new Map<string, VisitStatus>();
+        for (const v of userVisits) {
+            map.set(v.poiId, v.status);
+        }
+        return map;
+    }, [userVisits]);
+
+    const handleUpdateVisit = useCallback(async (poiId: string, status: VisitStatus) => {
+        try {
+            const visit = await discoveryService.updateVisit(poiId, status);
+            setUserVisits(prev => {
+                const filtered = prev.filter(v => v.poiId !== poiId);
+                return [...filtered, visit];
+            });
+        } catch (error) {
+            console.error('Failed to update visit:', error);
+        }
+    }, []);
+
+    const handleRemoveVisit = useCallback(async (poiId: string) => {
+        try {
+            await discoveryService.removeVisit(poiId);
+            setUserVisits(prev => prev.filter(v => v.poiId !== poiId));
+        } catch (error) {
+            console.error('Failed to remove visit:', error);
+        }
     }, []);
 
     const markers = useMemo<MapMarker[]>(() => {
@@ -78,8 +122,20 @@ export const ExplorePage: React.FC = () => {
             }
         }
 
+        if (filters.showPois) {
+            for (const p of pois) {
+                if (filters.county && p.county !== filters.county) continue;
+                if (filters.poiCategory && p.category !== filters.poiCategory) continue;
+                if (filters.searchText) {
+                    const q = filters.searchText.toLowerCase();
+                    if (!p.name.toLowerCase().includes(q) && !(p.county || '').toLowerCase().includes(q) && !(p.town || '').toLowerCase().includes(q)) continue;
+                }
+                result.push(poiToMarker(p, visitMap.get(p.id) ?? null));
+            }
+        }
+
         return result;
-    }, [campsites, suppliers, filters]);
+    }, [campsites, suppliers, pois, filters, visitMap]);
 
     const campsiteCount = useMemo(() =>
         markers.filter(m => m.type === 'campsite').length
@@ -87,6 +143,10 @@ export const ExplorePage: React.FC = () => {
 
     const supplierCount = useMemo(() =>
         markers.filter(m => m.type === 'supplier').length
+    , [markers]);
+
+    const poiCount = useMemo(() =>
+        markers.filter(m => m.type === 'poi').length
     , [markers]);
 
     return (
@@ -100,7 +160,12 @@ export const ExplorePage: React.FC = () => {
                 </div>
             ) : (
                 <>
-                    <ExploreMap markers={markers} className="absolute inset-0 z-0" />
+                    <ExploreMap
+                        markers={markers}
+                        className="absolute inset-0 z-0"
+                        onUpdateVisit={handleUpdateVisit}
+                        onRemoveVisit={handleRemoveVisit}
+                    />
                     <ExploreFilterPanel
                         filters={filters}
                         onChange={setFilters}
@@ -109,6 +174,7 @@ export const ExplorePage: React.FC = () => {
                         onToggle={() => setFilterOpen(v => !v)}
                         campsiteCount={campsiteCount}
                         supplierCount={supplierCount}
+                        poiCount={poiCount}
                     />
                     {/* Legend */}
                     <div className="absolute bottom-4 right-4 z-[1000] bg-white dark:bg-[#1a2632] rounded-lg shadow-lg p-3 text-xs flex flex-col gap-1.5 border border-gray-200 dark:border-gray-700">
@@ -119,6 +185,10 @@ export const ExplorePage: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full bg-purple-500" />
                             <span className="text-gray-700 dark:text-gray-300">Suppliers ({supplierCount})</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="w-3 h-3 rounded-full bg-cyan-500" />
+                            <span className="text-gray-700 dark:text-gray-300">POIs ({poiCount})</span>
                         </div>
                     </div>
                 </>

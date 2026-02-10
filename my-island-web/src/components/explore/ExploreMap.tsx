@@ -3,8 +3,10 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import type { MapMarker } from '../../types/explore';
+import type { VisitStatus } from '../../types/discovery';
 import { ExploreMarkerPopup } from './ExploreMarkerPopup';
 import { ExploreSupplierPopup } from './ExploreSupplierPopup';
+import { ExplorePoiPopup } from './ExplorePoiPopup';
 
 // Fix Leaflet default marker icon paths for Vite bundler
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,6 +42,20 @@ const supplierIcon = L.divIcon({
     popupAnchor: [0, -16],
 });
 
+const poiIcon = L.divIcon({
+    html: '<span class="material-symbols-outlined" style="font-size:20px;color:white;">explore</span>',
+    className: 'flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 border-2 border-white shadow-lg',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+});
+
+function getMarkerIcon(marker: MapMarker): L.DivIcon {
+    if (marker.type === 'campsite') return campsiteIcon;
+    if (marker.type === 'supplier') return supplierIcon;
+    return poiIcon;
+}
+
 // Component to fit map bounds when filters change (not on initial load)
 function FitBounds({ markers }: { markers: MapMarker[] }) {
     const map = useMap();
@@ -74,9 +90,11 @@ function FitBounds({ markers }: { markers: MapMarker[] }) {
 interface ExploreMapProps {
     markers: MapMarker[];
     className?: string;
+    onUpdateVisit?: (poiId: string, status: VisitStatus) => void;
+    onRemoveVisit?: (poiId: string) => void;
 }
 
-export const ExploreMap: React.FC<ExploreMapProps> = ({ markers, className }) => {
+export const ExploreMap: React.FC<ExploreMapProps> = ({ markers, className, onUpdateVisit, onRemoveVisit }) => {
     return (
         <MapContainer
             center={IRELAND_CENTER}
@@ -100,13 +118,19 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({ markers, className }) =>
                     <Marker
                         key={`${marker.type}-${marker.id}`}
                         position={[marker.latitude, marker.longitude]}
-                        icon={marker.type === 'campsite' ? campsiteIcon : supplierIcon}
+                        icon={getMarkerIcon(marker)}
                     >
                         <Popup>
                             {marker.type === 'campsite' ? (
                                 <ExploreMarkerPopup marker={marker} />
-                            ) : (
+                            ) : marker.type === 'supplier' ? (
                                 <ExploreSupplierPopup marker={marker} />
+                            ) : (
+                                <ExplorePoiPopup
+                                    marker={marker}
+                                    onUpdateVisit={onUpdateVisit}
+                                    onRemoveVisit={onRemoveVisit}
+                                />
                             )}
                         </Popup>
                     </Marker>

@@ -1,9 +1,10 @@
 import type { CampsiteProfile } from './campsite';
 import type { Supplier, OfferCategory } from './supplier';
+import type { Poi, PoiCategory, PoiDifficulty, VisitStatus } from './discovery';
 
 export interface MapMarker {
     id: string;
-    type: 'campsite' | 'supplier';
+    type: 'campsite' | 'supplier' | 'poi';
     name: string;
     latitude: number;
     longitude: number;
@@ -21,13 +22,22 @@ export interface MapMarker {
     location?: string;
     offerCount?: number;
     logo?: string;
+    // POI-specific
+    poiCategory?: PoiCategory;
+    difficulty?: PoiDifficulty | null;
+    distanceKm?: number | null;
+    description?: string | null;
+    websiteUrl?: string | null;
+    visitStatus?: VisitStatus | null;
 }
 
 export interface ExploreFilters {
     showCampsites: boolean;
     showSuppliers: boolean;
+    showPois: boolean;
     propertyType: string;
     supplierCategory: string;
+    poiCategory: string;
     county: string;
     searchText: string;
 }
@@ -66,5 +76,23 @@ export function supplierToMarker(s: Supplier): MapMarker | null {
         logo: s.logo,
         rating: s.rating,
         reviewCount: s.reviewCount,
+    };
+}
+
+export function poiToMarker(p: Poi, visitStatus?: VisitStatus | null): MapMarker {
+    return {
+        id: p.id,
+        type: 'poi',
+        name: p.name,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        county: p.county || '',
+        town: p.town || '',
+        poiCategory: p.category,
+        difficulty: p.difficulty,
+        distanceKm: p.distanceKm,
+        description: p.description,
+        websiteUrl: p.websiteUrl,
+        visitStatus: visitStatus ?? null,
     };
 }
