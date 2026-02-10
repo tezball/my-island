@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { SubscriptionProvider } from '../../context/SubscriptionContext';
 import { QRScanner } from './QRScanner';
 import { SubscriptionBanner } from './SubscriptionBanner';
+import { useAllStaffPermissions } from '../../hooks/useStaffPermission';
 import clsx from 'clsx';
 
 const PAGE_TITLES: Record<string, string> = {
@@ -20,6 +21,7 @@ const SupplierLayoutContent: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const perms = useAllStaffPermissions('supplier');
     const pageTitle = PAGE_TITLES[location.pathname] || (location.pathname.startsWith('/supplier/offers/') ? 'Offer Details' : 'Supplier Portal');
 
     const handleLogout = async () => {
@@ -66,15 +68,13 @@ const SupplierLayoutContent: React.FC = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    <SupplierNavLink to="/supplier" icon="dashboard" label="Dashboard" end />
-                    <SupplierNavLink to="/supplier/offers" icon="local_offer" label="My Offers" />
-                    <SupplierNavLink to="/supplier/redeem" icon="qr_code_scanner" label="Redeem Voucher" />
-                    <SupplierNavLink to="/supplier/reviews" icon="rate_review" label="Reviews" />
-                    <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />
-                    {user?.isSupplier && (
-                        <SupplierNavLink to="/supplier/staff" icon="group" label="Staff" />
-                    )}
-                    <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />
+                    {perms.dashboard?.canRead !== false && <SupplierNavLink to="/supplier" icon="dashboard" label="Dashboard" end />}
+                    {perms.offers?.canRead !== false && <SupplierNavLink to="/supplier/offers" icon="local_offer" label="My Offers" />}
+                    {perms.redeem?.canRead !== false && <SupplierNavLink to="/supplier/redeem" icon="qr_code_scanner" label="Redeem Voucher" />}
+                    {perms.reviews?.canRead !== false && <SupplierNavLink to="/supplier/reviews" icon="rate_review" label="Reviews" />}
+                    {perms.profile?.canRead !== false && <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />}
+                    {perms.staff?.canRead !== false && <SupplierNavLink to="/supplier/staff" icon="group" label="Staff" />}
+                    {perms.settings?.canRead !== false && <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />}
 
                     <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                         <p className="px-3 text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Browse</p>
@@ -96,7 +96,9 @@ const SupplierLayoutContent: React.FC = () => {
                         ></div>
                         <div className="flex flex-col overflow-hidden">
                             <span className="text-sm font-bold text-[#111418] dark:text-white truncate">{user?.name}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Supplier</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {user?.isSupplier ? 'Supplier' : user?.staffPermissions?.supplier?.role ? `Staff \u00b7 ${user.staffPermissions.supplier.role.charAt(0) + user.staffPermissions.supplier.role.slice(1).toLowerCase()}` : 'Staff'}
+                            </span>
                         </div>
                     </div>
                     <button

@@ -51,8 +51,7 @@ public class AuthController {
     @Operation(summary = "Get current user profile")
     public ResponseEntity<AuthResponse.UserDto> getCurrentUser(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        User user = authService.getCurrentUser(userDetails.getUserId());
-        return ResponseEntity.ok(AuthResponse.UserDto.from(user));
+        return ResponseEntity.ok(authService.getCurrentUserDto(userDetails.getUserId()));
     }
 
     @PostMapping("/forgot-password")

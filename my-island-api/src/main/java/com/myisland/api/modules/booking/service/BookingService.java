@@ -15,6 +15,9 @@ import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.UserRepository;
+import com.myisland.api.modules.identity.service.AccessLevel;
+import com.myisland.api.modules.identity.service.PermissionGroup;
+import com.myisland.api.modules.identity.service.StaffPermissionChecker;
 import com.myisland.api.shared.events.BookingEvent;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
@@ -44,12 +47,13 @@ public class BookingService {
     private final LotBlockedPeriodRepository blockedPeriodRepository;
     private final PricingService pricingService;
     private final OwnerRepository ownerRepository;
+    private final StaffPermissionChecker permissionChecker;
 
     public BookingService(BookingRepository bookingRepository, LotRepository lotRepository,
             UserRepository userRepository, ApplicationEventPublisher eventPublisher,
             BookingPaymentService bookingPaymentService, StripeProperties stripeProperties,
             LotBlockedPeriodRepository blockedPeriodRepository, PricingService pricingService,
-            OwnerRepository ownerRepository) {
+            OwnerRepository ownerRepository, StaffPermissionChecker permissionChecker) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
@@ -59,6 +63,7 @@ public class BookingService {
         this.blockedPeriodRepository = blockedPeriodRepository;
         this.pricingService = pricingService;
         this.ownerRepository = ownerRepository;
+        this.permissionChecker = permissionChecker;
     }
 
     @Transactional(readOnly = true)
@@ -169,10 +174,8 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
-        // Verify the user is the owner of the lot
-        if (!booking.getLot().getOwner().getUser().getId().equals(ownerId)) {
-            throw new BadRequestException("You are not authorized to confirm this booking");
-        }
+        // Verify the user has BOOKINGS FULL permission (owner or staff)
+        permissionChecker.checkOwnerPermission(ownerId, booking.getLot().getOwner(), PermissionGroup.BOOKINGS, AccessLevel.FULL);
 
         if (booking.getStatus() != Booking.BookingStatus.PENDING) {
             throw new BadRequestException("Only pending bookings can be confirmed");
@@ -208,11 +211,17 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
-        // Allow cancellation by either the guest who made the booking OR the lot owner
+        // Allow cancellation by the guest, the owner, or staff with BOOKINGS FULL permission
         boolean isGuest = booking.getUser() != null && booking.getUser().getId().equals(userId);
-        boolean isOwner = booking.getLot().getOwner().getUser().getId().equals(userId);
+        boolean isOwnerOrStaff = false;
+        try {
+            permissionChecker.checkOwnerPermission(userId, booking.getLot().getOwner(), PermissionGroup.BOOKINGS, AccessLevel.FULL);
+            isOwnerOrStaff = true;
+        } catch (Exception ignored) {
+            // Not owner/staff — that's ok if they're the guest
+        }
 
-        if (!isGuest && !isOwner) {
+        if (!isGuest && !isOwnerOrStaff) {
             throw new BadRequestException("You are not authorized to cancel this booking");
         }
 
@@ -240,7 +249,7 @@ public class BookingService {
 
         booking.setStatus(Booking.BookingStatus.CANCELLED);
         booking = bookingRepository.save(booking);
-        log.info("Cancelled booking: {} by user: {} (isOwner: {})", bookingId, userId, isOwner);
+        log.info("Cancelled booking: {} by user: {} (isOwnerOrStaff: {})", bookingId, userId, isOwnerOrStaff);
 
         eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CANCELLED));
 
@@ -287,9 +296,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
-        if (!booking.getLot().getOwner().getUser().getId().equals(ownerId)) {
-            throw new BadRequestException("You are not authorized to check in this booking");
-        }
+        permissionChecker.checkOwnerPermission(ownerId, booking.getLot().getOwner(), PermissionGroup.BOOKINGS, AccessLevel.FULL);
 
         if (booking.getStatus() != Booking.BookingStatus.CONFIRMED) {
             throw new BadRequestException("Only confirmed bookings can be checked in");
@@ -309,9 +316,7 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
-        if (!booking.getLot().getOwner().getUser().getId().equals(ownerId)) {
-            throw new BadRequestException("You are not authorized to check out this booking");
-        }
+        permissionChecker.checkOwnerPermission(ownerId, booking.getLot().getOwner(), PermissionGroup.BOOKINGS, AccessLevel.FULL);
 
         if (booking.getStatus() != Booking.BookingStatus.CHECKED_IN) {
             throw new BadRequestException("Only checked-in bookings can be checked out");
@@ -342,8 +347,7 @@ public class BookingService {
 
     @Transactional
     public BookingDto createManualBooking(Long userId, CreateManualBookingRequest request) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.BOOKINGS, AccessLevel.FULL);
 
         if (!owner.hasActiveSubscription()) {
             throw new BadRequestException("An active subscription is required to create manual bookings.");

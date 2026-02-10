@@ -4,6 +4,7 @@ import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.identity.dto.StaffMemberDto;
 import com.myisland.api.modules.identity.entity.StaffMember;
+import com.myisland.api.modules.identity.entity.StaffRole;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.StaffMemberRepository;
 import com.myisland.api.modules.identity.repository.UserRepository;
@@ -40,7 +41,7 @@ public class StaffService {
     }
 
     @Transactional
-    public StaffMemberDto addStaffForOwner(Long userId, String email) {
+    public StaffMemberDto addStaffForOwner(Long userId, String email, String roleName) {
         Owner owner = ownerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
 
@@ -48,9 +49,12 @@ public class StaffService {
             throw new BadRequestException("Staff member with this email already exists");
         }
 
+        StaffRole role = parseRole(roleName);
+
         StaffMember staffMember = new StaffMember();
         staffMember.setEmail(email);
         staffMember.setOwner(owner);
+        staffMember.setRole(role);
 
         // Check if user already exists
         Optional<User> existingUser = userRepository.findByEmail(email);
@@ -63,12 +67,12 @@ public class StaffService {
         }
 
         staffMember = staffMemberRepository.save(staffMember);
-        log.info("Added staff member {} for owner {}", email, owner.getId());
+        log.info("Added staff member {} ({}) for owner {}", email, role, owner.getId());
         return StaffMemberDto.from(staffMember);
     }
 
     @Transactional
-    public StaffMemberDto addStaffForSupplier(Long userId, String email) {
+    public StaffMemberDto addStaffForSupplier(Long userId, String email, String roleName) {
         Supplier supplier = supplierRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
 
@@ -76,9 +80,12 @@ public class StaffService {
             throw new BadRequestException("Staff member with this email already exists");
         }
 
+        StaffRole role = parseRole(roleName);
+
         StaffMember staffMember = new StaffMember();
         staffMember.setEmail(email);
         staffMember.setSupplier(supplier);
+        staffMember.setRole(role);
 
         // Check if user already exists
         Optional<User> existingUser = userRepository.findByEmail(email);
@@ -91,7 +98,45 @@ public class StaffService {
         }
 
         staffMember = staffMemberRepository.save(staffMember);
-        log.info("Added staff member {} for supplier {}", email, supplier.getId());
+        log.info("Added staff member {} ({}) for supplier {}", email, role, supplier.getId());
+        return StaffMemberDto.from(staffMember);
+    }
+
+    @Transactional
+    public StaffMemberDto updateStaffRoleForOwner(Long userId, Long staffMemberId, String roleName) {
+        Owner owner = ownerRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+
+        StaffMember staffMember = staffMemberRepository.findById(staffMemberId)
+                .orElseThrow(() -> new ResourceNotFoundException("Staff member", staffMemberId));
+
+        if (staffMember.getOwner() == null || !staffMember.getOwner().getId().equals(owner.getId())) {
+            throw new BadRequestException("Staff member does not belong to this owner");
+        }
+
+        StaffRole role = parseRole(roleName);
+        staffMember.setRole(role);
+        staffMember = staffMemberRepository.save(staffMember);
+        log.info("Updated staff member {} role to {} for owner {}", staffMemberId, role, owner.getId());
+        return StaffMemberDto.from(staffMember);
+    }
+
+    @Transactional
+    public StaffMemberDto updateStaffRoleForSupplier(Long userId, Long staffMemberId, String roleName) {
+        Supplier supplier = supplierRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+
+        StaffMember staffMember = staffMemberRepository.findById(staffMemberId)
+                .orElseThrow(() -> new ResourceNotFoundException("Staff member", staffMemberId));
+
+        if (staffMember.getSupplier() == null || !staffMember.getSupplier().getId().equals(supplier.getId())) {
+            throw new BadRequestException("Staff member does not belong to this supplier");
+        }
+
+        StaffRole role = parseRole(roleName);
+        staffMember.setRole(role);
+        staffMember = staffMemberRepository.save(staffMember);
+        log.info("Updated staff member {} role to {} for supplier {}", staffMemberId, role, supplier.getId());
         return StaffMemberDto.from(staffMember);
     }
 
@@ -214,6 +259,56 @@ public class StaffService {
                 .filter(sm -> sm.getSupplier() != null && sm.getStatus() == StaffMember.StaffStatus.ACTIVE)
                 .map(StaffMember::getSupplier)
                 .findFirst();
+    }
+
+    /**
+     * Build the staff permissions payload for a user, used in auth responses.
+     */
+    @Transactional(readOnly = true)
+    public StaffPermissionsPayload getStaffPermissionsPayload(Long userId) {
+        List<StaffMember> memberships = staffMemberRepository.findByUserId(userId);
+
+        StaffPermissionsPayload.PortalPermissions ownerPerms = null;
+        StaffPermissionsPayload.PortalPermissions supplierPerms = null;
+
+        for (StaffMember sm : memberships) {
+            if (sm.getStatus() != StaffMember.StaffStatus.ACTIVE) continue;
+
+            if (sm.getOwner() != null && ownerPerms == null) {
+                ownerPerms = new StaffPermissionsPayload.PortalPermissions(
+                        sm.getRole().name(),
+                        StaffPermissions.toStringMap(StaffPermissions.getOwnerPermissions(sm.getRole()))
+                );
+            }
+            if (sm.getSupplier() != null && supplierPerms == null) {
+                supplierPerms = new StaffPermissionsPayload.PortalPermissions(
+                        sm.getRole().name(),
+                        StaffPermissions.toStringMap(StaffPermissions.getSupplierPermissions(sm.getRole()))
+                );
+            }
+        }
+
+        if (ownerPerms == null && supplierPerms == null) return null;
+        return new StaffPermissionsPayload(ownerPerms, supplierPerms);
+    }
+
+    public record StaffPermissionsPayload(
+            PortalPermissions owner,
+            PortalPermissions supplier
+    ) {
+        public record PortalPermissions(
+                String role,
+                java.util.Map<String, String> permissions
+        ) {}
+    }
+
+    private StaffRole parseRole(String roleName) {
+        if (roleName == null || roleName.isBlank()) return StaffRole.MANAGER;
+        try {
+            return StaffRole.valueOf(roleName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid staff role: " + roleName);
+        }
     }
 
     private void removeStaffFlagIfNoMemberships(User user) {

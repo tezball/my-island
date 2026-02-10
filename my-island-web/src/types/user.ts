@@ -1,3 +1,13 @@
+export interface PortalPermissions {
+    role: string;
+    permissions: Record<string, 'NONE' | 'READ' | 'FULL'>;
+}
+
+export interface StaffPermissions {
+    owner: PortalPermissions | null;
+    supplier: PortalPermissions | null;
+}
+
 export interface User {
     id: string;
     email: string;
@@ -7,4 +17,5 @@ export interface User {
     isSupplier?: boolean;
     isStaff?: boolean;
     emailVerified?: boolean;
+    staffPermissions?: StaffPermissions | null;
 }

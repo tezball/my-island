@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-do
 import { useAuth } from '../../context/AuthContext';
 import { OwnerSubscriptionProvider } from '../../context/OwnerSubscriptionContext';
 import { OwnerSubscriptionBanner } from './OwnerSubscriptionBanner';
+import { useAllStaffPermissions } from '../../hooks/useStaffPermission';
 import clsx from 'clsx';
 
 const PAGE_TITLES: Record<string, string> = {
@@ -22,6 +23,7 @@ const OwnerLayoutContent: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const perms = useAllStaffPermissions('owner');
     const pageTitle = PAGE_TITLES[location.pathname] || 'Owner Portal';
 
     const handleLogout = async () => {
@@ -62,17 +64,16 @@ const OwnerLayoutContent: React.FC = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    <OwnerNavLink to="/owner" icon="dashboard" label="Dashboard" end />
-                    <OwnerNavLink to="/owner/today" icon="today" label="Today" />
-                    <OwnerNavLink to="/owner/lots" icon="grid_view" label="My Lots" />
-                    <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />
-                    <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />
-                    <OwnerNavLink to="/owner/reviews" icon="rate_review" label="Reviews" />
-                    <OwnerNavLink to="/owner/property" icon="home" label="Property Details" />
-                    {user?.isOwner && (
-                        <OwnerNavLink to="/owner/staff" icon="group" label="Staff" />
-                    )}
-                    <OwnerNavLink to="/owner/settings" icon="settings" label="Settings" />
+                    {perms.dashboard?.canRead !== false && <OwnerNavLink to="/owner" icon="dashboard" label="Dashboard" end />}
+                    {perms.today?.canRead !== false && <OwnerNavLink to="/owner/today" icon="today" label="Today" />}
+                    {perms.lots?.canRead !== false && <OwnerNavLink to="/owner/lots" icon="grid_view" label="My Lots" />}
+                    {perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />}
+                    {perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />}
+                    {perms.reviews?.canRead !== false && <OwnerNavLink to="/owner/reviews" icon="rate_review" label="Reviews" />}
+                    {perms.property?.canRead !== false && <OwnerNavLink to="/owner/property" icon="home" label="Property Details" />}
+                    {perms.pricing?.canRead !== false && <OwnerNavLink to="/owner/pricing" icon="payments" label="Pricing" />}
+                    {perms.staff?.canRead !== false && <OwnerNavLink to="/owner/staff" icon="group" label="Staff" />}
+                    {perms.settings?.canRead !== false && <OwnerNavLink to="/owner/settings" icon="settings" label="Settings" />}
                 </div>
 
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800">
@@ -83,7 +84,9 @@ const OwnerLayoutContent: React.FC = () => {
                         ></div>
                         <div className="flex flex-col overflow-hidden">
                             <span className="text-sm font-bold text-[#111418] dark:text-white truncate">{user?.name}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Property Owner</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {user?.isOwner ? 'Property Owner' : user?.staffPermissions?.owner?.role ? `Staff \u00b7 ${user.staffPermissions.owner.role.charAt(0) + user.staffPermissions.owner.role.slice(1).toLowerCase()}` : 'Staff'}
+                            </span>
                         </div>
                     </div>
                     <button

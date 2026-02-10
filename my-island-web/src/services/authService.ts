@@ -24,6 +24,10 @@ interface AuthApiResponse {
         isSupplier: boolean;
         isStaff: boolean;
         emailVerified: boolean;
+        staffPermissions?: {
+            owner: { role: string; permissions: Record<string, string> } | null;
+            supplier: { role: string; permissions: Record<string, string> } | null;
+        } | null;
     };
 }
 
@@ -37,6 +41,16 @@ function transformUser(apiUser: AuthApiResponse['user']): User {
         isSupplier: apiUser.isSupplier,
         isStaff: apiUser.isStaff,
         emailVerified: apiUser.emailVerified,
+        staffPermissions: apiUser.staffPermissions ? {
+            owner: apiUser.staffPermissions.owner ? {
+                role: apiUser.staffPermissions.owner.role,
+                permissions: apiUser.staffPermissions.owner.permissions as Record<string, 'NONE' | 'READ' | 'FULL'>,
+            } : null,
+            supplier: apiUser.staffPermissions.supplier ? {
+                role: apiUser.staffPermissions.supplier.role,
+                permissions: apiUser.staffPermissions.supplier.permissions as Record<string, 'NONE' | 'READ' | 'FULL'>,
+            } : null,
+        } : null,
     };
 }
 

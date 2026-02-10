@@ -21,4 +21,8 @@ public interface StaffMemberRepository extends JpaRepository<StaffMember, Long> 
     Optional<StaffMember> findByOwnerIdAndEmail(Long ownerId, String email);
 
     Optional<StaffMember> findBySupplierIdAndEmail(Long supplierId, String email);
+
+    Optional<StaffMember> findByOwnerIdAndUserId(Long ownerId, Long userId);
+
+    Optional<StaffMember> findBySupplierIdAndUserId(Long supplierId, Long userId);
 }

@@ -13,12 +13,15 @@ const TEST_USERS = [
     // No Subscription (for testing subscription gates)
     { email: 'bookings@loughdergcamping.ie', password: 'LoughDerg!Camp2025', label: 'Lough Derg Lakeside (Owner - No Sub)' },
     { email: 'hello@dinglekayak.ie', password: 'W@v3R!d3r$K3rrry#2026', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },
-    // Owner Staff
-    { email: 'staff@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Aoife Brennan (Staff - Nore Valley)' },
-    { email: 'staff@burrenglamp.ie', password: 'OwnerStaff#2026!Secure', label: 'Cian Walsh (Staff - Burren Glamping)' },
-    // Supplier Staff
-    { email: 'staff@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Niamh Kelly (Staff - Green Acres)' },
-    { email: 'staff@aillwee.ie', password: 'SupplierStaff#2026!Safe', label: 'Roisín Murphy (Staff - Aillwee Farm)' },
+    // Owner Staff (various roles)
+    { email: 'staff@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Aoife Brennan (Owner Staff - Manager)' },
+    { email: 'staff@burrenglamp.ie', password: 'OwnerStaff#2026!Secure', label: 'Cian Walsh (Owner Staff - Receptionist)' },
+    { email: 'grounds@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Declan O\'Brien (Owner Staff - Groundskeeper)' },
+    { email: 'viewer@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Sinéad Doyle (Owner Staff - Viewer)' },
+    // Supplier Staff (various roles)
+    { email: 'staff@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Niamh Kelly (Supplier Staff - Manager)' },
+    { email: 'staff@aillwee.ie', password: 'SupplierStaff#2026!Safe', label: 'Roisín Murphy (Supplier Staff - Redeemer)' },
+    { email: 'shop@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Pádraig Flynn (Supplier Staff - Associate)' },
     // Guest
     { email: 'family@example.com', password: 'MurphyFamily!Trip2025', label: 'Murphy Family (Guest)' },
 ];

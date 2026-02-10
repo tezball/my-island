@@ -2,6 +2,7 @@ package com.myisland.api.modules.identity.controller;
 
 import com.myisland.api.modules.identity.dto.AddStaffRequest;
 import com.myisland.api.modules.identity.dto.StaffMemberDto;
+import com.myisland.api.modules.identity.dto.UpdateStaffRoleRequest;
 import com.myisland.api.modules.identity.service.StaffService;
 import com.myisland.api.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,16 @@ public class OwnerStaffController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody AddStaffRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(staffService.addStaffForOwner(userDetails.getUserId(), request.email()));
+                .body(staffService.addStaffForOwner(userDetails.getUserId(), request.email(), request.role()));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a staff member's role")
+    public ResponseEntity<StaffMemberDto> updateStaffRole(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id,
+            @RequestBody UpdateStaffRoleRequest request) {
+        return ResponseEntity.ok(staffService.updateStaffRoleForOwner(userDetails.getUserId(), id, request.role()));
     }
 
     @DeleteMapping("/{id}")

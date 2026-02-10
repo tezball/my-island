@@ -28,6 +28,10 @@ public class StaffMember extends BaseEntity {
     @Column(nullable = false)
     private StaffStatus status = StaffStatus.INVITED;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StaffRole role = StaffRole.MANAGER;
+
     public enum StaffStatus {
         INVITED, ACTIVE
     }
@@ -48,4 +52,7 @@ public class StaffMember extends BaseEntity {
 
     public StaffStatus getStatus() { return status; }
     public void setStatus(StaffStatus status) { this.status = status; }
+
+    public StaffRole getRole() { return role; }
+    public void setRole(StaffRole role) { this.role = role; }
 }

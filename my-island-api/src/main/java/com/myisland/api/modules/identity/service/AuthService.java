@@ -76,7 +76,8 @@ public class AuthService {
         sendEmailVerification(user);
 
         String token = jwtProvider.generateToken(user.getEmail());
-        return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user));
+        StaffService.StaffPermissionsPayload perms = user.isStaff() ? staffService.getStaffPermissionsPayload(user.getId()) : null;
+        return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user, perms));
     }
 
     public AuthResponse login(AuthRequest request) {
@@ -90,7 +91,8 @@ public class AuthService {
         String token = jwtProvider.generateToken(authentication);
         log.info("User logged in: {}", user.getEmail());
 
-        return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user));
+        StaffService.StaffPermissionsPayload perms = user.isStaff() ? staffService.getStaffPermissionsPayload(user.getId()) : null;
+        return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user, perms));
     }
 
     @Transactional
@@ -222,5 +224,11 @@ public class AuthService {
     public User getCurrentUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+    }
+
+    public AuthResponse.UserDto getCurrentUserDto(Long userId) {
+        User user = getCurrentUser(userId);
+        StaffService.StaffPermissionsPayload perms = user.isStaff() ? staffService.getStaffPermissionsPayload(user.getId()) : null;
+        return AuthResponse.UserDto.from(user, perms);
     }
 }

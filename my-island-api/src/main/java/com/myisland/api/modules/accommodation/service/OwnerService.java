@@ -16,6 +16,9 @@ import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.UserRepository;
+import com.myisland.api.modules.identity.service.AccessLevel;
+import com.myisland.api.modules.identity.service.PermissionGroup;
+import com.myisland.api.modules.identity.service.StaffPermissionChecker;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import com.myisland.api.shared.storage.EntityImage;
@@ -47,13 +50,15 @@ public class OwnerService {
     private final LotBlockedPeriodRepository blockedPeriodRepository;
     private final UserRepository userRepository;
     private final SeasonalPricingRuleRepository pricingRuleRepository;
+    private final StaffPermissionChecker permissionChecker;
 
     public OwnerService(OwnerRepository ownerRepository, LotRepository lotRepository,
                         AmenityRepository amenityRepository, BookingRepository bookingRepository,
                         EntityImageService entityImageService,
                         LotBlockedPeriodRepository blockedPeriodRepository,
                         UserRepository userRepository,
-                        SeasonalPricingRuleRepository pricingRuleRepository) {
+                        SeasonalPricingRuleRepository pricingRuleRepository,
+                        StaffPermissionChecker permissionChecker) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
         this.amenityRepository = amenityRepository;
@@ -62,19 +67,18 @@ public class OwnerService {
         this.blockedPeriodRepository = blockedPeriodRepository;
         this.userRepository = userRepository;
         this.pricingRuleRepository = pricingRuleRepository;
+        this.permissionChecker = permissionChecker;
     }
 
     @Transactional(readOnly = true)
     public OwnerDto getOwnerProfile(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.PROPERTY, AccessLevel.READ);
         return OwnerDto.from(owner);
     }
 
     @Transactional
     public OwnerDto updateOwnerProfile(Long userId, UpdateOwnerRequest request) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.PROPERTY, AccessLevel.FULL);
 
         if (request.propertyName() != null) {
             owner.setPropertyName(request.propertyName());
@@ -115,8 +119,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public List<LotDto> getOwnerLots(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.LOTS, AccessLevel.READ);
 
         List<Lot> lots = lotRepository.findByOwnerId(owner.getId());
         List<Long> lotIds = lots.stream().map(Lot::getId).toList();
@@ -132,8 +135,7 @@ public class OwnerService {
 
     @Transactional
     public LotDto createLot(Long userId, CreateLotRequest request) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.LOTS, AccessLevel.FULL);
 
         Set<Amenity> amenities = new HashSet<>();
         if (request.amenityIds() != null && !request.amenityIds().isEmpty()) {
@@ -158,8 +160,7 @@ public class OwnerService {
 
     @Transactional
     public LotDto updateLot(Long userId, Long lotId, UpdateLotRequest request) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.LOTS, AccessLevel.FULL);
 
         Lot lot = lotRepository.findById(lotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
@@ -201,8 +202,7 @@ public class OwnerService {
 
     @Transactional
     public void deleteLot(Long userId, Long lotId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.LOTS, AccessLevel.FULL);
 
         Lot lot = lotRepository.findById(lotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
@@ -224,8 +224,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getOwnerDashboard(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.DASHBOARD, AccessLevel.READ);
 
         List<Lot> lots = lotRepository.findByOwnerId(owner.getId());
         long activeLots = lots.stream().filter(Lot::isActive).count();
@@ -264,8 +263,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public OwnerPreferencesDto getOwnerPreferences(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.SETTINGS, AccessLevel.READ);
         return OwnerPreferencesDto.from(
                 owner.isEmailNotificationsBookings(),
                 owner.isWeeklySummaryReports(),
@@ -277,8 +275,7 @@ public class OwnerService {
 
     @Transactional
     public OwnerPreferencesDto updateOwnerPreferences(Long userId, OwnerPreferencesDto preferences) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.SETTINGS, AccessLevel.FULL);
 
         owner.setEmailNotificationsBookings(preferences.emailNotificationsBookings());
         owner.setWeeklySummaryReports(preferences.weeklySummaryReports());
@@ -300,8 +297,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public Map<String, List<BookingDto>> getTodayMovements(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.TODAY, AccessLevel.READ);
 
         LocalDate today = LocalDate.now();
         List<BookingDto> arrivals = bookingRepository.findTodayArrivals(owner.getId(), today)
@@ -317,8 +313,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public List<BookingDto> getOwnerBookings(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.BOOKINGS, AccessLevel.READ);
 
         List<Booking> bookings = bookingRepository.findByOwnerId(owner.getId());
         log.info("Found {} bookings for owner {}", bookings.size(), owner.getId());
@@ -332,8 +327,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public List<BlockedPeriodDto> getBlockedPeriods(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.CALENDAR, AccessLevel.READ);
         return blockedPeriodRepository.findByOwnerId(owner.getId()).stream()
                 .map(BlockedPeriodDto::from)
                 .toList();
@@ -341,8 +335,7 @@ public class OwnerService {
 
     @Transactional
     public BlockedPeriodDto createBlockedPeriod(Long userId, CreateBlockedPeriodRequest request) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.CALENDAR, AccessLevel.FULL);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
@@ -372,8 +365,7 @@ public class OwnerService {
 
     @Transactional
     public void deleteBlockedPeriod(Long userId, Long blockedPeriodId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.CALENDAR, AccessLevel.FULL);
 
         LotBlockedPeriod bp = blockedPeriodRepository.findById(blockedPeriodId)
                 .orElseThrow(() -> new ResourceNotFoundException("Blocked period", blockedPeriodId));
@@ -390,8 +382,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public List<SeasonalPricingRuleDto> getPricingRules(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.PRICING, AccessLevel.READ);
         return pricingRuleRepository.findByOwnerId(owner.getId()).stream()
                 .map(SeasonalPricingRuleDto::from)
                 .toList();
@@ -399,8 +390,7 @@ public class OwnerService {
 
     @Transactional
     public SeasonalPricingRuleDto createPricingRule(Long userId, CreateSeasonalPricingRuleRequest request) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.PRICING, AccessLevel.FULL);
 
         if (request.endDate().isBefore(request.startDate()) || request.endDate().isEqual(request.startDate())) {
             throw new BadRequestException("End date must be after start date");
@@ -429,8 +419,7 @@ public class OwnerService {
 
     @Transactional
     public void deletePricingRule(Long userId, Long ruleId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.PRICING, AccessLevel.FULL);
 
         SeasonalPricingRule rule = pricingRuleRepository.findById(ruleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pricing rule", ruleId));
@@ -445,8 +434,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public LotsDetailResponse getLotsAnalytics(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.DASHBOARD, AccessLevel.READ);
 
         // Require active subscription to access analytics
         requireActiveSubscription(owner);
@@ -485,8 +473,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public BookingsDetailResponse getBookingsAnalytics(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.DASHBOARD, AccessLevel.READ);
 
         // Require active subscription to access analytics
         requireActiveSubscription(owner);
@@ -546,8 +533,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public RevenueDetailResponse getRevenueAnalytics(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.DASHBOARD, AccessLevel.READ);
 
         // Require active subscription to access analytics
         requireActiveSubscription(owner);
@@ -660,8 +646,7 @@ public class OwnerService {
 
     @Transactional(readOnly = true)
     public OccupancyDetailResponse getOccupancyAnalytics(Long userId) {
-        Owner owner = ownerRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Owner profile not found for user"));
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.DASHBOARD, AccessLevel.READ);
 
         // Require active subscription to access analytics
         requireActiveSubscription(owner);

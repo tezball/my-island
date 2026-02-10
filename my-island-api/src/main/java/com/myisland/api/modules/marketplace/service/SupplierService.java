@@ -1,5 +1,8 @@
 package com.myisland.api.modules.marketplace.service;
 
+import com.myisland.api.modules.identity.service.AccessLevel;
+import com.myisland.api.modules.identity.service.PermissionGroup;
+import com.myisland.api.modules.identity.service.StaffPermissionChecker;
 import com.myisland.api.modules.marketplace.dto.*;
 import com.myisland.api.modules.marketplace.entity.Offer;
 import com.myisland.api.modules.marketplace.entity.OfferClaim;
@@ -25,25 +28,25 @@ public class SupplierService {
     private final SupplierRepository supplierRepository;
     private final OfferRepository offerRepository;
     private final OfferClaimRepository offerClaimRepository;
+    private final StaffPermissionChecker permissionChecker;
 
     public SupplierService(SupplierRepository supplierRepository, OfferRepository offerRepository,
-            OfferClaimRepository offerClaimRepository) {
+            OfferClaimRepository offerClaimRepository, StaffPermissionChecker permissionChecker) {
         this.supplierRepository = supplierRepository;
         this.offerRepository = offerRepository;
         this.offerClaimRepository = offerClaimRepository;
+        this.permissionChecker = permissionChecker;
     }
 
     @Transactional(readOnly = true)
     public SupplierDto getSupplierProfile(Long userId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.PROFILE, AccessLevel.READ);
         return SupplierDto.from(supplier);
     }
 
     @Transactional
     public SupplierDto updateSupplierProfile(Long userId, UpdateSupplierRequest request) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.PROFILE, AccessLevel.FULL);
 
         if (request.businessName() != null) {
             supplier.setBusinessName(request.businessName());
@@ -86,8 +89,7 @@ public class SupplierService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getSupplierDashboard(Long userId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.DASHBOARD, AccessLevel.READ);
 
         List<Offer> activeOffers = offerRepository.findBySupplierIdAndIsActiveTrue(supplier.getId());
         long totalClaims = offerClaimRepository.countBySupplierIdAndStatus(supplier.getId(),
@@ -113,8 +115,7 @@ public class SupplierService {
 
     @Transactional(readOnly = true)
     public List<OfferDto> getSupplierOffers(Long userId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.READ);
         return offerRepository.findBySupplierId(supplier.getId()).stream()
                 .map(OfferDto::from)
                 .toList();
@@ -122,8 +123,7 @@ public class SupplierService {
 
     @Transactional
     public OfferDto createOffer(Long userId, CreateOfferRequest request) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.FULL);
 
         // Require active subscription to create offers
         if (!supplier.hasActiveSubscription()) {
@@ -155,8 +155,7 @@ public class SupplierService {
 
     @Transactional
     public OfferDto updateOffer(Long userId, Long offerId, UpdateOfferRequest request) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.FULL);
 
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Offer", offerId));
@@ -209,8 +208,7 @@ public class SupplierService {
 
     @Transactional
     public void deleteOffer(Long userId, Long offerId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.FULL);
 
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Offer", offerId));
@@ -233,8 +231,7 @@ public class SupplierService {
 
     @Transactional(readOnly = true)
     public List<OfferClaimDto> getOfferClaims(Long userId, Long offerId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.READ);
 
         Offer offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Offer", offerId));
@@ -250,8 +247,7 @@ public class SupplierService {
 
     @Transactional(readOnly = true)
     public List<OfferClaimDto> getAllSupplierClaims(Long userId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.READ);
 
         return offerClaimRepository.findBySupplierIdAndIsTestFalse(supplier.getId()).stream()
                 .map(OfferClaimDto::from)
@@ -260,8 +256,7 @@ public class SupplierService {
 
     @Transactional(readOnly = true)
     public List<OfferClaimDto> getTestClaims(Long userId) {
-        Supplier supplier = supplierRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier profile not found for user"));
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.READ);
 
         return offerClaimRepository.findBySupplierIdAndIsTestTrue(supplier.getId()).stream()
                 .map(OfferClaimDto::from)

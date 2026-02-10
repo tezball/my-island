@@ -1,6 +1,6 @@
 import React from 'react';
 import { StaffManagement } from '../../components/staff/StaffManagement';
-import { supplierStaffService } from '../../services/staffService';
+import { supplierStaffService, SUPPLIER_ROLES } from '../../services/staffService';
 import { useAuth } from '../../context/AuthContext';
 
 export const SupplierStaffPage: React.FC = () => {
@@ -27,6 +27,8 @@ export const SupplierStaffPage: React.FC = () => {
                 listStaff={supplierStaffService.list}
                 addStaff={supplierStaffService.add}
                 removeStaff={supplierStaffService.remove}
+                updateRole={supplierStaffService.updateRole}
+                roles={SUPPLIER_ROLES}
                 accentColor="lime"
             />
         </div>

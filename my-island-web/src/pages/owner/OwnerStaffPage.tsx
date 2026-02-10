@@ -1,6 +1,6 @@
 import React from 'react';
 import { StaffManagement } from '../../components/staff/StaffManagement';
-import { ownerStaffService } from '../../services/staffService';
+import { ownerStaffService, OWNER_ROLES } from '../../services/staffService';
 import { useAuth } from '../../context/AuthContext';
 
 export const OwnerStaffPage: React.FC = () => {
@@ -25,6 +25,8 @@ export const OwnerStaffPage: React.FC = () => {
                 listStaff={ownerStaffService.list}
                 addStaff={ownerStaffService.add}
                 removeStaff={ownerStaffService.remove}
+                updateRole={ownerStaffService.updateRole}
+                roles={OWNER_ROLES}
             />
         </div>
     );
