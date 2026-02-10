@@ -4,7 +4,10 @@ import clsx from 'clsx';
 
 export const BottomNav: React.FC = () => {
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a2632] border-t border-gray-200 dark:border-gray-800 px-6 py-2 z-50">
+        <nav
+            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a2632] border-t border-gray-200 dark:border-gray-800 px-6 pt-2 z-50"
+            style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom, 16px))' }}
+        >
             <div className="flex justify-between items-center max-w-lg mx-auto">
                 <NavItem to="/" icon="search" label="Search" />
                 <NavItem to="/marketplace" icon="storefront" label="Marketplace" />
@@ -12,7 +15,6 @@ export const BottomNav: React.FC = () => {
                 <NavItem to="/trips" icon="luggage" label="Trips" />
                 <NavItem to="/profile" icon="person" label="Profile" />
             </div>
-            <div className="h-4 w-full"></div>
         </nav>
     );
 };

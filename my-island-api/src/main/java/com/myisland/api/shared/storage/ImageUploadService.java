@@ -99,8 +99,8 @@ public class ImageUploadService {
 
     public String getPublicUrl(String key) {
         if (s3Endpoint != null && !s3Endpoint.isBlank()) {
-            // LocalStack - return localhost URL for browser access
-            return "http://localhost:4566/" + bucketName + "/" + key;
+            // LocalStack - return relative URL routed through Vite proxy
+            return "/s3/" + bucketName + "/" + key;
         }
         // Production S3
         return "https://" + bucketName + ".s3.amazonaws.com/" + key;

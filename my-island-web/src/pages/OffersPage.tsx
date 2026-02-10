@@ -1,25 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supplierService, type Offer, type Supplier } from '../services/supplierService';
 import { Link, useNavigate } from 'react-router-dom';
 
 type OfferWithSupplier = Offer & { supplier: Supplier };
 
-const CATEGORY_ICONS: Record<string, string> = {
-    FOOD: 'restaurant',
-    ACTIVITIES: 'hiking',
-    GEAR: 'backpack',
-    ATTRACTIONS: 'attractions',
-    TRANSPORT: 'directions_car'
-};
+interface ExperienceFilter {
+    id: string;
+    label: string;
+    icon: string;
+    match: (o: OfferWithSupplier) => boolean;
+}
 
-const CATEGORY_LABELS: Record<string, string> = {
-    FOOD: 'Food & Drink',
-    ACTIVITIES: 'Activities',
-    GEAR: 'Camping Gear',
-    ATTRACTIONS: 'Attractions',
-    TRANSPORT: 'Transport'
-};
+function keywordMatch(offer: OfferWithSupplier, keywords: string[]): boolean {
+    const text = `${offer.supplier.businessName} ${offer.title}`.toLowerCase();
+    return keywords.some(kw => text.includes(kw));
+}
+
+const EXPERIENCE_FILTERS: ExperienceFilter[] = [
+    { id: 'all', label: 'All', icon: 'apps', match: () => true },
+    { id: 'theme-parks', label: 'Theme Parks', icon: 'attractions', match: (o) => keywordMatch(o, ['theme park', 'adventure park', 'fun farm', 'funfair', 'amusement']) },
+    { id: 'events', label: 'Events', icon: 'celebration', match: (o) => keywordMatch(o, ['event', 'festival', 'gala']) },
+    { id: 'kayaking', label: 'Kayaking', icon: 'kayaking', match: (o) => keywordMatch(o, ['kayak', 'canoe', 'paddle']) },
+    { id: 'fishing', label: 'Fishing', icon: 'set_meal', match: (o) => keywordMatch(o, ['fishing', 'angling']) },
+    { id: 'surfing', label: 'Surfing', icon: 'surfing', match: (o) => keywordMatch(o, ['surf']) },
+    { id: 'cycling', label: 'Cycling', icon: 'pedal_bike', match: (o) => keywordMatch(o, ['cycle', 'bike', 'bicycle']) },
+    { id: 'food-drink', label: 'Food & Drink', icon: 'restaurant', match: (o) => o.category === 'FOOD' },
+    { id: 'tours', label: 'Tours', icon: 'tour', match: (o) => keywordMatch(o, ['tour', 'ferry', 'distillery', 'island']) },
+    { id: 'wellness', label: 'Wellness', icon: 'spa', match: (o) => keywordMatch(o, ['spa', 'yoga', 'wellness', 'retreat', 'forest bath']) },
+];
 
 export const OffersPage: React.FC = () => {
     const { user } = useAuth();
@@ -27,7 +36,7 @@ export const OffersPage: React.FC = () => {
     const [offers, setOffers] = useState<OfferWithSupplier[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [claimingId, setClaimingId] = useState<string | null>(null);
-    const [categoryFilter, setCategoryFilter] = useState<string>('all');
+    const [activeFilter, setActiveFilter] = useState<string>('all');
 
     // Modal State
     const [selectedOffer, setSelectedOffer] = useState<OfferWithSupplier | null>(null);
@@ -74,12 +83,13 @@ export const OffersPage: React.FC = () => {
         setSelectedOffer(offer);
     };
 
-    const filteredOffers = offers.filter(o => {
-        if (categoryFilter === 'all') return true;
-        return o.category === categoryFilter;
-    });
+    const visibleFilters = useMemo(() =>
+        EXPERIENCE_FILTERS.filter(f => f.id === 'all' || offers.some(o => f.match(o))),
+        [offers]
+    );
 
-    const categories = ['all', ...new Set(offers.map(o => o.category))];
+    const currentFilter = EXPERIENCE_FILTERS.find(f => f.id === activeFilter);
+    const filteredOffers = offers.filter(o => currentFilter ? currentFilter.match(o) : true);
 
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('en-IE', {
@@ -115,25 +125,23 @@ export const OffersPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Category Filter */}
+            {/* Experience Filters */}
             <div className="border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
                 <div className="max-w-7xl mx-auto px-4 py-4">
                     <div className="flex gap-2 min-w-max">
-                        {categories.map((category) => (
+                        {visibleFilters.map((filter) => (
                             <button
-                                key={category}
-                                onClick={() => setCategoryFilter(category)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${categoryFilter === category
+                                key={filter.id}
+                                onClick={() => setActiveFilter(filter.id)}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2 ${activeFilter === filter.id
                                         ? 'bg-primary text-white'
                                         : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                                     }`}
                             >
-                                {category !== 'all' && (
-                                    <span className="material-symbols-outlined text-sm">
-                                        {CATEGORY_ICONS[category] || 'store'}
-                                    </span>
-                                )}
-                                {category === 'all' ? 'All Offers' : CATEGORY_LABELS[category] || category}
+                                <span className="material-symbols-outlined text-sm">
+                                    {filter.icon}
+                                </span>
+                                {filter.label}
                             </button>
                         ))}
                     </div>
@@ -171,11 +179,9 @@ export const OffersPage: React.FC = () => {
                             )}
 
                             <div className="p-4">
-                                {/* Supplier & Category */}
+                                {/* Supplier */}
                                 <div className="flex items-center gap-2 mb-2">
-                                    <span className="material-symbols-outlined text-primary text-sm">
-                                        {CATEGORY_ICONS[offer.category] || 'store'}
-                                    </span>
+                                    <span className="material-symbols-outlined text-primary text-sm">store</span>
                                     <Link
                                         to={`/marketplace/supplier/${offer.supplier.id}`}
                                         onClick={(e) => e.stopPropagation()}
@@ -254,7 +260,7 @@ export const OffersPage: React.FC = () => {
                                         {selectedOffer.supplier.businessName}
                                     </Link>
                                     <span>•</span>
-                                    <span>{CATEGORY_LABELS[selectedOffer.category]}</span>
+                                    <span>{EXPERIENCE_FILTERS.find(f => f.id !== 'all' && f.match(selectedOffer))?.label || 'Local Offer'}</span>
                                 </div>
 
                                 <h2 className="text-2xl font-bold text-[#111418] dark:text-white mb-4">

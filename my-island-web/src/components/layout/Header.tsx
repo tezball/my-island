@@ -83,18 +83,20 @@ export const Header: React.FC = () => {
             <div className="flex items-center p-4 max-w-7xl mx-auto w-full">
                 {isAuthenticated && user ? (
                     <>
-                        <div className="flex size-10 shrink-0 items-center">
-                            <div
-                                className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-gray-200"
-                                aria-label={`User profile avatar for ${user.name}`}
-                                style={{ backgroundImage: `url("${user.avatarUrl}")` }}
-                            >
+                        <Link to="/" className="flex items-center flex-1 min-w-0">
+                            <div className="flex size-10 shrink-0 items-center">
+                                <div
+                                    className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-gray-200"
+                                    aria-label={`User profile avatar for ${user.name}`}
+                                    style={{ backgroundImage: `url("${user.avatarUrl}")` }}
+                                >
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex flex-col ml-3 flex-1">
-                            <span className="text-xs text-gray-500 font-medium">Welcome back,</span>
-                            <h2 className="text-[#111418] dark:text-white text-base font-bold leading-tight tracking-[-0.015em]">{user.name}</h2>
-                        </div>
+                            <div className="flex flex-col ml-3 flex-1 min-w-0">
+                                <span className="text-xs text-gray-500 font-medium">Welcome back,</span>
+                                <h2 className="text-[#111418] dark:text-white text-base font-bold leading-tight tracking-[-0.015em] truncate">{user.name}</h2>
+                            </div>
+                        </Link>
                         <div className="flex items-center justify-end gap-3">
                             {!user.isSupplier && !user.isOwner && (
                                 <Link

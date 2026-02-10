@@ -75,42 +75,6 @@ export const ProfilePage: React.FC = () => {
                     <span className="material-symbols-outlined text-cyan-500">chevron_right</span>
                 </Link>
 
-                {!user?.isOwner && (
-                    <Link
-                        to="/become-a-host"
-                        className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 flex items-center justify-between mb-4 border border-blue-200 dark:border-blue-800/50"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="size-12 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
-                                <span className="material-symbols-outlined text-white">cabin</span>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-[#111418] dark:text-white text-base">Become a Host</h3>
-                                <p className="text-xs text-gray-600 dark:text-gray-400">Earn money by listing your campsite</p>
-                            </div>
-                        </div>
-                        <span className="material-symbols-outlined text-blue-500">chevron_right</span>
-                    </Link>
-                )}
-
-                {!user?.isSupplier && (
-                    <Link
-                        to="/become-a-supplier"
-                        className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 flex items-center justify-between mb-4 border border-purple-200 dark:border-purple-800/50"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="size-12 rounded-full bg-purple-500 flex items-center justify-center shrink-0">
-                                <span className="material-symbols-outlined text-white">storefront</span>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-[#111418] dark:text-white text-base">Become a Supplier</h3>
-                                <p className="text-xs text-gray-600 dark:text-gray-400">Offer local services & deals to campers</p>
-                            </div>
-                        </div>
-                        <span className="material-symbols-outlined text-purple-500">chevron_right</span>
-                    </Link>
-                )}
-
                 <div className="flex flex-col gap-2">
                     {user?.isOwner && (
                         <Link
@@ -172,6 +136,50 @@ export const ProfilePage: React.FC = () => {
                         <span className="material-symbols-outlined">logout</span>
                         Log out
                     </button>
+
+                    {(!user?.isOwner || !user?.isSupplier) && (
+                        <>
+                            <div className="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 px-1">Grow with My Island</h3>
+                            </div>
+
+                            {!user?.isOwner && (
+                                <Link
+                                    to="/become-a-host"
+                                    className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-blue-200 dark:border-blue-800/50"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                            <span className="material-symbols-outlined">cabin</span>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-[#111418] dark:text-white text-base">Become a Host</h3>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Earn money by listing your campsite</p>
+                                        </div>
+                                    </div>
+                                    <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                                </Link>
+                            )}
+
+                            {!user?.isSupplier && (
+                                <Link
+                                    to="/become-a-supplier"
+                                    className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-purple-200 dark:border-purple-800/50"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                                            <span className="material-symbols-outlined">storefront</span>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-[#111418] dark:text-white text-base">Become a Supplier</h3>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">Offer local services & deals to campers</p>
+                                        </div>
+                                    </div>
+                                    <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                                </Link>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
         </main>

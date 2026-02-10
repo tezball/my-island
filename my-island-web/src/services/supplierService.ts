@@ -144,7 +144,7 @@ function transformOffer(api: OfferApiResponse): Offer {
         supplierId: String(api.supplierId),
         title: api.title,
         description: api.description ?? '',
-        category: 'FOOD',
+        category: CATEGORY_MAP[api.supplierCategory ?? ''] || 'FOOD',
         discountPercent: api.discountType === 'PERCENTAGE' ? api.discountValue : 10,
         validFrom: api.validFrom,
         validUntil: api.validUntil,

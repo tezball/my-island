@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    allowedHosts: ['host.testcontainers.internal'],
+    allowedHosts: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
@@ -16,6 +16,11 @@ export default defineConfig({
             proxyReq.setHeader('origin', 'http://localhost:5173');
           });
         }
+      },
+      '/s3': {
+        target: 'http://localhost:4566',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/s3/, '')
       }
     }
   }
