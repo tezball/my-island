@@ -143,10 +143,12 @@ const DevModeForm: React.FC<{
 }> = ({ onConfirm, onClose }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setError(null);
         try {
             await onConfirm();
             setSuccess(true);
@@ -155,6 +157,7 @@ const DevModeForm: React.FC<{
             }, 1500);
         } catch (err) {
             console.error('Failed to confirm subscription:', err);
+            setError(err instanceof Error ? err.message : 'Failed to activate subscription. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -177,6 +180,12 @@ const DevModeForm: React.FC<{
                 <p className="font-medium">Development Mode</p>
                 <p className="text-xs mt-1">Test card details pre-filled below.</p>
             </div>
+
+            {error && (
+                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                </div>
+            )}
 
             <div className="space-y-3">
                 <div>

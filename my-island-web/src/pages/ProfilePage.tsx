@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 const PROFILE_SECTIONS = [
     { id: 'personal', label: 'Personal Details', icon: 'person', desc: 'Update your information', path: '/profile/details' },
     { id: 'security', label: 'Security', icon: 'lock', desc: 'Password and settings', path: '/profile/security' },
-    { id: 'payments', label: 'Payment Details', icon: 'credit_card', desc: 'Add or remove cards', path: '/profile/payment' },
     { id: 'notifications', label: 'Notifications', icon: 'notifications', desc: 'Manage alerts', path: '/profile/notifications' },
 ];
 

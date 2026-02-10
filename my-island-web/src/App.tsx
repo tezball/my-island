@@ -30,7 +30,6 @@ import { SearchResultsPage } from './pages/SearchResultsPage';
 import { SavedPage } from './pages/SavedPage';
 import { PersonalDetailsPage } from './pages/profile/PersonalDetailsPage';
 import { SecurityPage } from './pages/profile/SecurityPage';
-import { PaymentDetailsPage } from './pages/profile/PaymentDetailsPage';
 import { NotificationsPage } from './pages/profile/NotificationsPage';
 import { VouchersPage } from './pages/VouchersPage';
 import { OffersPage } from './pages/OffersPage';
@@ -82,7 +81,6 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/details" element={<PersonalDetailsPage />} />
               <Route path="/profile/security" element={<SecurityPage />} />
-              <Route path="/profile/payment" element={<PaymentDetailsPage />} />
               <Route path="/profile/notifications" element={<NotificationsPage />} />
               <Route path="/campsite/:id" element={<CampsiteDetailsPage />} />
               <Route path="/saved" element={<SavedPage />} />

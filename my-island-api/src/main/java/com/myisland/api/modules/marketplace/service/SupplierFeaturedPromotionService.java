@@ -21,6 +21,8 @@ public class SupplierFeaturedPromotionService {
 
     private static final Logger log = LoggerFactory.getLogger(SupplierFeaturedPromotionService.class);
 
+    private static final int MAX_FEATURED_SUPPLIERS = 4;
+
     // Pricing in cents (same as Owner featured)
     private static final Map<String, Long> FEATURED_PRICES = Map.of(
             "7_DAYS", 999L,   // €9.99
@@ -43,6 +45,30 @@ public class SupplierFeaturedPromotionService {
         Long priceInCents = FEATURED_PRICES.get(duration);
         if (priceInCents == null) {
             throw new BadRequestException("Invalid duration. Must be '7_DAYS' or '30_DAYS'");
+        }
+
+        // Check featured slot limit (suppliers already featured are extending, not taking a new slot)
+        if (!supplier.isCurrentlyFeatured()) {
+            int currentFeatured = supplierRepository.findFeaturedSuppliers().size();
+            if (currentFeatured >= MAX_FEATURED_SUPPLIERS) {
+                throw new BadRequestException("All featured slots are currently taken. Please try again later.");
+            }
+        }
+
+        // Dev mode: skip Stripe and directly activate featured promotion
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Activating featured promotion directly for supplier {} with duration {}", supplier.getId(), duration);
+            LocalDateTime newExpiry = calculateFeaturedExpiry(supplier, duration);
+            supplier.setFeatured(true);
+            supplier.setFeaturedUntil(newExpiry);
+            supplier.setFeaturedPurchaseId("cs_dev_featured_supplier_" + supplier.getId());
+            supplierRepository.save(supplier);
+
+            String successUrl = stripeProperties.getSupplierSuccessUrl();
+            if (successUrl == null || successUrl.isBlank()) {
+                successUrl = "http://localhost:5173/supplier/settings?featured=success";
+            }
+            return successUrl;
         }
 
         String productName = "Featured Promotion - " + duration.replace("_", " ");

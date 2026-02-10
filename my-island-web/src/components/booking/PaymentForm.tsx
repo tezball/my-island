@@ -233,15 +233,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                 </div>
             )}
 
-            {/* Test card info for dev */}
-            {!paymentIntent?.devMode && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                    <p className="text-xs text-blue-600 dark:text-blue-400">
-                        <strong>Test card:</strong> 4242 4242 4242 4242 | Any future date | Any CVC
-                    </p>
-                </div>
-            )}
-
             {/* Action buttons */}
             <div className="flex gap-3 pt-2">
                 <button

@@ -21,6 +21,8 @@ public class FeaturedPromotionService {
 
     private static final Logger log = LoggerFactory.getLogger(FeaturedPromotionService.class);
 
+    private static final int MAX_FEATURED_OWNERS = 4;
+
     // Pricing in cents
     private static final Map<String, Long> FEATURED_PRICES = Map.of(
             "7_DAYS", 999L,   // €9.99
@@ -43,6 +45,30 @@ public class FeaturedPromotionService {
         Long priceInCents = FEATURED_PRICES.get(duration);
         if (priceInCents == null) {
             throw new BadRequestException("Invalid duration. Must be '7_DAYS' or '30_DAYS'");
+        }
+
+        // Check featured slot limit (owners already featured are extending, not taking a new slot)
+        if (!owner.isCurrentlyFeatured()) {
+            int currentFeatured = ownerRepository.findFeaturedOwners().size();
+            if (currentFeatured >= MAX_FEATURED_OWNERS) {
+                throw new BadRequestException("All featured slots are currently taken. Please try again later.");
+            }
+        }
+
+        // Dev mode: skip Stripe and directly activate featured promotion
+        if (stripeProperties.isDevMode()) {
+            log.info("Dev mode: Activating featured promotion directly for owner {} with duration {}", owner.getId(), duration);
+            LocalDateTime newExpiry = calculateFeaturedExpiry(owner, duration);
+            owner.setFeatured(true);
+            owner.setFeaturedUntil(newExpiry);
+            owner.setFeaturedPurchaseId("cs_dev_featured_owner_" + owner.getId());
+            ownerRepository.save(owner);
+
+            String successUrl = stripeProperties.getFeaturedSuccessUrl();
+            if (successUrl == null || successUrl.isBlank()) {
+                successUrl = stripeProperties.getOwnerSuccessUrl().replace("subscription=success", "featured=success");
+            }
+            return successUrl;
         }
 
         String productName = "Featured Promotion - " + duration.replace("_", " ");

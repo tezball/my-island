@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ROADMAP.md",
+                "file": "STRIPE_AUDIT.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ROADMAP"
+              "title": "STRIPE_AUDIT"
             }
           }
         ]
@@ -187,6 +187,17 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "STRIPE_AUDIT.md.tmp.129909.1770742912688",
+    "STRIPE_AUDIT.md.tmp.129909.1770742911801",
+    "STRIPE_AUDIT.md.tmp.129909.1770742904655",
+    "STRIPE_AUDIT.md.tmp.129909.1770742903166",
+    "STRIPE_AUDIT.md.tmp.129909.1770742901633",
+    "00-Domain/DOMAIN_MODEL.md",
+    "STRIPE_AUDIT.md",
+    "STRIPE_AUDIT.md.tmp.129909.1770742273782",
+    "ROADMAP.md.tmp.129909.1770741495657",
+    "ROADMAP.md.tmp.129909.1770741254377",
+    "ROADMAP.md",
     "README.md",
     "Graph for all pages.canvas",
     "Graph for all pages.canvas.tmp.6999.1770677481634",
@@ -200,13 +211,6 @@
     "capture-screenshots.mjs.tmp.6999.1770677373053",
     "screenshots/signin.png",
     "node_modules/playwright-core/lib/vite/traceViewer/manifest.webmanifest",
-    "node_modules/playwright-core/ThirdPartyNotices.txt",
-    "node_modules/playwright-core/lib/vite/traceViewer/codicon.DCmgc-ay.ttf",
-    "node_modules/playwright-core/lib/vite/recorder/assets/codicon-DCmgc-ay.ttf",
-    "node_modules/playwright-core/types/types.d.ts",
-    "node_modules/playwright-core/types/structs.d.ts",
-    "node_modules/playwright-core/types/protocol.d.ts",
-    "node_modules/playwright-core/types",
     "node_modules/playwright-core/lib/vite/traceViewer/playwright-logo.svg",
     "node_modules/playwright-core/lib/vite/recorder/playwright-logo.svg",
     "node_modules/playwright-core/README.md",
@@ -220,7 +224,6 @@
     "node_modules/playwright/lib/agents/playwright-test-coverage.prompt.md",
     "supplier-portal-mvp-issues.md",
     "Graph for all pages.md",
-    "ROADMAP.md",
     "MVP_LAUNCH_CHECKLIST.md",
     "DDD_SYNC_PLAN.md",
     "00-Domain/FAQ.md",
@@ -232,8 +235,6 @@
     "00-Domain/07-Marketplace/NOTES.md",
     "00-Domain/06-Support/NOTES.md",
     "00-Domain/05-Communication/USER_STORIES.md",
-    "00-Domain/05-Communication/NOTES.md",
-    "00-Domain/04-Review/NOTES.md",
     "04-User-Flows/owner-admin/owner-admin-flow.canvas",
     "04-User-Flows/profile/profile-flow.canvas",
     "04-User-Flows/reviews/reviews-flow.canvas",
