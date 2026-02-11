@@ -158,14 +158,46 @@ my-island-web/src/
 
 ## Test Accounts
 
-All passwords are `password`.
+The login page has a dropdown that auto-fills credentials for these accounts.
 
-| Email | Role |
-|-------|------|
-| norevalley@myisland.com | Owner |
-| farmshop@greenacres.ie | Supplier |
-| family@example.com | Guest |
-| testguest@example.com | Guest (clean account, no bookings) |
+### Subscribed Owners
+| Email | Password | Description |
+|-------|----------|-------------|
+| norevalley@myisland.com | `NoreValley2025!Secured` | Nore Valley Park |
+| hello@burrenglampingvillage.ie | `BurrenGlamp$99Safe` | Burren Glamping Village |
+
+### Subscribed Suppliers
+| Email | Password | Description |
+|-------|----------|-------------|
+| farmshop@greenacres.ie | `GreenAcres#Farm2025` | Green Acres Farm Shop |
+| info@aillweefarmshop.ie | `AillweeCh33se!Secure` | Aillwee Farm Shop & Cheese |
+
+### No Subscription (for testing subscription gates)
+| Email | Password | Description |
+|-------|----------|-------------|
+| bookings@loughdergcamping.ie | `LoughDerg!Camp2025` | Lough Derg Lakeside (Owner) |
+| hello@dinglekayak.ie | `W@v3R!d3r$K3rrry#2026` | Dingle Kayak Adventures (Supplier) |
+
+### Owner Staff (all use password `OwnerStaff#2026!Secure`)
+| Email | Role | Staff Of |
+|-------|------|----------|
+| staff@norevalley.com | Manager | Nore Valley |
+| staff@burrenglamp.ie | Receptionist | Burren Glamping |
+| grounds@norevalley.com | Groundskeeper | Nore Valley |
+| viewer@norevalley.com | Viewer | Nore Valley |
+
+### Supplier Staff (all use password `SupplierStaff#2026!Safe`)
+| Email | Role | Staff Of |
+|-------|------|----------|
+| staff@greenacres.ie | Manager | Green Acres |
+| staff@aillwee.ie | Redeemer | Aillwee |
+| shop@greenacres.ie | Associate | Green Acres |
+
+### Guests
+| Email | Password | Description |
+|-------|----------|-------------|
+| family@example.com | `MurphyFamily!Trip2025` | Murphy Family (has bookings) |
+| testguest@example.com | `TestGuest#2026!Safe` | Clean account, no bookings |
 
 **Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner` and `isSupplier` flags. Staff users (`isStaff=true`) gain access to the portals of the Owner/Supplier who invited them.
 

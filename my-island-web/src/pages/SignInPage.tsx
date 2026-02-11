@@ -30,8 +30,8 @@ const TEST_USERS = [
 export const SignInPage: React.FC = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const [email, setEmail] = React.useState(TEST_USERS[0].email);
+    const [password, setPassword] = React.useState(TEST_USERS[0].password);
     const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);

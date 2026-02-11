@@ -2,6 +2,7 @@ package com.myisland.api.modules.accommodation.controller;
 
 import com.myisland.api.modules.accommodation.dto.LotDto;
 import com.myisland.api.modules.accommodation.dto.OwnerDto;
+import com.myisland.api.modules.accommodation.entity.Lot;
 import com.myisland.api.modules.accommodation.service.CampsiteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,6 +80,15 @@ public class CampsiteController {
     @Operation(summary = "Get booked date ranges for a lot")
     public ResponseEntity<List<BookedDateRange>> getBookedDates(@PathVariable Long lotId) {
         return ResponseEntity.ok(campsiteService.getBookedDates(lotId));
+    }
+
+    @GetMapping("/{ownerId}/lots/type/{lotType}/unavailable-dates")
+    @Operation(summary = "Get dates where all lots of a type are fully booked")
+    public ResponseEntity<List<BookedDateRange>> getUnavailableDatesByType(
+            @PathVariable Long ownerId,
+            @PathVariable Lot.LotType lotType
+    ) {
+        return ResponseEntity.ok(campsiteService.getUnavailableDatesByType(ownerId, lotType));
     }
 
     public record BookedDateRange(LocalDate checkIn, LocalDate checkOut) {}

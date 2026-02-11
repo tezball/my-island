@@ -168,7 +168,7 @@ wait_for_healthy() {
 start_docker_infra() {
     log_step "Starting Docker infrastructure..."
 
-    docker compose up -d postgres zookeeper kafka kafka-ui localstack
+    docker compose up -d postgres zookeeper kafka kafka-ui localstack mailpit grafana prometheus loki
 
     # Wait for services to be healthy using Docker health checks
     log_info "Waiting for services to be healthy..."
@@ -195,6 +195,20 @@ start_docker_infra() {
     else
         log_error "LocalStack failed to become healthy"
         return 1
+    fi
+
+    echo -n "  Mailpit"
+    if wait_for_healthy "myisland-mailpit" 30; then
+        log_success "Mailpit ready"
+    else
+        log_warn "Mailpit not healthy (non-critical)"
+    fi
+
+    echo -n "  Grafana"
+    if wait_for_port 3000 "Grafana" 30; then
+        log_success "Grafana ready"
+    else
+        log_warn "Grafana not ready (non-critical)"
     fi
 
     # Give services a moment to fully initialize
@@ -306,6 +320,50 @@ start_stripe_cli() {
 }
 
 # ============================================
+# Open Browser Tabs
+# ============================================
+open_browser_tabs() {
+    log_step "Opening browser tabs..."
+
+    local open_cmd=""
+    if command -v xdg-open &>/dev/null; then
+        open_cmd="xdg-open"
+    elif command -v open &>/dev/null; then
+        open_cmd="open"
+    elif command -v wslview &>/dev/null; then
+        open_cmd="wslview"
+    else
+        log_warn "No browser opener found — open the URLs manually"
+        return 0
+    fi
+
+    local urls=(
+        "http://localhost:5173"
+        "http://localhost:8080/api/swagger-ui.html"
+        "http://localhost:8025"
+        "http://localhost:8081"
+        "http://localhost:3000"
+        "http://localhost:9090"
+    )
+    local labels=(
+        "Frontend"
+        "Swagger"
+        "Mailpit"
+        "Kafka UI"
+        "Grafana"
+        "Prometheus"
+    )
+
+    for i in "${!urls[@]}"; do
+        $open_cmd "${urls[$i]}" &>/dev/null &
+        log_info "  ${labels[$i]} → ${urls[$i]}"
+        sleep 0.4
+    done
+
+    log_success "Browser tabs opened"
+}
+
+# ============================================
 # Main
 # ============================================
 main() {
@@ -351,35 +409,32 @@ main() {
     start_frontend
     echo ""
     start_stripe_cli
+    echo ""
+    open_browser_tabs
 
     echo ""
     echo "=========================================="
     echo "  All services running with fresh data!"
     echo "=========================================="
     echo ""
-    echo "  Frontend:  http://localhost:5173"
-    echo "  Backend:   http://localhost:8080/api"
-    echo "  Swagger:   http://localhost:8080/api/swagger-ui.html"
-    echo "  Kafka UI:  http://localhost:8081"
+    echo "  App & API:"
+    echo "    Frontend:    http://localhost:5173"
+    echo "    API:         http://localhost:8080/api"
+    echo "    Swagger:     http://localhost:8080/api/swagger-ui.html"
     echo ""
-    echo "  Stripe:    Sandbox mode (test payments → dashboard.stripe.com/test)"
-    echo "  Webhooks:  Forwarding to localhost:8080/api/webhooks/stripe"
-    echo "  Test card: 4242 4242 4242 4242 (any expiry/CVC)"
+    echo "  Dev Tools:"
+    echo "    Mailpit:     http://localhost:8025"
+    echo "    Kafka UI:    http://localhost:8081"
+    echo "    Grafana:     http://localhost:3000  (admin / admin)"
+    echo "    Prometheus:  http://localhost:9090"
+    echo "    Loki:        http://localhost:3100"
     echo ""
-    echo "  Test accounts (password: 'password'):"
-    echo "    Subscribed:"
-    echo "      - norevalley@myisland.com (Owner - Nore Valley Park)"
-    echo "      - hello@burrenglampingvillage.ie (Owner - Burren Glamping)"
-    echo "      - farmshop@greenacres.ie (Supplier - Green Acres)"
-    echo "      - info@aillweefarmshop.ie (Supplier - Aillwee Farm Shop)"
-    echo "    No Subscription:"
-    echo "      - bookings@loughdergcamping.ie (Owner - Lough Derg Lakeside)"
-    echo "      - hello@dinglekayak.ie (Supplier - Dingle Kayak Adventures)"
-    echo "    Guest:"
-    echo "      - family@example.com (Murphy Family)"
+    echo "  Stripe:"
+    echo "    Mode:        Sandbox (test payments)"
+    echo "    Webhooks:    Forwarding to localhost:8080/api/webhooks/stripe"
+    echo "    Test card:   4242 4242 4242 4242 (any expiry/CVC)"
     echo ""
     echo "  Logs: $SCRIPT_DIR/logs/"
-    echo ""
     echo "  To stop: ./stop.sh"
     echo "=========================================="
 }

@@ -6,13 +6,13 @@ These are the remaining features needed before launch. Items are ordered by prio
 
 ### Must Have (Launch Blockers)
 
-| # | Feature | Status | Notes |
-|---|---------|--------|-------|
-| 1 | **Stripe payment integration** | TODO | Owners/suppliers can subscribe; guests can pay for bookings online |
-| 2 | **Automated pre-arrival email** | TODO | Confirmation + directions sent to guests after booking |
-| 3 | **Lot status lifecycle** | TODO | Available → Booked → Checked-in → Checked-out → Cleaning → Available, visible on calendar/lot grid |
-| 4 | **Booking modifications** | TODO | Change dates or move guest to different lot without cancel/rebook |
-| 5 | **Staff accounts with roles** | DONE | Preset roles (Manager, Receptionist, Groundskeeper, Viewer, Associate, Redeemer) with per-section ACL |
+| #   | Feature                         | Status | Notes                                                                                                                              |
+| --- | ------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Stripe payment integration**  | DONE   | Manual capture flow (authorize → confirm → capture), Stripe Connect payouts, webhook handling, subscriptions                       |
+| 2   | **Automated pre-arrival email** | TODO   | Confirmation + directions sent to guests before arrival (booking creation/confirmation emails exist, but no pre-arrival scheduler) |
+| 3   | **Lot status lifecycle**        | DONE   | PENDING_PAYMENT → PENDING → CONFIRMED → CHECKED_IN → COMPLETED (+ CANCELLED, PAYMENT_FAILED)                                       |
+| 4   | **Booking modifications**       | TODO   | Change dates or move guest to different lot without cancel/rebook                                                                  |
+| 5   | **Staff accounts with roles**   | DONE   | Preset roles (Manager, Receptionist, Groundskeeper, Viewer, Associate, Redeemer) with per-section ACL                              |
 
 ### Should Have (Post-Launch Priority)
 
@@ -52,6 +52,11 @@ For reference, these features are implemented and working:
 
 | Feature | Category |
 |---------|----------|
+| Stripe payment (authorize/capture/refund/payout) | Payments |
+| Booking status lifecycle (7 states with transitions) | Booking |
+| Auto-assign available lot of same type on booking | Booking |
+| Type-level availability calendar (red only when ALL lots booked) | Booking |
+| Booking confirmation + confirmed emails to guest/owner | Notifications |
 | Manual booking creation (owner-side) | Staff & Direct Bookings |
 | Walk-in / phone booking flag | Staff & Direct Bookings |
 | Check-in action | Check-in / Check-out |

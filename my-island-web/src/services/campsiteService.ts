@@ -210,6 +210,15 @@ export const campsiteService = {
         return apiRequest<Array<{ checkIn: string; checkOut: string }>>(`/campsites/lots/${lotId}/booked-dates`, { requiresAuth: false });
     },
 
+    async getUnavailableDatesByType(ownerId: string, lotType: string): Promise<Array<{ checkIn: string; checkOut: string }>> {
+        // Convert frontend lot type (lowercase with dashes) to backend enum (uppercase with underscores)
+        const backendType = lotType.toUpperCase().replace(/-/g, '_');
+        return apiRequest<Array<{ checkIn: string; checkOut: string }>>(
+            `/campsites/${ownerId}/lots/type/${backendType}/unavailable-dates`,
+            { requiresAuth: false }
+        );
+    },
+
     async createBooking(booking: Omit<Booking, 'id' | 'status'>, options?: { wantsPower?: boolean }): Promise<Booking> {
         const parseDate = (dateStr: string): string => {
             const [day, month, year] = dateStr.split('/');

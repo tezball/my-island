@@ -122,18 +122,29 @@ public class BookingService {
             throw new BadRequestException("Number of guests exceeds lot capacity of " + lot.getMaxGuests());
         }
 
-        // Check for overlapping bookings
+        // Check for overlapping bookings on the requested lot
         List<Booking> overlapping = bookingRepository.findOverlappingBookings(
                 lot.getId(), request.checkInDate(), request.checkOutDate());
-        if (!overlapping.isEmpty()) {
-            throw new BadRequestException("Lot is not available for the selected dates");
-        }
-
-        // Check for blocked periods
         List<LotBlockedPeriod> blockedPeriods = blockedPeriodRepository.findOverlappingBlocks(
                 lot.getId(), request.checkInDate(), request.checkOutDate());
-        if (!blockedPeriods.isEmpty()) {
-            throw new BadRequestException("Lot is blocked for the selected dates");
+
+        // If the requested lot is taken, auto-assign another available lot of the same type
+        if (!overlapping.isEmpty() || !blockedPeriods.isEmpty()) {
+            Lot.LotType requestedType = lot.getLotType();
+            int requestedGuests = request.numGuests();
+            List<Lot> availableLots = lotRepository.findAvailableLotsByOwner(
+                    owner.getId(), request.checkInDate(), request.checkOutDate());
+            Lot alternate = availableLots.stream()
+                    .filter(l -> l.getLotType() == requestedType)
+                    .filter(l -> l.getMaxGuests() >= requestedGuests)
+                    .findFirst()
+                    .orElse(null);
+
+            if (alternate == null) {
+                throw new BadRequestException("No " + requestedType.name().toLowerCase().replace('_', ' ')
+                        + " lots are available for the selected dates");
+            }
+            lot = alternate;
         }
 
         // Calculate total price using seasonal pricing rules (falls back to base price)

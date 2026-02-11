@@ -42,8 +42,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
     const [createdBooking, setCreatedBooking] = useState<Booking | null>(null);
     const [confirmation, setConfirmation] = useState<BookingConfirmation | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
-    const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
     const [bookedDates, setBookedDates] = useState<Array<{ checkIn: string; checkOut: string }>>([]);
     const [isLoadingDates, setIsLoadingDates] = useState(false);
 
@@ -77,67 +75,29 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
             setCreatedBooking(null);
             setConfirmation(null);
             setError(null);
-            setIsAvailable(null);
             setBookedDates([]);
         }
     }, [isOpen]);
 
-    // Fetch booked dates when modal opens
+    // Fetch unavailable dates for this accommodation type (across all lots of this type)
     useEffect(() => {
-        const fetchBookedDates = async () => {
-            if (!isOpen || !lot.id) return;
+        const fetchUnavailableDates = async () => {
+            if (!isOpen || !lot.ownerId || !lot.type) return;
 
             setIsLoadingDates(true);
             try {
-                const dates = await campsiteService.getBookedDates(lot.id);
+                const dates = await campsiteService.getUnavailableDatesByType(lot.ownerId, lot.type);
                 setBookedDates(dates);
             } catch (err) {
-                console.error('Failed to fetch booked dates:', err);
+                console.error('Failed to fetch unavailable dates:', err);
                 // Don't block the modal if this fails
             } finally {
                 setIsLoadingDates(false);
             }
         };
 
-        fetchBookedDates();
-    }, [isOpen, lot.id]);
-
-    // Check availability when dates change
-    useEffect(() => {
-        const checkAvailability = async () => {
-            if (!startDate || !endDate || !lot.ownerId) {
-                setIsAvailable(null);
-                return;
-            }
-
-            setIsCheckingAvailability(true);
-            setError(null);
-
-            try {
-                const checkIn = new Date(startDate);
-                const checkOut = new Date(endDate);
-                const availableLots = await campsiteService.getAvailableLots(
-                    lot.ownerId,
-                    checkIn,
-                    checkOut
-                );
-                const lotIsAvailable = availableLots.some(availableLot => availableLot.id === lot.id);
-                setIsAvailable(lotIsAvailable);
-
-                if (!lotIsAvailable) {
-                    setError('This accommodation is not available for the selected dates. Please choose different dates.');
-                }
-            } catch (err) {
-                console.error('Failed to check availability:', err);
-                // Don't block booking if availability check fails - backend will validate
-                setIsAvailable(null);
-            } finally {
-                setIsCheckingAvailability(false);
-            }
-        };
-
-        checkAvailability();
-    }, [startDate, endDate, lot.id, lot.ownerId]);
+        fetchUnavailableDates();
+    }, [isOpen, lot.ownerId, lot.type]);
 
     if (!isOpen) return null;
 
@@ -154,7 +114,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
     // First click = check-in, second click = check-out
     const handleDateSelect = (date: string) => {
         setError(null);
-        setIsAvailable(null);
 
         if (!startDate || (startDate && endDate)) {
             // No dates selected OR both dates selected - start fresh with check-in
@@ -491,10 +450,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={isSubmitting || !user || days === 0 || isAvailable === false || isCheckingAvailability}
+                        disabled={isSubmitting || !user || days === 0}
                         className="w-full bg-primary hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2"
                     >
-                        {isCheckingAvailability ? 'Checking availability...' : isSubmitting ? 'Processing...' : 'Continue to Payment'}
+                        {isSubmitting ? 'Processing...' : 'Continue to Payment'}
                     </button>
                 </form>
             </div>
