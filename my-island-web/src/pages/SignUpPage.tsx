@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { uploadImage, validateFile } from '../services/imageService';
 
 export const SignUpPage: React.FC = () => {
     const navigate = useNavigate();
@@ -11,6 +12,22 @@ export const SignUpPage: React.FC = () => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
+    const [profilePhoto, setProfilePhoto] = React.useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const validationError = validateFile(file);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
+        setProfilePhoto(file);
+        setPhotoPreview(URL.createObjectURL(file));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,12 +36,26 @@ export const SignUpPage: React.FC = () => {
 
         try {
             await signup(name, email, password);
-            navigate('/personalize');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to sign up');
-        } finally {
             setIsLoading(false);
+            return;
         }
+
+        // Upload profile photo after signup (non-blocking — don't fail signup if upload fails)
+        if (profilePhoto) {
+            try {
+                const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+                if (storedUser.id) {
+                    await uploadImage('USER', storedUser.id, profilePhoto, { primary: true });
+                }
+            } catch (err) {
+                console.error('Profile photo upload failed:', err);
+            }
+        }
+
+        setIsLoading(false);
+        navigate('/personalize');
     };
 
     return (
@@ -65,17 +96,21 @@ export const SignUpPage: React.FC = () => {
                     )}
                     <div className="flex flex-col items-center justify-center gap-2 mb-2">
                         <div className="relative group cursor-pointer">
-                            <input accept="image/*" className="hidden" id="profile-upload" type="file" />
-                            <label className="flex h-24 w-24 items-center justify-center rounded-full bg-background-light dark:bg-background-dark border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary transition-all cursor-pointer" htmlFor="profile-upload">
-                                <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors text-[32px]">photo_camera</span>
+                            <input accept="image/*" className="hidden" id="profile-upload" type="file" onChange={handlePhotoChange} />
+                            <label className="flex h-24 w-24 items-center justify-center rounded-full bg-background-light dark:bg-background-dark border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary transition-all cursor-pointer overflow-hidden" htmlFor="profile-upload">
+                                {photoPreview ? (
+                                    <img src={photoPreview} alt="Profile preview" className="h-full w-full object-cover" />
+                                ) : (
+                                    <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors text-[32px]">photo_camera</span>
+                                )}
                             </label>
-                            <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow-sm ring-2 ring-white dark:ring-[#1a2632] hover:scale-105 transition-transform" type="button">
-                                <span className="material-symbols-outlined text-[18px]">add</span>
-                            </button>
+                            <label htmlFor="profile-upload" className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow-sm ring-2 ring-white dark:ring-[#1a2632] hover:scale-105 transition-transform cursor-pointer">
+                                <span className="material-symbols-outlined text-[18px]">{photoPreview ? 'edit' : 'add'}</span>
+                            </label>
                         </div>
-                        <button className="text-sm font-bold text-primary hover:text-[#20d85f] transition-colors" type="button">
-                            Add Photo
-                        </button>
+                        <label htmlFor="profile-upload" className="text-sm font-bold text-primary hover:text-[#20d85f] transition-colors cursor-pointer">
+                            {photoPreview ? 'Change Photo' : 'Add Photo'}
+                        </label>
                     </div>
 
                     <div className="flex flex-col gap-1.5">
