@@ -10,6 +10,7 @@ Core business logic and entity documentation. Each module has a `README.md` with
 | Module | Status | Description |
 |--------|--------|-------------|
 | [Accommodation](domain/accommodation/) | Implemented | Campsites, lots, pricing, availability |
+| [Admin](domain/admin/) | Implemented | Platform admin portal, audit log, lead CRM, financial reporting |
 | [Booking](domain/booking/) | Implemented | Reservations, payments, check-in/out |
 | [Identity](domain/identity/) | Implemented | Auth, users, roles, staff management |
 | [Marketplace](domain/marketplace/) | Implemented | Suppliers, offers, voucher redemption |

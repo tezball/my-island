@@ -34,6 +34,9 @@ public class User extends BaseEntity {
     @Column(name = "is_admin", nullable = false)
     private boolean isAdmin = false;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
+
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
@@ -113,6 +116,9 @@ public class User extends BaseEntity {
 
     public boolean isAdmin() { return isAdmin; }
     public void setAdmin(boolean admin) { isAdmin = admin; }
+
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
 
     public boolean isEmailVerified() { return emailVerified; }
     public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }

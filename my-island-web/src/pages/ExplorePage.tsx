@@ -177,7 +177,7 @@ export const ExplorePage: React.FC = () => {
                         poiCount={poiCount}
                     />
                     {/* Legend */}
-                    <div className="absolute bottom-4 right-4 z-[1000] bg-white dark:bg-[#1a2632] rounded-lg shadow-lg p-3 text-xs flex flex-col gap-1.5 border border-gray-200 dark:border-gray-700">
+                    <div className="absolute bottom-20 right-4 z-[1000] bg-white dark:bg-[#1a2632] rounded-lg shadow-lg p-3 text-xs flex flex-col gap-1.5 border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full bg-emerald-500" />
                             <span className="text-gray-700 dark:text-gray-300">Campsites ({campsiteCount})</span>

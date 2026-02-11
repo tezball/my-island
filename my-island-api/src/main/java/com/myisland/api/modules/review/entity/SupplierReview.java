@@ -37,6 +37,9 @@ public class SupplierReview extends BaseEntity {
     @Column(name = "supplier_response_at")
     private LocalDateTime supplierResponseAt;
 
+    @Column(name = "is_flagged", nullable = false)
+    private boolean isFlagged = false;
+
     public SupplierReview() {}
 
     public static Builder builder() {
@@ -88,4 +91,7 @@ public class SupplierReview extends BaseEntity {
 
     public LocalDateTime getSupplierResponseAt() { return supplierResponseAt; }
     public void setSupplierResponseAt(LocalDateTime supplierResponseAt) { this.supplierResponseAt = supplierResponseAt; }
+
+    public boolean isFlagged() { return isFlagged; }
+    public void setFlagged(boolean flagged) { isFlagged = flagged; }
 }

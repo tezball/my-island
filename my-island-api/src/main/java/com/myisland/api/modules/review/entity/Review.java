@@ -37,6 +37,9 @@ public class Review extends BaseEntity {
     @Column(name = "owner_response_at")
     private LocalDateTime ownerResponseAt;
 
+    @Column(name = "is_flagged", nullable = false)
+    private boolean isFlagged = false;
+
     public Review() {}
 
     public static Builder builder() {
@@ -88,4 +91,7 @@ public class Review extends BaseEntity {
 
     public LocalDateTime getOwnerResponseAt() { return ownerResponseAt; }
     public void setOwnerResponseAt(LocalDateTime ownerResponseAt) { this.ownerResponseAt = ownerResponseAt; }
+
+    public boolean isFlagged() { return isFlagged; }
+    public void setFlagged(boolean flagged) { isFlagged = flagged; }
 }

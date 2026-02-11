@@ -18,6 +18,20 @@ import { SupplierGuard } from './components/auth/SupplierGuard';
 import { AdminGuard } from './components/auth/AdminGuard';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminUsersPage } from './pages/admin/AdminUsersPage';
+import { AdminUserDetailPage } from './pages/admin/AdminUserDetailPage';
+import { AdminBookingsPage } from './pages/admin/AdminBookingsPage';
+import { AdminBookingDetailPage } from './pages/admin/AdminBookingDetailPage';
+import { AdminOwnersPage } from './pages/admin/AdminOwnersPage';
+import { AdminOwnerDetailPage } from './pages/admin/AdminOwnerDetailPage';
+import { AdminSuppliersPage } from './pages/admin/AdminSuppliersPage';
+import { AdminSupplierDetailPage } from './pages/admin/AdminSupplierDetailPage';
+import { AdminReviewsPage } from './pages/admin/AdminReviewsPage';
+import { AdminSubscriptionsPage } from './pages/admin/AdminSubscriptionsPage';
+import { AdminFinancialPage } from './pages/admin/AdminFinancialPage';
+import { AdminLeadsPage } from './pages/admin/AdminLeadsPage';
+import { AdminLeadDetailPage } from './pages/admin/AdminLeadDetailPage';
+import { AdminAuditPage } from './pages/admin/AdminAuditPage';
 import { SupplierLayout } from './components/supplier/SupplierLayout';
 import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
 import { SupplierOffersPage } from './pages/supplier/SupplierOffersPage';
@@ -139,6 +153,20 @@ function App() {
             <Route element={<AdminGuard />}>
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboardPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="users/:id" element={<AdminUserDetailPage />} />
+                <Route path="bookings" element={<AdminBookingsPage />} />
+                <Route path="bookings/:id" element={<AdminBookingDetailPage />} />
+                <Route path="owners" element={<AdminOwnersPage />} />
+                <Route path="owners/:id" element={<AdminOwnerDetailPage />} />
+                <Route path="suppliers" element={<AdminSuppliersPage />} />
+                <Route path="suppliers/:id" element={<AdminSupplierDetailPage />} />
+                <Route path="reviews" element={<AdminReviewsPage />} />
+                <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
+                <Route path="financial" element={<AdminFinancialPage />} />
+                <Route path="leads" element={<AdminLeadsPage />} />
+                <Route path="leads/:id" element={<AdminLeadDetailPage />} />
+                <Route path="audit" element={<AdminAuditPage />} />
               </Route>
             </Route>
           </Routes>

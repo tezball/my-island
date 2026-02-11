@@ -19,6 +19,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | Context | Status | Notes |
 |---------|--------|-------|
 | Accommodation | Implemented | Campsite, Lot, Amenity, Image management, Owner onboarding |
+| Admin | Implemented | Platform admin portal, audit logging, lead CRM, financial reporting |
 | Booking | Implemented | Booking CRUD, Stripe payment intents (authorize/capture), trip viewing |
 | Identity | Partially implemented | Email auth, password reset, email verification, profile editing. No social auth or account deletion |
 | Review | Not yet built | No entities, endpoints, or UI |
@@ -187,6 +188,21 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 - Verify payouts enabled
 - Handle account.updated webhooks
 
+### 10. Admin Context
+**Purpose**: Platform administration, audit logging, and lead CRM for campsite partnerships.
+
+**Aggregates**: AdminAuditLog, Lead (with LeadInteraction)
+
+**Key Operations**:
+- Dashboard KPIs and activity feed
+- Manage users, bookings, owners, suppliers, reviews
+- Toggle user active status
+- Verify suppliers
+- Flag and delete reviews
+- Financial reporting with CSV export
+- Lead CRM with scoring, interactions, and follow-up tracking
+- Audit logging of all admin actions with before/after snapshots
+
 ---
 
 ## Aggregates & Entities
@@ -334,6 +350,7 @@ User (Root)
 | isSupplier | Boolean | Has supplier dashboard access |
 | isStaff | Boolean | Has staff access via StaffMember membership |
 | isAdmin | Boolean | Platform admin with access to admin portal |
+| isActive | Boolean | Account active status (default true). Disabled users cannot log in. |
 | emailVerified | Boolean | Email verification status |
 | emailVerificationToken | String | Token for email verification |
 | emailVerificationTokenExpiry | DateTime | Token expiry |
@@ -478,6 +495,69 @@ SupportTicket (Root)
 | status | TicketStatus | Current state |
 | relatedBookingId | UUID | Optional booking reference |
 | createdAt | Timestamp | Creation time |
+
+---
+
+### AdminAuditLog
+
+```
+AdminAuditLog (standalone entity, no aggregate root)
+```
+
+**AdminAuditLog**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| adminUserId | Long | Admin who performed the action |
+| action | String | Action performed (e.g., "UPDATE_USER", "CANCEL_BOOKING") |
+| entityType | String | Type of affected entity (e.g., "USER", "BOOKING") |
+| entityId | Long | ID of affected entity |
+| summary | String | Human-readable description of the action |
+| details | JSONB | Additional action details |
+| previousValue | JSONB | Entity state before the action |
+| newValue | JSONB | Entity state after the action |
+| createdAt | Timestamp | When the action occurred |
+
+---
+
+### Lead Aggregate
+
+```
+Lead (Root)
+└── LeadInteraction[] (Entity)
+```
+
+**Lead** (extends BaseEntity)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| name | String | Contact name |
+| email | String | Contact email |
+| phone | String | Contact phone |
+| businessType | BusinessType | OWNER or SUPPLIER |
+| status | LeadStatus | NEW, CONTACTED, QUALIFIED, CONVERTED, LOST |
+| source | String | How the lead was found |
+| notes | String | Free-text notes |
+| assignedTo | String | Admin user handling this lead |
+| tags | String | Comma-separated tags |
+| score | Integer | Computed score 0-100 |
+| scheduledFollowUp | DateTime | Next follow-up date |
+| convertedUserId | Long | User ID if converted |
+| createdAt | Timestamp | Creation time |
+| updatedAt | Timestamp | Last update |
+
+**LeadInteraction**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| leadId | Long | Parent lead |
+| type | InteractionType | CALL, EMAIL, MEETING, NOTE |
+| content | String | Interaction details |
+| createdBy | String | Admin who created the interaction |
+| createdAt | Timestamp | When the interaction occurred |
 
 ---
 
@@ -645,6 +725,38 @@ SupportTicket (Root)
 | REDEEMED | Supplier has marked the voucher as used |
 | EXPIRED | Claim expired (past offer's validUntil date) |
 
+### BusinessType (Admin)
+
+| Type | Description |
+|------|-------------|
+| OWNER | Prospective campsite owner |
+| SUPPLIER | Prospective supplier |
+
+### LeadStatus (Admin, State Machine)
+
+```
+NEW --> CONTACTED --> QUALIFIED --> CONVERTED
+                        |
+                       LOST
+```
+
+| Status | Description |
+|--------|-------------|
+| NEW | Lead just created, no outreach yet |
+| CONTACTED | Initial outreach made |
+| QUALIFIED | Lead has shown genuine interest |
+| CONVERTED | Lead signed up as an Owner or Supplier |
+| LOST | Lead is no longer a prospect |
+
+### InteractionType (Admin)
+
+| Type | Description |
+|------|-------------|
+| CALL | Phone call with the lead |
+| EMAIL | Email communication |
+| MEETING | In-person or virtual meeting |
+| NOTE | Internal note or observation |
+
 ### PaymentType
 
 | Type | Description |
@@ -808,6 +920,15 @@ SupportTicket (Root)
 │ User (isSupplier=true) ───── (0..1) Supplier ── (0..*) Offer                │
 │                                                      │                      │
 │ User (Guest) ─────────────────────── (0..*) OfferClaim                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ADMIN CONTEXT                                                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ User (isAdmin=true) ──── (0..*) AdminAuditLog                               │
+│                                                                             │
+│ Lead ── (0..*) LeadInteraction                                              │
+│   └── (0..1) convertedUserId ──► User                                      │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 

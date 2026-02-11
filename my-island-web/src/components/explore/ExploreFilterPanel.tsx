@@ -52,10 +52,13 @@ export const ExploreFilterPanel: React.FC<ExploreFilterPanelProps> = ({
 
     return (
         <>
-            {/* Toggle button */}
+            {/* Toggle button — pinned to right side */}
             <button
                 onClick={onToggle}
-                className="absolute top-4 left-4 z-[1000] bg-white dark:bg-[#1a2632] shadow-lg rounded-lg px-3 py-2 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-600"
+                className={clsx(
+                    'absolute top-4 z-[1001] bg-white dark:bg-[#1a2632] shadow-lg rounded-lg px-3 py-2 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 border border-gray-200 dark:border-gray-600',
+                    isOpen ? 'right-[calc(20rem+1rem)]' : 'right-4',
+                )}
             >
                 <span className="material-symbols-outlined text-lg">
                     {isOpen ? 'close' : 'tune'}
@@ -63,18 +66,22 @@ export const ExploreFilterPanel: React.FC<ExploreFilterPanelProps> = ({
                 {isOpen ? 'Close' : 'Filters'}
             </button>
 
-            {/* Panel */}
+            {/* Backdrop — mobile only */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 z-[999] bg-black/30 md:hidden"
+                    onClick={onToggle}
+                />
+            )}
+
+            {/* Slide-in panel from right */}
             <div
                 className={clsx(
-                    'absolute z-[1000] bg-white dark:bg-[#1a2632] shadow-xl transition-all duration-300 overflow-y-auto',
-                    // Desktop: left sidebar
-                    'md:top-0 md:left-0 md:h-full md:w-80 md:rounded-r-xl md:border-r md:border-gray-200 md:dark:border-gray-700',
-                    // Mobile: bottom sheet
-                    'max-md:bottom-0 max-md:left-0 max-md:right-0 max-md:rounded-t-xl max-md:border-t max-md:border-gray-200 max-md:dark:border-gray-700 max-md:max-h-[60vh]',
-                    isOpen ? 'translate-x-0 max-md:translate-y-0' : 'md:-translate-x-full max-md:translate-y-full',
+                    'absolute top-0 right-0 z-[1000] h-full w-80 bg-white dark:bg-[#1a2632] shadow-xl border-l border-gray-200 dark:border-gray-700 overflow-y-auto transition-transform duration-300 ease-in-out',
+                    isOpen ? 'translate-x-0' : 'translate-x-full',
                 )}
             >
-                <div className="p-4 pt-14 md:pt-16 flex flex-col gap-4">
+                <div className="p-4 pt-14 flex flex-col gap-4">
                     {/* Search */}
                     <div className="relative">
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>

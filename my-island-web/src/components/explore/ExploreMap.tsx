@@ -26,25 +26,27 @@ const IRELAND_BOUNDS: L.LatLngBoundsExpression = [
     [55.8, -4.5],  // Northeast
 ];
 
+const markerStyle = 'display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:2px solid white;box-shadow:0 4px 6px rgba(0,0,0,0.3);';
+
 const campsiteIcon = L.divIcon({
-    html: '<span class="material-symbols-outlined" style="font-size:20px;color:white;">camping</span>',
-    className: 'flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 border-2 border-white shadow-lg',
+    html: `<div style="${markerStyle}background:#10b981;"><span class="material-symbols-outlined" style="font-size:18px;color:white;">camping</span></div>`,
+    className: '',
     iconSize: [32, 32],
     iconAnchor: [16, 16],
     popupAnchor: [0, -16],
 });
 
 const supplierIcon = L.divIcon({
-    html: '<span class="material-symbols-outlined" style="font-size:20px;color:white;">storefront</span>',
-    className: 'flex items-center justify-center w-8 h-8 rounded-full bg-purple-500 border-2 border-white shadow-lg',
+    html: `<div style="${markerStyle}background:#a855f7;"><span class="material-symbols-outlined" style="font-size:18px;color:white;">storefront</span></div>`,
+    className: '',
     iconSize: [32, 32],
     iconAnchor: [16, 16],
     popupAnchor: [0, -16],
 });
 
 const poiIcon = L.divIcon({
-    html: '<span class="material-symbols-outlined" style="font-size:20px;color:white;">explore</span>',
-    className: 'flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 border-2 border-white shadow-lg',
+    html: `<div style="${markerStyle}background:#06b6d4;"><span class="material-symbols-outlined" style="font-size:18px;color:white;">explore</span></div>`,
+    className: '',
     iconSize: [32, 32],
     iconAnchor: [16, 16],
     popupAnchor: [0, -16],

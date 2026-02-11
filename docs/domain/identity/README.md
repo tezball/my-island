@@ -8,7 +8,7 @@ Handles user authentication, registration, email verification, password manageme
 
 ## Key Entities
 
-- **User** — Core identity with email/password auth. Flags: `isOwner`, `isSupplier`, `isStaff`, `isAdmin`. Tracks email verification status, password reset tokens, and profile info.
+- **User** — Core identity with email/password auth. Flags: `isOwner`, `isSupplier`, `isStaff`, `isAdmin`, `isActive`. Tracks email verification status, password reset tokens, and profile info.
 - **StaffMember** — Links a staff user to an owner or supplier. Contains the staff role assignment and invitation status.
 - **StaffRole** — Defines a named role with granular permissions (e.g., "Manager" with full access, "Receptionist" with booking-only access).
 
@@ -20,6 +20,7 @@ Handles user authentication, registration, email verification, password manageme
 | `isSupplier` | `false` | Can manage supplier offers |
 | `isStaff` | `false` | Can access portals of the owner/supplier who invited them |
 | `isAdmin` | `false` | Platform superuser with access to the admin portal |
+| `isActive` | `true` | Account active status. Disabled users cannot log in. Toggled by platform admins via `/admin/users/{id}/toggle-active`. |
 
 Users start as Guest (all flags false). Roles are additive — a user can be both Owner AND Supplier. Admin is a platform-level role set directly in the database.
 
@@ -63,6 +64,17 @@ Example: A "Receptionist" role might have BOOKINGS(FULL) + ANALYTICS(VIEW_ONLY).
 - **ProfilePage** — User profile management
 - **OwnerStaffPage** — Manage owner staff members
 - **SupplierStaffPage** — Manage supplier staff members
+
+## Admin User Management
+
+Platform admins can manage users through the admin portal. See [Admin module](../admin/README.md) for full details.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/admin/users` | List users with search/filter |
+| GET | `/api/admin/users/{id}` | User detail |
+| PUT | `/api/admin/users/{id}` | Update user |
+| PUT | `/api/admin/users/{id}/toggle-active` | Enable/disable user account |
 
 ## Not Yet Implemented
 - Social login (OAuth — Google, Apple, Facebook)

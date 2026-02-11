@@ -117,7 +117,8 @@ my-island-api/src/main/java/com/myisland/api/
     ├── identity/          # User, Auth, Staff, JWT endpoints
     ├── accommodation/     # Owner, Lot, Amenity
     ├── booking/           # Booking entity and service
-    └── marketplace/       # Supplier, Offer, Claim
+    ├── marketplace/       # Supplier, Offer, Claim
+    └── admin/             # Platform admin: audit log, leads CRM, admin services
 ```
 
 ### Frontend Structure
@@ -131,7 +132,8 @@ my-island-web/src/
 │   └── ui/                # Reusable components
 ├── pages/                 # Page components
 │   ├── owner/            # Owner dashboard pages
-│   └── supplier/         # Supplier dashboard pages
+│   ├── supplier/         # Supplier dashboard pages
+│   └── admin/            # Platform admin portal pages
 ├── context/              # AuthContext for auth state
 └── services/             # API services
 ```
@@ -239,3 +241,13 @@ Key endpoints:
 - `POST /api/supplier/redeem/{code}` - Redeem voucher
 - `GET/POST/DELETE /api/owner/staff` - Manage owner staff members
 - `GET/POST/DELETE /api/supplier/staff` - Manage supplier staff members
+- `GET /api/admin/dashboard` - Admin dashboard stats
+- `GET /api/admin/users` - Admin user management
+- `GET /api/admin/bookings` - Admin booking management
+- `GET /api/admin/owners` - Admin owner management
+- `GET /api/admin/suppliers` - Admin supplier management
+- `GET /api/admin/reviews` - Admin review moderation
+- `GET /api/admin/subscriptions` - Admin subscription overview
+- `GET /api/admin/financial/revenue` - Admin financial reports
+- `CRUD /api/admin/leads` - Admin leads CRM
+- `GET /api/admin/audit` - Admin audit log

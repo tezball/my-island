@@ -5,13 +5,23 @@ import clsx from 'clsx';
 
 const PAGE_TITLES: Record<string, string> = {
     '/admin': 'Dashboard',
+    '/admin/users': 'Users',
+    '/admin/bookings': 'Bookings',
+    '/admin/owners': 'Owners',
+    '/admin/suppliers': 'Suppliers',
+    '/admin/reviews': 'Reviews',
+    '/admin/subscriptions': 'Subscriptions',
+    '/admin/financial': 'Financial',
+    '/admin/leads': 'Leads CRM',
+    '/admin/audit': 'Audit Log',
 };
 
 export const AdminLayout: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const pageTitle = PAGE_TITLES[location.pathname] || 'Admin Portal';
+    const basePath = '/' + location.pathname.split('/').slice(1, 3).join('/');
+    const pageTitle = PAGE_TITLES[location.pathname] || PAGE_TITLES[basePath] || 'Admin Portal';
 
     const handleLogout = async () => {
         await logout();
@@ -52,6 +62,15 @@ export const AdminLayout: React.FC = () => {
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
                     <AdminNavLink to="/admin" icon="dashboard" label="Dashboard" end />
+                    <AdminNavLink to="/admin/users" icon="group" label="Users" />
+                    <AdminNavLink to="/admin/bookings" icon="event_note" label="Bookings" />
+                    <AdminNavLink to="/admin/owners" icon="cottage" label="Owners" />
+                    <AdminNavLink to="/admin/suppliers" icon="storefront" label="Suppliers" />
+                    <AdminNavLink to="/admin/reviews" icon="reviews" label="Reviews" />
+                    <AdminNavLink to="/admin/subscriptions" icon="card_membership" label="Subscriptions" />
+                    <AdminNavLink to="/admin/financial" icon="payments" label="Financial" />
+                    <AdminNavLink to="/admin/leads" icon="contact_phone" label="Leads CRM" />
+                    <AdminNavLink to="/admin/audit" icon="history" label="Audit Log" />
                 </div>
 
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800">
