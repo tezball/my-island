@@ -139,6 +139,13 @@ public class BookingService {
         // Calculate total price using seasonal pricing rules (falls back to base price)
         BigDecimal totalPrice = pricingService.calculateTotalPrice(lot, request.checkInDate(), request.checkOutDate());
 
+        // Add power hookup surcharge for tent lots (€5 per night)
+        if (Boolean.TRUE.equals(request.wantsPower()) && lot.getLotType() == Lot.LotType.TENT) {
+            long nights = java.time.temporal.ChronoUnit.DAYS.between(request.checkInDate(), request.checkOutDate());
+            BigDecimal powerSurcharge = BigDecimal.valueOf(5).multiply(BigDecimal.valueOf(nights));
+            totalPrice = totalPrice.add(powerSurcharge);
+        }
+
         // Calculate service fee (added on top, platform keeps this)
         BigDecimal serviceFee = totalPrice.multiply(BigDecimal.valueOf(stripeProperties.getServiceFeePercent()))
                 .setScale(2, RoundingMode.HALF_UP);

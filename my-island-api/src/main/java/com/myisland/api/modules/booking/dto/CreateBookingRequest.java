@@ -20,5 +20,7 @@ public record CreateBookingRequest(
         @Max(value = 20, message = "Maximum 20 guests allowed")
         int numGuests,
 
-        String specialRequests
+        String specialRequests,
+
+        Boolean wantsPower
 ) {}

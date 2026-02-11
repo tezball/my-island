@@ -77,7 +77,7 @@ The `Supplier` entity is **separate from the `User` entity** but linked via `use
 - **User** (Identity Context): Authentication, profile, `isSupplier` flag
 - **Supplier** (Marketplace Context): Business details, offers
 
-A user with `isSupplier=true` can create a `Supplier` profile here. See [Identity Context Notes](../03-Identity/NOTES.md) for full details on this boundary.
+A user with `isSupplier=true` can create a `Supplier` profile here. See [Identity Context Notes](../identity/NOTES.md) for full details on this boundary.
 
 ---
 

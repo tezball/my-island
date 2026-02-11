@@ -11,18 +11,22 @@ My Island is a camping/glamping booking platform for Ireland with a marketplace 
 **CRITICAL**: Every code change MUST include corresponding documentation updates. This is not optional — treat docs as part of the deliverable, not an afterthought.
 
 ### For EVERY task, before considering it complete:
-1. **Identify affected docs** — Check `docs/` for existing documentation related to the feature/module being changed
-2. **Update existing docs** — If docs exist, update them to reflect the new behavior, status changes, flows, or API changes
-3. **Create missing docs** — If no documentation exists for the feature area, create it in the appropriate `docs/00-Domain/{module}/` directory
-4. **Update DOMAIN_MODEL.md** — If entities, enums, relationships, or status flows changed, update `docs/00-Domain/DOMAIN_MODEL.md`
+1. **Identify affected module** — Find the module README at `docs/domain/{module}/README.md`
+2. **Update module README** — Update status, entities, endpoints, lifecycle diagrams, or frontend pages as needed
+3. **Create missing docs** — If no documentation exists for the feature area, create it following the module README template
+4. **Update DOMAIN_MODEL.md** — If entities, enums, relationships, or status flows changed, update `docs/domain/DOMAIN_MODEL.md`
 5. **Update CLAUDE.md** — If test accounts, endpoints, architecture, or key patterns changed, update this file
 
 ### Documentation locations
-- **Domain concepts, entities, status flows**: `docs/00-Domain/DOMAIN_MODEL.md`
-- **Module-specific details**: `docs/00-Domain/{module}/` (e.g., `02-Booking/PAYMENT_FLOW.md`)
-- **User stories**: `docs/00-Domain/{module}/USER_STORIES.md`
-- **API reference**: `docs/API_REFERENCE.md`
-- **Roadmap/feature status**: `docs/ROADMAP.md`
+- **Module overview (start here)**: `docs/domain/{module}/README.md` — status, entities, endpoints, pages
+- **Domain model**: `docs/domain/DOMAIN_MODEL.md` — entity relationships, state machines, bounded contexts
+- **Module details**: `docs/domain/{module}/NOTES.md` — aggregates, business rules, invariants
+- **User stories**: `docs/domain/{module}/USER_STORIES.md`
+- **Specific flows**: `docs/domain/{module}/*.md` (e.g., `booking/PAYMENT_FLOW.md`)
+- **Architecture**: `docs/architecture/OVERVIEW.md`
+- **Operations**: `docs/operations/` (testing guides, seed data)
+- **Roadmap**: `docs/ROADMAP.md`
+- **Full index**: `docs/README.md`
 
 ### What counts as a doc-worthy change
 - New or modified API endpoints
@@ -161,6 +165,7 @@ All passwords are `password`.
 | norevalley@myisland.com | Owner |
 | farmshop@greenacres.ie | Supplier |
 | family@example.com | Guest |
+| testguest@example.com | Guest (clean account, no bookings) |
 
 **Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner` and `isSupplier` flags. Staff users (`isStaff=true`) gain access to the portals of the Owner/Supplier who invited them.
 

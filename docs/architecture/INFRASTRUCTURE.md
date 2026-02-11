@@ -1,71 +1,23 @@
-# Tech Stack
+# Infrastructure
 
-This document outlines the technologies used and planned for the My Island project.
-
-## Backend
-
-### Framework
-- **Spring Boot** - Java-based framework for building production-ready applications
-  - RESTful API development
-  - Dependency injection
-  - Auto-configuration
-  - 
-
-### Database
-- **PostgreSQL** - Primary relational database
-  - ACID compliance
-  - JSON support for flexible data structures
-  - Full-text search capabilities
-
-### Event Streaming
-- **Apache Kafka** - Distributed event streaming platform
-  - Asynchronous communication between services
-  - Event sourcing
-  - Real-time data processing
-
-## Frontend
-
-- **React** - UI library
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-
-## Testing
-
-- **Testcontainers** - Integration testing with real dependencies
-  - Spin up PostgreSQL containers for database tests
-  - Kafka containers for event streaming tests
-  - Ensures tests run against real services, not mocks
-
-## Infrastructure
-
-### Local Development
-- **Docker Compose** - Container orchestration for local development
-  - PostgreSQL
-  - Kafka + Zookeeper
-  - Backend services
-
-## Getting Started
+## Local Development
 
 ### Prerequisites
-- Docker and Docker Compose installed
-- Git
+- Docker and Docker Compose
+- Node.js (for frontend dev server)
+- Java 25 (for backend without Docker)
 
-### Quick Start (Git Clone & Run)
+### Quick Start
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd my-island
-
 # Start all services
 docker compose up -d
 
-# The application will be available at:
+# Access points:
 # - Frontend: http://localhost:5173
-# - Backend API: http://localhost:8080
-# - PostgreSQL: localhost:5432
-# - Kafka: localhost:9092
+# - API: http://localhost:8080/api
+# - Swagger: http://localhost:8080/api/swagger-ui.html
+# - Kafka UI: http://localhost:8081
 ```
 
 ### Stopping Services
@@ -77,30 +29,32 @@ docker compose down
 ### Viewing Logs
 
 ```bash
-# All services
-docker compose logs -f
-
-# Specific service
-docker compose logs -f backend
+docker compose logs -f        # All services
+docker compose logs -f api    # API only
 ```
 
-## Architecture Overview
+## Services
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Frontend  │────▶│   Backend   │────▶│  PostgreSQL │
-│   (React)   │     │(Spring Boot)│     │             │
-└─────────────┘     └──────┬──────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │    Kafka    │
-                    │   (Events)  │
-                    └─────────────┘
-```
+### PostgreSQL 17
+- Primary relational database
+- Flyway manages schema migrations (see [Seed Data](../operations/SEED_DATA.md) for migration inventory)
+- Port: 5432
+
+### Apache Kafka
+- Asynchronous domain event streaming
+- Used for: booking events, offer claims, notifications
+- Kafka UI available at port 8081
+- Port: 9092
+
+### Stripe
+- Payment Intents with manual capture for bookings
+- Subscriptions for owner/supplier plans
+- Connect Express for supplier payouts
+- Webhook handling via `StripeWebhookController`
+- Dev mode (`STRIPE_DEV_MODE=true`) simulates payments locally without Stripe API calls
 
 ## Future Considerations
-
 - Redis for caching
+- AWS S3 for image storage (currently local/embedded)
+- AWS SES for email delivery
 - Elasticsearch for advanced search
-- Kubernetes for production deployment

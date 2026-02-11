@@ -114,7 +114,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(10),
                                         LocalDate.now().plusDays(13),
                                         2,
-                                        "Early check-in please");
+                                        "Early check-in please",
+                                        false);
 
                         // When
                         result = mockMvc.perform(post("/bookings")
@@ -141,7 +142,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(20),
                                         LocalDate.now().plusDays(23),
                                         2,
-                                        null);
+                                        null,
+                                        false);
                         mockMvc.perform(post("/bookings")
                                         .header("Authorization", "Bearer " + authToken)
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +155,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(22),
                                         LocalDate.now().plusDays(25),
                                         2,
-                                        null);
+                                        null,
+                                        false);
                         result = mockMvc.perform(post("/bookings")
                                         .header("Authorization", "Bearer " + authToken)
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -174,7 +177,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(30),
                                         LocalDate.now().plusDays(32),
                                         10, // Lot max is 4
-                                        null);
+                                        null,
+                                        false);
 
                         // When
                         result = mockMvc.perform(post("/bookings")
@@ -196,7 +200,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(40),
                                         LocalDate.now().plusDays(42),
                                         2,
-                                        null);
+                                        null,
+                                        false);
 
                         // When
                         result = mockMvc.perform(post("/bookings")
@@ -222,7 +227,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(50),
                                         LocalDate.now().plusDays(52),
                                         2,
-                                        null);
+                                        null,
+                                        false);
                         mockMvc.perform(post("/bookings")
                                         .header("Authorization", "Bearer " + authToken)
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -253,7 +259,8 @@ class BookingControllerTest extends BddTest {
                                         LocalDate.now().plusDays(60),
                                         LocalDate.now().plusDays(62),
                                         2,
-                                        null);
+                                        null,
+                                        false);
                         var createResult = mockMvc.perform(post("/bookings")
                                         .header("Authorization", "Bearer " + authToken)
                                         .contentType(MediaType.APPLICATION_JSON)

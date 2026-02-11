@@ -1,152 +1,101 @@
----
-title: Architecture
-type: MOC
-status: active
-created: 2026-01-03
-tags:
-  - moc
-  - architecture
-  - technical
----
+# Architecture Overview
 
-# Architecture
-
-> Technical design, domain models, and system architecture for my-island
-
----
-
-## System Overview
+## System Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        FRONTEND                                  │
 │   React 19 + TypeScript 5.9 + Vite 7 + Tailwind CSS 4           │
-│   └── React Router 7 (~70 routes)                               │
+│   └── React Router 7                                             │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               │ REST API (JWT Auth)
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                        BACKEND                                   │
-│   Spring Boot 4.0.1 + Java 25 + Spring Security                 │
+│   Spring Boot 3.4 + Java 25 + Spring Security                   │
 │   └── Port 8080 (/api/*)                                        │
 └─────────────────────────────────────────────────────────────────┘
                               │
               ┌───────────────┼───────────────┐
               ▼               ▼               ▼
         ┌──────────┐   ┌──────────┐   ┌──────────┐
-        │PostgreSQL│   │    S3    │   │   SES    │
-        │   17     │   │ (images) │   │ (email)  │
+        │PostgreSQL│   │  Kafka   │   │  Stripe  │
+        │   17     │   │ (events) │   │(payments)│
         └──────────┘   └──────────┘   └──────────┘
 ```
 
----
-
-## Key Documents
-
-### Domain
-- [[DOMAIN_MODEL]] - Entity relationships and data model
-
-### Technical
-- [[tech-stack]] - Full technology stack details
-
----
-
-## Tech Stack Summary
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | React 19, TypeScript 5.9, Vite 7, Tailwind 4 |
+| Frontend | React 19, TypeScript 5.9, Vite 7, Tailwind CSS 4 |
 | Routing | React Router 7 |
-| Maps | Leaflet 1.9.4 + react-leaflet |
-| Charts | Recharts 3.6.0 |
-| Backend | Spring Boot 4.0.1, Java 25 |
+| Maps | Leaflet + react-leaflet |
+| Charts | Recharts |
+| Backend | Spring Boot 3.4, Java 25, Spring Security |
 | Database | PostgreSQL 17 |
-| Auth | JWT (Spring Security) |
-| Cloud | AWS (S3, SES, LocalStack for dev) |
-| Events | Kafka |
-| Monitoring | Grafana |
+| Migrations | Flyway |
+| Messaging | Apache Kafka |
+| Scheduling | Spring @Scheduled + ShedLock |
+| Payments | Stripe (Payment Intents, Subscriptions, Connect Express) |
+| Auth | JWT (Spring Security, localStorage) |
 
----
-
-## Backend Structure
+## Backend Module Structure
 
 ```
-my-island-api/src/main/java/com/example/myislandapi/
-├── config/           # SecurityConfig, JpaConfig
-├── controller/       # REST controllers
-├── dto/              # Request/Response DTOs
-│   ├── request/
-│   └── response/
-├── entity/           # JPA entities
-├── enums/            # Facility, LotType, BookingStatus
-├── exception/        # Custom exceptions + GlobalExceptionHandler
-├── repository/       # Spring Data JPA repositories
-├── security/         # JWT provider, filter, UserDetailsService
-└── service/          # Business logic
+my-island-api/src/main/java/com/myisland/api/
+├── config/                 # Security, Kafka, Async configs
+├── security/               # JWT provider, filter, user details
+├── shared/
+│   ├── domain/            # Base entity
+│   ├── events/            # Application events, Kafka events
+│   └── exceptions/        # Global exception handler
+└── modules/
+    ├── identity/          # User, Auth, Staff, JWT endpoints
+    ├── accommodation/     # Owner, Lot, Amenity, Pricing, Featured
+    ├── booking/           # Booking, Payment (Stripe intents)
+    ├── marketplace/       # Supplier, Offer, Claim, Stripe Connect/Webhooks
+    ├── review/            # Campsite reviews, Supplier reviews
+    ├── notification/      # Event-driven notifications
+    └── discovery/         # Points of Interest, user visits
 ```
-
----
-
-## API Endpoints
-
-### Implemented
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Create account |
-| POST | `/api/auth/login` | Login (returns JWT) |
-| POST | `/api/auth/refresh` | Refresh token |
-| GET | `/api/users/me` | Get current user |
-| PUT | `/api/users/me` | Update profile |
-| DELETE | `/api/users/me` | Delete account |
-
-### Planned
-- Campsites CRUD
-- Bookings CRUD
-- Reviews CRUD
-- Favorites sync
-- Payments (Stripe)
-
----
 
 ## Frontend Structure
 
 ```
-src/
-├── App.tsx              # Main router (~70 routes)
+my-island-web/src/
+├── App.tsx                 # Router with Layout wrapper
 ├── components/
-│   ├── charts/          # BarChart, LineChart
-│   ├── layout/          # AppShell, Header, BottomNav
-│   └── ui/              # Reusable components
-├── pages/               # 83 page components
-│   ├── Auth/
-│   ├── Booking/
-│   ├── Discovery/
-│   ├── MyBookings/
-│   └── owner/
-├── context/             # React contexts
-├── lib/                 # API client, utilities
-└── data/
-    ├── mockData.ts      # 120 mock campsites
-    └── types.ts         # TypeScript interfaces
+│   ├── booking/           # BookingModal, PaymentForm
+│   ├── explore/           # Map, filters, popups
+│   ├── layout/            # Header, BottomNav
+│   ├── owner/             # Owner portal components
+│   ├── supplier/          # Supplier portal components
+│   ├── review/            # Review display, star rating
+│   ├── staff/             # StaffManagement
+│   └── ui/                # Reusable (ImageUpload, Calendar, etc.)
+├── pages/
+│   ├── owner/             # Owner dashboard pages
+│   └── supplier/          # Supplier dashboard pages
+├── context/               # AuthContext
+├── services/              # API service modules
+└── types/                 # TypeScript type definitions
 ```
-
----
 
 ## Key Patterns
 
 | Pattern | Implementation |
 |---------|----------------|
-| Page-based routing | Components in `/pages` by feature |
-| URL params | React Router params (`/book/:id`) |
+| Auth | JWT in localStorage, AuthContext provides user state |
+| API calls | `fetch()` with auth headers, no axios |
+| Routing | React Router 7, nested routes, role-based guards |
 | Path alias | `@/*` → `./src/*` |
-| Protected routes | `ProtectedRoute` with role checking |
-| Mock data | Centralized in `mockData.ts` |
+| Events | Spring ApplicationEvents → Kafka topics → consumers |
+| Payments | Stripe manual capture (authorize → capture) |
+| Images | `/api/images/{entityType}/{entityId}` multi-image upload |
+| Scheduling | ShedLock for distributed lock, @Scheduled for cron jobs |
+| Subscriptions | Stripe-managed with webhook event handling |
 
----
-
-## Related Links
-
-- [[../README|Docs Home]]
-- [[../01-Project-Management/README|Project Management]]
-- [[../04-User-Flows/README|User Flows]]
+## API Documentation
+Live Swagger UI available at `/api/swagger-ui.html` when running.

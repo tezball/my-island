@@ -318,7 +318,7 @@ User (Root)
 ```
 
 > **Note**: The `Supplier` entity is owned by the **Marketplace Context**, not Identity.
-> Users with `isSupplier=true` can create a Supplier profile there. See [Identity Notes](00-Domain/03-Identity/NOTES.md) for boundary details.
+> Users with `isSupplier=true` can create a Supplier profile there. See [Identity Notes](identity/NOTES.md) for boundary details.
 
 **User**
 

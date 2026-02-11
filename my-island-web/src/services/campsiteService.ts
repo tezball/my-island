@@ -210,7 +210,7 @@ export const campsiteService = {
         return apiRequest<Array<{ checkIn: string; checkOut: string }>>(`/campsites/lots/${lotId}/booked-dates`, { requiresAuth: false });
     },
 
-    async createBooking(booking: Omit<Booking, 'id' | 'status'>): Promise<Booking> {
+    async createBooking(booking: Omit<Booking, 'id' | 'status'>, options?: { wantsPower?: boolean }): Promise<Booking> {
         const parseDate = (dateStr: string): string => {
             const [day, month, year] = dateStr.split('/');
             return `${year}-${month}-${day}`;
@@ -224,6 +224,7 @@ export const campsiteService = {
                 checkOutDate: parseDate(booking.endDate),
                 numGuests: 2,
                 specialRequests: booking.details || null,
+                wantsPower: options?.wantsPower || false,
             },
         });
         return transformBooking(data);

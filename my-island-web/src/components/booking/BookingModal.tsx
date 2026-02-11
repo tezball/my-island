@@ -208,7 +208,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                 endDate: formatDate(endDate),
                 totalPrice,
                 details: combinedDetails || undefined
-            });
+            }, { wantsPower: isTent && wantsPower });
 
             // Store the created booking and move to payment step
             setCreatedBooking(booking);
