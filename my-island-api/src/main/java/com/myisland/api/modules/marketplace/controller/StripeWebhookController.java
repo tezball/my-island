@@ -110,6 +110,13 @@ public class StripeWebhookController {
                     // Handle booking payment authorization success
                     bookingPaymentService.handlePaymentIntentSucceeded(paymentIntent);
                 }
+                case "payment_intent.amount_capturable_updated" -> {
+                    // Manual capture mode: this fires instead of payment_intent.succeeded
+                    // when the card is authorized but not yet captured
+                    PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
+                            .getObject().orElseThrow();
+                    bookingPaymentService.handlePaymentIntentSucceeded(paymentIntent);
+                }
                 case "payment_intent.payment_failed" -> {
                     PaymentIntent paymentIntent = (PaymentIntent) event.getDataObjectDeserializer()
                             .getObject().orElseThrow();

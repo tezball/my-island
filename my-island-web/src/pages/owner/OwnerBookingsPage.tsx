@@ -14,7 +14,7 @@ export const OwnerBookingsPage: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [lots, setLots] = useState<Lot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'checked_in' | 'completed' | 'cancelled'>('all');
+    const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'pending_payment' | 'checked_in' | 'completed' | 'cancelled'>('all');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -55,9 +55,11 @@ export const OwnerBookingsPage: React.FC = () => {
     const statusStyles: Record<string, string> = {
         confirmed: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
         pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+        pending_payment: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
         cancelled: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
         checked_in: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
         completed: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400',
+        payment_failed: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
     };
 
     const handleCheckIn = async (bookingId: string) => {
@@ -154,7 +156,17 @@ export const OwnerBookingsPage: React.FC = () => {
 
             {/* Filters */}
             <div className="flex gap-2 overflow-x-auto pb-2">
-                {(['all', 'confirmed', 'pending', 'checked_in', 'completed', 'cancelled'] as const).map((f) => (
+                {(['all', 'confirmed', 'pending', 'pending_payment', 'checked_in', 'completed', 'cancelled'] as const).map((f) => {
+                    const labels: Record<string, string> = {
+                        all: 'All',
+                        confirmed: 'Confirmed',
+                        pending: 'Pending',
+                        pending_payment: 'Awaiting Payment',
+                        checked_in: 'Checked In',
+                        completed: 'Completed',
+                        cancelled: 'Cancelled',
+                    };
+                    return (
                     <button
                         key={f}
                         onClick={() => { setFilter(f); setCurrentPage(1); }}
@@ -165,9 +177,10 @@ export const OwnerBookingsPage: React.FC = () => {
                                 : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                         )}
                     >
-                        {f === 'checked_in' ? 'Checked In' : f.charAt(0).toUpperCase() + f.slice(1)}
+                        {labels[f]}
                     </button>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Bookings List - Mobile Friendly */}
@@ -226,18 +239,48 @@ export const OwnerBookingsPage: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Check In Button for Confirmed Bookings */}
-                        {booking.status === 'confirmed' && (
+                        {/* Cancel Button for Pending Payment Bookings */}
+                        {booking.status === 'pending_payment' && (
                             <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
                                 <button
-                                    onClick={() => handleCheckIn(booking.id)}
-                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                    onClick={() => handleReject(booking.id)}
+                                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/20 dark:hover:bg-red-900/30 dark:text-red-400 text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
                                 >
-                                    <span className="material-symbols-outlined text-lg">login</span>
-                                    Check In
+                                    <span className="material-symbols-outlined text-lg">close</span>
+                                    Cancel
                                 </button>
                             </div>
                         )}
+
+                        {/* Check In Button for Confirmed Bookings — only when check-in date is today or earlier */}
+                        {booking.status === 'confirmed' && (() => {
+                            const [d, m, y] = booking.startDate.split('/');
+                            const checkInDate = new Date(`${y}-${m}-${d}`);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            // Allow check-in from 1 day before check-in date
+                            const earliestCheckIn = new Date(checkInDate);
+                            earliestCheckIn.setDate(earliestCheckIn.getDate() - 1);
+                            const canCheckIn = today >= earliestCheckIn;
+                            return (
+                                <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                                    <button
+                                        onClick={() => handleCheckIn(booking.id)}
+                                        disabled={!canCheckIn}
+                                        className={clsx(
+                                            "flex-1 text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1",
+                                            canCheckIn
+                                                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                                                : "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+                                        )}
+                                        title={canCheckIn ? 'Check in guest' : `Check-in available from ${booking.startDate}`}
+                                    >
+                                        <span className="material-symbols-outlined text-lg">login</span>
+                                        {canCheckIn ? 'Check In' : `Check-in from ${booking.startDate}`}
+                                    </button>
+                                </div>
+                            );
+                        })()}
 
                         {/* Check Out Button for Checked In Bookings */}
                         {booking.status === 'checked_in' && (

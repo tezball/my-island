@@ -70,6 +70,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         if (!elements || !paymentIntent || paymentIntent.devMode) return;
 
         const cardElement = elements.create('card', {
+            hidePostalCode: true,
             style: {
                 base: {
                     fontSize: '16px',
@@ -158,9 +159,21 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
 
             if (confirmedIntent?.status === 'requires_capture') {
                 // Payment authorized successfully (manual capture mode)
+                // Sync the booking status on the backend (don't rely on webhook timing)
+                try {
+                    await paymentService.confirmAuthorization(bookingId);
+                } catch (syncErr) {
+                    // Non-fatal: webhook will eventually update the status
+                    console.warn('Could not sync authorization status:', syncErr);
+                }
                 onPaymentSuccess();
             } else if (confirmedIntent?.status === 'succeeded') {
                 // Should not happen with manual capture, but handle it
+                try {
+                    await paymentService.confirmAuthorization(bookingId);
+                } catch (syncErr) {
+                    console.warn('Could not sync payment status:', syncErr);
+                }
                 onPaymentSuccess();
             } else {
                 throw new Error('Unexpected payment status: ' + confirmedIntent?.status);

@@ -14,6 +14,10 @@ export const paymentService = {
         return apiRequest(`/bookings/${bookingId}/payment/status`);
     },
 
+    async confirmAuthorization(bookingId: string): Promise<void> {
+        await apiRequest(`/bookings/${bookingId}/payment/confirm-authorization`, { method: 'POST' });
+    },
+
     async simulatePaymentSuccess(bookingId: string): Promise<void> {
         await apiRequest(`/bookings/${bookingId}/payment/simulate-success`, { method: 'POST' });
     },

@@ -254,4 +254,9 @@ export const campsiteService = {
         const data = await apiRequest<BookingApiResponse>(`/bookings/${bookingId}/cancel`, { method: 'POST' });
         return transformBooking(data);
     },
+
+    async retryPayment(bookingId: string): Promise<Booking> {
+        const data = await apiRequest<BookingApiResponse>(`/bookings/${bookingId}/retry-payment`, { method: 'POST' });
+        return transformBooking(data);
+    },
 };

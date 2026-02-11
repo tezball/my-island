@@ -81,6 +81,21 @@ else
     fi
 fi
 
+# Stop Stripe CLI
+log_info "Stopping Stripe CLI..."
+if [ -f "$SCRIPT_DIR/logs/stripe.pid" ]; then
+    pid=$(cat "$SCRIPT_DIR/logs/stripe.pid")
+    if kill -0 "$pid" 2>/dev/null; then
+        kill "$pid" 2>/dev/null || true
+        log_success "Stripe CLI stopped (PID: $pid)"
+    else
+        log_warn "Stripe CLI process not found"
+    fi
+    rm -f "$SCRIPT_DIR/logs/stripe.pid"
+else
+    pkill -f "stripe listen" 2>/dev/null && log_success "Stripe CLI stopped" || log_warn "Stripe CLI not running"
+fi
+
 # Stop Docker
 log_info "Stopping Docker containers..."
 if [ "$KILL_VOLUMES" = true ]; then

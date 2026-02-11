@@ -80,6 +80,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     Optional<Booking> findByStripePaymentIntentId(String stripePaymentIntentId);
 
+    @Query("SELECT b FROM Booking b WHERE b.status = 'PENDING_PAYMENT' AND b.createdAt < :cutoff")
+    List<Booking> findStalePendingPaymentBookings(LocalDateTime cutoff);
+
+    @Query("SELECT b FROM Booking b WHERE b.status = 'CHECKED_IN' AND b.checkOutDate < :today")
+    List<Booking> findCheckedInBookingsPastCheckout(LocalDate today);
+
     @Query("""
             SELECT COUNT(b) FROM Booking b
             WHERE b.lot.owner.id = :ownerId

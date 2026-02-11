@@ -97,6 +97,18 @@ stop_all_services() {
         kill -9 "$pid" 2>/dev/null || true
     fi
 
+    # Stop Stripe CLI
+    if [ -f "$SCRIPT_DIR/logs/stripe.pid" ]; then
+        pid=$(cat "$SCRIPT_DIR/logs/stripe.pid")
+        if kill -0 "$pid" 2>/dev/null; then
+            log_info "Stopping Stripe CLI (PID: $pid)..."
+            kill "$pid" 2>/dev/null || true
+        fi
+        rm -f "$SCRIPT_DIR/logs/stripe.pid"
+    fi
+    # Also kill any lingering stripe listen processes
+    pkill -f "stripe listen" 2>/dev/null || true
+
     # Stop Docker containers and remove volumes for fresh DB
     log_info "Stopping Docker containers and removing volumes..."
     docker compose down -v 2>/dev/null || true
@@ -258,6 +270,42 @@ start_frontend() {
 }
 
 # ============================================
+# Start Stripe CLI (Webhook Forwarding)
+# ============================================
+start_stripe_cli() {
+    log_step "Starting Stripe CLI webhook forwarding..."
+
+    if ! command -v stripe &> /dev/null; then
+        log_warn "Stripe CLI not installed - skipping webhook forwarding"
+        log_warn "Install from: https://docs.stripe.com/stripe-cli"
+        return 0
+    fi
+
+    # Load .env for the webhook secret
+    if [ -f "$SCRIPT_DIR/.env" ]; then
+        set -a
+        source "$SCRIPT_DIR/.env"
+        set +a
+    fi
+
+    nohup stripe listen \
+        --forward-to localhost:8080/api/webhooks/stripe \
+        > "$SCRIPT_DIR/logs/stripe.log" 2>&1 &
+
+    local stripe_pid=$!
+    echo $stripe_pid > "$SCRIPT_DIR/logs/stripe.pid"
+
+    # Give it a moment to connect
+    sleep 3
+
+    if kill -0 "$stripe_pid" 2>/dev/null; then
+        log_success "Stripe CLI listening (PID: $stripe_pid) → forwarding to localhost:8080/api/webhooks/stripe"
+    else
+        log_warn "Stripe CLI failed to start. Check logs/stripe.log (you may need to run 'stripe login' first)"
+    fi
+}
+
+# ============================================
 # Main
 # ============================================
 main() {
@@ -301,6 +349,8 @@ main() {
     start_backend
     echo ""
     start_frontend
+    echo ""
+    start_stripe_cli
 
     echo ""
     echo "=========================================="
@@ -311,6 +361,10 @@ main() {
     echo "  Backend:   http://localhost:8080/api"
     echo "  Swagger:   http://localhost:8080/api/swagger-ui.html"
     echo "  Kafka UI:  http://localhost:8081"
+    echo ""
+    echo "  Stripe:    Sandbox mode (test payments → dashboard.stripe.com/test)"
+    echo "  Webhooks:  Forwarding to localhost:8080/api/webhooks/stripe"
+    echo "  Test card: 4242 4242 4242 4242 (any expiry/CVC)"
     echo ""
     echo "  Test accounts (password: 'password'):"
     echo "    Subscribed:"

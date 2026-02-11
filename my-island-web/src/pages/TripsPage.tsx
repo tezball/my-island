@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { campsiteService } from '../services/campsiteService';
+import { PaymentForm } from '../components/booking/PaymentForm';
 import type { Booking } from '../types/booking';
 import { Link } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ export const TripsPage: React.FC = () => {
     const [cancellingBookingId, setCancellingBookingId] = useState<string | null>(null);
     const [isCancelling, setIsCancelling] = useState(false);
     const [cancelError, setCancelError] = useState<string | null>(null);
+    const [paymentBooking, setPaymentBooking] = useState<Booking | null>(null);
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -47,11 +49,35 @@ export const TripsPage: React.FC = () => {
                 )
             );
             setCancellingBookingId(null);
+            // Also close the details modal if it's showing the same booking
+            if (selectedBooking?.id === cancellingBookingId) {
+                setSelectedBooking(null);
+            }
         } catch {
             setCancelError('Failed to cancel booking. Please try again.');
         } finally {
             setIsCancelling(false);
         }
+    };
+
+    const handlePaymentSuccess = () => {
+        // Refresh bookings after successful payment
+        if (user) {
+            campsiteService.getUserBookings(user.id).then(setBookings).catch(console.error);
+        }
+        setPaymentBooking(null);
+    };
+
+    const handleRetryPayment = (booking: Booking) => {
+        // For payment_failed bookings, reset to pending_payment on backend then open payment modal
+        campsiteService.retryPayment(booking.id).then(() => {
+            setBookings(prev =>
+                prev.map(b =>
+                    b.id === booking.id ? { ...b, status: 'pending_payment' as const } : b
+                )
+            );
+            setPaymentBooking({ ...booking, status: 'pending_payment' });
+        }).catch(console.error);
     };
 
     const isCancellable = (status: Booking['status']) =>
@@ -61,10 +87,27 @@ export const TripsPage: React.FC = () => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    const upcomingBookings = bookings.filter(b => {
-        const startDate = parseDate(b.startDate);
-        return startDate >= now && b.status !== 'cancelled';
-    });
+    const upcomingBookings = bookings
+        .filter(b => {
+            const startDate = parseDate(b.startDate);
+            return startDate >= now && b.status !== 'cancelled';
+        })
+        .sort((a, b) => {
+            // Action-needed statuses first
+            const priority: Record<string, number> = {
+                pending_payment: 0,
+                payment_failed: 1,
+                pending: 2,
+                confirmed: 3,
+                checked_in: 4,
+                completed: 5,
+            };
+            const pa = priority[a.status] ?? 99;
+            const pb = priority[b.status] ?? 99;
+            if (pa !== pb) return pa - pb;
+            // Then by start date ascending
+            return parseDate(a.startDate).getTime() - parseDate(b.startDate).getTime();
+        });
 
     const pastBookings = bookings.filter(b => {
         const endDate = parseDate(b.endDate);
@@ -86,7 +129,35 @@ export const TripsPage: React.FC = () => {
                 return (
                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
                         <span className="material-symbols-outlined text-xs">schedule</span>
-                        Pending
+                        Pending Approval
+                    </span>
+                );
+            case 'pending_payment':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                        <span className="material-symbols-outlined text-xs">payment</span>
+                        Awaiting Payment
+                    </span>
+                );
+            case 'payment_failed':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                        <span className="material-symbols-outlined text-xs">error</span>
+                        Payment Failed
+                    </span>
+                );
+            case 'checked_in':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                        <span className="material-symbols-outlined text-xs">hotel</span>
+                        Checked In
+                    </span>
+                );
+            case 'completed':
+                return (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                        <span className="material-symbols-outlined text-xs">task_alt</span>
+                        Completed
                     </span>
                 );
             case 'cancelled':
@@ -96,6 +167,30 @@ export const TripsPage: React.FC = () => {
                         Cancelled
                     </span>
                 );
+        }
+    };
+
+    const getModalTitle = (status: Booking['status']) => {
+        switch (status) {
+            case 'pending_payment': return 'Awaiting Payment';
+            case 'payment_failed': return 'Payment Failed';
+            case 'pending': return 'Pending Approval';
+            case 'confirmed': return 'Booking Confirmed';
+            case 'checked_in': return 'Currently Staying';
+            case 'completed': return 'Stay Completed';
+            case 'cancelled': return 'Booking Cancelled';
+        }
+    };
+
+    const getTotalLabel = (status: Booking['status']) => {
+        switch (status) {
+            case 'pending_payment':
+            case 'payment_failed':
+                return 'Amount Due';
+            case 'pending':
+                return 'Total (Authorized)';
+            default:
+                return 'Total Paid';
         }
     };
 
@@ -166,28 +261,52 @@ export const TripsPage: React.FC = () => {
                     <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
                         <div className="flex justify-between items-center">
                             <span className="text-gray-500 dark:text-gray-400">Total</span>
-                            <span className="text-xl font-bold text-primary">€{booking.totalPrice}</span>
+                            <span className="text-xl font-bold text-primary">&euro;{booking.totalPrice}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Card Footer */}
                 {!isPast && booking.status !== 'cancelled' && (
-                    <div className="px-4 pb-4 flex gap-2">
-                        <button
-                            onClick={() => setSelectedBooking(booking)}
-                            className="flex-1 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
-                        >
-                            View Details
-                        </button>
-                        {isCancellable(booking.status) && (
+                    <div className="px-4 pb-4 space-y-2">
+                        {/* Complete Payment button for pending_payment */}
+                        {booking.status === 'pending_payment' && (
                             <button
-                                onClick={() => { setCancelError(null); setCancellingBookingId(booking.id); }}
-                                className="flex-1 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 transition-colors"
+                                onClick={() => setPaymentBooking(booking)}
+                                className="w-full py-2.5 text-sm font-semibold text-white bg-primary hover:bg-emerald-600 rounded-lg transition-colors flex items-center justify-center gap-1.5"
                             >
-                                Cancel Booking
+                                <span className="material-symbols-outlined text-lg">payment</span>
+                                Complete Payment
                             </button>
                         )}
+
+                        {/* Retry Payment button for payment_failed */}
+                        {booking.status === 'payment_failed' && (
+                            <button
+                                onClick={() => handleRetryPayment(booking)}
+                                className="w-full py-2.5 text-sm font-semibold text-white bg-primary hover:bg-emerald-600 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                            >
+                                <span className="material-symbols-outlined text-lg">refresh</span>
+                                Retry Payment
+                            </button>
+                        )}
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setSelectedBooking(booking)}
+                                className="flex-1 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 transition-colors"
+                            >
+                                View Details
+                            </button>
+                            {isCancellable(booking.status) && (
+                                <button
+                                    onClick={() => { setCancelError(null); setCancellingBookingId(booking.id); }}
+                                    className="flex-1 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 transition-colors"
+                                >
+                                    Cancel Booking
+                                </button>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
@@ -344,7 +463,7 @@ export const TripsPage: React.FC = () => {
                         <div className="bg-primary text-white p-6">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h2 className="text-xl font-bold mb-1">Booking Confirmation</h2>
+                                    <h2 className="text-xl font-bold mb-1">{getModalTitle(selectedBooking.status)}</h2>
                                     <p className="text-white/80 text-sm">Reference: #{selectedBooking.id.toUpperCase()}</p>
                                 </div>
                                 <button
@@ -413,14 +532,46 @@ export const TripsPage: React.FC = () => {
                             {/* Total */}
                             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                                 <div className="flex justify-between items-center">
-                                    <span className="text-gray-500">Total Paid</span>
-                                    <span className="text-2xl font-bold text-primary">€{selectedBooking.totalPrice}</span>
+                                    <span className="text-gray-500">{getTotalLabel(selectedBooking.status)}</span>
+                                    <span className="text-2xl font-bold text-primary">&euro;{selectedBooking.totalPrice}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Modal Footer */}
                         <div className="p-6 pt-0 space-y-3">
+                            {/* Complete Payment from modal */}
+                            {selectedBooking.status === 'pending_payment' && (
+                                <button
+                                    onClick={() => { setSelectedBooking(null); setPaymentBooking(selectedBooking); }}
+                                    className="w-full py-3 font-semibold text-white bg-primary hover:bg-emerald-600 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined">payment</span>
+                                    Complete Payment
+                                </button>
+                            )}
+
+                            {/* Retry Payment from modal */}
+                            {selectedBooking.status === 'payment_failed' && (
+                                <button
+                                    onClick={() => { setSelectedBooking(null); handleRetryPayment(selectedBooking); }}
+                                    className="w-full py-3 font-semibold text-white bg-primary hover:bg-emerald-600 rounded-xl transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined">refresh</span>
+                                    Retry Payment
+                                </button>
+                            )}
+
+                            {/* Cancel from modal */}
+                            {isCancellable(selectedBooking.status) && (
+                                <button
+                                    onClick={() => { setCancelError(null); setCancellingBookingId(selectedBooking.id); setSelectedBooking(null); }}
+                                    className="w-full py-3 font-semibold text-red-600 border border-red-300 dark:text-red-400 dark:border-red-800 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                >
+                                    Cancel Booking
+                                </button>
+                            )}
+
                             <Link
                                 to="/campsite/nore-valley-owner"
                                 className="block w-full py-3 text-center font-semibold text-primary border border-primary rounded-xl hover:bg-primary/5 transition-colors"
@@ -429,10 +580,40 @@ export const TripsPage: React.FC = () => {
                             </Link>
                             <button
                                 onClick={() => setSelectedBooking(null)}
-                                className="w-full py-3 font-semibold text-white bg-primary hover:bg-emerald-600 rounded-xl transition-colors"
+                                className="w-full py-3 font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
                             >
                                 Close
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Payment Modal */}
+            {paymentBooking && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-[#1a2632] rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+                        <div className="bg-primary text-white p-6">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h2 className="text-xl font-bold mb-1">Complete Payment</h2>
+                                    <p className="text-white/80 text-sm">{paymentBooking.lotName}</p>
+                                </div>
+                                <button
+                                    onClick={() => setPaymentBooking(null)}
+                                    className="p-1 hover:bg-white/20 rounded-full transition-colors"
+                                >
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="p-6">
+                            <PaymentForm
+                                bookingId={paymentBooking.id}
+                                onPaymentSuccess={handlePaymentSuccess}
+                                onPaymentError={(err) => console.error('Payment error:', err)}
+                                onCancel={() => setPaymentBooking(null)}
+                            />
                         </div>
                     </div>
                 </div>

@@ -257,6 +257,29 @@ public class BookingService {
     }
 
     @Transactional
+    public BookingDto retryPayment(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        if (booking.getUser() == null || !booking.getUser().getId().equals(userId)) {
+            throw new BadRequestException("Booking does not belong to this user");
+        }
+
+        if (booking.getStatus() != Booking.BookingStatus.PAYMENT_FAILED) {
+            throw new BadRequestException("Only failed-payment bookings can be retried");
+        }
+
+        // Reset to pending_payment so guest can re-attempt
+        booking.setStatus(Booking.BookingStatus.PENDING_PAYMENT);
+        booking.setPaymentStatus(Booking.PaymentStatus.NONE);
+        booking.setStripePaymentIntentId(null); // Clear old intent so a new one is created
+        booking = bookingRepository.save(booking);
+        log.info("Reset booking {} to PENDING_PAYMENT for payment retry", bookingId);
+
+        return BookingDto.from(booking);
+    }
+
+    @Transactional
     public BookingDto simulatePaymentSuccess(Long bookingId, Long userId) {
         if (!stripeProperties.isDevMode()) {
             throw new BadRequestException("This endpoint is only available in dev mode");

@@ -216,6 +216,24 @@ public class OwnerController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/bookings/{bookingId}/confirm")
+    @Operation(summary = "Confirm a booking (captures payment)")
+    public ResponseEntity<BookingDto> confirmBooking(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookingId
+    ) {
+        return ResponseEntity.ok(bookingService.confirmBooking(bookingId, userDetails.getUserId()));
+    }
+
+    @PostMapping("/bookings/{bookingId}/cancel")
+    @Operation(summary = "Cancel/reject a booking")
+    public ResponseEntity<BookingDto> cancelBooking(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookingId
+    ) {
+        return ResponseEntity.ok(bookingService.cancelBooking(bookingId, userDetails.getUserId()));
+    }
+
     @PutMapping("/bookings/{bookingId}/check-in")
     @Operation(summary = "Check in a booking")
     public ResponseEntity<BookingDto> checkInBooking(

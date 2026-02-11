@@ -2,6 +2,7 @@ package com.myisland.api.modules.booking.service;
 
 import com.myisland.api.config.StripeProperties;
 import com.myisland.api.modules.accommodation.entity.Owner;
+import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.PaymentIntentResponse;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.entity.Booking.BookingStatus;
@@ -207,6 +208,82 @@ public class BookingPaymentService {
         bookingRepository.save(booking);
 
         log.info("Payment failed for booking {}", bookingId);
+    }
+
+    /**
+     * Called by the frontend after stripe.confirmCardPayment() returns requires_capture.
+     * Verifies the PaymentIntent status with Stripe and updates the booking accordingly.
+     * This avoids a race condition where the webhook hasn't arrived yet.
+     */
+    @Transactional
+    public BookingDto confirmAuthorization(Long bookingId, Long userId) throws StripeException {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        if (!booking.getUser().getId().equals(userId)) {
+            throw new BadRequestException("Booking does not belong to this user");
+        }
+
+        // Already processed (webhook may have arrived first)
+        if (booking.getStatus() != BookingStatus.PENDING_PAYMENT) {
+            return BookingDto.from(booking);
+        }
+
+        String paymentIntentId = booking.getStripePaymentIntentId();
+        if (paymentIntentId == null) {
+            throw new BadRequestException("No payment intent found for booking");
+        }
+
+        if (stripeProperties.isDevMode()) {
+            throw new BadRequestException("Use simulate-success in dev mode");
+        }
+
+        // Verify with Stripe that the payment is actually authorized
+        PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+        String status = paymentIntent.getStatus();
+
+        if ("requires_capture".equals(status)) {
+            // Card authorized — update booking
+            Owner owner = booking.getLot().getOwner();
+            if (owner.isInstantBooking()) {
+                booking.setStatus(BookingStatus.CONFIRMED);
+                booking.setPaymentStatus(PaymentStatus.AUTHORIZED);
+                bookingRepository.save(booking);
+
+                try {
+                    capturePayment(bookingId);
+                } catch (StripeException e) {
+                    log.error("Failed to capture payment for instant booking {}: {}", bookingId, e.getMessage());
+                }
+                try {
+                    createOwnerPayout(bookingId);
+                } catch (StripeException e) {
+                    log.error("Failed to create payout for instant booking {}: {}", bookingId, e.getMessage());
+                }
+
+                eventPublisher.publishEvent(new BookingEvent(this, bookingId, BookingEvent.Type.CONFIRMED));
+                log.info("Confirmed authorization and auto-confirmed instant booking {}", bookingId);
+            } else {
+                booking.setStatus(BookingStatus.PENDING);
+                booking.setPaymentStatus(PaymentStatus.AUTHORIZED);
+                bookingRepository.save(booking);
+                log.info("Confirmed authorization for booking {}, status set to PENDING", bookingId);
+            }
+        } else if ("succeeded".equals(status)) {
+            // Already captured somehow
+            booking.setStatus(BookingStatus.CONFIRMED);
+            booking.setPaymentStatus(PaymentStatus.CAPTURED);
+            bookingRepository.save(booking);
+        } else if ("canceled".equals(status)) {
+            booking.setStatus(BookingStatus.CANCELLED);
+            booking.setPaymentStatus(PaymentStatus.RELEASED);
+            bookingRepository.save(booking);
+        } else {
+            log.warn("Unexpected PaymentIntent status '{}' for booking {}", status, bookingId);
+            throw new BadRequestException("Payment not yet authorized. Please try again.");
+        }
+
+        return BookingDto.from(booking);
     }
 
     @Transactional

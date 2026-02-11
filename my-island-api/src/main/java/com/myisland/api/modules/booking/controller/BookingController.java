@@ -91,6 +91,22 @@ public class BookingController {
         ));
     }
 
+    @PostMapping("/{id}/retry-payment")
+    @Operation(summary = "Reset a failed payment booking back to pending_payment for retry")
+    public ResponseEntity<BookingDto> retryPayment(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(bookingService.retryPayment(id, userDetails.getUserId()));
+    }
+
+    @PostMapping("/{id}/payment/confirm-authorization")
+    @Operation(summary = "Confirm payment authorization after card submission (syncs status from Stripe)")
+    public ResponseEntity<BookingDto> confirmAuthorization(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) throws StripeException {
+        return ResponseEntity.ok(bookingPaymentService.confirmAuthorization(id, userDetails.getUserId()));
+    }
+
     @PostMapping("/{id}/payment/simulate-success")
     @Operation(summary = "Simulate payment success (dev mode only)")
     public ResponseEntity<BookingDto> simulatePaymentSuccess(
