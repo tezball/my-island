@@ -16,6 +16,7 @@ export interface User {
     isOwner?: boolean;
     isSupplier?: boolean;
     isStaff?: boolean;
+    isAdmin?: boolean;
     emailVerified?: boolean;
     staffPermissions?: StaffPermissions | null;
 }

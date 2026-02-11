@@ -60,6 +60,7 @@ See [PAYMENT_FLOW.md](./PAYMENT_FLOW.md) for full payment integration details.
 
 - **BookingAutoCompleteScheduler** — Auto-completes bookings after checkout date passes
 - **BookingCleanupScheduler** — Cleans up stale `PENDING_PAYMENT` bookings
+- **PreArrivalEmailScheduler** — Sends pre-arrival email to guests 2 days before check-in (daily at 9 AM, ShedLock protected)
 
 ## Implementation Notes
 - All payments use Stripe manual capture: authorize first, capture on confirmation.

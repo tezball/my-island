@@ -23,6 +23,7 @@ public record AuthResponse(
             boolean isOwner,
             boolean isSupplier,
             boolean isStaff,
+            boolean isAdmin,
             boolean emailVerified,
             StaffPermissionsDto staffPermissions
     ) {
@@ -35,6 +36,7 @@ public record AuthResponse(
                     user.isOwner(),
                     user.isSupplier(),
                     user.isStaff(),
+                    user.isAdmin(),
                     user.isEmailVerified(),
                     null
             );
@@ -62,6 +64,7 @@ public record AuthResponse(
                     user.isOwner(),
                     user.isSupplier(),
                     user.isStaff(),
+                    user.isAdmin(),
                     user.isEmailVerified(),
                     dto
             );

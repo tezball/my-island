@@ -22,6 +22,8 @@ const TEST_USERS = [
     { email: 'staff@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Niamh Kelly (Supplier Staff - Manager)' },
     { email: 'staff@aillwee.ie', password: 'SupplierStaff#2026!Safe', label: 'Roisín Murphy (Supplier Staff - Redeemer)' },
     { email: 'shop@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Pádraig Flynn (Supplier Staff - Associate)' },
+    // Platform Admin
+    { email: 'tezball86@gmail.com', password: 'PlatformAdmin#2026!Secure', label: 'Platform Admin' },
     // Guests
     { email: 'family@example.com', password: 'MurphyFamily!Trip2025', label: 'Murphy Family (Guest)' },
     { email: 'testguest@example.com', password: 'TestGuest#2026!Safe', label: 'Test Guest (Guest - Clean Account)' },

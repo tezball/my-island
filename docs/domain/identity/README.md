@@ -8,7 +8,7 @@ Handles user authentication, registration, email verification, password manageme
 
 ## Key Entities
 
-- **User** — Core identity with email/password auth. Flags: `isOwner`, `isSupplier`, `isStaff`. Tracks email verification status, password reset tokens, and profile info.
+- **User** — Core identity with email/password auth. Flags: `isOwner`, `isSupplier`, `isStaff`, `isAdmin`. Tracks email verification status, password reset tokens, and profile info.
 - **StaffMember** — Links a staff user to an owner or supplier. Contains the staff role assignment and invitation status.
 - **StaffRole** — Defines a named role with granular permissions (e.g., "Manager" with full access, "Receptionist" with booking-only access).
 
@@ -19,8 +19,9 @@ Handles user authentication, registration, email verification, password manageme
 | `isOwner` | `false` | Can manage campsites and lots |
 | `isSupplier` | `false` | Can manage supplier offers |
 | `isStaff` | `false` | Can access portals of the owner/supplier who invited them |
+| `isAdmin` | `false` | Platform superuser with access to the admin portal |
 
-Users start as Guest (all flags false). Roles are additive — a user can be both Owner AND Supplier.
+Users start as Guest (all flags false). Roles are additive — a user can be both Owner AND Supplier. Admin is a platform-level role set directly in the database.
 
 ## Staff Permission System
 

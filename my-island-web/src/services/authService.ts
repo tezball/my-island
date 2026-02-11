@@ -23,6 +23,7 @@ interface AuthApiResponse {
         isOwner: boolean;
         isSupplier: boolean;
         isStaff: boolean;
+        isAdmin: boolean;
         emailVerified: boolean;
         staffPermissions?: {
             owner: { role: string; permissions: Record<string, string> } | null;
@@ -40,6 +41,7 @@ function transformUser(apiUser: AuthApiResponse['user']): User {
         isOwner: apiUser.isOwner,
         isSupplier: apiUser.isSupplier,
         isStaff: apiUser.isStaff,
+        isAdmin: apiUser.isAdmin,
         emailVerified: apiUser.emailVerified,
         staffPermissions: apiUser.staffPermissions ? {
             owner: apiUser.staffPermissions.owner ? {

@@ -15,6 +15,9 @@ import { OwnerGuard } from './components/auth/OwnerGuard';
 import { OwnerLayout } from './components/owner/OwnerLayout';
 import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage } from './pages/owner';
 import { SupplierGuard } from './components/auth/SupplierGuard';
+import { AdminGuard } from './components/auth/AdminGuard';
+import { AdminLayout } from './components/admin/AdminLayout';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { SupplierLayout } from './components/supplier/SupplierLayout';
 import { SupplierDashboardPage } from './pages/supplier/SupplierDashboardPage';
 import { SupplierOffersPage } from './pages/supplier/SupplierOffersPage';
@@ -47,12 +50,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const hideNavRoutes = ['/signin', '/signup', '/forgot-password', '/reset-password', '/personalize', '/become-a-host', '/become-a-supplier', '/verify-email'];
   const isOwnerRoute = location.pathname.startsWith('/owner');
   const isSupplierRoute = location.pathname.startsWith('/supplier');
+  const isAdminRoute = location.pathname.startsWith('/admin');
   const isBecomeHostRoute = location.pathname.startsWith('/become-a-host');
   const isBecomeSupplierRoute = location.pathname.startsWith('/become-a-supplier');
-  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute;
+  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isOwnerRoute || isSupplierRoute || isAdminRoute || isBecomeHostRoute || isBecomeSupplierRoute;
 
-  // Don't render the layout wrapper at all for owner/supplier/become-a-host/become-a-supplier routes
-  if (isOwnerRoute || isSupplierRoute || isBecomeHostRoute || isBecomeSupplierRoute) {
+  // Don't render the layout wrapper at all for owner/supplier/admin/become-a-host/become-a-supplier routes
+  if (isOwnerRoute || isSupplierRoute || isAdminRoute || isBecomeHostRoute || isBecomeSupplierRoute) {
     return null;
   }
 
@@ -126,6 +130,15 @@ function App() {
                 <Route path="profile" element={<SupplierProfilePage />} />
                 <Route path="staff" element={<SupplierStaffPage />} />
                 <Route path="settings" element={<SupplierSettingsPage />} />
+              </Route>
+            </Route>
+          </Routes>
+
+          {/* Admin Routes - Outside of Main Layout */}
+          <Routes>
+            <Route element={<AdminGuard />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
               </Route>
             </Route>
           </Routes>

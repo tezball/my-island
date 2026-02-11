@@ -33,6 +33,16 @@
         "@modelcontextprotocol/server-filesystem",
         "/home/tezball/projects/my-island"
       ]
+    },
+    "postgres": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://myisland:myisland_dev_password@localhost:5432/myisland"
+      ],
+      "env": {}
     }
   }
 }

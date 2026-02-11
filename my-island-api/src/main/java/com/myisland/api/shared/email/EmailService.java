@@ -114,6 +114,18 @@ public class EmailService implements EmailNotificationService {
         sendEmail(ownerEmail, "Your Weekly Summary - " + data.propertyName(), "weekly-summary", context);
     }
 
+    @Async
+    public void sendPreArrivalEmailToGuest(String guestEmail, BookingEmailData bookingData, String county, String phone, String mapUrl) {
+        Context context = createBookingContext(bookingData);
+        context.setVariable("county", county);
+        context.setVariable("phone", phone);
+        context.setVariable("mapUrl", mapUrl);
+        context.setVariable("tripsUrl", frontendUrl + "/trips");
+        context.setVariable("marketplaceUrl", frontendUrl + "/marketplace");
+
+        sendEmail(guestEmail, "Your Trip is Coming Up! - " + bookingData.propertyName(), "pre-arrival", context);
+    }
+
     private Context createBookingContext(BookingEmailData bookingData) {
         Context context = new Context();
         context.setVariable("bookingId", bookingData.bookingId());

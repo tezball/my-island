@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Trip is Coming Up</title>
+</head>
+<body style="font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f6f7f8;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="width: 60px; height: 60px; background: #dbeafe; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: #2563eb; font-size: 30px;">&#9992;</span>
+                </div>
+                <h1 style="color: #111418; margin: 0; font-size: 24px;">Your Trip is Coming Up!</h1>
+                <p style="color: #6b7280; margin: 8px 0 0 0; font-size: 14px;">Just 2 days to go</p>
+            </div>
+
+            <p style="color: #111418; font-size: 16px; line-height: 1.6;">
+                Hi <span th:text="${guestName}">Guest</span>,
+            </p>
+
+            <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">
+                We're looking forward to welcoming you at <strong th:text="${propertyName}">Nore Valley Park</strong>. Here's everything you need for your stay.
+            </p>
+
+            <!-- Booking Details -->
+            <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: #111418; margin: 0 0 5px 0; font-size: 18px;" th:text="${lotName}">Riverside Pitch</h3>
+                <p style="color: #6b7280; margin: 0 0 15px 0; font-size: 14px;">
+                    <span th:text="${propertyName}">Nore Valley Park</span>
+                    <span th:if="${county}" th:text="', Co. ' + ${county}"> , Co. Kilkenny</span>
+                </p>
+
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; color: #6b7280;">Check-in</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="${#temporals.format(checkInDate, 'EEEE, dd MMM yyyy')}">Friday, 15 Mar 2026</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #6b7280;">Check-out</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="${#temporals.format(checkOutDate, 'EEEE, dd MMM yyyy')}">Monday, 18 Mar 2026</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #6b7280;">Guests</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="${numGuests}">2</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; color: #6b7280;">Booking ID</td>
+                        <td style="padding: 8px 0; color: #111418; text-align: right; font-weight: 500;" th:text="'#' + ${bookingId}">#123</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Contact & Directions -->
+            <div th:if="${phone != '' or mapUrl != ''}" style="background: #eff6ff; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 16px;">Contact &amp; Directions</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr th:if="${phone != ''}">
+                        <td style="padding: 6px 0; color: #6b7280; font-size: 14px;">Phone</td>
+                        <td style="padding: 6px 0; color: #111418; text-align: right; font-size: 14px; font-weight: 500;" th:text="${phone}">087 123 4567</td>
+                    </tr>
+                </table>
+                <div th:if="${mapUrl != ''}" style="margin-top: 12px; text-align: center;">
+                    <a th:href="${mapUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                        Get Directions
+                    </a>
+                </div>
+            </div>
+
+            <!-- Marketplace Reminder -->
+            <div style="background: #f0fdf4; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                <h3 style="color: #059669; margin: 0 0 8px 0; font-size: 16px;">Local Deals Await</h3>
+                <p style="color: #4b5563; font-size: 14px; line-height: 1.5; margin: 0;">
+                    Don't miss exclusive offers from local suppliers near your stay &mdash; farm shops, kayaking, restaurants and more!
+                </p>
+                <div style="margin-top: 12px; text-align: center;">
+                    <a th:href="${marketplaceUrl}" style="display: inline-block; background: #059669; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                        Browse Offers
+                    </a>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <a th:href="${tripsUrl}" style="display: inline-block; background: #059669; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                    View My Trips
+                </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 12px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                You're receiving this because you have a booking at <span th:text="${propertyName}">Nore Valley Park</span>.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

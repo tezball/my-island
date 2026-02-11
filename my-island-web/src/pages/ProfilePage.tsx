@@ -75,6 +75,23 @@ export const ProfilePage: React.FC = () => {
                 </Link>
 
                 <div className="flex flex-col gap-2">
+                    {user?.isAdmin && (
+                        <Link
+                            to="/admin"
+                            className="flex items-center justify-between p-4 bg-white dark:bg-[#1a2632] rounded-xl shadow-sm border border-red-200 dark:border-red-900/50 mb-2"
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="size-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+                                    <span className="material-symbols-outlined">admin_panel_settings</span>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-[#111418] dark:text-white text-base">Admin Portal</h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Platform administration</p>
+                                </div>
+                            </div>
+                            <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+                        </Link>
+                    )}
                     {(user?.isOwner || user?.isStaff) && (
                         <Link
                             to="/owner"

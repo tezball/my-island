@@ -34,8 +34,19 @@ Event-driven notification system. Domain events (booking created, offer claimed,
 - **NotificationService** — Fetches notifications from API
 - Notification bell in Header component
 
+## Email Notifications (Implemented)
+- Welcome email on signup
+- Booking created (to owner and guest)
+- Booking confirmed (to guest)
+- Booking cancelled (to owner and guest)
+- Offer claimed (to supplier)
+- Voucher (to guest)
+- Password reset
+- Email verification
+- Weekly summary (to owner)
+- **Pre-arrival email** — Sent 2 days before check-in with booking details, property contact info, Google Maps directions link, and marketplace CTA
+
 ## Not Yet Implemented
-- Email delivery (SES integration planned)
 - Push notifications
 - SMS notifications
 - Real-time WebSocket updates

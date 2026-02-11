@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { authService } from '../services/authService';
 
@@ -6,12 +6,18 @@ export const VerifyEmailPage: React.FC = () => {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const hasVerified = useRef(false);
 
     useEffect(() => {
         if (!token) {
             setStatus('error');
             return;
         }
+
+        // Prevent duplicate API call from React StrictMode double-invoke.
+        // The verify endpoint consumes the token, so a second call would fail.
+        if (hasVerified.current) return;
+        hasVerified.current = true;
 
         authService.verifyEmail(token)
             .then(() => setStatus('success'))

@@ -79,6 +79,9 @@ public class SecurityConfig {
                         // Supplier endpoints (accessible by suppliers and staff)
                         .requestMatchers("/supplier/**").hasAnyRole("SUPPLIER", "STAFF")
 
+                        // Admin endpoints
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
                         // All other endpoints require authentication
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())

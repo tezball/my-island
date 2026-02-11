@@ -110,4 +110,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             WHERE b.id = :id
             """)
     Optional<Booking> findByIdWithDetails(Long id);
+
+    @Query("""
+            SELECT b FROM Booking b
+            JOIN FETCH b.user
+            JOIN FETCH b.lot l
+            JOIN FETCH l.owner
+            WHERE b.checkInDate = :date
+            AND b.status = 'CONFIRMED'
+            """)
+    List<Booking> findConfirmedArrivalsForDate(LocalDate date);
 }

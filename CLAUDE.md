@@ -193,13 +193,18 @@ The login page has a dropdown that auto-fills credentials for these accounts.
 | staff@aillwee.ie | Redeemer | Aillwee |
 | shop@greenacres.ie | Associate | Green Acres |
 
+### Platform Admin
+| Email | Password | Description |
+|-------|----------|-------------|
+| tezball86@gmail.com | `PlatformAdmin#2026!Secure` | Platform Admin (superuser) |
+
 ### Guests
 | Email | Password | Description |
 |-------|----------|-------------|
 | family@example.com | `MurphyFamily!Trip2025` | Murphy Family (has bookings) |
 | testguest@example.com | `TestGuest#2026!Safe` | Clean account, no bookings |
 
-**Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner` and `isSupplier` flags. Staff users (`isStaff=true`) gain access to the portals of the Owner/Supplier who invited them.
+**Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner`, `isSupplier`, and `isAdmin` flags. Staff users (`isStaff=true`) gain access to the portals of the Owner/Supplier who invited them. Admin users (`isAdmin=true`) access the platform admin portal at `/admin`.
 
 ## Database
 

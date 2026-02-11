@@ -66,6 +66,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | **Owner** | Registered user with `isOwner=true`. Manages campsites, lots, bookings, and responds to reviews. Requires subscription to receive bookings and access analytics. Can set up Stripe Connect to receive booking payments. |
 | **Supplier** | Registered user with `isSupplier=true`. Creates and manages promotional offers. Requires subscription to create offers. Can set up Stripe Connect to receive offer redemption payments. |
 | **Staff** | Registered user with `isStaff=true`. Granted access to Owner and/or Supplier portals via staff membership. Full portal access (ACL deferred). |
+| **Admin** | Registered user with `isAdmin=true`. Platform superuser with access to the admin portal for platform-wide administration. Set directly in the database. |
 
 ---
 
@@ -332,6 +333,7 @@ User (Root)
 | isOwner | Boolean | Has campsite management access |
 | isSupplier | Boolean | Has supplier dashboard access |
 | isStaff | Boolean | Has staff access via StaffMember membership |
+| isAdmin | Boolean | Platform admin with access to admin portal |
 | emailVerified | Boolean | Email verification status |
 | emailVerificationToken | String | Token for email verification |
 | emailVerificationTokenExpiry | DateTime | Token expiry |
