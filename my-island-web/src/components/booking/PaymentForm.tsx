@@ -164,7 +164,9 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
                     await paymentService.confirmAuthorization(bookingId);
                 } catch (syncErr) {
                     // Non-fatal: webhook will eventually update the status
-                    console.warn('Could not sync authorization status:', syncErr);
+                    // Wait briefly so the webhook has time to arrive before the UI refreshes
+                    console.warn('Could not sync authorization status, waiting for webhook:', syncErr);
+                    await new Promise(resolve => setTimeout(resolve, 1500));
                 }
                 onPaymentSuccess();
             } else if (confirmedIntent?.status === 'succeeded') {

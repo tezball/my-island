@@ -116,8 +116,9 @@ function transformLot(api: LotApiResponse): Lot {
 function transformBooking(api: BookingApiResponse): Booking {
     const statusMap: Record<string, Booking['status']> = {
         'PENDING_PAYMENT': 'pending_payment', 'PENDING': 'pending',
-        'CONFIRMED': 'confirmed', 'CANCELLED': 'cancelled',
-        'COMPLETED': 'completed', 'PAYMENT_FAILED': 'payment_failed',
+        'CONFIRMED': 'confirmed', 'CHECKED_IN': 'checked_in',
+        'CANCELLED': 'cancelled', 'COMPLETED': 'completed',
+        'PAYMENT_FAILED': 'payment_failed',
     };
     const paymentStatusMap: Record<string, Booking['paymentStatus']> = {
         'NONE': 'none', 'AUTHORIZED': 'authorized', 'CAPTURED': 'captured',

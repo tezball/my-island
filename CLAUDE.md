@@ -6,6 +6,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 My Island is a camping/glamping booking platform for Ireland with a marketplace for local suppliers. Full stack application with React frontend and Spring Boot backend.
 
+## Documentation Sync (Mandatory)
+
+**CRITICAL**: Every code change MUST include corresponding documentation updates. This is not optional — treat docs as part of the deliverable, not an afterthought.
+
+### For EVERY task, before considering it complete:
+1. **Identify affected docs** — Check `docs/` for existing documentation related to the feature/module being changed
+2. **Update existing docs** — If docs exist, update them to reflect the new behavior, status changes, flows, or API changes
+3. **Create missing docs** — If no documentation exists for the feature area, create it in the appropriate `docs/00-Domain/{module}/` directory
+4. **Update DOMAIN_MODEL.md** — If entities, enums, relationships, or status flows changed, update `docs/00-Domain/DOMAIN_MODEL.md`
+5. **Update CLAUDE.md** — If test accounts, endpoints, architecture, or key patterns changed, update this file
+
+### Documentation locations
+- **Domain concepts, entities, status flows**: `docs/00-Domain/DOMAIN_MODEL.md`
+- **Module-specific details**: `docs/00-Domain/{module}/` (e.g., `02-Booking/PAYMENT_FLOW.md`)
+- **User stories**: `docs/00-Domain/{module}/USER_STORIES.md`
+- **API reference**: `docs/API_REFERENCE.md`
+- **Roadmap/feature status**: `docs/ROADMAP.md`
+
+### What counts as a doc-worthy change
+- New or modified API endpoints
+- New or modified entity fields, enums, or status values
+- Business logic changes (booking flows, payment states, etc.)
+- New features or feature removals
+- Configuration or architecture changes
+- Bug fixes that reveal incorrect documentation
+
 ## Cross-Layer Change Requirements
 
 **IMPORTANT**: When making changes to domain concepts (user types, roles, entities, features), you MUST update ALL affected layers:
@@ -14,10 +40,7 @@ My Island is a camping/glamping booking platform for Ireland with a marketplace 
 - [ ] **Frontend**: Types, services, components, pages
 - [ ] **Backend**: Entities, repositories, services, controllers, DTOs
 - [ ] **Database**: Flyway migrations if schema changes
-- [ ] **Documentation**:
-  - `docs/00-Domain/DOMAIN_MODEL.md`
-  - `docs/00-Domain/*/USER_STORIES.md` (affected modules)
-  - This file (`CLAUDE.md`) - test accounts, architecture diagrams
+- [ ] **Documentation**: See "Documentation Sync" section above
 - [ ] **API Docs**: Update Swagger annotations if endpoints change
 
 ### Examples of Cross-Layer Changes

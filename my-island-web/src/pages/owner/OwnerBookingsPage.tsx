@@ -18,6 +18,7 @@ export const OwnerBookingsPage: React.FC = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [actionError, setActionError] = useState<{ bookingId: string; message: string } | null>(null);
     const PAGE_SIZE = 15;
 
     useEffect(() => {
@@ -63,6 +64,7 @@ export const OwnerBookingsPage: React.FC = () => {
     };
 
     const handleCheckIn = async (bookingId: string) => {
+        setActionError(null);
         try {
             await ownerService.checkInBooking(bookingId);
             setBookings(prev => prev.map(b =>
@@ -70,10 +72,12 @@ export const OwnerBookingsPage: React.FC = () => {
             ));
         } catch (error) {
             console.error('Failed to check in booking:', error);
+            setActionError({ bookingId, message: error instanceof Error ? error.message : 'Failed to check in booking' });
         }
     };
 
     const handleCheckOut = async (bookingId: string) => {
+        setActionError(null);
         try {
             await ownerService.checkOutBooking(bookingId);
             setBookings(prev => prev.map(b =>
@@ -81,10 +85,12 @@ export const OwnerBookingsPage: React.FC = () => {
             ));
         } catch (error) {
             console.error('Failed to check out booking:', error);
+            setActionError({ bookingId, message: error instanceof Error ? error.message : 'Failed to check out booking' });
         }
     };
 
     const handleConfirm = async (bookingId: string) => {
+        setActionError(null);
         try {
             await ownerService.confirmBooking(bookingId);
             setBookings(prev => prev.map(b =>
@@ -92,10 +98,12 @@ export const OwnerBookingsPage: React.FC = () => {
             ));
         } catch (error) {
             console.error('Failed to confirm booking:', error);
+            setActionError({ bookingId, message: error instanceof Error ? error.message : 'Failed to confirm booking' });
         }
     };
 
     const handleReject = async (bookingId: string) => {
+        setActionError(null);
         try {
             await ownerService.cancelBooking(bookingId);
             setBookings(prev => prev.map(b =>
@@ -103,6 +111,7 @@ export const OwnerBookingsPage: React.FC = () => {
             ));
         } catch (error) {
             console.error('Failed to reject booking:', error);
+            setActionError({ bookingId, message: error instanceof Error ? error.message : 'Failed to cancel booking' });
         }
     };
 
@@ -217,6 +226,20 @@ export const OwnerBookingsPage: React.FC = () => {
                         </div>
                         {booking.details && (
                             <p className="text-xs text-gray-400 mt-2">{booking.details}</p>
+                        )}
+
+                        {/* Inline error banner */}
+                        {actionError?.bookingId === booking.id && (
+                            <div className="mt-3 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm p-3 rounded-lg">
+                                <span className="material-symbols-outlined text-base">error</span>
+                                <span className="flex-1">{actionError.message}</span>
+                                <button
+                                    onClick={() => setActionError(null)}
+                                    className="text-red-400 hover:text-red-600 dark:hover:text-red-300"
+                                >
+                                    <span className="material-symbols-outlined text-base">close</span>
+                                </button>
+                            </div>
                         )}
 
                         {/* Action Buttons for Pending Bookings */}
