@@ -11,7 +11,10 @@ import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.CreateBookingRequest;
 import com.myisland.api.modules.booking.dto.CreateManualBookingRequest;
+import com.myisland.api.modules.booking.dto.ModifyBookingRequest;
 import com.myisland.api.modules.booking.entity.Booking;
+import com.myisland.api.modules.booking.entity.BookingModificationLog;
+import com.myisland.api.modules.booking.repository.BookingModificationLogRepository;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.UserRepository;
@@ -48,12 +51,14 @@ public class BookingService {
     private final PricingService pricingService;
     private final OwnerRepository ownerRepository;
     private final StaffPermissionChecker permissionChecker;
+    private final BookingModificationLogRepository modificationLogRepository;
 
     public BookingService(BookingRepository bookingRepository, LotRepository lotRepository,
             UserRepository userRepository, ApplicationEventPublisher eventPublisher,
             BookingPaymentService bookingPaymentService, StripeProperties stripeProperties,
             LotBlockedPeriodRepository blockedPeriodRepository, PricingService pricingService,
-            OwnerRepository ownerRepository, StaffPermissionChecker permissionChecker) {
+            OwnerRepository ownerRepository, StaffPermissionChecker permissionChecker,
+            BookingModificationLogRepository modificationLogRepository) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
@@ -64,6 +69,7 @@ public class BookingService {
         this.pricingService = pricingService;
         this.ownerRepository = ownerRepository;
         this.permissionChecker = permissionChecker;
+        this.modificationLogRepository = modificationLogRepository;
     }
 
     @Transactional(readOnly = true)
@@ -468,6 +474,138 @@ public class BookingService {
                 booking.getId(), owner.getId(), request.guestName(), lot.getId(), totalPrice);
 
         eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CREATED));
+
+        return BookingDto.from(booking);
+    }
+
+    @Transactional
+    public BookingDto modifyBooking(Long bookingId, Long userId, ModifyBookingRequest request) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        // Permission check: owner or staff with BOOKINGS FULL access
+        permissionChecker.checkOwnerPermission(userId, booking.getLot().getOwner(), PermissionGroup.BOOKINGS, AccessLevel.FULL);
+
+        // Validate status
+        if (booking.getStatus() != Booking.BookingStatus.CONFIRMED && booking.getStatus() != Booking.BookingStatus.CHECKED_IN) {
+            throw new BadRequestException("Only confirmed or checked-in bookings can be modified");
+        }
+
+        // Block if payment is authorized (pending capture)
+        if (booking.getPaymentStatus() == Booking.PaymentStatus.AUTHORIZED) {
+            throw new BadRequestException("Cannot modify a booking with an authorized payment hold. Please confirm or cancel the booking first.");
+        }
+
+        // Capture "before" state
+        Lot previousLot = booking.getLot();
+        LocalDate previousCheckIn = booking.getCheckInDate();
+        LocalDate previousCheckOut = booking.getCheckOutDate();
+        BigDecimal previousTotalPrice = booking.getTotalPrice();
+
+        // Resolve new values (null = keep current)
+        Lot newLot = previousLot;
+        if (request.lotId() != null && !request.lotId().equals(previousLot.getId())) {
+            newLot = lotRepository.findById(request.lotId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Lot", request.lotId()));
+            // Verify lot belongs to same owner
+            if (!newLot.getOwner().getId().equals(previousLot.getOwner().getId())) {
+                throw new BadRequestException("New lot must belong to the same owner");
+            }
+            if (!newLot.isActive()) {
+                throw new BadRequestException("Selected lot is not active");
+            }
+        }
+
+        LocalDate newCheckIn = request.checkInDate() != null ? request.checkInDate() : previousCheckIn;
+        LocalDate newCheckOut = request.checkOutDate() != null ? request.checkOutDate() : previousCheckOut;
+
+        // Validate at least one field is changing
+        boolean lotChanged = !newLot.getId().equals(previousLot.getId());
+        boolean datesChanged = !newCheckIn.equals(previousCheckIn) || !newCheckOut.equals(previousCheckOut);
+        if (!lotChanged && !datesChanged) {
+            throw new BadRequestException("No changes specified");
+        }
+
+        // Validate dates
+        if (!newCheckOut.isAfter(newCheckIn)) {
+            throw new BadRequestException("Check-out date must be after check-in date");
+        }
+
+        // For CHECKED_IN bookings: new check-in must be <= today
+        if (booking.getStatus() == Booking.BookingStatus.CHECKED_IN && newCheckIn.isAfter(LocalDate.now())) {
+            throw new BadRequestException("Cannot set a future check-in date on an already checked-in booking");
+        }
+
+        // Check guest capacity
+        if (booking.getNumGuests() > newLot.getMaxGuests()) {
+            throw new BadRequestException("Number of guests (" + booking.getNumGuests() + ") exceeds new lot capacity of " + newLot.getMaxGuests());
+        }
+
+        // Check availability (excluding this booking)
+        List<Booking> overlapping = bookingRepository.findOverlappingBookingsExcluding(
+                newLot.getId(), newCheckIn, newCheckOut, bookingId);
+        if (!overlapping.isEmpty()) {
+            throw new BadRequestException("The selected lot is not available for the new dates");
+        }
+
+        List<LotBlockedPeriod> blockedPeriods = blockedPeriodRepository.findOverlappingBlocks(
+                newLot.getId(), newCheckIn, newCheckOut);
+        if (!blockedPeriods.isEmpty()) {
+            throw new BadRequestException("The selected lot is blocked for the new dates");
+        }
+
+        // Recalculate price
+        BigDecimal newTotalPrice = pricingService.calculateTotalPrice(newLot, newCheckIn, newCheckOut);
+
+        // Update booking fields
+        booking.setLot(newLot);
+        booking.setCheckInDate(newCheckIn);
+        booking.setCheckOutDate(newCheckOut);
+        booking.setTotalPrice(newTotalPrice);
+
+        // For manual bookings (no payment), also recalculate serviceFee/chargeTotal
+        if (booking.getPaymentStatus() == Booking.PaymentStatus.NONE) {
+            BigDecimal serviceFee = newTotalPrice.multiply(BigDecimal.valueOf(stripeProperties.getServiceFeePercent()))
+                    .setScale(2, java.math.RoundingMode.HALF_UP);
+            booking.setServiceFee(serviceFee);
+            booking.setChargeTotal(newTotalPrice.add(serviceFee));
+        }
+
+        booking = bookingRepository.save(booking);
+
+        // Determine modification type
+        String modificationType;
+        if (lotChanged && datesChanged) {
+            modificationType = "DATE_AND_LOT_CHANGE";
+        } else if (lotChanged) {
+            modificationType = "LOT_CHANGE";
+        } else {
+            modificationType = "DATE_CHANGE";
+        }
+
+        // Create audit log entry
+        BookingModificationLog modLog = BookingModificationLog.builder()
+                .booking(booking)
+                .modifiedByUserId(userId)
+                .modificationType(modificationType)
+                .previousLotId(previousLot.getId())
+                .previousCheckInDate(previousCheckIn)
+                .previousCheckOutDate(previousCheckOut)
+                .previousTotalPrice(previousTotalPrice)
+                .newLotId(newLot.getId())
+                .newCheckInDate(newCheckIn)
+                .newCheckOutDate(newCheckOut)
+                .newTotalPrice(newTotalPrice)
+                .priceAdjustment(newTotalPrice.subtract(previousTotalPrice))
+                .reason(request.reason())
+                .build();
+        modificationLogRepository.save(modLog);
+
+        log.info("Modified booking: {} (type: {}, price: {} -> {}, lot: {} -> {}, dates: {}-{} -> {}-{})",
+                bookingId, modificationType, previousTotalPrice, newTotalPrice,
+                previousLot.getId(), newLot.getId(), previousCheckIn, previousCheckOut, newCheckIn, newCheckOut);
+
+        eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.MODIFIED));
 
         return BookingDto.from(booking);
     }

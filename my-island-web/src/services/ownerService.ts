@@ -317,6 +317,20 @@ export const ownerService = {
         return transformBooking(api);
     },
 
+    // --- Modify Booking ---
+
+    async modifyBooking(bookingId: string, data: {
+        lotId?: number;
+        checkInDate?: string;
+        checkOutDate?: string;
+        reason?: string;
+    }): Promise<Booking> {
+        const api = await apiRequest<BookingApiResponse>(`/owner/bookings/${bookingId}/modify`, {
+            method: 'PUT', body: data,
+        });
+        return transformBooking(api);
+    },
+
     // --- Blocked Periods ---
 
     async getBlockedPeriods(): Promise<BlockedPeriod[]> {

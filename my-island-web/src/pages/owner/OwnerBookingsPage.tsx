@@ -4,6 +4,7 @@ import { useOwnerSubscription } from '../../context/OwnerSubscriptionContext';
 import { ownerService } from '../../services/ownerService';
 import type { Booking, Lot } from '../../types/booking';
 import { ManualBookingModal } from '../../components/owner/ManualBookingModal';
+import { ModifyBookingModal } from '../../components/owner/ModifyBookingModal';
 import { SubscriptionGate } from '../../components/owner/SubscriptionGate';
 import clsx from 'clsx';
 
@@ -16,6 +17,7 @@ export const OwnerBookingsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending' | 'pending_payment' | 'checked_in' | 'completed' | 'cancelled'>('all');
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [modifyingBooking, setModifyingBooking] = useState<Booking | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [actionError, setActionError] = useState<{ bookingId: string; message: string } | null>(null);
@@ -118,6 +120,11 @@ export const OwnerBookingsPage: React.FC = () => {
     const handleCreateBooking = async (data: Parameters<typeof ownerService.createManualBooking>[0]) => {
         const newBooking = await ownerService.createManualBooking(data);
         setBookings(prev => [newBooking, ...prev]);
+    };
+
+    const handleModifyBooking = async (bookingId: string, data: Parameters<typeof ownerService.modifyBooking>[1]) => {
+        const updated = await ownerService.modifyBooking(bookingId, data);
+        setBookings(prev => prev.map(b => b.id === bookingId ? updated : b));
     };
 
     if (isLoading) {
@@ -275,7 +282,7 @@ export const OwnerBookingsPage: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Check In Button for Confirmed Bookings — only when check-in date is today or earlier */}
+                        {/* Check In + Modify Buttons for Confirmed Bookings */}
                         {booking.status === 'confirmed' && (() => {
                             const [d, m, y] = booking.startDate.split('/');
                             const checkInDate = new Date(`${y}-${m}-${d}`);
@@ -287,6 +294,14 @@ export const OwnerBookingsPage: React.FC = () => {
                             const canCheckIn = today >= earliestCheckIn;
                             return (
                                 <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                                    <button
+                                        onClick={() => setModifyingBooking(booking)}
+                                        className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-1"
+                                        title="Modify booking dates or lot"
+                                    >
+                                        <span className="material-symbols-outlined text-lg">edit_calendar</span>
+                                        Modify
+                                    </button>
                                     <button
                                         onClick={() => handleCheckIn(booking.id)}
                                         disabled={!canCheckIn}
@@ -305,9 +320,17 @@ export const OwnerBookingsPage: React.FC = () => {
                             );
                         })()}
 
-                        {/* Check Out Button for Checked In Bookings */}
+                        {/* Check Out + Modify Buttons for Checked In Bookings */}
                         {booking.status === 'checked_in' && (
                             <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                                <button
+                                    onClick={() => setModifyingBooking(booking)}
+                                    className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-1"
+                                    title="Modify booking dates or lot"
+                                >
+                                    <span className="material-symbols-outlined text-lg">edit_calendar</span>
+                                    Modify
+                                </button>
                                 <button
                                     onClick={() => handleCheckOut(booking.id)}
                                     className="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
@@ -361,6 +384,16 @@ export const OwnerBookingsPage: React.FC = () => {
                 onSubmit={handleCreateBooking}
                 lots={lots}
             />
+
+            {modifyingBooking && (
+                <ModifyBookingModal
+                    isOpen={true}
+                    onClose={() => setModifyingBooking(null)}
+                    booking={modifyingBooking}
+                    lots={lots}
+                    onSubmit={handleModifyBooking}
+                />
+            )}
         </div>
     );
 };

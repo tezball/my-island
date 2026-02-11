@@ -123,6 +123,17 @@ public class NotificationEventListener {
                     );
                 }
             }
+            case MODIFIED -> {
+                if (guest != null) {
+                    notificationService.createNotification(
+                            guest,
+                            NotificationType.BOOKING_MODIFIED,
+                            "Booking Updated",
+                            "Your booking for " + lotName + " has been updated. New dates: " + booking.getCheckInDate() + " - " + booking.getCheckOutDate() + ".",
+                            "/trips"
+                    );
+                }
+            }
             default -> log.debug("Unhandled booking event type for notifications: {}", event.getType());
         }
     }

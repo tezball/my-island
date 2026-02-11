@@ -6,6 +6,7 @@ import com.myisland.api.modules.accommodation.service.OwnerService;
 import com.myisland.api.modules.accommodation.service.OwnerSubscriptionService;
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.CreateManualBookingRequest;
+import com.myisland.api.modules.booking.dto.ModifyBookingRequest;
 import com.myisland.api.modules.booking.service.BookingService;
 import com.myisland.api.modules.marketplace.dto.ConfirmSubscriptionRequest;
 import com.myisland.api.modules.marketplace.dto.ConnectStatusDto;
@@ -250,6 +251,16 @@ public class OwnerController {
             @PathVariable Long bookingId
     ) {
         return ResponseEntity.ok(bookingService.checkOutBooking(bookingId, userDetails.getUserId()));
+    }
+
+    @PutMapping("/bookings/{bookingId}/modify")
+    @Operation(summary = "Modify booking dates or lot assignment")
+    public ResponseEntity<BookingDto> modifyBooking(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long bookingId,
+            @RequestBody ModifyBookingRequest request
+    ) {
+        return ResponseEntity.ok(bookingService.modifyBooking(bookingId, userDetails.getUserId(), request));
     }
 
     @GetMapping("/analytics/lots")

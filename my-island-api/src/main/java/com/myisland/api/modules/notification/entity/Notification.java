@@ -14,6 +14,7 @@ public class Notification extends BaseEntity {
         BOOKING_CANCELLED,
         BOOKING_CHECKED_IN,
         BOOKING_CHECKED_OUT,
+        BOOKING_MODIFIED,
         OFFER_CLAIMED,
         OFFER_REDEEMED
     }

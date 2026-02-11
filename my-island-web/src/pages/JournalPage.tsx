@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import clsx from 'clsx';
 import L from 'leaflet';
+import { LocateControl } from '../components/ui/LocateControl';
 import { useAuth } from '../context/AuthContext';
 import { discoveryService } from '../services/discoveryService';
 import type { Poi, UserPoiVisit, VisitStatus, VisitStats, PoiCategory } from '../types/discovery';
@@ -211,6 +212,7 @@ export const JournalPage: React.FC = () => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                <LocateControl position="topright" />
                 <FitAllMarkers pois={filteredPois} />
                 {filteredPois.map(p => {
                     const visit = visitMap.get(p.id);

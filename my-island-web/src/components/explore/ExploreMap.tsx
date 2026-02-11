@@ -7,6 +7,7 @@ import type { VisitStatus } from '../../types/discovery';
 import { ExploreMarkerPopup } from './ExploreMarkerPopup';
 import { ExploreSupplierPopup } from './ExploreSupplierPopup';
 import { ExplorePoiPopup } from './ExplorePoiPopup';
+import { LocateControl } from '../ui/LocateControl';
 
 // Fix Leaflet default marker icon paths for Vite bundler
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,6 +116,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({ markers, className, onUp
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <FitBounds markers={markers} />
+            <LocateControl position="topright" />
             <MarkerClusterGroup chunkedLoading>
                 {markers.map(marker => (
                     <Marker

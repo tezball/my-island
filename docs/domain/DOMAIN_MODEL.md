@@ -285,6 +285,7 @@ Owner / Campsite (Root)
 ```
 Booking (Root)
 ├── Payment fields (embedded)
+├── BookingModificationLog[] (Entity)
 ├── BookingExtra[] (Entity)    — NOT YET BUILT
 └── Message[] (cross-ref)      — NOT YET BUILT
 ```
@@ -310,6 +311,26 @@ Booking (Root)
 | chargeTotal | BigDecimal | Total charge amount |
 | stripeTransferId | String | Stripe transfer ID for owner payout |
 | createdAt | Timestamp | Booking creation time |
+
+**BookingModificationLog**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| bookingId | Long | Modified booking |
+| modifiedByUserId | Long | User who made the change |
+| modificationType | String | DATE_CHANGE, LOT_CHANGE, DATE_AND_LOT_CHANGE |
+| previousLotId | Long | Lot before change |
+| previousCheckInDate | LocalDate | Check-in before change |
+| previousCheckOutDate | LocalDate | Check-out before change |
+| previousTotalPrice | BigDecimal | Price before change |
+| newLotId | Long | Lot after change |
+| newCheckInDate | LocalDate | Check-in after change |
+| newCheckOutDate | LocalDate | Check-out after change |
+| newTotalPrice | BigDecimal | Price after change |
+| priceAdjustment | BigDecimal | Positive = guest owes more |
+| reason | String | Optional reason for modification |
+| createdAt | Timestamp | When modification occurred |
 
 **BookingExtra** — *Not Yet Built*
 
@@ -797,6 +818,7 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 5. **Review Eligibility**: Reviews can only be submitted when `status = COMPLETED` *(requires Review module)*
 6. **Cancellation Window**: Defined by campsite policy (not enforced in domain)
 7. **Price Locking**: Extra prices are captured at booking time (`unitPrice`) *(requires Extras system)*
+8. **Modification Rules**: Only CONFIRMED/CHECKED_IN bookings can be modified; AUTHORIZED payment status blocks modification; CHECKED_IN bookings cannot move check-in to a future date; new lot must belong to same owner
 
 ### Campsite Rules
 

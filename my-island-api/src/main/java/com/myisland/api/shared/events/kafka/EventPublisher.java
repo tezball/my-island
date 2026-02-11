@@ -66,7 +66,7 @@ public class EventPublisher {
             case CONFIRMED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC;
             case CANCELLED -> KafkaConfig.BOOKING_CANCELLED_TOPIC;
             case COMPLETED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
-            case CHECKED_IN, CHECKED_OUT -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
+            case CHECKED_IN, CHECKED_OUT, MODIFIED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
         };
 
         kafkaTemplate.send(topic, booking.getId().toString(), kafkaEvent);

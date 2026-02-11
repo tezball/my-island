@@ -43,6 +43,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("""
             SELECT b FROM Booking b
+            WHERE b.lot.id = :lotId
+            AND b.id <> :excludeBookingId
+            AND b.status NOT IN ('CANCELLED', 'PENDING_PAYMENT', 'PAYMENT_FAILED')
+            AND b.checkInDate < :checkOut
+            AND b.checkOutDate > :checkIn
+            """)
+    List<Booking> findOverlappingBookingsExcluding(Long lotId, LocalDate checkIn, LocalDate checkOut, Long excludeBookingId);
+
+    @Query("""
+            SELECT b FROM Booking b
             WHERE b.lot.owner.id = :ownerId
             ORDER BY b.createdAt DESC
             """)

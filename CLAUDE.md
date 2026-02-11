@@ -237,6 +237,7 @@ Key endpoints:
 - `POST /api/auth/login` - Login
 - `GET /api/campsites` - List campsites
 - `POST /api/bookings` - Create booking
+- `PUT /api/owner/bookings/{id}/modify` - Modify booking dates or lot (owner)
 - `GET /api/marketplace/offers` - Browse offers
 - `POST /api/supplier/redeem/{code}` - Redeem voucher
 - `GET/POST/DELETE /api/owner/staff` - Manage owner staff members

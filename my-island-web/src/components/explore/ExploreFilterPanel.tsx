@@ -52,12 +52,12 @@ export const ExploreFilterPanel: React.FC<ExploreFilterPanelProps> = ({
 
     return (
         <>
-            {/* Toggle button — pinned to right side */}
+            {/* Toggle button — pinned to left side */}
             <button
                 onClick={onToggle}
                 className={clsx(
                     'absolute top-4 z-[1001] bg-white dark:bg-[#1a2632] shadow-lg rounded-lg px-3 py-2 flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 border border-gray-200 dark:border-gray-600',
-                    isOpen ? 'right-[calc(20rem+1rem)]' : 'right-4',
+                    isOpen ? 'left-[calc(20rem+1rem)]' : 'left-4',
                 )}
             >
                 <span className="material-symbols-outlined text-lg">
@@ -74,11 +74,11 @@ export const ExploreFilterPanel: React.FC<ExploreFilterPanelProps> = ({
                 />
             )}
 
-            {/* Slide-in panel from right */}
+            {/* Slide-in panel from left */}
             <div
                 className={clsx(
-                    'absolute top-0 right-0 z-[1000] h-full w-80 bg-white dark:bg-[#1a2632] shadow-xl border-l border-gray-200 dark:border-gray-700 overflow-y-auto transition-transform duration-300 ease-in-out',
-                    isOpen ? 'translate-x-0' : 'translate-x-full',
+                    'absolute top-0 left-0 z-[1000] h-full w-80 bg-white dark:bg-[#1a2632] shadow-xl border-r border-gray-200 dark:border-gray-700 overflow-y-auto transition-transform duration-300 ease-in-out',
+                    isOpen ? 'translate-x-0' : '-translate-x-full',
                 )}
             >
                 <div className="p-4 pt-14 flex flex-col gap-4">
