@@ -22,7 +22,16 @@ public record CreateLotRequest(
         @Max(value = 20, message = "Max guests cannot exceed 20")
         int maxGuests,
 
+        @Min(value = 1, message = "Minimum stay must be at least 1 night")
+        @Max(value = 30, message = "Minimum stay cannot exceed 30 nights")
+        int minStay,
+
         String imageUrl,
 
         Set<Long> amenityIds
-) {}
+) {
+    public CreateLotRequest {
+        // Default minStay to 1 if not provided (0 means not set)
+        if (minStay <= 0) minStay = 1;
+    }
+}

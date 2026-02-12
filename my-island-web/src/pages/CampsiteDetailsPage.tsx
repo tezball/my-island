@@ -54,6 +54,7 @@ interface AccommodationType {
     availableCount: number;
     minPrice: number;
     maxPrice: number;
+    maxMinStay: number; // Highest minimum stay across lots of this type
     representativeImage: string;
     representativeLot: Lot; // The lot to use for booking
     commonAmenities: string[];
@@ -136,12 +137,17 @@ export const CampsiteDetailsPage: React.FC = () => {
                 return lot.imageUrl || TYPE_CONFIG[type]?.defaultImage || '';
             };
 
+            // Compute the maximum minStay across all lots of this type
+            const minStays = typeLots.map(l => l.minStay ?? 1);
+            const maxMinStay = Math.max(...minStays);
+
             return {
                 type,
                 lots: typeLots,
                 availableCount: availableLots.length,
                 minPrice: Math.min(...prices),
                 maxPrice: Math.max(...prices),
+                maxMinStay,
                 representativeImage: getPrimaryImage(representativeLot),
                 representativeLot,
                 commonAmenities: Array.from(allAmenities).slice(0, 4)
@@ -287,6 +293,13 @@ export const CampsiteDetailsPage: React.FC = () => {
                                             <>From €{accom.minPrice}<span className="text-gray-500 font-normal text-sm"> / night</span></>
                                         )}
                                     </p>
+
+                                    {accom.maxMinStay > 1 && (
+                                        <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-md mb-2">
+                                            <span className="material-symbols-outlined text-xs">dark_mode</span>
+                                            Min {accom.maxMinStay} nights
+                                        </span>
+                                    )}
 
                                     <p className="text-gray-500 text-sm mb-4 line-clamp-2">
                                         {config.description}

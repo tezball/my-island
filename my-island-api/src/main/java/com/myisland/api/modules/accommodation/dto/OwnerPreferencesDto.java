@@ -5,21 +5,30 @@ public record OwnerPreferencesDto(
     boolean weeklySummaryReports,
     boolean instantBooking,
     boolean allowSameDayBookings,
-    boolean requireGuestVerification
+    boolean requireGuestVerification,
+    boolean allowGuestModifications,
+    int modificationDeadlineDays,
+    boolean requireModificationApproval
 ) {
     public static OwnerPreferencesDto from(
             boolean emailNotificationsBookings,
             boolean weeklySummaryReports,
             boolean instantBooking,
             boolean allowSameDayBookings,
-            boolean requireGuestVerification
+            boolean requireGuestVerification,
+            boolean allowGuestModifications,
+            int modificationDeadlineDays,
+            boolean requireModificationApproval
     ) {
         return new OwnerPreferencesDto(
                 emailNotificationsBookings,
                 weeklySummaryReports,
                 instantBooking,
                 allowSameDayBookings,
-                requireGuestVerification
+                requireGuestVerification,
+                allowGuestModifications,
+                modificationDeadlineDays,
+                requireModificationApproval
         );
     }
 }

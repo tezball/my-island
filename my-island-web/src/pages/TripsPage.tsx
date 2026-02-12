@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { campsiteService } from '../services/campsiteService';
 import { PaymentForm } from '../components/booking/PaymentForm';
-import type { Booking } from '../types/booking';
+import { GuestModifyBookingModal } from '../components/booking/GuestModifyBookingModal';
+import type { Booking, GuestModificationPolicy, ModificationRequest } from '../types/booking';
 import { Link } from 'react-router-dom';
 
 export const TripsPage: React.FC = () => {
@@ -14,6 +15,11 @@ export const TripsPage: React.FC = () => {
     const [isCancelling, setIsCancelling] = useState(false);
     const [cancelError, setCancelError] = useState<string | null>(null);
     const [paymentBooking, setPaymentBooking] = useState<Booking | null>(null);
+    const [modifyBooking, setModifyBooking] = useState<Booking | null>(null);
+    const [modifyPolicy, setModifyPolicy] = useState<GuestModificationPolicy | null>(null);
+    const [modifyLoading, setModifyLoading] = useState<string | null>(null);
+    const [pendingRequests, setPendingRequests] = useState<Record<string, ModificationRequest>>({});
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -79,6 +85,90 @@ export const TripsPage: React.FC = () => {
             setPaymentBooking({ ...booking, status: 'pending_payment' });
         }).catch(console.error);
     };
+
+    const handleModifyClick = async (booking: Booking) => {
+        setModifyLoading(booking.id);
+        try {
+            const policy = await campsiteService.getModificationPolicy(booking.id);
+            if (policy.canModify) {
+                setModifyPolicy(policy);
+                setModifyBooking(booking);
+            } else {
+                setSuccessMessage(policy.cannotModifyReason || 'This booking cannot be modified');
+                setTimeout(() => setSuccessMessage(null), 4000);
+            }
+        } catch {
+            setSuccessMessage('Unable to check modification policy');
+            setTimeout(() => setSuccessMessage(null), 4000);
+        } finally {
+            setModifyLoading(null);
+        }
+    };
+
+    const handleModifySuccess = (updatedBooking: Booking) => {
+        setBookings(prev => prev.map(b => b.id === updatedBooking.id ? updatedBooking : b));
+        setModifyBooking(null);
+        setModifyPolicy(null);
+        // Remove pending request for this booking if it existed
+        setPendingRequests(prev => {
+            const next = { ...prev };
+            delete next[updatedBooking.id];
+            return next;
+        });
+        setSuccessMessage('Booking updated successfully!');
+        setTimeout(() => setSuccessMessage(null), 3000);
+    };
+
+    const handleModifyRequestSubmitted = () => {
+        setModifyBooking(null);
+        setModifyPolicy(null);
+        setSuccessMessage('Modification request submitted! The property will review your request.');
+        setTimeout(() => setSuccessMessage(null), 5000);
+        // Refresh bookings and pending requests
+        if (user) {
+            campsiteService.getUserBookings(user.id).then(userBookings => {
+                setBookings(userBookings);
+                // Load pending requests for confirmed bookings
+                loadPendingRequests(userBookings);
+            }).catch(console.error);
+        }
+    };
+
+    const loadPendingRequests = async (bookingList: Booking[]) => {
+        const confirmed = bookingList.filter(b => b.status === 'confirmed');
+        const requests: Record<string, ModificationRequest> = {};
+        await Promise.all(confirmed.map(async (b) => {
+            try {
+                const reqs = await campsiteService.getModificationRequests(b.id);
+                const pending = reqs.find(r => r.status === 'pending');
+                if (pending) requests[b.id] = pending;
+            } catch { /* ignore */ }
+        }));
+        setPendingRequests(requests);
+    };
+
+    const handleCancelRequest = async (bookingId: string, requestId: string) => {
+        try {
+            await campsiteService.cancelModificationRequest(bookingId, requestId);
+            setPendingRequests(prev => {
+                const next = { ...prev };
+                delete next[bookingId];
+                return next;
+            });
+            setSuccessMessage('Modification request cancelled');
+            setTimeout(() => setSuccessMessage(null), 3000);
+        } catch {
+            setSuccessMessage('Failed to cancel request');
+            setTimeout(() => setSuccessMessage(null), 3000);
+        }
+    };
+
+    // Load pending modification requests for confirmed bookings
+    useEffect(() => {
+        if (bookings.length > 0 && !isLoading) {
+            loadPendingRequests(bookings);
+        }
+    }, [bookings.length, isLoading]);
 
     const isCancellable = (status: Booking['status']) =>
         status === 'pending' || status === 'pending_payment' || status === 'confirmed';
@@ -264,6 +354,24 @@ export const TripsPage: React.FC = () => {
                             <span className="text-xl font-bold text-primary">&euro;{booking.totalPrice}</span>
                         </div>
                     </div>
+
+                    {/* Pending Modification Request Badge */}
+                    {pendingRequests[booking.id] && (
+                        <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-lg">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-amber-600 text-sm">edit_note</span>
+                                    <span className="text-xs font-medium text-amber-700 dark:text-amber-400">Modification Pending</span>
+                                </div>
+                                <button
+                                    onClick={() => handleCancelRequest(booking.id, pendingRequests[booking.id].id)}
+                                    className="text-xs text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 font-medium"
+                                >
+                                    Cancel Request
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Card Footer */}
@@ -291,6 +399,17 @@ export const TripsPage: React.FC = () => {
                             </button>
                         )}
 
+                        {/* Message Owner link */}
+                        {(booking.status === 'confirmed' || booking.status === 'checked_in') && (
+                            <Link
+                                to={`/trips/${booking.id}/messages`}
+                                className="flex items-center justify-center gap-1.5 w-full py-2 text-sm font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-lg">chat</span>
+                                Message Owner
+                            </Link>
+                        )}
+
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setSelectedBooking(booking)}
@@ -298,12 +417,26 @@ export const TripsPage: React.FC = () => {
                             >
                                 View Details
                             </button>
+                            {booking.status === 'confirmed' && !pendingRequests[booking.id] && (
+                                <button
+                                    onClick={() => handleModifyClick(booking)}
+                                    disabled={modifyLoading === booking.id}
+                                    className="flex-1 py-2 text-sm font-medium text-[#111418] dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                >
+                                    {modifyLoading === booking.id ? (
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+                                    ) : (
+                                        <span className="material-symbols-outlined text-sm">edit</span>
+                                    )}
+                                    Modify
+                                </button>
+                            )}
                             {isCancellable(booking.status) && (
                                 <button
                                     onClick={() => { setCancelError(null); setCancellingBookingId(booking.id); }}
                                     className="flex-1 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-lg hover:bg-red-50 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/20 transition-colors"
                                 >
-                                    Cancel Booking
+                                    Cancel
                                 </button>
                             )}
                         </div>
@@ -562,6 +695,17 @@ export const TripsPage: React.FC = () => {
                                 </button>
                             )}
 
+                            {/* Modify from modal */}
+                            {selectedBooking.status === 'confirmed' && !pendingRequests[selectedBooking.id] && (
+                                <button
+                                    onClick={() => { const b = selectedBooking; setSelectedBooking(null); handleModifyClick(b); }}
+                                    className="w-full py-3 font-semibold text-[#111418] dark:text-white border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined text-lg">edit</span>
+                                    Modify Booking
+                                </button>
+                            )}
+
                             {/* Cancel from modal */}
                             {isCancellable(selectedBooking.status) && (
                                 <button
@@ -587,6 +731,25 @@ export const TripsPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Success/Info Toast */}
+            {successMessage && (
+                <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-white dark:bg-[#1a2632] shadow-lg border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-3 flex items-center gap-2 animate-in fade-in slide-in-from-top">
+                    <span className="material-symbols-outlined text-primary text-lg">info</span>
+                    <span className="text-sm font-medium text-[#111418] dark:text-white">{successMessage}</span>
+                </div>
+            )}
+
+            {/* Guest Modify Booking Modal */}
+            {modifyBooking && modifyPolicy && (
+                <GuestModifyBookingModal
+                    booking={modifyBooking}
+                    policy={modifyPolicy}
+                    onClose={() => { setModifyBooking(null); setModifyPolicy(null); }}
+                    onSuccess={handleModifySuccess}
+                    onRequestSubmitted={handleModifyRequestSubmitted}
+                />
             )}
 
             {/* Payment Modal */}

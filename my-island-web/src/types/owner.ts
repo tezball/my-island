@@ -45,6 +45,9 @@ export interface OwnerPreferences {
     instantBooking: boolean;
     allowSameDayBookings: boolean;
     requireGuestVerification: boolean;
+    allowGuestModifications: boolean;
+    modificationDeadlineDays: number;
+    requireModificationApproval: boolean;
 }
 
 // --- Lot CRUD request types ---
@@ -55,6 +58,7 @@ export interface CreateLotRequest {
     description: string;
     pricePerNight: number;
     maxGuests: number;
+    minStay: number;
     imageUrl?: string;
     amenityIds?: number[];
 }
@@ -65,6 +69,7 @@ export interface UpdateLotRequest {
     description?: string;
     pricePerNight?: number;
     maxGuests?: number;
+    minStay?: number;
     isActive?: boolean;
     imageUrl?: string;
     amenityIds?: number[];

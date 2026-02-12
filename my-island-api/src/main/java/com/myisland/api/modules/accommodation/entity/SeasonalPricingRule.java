@@ -30,6 +30,9 @@ public class SeasonalPricingRule extends BaseEntity {
     @Column(name = "price_per_night", nullable = false, precision = 10, scale = 2)
     private BigDecimal pricePerNight;
 
+    @Column(name = "min_stay")
+    private Integer minStay;
+
     public SeasonalPricingRule() {}
 
     public static Builder builder() { return new Builder(); }
@@ -41,6 +44,7 @@ public class SeasonalPricingRule extends BaseEntity {
         private LocalDate startDate;
         private LocalDate endDate;
         private BigDecimal pricePerNight;
+        private Integer minStay;
 
         public Builder owner(Owner owner) { this.owner = owner; return this; }
         public Builder lotType(Lot.LotType lotType) { this.lotType = lotType; return this; }
@@ -48,6 +52,7 @@ public class SeasonalPricingRule extends BaseEntity {
         public Builder startDate(LocalDate startDate) { this.startDate = startDate; return this; }
         public Builder endDate(LocalDate endDate) { this.endDate = endDate; return this; }
         public Builder pricePerNight(BigDecimal pricePerNight) { this.pricePerNight = pricePerNight; return this; }
+        public Builder minStay(Integer minStay) { this.minStay = minStay; return this; }
 
         public SeasonalPricingRule build() {
             SeasonalPricingRule rule = new SeasonalPricingRule();
@@ -57,6 +62,7 @@ public class SeasonalPricingRule extends BaseEntity {
             rule.startDate = startDate;
             rule.endDate = endDate;
             rule.pricePerNight = pricePerNight;
+            rule.minStay = minStay;
             return rule;
         }
     }
@@ -78,4 +84,7 @@ public class SeasonalPricingRule extends BaseEntity {
 
     public BigDecimal getPricePerNight() { return pricePerNight; }
     public void setPricePerNight(BigDecimal pricePerNight) { this.pricePerNight = pricePerNight; }
+
+    public Integer getMinStay() { return minStay; }
+    public void setMinStay(Integer minStay) { this.minStay = minStay; }
 }

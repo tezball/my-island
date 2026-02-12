@@ -42,6 +42,7 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
         description: '',
         pricePerNight: 25,
         maxGuests: 4,
+        minStay: 1,
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,6 +69,7 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                 description: lot.description,
                 pricePerNight: lot.pricePerNight,
                 maxGuests: 4,
+                minStay: lot.minStay ?? 1,
             });
             // Load existing images
             getImages('LOT', lot.id)
@@ -80,6 +82,7 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                 description: '',
                 pricePerNight: 25,
                 maxGuests: 4,
+                minStay: 1,
             });
         }
     }, [isOpen, lot]);
@@ -89,6 +92,8 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
         if (!formData.name.trim()) newErrors.name = 'Name is required';
         if (formData.pricePerNight <= 0) newErrors.pricePerNight = 'Price must be greater than 0';
         if (formData.maxGuests <= 0) newErrors.maxGuests = 'Max guests must be at least 1';
+        if (formData.minStay < 1) newErrors.minStay = 'Minimum stay must be at least 1 night';
+        if (formData.minStay > 30) newErrors.minStay = 'Minimum stay cannot exceed 30 nights';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -106,6 +111,7 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                     description: formData.description.trim(),
                     pricePerNight: formData.pricePerNight,
                     maxGuests: formData.maxGuests,
+                    minStay: formData.minStay,
                 };
                 await ownerService.updateLot(lot.id, updates);
                 onSaved();
@@ -117,6 +123,7 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                     description: formData.description.trim(),
                     pricePerNight: formData.pricePerNight,
                     maxGuests: formData.maxGuests,
+                    minStay: formData.minStay,
                 };
                 const created = await ownerService.createLot(data);
                 setCreatedLotId(created.id);
@@ -241,20 +248,37 @@ export const LotFormModal: React.FC<LotFormModalProps> = ({
                             </div>
                         </div>
 
-                        {/* Max Guests */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Max Guests
-                            </label>
-                            <input
-                                type="number"
-                                min="1"
-                                max="20"
-                                value={formData.maxGuests}
-                                onChange={(e) => setFormData(prev => ({ ...prev, maxGuests: parseInt(e.target.value) || 1 }))}
-                                className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
-                            />
-                            {errors.maxGuests && <p className="text-red-500 text-xs mt-1">{errors.maxGuests}</p>}
+                        {/* Max Guests & Min Stay */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Max Guests
+                                </label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="20"
+                                    value={formData.maxGuests}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, maxGuests: parseInt(e.target.value) || 1 }))}
+                                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                                />
+                                {errors.maxGuests && <p className="text-red-500 text-xs mt-1">{errors.maxGuests}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Minimum Stay (nights)
+                                </label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="30"
+                                    data-testid="min-stay-input"
+                                    value={formData.minStay}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, minStay: parseInt(e.target.value) || 1 }))}
+                                    className="w-full px-4 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                                />
+                                {errors.minStay && <p className="text-red-500 text-xs mt-1">{errors.minStay}</p>}
+                            </div>
                         </div>
 
                         {/* Description */}

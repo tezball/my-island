@@ -143,6 +143,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
     const powerCost = isTent && wantsPower ? 5 : 0;
     const pricePerNight = lot.pricePerNight + powerCost;
     const totalPrice = days * pricePerNight;
+    const minStay = lot.minStay ?? 1;
+    const isBelowMinStay = days > 0 && days < minStay;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -351,6 +353,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                         From €{minPrice || lot.pricePerNight}/night
                     </p>
+                    {lot.minStay > 1 && (
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-xs">dark_mode</span>
+                            Minimum stay: {lot.minStay} nights
+                        </p>
+                    )}
                 </div>
 
                 {/* Form */}
@@ -370,6 +378,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                                 selectedCheckIn={startDate}
                                 selectedCheckOut={endDate}
                                 onDateSelect={handleDateSelect}
+                                minStay={minStay}
                             />
                         )}
                         {/* Date selection hint */}
@@ -439,6 +448,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                         </div>
                     )}
 
+                    {/* Minimum Stay Warning */}
+                    {isBelowMinStay && (
+                        <div className="text-amber-600 text-sm bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg flex items-center gap-2">
+                            <span className="material-symbols-outlined text-sm">dark_mode</span>
+                            Minimum stay is {minStay} nights. Please select at least {minStay} nights.
+                        </div>
+                    )}
+
                     {/* Sign-in Warning */}
                     {!user && (
                         <div className="text-amber-600 text-sm bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg flex items-center gap-2">
@@ -450,7 +467,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ lot, isOpen, onClose
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={isSubmitting || !user || days === 0}
+                        disabled={isSubmitting || !user || days === 0 || isBelowMinStay}
                         className="w-full bg-primary hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md mt-2"
                     >
                         {isSubmitting ? 'Processing...' : 'Continue to Payment'}

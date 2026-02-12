@@ -87,6 +87,16 @@ public class Owner extends BaseEntity {
     @Column(name = "require_guest_verification")
     private boolean requireGuestVerification = true;
 
+    // Guest modification policy fields
+    @Column(name = "allow_guest_modifications")
+    private boolean allowGuestModifications = true;
+
+    @Column(name = "modification_deadline_days")
+    private int modificationDeadlineDays = 3;
+
+    @Column(name = "require_modification_approval")
+    private boolean requireModificationApproval = false;
+
     // Featured promotion fields
     @Column(name = "is_featured", nullable = false)
     private boolean isFeatured = false;
@@ -300,6 +310,16 @@ public class Owner extends BaseEntity {
 
     public boolean isRequireGuestVerification() { return requireGuestVerification; }
     public void setRequireGuestVerification(boolean requireGuestVerification) { this.requireGuestVerification = requireGuestVerification; }
+
+    // Guest modification policy getters and setters
+    public boolean isAllowGuestModifications() { return allowGuestModifications; }
+    public void setAllowGuestModifications(boolean allowGuestModifications) { this.allowGuestModifications = allowGuestModifications; }
+
+    public int getModificationDeadlineDays() { return modificationDeadlineDays; }
+    public void setModificationDeadlineDays(int modificationDeadlineDays) { this.modificationDeadlineDays = modificationDeadlineDays; }
+
+    public boolean isRequireModificationApproval() { return requireModificationApproval; }
+    public void setRequireModificationApproval(boolean requireModificationApproval) { this.requireModificationApproval = requireModificationApproval; }
 
     // Featured promotion getters and setters
     public boolean isFeatured() { return isFeatured; }

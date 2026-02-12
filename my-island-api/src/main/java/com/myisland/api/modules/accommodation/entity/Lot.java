@@ -31,6 +31,9 @@ public class Lot extends BaseEntity {
     @Column(name = "max_guests", nullable = false)
     private int maxGuests = 2;
 
+    @Column(name = "min_stay", nullable = false)
+    private int minStay = 1;
+
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
@@ -62,6 +65,7 @@ public class Lot extends BaseEntity {
         private String description;
         private BigDecimal pricePerNight;
         private int maxGuests = 2;
+        private int minStay = 1;
         private boolean isActive = true;
         private String imageUrl;
         private Set<Amenity> amenities = new HashSet<>();
@@ -72,6 +76,7 @@ public class Lot extends BaseEntity {
         public Builder description(String description) { this.description = description; return this; }
         public Builder pricePerNight(BigDecimal pricePerNight) { this.pricePerNight = pricePerNight; return this; }
         public Builder maxGuests(int maxGuests) { this.maxGuests = maxGuests; return this; }
+        public Builder minStay(int minStay) { this.minStay = minStay; return this; }
         public Builder isActive(boolean isActive) { this.isActive = isActive; return this; }
         public Builder imageUrl(String imageUrl) { this.imageUrl = imageUrl; return this; }
         public Builder amenities(Set<Amenity> amenities) { this.amenities = amenities; return this; }
@@ -84,6 +89,7 @@ public class Lot extends BaseEntity {
             lot.description = this.description;
             lot.pricePerNight = this.pricePerNight;
             lot.maxGuests = this.maxGuests;
+            lot.minStay = this.minStay;
             lot.isActive = this.isActive;
             lot.imageUrl = this.imageUrl;
             lot.amenities = this.amenities;
@@ -109,6 +115,9 @@ public class Lot extends BaseEntity {
 
     public int getMaxGuests() { return maxGuests; }
     public void setMaxGuests(int maxGuests) { this.maxGuests = maxGuests; }
+
+    public int getMinStay() { return minStay; }
+    public void setMinStay(int minStay) { this.minStay = minStay; }
 
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }

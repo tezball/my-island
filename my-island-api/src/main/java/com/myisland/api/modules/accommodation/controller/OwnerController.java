@@ -6,7 +6,9 @@ import com.myisland.api.modules.accommodation.service.OwnerService;
 import com.myisland.api.modules.accommodation.service.OwnerSubscriptionService;
 import com.myisland.api.modules.booking.dto.BookingDto;
 import com.myisland.api.modules.booking.dto.CreateManualBookingRequest;
+import com.myisland.api.modules.booking.dto.ModificationRequestDto;
 import com.myisland.api.modules.booking.dto.ModifyBookingRequest;
+import com.myisland.api.modules.booking.dto.ResolveModificationRequest;
 import com.myisland.api.modules.booking.service.BookingService;
 import com.myisland.api.modules.marketplace.dto.ConfirmSubscriptionRequest;
 import com.myisland.api.modules.marketplace.dto.ConnectStatusDto;
@@ -261,6 +263,27 @@ public class OwnerController {
             @RequestBody ModifyBookingRequest request
     ) {
         return ResponseEntity.ok(bookingService.modifyBooking(bookingId, userDetails.getUserId(), request));
+    }
+
+    // ==================== Modification Request Endpoints ====================
+
+    @GetMapping("/modification-requests")
+    @Operation(summary = "Get pending modification requests for owner's bookings")
+    public ResponseEntity<List<ModificationRequestDto>> getPendingModificationRequests(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(bookingService.getOwnerPendingModificationRequests(userDetails.getUserId()));
+    }
+
+    @PostMapping("/modification-requests/{requestId}/resolve")
+    @Operation(summary = "Approve or decline a guest modification request")
+    public ResponseEntity<ModificationRequestDto> resolveModificationRequest(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long requestId,
+            @RequestBody ResolveModificationRequest request
+    ) {
+        return ResponseEntity.ok(bookingService.resolveModificationRequest(
+                requestId, userDetails.getUserId(), request.approve(), request.declineReason()));
     }
 
     @GetMapping("/analytics/lots")

@@ -99,6 +99,23 @@ public class Supplier extends BaseEntity {
     @Column(name = "review_count", nullable = false)
     private int reviewCount = 0;
 
+    // Notification preference fields
+    @Column(name = "email_notifications", nullable = false)
+    private boolean emailNotifications = true;
+
+    @Column(name = "new_claim_alerts", nullable = false)
+    private boolean newClaimAlerts = true;
+
+    @Column(name = "weekly_report", nullable = false)
+    private boolean weeklyReport = false;
+
+    @Column(name = "marketing_emails", nullable = false)
+    private boolean marketingEmails = false;
+
+    // Deactivation field
+    @Column(name = "is_deactivated", nullable = false)
+    private boolean isDeactivated = false;
+
     // Trial fields
     @Column(name = "trial_ends_at")
     private Instant trialEndsAt;
@@ -512,5 +529,47 @@ public class Supplier extends BaseEntity {
 
     public void setReviewCount(int reviewCount) {
         this.reviewCount = reviewCount;
+    }
+
+    // Notification preference getters and setters
+    public boolean isEmailNotifications() {
+        return emailNotifications;
+    }
+
+    public void setEmailNotifications(boolean emailNotifications) {
+        this.emailNotifications = emailNotifications;
+    }
+
+    public boolean isNewClaimAlerts() {
+        return newClaimAlerts;
+    }
+
+    public void setNewClaimAlerts(boolean newClaimAlerts) {
+        this.newClaimAlerts = newClaimAlerts;
+    }
+
+    public boolean isWeeklyReport() {
+        return weeklyReport;
+    }
+
+    public void setWeeklyReport(boolean weeklyReport) {
+        this.weeklyReport = weeklyReport;
+    }
+
+    public boolean isMarketingEmails() {
+        return marketingEmails;
+    }
+
+    public void setMarketingEmails(boolean marketingEmails) {
+        this.marketingEmails = marketingEmails;
+    }
+
+    // Deactivation getters and setters
+    public boolean isDeactivated() {
+        return isDeactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        isDeactivated = deactivated;
     }
 }

@@ -8,3 +8,5 @@ export { OwnerPricingPage } from './OwnerPricingPage';
 export { OwnerTodayPage } from './OwnerTodayPage';
 export { OwnerReviewsPage } from './OwnerReviewsPage';
 export { OwnerStaffPage } from './OwnerStaffPage';
+export { OwnerModificationRequestsPage } from './OwnerModificationRequestsPage';
+export { OwnerMessagesPage } from './OwnerMessagesPage';

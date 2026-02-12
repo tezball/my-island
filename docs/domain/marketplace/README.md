@@ -46,6 +46,11 @@ EXPIRED (validUntil date passed)
 | DELETE | `/api/supplier/offers/{id}` | Delete offer |
 | POST | `/api/supplier/redeem/{code}` | Redeem voucher via QR code |
 | GET | `/api/supplier/claims` | Get supplier's claims |
+| GET | `/api/supplier/preferences` | Get supplier notification preferences |
+| PUT | `/api/supplier/preferences` | Update supplier notification preferences |
+| POST | `/api/supplier/deactivate` | Deactivate supplier account (hides offers) |
+| POST | `/api/supplier/reactivate` | Reactivate supplier account |
+| GET | `/api/supplier/deactivated` | Check if supplier is deactivated |
 
 ## Frontend Pages
 
@@ -57,9 +62,12 @@ EXPIRED (validUntil date passed)
 - **SupplierOffersPage** — Create/manage offers
 - **SupplierOfferDetailPage** — View offer with claims
 - **SupplierRedeemPage** — QR code scanner for redemption
+- **SupplierSettingsPage** — Notification preferences, billing, featured promotion, account deactivation
 
 ## Implementation Notes
 - Supplier subscription is required to publish offers (managed via `SubscriptionService` + Stripe).
 - Featured supplier listings are time-limited promotions (7/30 days) purchased via Stripe.
 - Stripe Connect Express is used for supplier payouts (`StripeConnectService`).
 - QR codes contain the OfferClaim UUID — scanned by the supplier to trigger redemption.
+- Supplier notification preferences (email, claim alerts, weekly report, marketing) stored on Supplier entity.
+- Supplier account deactivation is a soft toggle (`isDeactivated`) — deactivating hides all offers; reactivating restores the account but offers remain inactive.

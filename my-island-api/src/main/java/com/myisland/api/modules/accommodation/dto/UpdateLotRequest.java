@@ -19,6 +19,10 @@ public record UpdateLotRequest(
         @Max(value = 20, message = "Max guests cannot exceed 20")
         Integer maxGuests,
 
+        @Min(value = 1, message = "Minimum stay must be at least 1 night")
+        @Max(value = 30, message = "Minimum stay cannot exceed 30 nights")
+        Integer minStay,
+
         Boolean isActive,
         String imageUrl,
         Set<Long> amenityIds

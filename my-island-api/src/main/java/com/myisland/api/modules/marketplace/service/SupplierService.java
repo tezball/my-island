@@ -262,4 +262,68 @@ public class SupplierService {
                 .map(OfferClaimDto::from)
                 .toList();
     }
+
+    // --- Preferences ---
+
+    @Transactional(readOnly = true)
+    public SupplierPreferencesDto getSupplierPreferences(Long userId) {
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.SETTINGS, AccessLevel.READ);
+        return SupplierPreferencesDto.from(
+                supplier.isEmailNotifications(),
+                supplier.isNewClaimAlerts(),
+                supplier.isWeeklyReport(),
+                supplier.isMarketingEmails()
+        );
+    }
+
+    @Transactional
+    public SupplierPreferencesDto updateSupplierPreferences(Long userId, SupplierPreferencesDto preferences) {
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.SETTINGS, AccessLevel.FULL);
+
+        supplier.setEmailNotifications(preferences.emailNotifications());
+        supplier.setNewClaimAlerts(preferences.newClaimAlerts());
+        supplier.setWeeklyReport(preferences.weeklyReport());
+        supplier.setMarketingEmails(preferences.marketingEmails());
+
+        supplierRepository.save(supplier);
+        log.info("Updated supplier preferences for user: {}", userId);
+
+        return SupplierPreferencesDto.from(
+                supplier.isEmailNotifications(),
+                supplier.isNewClaimAlerts(),
+                supplier.isWeeklyReport(),
+                supplier.isMarketingEmails()
+        );
+    }
+
+    // --- Deactivation ---
+
+    @Transactional
+    public void deactivateSupplier(Long userId) {
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.SETTINGS, AccessLevel.FULL);
+
+        supplier.setDeactivated(true);
+
+        // Deactivate all active offers
+        offerRepository.findBySupplierIdAndIsActiveTrue(supplier.getId())
+                .forEach(offer -> offer.setActive(false));
+
+        supplierRepository.save(supplier);
+        log.info("Deactivated supplier account for user: {}", userId);
+    }
+
+    @Transactional
+    public void reactivateSupplier(Long userId) {
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.SETTINGS, AccessLevel.FULL);
+
+        supplier.setDeactivated(false);
+        supplierRepository.save(supplier);
+        log.info("Reactivated supplier account for user: {}", userId);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isSupplierDeactivated(Long userId) {
+        Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.PROFILE, AccessLevel.READ);
+        return supplier.isDeactivated();
+    }
 }

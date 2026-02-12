@@ -1,5 +1,5 @@
 import { apiRequest, NotFoundError } from './apiClient';
-import type { Lot, Booking } from '../types/booking';
+import type { Lot, Booking, GuestModificationPolicy, ModificationRequest } from '../types/booking';
 import type { CampsiteProfile } from '../types/campsite';
 
 // Re-export for backward compatibility
@@ -36,6 +36,7 @@ interface LotApiResponse {
     description: string;
     pricePerNight: number;
     maxGuests: number;
+    minStay: number;
     isActive: boolean;
     imageUrl: string | null;
     amenities: Array<{ id: number; name: string; category: string }>;
@@ -101,6 +102,7 @@ function transformLot(api: LotApiResponse): Lot {
         name: api.name,
         type: LOT_TYPE_MAP[api.lotType] || 'tent',
         pricePerNight: api.pricePerNight,
+        minStay: api.minStay ?? 1,
         description: api.description || '',
         lotAmenities: api.amenities.filter(a => lotAmenityCategories.includes(a.category)).map(a => a.name),
         campsiteAmenities: api.amenities.filter(a => !lotAmenityCategories.includes(a.category)).map(a => a.name),
@@ -269,5 +271,31 @@ export const campsiteService = {
     async retryPayment(bookingId: string): Promise<Booking> {
         const data = await apiRequest<BookingApiResponse>(`/bookings/${bookingId}/retry-payment`, { method: 'POST' });
         return transformBooking(data);
+    },
+
+    async getModificationPolicy(bookingId: string): Promise<GuestModificationPolicy> {
+        return apiRequest<GuestModificationPolicy>(`/bookings/${bookingId}/modification-policy`);
+    },
+
+    async guestModifyBooking(bookingId: string, data: {
+        lotId?: number;
+        checkInDate?: string;
+        checkOutDate?: string;
+        wantsPower?: boolean;
+        reason?: string;
+    }): Promise<Booking> {
+        const result = await apiRequest<BookingApiResponse>(`/bookings/${bookingId}/modify`, {
+            method: 'PUT',
+            body: data,
+        });
+        return transformBooking(result);
+    },
+
+    async getModificationRequests(bookingId: string): Promise<ModificationRequest[]> {
+        return apiRequest<ModificationRequest[]>(`/bookings/${bookingId}/modification-requests`);
+    },
+
+    async cancelModificationRequest(bookingId: string, requestId: string): Promise<void> {
+        await apiRequest<void>(`/bookings/${bookingId}/modification-requests/${requestId}/cancel`, { method: 'POST' });
     },
 };

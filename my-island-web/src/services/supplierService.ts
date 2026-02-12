@@ -6,6 +6,7 @@ import type {
     CreatePropertyParams, CreateBulkLotsParams, CreateSupplierBusinessParams,
     ActiveOfferDetail, ClaimDetail,
     ActiveOffersDetailResponse, ClaimsDetailResponse,
+    SupplierPreferences,
 } from '../types/supplier';
 
 // Re-export types for backward compatibility
@@ -15,6 +16,7 @@ export type {
     CreatePropertyParams, CreateBulkLotsParams, CreateSupplierBusinessParams,
     ActiveOfferDetail, ClaimDetail,
     ActiveOffersDetailResponse, ClaimsDetailResponse,
+    SupplierPreferences,
 } from '../types/supplier';
 
 // --- API response types (internal) ---
@@ -85,6 +87,7 @@ interface LotApiResponse {
     description: string;
     pricePerNight: number;
     maxGuests: number;
+    minStay: number;
     isActive: boolean;
     imageUrl: string | null;
     amenities: Array<{ id: number; name: string; icon: string }>;
@@ -185,6 +188,7 @@ function transformLot(api: LotApiResponse): Lot {
         name: api.name,
         type: LOT_TYPE_MAP[api.lotType] || 'tent',
         pricePerNight: api.pricePerNight,
+        minStay: api.minStay ?? 1,
         description: api.description || '',
         lotAmenities: api.amenities.map(a => a.name),
         campsiteAmenities: [],
@@ -560,5 +564,32 @@ export const supplierService = {
         return apiRequest<{ checkoutUrl: string }>('/supplier/featured/purchase', {
             method: 'POST', body: { duration },
         });
+    },
+
+    // --- Preferences ---
+
+    async getPreferences(): Promise<SupplierPreferences> {
+        return apiRequest<SupplierPreferences>('/supplier/preferences');
+    },
+
+    async updatePreferences(preferences: SupplierPreferences): Promise<SupplierPreferences> {
+        return apiRequest<SupplierPreferences>('/supplier/preferences', {
+            method: 'PUT', body: preferences,
+        });
+    },
+
+    // --- Deactivation ---
+
+    async deactivateAccount(): Promise<void> {
+        await apiRequest<void>('/supplier/deactivate', { method: 'POST' });
+    },
+
+    async reactivateAccount(): Promise<void> {
+        await apiRequest<void>('/supplier/reactivate', { method: 'POST' });
+    },
+
+    async isDeactivated(): Promise<boolean> {
+        const result = await apiRequest<{ isDeactivated: boolean }>('/supplier/deactivated');
+        return result.isDeactivated;
     },
 };

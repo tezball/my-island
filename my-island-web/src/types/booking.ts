@@ -62,6 +62,7 @@ export interface SeasonalPricingRule {
     startDate: string;
     endDate: string;
     pricePerNight: number;
+    minStay?: number;
     createdAt: string;
 }
 
@@ -73,12 +74,46 @@ export interface CreateSeasonalPricingRuleRequest {
     pricePerNight: number;
 }
 
+export type ModificationRequestStatus = 'pending' | 'approved' | 'declined' | 'cancelled';
+
+export interface ModificationRequest {
+    id: string;
+    bookingId: string;
+    status: ModificationRequestStatus;
+    requestedLotId?: number;
+    requestedLotName?: string;
+    requestedCheckInDate?: string;
+    requestedCheckOutDate?: string;
+    requestedWantsPower?: boolean;
+    estimatedNewPrice: number;
+    priceDifference: number;
+    reason?: string;
+    declineReason?: string;
+    createdAt: string;
+    resolvedAt?: string;
+    currentLotId: number;
+    currentLotName: string;
+    currentCheckInDate: string;
+    currentCheckOutDate: string;
+    currentTotalPrice: number;
+    guestName: string;
+}
+
+export interface GuestModificationPolicy {
+    allowed: boolean;
+    deadlineDays: number;
+    requiresApproval: boolean;
+    canModify: boolean;
+    cannotModifyReason?: string;
+}
+
 export interface Lot {
     id: string;
     ownerId?: string; // Optional for backward compatibility with existing mocks
     name: string;
     type: 'tent' | 'touring' | 'glamping' | 'cabin' | 'mobile-home';
     pricePerNight: number;
+    minStay: number;
     description: string;
     lotAmenities: string[];       // Specific to this pitch/unit (e.g., Electric Hookup, Private Fire Pit)
     campsiteAmenities: string[];  // Shared facilities available to guests (e.g., Free Showers, WiFi)

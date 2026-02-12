@@ -11,6 +11,7 @@ interface AvailabilityCalendarProps {
     selectedCheckOut: string | null;
     onDateSelect: (date: string) => void;
     minDate?: string;
+    minStay?: number;
 }
 
 export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
@@ -19,6 +20,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
     selectedCheckOut,
     onDateSelect,
     minDate,
+    minStay,
 }) => {
     const [currentMonth, setCurrentMonth] = useState(() => {
         const now = new Date();
@@ -225,6 +227,14 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({
             <div className="grid grid-cols-7 gap-1">
                 {renderCalendar()}
             </div>
+
+            {/* Min stay hint */}
+            {minStay && minStay > 1 && selectedCheckIn && !selectedCheckOut && (
+                <div className="mt-3 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-xs">info</span>
+                    Select a check-out at least {minStay} nights after check-in
+                </div>
+            )}
 
             {/* Legend */}
             <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">

@@ -238,8 +238,17 @@ Key endpoints:
 - `GET /api/campsites` - List campsites
 - `POST /api/bookings` - Create booking
 - `PUT /api/owner/bookings/{id}/modify` - Modify booking dates or lot (owner)
+- `GET /api/bookings/{id}/modification-policy` - Get guest modification policy
+- `PUT /api/bookings/{id}/modify` - Guest modify booking (auto-approve or request)
+- `GET /api/bookings/{id}/modification-requests` - Guest's modification requests
+- `POST /api/bookings/{id}/modification-requests/{reqId}/cancel` - Cancel pending request
+- `GET /api/owner/modification-requests` - Owner's pending modification requests
+- `POST /api/owner/modification-requests/{reqId}/resolve` - Approve/decline request
 - `GET /api/marketplace/offers` - Browse offers
 - `POST /api/supplier/redeem/{code}` - Redeem voucher
+- `GET/POST/{lotId}/DELETE/{lotId} /api/saved` - Saved/favorites (list, save, unsave)
+- `GET /api/saved/check/{lotId}` - Check if lot is saved
+- `POST /api/saved/bulk` - Bulk save (merge localStorage on login)
 - `GET/POST/DELETE /api/owner/staff` - Manage owner staff members
 - `GET/POST/DELETE /api/supplier/staff` - Manage supplier staff members
 - `GET /api/admin/dashboard` - Admin dashboard stats

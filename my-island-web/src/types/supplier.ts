@@ -141,6 +141,13 @@ export interface ActiveOffersDetailResponse {
     };
 }
 
+export interface SupplierPreferences {
+    emailNotifications: boolean;
+    newClaimAlerts: boolean;
+    weeklyReport: boolean;
+    marketingEmails: boolean;
+}
+
 export interface ClaimsDetailResponse {
     claims: ClaimDetail[];
     summary: {

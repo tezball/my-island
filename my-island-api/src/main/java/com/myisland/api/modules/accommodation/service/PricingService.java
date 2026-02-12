@@ -47,4 +47,26 @@ public class PricingService {
 
         return total;
     }
+
+    /**
+     * Determine the minimum stay requirement for a lot on a given check-in date.
+     * If a seasonal pricing rule with a minStay override applies, use it.
+     * Otherwise fall back to the lot's base minStay.
+     */
+    public int getMinimumStay(Lot lot, LocalDate checkIn) {
+        Long ownerId = lot.getOwner().getId();
+        // Fetch seasonal rules that overlap the check-in date
+        List<SeasonalPricingRule> rules = pricingRuleRepository.findRulesForDateRange(
+                ownerId, lot.getLotType(), checkIn, checkIn.plusDays(1));
+
+        for (SeasonalPricingRule rule : rules) {
+            if (!checkIn.isBefore(rule.getStartDate()) && checkIn.isBefore(rule.getEndDate())) {
+                if (rule.getMinStay() != null) {
+                    return rule.getMinStay();
+                }
+            }
+        }
+
+        return lot.getMinStay();
+    }
 }

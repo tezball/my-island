@@ -23,7 +23,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | Booking | Implemented | Booking CRUD, Stripe payment intents (authorize/capture), trip viewing |
 | Identity | Partially implemented | Email auth, password reset, email verification, profile editing. No social auth or account deletion |
 | Review | Not yet built | No entities, endpoints, or UI |
-| Communication | Not yet built | Kafka events published but no notification delivery to users |
+| Communication | Partially implemented | In-app messaging (per-booking threads between guests and owners). No email delivery yet. |
 | Support | Not yet built | No entities, endpoints, or UI |
 | Marketplace | Implemented | Supplier onboarding, Offer CRUD, Claim/Redeem with QR codes, test claims |
 | Subscription | Implemented | Stripe subscriptions for Owners and Suppliers, featured promotions |
@@ -128,17 +128,18 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 - Owner response
 - Mark as helpful
 
-### 5. Communication Context — *Not Yet Built*
+### 5. Communication Context — *Partially Implemented*
 **Purpose**: Messaging between guests and hosts.
 
-> Kafka events are published for key actions (BookingCreated, BookingConfirmed, etc.) but no consumer delivers notifications to end users.
+**Aggregates**: Message
 
-**Aggregates**: Message, Notification
+**Key Operations**:
+- Send message in a booking conversation
+- Get conversation messages (auto-marks received as read)
+- Get unread message counts per booking
+- Get owner conversation list with latest message summary
 
-**Key Operations** (planned):
-- Send/receive messages
-- System notifications
-- Booking reminders
+> **Not yet built**: Email delivery for new messages, system notifications, booking reminders, push notifications
 
 ### 6. Support Context — *Not Yet Built*
 **Purpose**: Customer service and issue resolution.
@@ -217,6 +218,7 @@ Owner / Campsite (Root)
 ├── Lot[] (Entity)
 │   ├── LotType (Enum)
 │   └── Amenity[] (ManyToMany)
+├── SeasonalPricingRule[] (Entity)
 ├── Amenity[] (ManyToMany, property-level)
 ├── EntityImage[] (Entity)
 ├── Extra[] (Entity)              — NOT YET BUILT
@@ -258,11 +260,25 @@ Owner / Campsite (Root)
 | description | String | Lot description |
 | maxGuests | Integer | Maximum guests (default 2) |
 | pricePerNight | BigDecimal | Base price |
+| minStay | int | Minimum nights per booking (default 1) |
 | isActive | Boolean | Currently bookable |
 | imageUrl | String | Legacy single image URL |
 | amenities | Amenity[] | ManyToMany, lot-specific amenities |
 
 > Images are now managed via the EntityImage system (multi-image with primary selection).
+
+**SeasonalPricingRule**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| ownerId | Long | Parent owner/campsite |
+| lotType | LotType | Which lot type this rule applies to |
+| name | String | Rule name (e.g., "Summer Peak") |
+| startDate | LocalDate | Season start date |
+| endDate | LocalDate | Season end date |
+| pricePerNight | BigDecimal | Override price for the season |
+| minStay | Integer | Optional minimum stay override for the season (nullable) |
 
 **Extra** — *Not Yet Built*
 
@@ -286,8 +302,9 @@ Owner / Campsite (Root)
 Booking (Root)
 ├── Payment fields (embedded)
 ├── BookingModificationLog[] (Entity)
+├── BookingModificationRequest[] (Entity)
 ├── BookingExtra[] (Entity)    — NOT YET BUILT
-└── Message[] (cross-ref)      — NOT YET BUILT
+└── Message[] (cross-ref via booking_id, Communication Context)
 ```
 
 **Booking**
@@ -309,6 +326,7 @@ Booking (Root)
 | refundAmount | BigDecimal | Refund amount if applicable |
 | serviceFee | BigDecimal | Platform fee |
 | chargeTotal | BigDecimal | Total charge amount |
+| reviewEmailSentAt | Instant | When post-stay review request email was sent |
 | stripeTransferId | String | Stripe transfer ID for owner payout |
 | createdAt | Timestamp | Booking creation time |
 
@@ -330,7 +348,29 @@ Booking (Root)
 | newTotalPrice | BigDecimal | Price after change |
 | priceAdjustment | BigDecimal | Positive = guest owes more |
 | reason | String | Optional reason for modification |
+| initiatedBy | String | OWNER or GUEST |
 | createdAt | Timestamp | When modification occurred |
+
+**BookingModificationRequest**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| bookingId | Long | Booking being modified |
+| requestedByUserId | Long | Guest who submitted the request |
+| status | ModificationRequestStatus | PENDING, APPROVED, DECLINED, CANCELLED |
+| requestedLotId | Long | Proposed new lot (null = no change) |
+| requestedCheckInDate | LocalDate | Proposed new check-in (null = no change) |
+| requestedCheckOutDate | LocalDate | Proposed new check-out (null = no change) |
+| requestedWantsPower | Boolean | Proposed power hookup (null = no change) |
+| estimatedNewPrice | BigDecimal | Calculated new total price |
+| priceDifference | BigDecimal | Difference from current price |
+| reason | String | Guest's reason for modification |
+| resolvedByUserId | Long | Owner/staff who approved/declined |
+| resolvedAt | Timestamp | When resolved |
+| declineReason | String | Reason for declining |
+| createdAt | Timestamp | Request creation time |
+| updatedAt | Timestamp | Last update |
 
 **BookingExtra** — *Not Yet Built*
 
@@ -350,9 +390,9 @@ Booking (Root)
 ```
 User (Root)
 ├── StaffMember[] (Entity)                 — Staff memberships for Owner/Supplier portals
+├── SavedLot[] (Entity)                    — Persisted favorites (API for auth users, localStorage for anonymous)
 ├── LinkedAccount[] (Entity)               — NOT YET BUILT
-├── NotificationPreferences (Value Object) — NOT YET BUILT (Owner has partial prefs)
-└── Favorite[] (Entity)                    — Frontend-only via SavedContext/localStorage
+└── NotificationPreferences (Value Object) — NOT YET BUILT (Owner has partial prefs)
 ```
 
 > **Note**: The `Supplier` entity is owned by the **Marketplace Context**, not Identity.
@@ -397,6 +437,18 @@ User (Root)
 
 > At least one of `ownerId` or `supplierId` must be set. When a user signs up with a matching email, the membership is auto-activated and `isStaff` is set on the User.
 
+**SavedLot** (extends BaseEntity)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| userId | Long | FK to User — the guest who saved the lot |
+| lotId | Long | FK to Lot — the saved lot |
+| createdAt | Timestamp | When the lot was saved |
+| updatedAt | Timestamp | Last update |
+
+> Unique constraint on `(user_id, lot_id)`. Cascade delete on both User and Lot. Indexed on `user_id`. Anonymous users fall back to localStorage; on login, localStorage favorites are merged via the bulk endpoint and then cleared.
+
 **LinkedAccount** — *Not Yet Built*
 
 | Field | Type | Description |
@@ -436,6 +488,9 @@ Owner (Root)
 | stripeConnectAccountId | String | Stripe Connect account for payouts |
 | connectOnboardingComplete | Boolean | Has completed onboarding |
 | payoutsEnabled | Boolean | Can receive payments |
+| allowGuestModifications | Boolean | Allow guests to modify their bookings (default true) |
+| modificationDeadlineDays | Integer | Min days before check-in for guest modifications (default 3) |
+| requireModificationApproval | Boolean | Require owner approval for guest modifications (default false) |
 
 ---
 
@@ -470,6 +525,11 @@ Supplier (Root)
 | stripeConnectAccountId | String | Stripe Connect account for payouts |
 | connectOnboardingComplete | Boolean | Has completed onboarding |
 | payoutsEnabled | Boolean | Can receive payments |
+| emailNotifications | Boolean | Email notification preference (default true) |
+| newClaimAlerts | Boolean | New claim alert preference (default true) |
+| weeklyReport | Boolean | Weekly performance report preference (default false) |
+| marketingEmails | Boolean | Marketing email preference (default false) |
+| isDeactivated | Boolean | Whether the supplier account is deactivated (default false) |
 
 ---
 
@@ -579,6 +639,28 @@ Lead (Root)
 | content | String | Interaction details |
 | createdBy | String | Admin who created the interaction |
 | createdAt | Timestamp | When the interaction occurred |
+
+---
+
+### Message (Communication Context)
+
+```
+Message (standalone entity, references Booking and User)
+```
+
+**Message** (extends BaseEntity)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| booking | Booking (FK) | The booking this conversation belongs to |
+| sender | User (FK) | User who sent the message |
+| content | String (TEXT) | Message body |
+| isRead | Boolean | Whether the recipient has read the message (default false) |
+| createdAt | Timestamp | When the message was sent |
+| updatedAt | Timestamp | Last update |
+
+> Indexed on `booking_id`, `sender_id`, and partial index on `(booking_id, is_read) WHERE is_read = FALSE`.
 
 ---
 
@@ -814,11 +896,13 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 1. **Date Validation**: `checkOut` must be after `checkIn`
 2. **Guest Capacity**: `guests` cannot exceed `lot.capacity`
 3. **Availability Check**: Booking dates must not overlap with existing bookings on the same lot
+3a. **Minimum Stay**: Requested nights must meet or exceed the lot's minimum stay (or the seasonal pricing rule override if one applies for the check-in date)
 4. **One Review Per Booking**: A booking can have at most one associated review *(requires Review module)*
 5. **Review Eligibility**: Reviews can only be submitted when `status = COMPLETED` *(requires Review module)*
 6. **Cancellation Window**: Defined by campsite policy (not enforced in domain)
 7. **Price Locking**: Extra prices are captured at booking time (`unitPrice`) *(requires Extras system)*
 8. **Modification Rules**: Only CONFIRMED/CHECKED_IN bookings can be modified; AUTHORIZED payment status blocks modification; CHECKED_IN bookings cannot move check-in to a future date; new lot must belong to same owner
+9. **Guest Modification Rules**: Only CONFIRMED bookings; owner must allow guest modifications; must be outside modification deadline; no existing PENDING request for the booking; auto-approve or create request based on owner policy
 
 ### Campsite Rules
 
@@ -871,6 +955,10 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 | `BookingCancelled` | Guest/owner cancels | Notification, Availability, Refund |
 | `GuestCheckedIn` | Check-in recorded | Notification |
 | `BookingCompleted` | Check-out recorded | Review eligibility, Notification |
+| `GuestModified` | Guest auto-approved modification | Owner notification, Guest notification |
+| `ModificationRequested` | Guest requests modification (approval required) | Owner notification |
+| `ModificationApproved` | Owner approves modification request | Guest notification |
+| `ModificationDeclined` | Owner declines modification request | Guest notification |
 | `ReviewSubmitted` | New review posted | Rating recalc, Owner notification |
 | `MessageSent` | New message | Recipient notification |
 | `TicketCreated` | Support ticket opened | Staff queue |
@@ -898,8 +986,8 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 │ User                                                                        │
 │   │                                                                         │
 │   ├──── (0..*) StaffMember ── (0..1) Owner / (0..1) Supplier               │
+│   ├──── (0..*) SavedLot ── (1) Lot    — Persisted favorites                │
 │   ├──── (0..*) LinkedAccount          — NOT YET BUILT                       │
-│   ├──── (0..*) Favorite               — Frontend-only (localStorage)        │
 │   └──── (0..*) Notification           — NOT YET BUILT                       │
 └─────────────────────────────────────────────────────────────────────────────┘
       │
@@ -926,7 +1014,7 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 │                      │                                                      │
 │                      ├── Payment fields (embedded)                          │
 │                      ├── (0..*) BookingExtra       — NOT YET BUILT          │
-│                      ├── (0..*) Message            — NOT YET BUILT          │
+│                      ├── (0..*) Message            — Communication Context   │
 │                      └── (0..1) Review             — NOT YET BUILT          │
 └─────────────────────────────────────────────────────────────────────────────┘
 

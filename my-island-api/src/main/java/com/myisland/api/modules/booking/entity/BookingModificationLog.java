@@ -55,6 +55,9 @@ public class BookingModificationLog {
     @Column(columnDefinition = "TEXT")
     private String reason;
 
+    @Column(name = "initiated_by", length = 10)
+    private String initiatedBy = "OWNER";
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -105,6 +108,9 @@ public class BookingModificationLog {
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
 
+    public String getInitiatedBy() { return initiatedBy; }
+    public void setInitiatedBy(String initiatedBy) { this.initiatedBy = initiatedBy; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
@@ -130,6 +136,7 @@ public class BookingModificationLog {
         public Builder newTotalPrice(BigDecimal newTotalPrice) { log.newTotalPrice = newTotalPrice; return this; }
         public Builder priceAdjustment(BigDecimal priceAdjustment) { log.priceAdjustment = priceAdjustment; return this; }
         public Builder reason(String reason) { log.reason = reason; return this; }
+        public Builder initiatedBy(String initiatedBy) { log.initiatedBy = initiatedBy; return this; }
 
         public BookingModificationLog build() {
             return log;

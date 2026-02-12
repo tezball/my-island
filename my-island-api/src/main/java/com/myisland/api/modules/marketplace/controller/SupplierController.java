@@ -250,6 +250,51 @@ public class SupplierController {
         return ResponseEntity.ok(stripeConnectService.createSupplierOnboardingLink(supplier.id(), returnUrl, refreshUrl));
     }
 
+    // Preferences endpoints
+    @GetMapping("/preferences")
+    @Operation(summary = "Get supplier notification preferences")
+    public ResponseEntity<SupplierPreferencesDto> getPreferences(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(supplierService.getSupplierPreferences(userDetails.getUserId()));
+    }
+
+    @PutMapping("/preferences")
+    @Operation(summary = "Update supplier notification preferences")
+    public ResponseEntity<SupplierPreferencesDto> updatePreferences(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody SupplierPreferencesDto preferences
+    ) {
+        return ResponseEntity.ok(supplierService.updateSupplierPreferences(userDetails.getUserId(), preferences));
+    }
+
+    // Deactivation endpoints
+    @PostMapping("/deactivate")
+    @Operation(summary = "Deactivate supplier account (hides all offers)")
+    public ResponseEntity<Void> deactivateAccount(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        supplierService.deactivateSupplier(userDetails.getUserId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reactivate")
+    @Operation(summary = "Reactivate supplier account")
+    public ResponseEntity<Void> reactivateAccount(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        supplierService.reactivateSupplier(userDetails.getUserId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/deactivated")
+    @Operation(summary = "Check if supplier account is deactivated")
+    public ResponseEntity<Map<String, Boolean>> isDeactivated(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return ResponseEntity.ok(Map.of("isDeactivated", supplierService.isSupplierDeactivated(userDetails.getUserId())));
+    }
+
     // Review endpoints
     @GetMapping("/reviews")
     @Operation(summary = "Get all reviews for supplier's business")

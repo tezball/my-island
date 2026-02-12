@@ -13,7 +13,8 @@ import { AuthProvider } from './context/AuthContext';
 import { SavedProvider } from './context/SavedContext';
 import { OwnerGuard } from './components/auth/OwnerGuard';
 import { OwnerLayout } from './components/owner/OwnerLayout';
-import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage } from './pages/owner';
+import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage, OwnerModificationRequestsPage, OwnerMessagesPage } from './pages/owner';
+import { BookingMessagesPage } from './pages/BookingMessagesPage';
 import { SupplierGuard } from './components/auth/SupplierGuard';
 import { AdminGuard } from './components/auth/AdminGuard';
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -67,7 +68,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isBecomeHostRoute = location.pathname.startsWith('/become-a-host');
   const isBecomeSupplierRoute = location.pathname.startsWith('/become-a-supplier');
-  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isOwnerRoute || isSupplierRoute || isAdminRoute || isBecomeHostRoute || isBecomeSupplierRoute;
+  const isMessagesRoute = location.pathname.includes('/messages');
+  const shouldHideNav = hideNavRoutes.includes(location.pathname) || isOwnerRoute || isSupplierRoute || isAdminRoute || isBecomeHostRoute || isBecomeSupplierRoute || isMessagesRoute;
 
   // Don't render the layout wrapper at all for owner/supplier/admin/become-a-host/become-a-supplier routes
   if (isOwnerRoute || isSupplierRoute || isAdminRoute || isBecomeHostRoute || isBecomeSupplierRoute) {
@@ -104,6 +106,7 @@ function App() {
               <Route path="/campsite/:id" element={<CampsiteDetailsPage />} />
               <Route path="/saved" element={<SavedPage />} />
               <Route path="/trips" element={<TripsPage />} />
+              <Route path="/trips/:bookingId/messages" element={<BookingMessagesPage />} />
               <Route path="/search" element={<SearchResultsPage />} />
               <Route path="/vouchers" element={<VouchersPage />} />
               <Route path="/marketplace" element={<OffersPage />} />
@@ -127,6 +130,8 @@ function App() {
                 <Route path="property" element={<OwnerPropertyPage />} />
                 <Route path="pricing" element={<OwnerPricingPage />} />
                 <Route path="staff" element={<OwnerStaffPage />} />
+                <Route path="modification-requests" element={<OwnerModificationRequestsPage />} />
+                <Route path="messages" element={<OwnerMessagesPage />} />
                 <Route path="settings" element={<OwnerSettingsPage />} />
               </Route>
             </Route>

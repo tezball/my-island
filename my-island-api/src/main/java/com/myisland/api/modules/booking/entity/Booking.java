@@ -64,6 +64,9 @@ public class Booking extends BaseEntity {
     @Column(name = "stripe_transfer_id")
     private String stripeTransferId;
 
+    @Column(name = "review_email_sent_at")
+    private Instant reviewEmailSentAt;
+
     // Manual booking fields
     @Column(name = "guest_name")
     private String guestName;
@@ -227,4 +230,7 @@ public class Booking extends BaseEntity {
 
     public Owner getCreatedByOwner() { return createdByOwner; }
     public void setCreatedByOwner(Owner createdByOwner) { this.createdByOwner = createdByOwner; }
+
+    public Instant getReviewEmailSentAt() { return reviewEmailSentAt; }
+    public void setReviewEmailSentAt(Instant reviewEmailSentAt) { this.reviewEmailSentAt = reviewEmailSentAt; }
 }

@@ -8,13 +8,12 @@ import com.myisland.api.modules.accommodation.repository.LotBlockedPeriodReposit
 import com.myisland.api.modules.accommodation.repository.LotRepository;
 import com.myisland.api.modules.accommodation.service.PricingService;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
-import com.myisland.api.modules.booking.dto.BookingDto;
-import com.myisland.api.modules.booking.dto.CreateBookingRequest;
-import com.myisland.api.modules.booking.dto.CreateManualBookingRequest;
-import com.myisland.api.modules.booking.dto.ModifyBookingRequest;
+import com.myisland.api.modules.booking.dto.*;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.entity.BookingModificationLog;
+import com.myisland.api.modules.booking.entity.BookingModificationRequest;
 import com.myisland.api.modules.booking.repository.BookingModificationLogRepository;
+import com.myisland.api.modules.booking.repository.BookingModificationRequestRepository;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.UserRepository;
@@ -34,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -52,13 +53,15 @@ public class BookingService {
     private final OwnerRepository ownerRepository;
     private final StaffPermissionChecker permissionChecker;
     private final BookingModificationLogRepository modificationLogRepository;
+    private final BookingModificationRequestRepository modificationRequestRepository;
 
     public BookingService(BookingRepository bookingRepository, LotRepository lotRepository,
             UserRepository userRepository, ApplicationEventPublisher eventPublisher,
             BookingPaymentService bookingPaymentService, StripeProperties stripeProperties,
             LotBlockedPeriodRepository blockedPeriodRepository, PricingService pricingService,
             OwnerRepository ownerRepository, StaffPermissionChecker permissionChecker,
-            BookingModificationLogRepository modificationLogRepository) {
+            BookingModificationLogRepository modificationLogRepository,
+            BookingModificationRequestRepository modificationRequestRepository) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
@@ -70,6 +73,7 @@ public class BookingService {
         this.ownerRepository = ownerRepository;
         this.permissionChecker = permissionChecker;
         this.modificationLogRepository = modificationLogRepository;
+        this.modificationRequestRepository = modificationRequestRepository;
     }
 
     @Transactional(readOnly = true)
@@ -126,6 +130,13 @@ public class BookingService {
 
         if (request.numGuests() > lot.getMaxGuests()) {
             throw new BadRequestException("Number of guests exceeds lot capacity of " + lot.getMaxGuests());
+        }
+
+        // Enforce minimum stay requirement
+        int minStay = pricingService.getMinimumStay(lot, request.checkInDate());
+        long requestedNights = ChronoUnit.DAYS.between(request.checkInDate(), request.checkOutDate());
+        if (requestedNights < minStay) {
+            throw new BadRequestException("Minimum stay is " + minStay + " nights for this accommodation");
         }
 
         // Check for overlapping bookings on the requested lot
@@ -496,49 +507,136 @@ public class BookingService {
             throw new BadRequestException("Cannot modify a booking with an authorized payment hold. Please confirm or cancel the booking first.");
         }
 
-        // Capture "before" state
-        Lot previousLot = booking.getLot();
-        LocalDate previousCheckIn = booking.getCheckInDate();
-        LocalDate previousCheckOut = booking.getCheckOutDate();
-        BigDecimal previousTotalPrice = booking.getTotalPrice();
+        return applyBookingModification(booking, request.lotId(), request.checkInDate(),
+                request.checkOutDate(), null, userId, request.reason(), "OWNER");
+    }
 
-        // Resolve new values (null = keep current)
-        Lot newLot = previousLot;
-        if (request.lotId() != null && !request.lotId().equals(previousLot.getId())) {
+    // ==================== Guest Modification Methods ====================
+
+    @Transactional(readOnly = true)
+    public GuestModificationPolicyDto getModificationPolicy(Long bookingId, Long guestUserId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        if (booking.getUser() == null || !booking.getUser().getId().equals(guestUserId)) {
+            throw new BadRequestException("Booking does not belong to this user");
+        }
+
+        Owner owner = booking.getLot().getOwner();
+        boolean allowed = owner.isAllowGuestModifications();
+        int deadlineDays = owner.getModificationDeadlineDays();
+        boolean requiresApproval = owner.isRequireModificationApproval();
+
+        // Compute canModify
+        boolean canModify = true;
+        String cannotModifyReason = null;
+
+        if (!allowed) {
+            canModify = false;
+            cannotModifyReason = "This property does not allow guest modifications.";
+        } else if (booking.getStatus() != Booking.BookingStatus.CONFIRMED) {
+            canModify = false;
+            cannotModifyReason = "Only confirmed bookings can be modified.";
+        } else if (booking.getPaymentStatus() == Booking.PaymentStatus.AUTHORIZED) {
+            canModify = false;
+            cannotModifyReason = "Cannot modify a booking with a pending payment authorization.";
+        } else {
+            long daysUntilCheckIn = ChronoUnit.DAYS.between(LocalDate.now(), booking.getCheckInDate());
+            if (daysUntilCheckIn < deadlineDays) {
+                canModify = false;
+                cannotModifyReason = "Modifications must be made at least " + deadlineDays + " days before check-in.";
+            } else {
+                // Check for existing pending request
+                List<BookingModificationRequest> pending = modificationRequestRepository
+                        .findByBookingIdAndStatus(bookingId, BookingModificationRequest.Status.PENDING);
+                if (!pending.isEmpty()) {
+                    canModify = false;
+                    cannotModifyReason = "A modification request is already pending for this booking.";
+                }
+            }
+        }
+
+        return new GuestModificationPolicyDto(allowed, deadlineDays, requiresApproval, canModify, cannotModifyReason);
+    }
+
+    @Transactional
+    public BookingDto guestModifyBooking(Long bookingId, Long guestUserId, GuestModifyBookingRequest request) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        // Verify guest owns the booking
+        if (booking.getUser() == null || !booking.getUser().getId().equals(guestUserId)) {
+            throw new BadRequestException("Booking does not belong to this user");
+        }
+
+        // Verify status
+        if (booking.getStatus() != Booking.BookingStatus.CONFIRMED) {
+            throw new BadRequestException("Only confirmed bookings can be modified");
+        }
+
+        Owner owner = booking.getLot().getOwner();
+
+        // Check owner allows guest modifications
+        if (!owner.isAllowGuestModifications()) {
+            throw new BadRequestException("This property does not allow guest modifications.");
+        }
+
+        // Check deadline
+        long daysUntilCheckIn = ChronoUnit.DAYS.between(LocalDate.now(), booking.getCheckInDate());
+        if (daysUntilCheckIn < owner.getModificationDeadlineDays()) {
+            throw new BadRequestException("Modifications must be made at least " + owner.getModificationDeadlineDays() + " days before check-in.");
+        }
+
+        // Check no pending request exists
+        List<BookingModificationRequest> pending = modificationRequestRepository
+                .findByBookingIdAndStatus(bookingId, BookingModificationRequest.Status.PENDING);
+        if (!pending.isEmpty()) {
+            throw new BadRequestException("A modification request is already pending for this booking.");
+        }
+
+        // Block if payment is authorized
+        if (booking.getPaymentStatus() == Booking.PaymentStatus.AUTHORIZED) {
+            throw new BadRequestException("Cannot modify a booking with a pending payment authorization.");
+        }
+
+        // Validate at least one change
+        boolean hasChange = request.lotId() != null || request.checkInDate() != null
+                || request.checkOutDate() != null || request.wantsPower() != null;
+        if (!hasChange) {
+            throw new BadRequestException("No changes specified");
+        }
+
+        // Resolve proposed values
+        Lot currentLot = booking.getLot();
+        Lot newLot = currentLot;
+        if (request.lotId() != null && !request.lotId().equals(currentLot.getId())) {
             newLot = lotRepository.findById(request.lotId())
                     .orElseThrow(() -> new ResourceNotFoundException("Lot", request.lotId()));
-            // Verify lot belongs to same owner
-            if (!newLot.getOwner().getId().equals(previousLot.getOwner().getId())) {
-                throw new BadRequestException("New lot must belong to the same owner");
+            if (!newLot.getOwner().getId().equals(currentLot.getOwner().getId())) {
+                throw new BadRequestException("New lot must belong to the same property");
             }
             if (!newLot.isActive()) {
                 throw new BadRequestException("Selected lot is not active");
             }
         }
 
-        LocalDate newCheckIn = request.checkInDate() != null ? request.checkInDate() : previousCheckIn;
-        LocalDate newCheckOut = request.checkOutDate() != null ? request.checkOutDate() : previousCheckOut;
+        LocalDate newCheckIn = request.checkInDate() != null ? request.checkInDate() : booking.getCheckInDate();
+        LocalDate newCheckOut = request.checkOutDate() != null ? request.checkOutDate() : booking.getCheckOutDate();
 
-        // Validate at least one field is changing
-        boolean lotChanged = !newLot.getId().equals(previousLot.getId());
-        boolean datesChanged = !newCheckIn.equals(previousCheckIn) || !newCheckOut.equals(previousCheckOut);
-        if (!lotChanged && !datesChanged) {
-            throw new BadRequestException("No changes specified");
-        }
-
-        // Validate dates
         if (!newCheckOut.isAfter(newCheckIn)) {
             throw new BadRequestException("Check-out date must be after check-in date");
         }
 
-        // For CHECKED_IN bookings: new check-in must be <= today
-        if (booking.getStatus() == Booking.BookingStatus.CHECKED_IN && newCheckIn.isAfter(LocalDate.now())) {
-            throw new BadRequestException("Cannot set a future check-in date on an already checked-in booking");
-        }
-
         // Check guest capacity
         if (booking.getNumGuests() > newLot.getMaxGuests()) {
-            throw new BadRequestException("Number of guests (" + booking.getNumGuests() + ") exceeds new lot capacity of " + newLot.getMaxGuests());
+            throw new BadRequestException("Number of guests (" + booking.getNumGuests() + ") exceeds lot capacity of " + newLot.getMaxGuests());
+        }
+
+        // Enforce minimum stay requirement
+        int guestMinStay = pricingService.getMinimumStay(newLot, newCheckIn);
+        long guestNights = ChronoUnit.DAYS.between(newCheckIn, newCheckOut);
+        if (guestNights < guestMinStay) {
+            throw new BadRequestException("Minimum stay is " + guestMinStay + " nights for this accommodation");
         }
 
         // Check availability (excluding this booking)
@@ -554,8 +652,235 @@ public class BookingService {
             throw new BadRequestException("The selected lot is blocked for the new dates");
         }
 
+        // Calculate new price
+        BigDecimal newTotalPrice = pricingService.calculateTotalPrice(newLot, newCheckIn, newCheckOut);
+
+        // Add power surcharge if requested for tent lots
+        if (Boolean.TRUE.equals(request.wantsPower()) && newLot.getLotType() == Lot.LotType.TENT) {
+            long nights = ChronoUnit.DAYS.between(newCheckIn, newCheckOut);
+            BigDecimal powerSurcharge = BigDecimal.valueOf(5).multiply(BigDecimal.valueOf(nights));
+            newTotalPrice = newTotalPrice.add(powerSurcharge);
+        }
+
+        BigDecimal priceDifference = newTotalPrice.subtract(booking.getTotalPrice());
+
+        if (!owner.isRequireModificationApproval()) {
+            // Auto-approve: apply modification immediately
+            BookingDto result = applyBookingModification(booking, request.lotId(), request.checkInDate(),
+                    request.checkOutDate(), request.wantsPower(), guestUserId, request.reason(), "GUEST");
+
+            eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.GUEST_MODIFIED));
+
+            return result;
+        } else {
+            // Create pending request for owner approval
+            BookingModificationRequest modRequest = new BookingModificationRequest();
+            modRequest.setBooking(booking);
+            modRequest.setRequestedByUserId(guestUserId);
+            modRequest.setStatus(BookingModificationRequest.Status.PENDING);
+            modRequest.setRequestedLotId(request.lotId());
+            modRequest.setRequestedCheckInDate(request.checkInDate());
+            modRequest.setRequestedCheckOutDate(request.checkOutDate());
+            modRequest.setRequestedWantsPower(request.wantsPower());
+            modRequest.setEstimatedNewPrice(newTotalPrice);
+            modRequest.setPriceDifference(priceDifference);
+            modRequest.setReason(request.reason());
+            modificationRequestRepository.save(modRequest);
+
+            log.info("Guest {} created modification request {} for booking {}",
+                    guestUserId, modRequest.getId(), bookingId);
+
+            eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.MODIFICATION_REQUESTED));
+
+            return BookingDto.from(booking);
+        }
+    }
+
+    @Transactional
+    public ModificationRequestDto resolveModificationRequest(Long requestId, Long ownerUserId,
+            boolean approve, String declineReason) {
+        BookingModificationRequest modRequest = modificationRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("ModificationRequest", requestId));
+
+        if (modRequest.getStatus() != BookingModificationRequest.Status.PENDING) {
+            throw new BadRequestException("This modification request has already been resolved");
+        }
+
+        // Permission check
+        Booking booking = modRequest.getBooking();
+        permissionChecker.checkOwnerPermission(ownerUserId, booking.getLot().getOwner(),
+                PermissionGroup.BOOKINGS, AccessLevel.FULL);
+
+        if (approve) {
+            // Re-validate availability before applying
+            Lot newLot = booking.getLot();
+            if (modRequest.getRequestedLotId() != null && !modRequest.getRequestedLotId().equals(newLot.getId())) {
+                newLot = lotRepository.findById(modRequest.getRequestedLotId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Lot", modRequest.getRequestedLotId()));
+            }
+            LocalDate newCheckIn = modRequest.getRequestedCheckInDate() != null
+                    ? modRequest.getRequestedCheckInDate() : booking.getCheckInDate();
+            LocalDate newCheckOut = modRequest.getRequestedCheckOutDate() != null
+                    ? modRequest.getRequestedCheckOutDate() : booking.getCheckOutDate();
+
+            List<Booking> overlapping = bookingRepository.findOverlappingBookingsExcluding(
+                    newLot.getId(), newCheckIn, newCheckOut, booking.getId());
+            if (!overlapping.isEmpty()) {
+                throw new BadRequestException("The requested lot is no longer available for those dates");
+            }
+
+            // Apply the modification
+            applyBookingModification(booking, modRequest.getRequestedLotId(),
+                    modRequest.getRequestedCheckInDate(), modRequest.getRequestedCheckOutDate(),
+                    modRequest.getRequestedWantsPower(), modRequest.getRequestedByUserId(),
+                    modRequest.getReason(), "GUEST");
+
+            modRequest.setStatus(BookingModificationRequest.Status.APPROVED);
+            modRequest.setResolvedByUserId(ownerUserId);
+            modRequest.setResolvedAt(LocalDateTime.now());
+            modificationRequestRepository.save(modRequest);
+
+            log.info("Owner {} approved modification request {} for booking {}", ownerUserId, requestId, booking.getId());
+
+            eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.MODIFICATION_APPROVED));
+        } else {
+            modRequest.setStatus(BookingModificationRequest.Status.DECLINED);
+            modRequest.setResolvedByUserId(ownerUserId);
+            modRequest.setResolvedAt(LocalDateTime.now());
+            modRequest.setDeclineReason(declineReason);
+            modificationRequestRepository.save(modRequest);
+
+            log.info("Owner {} declined modification request {} for booking {}", ownerUserId, requestId, booking.getId());
+
+            eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.MODIFICATION_DECLINED));
+        }
+
+        return ModificationRequestDto.from(modRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ModificationRequestDto> getOwnerPendingModificationRequests(Long ownerUserId) {
+        Owner owner = permissionChecker.resolveOwnerAndCheck(ownerUserId, PermissionGroup.BOOKINGS, AccessLevel.READ);
+        return modificationRequestRepository.findByOwnerIdAndStatus(owner.getId(), BookingModificationRequest.Status.PENDING)
+                .stream()
+                .map(ModificationRequestDto::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ModificationRequestDto> getBookingModificationRequests(Long bookingId, Long guestUserId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
+
+        if (booking.getUser() == null || !booking.getUser().getId().equals(guestUserId)) {
+            throw new BadRequestException("Booking does not belong to this user");
+        }
+
+        return modificationRequestRepository.findByBookingIdOrderByCreatedAtDesc(bookingId)
+                .stream()
+                .map(ModificationRequestDto::from)
+                .toList();
+    }
+
+    @Transactional
+    public void cancelModificationRequest(Long bookingId, Long requestId, Long guestUserId) {
+        BookingModificationRequest modRequest = modificationRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("ModificationRequest", requestId));
+
+        if (!modRequest.getBooking().getId().equals(bookingId)) {
+            throw new BadRequestException("Request does not belong to this booking");
+        }
+
+        if (!modRequest.getRequestedByUserId().equals(guestUserId)) {
+            throw new BadRequestException("You can only cancel your own modification requests");
+        }
+
+        if (modRequest.getStatus() != BookingModificationRequest.Status.PENDING) {
+            throw new BadRequestException("Only pending requests can be cancelled");
+        }
+
+        modRequest.setStatus(BookingModificationRequest.Status.CANCELLED);
+        modRequest.setResolvedAt(LocalDateTime.now());
+        modificationRequestRepository.save(modRequest);
+
+        log.info("Guest {} cancelled modification request {} for booking {}", guestUserId, requestId, bookingId);
+    }
+
+    // ==================== Private Helpers ====================
+
+    private BookingDto applyBookingModification(Booking booking, Long newLotId, LocalDate newCheckInDate,
+            LocalDate newCheckOutDate, Boolean wantsPower, Long modifiedByUserId, String reason, String initiatedBy) {
+
+        Lot previousLot = booking.getLot();
+        LocalDate previousCheckIn = booking.getCheckInDate();
+        LocalDate previousCheckOut = booking.getCheckOutDate();
+        BigDecimal previousTotalPrice = booking.getTotalPrice();
+
+        // Resolve new lot
+        Lot newLot = previousLot;
+        if (newLotId != null && !newLotId.equals(previousLot.getId())) {
+            newLot = lotRepository.findById(newLotId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Lot", newLotId));
+            if (!newLot.getOwner().getId().equals(previousLot.getOwner().getId())) {
+                throw new BadRequestException("New lot must belong to the same owner");
+            }
+            if (!newLot.isActive()) {
+                throw new BadRequestException("Selected lot is not active");
+            }
+        }
+
+        LocalDate newCheckIn = newCheckInDate != null ? newCheckInDate : previousCheckIn;
+        LocalDate newCheckOut = newCheckOutDate != null ? newCheckOutDate : previousCheckOut;
+
+        boolean lotChanged = !newLot.getId().equals(previousLot.getId());
+        boolean datesChanged = !newCheckIn.equals(previousCheckIn) || !newCheckOut.equals(previousCheckOut);
+        boolean powerChanged = wantsPower != null;
+
+        if (!lotChanged && !datesChanged && !powerChanged) {
+            throw new BadRequestException("No changes specified");
+        }
+
+        if (!newCheckOut.isAfter(newCheckIn)) {
+            throw new BadRequestException("Check-out date must be after check-in date");
+        }
+
+        // Enforce minimum stay requirement on modifications
+        int modMinStay = pricingService.getMinimumStay(newLot, newCheckIn);
+        long modNights = ChronoUnit.DAYS.between(newCheckIn, newCheckOut);
+        if (modNights < modMinStay) {
+            throw new BadRequestException("Minimum stay is " + modMinStay + " nights for this accommodation");
+        }
+
+        if (booking.getStatus() == Booking.BookingStatus.CHECKED_IN && newCheckIn.isAfter(LocalDate.now())) {
+            throw new BadRequestException("Cannot set a future check-in date on an already checked-in booking");
+        }
+
+        if (booking.getNumGuests() > newLot.getMaxGuests()) {
+            throw new BadRequestException("Number of guests (" + booking.getNumGuests() + ") exceeds new lot capacity of " + newLot.getMaxGuests());
+        }
+
+        // Check availability (excluding this booking)
+        List<Booking> overlapping = bookingRepository.findOverlappingBookingsExcluding(
+                newLot.getId(), newCheckIn, newCheckOut, booking.getId());
+        if (!overlapping.isEmpty()) {
+            throw new BadRequestException("The selected lot is not available for the new dates");
+        }
+
+        List<LotBlockedPeriod> blockedPeriods = blockedPeriodRepository.findOverlappingBlocks(
+                newLot.getId(), newCheckIn, newCheckOut);
+        if (!blockedPeriods.isEmpty()) {
+            throw new BadRequestException("The selected lot is blocked for the new dates");
+        }
+
         // Recalculate price
         BigDecimal newTotalPrice = pricingService.calculateTotalPrice(newLot, newCheckIn, newCheckOut);
+
+        // Add power surcharge if requested
+        if (Boolean.TRUE.equals(wantsPower) && newLot.getLotType() == Lot.LotType.TENT) {
+            long nights = ChronoUnit.DAYS.between(newCheckIn, newCheckOut);
+            BigDecimal powerSurcharge = BigDecimal.valueOf(5).multiply(BigDecimal.valueOf(nights));
+            newTotalPrice = newTotalPrice.add(powerSurcharge);
+        }
 
         // Update booking fields
         booking.setLot(newLot);
@@ -566,7 +891,7 @@ public class BookingService {
         // For manual bookings (no payment), also recalculate serviceFee/chargeTotal
         if (booking.getPaymentStatus() == Booking.PaymentStatus.NONE) {
             BigDecimal serviceFee = newTotalPrice.multiply(BigDecimal.valueOf(stripeProperties.getServiceFeePercent()))
-                    .setScale(2, java.math.RoundingMode.HALF_UP);
+                    .setScale(2, RoundingMode.HALF_UP);
             booking.setServiceFee(serviceFee);
             booking.setChargeTotal(newTotalPrice.add(serviceFee));
         }
@@ -579,14 +904,16 @@ public class BookingService {
             modificationType = "DATE_AND_LOT_CHANGE";
         } else if (lotChanged) {
             modificationType = "LOT_CHANGE";
-        } else {
+        } else if (datesChanged) {
             modificationType = "DATE_CHANGE";
+        } else {
+            modificationType = "POWER_CHANGE";
         }
 
         // Create audit log entry
         BookingModificationLog modLog = BookingModificationLog.builder()
                 .booking(booking)
-                .modifiedByUserId(userId)
+                .modifiedByUserId(modifiedByUserId)
                 .modificationType(modificationType)
                 .previousLotId(previousLot.getId())
                 .previousCheckInDate(previousCheckIn)
@@ -597,15 +924,19 @@ public class BookingService {
                 .newCheckOutDate(newCheckOut)
                 .newTotalPrice(newTotalPrice)
                 .priceAdjustment(newTotalPrice.subtract(previousTotalPrice))
-                .reason(request.reason())
+                .reason(reason)
+                .initiatedBy(initiatedBy)
                 .build();
         modificationLogRepository.save(modLog);
 
-        log.info("Modified booking: {} (type: {}, price: {} -> {}, lot: {} -> {}, dates: {}-{} -> {}-{})",
-                bookingId, modificationType, previousTotalPrice, newTotalPrice,
+        log.info("Modified booking: {} (type: {}, initiatedBy: {}, price: {} -> {}, lot: {} -> {}, dates: {}-{} -> {}-{})",
+                booking.getId(), modificationType, initiatedBy, previousTotalPrice, newTotalPrice,
                 previousLot.getId(), newLot.getId(), previousCheckIn, previousCheckOut, newCheckIn, newCheckOut);
 
-        eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.MODIFIED));
+        // Only publish MODIFIED event for owner-initiated modifications (guest events are published by caller)
+        if ("OWNER".equals(initiatedBy)) {
+            eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.MODIFIED));
+        }
 
         return BookingDto.from(booking);
     }

@@ -1,28 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { CreditCard, ExternalLink, Star } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { CreditCard, ExternalLink, Star, AlertTriangle } from 'lucide-react';
 import { useSubscription } from '../../context/SubscriptionContext';
 import { supplierService } from '../../services/supplierService';
 import { supplierSubscriptionApi } from '../../services/subscriptionApi';
 import { SubscriptionFormModal } from '../../components/subscription/SubscriptionForm';
 import { ConnectOnboarding } from '../../components/owner/ConnectOnboarding';
+import type { SupplierPreferences } from '../../types/supplier';
 
 export const SupplierSettingsPage: React.FC = () => {
-    const [settings, setSettings] = useState({
+    const [settings, setSettings] = useState<SupplierPreferences>({
         emailNotifications: true,
         newClaimAlerts: true,
         weeklyReport: false,
-        marketingEmails: false
+        marketingEmails: false,
     });
+    const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [isDeactivated, setIsDeactivated] = useState(false);
+    const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
+    const [isDeactivating, setIsDeactivating] = useState(false);
+
+    const loadData = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const [prefs, deactivated] = await Promise.all([
+                supplierService.getPreferences(),
+                supplierService.isDeactivated(),
+            ]);
+            setSettings(prefs);
+            setIsDeactivated(deactivated);
+        } catch {
+            setError('Failed to load settings. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
     const handleSave = async () => {
         setIsSaving(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setIsSaving(false);
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
+        setError(null);
+        try {
+            const updated = await supplierService.updatePreferences(settings);
+            setSettings(updated);
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 3000);
+        } catch {
+            setError('Failed to save settings. Please try again.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeactivate = async () => {
+        setIsDeactivating(true);
+        try {
+            await supplierService.deactivateAccount();
+            setIsDeactivated(true);
+            setShowDeactivateConfirm(false);
+        } catch {
+            setError('Failed to deactivate account. Please try again.');
+        } finally {
+            setIsDeactivating(false);
+        }
+    };
+
+    const handleReactivate = async () => {
+        setIsDeactivating(true);
+        try {
+            await supplierService.reactivateAccount();
+            setIsDeactivated(false);
+        } catch {
+            setError('Failed to reactivate account. Please try again.');
+        } finally {
+            setIsDeactivating(false);
+        }
     };
 
     const ToggleSetting: React.FC<{
@@ -42,11 +100,34 @@ export const SupplierSettingsPage: React.FC = () => {
                     checked={checked}
                     onChange={(e) => onChange(e.target.checked)}
                     className="sr-only peer"
+                    disabled={isSaving}
                 />
-                <div className="w-11 h-6 bg-gray-300 peer-focus:ring-4 peer-focus:ring-lime-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lime-500"></div>
+                <div className="w-11 h-6 bg-gray-300 peer-focus:ring-4 peer-focus:ring-lime-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lime-500 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
             </label>
         </div>
     );
+
+    if (isLoading) {
+        return (
+            <div className="max-w-2xl">
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-[#111418] dark:text-white mb-2">Settings</h1>
+                    <p className="text-gray-500 dark:text-gray-400">Manage your notification preferences and account settings</p>
+                </div>
+                <div className="space-y-6">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 animate-pulse">
+                            <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+                            <div className="space-y-4">
+                                <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                <div className="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-2xl">
@@ -57,11 +138,33 @@ export const SupplierSettingsPage: React.FC = () => {
                 </p>
             </div>
 
+            {isDeactivated && (
+                <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 mb-2">
+                        <AlertTriangle className="w-5 h-5" />
+                        <span className="font-semibold">Account Deactivated</span>
+                    </div>
+                    <p className="text-sm text-amber-600 dark:text-amber-400">
+                        Your supplier account is currently deactivated. All your offers are hidden from guests.
+                    </p>
+                </div>
+            )}
+
             {showSuccess && (
                 <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                     <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                        <span className="material-symbols-outlined">check_circle</span>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
                         <span className="font-medium">Settings saved successfully!</span>
+                    </div>
+                </div>
+            )}
+
+            {error && (
+                <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                        <span className="font-medium">{error}</span>
                     </div>
                 </div>
             )}
@@ -106,44 +209,36 @@ export const SupplierSettingsPage: React.FC = () => {
             {/* Payout Settings Section */}
             <ConnectOnboarding userType="supplier" />
 
-            {/* Account Section */}
-            <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
-                <h2 className="text-lg font-bold text-[#111418] dark:text-white mb-4">Account</h2>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between py-2">
-                        <div>
-                            <p className="font-medium text-[#111418] dark:text-white">Change Password</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Update your account password</p>
-                        </div>
-                        <button className="text-sm font-medium text-lime-600 hover:text-lime-700 transition-colors">
-                            Change
-                        </button>
-                    </div>
-                    <div className="flex items-center justify-between py-2">
-                        <div>
-                            <p className="font-medium text-[#111418] dark:text-white">Two-Factor Authentication</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Add an extra layer of security</p>
-                        </div>
-                        <button className="text-sm font-medium text-lime-600 hover:text-lime-700 transition-colors">
-                            Enable
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             {/* Danger Zone */}
-            <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-red-200 dark:border-red-900/50 p-6">
+            <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-red-200 dark:border-red-900/50 p-6 mb-6">
                 <h2 className="text-lg font-bold text-red-600 dark:text-red-400 mb-4">Danger Zone</h2>
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="font-medium text-[#111418] dark:text-white">Deactivate Supplier Account</p>
+                        <p className="font-medium text-[#111418] dark:text-white">
+                            {isDeactivated ? 'Reactivate Supplier Account' : 'Deactivate Supplier Account'}
+                        </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            This will hide all your offers from guests
+                            {isDeactivated
+                                ? 'Reactivate your account to make your business visible again'
+                                : 'This will hide all your offers from guests'}
                         </p>
                     </div>
-                    <button className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors">
-                        Deactivate
-                    </button>
+                    {isDeactivated ? (
+                        <button
+                            onClick={handleReactivate}
+                            disabled={isDeactivating}
+                            className="px-4 py-2 text-sm font-medium text-white bg-lime-500 hover:bg-lime-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isDeactivating ? 'Reactivating...' : 'Reactivate'}
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setShowDeactivateConfirm(true)}
+                            className="px-4 py-2 text-sm font-medium text-red-600 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                        >
+                            Deactivate
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -157,6 +252,48 @@ export const SupplierSettingsPage: React.FC = () => {
                     {isSaving ? 'Saving...' : 'Save Settings'}
                 </button>
             </div>
+
+            {/* Deactivation Confirmation Modal */}
+            {showDeactivateConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white dark:bg-[#1a2632] rounded-xl p-6 max-w-md w-full shadow-xl">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                                <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                            </div>
+                            <h3 className="text-lg font-bold text-[#111418] dark:text-white">
+                                Deactivate Account?
+                            </h3>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            This will:
+                        </p>
+                        <ul className="text-sm text-gray-600 dark:text-gray-400 mb-6 list-disc list-inside space-y-1">
+                            <li>Hide your business from the marketplace</li>
+                            <li>Deactivate all your active offers</li>
+                            <li>Prevent guests from claiming new offers</li>
+                        </ul>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                            You can reactivate your account at any time, but you will need to re-enable offers individually.
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <button
+                                onClick={() => setShowDeactivateConfirm(false)}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeactivate}
+                                disabled={isDeactivating}
+                                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isDeactivating ? 'Deactivating...' : 'Deactivate Account'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -275,7 +412,7 @@ const BillingSection: React.FC = () => {
                 <div className="flex items-center justify-between py-2 border-t border-gray-100 dark:border-gray-800">
                     <div>
                         <p className="font-medium text-[#111418] dark:text-white">Monthly Plan</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">€5/month</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">&euro;5/month</p>
                     </div>
                     {subscription?.hasActiveSubscription || subscription?.hasLapsedSubscription ? (
                         <button
@@ -303,7 +440,7 @@ const BillingSection: React.FC = () => {
                 onSuccess={handleSubscriptionSuccess}
                 createSetupIntent={supplierSubscriptionApi.createSetupIntent}
                 confirmSubscription={supplierSubscriptionApi.confirmSubscription}
-                pricePerMonth="€5"
+                pricePerMonth="&euro;5"
                 planName="Supplier Plan"
             />
         </div>
@@ -378,7 +515,7 @@ const FeaturedPromotionSection: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="font-bold text-[#111418] dark:text-white text-lg mb-1">7 Days</div>
-                    <div className="text-2xl font-bold text-lime-600 dark:text-lime-400 mb-2">€9.99</div>
+                    <div className="text-2xl font-bold text-lime-600 dark:text-lime-400 mb-2">&euro;9.99</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                         Perfect for short-term promotions
                     </p>
@@ -396,7 +533,7 @@ const FeaturedPromotionSection: React.FC = () => {
                         Best Value
                     </div>
                     <div className="font-bold text-[#111418] dark:text-white text-lg mb-1">30 Days</div>
-                    <div className="text-2xl font-bold text-lime-600 dark:text-lime-400 mb-2">€29.99</div>
+                    <div className="text-2xl font-bold text-lime-600 dark:text-lime-400 mb-2">&euro;29.99</div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                         Maximum visibility for your business
                     </p>

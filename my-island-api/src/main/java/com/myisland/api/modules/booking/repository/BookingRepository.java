@@ -130,4 +130,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             AND b.status = 'CONFIRMED'
             """)
     List<Booking> findConfirmedArrivalsForDate(LocalDate date);
+
+    @Query("""
+            SELECT b FROM Booking b
+            JOIN FETCH b.user
+            JOIN FETCH b.lot l
+            JOIN FETCH l.owner
+            WHERE b.status = 'COMPLETED'
+            AND b.checkOutDate = :checkoutDate
+            AND b.reviewEmailSentAt IS NULL
+            AND b.user IS NOT NULL
+            AND NOT EXISTS (SELECT r FROM com.myisland.api.modules.review.entity.Review r WHERE r.booking.id = b.id)
+            """)
+    List<Booking> findCompletedBookingsEligibleForReviewEmail(LocalDate checkoutDate);
 }

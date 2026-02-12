@@ -134,6 +134,58 @@ public class NotificationEventListener {
                     );
                 }
             }
+            case GUEST_MODIFIED -> {
+                // Notify owner that guest modified their booking
+                notificationService.createNotification(
+                        owner,
+                        NotificationType.BOOKING_MODIFIED,
+                        "Booking Modified by Guest",
+                        guestName + " modified their booking for " + lotName + ". New dates: " + booking.getCheckInDate() + " - " + booking.getCheckOutDate() + ".",
+                        "/owner/bookings"
+                );
+                // Notify guest of confirmation
+                if (guest != null) {
+                    notificationService.createNotification(
+                            guest,
+                            NotificationType.BOOKING_MODIFIED,
+                            "Booking Updated",
+                            "Your booking for " + lotName + " has been updated. New dates: " + booking.getCheckInDate() + " - " + booking.getCheckOutDate() + ".",
+                            "/trips"
+                    );
+                }
+            }
+            case MODIFICATION_REQUESTED -> {
+                // Notify owner of pending request
+                notificationService.createNotification(
+                        owner,
+                        NotificationType.BOOKING_MODIFICATION_REQUESTED,
+                        "Modification Request",
+                        guestName + " has requested to modify their booking for " + lotName + ". Please review and approve or decline.",
+                        "/owner/modification-requests"
+                );
+            }
+            case MODIFICATION_APPROVED -> {
+                if (guest != null) {
+                    notificationService.createNotification(
+                            guest,
+                            NotificationType.BOOKING_MODIFICATION_APPROVED,
+                            "Modification Approved",
+                            "Your modification request for " + lotName + " has been approved! New dates: " + booking.getCheckInDate() + " - " + booking.getCheckOutDate() + ".",
+                            "/trips"
+                    );
+                }
+            }
+            case MODIFICATION_DECLINED -> {
+                if (guest != null) {
+                    notificationService.createNotification(
+                            guest,
+                            NotificationType.BOOKING_MODIFICATION_DECLINED,
+                            "Modification Declined",
+                            "Your modification request for " + lotName + " has been declined. Your original booking remains unchanged.",
+                            "/trips"
+                    );
+                }
+            }
             default -> log.debug("Unhandled booking event type for notifications: {}", event.getType());
         }
     }

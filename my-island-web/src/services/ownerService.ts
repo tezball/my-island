@@ -1,5 +1,5 @@
 import { apiRequest, NotFoundError } from './apiClient';
-import type { Lot, Booking, BlockedPeriod, CreateBlockedPeriodRequest, SeasonalPricingRule, CreateSeasonalPricingRuleRequest } from '../types/booking';
+import type { Lot, Booking, BlockedPeriod, CreateBlockedPeriodRequest, SeasonalPricingRule, CreateSeasonalPricingRuleRequest, ModificationRequest } from '../types/booking';
 import type {
     Owner, OwnerStats, OwnerDashboardData,
     CreateLotRequest, UpdateLotRequest,
@@ -59,6 +59,7 @@ interface LotApiResponse {
     description: string;
     pricePerNight: number;
     maxGuests: number;
+    minStay: number;
     isActive: boolean;
     imageUrl: string | null;
     amenities: Array<{ id: number; name: string; icon: string }>;
@@ -99,6 +100,7 @@ function transformLot(api: LotApiResponse): Lot {
         name: api.name,
         type: LOT_TYPE_MAP[api.lotType] || 'tent',
         pricePerNight: api.pricePerNight,
+        minStay: api.minStay ?? 1,
         description: api.description || '',
         lotAmenities: api.amenities.map(a => a.name),
         campsiteAmenities: [],
@@ -395,6 +397,19 @@ export const ownerService = {
             method: 'POST', body: data,
         });
         return transformBooking(api);
+    },
+
+    // --- Modification Requests ---
+
+    async getPendingModificationRequests(): Promise<ModificationRequest[]> {
+        return apiRequest<ModificationRequest[]>('/owner/modification-requests');
+    },
+
+    async resolveModificationRequest(requestId: string, approve: boolean, declineReason?: string): Promise<ModificationRequest> {
+        return apiRequest<ModificationRequest>(`/owner/modification-requests/${requestId}/resolve`, {
+            method: 'POST',
+            body: { approve, declineReason },
+        });
     },
 
     // --- Profile Update ---

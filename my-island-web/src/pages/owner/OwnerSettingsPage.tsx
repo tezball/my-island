@@ -50,6 +50,23 @@ export const OwnerSettingsPage: React.FC = () => {
         }
     };
 
+    const handleDeadlineChange = async (days: number) => {
+        if (!preferences) return;
+
+        const newPreferences = { ...preferences, modificationDeadlineDays: days };
+        setPreferences(newPreferences);
+        setIsSaving(true);
+
+        try {
+            await ownerPreferencesService.updatePreferences(newPreferences);
+        } catch (error) {
+            console.error('Failed to save preferences:', error);
+            setPreferences(preferences);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="space-y-6">
@@ -118,6 +135,46 @@ export const OwnerSettingsPage: React.FC = () => {
                             onChange={() => handleToggle('requireGuestVerification')}
                             disabled={isSaving}
                         />
+                    </div>
+                </div>
+
+                <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+                    <h2 className="text-base font-bold text-[#111418] dark:text-white mb-1">Guest Modifications</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Control how guests can modify their bookings</p>
+                    <div className="space-y-4">
+                        <SettingToggle
+                            label="Allow guests to modify their bookings"
+                            checked={preferences?.allowGuestModifications ?? true}
+                            onChange={() => handleToggle('allowGuestModifications')}
+                            disabled={isSaving}
+                        />
+                        {preferences?.allowGuestModifications && (
+                            <>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-[#111418] dark:text-white">Modification deadline</span>
+                                    <select
+                                        value={preferences?.modificationDeadlineDays ?? 3}
+                                        onChange={e => handleDeadlineChange(Number(e.target.value))}
+                                        disabled={isSaving}
+                                        className="px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-[#111418] dark:text-white text-sm focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50"
+                                    >
+                                        <option value={0}>Up to check-in day</option>
+                                        <option value={1}>1 day before</option>
+                                        <option value={2}>2 days before</option>
+                                        <option value={3}>3 days before</option>
+                                        <option value={5}>5 days before</option>
+                                        <option value={7}>7 days before</option>
+                                        <option value={14}>14 days before</option>
+                                    </select>
+                                </div>
+                                <SettingToggle
+                                    label="Require my approval for guest modifications"
+                                    checked={preferences?.requireModificationApproval ?? false}
+                                    onChange={() => handleToggle('requireModificationApproval')}
+                                    disabled={isSaving}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
 

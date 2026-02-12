@@ -1,8 +1,6 @@
 package com.myisland.api.modules.booking.controller;
 
-import com.myisland.api.modules.booking.dto.BookingDto;
-import com.myisland.api.modules.booking.dto.CreateBookingRequest;
-import com.myisland.api.modules.booking.dto.PaymentIntentResponse;
+import com.myisland.api.modules.booking.dto.*;
 import com.myisland.api.modules.booking.service.BookingPaymentService;
 import com.myisland.api.modules.booking.service.BookingService;
 import com.myisland.api.security.CustomUserDetails;
@@ -113,6 +111,43 @@ public class BookingController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(bookingService.simulatePaymentSuccess(id, userDetails.getUserId()));
+    }
+
+    // ==================== Guest Modification Endpoints ====================
+
+    @GetMapping("/{id}/modification-policy")
+    @Operation(summary = "Get guest modification policy for a booking")
+    public ResponseEntity<GuestModificationPolicyDto> getModificationPolicy(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(bookingService.getModificationPolicy(id, userDetails.getUserId()));
+    }
+
+    @PutMapping("/{id}/modify")
+    @Operation(summary = "Guest modifies their booking (auto-approve or creates request)")
+    public ResponseEntity<BookingDto> guestModifyBooking(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody GuestModifyBookingRequest request) {
+        return ResponseEntity.ok(bookingService.guestModifyBooking(id, userDetails.getUserId(), request));
+    }
+
+    @GetMapping("/{id}/modification-requests")
+    @Operation(summary = "Get modification requests for a booking (guest)")
+    public ResponseEntity<List<ModificationRequestDto>> getModificationRequests(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(bookingService.getBookingModificationRequests(id, userDetails.getUserId()));
+    }
+
+    @PostMapping("/{id}/modification-requests/{requestId}/cancel")
+    @Operation(summary = "Guest cancels a pending modification request")
+    public ResponseEntity<Void> cancelModificationRequest(
+            @PathVariable Long id,
+            @PathVariable Long requestId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        bookingService.cancelModificationRequest(id, requestId, userDetails.getUserId());
+        return ResponseEntity.noContent().build();
     }
 
     public record PaymentStatusResponse(

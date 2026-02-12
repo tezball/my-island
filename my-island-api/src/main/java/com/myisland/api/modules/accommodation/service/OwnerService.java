@@ -149,6 +149,7 @@ public class OwnerService {
                 .description(request.description())
                 .pricePerNight(request.pricePerNight())
                 .maxGuests(request.maxGuests())
+                .minStay(request.minStay())
                 .imageUrl(request.imageUrl())
                 .amenities(amenities)
                 .build();
@@ -183,6 +184,9 @@ public class OwnerService {
         }
         if (request.maxGuests() != null) {
             lot.setMaxGuests(request.maxGuests());
+        }
+        if (request.minStay() != null) {
+            lot.setMinStay(request.minStay());
         }
         if (request.isActive() != null) {
             lot.setActive(request.isActive());
@@ -269,7 +273,10 @@ public class OwnerService {
                 owner.isWeeklySummaryReports(),
                 owner.isInstantBooking(),
                 owner.isAllowSameDayBookings(),
-                owner.isRequireGuestVerification()
+                owner.isRequireGuestVerification(),
+                owner.isAllowGuestModifications(),
+                owner.getModificationDeadlineDays(),
+                owner.isRequireModificationApproval()
         );
     }
 
@@ -282,6 +289,9 @@ public class OwnerService {
         owner.setInstantBooking(preferences.instantBooking());
         owner.setAllowSameDayBookings(preferences.allowSameDayBookings());
         owner.setRequireGuestVerification(preferences.requireGuestVerification());
+        owner.setAllowGuestModifications(preferences.allowGuestModifications());
+        owner.setModificationDeadlineDays(preferences.modificationDeadlineDays());
+        owner.setRequireModificationApproval(preferences.requireModificationApproval());
 
         ownerRepository.save(owner);
         log.info("Updated owner preferences for user: {}", userId);
@@ -291,7 +301,10 @@ public class OwnerService {
                 owner.isWeeklySummaryReports(),
                 owner.isInstantBooking(),
                 owner.isAllowSameDayBookings(),
-                owner.isRequireGuestVerification()
+                owner.isRequireGuestVerification(),
+                owner.isAllowGuestModifications(),
+                owner.getModificationDeadlineDays(),
+                owner.isRequireModificationApproval()
         );
     }
 
