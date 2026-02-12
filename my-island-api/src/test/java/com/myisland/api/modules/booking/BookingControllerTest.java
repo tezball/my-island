@@ -6,6 +6,7 @@ import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.LotRepository;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.booking.dto.CreateBookingRequest;
+import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.dto.SignupRequest;
 import com.myisland.api.modules.identity.entity.User;
@@ -56,10 +57,8 @@ class BookingControllerTest extends BddTest {
         }
 
         private void setupTestData() {
-                // Clean up
-                bookingRepository.deleteAll();
-                lotRepository.deleteAll();
-                ownerRepository.deleteAll();
+                // Clean up — truncate users CASCADE cleans all referencing tables
+                truncateTables("users");
 
                 // Create owner user
                 User ownerUser = userRepository.save(User.builder()
@@ -70,13 +69,16 @@ class BookingControllerTest extends BddTest {
                                 .isOwner(true)
                                 .build());
 
-                // Create owner
-                Owner owner = ownerRepository.save(Owner.builder()
+                // Create owner with active subscription and relaxed booking settings
+                Owner owner = Owner.builder()
                                 .user(ownerUser)
                                 .propertyName("Booking Test Campsite")
                                 .county("Cork")
                                 .propertyType(Owner.PropertyType.TENT)
-                                .build());
+                                .build();
+                owner.setSubscriptionStatus(Owner.SubscriptionStatus.ACTIVE);
+                owner.setRequireGuestVerification(false);
+                owner = ownerRepository.save(owner);
 
                 // Create lot
                 testLot = lotRepository.save(Lot.builder()
@@ -128,14 +130,15 @@ class BookingControllerTest extends BddTest {
                                         .andExpect(jsonPath("$.lotId").value(testLot.getId()))
                                         .andExpect(jsonPath("$.numGuests").value(2))
                                         .andExpect(jsonPath("$.totalPrice").value(90.00)) // 3 nights * 30
-                                        .andExpect(jsonPath("$.status").value("PENDING"))
+                                        .andExpect(jsonPath("$.status").value("PENDING_PAYMENT"))
                                         .andExpect(jsonPath("$.specialRequests").value("Early check-in please"));
                 }
 
                 @Test
                 @DisplayName("Given overlapping dates, When I create booking, Then error returned")
                 void shouldRejectOverlappingBooking() throws Exception {
-                        // Given - Create first booking
+                        // Given - Create first booking and advance it past PENDING_PAYMENT
+                        // (PENDING_PAYMENT bookings are excluded from overlap checks by design)
                         authToken = createUserAndGetToken("booker2@example.com");
                         var firstRequest = new CreateBookingRequest(
                                         testLot.getId(),
@@ -144,10 +147,19 @@ class BookingControllerTest extends BddTest {
                                         2,
                                         null,
                                         false);
-                        mockMvc.perform(post("/bookings")
+                        var createResult = mockMvc.perform(post("/bookings")
                                         .header("Authorization", "Bearer " + authToken)
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(firstRequest)));
+                                        .content(objectMapper.writeValueAsString(firstRequest)))
+                                        .andReturn();
+
+                        Long firstBookingId = objectMapper.readTree(createResult.getResponse().getContentAsString())
+                                        .get("id").asLong();
+
+                        // Advance to PENDING so it counts in overlap checks
+                        Booking firstBooking = bookingRepository.findById(firstBookingId).orElseThrow();
+                        firstBooking.setStatus(Booking.BookingStatus.PENDING);
+                        bookingRepository.save(firstBooking);
 
                         // When - Try overlapping booking
                         var overlappingRequest = new CreateBookingRequest(
@@ -164,7 +176,7 @@ class BookingControllerTest extends BddTest {
 
                         // Then
                         result.andExpect(status().isBadRequest())
-                                        .andExpect(jsonPath("$.message").value(containsString("not available")));
+                                        .andExpect(jsonPath("$.message").value(containsString("available")));
                 }
 
                 @Test

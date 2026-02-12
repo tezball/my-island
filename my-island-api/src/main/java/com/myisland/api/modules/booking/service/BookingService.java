@@ -249,15 +249,11 @@ public class BookingService {
         // Allow cancellation by the guest, the owner, or staff with BOOKINGS FULL permission
         boolean isGuest = booking.getUser() != null && booking.getUser().getId().equals(userId);
         boolean isOwnerOrStaff = false;
-        try {
+        if (!isGuest) {
+            // Only check owner/staff permission if the caller is not the booking guest
+            // (calling checkOwnerPermission inside a try-catch marks the transaction rollback-only)
             permissionChecker.checkOwnerPermission(userId, booking.getLot().getOwner(), PermissionGroup.BOOKINGS, AccessLevel.FULL);
             isOwnerOrStaff = true;
-        } catch (Exception ignored) {
-            // Not owner/staff — that's ok if they're the guest
-        }
-
-        if (!isGuest && !isOwnerOrStaff) {
-            throw new BadRequestException("You are not authorized to cancel this booking");
         }
 
         if (booking.getStatus() == Booking.BookingStatus.CANCELLED) {

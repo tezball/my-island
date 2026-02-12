@@ -35,6 +35,9 @@ public class BookingControllerUnitTests {
         private BookingService bookingService;
 
         @MockBean
+        private com.myisland.api.modules.booking.service.BookingPaymentService bookingPaymentService;
+
+        @MockBean
         private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
         // JwtAuthenticationFilter is now a real bean (imported), so we mock its

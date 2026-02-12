@@ -20,8 +20,8 @@
               ┌───────────────┼───────────────┐
               ▼               ▼               ▼
         ┌──────────┐   ┌──────────┐   ┌──────────┐
-        │PostgreSQL│   │  Kafka   │   │  Stripe  │
-        │   17     │   │ (events) │   │(payments)│
+        │PostgreSQL│   │  Mailpit │   │  Stripe  │
+        │   17     │   │ (email)  │   │(payments)│
         └──────────┘   └──────────┘   └──────────┘
 ```
 
@@ -36,7 +36,7 @@
 | Backend | Spring Boot 3.4, Java 25, Spring Security |
 | Database | PostgreSQL 17 |
 | Migrations | Flyway |
-| Messaging | Apache Kafka |
+| Events | Spring ApplicationEvents (@Async) |
 | Scheduling | Spring @Scheduled + ShedLock |
 | Payments | Stripe (Payment Intents, Subscriptions, Connect Express) |
 | Auth | JWT (Spring Security, localStorage) |
@@ -45,11 +45,11 @@
 
 ```
 my-island-api/src/main/java/com/myisland/api/
-├── config/                 # Security, Kafka, Async configs
+├── config/                 # Security, Async configs
 ├── security/               # JWT provider, filter, user details
 ├── shared/
 │   ├── domain/            # Base entity
-│   ├── events/            # Application events, Kafka events
+│   ├── events/            # Application events, async event publisher
 │   └── exceptions/        # Global exception handler
 └── modules/
     ├── identity/          # User, Auth, Staff, JWT endpoints
@@ -91,7 +91,7 @@ my-island-web/src/
 | API calls | `fetch()` with auth headers, no axios |
 | Routing | React Router 7, nested routes, role-based guards |
 | Path alias | `@/*` → `./src/*` |
-| Events | Spring ApplicationEvents → Kafka topics → consumers |
+| Events | Spring ApplicationEvents → @Async @TransactionalEventListener → email service |
 | Payments | Stripe manual capture (authorize → capture) |
 | Images | `/api/images/{entityType}/{entityId}` multi-image upload |
 | Scheduling | ShedLock for distributed lock, @Scheduled for cron jobs |

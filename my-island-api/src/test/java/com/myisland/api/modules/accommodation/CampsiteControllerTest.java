@@ -46,9 +46,8 @@ class CampsiteControllerTest extends BddTest {
     }
 
     private void setupTestData() {
-        // Clean up
-        lotRepository.deleteAll();
-        ownerRepository.deleteAll();
+        // Clean up — truncate users CASCADE cleans all referencing tables
+        truncateTables("users");
 
         // Create test owner user
         User ownerUser = userRepository.save(User.builder()

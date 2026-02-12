@@ -1,38 +1,48 @@
 package com.myisland.api.shared.events.kafka;
 
-import com.myisland.api.config.KafkaConfig;
+import com.myisland.api.modules.accommodation.entity.Owner;
+import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
-import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.marketplace.entity.OfferClaim;
+import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.OfferClaimRepository;
+import com.myisland.api.modules.marketplace.repository.SupplierRepository;
+import com.myisland.api.shared.email.BookingEmailData;
+import com.myisland.api.shared.email.EmailNotificationService;
+import com.myisland.api.shared.email.OfferClaimEmailData;
 import com.myisland.api.shared.events.BookingEvent;
 import com.myisland.api.shared.events.OfferEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 public class EventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(EventPublisher.class);
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BookingRepository bookingRepository;
     private final OfferClaimRepository offerClaimRepository;
+    private final EmailNotificationService emailService;
+    private final OwnerRepository ownerRepository;
+    private final SupplierRepository supplierRepository;
 
-    public EventPublisher(KafkaTemplate<String, Object> kafkaTemplate,
-                          BookingRepository bookingRepository,
-                          OfferClaimRepository offerClaimRepository) {
-        this.kafkaTemplate = kafkaTemplate;
+    public EventPublisher(BookingRepository bookingRepository,
+                          OfferClaimRepository offerClaimRepository,
+                          EmailNotificationService emailService,
+                          OwnerRepository ownerRepository,
+                          SupplierRepository supplierRepository) {
         this.bookingRepository = bookingRepository;
         this.offerClaimRepository = offerClaimRepository;
+        this.emailService = emailService;
+        this.ownerRepository = ownerRepository;
+        this.supplierRepository = supplierRepository;
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -44,33 +54,31 @@ public class EventPublisher {
             return;
         }
 
-        KafkaBookingEvent kafkaEvent = new KafkaBookingEvent(
-                booking.getId(),
-                booking.getUser() != null ? booking.getUser().getId() : null,
-                booking.getUser() != null ? booking.getUser().getName() : booking.getGuestName(),
-                booking.getUser() != null ? booking.getUser().getEmail() : booking.getGuestEmail(),
-                booking.getLot().getId(),
-                booking.getLot().getName(),
-                booking.getLot().getOwner().getId(),
-                booking.getLot().getOwner().getPropertyName(),
-                booking.getCheckInDate(),
-                booking.getCheckOutDate(),
-                booking.getNumGuests(),
-                booking.getTotalPrice(),
-                booking.getStatus().name(),
-                LocalDateTime.now()
-        );
+        BookingEmailData bookingData = createBookingEmailData(booking);
+        String guestEmail = booking.getUser() != null ? booking.getUser().getEmail() : booking.getGuestEmail();
 
-        String topic = switch (event.getType()) {
-            case CREATED -> KafkaConfig.BOOKING_CREATED_TOPIC;
-            case CONFIRMED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC;
-            case CANCELLED -> KafkaConfig.BOOKING_CANCELLED_TOPIC;
-            case COMPLETED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
-            case CHECKED_IN, CHECKED_OUT, MODIFIED, GUEST_MODIFIED, MODIFICATION_REQUESTED, MODIFICATION_APPROVED, MODIFICATION_DECLINED -> KafkaConfig.BOOKING_CONFIRMED_TOPIC; // Reuse confirmed topic
-        };
-
-        kafkaTemplate.send(topic, booking.getId().toString(), kafkaEvent);
-        log.info("Published booking event: {} to topic: {}", event.getType(), topic);
+        switch (event.getType()) {
+            case CREATED -> {
+                sendOwnerBookingEmail(booking, bookingData, "created",
+                        (email, data) -> emailService.sendBookingCreatedToOwner(email, data));
+                emailService.sendBookingCreatedToGuest(guestEmail, bookingData);
+                log.info("Sent booking created emails for booking: {}", booking.getId());
+            }
+            case CONFIRMED -> {
+                emailService.sendBookingConfirmedToGuest(guestEmail, bookingData);
+                log.info("Sent booking confirmed email for booking: {}", booking.getId());
+            }
+            case CANCELLED -> {
+                sendOwnerBookingEmail(booking, bookingData, "cancelled",
+                        (email, data) -> emailService.sendBookingCancelledToOwner(email, data));
+                emailService.sendBookingCancelledToGuest(guestEmail, bookingData);
+                log.info("Sent booking cancelled emails for booking: {}", booking.getId());
+            }
+            default -> {
+                emailService.sendBookingConfirmedToGuest(guestEmail, bookingData);
+                log.info("Sent booking confirmed email for event type {} on booking: {}", event.getType(), booking.getId());
+            }
+        }
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -82,40 +90,78 @@ public class EventPublisher {
             return;
         }
 
-        KafkaOfferEvent kafkaEvent = new KafkaOfferEvent(
-                claim.getId(),
-                claim.getOffer().getId(),
-                claim.getOffer().getTitle(),
-                claim.getOffer().getSupplier().getId(),
-                claim.getOffer().getSupplier().getBusinessName(),
-                claim.getUser().getId(),
-                claim.getUser().getName(),
-                claim.getUser().getEmail(),
-                claim.getClaimCode(),
-                claim.getStatus().name(),
-                claim.isTest(),
-                LocalDateTime.now()
-        );
+        switch (event.getType()) {
+            case CLAIMED -> {
+                if (claim.isTest()) {
+                    log.debug("Ignoring test claim event: claimId={}", claim.getId());
+                    return;
+                }
 
-        String topic = switch (event.getType()) {
-            case CLAIMED -> KafkaConfig.OFFER_CLAIMED_TOPIC;
-            case REDEEMED -> KafkaConfig.OFFER_REDEEMED_TOPIC;
-        };
+                OfferClaimEmailData claimData = createClaimEmailData(claim);
 
-        kafkaTemplate.send(topic, claim.getId().toString(), kafkaEvent);
-        log.info("Published offer event: {} to topic: {}", event.getType(), topic);
+                Optional<Supplier> supplierOpt = supplierRepository.findById(claim.getOffer().getSupplier().getId());
+                supplierOpt.ifPresent(supplier -> {
+                    String supplierEmail = supplier.getUser().getEmail();
+                    emailService.sendOfferClaimedToSupplier(supplierEmail, claimData);
+                    log.info("Sent claim notification to supplier: {}", supplierEmail);
+                });
+
+                emailService.sendVoucherToGuest(claim.getUser().getEmail(), claimData);
+                log.info("Sent voucher to guest: {}", claim.getUser().getEmail());
+            }
+            case REDEEMED -> {
+                if (claim.isTest()) {
+                    log.debug("Ignoring test redemption event: claimId={}", claim.getId());
+                    return;
+                }
+                log.info("Offer redeemed: claimId={}, offer={}, supplier={}",
+                        claim.getId(), claim.getOffer().getTitle(), claim.getOffer().getSupplier().getBusinessName());
+            }
+        }
     }
 
-    public void publishUserRegistered(User user) {
-        KafkaUserEvent event = new KafkaUserEvent(
-                user.getId(),
-                user.getEmail(),
-                user.getName(),
-                user.getRole().name(),
-                LocalDateTime.now()
-        );
+    private void sendOwnerBookingEmail(Booking booking, BookingEmailData bookingData,
+                                       String eventType, OwnerEmailSender sender) {
+        Optional<Owner> ownerOpt = ownerRepository.findById(booking.getLot().getOwner().getId());
+        ownerOpt.ifPresent(owner -> {
+            if (owner.isEmailNotificationsBookings()) {
+                String ownerEmail = owner.getUser().getEmail();
+                sender.send(ownerEmail, bookingData);
+                log.info("Sent booking {} notification to owner: {}", eventType, ownerEmail);
+            } else {
+                log.info("Skipping booking {} email for owner {} (notifications disabled)",
+                        eventType, owner.getId());
+            }
+        });
+    }
 
-        kafkaTemplate.send(KafkaConfig.USER_REGISTERED_TOPIC, user.getId().toString(), event);
-        log.info("Published user registered event for user: {}", user.getId());
+    private BookingEmailData createBookingEmailData(Booking booking) {
+        return new BookingEmailData(
+                booking.getId(),
+                booking.getUser() != null ? booking.getUser().getName() : booking.getGuestName(),
+                booking.getUser() != null ? booking.getUser().getEmail() : booking.getGuestEmail(),
+                booking.getLot().getName(),
+                booking.getLot().getOwner().getPropertyName(),
+                booking.getCheckInDate(),
+                booking.getCheckOutDate(),
+                booking.getNumGuests(),
+                booking.getTotalPrice()
+        );
+    }
+
+    private OfferClaimEmailData createClaimEmailData(OfferClaim claim) {
+        return new OfferClaimEmailData(
+                claim.getId(),
+                claim.getOffer().getTitle(),
+                claim.getOffer().getSupplier().getBusinessName(),
+                claim.getUser().getName(),
+                claim.getUser().getEmail(),
+                claim.getClaimCode()
+        );
+    }
+
+    @FunctionalInterface
+    private interface OwnerEmailSender {
+        void send(String email, BookingEmailData data);
     }
 }

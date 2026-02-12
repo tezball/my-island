@@ -17,7 +17,7 @@ docker compose up -d
 # - Frontend: http://localhost:5173
 # - API: http://localhost:8080/api
 # - Swagger: http://localhost:8080/api/swagger-ui.html
-# - Kafka UI: http://localhost:8081
+# - Mailpit: http://localhost:8025
 ```
 
 ### Stopping Services
@@ -40,11 +40,11 @@ docker compose logs -f api    # API only
 - Flyway manages schema migrations (see [Seed Data](../operations/SEED_DATA.md) for migration inventory)
 - Port: 5432
 
-### Apache Kafka
-- Asynchronous domain event streaming
-- Used for: booking events, offer claims, notifications
-- Kafka UI available at port 8081
-- Port: 9092
+### Spring Async Events
+- Domain events published via `ApplicationEventPublisher`
+- Consumed by `EventPublisher` using `@Async` + `@TransactionalEventListener(AFTER_COMMIT)`
+- Used for: booking email notifications, offer claim notifications
+- No external message broker required
 
 ### Stripe
 - Payment Intents with manual capture for bookings

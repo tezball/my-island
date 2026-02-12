@@ -51,6 +51,9 @@ public class AuthController {
     @Operation(summary = "Get current user profile")
     public ResponseEntity<AuthResponse.UserDto> getCurrentUser(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(authService.getCurrentUserDto(userDetails.getUserId()));
     }
 

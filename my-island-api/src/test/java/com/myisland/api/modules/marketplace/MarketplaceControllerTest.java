@@ -57,10 +57,8 @@ class MarketplaceControllerTest extends BddTest {
     }
 
     private void setupTestData() {
-        // Clean up
-        offerClaimRepository.deleteAll();
-        offerRepository.deleteAll();
-        supplierRepository.deleteAll();
+        // Clean up — truncate users CASCADE cleans all referencing tables
+        truncateTables("users");
 
         // Create supplier user
         User supplierUser = userRepository.save(User.builder()

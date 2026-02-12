@@ -62,7 +62,7 @@ docker compose up -d
 # - Frontend: http://localhost:5173
 # - API: http://localhost:8080/api
 # - Swagger: http://localhost:8080/api/swagger-ui.html
-# - Kafka UI: http://localhost:8081
+# - Mailpit: http://localhost:8025
 ```
 
 ## Commands
@@ -88,7 +88,7 @@ npm run preview  # Preview production build
 
 ```bash
 docker compose up -d              # Start all services
-docker compose up -d postgres kafka  # Start dependencies only
+docker compose up -d postgres        # Start dependencies only
 docker compose logs -f api        # View API logs
 docker compose down               # Stop all services
 ```
@@ -107,11 +107,11 @@ my-island/
 
 ```
 my-island-api/src/main/java/com/myisland/api/
-├── config/                 # Security, Kafka, Async configs
+├── config/                 # Security, Async configs
 ├── security/               # JWT provider, filter, user details
 ├── shared/
 │   ├── domain/            # Base entity
-│   ├── events/            # Application events, Kafka events
+│   ├── events/            # Application events, async event publisher
 │   └── exceptions/        # Global exception handler
 └── modules/
     ├── identity/          # User, Auth, Staff, JWT endpoints
@@ -147,7 +147,7 @@ my-island-web/src/
 | Routing | React Router 7 |
 | Backend | Spring Boot 3.4, Java 25, Spring Security |
 | Database | PostgreSQL 17 |
-| Messaging | Apache Kafka |
+| Events | Spring ApplicationEvents (@Async) |
 | Auth | JWT |
 
 ## Key Patterns
@@ -155,7 +155,7 @@ my-island-web/src/
 - **Routing**: React Router with nested routes. Owner/Supplier routes protected by role checks
 - **Auth State**: React Context (`AuthContext`), JWT stored in localStorage
 - **API**: RESTful with `/api` prefix, Swagger documentation
-- **Events**: Spring ApplicationEvents published to Kafka topics
+- **Events**: Spring ApplicationEvents with @Async + @TransactionalEventListener for post-commit email notifications
 - **Path Alias**: `@/*` maps to `./src/*`
 - **Layout**: Header and BottomNav hidden on `/signin`, `/signup`, `/personalize`, `/trips/*/messages`
 

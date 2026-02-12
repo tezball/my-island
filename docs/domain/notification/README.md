@@ -4,7 +4,7 @@
 Partial — Backend stores and retrieves notifications; no email/push delivery yet.
 
 ## Overview
-Event-driven notification system. Domain events (booking created, offer claimed, etc.) are published to Kafka and consumed by the `NotificationEventListener`, which creates notification records in the database. The frontend polls for notifications via the API.
+Event-driven notification system. Domain events (booking created, offer claimed, etc.) are published via Spring `ApplicationEventPublisher` and handled asynchronously by `EventPublisher` using `@Async` + `@TransactionalEventListener(AFTER_COMMIT)`. The `NotificationEventListener` creates notification records in the database. The `EventPublisher` sends email notifications via `EmailNotificationService`. The frontend polls for notifications via the API.
 
 ## Key Entities
 

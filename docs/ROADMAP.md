@@ -177,7 +177,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 
 | Feature | Details |
 |---------|---------|
-| Kafka event system | Spring ApplicationEvents → Kafka topics (booking-events, offer-events, user-events) |
+| Async event system | Spring ApplicationEvents with @Async + @TransactionalEventListener for post-commit email notifications |
 | Distributed scheduling | ShedLock for job deduplication (pre-arrival emails, post-stay review emails, featured expiry) |
 | E2E test suite | Playwright with 146 tests across 22 spec files (auth, browsing, navigation, booking flow, trips, owner portal, supplier portal, admin portal, review flow, minimum stay, saved favorites, messaging, booking cancel, owner check-in, booking modifications, date blocking, review submit, notifications, marketplace claims, owner settings, owner timeline) |
 | Video recording | Every E2E test run produces video recordings for visual review |

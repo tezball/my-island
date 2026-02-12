@@ -1,13 +1,21 @@
 package com.myisland.api.shared.events.kafka;
 
+import com.myisland.api.modules.accommodation.entity.Lot;
 import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
+import com.myisland.api.modules.booking.entity.Booking;
+import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
+import com.myisland.api.modules.marketplace.entity.Offer;
+import com.myisland.api.modules.marketplace.entity.OfferClaim;
 import com.myisland.api.modules.marketplace.entity.Supplier;
+import com.myisland.api.modules.marketplace.repository.OfferClaimRepository;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import com.myisland.api.shared.email.BookingEmailData;
 import com.myisland.api.shared.email.EmailNotificationService;
 import com.myisland.api.shared.email.OfferClaimEmailData;
+import com.myisland.api.shared.events.BookingEvent;
+import com.myisland.api.shared.events.OfferEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,8 +36,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("EventConsumer Email Integration")
-class EventConsumerEmailTest {
+@DisplayName("EventPublisher Email Integration")
+class EventPublisherEmailTest {
+
+    @Mock
+    private BookingRepository bookingRepository;
+
+    @Mock
+    private OfferClaimRepository offerClaimRepository;
 
     @Mock
     private EmailNotificationService emailService;
@@ -41,60 +54,56 @@ class EventConsumerEmailTest {
     @Mock
     private SupplierRepository supplierRepository;
 
-    private EventConsumer eventConsumer;
+    private EventPublisher eventPublisher;
 
     @BeforeEach
     void setUp() {
-        eventConsumer = new EventConsumer(emailService, ownerRepository, supplierRepository);
+        eventPublisher = new EventPublisher(
+                bookingRepository, offerClaimRepository,
+                emailService, ownerRepository, supplierRepository);
     }
 
     @Nested
-    @DisplayName("handleBookingCreated")
+    @DisplayName("handleBookingEvent — CREATED")
     class HandleBookingCreated {
 
         @Test
         @DisplayName("should send email to owner when booking is created")
         void shouldSendEmailToOwner() {
-            // Given
-            KafkaBookingEvent event = createBookingEvent("PENDING_PAYMENT");
+            Booking booking = createMockBooking();
+            given(bookingRepository.findByIdWithDetails(1L)).willReturn(Optional.of(booking));
             Owner owner = createMockOwner("owner@campsite.ie");
             given(ownerRepository.findById(1L)).willReturn(Optional.of(owner));
 
-            // When
-            eventConsumer.handleBookingCreated(event);
+            eventPublisher.handleBookingEvent(new BookingEvent(this, 1L, BookingEvent.Type.CREATED));
 
-            // Then
             verify(emailService).sendBookingCreatedToOwner(eq("owner@campsite.ie"), any(BookingEmailData.class));
         }
 
         @Test
         @DisplayName("should send email to guest when booking is created")
         void shouldSendEmailToGuest() {
-            // Given
-            KafkaBookingEvent event = createBookingEvent("PENDING_PAYMENT");
+            Booking booking = createMockBooking();
+            given(bookingRepository.findByIdWithDetails(1L)).willReturn(Optional.of(booking));
             Owner owner = createMockOwner("owner@campsite.ie");
             given(ownerRepository.findById(1L)).willReturn(Optional.of(owner));
 
-            // When
-            eventConsumer.handleBookingCreated(event);
+            eventPublisher.handleBookingEvent(new BookingEvent(this, 1L, BookingEvent.Type.CREATED));
 
-            // Then
             verify(emailService).sendBookingCreatedToGuest(eq("guest@example.com"), any(BookingEmailData.class));
         }
 
         @Test
         @DisplayName("should include correct booking data in email")
         void shouldIncludeCorrectBookingData() {
-            // Given
-            KafkaBookingEvent event = createBookingEvent("PENDING_PAYMENT");
+            Booking booking = createMockBooking();
+            given(bookingRepository.findByIdWithDetails(1L)).willReturn(Optional.of(booking));
             Owner owner = createMockOwner("owner@campsite.ie");
             given(ownerRepository.findById(1L)).willReturn(Optional.of(owner));
             ArgumentCaptor<BookingEmailData> dataCaptor = ArgumentCaptor.forClass(BookingEmailData.class);
 
-            // When
-            eventConsumer.handleBookingCreated(event);
+            eventPublisher.handleBookingEvent(new BookingEvent(this, 1L, BookingEvent.Type.CREATED));
 
-            // Then
             verify(emailService).sendBookingCreatedToOwner(any(), dataCaptor.capture());
             BookingEmailData data = dataCaptor.getValue();
             assertThat(data.guestName()).isEqualTo("John Murphy");
@@ -106,118 +115,104 @@ class EventConsumerEmailTest {
     }
 
     @Nested
-    @DisplayName("handleBookingConfirmed")
+    @DisplayName("handleBookingEvent — CONFIRMED")
     class HandleBookingConfirmed {
 
         @Test
         @DisplayName("should send confirmation email to guest")
         void shouldSendConfirmationEmailToGuest() {
-            // Given
-            KafkaBookingEvent event = createBookingEvent("CONFIRMED");
+            Booking booking = createMockBooking();
+            given(bookingRepository.findByIdWithDetails(1L)).willReturn(Optional.of(booking));
 
-            // When
-            eventConsumer.handleBookingConfirmed(event);
+            eventPublisher.handleBookingEvent(new BookingEvent(this, 1L, BookingEvent.Type.CONFIRMED));
 
-            // Then
             verify(emailService).sendBookingConfirmedToGuest(eq("guest@example.com"), any(BookingEmailData.class));
         }
     }
 
     @Nested
-    @DisplayName("handleBookingCancelled")
+    @DisplayName("handleBookingEvent — CANCELLED")
     class HandleBookingCancelled {
 
         @Test
         @DisplayName("should send cancellation email to owner")
         void shouldSendCancellationEmailToOwner() {
-            // Given
-            KafkaBookingEvent event = createBookingEvent("CANCELLED");
+            Booking booking = createMockBooking();
+            given(bookingRepository.findByIdWithDetails(1L)).willReturn(Optional.of(booking));
             Owner owner = createMockOwner("owner@campsite.ie");
             given(ownerRepository.findById(1L)).willReturn(Optional.of(owner));
 
-            // When
-            eventConsumer.handleBookingCancelled(event);
+            eventPublisher.handleBookingEvent(new BookingEvent(this, 1L, BookingEvent.Type.CANCELLED));
 
-            // Then
             verify(emailService).sendBookingCancelledToOwner(eq("owner@campsite.ie"), any(BookingEmailData.class));
         }
 
         @Test
         @DisplayName("should send cancellation email to guest")
         void shouldSendCancellationEmailToGuest() {
-            // Given
-            KafkaBookingEvent event = createBookingEvent("CANCELLED");
+            Booking booking = createMockBooking();
+            given(bookingRepository.findByIdWithDetails(1L)).willReturn(Optional.of(booking));
             Owner owner = createMockOwner("owner@campsite.ie");
             given(ownerRepository.findById(1L)).willReturn(Optional.of(owner));
 
-            // When
-            eventConsumer.handleBookingCancelled(event);
+            eventPublisher.handleBookingEvent(new BookingEvent(this, 1L, BookingEvent.Type.CANCELLED));
 
-            // Then
             verify(emailService).sendBookingCancelledToGuest(eq("guest@example.com"), any(BookingEmailData.class));
         }
     }
 
     @Nested
-    @DisplayName("handleOfferClaimed")
+    @DisplayName("handleOfferEvent — CLAIMED")
     class HandleOfferClaimed {
 
         @Test
         @DisplayName("should send notification to supplier")
         void shouldSendNotificationToSupplier() {
-            // Given
-            KafkaOfferEvent event = createOfferEvent(false);
+            OfferClaim claim = createMockClaim(false);
+            given(offerClaimRepository.findByIdWithDetails(1L)).willReturn(Optional.of(claim));
             Supplier supplier = createMockSupplier("supplier@greenacres.ie");
             given(supplierRepository.findById(1L)).willReturn(Optional.of(supplier));
 
-            // When
-            eventConsumer.handleOfferClaimed(event);
+            eventPublisher.handleOfferEvent(new OfferEvent(this, 1L, OfferEvent.Type.CLAIMED));
 
-            // Then
             verify(emailService).sendOfferClaimedToSupplier(eq("supplier@greenacres.ie"), any(OfferClaimEmailData.class));
         }
 
         @Test
         @DisplayName("should send voucher to guest")
         void shouldSendVoucherToGuest() {
-            // Given
-            KafkaOfferEvent event = createOfferEvent(false);
+            OfferClaim claim = createMockClaim(false);
+            given(offerClaimRepository.findByIdWithDetails(1L)).willReturn(Optional.of(claim));
             Supplier supplier = createMockSupplier("supplier@greenacres.ie");
             given(supplierRepository.findById(1L)).willReturn(Optional.of(supplier));
 
-            // When
-            eventConsumer.handleOfferClaimed(event);
+            eventPublisher.handleOfferEvent(new OfferEvent(this, 1L, OfferEvent.Type.CLAIMED));
 
-            // Then
             verify(emailService).sendVoucherToGuest(eq("guest@example.com"), any(OfferClaimEmailData.class));
         }
 
         @Test
         @DisplayName("should not send emails for test claims")
         void shouldNotSendEmailsForTestClaims() {
-            // Given
-            KafkaOfferEvent event = createOfferEvent(true);
+            OfferClaim claim = createMockClaim(true);
+            given(offerClaimRepository.findByIdWithDetails(1L)).willReturn(Optional.of(claim));
 
-            // When
-            eventConsumer.handleOfferClaimed(event);
+            eventPublisher.handleOfferEvent(new OfferEvent(this, 1L, OfferEvent.Type.CLAIMED));
 
-            // Then
             verifyNoInteractions(emailService);
         }
 
         @Test
         @DisplayName("should include correct claim data in email")
         void shouldIncludeCorrectClaimData() {
-            // Given
-            KafkaOfferEvent event = createOfferEvent(false);
+            OfferClaim claim = createMockClaim(false);
+            given(offerClaimRepository.findByIdWithDetails(1L)).willReturn(Optional.of(claim));
             Supplier supplier = createMockSupplier("supplier@greenacres.ie");
             given(supplierRepository.findById(1L)).willReturn(Optional.of(supplier));
             ArgumentCaptor<OfferClaimEmailData> dataCaptor = ArgumentCaptor.forClass(OfferClaimEmailData.class);
 
-            // When
-            eventConsumer.handleOfferClaimed(event);
+            eventPublisher.handleOfferEvent(new OfferEvent(this, 1L, OfferEvent.Type.CLAIMED));
 
-            // Then
             verify(emailService).sendVoucherToGuest(any(), dataCaptor.capture());
             OfferClaimEmailData data = dataCaptor.getValue();
             assertThat(data.claimCode()).isEqualTo("ABC123XYZ");
@@ -226,64 +221,52 @@ class EventConsumerEmailTest {
         }
     }
 
-    @Nested
-    @DisplayName("handleUserRegistered")
-    class HandleUserRegistered {
+    private Booking createMockBooking() {
+        User guest = mock(User.class);
+        lenient().when(guest.getName()).thenReturn("John Murphy");
+        lenient().when(guest.getEmail()).thenReturn("guest@example.com");
 
-        @Test
-        @DisplayName("should send welcome email to new user")
-        void shouldSendWelcomeEmail() {
-            // Given
-            KafkaUserEvent event = new KafkaUserEvent(
-                    1L,
-                    "newuser@example.com",
-                    "New User",
-                    "GUEST",
-                    LocalDateTime.now()
-            );
+        Owner owner = mock(Owner.class);
+        lenient().when(owner.getId()).thenReturn(1L);
+        lenient().when(owner.getPropertyName()).thenReturn("Nore Valley Park");
 
-            // When
-            eventConsumer.handleUserRegistered(event);
+        Lot lot = mock(Lot.class);
+        lenient().when(lot.getName()).thenReturn("Riverside Pitch");
+        lenient().when(lot.getOwner()).thenReturn(owner);
 
-            // Then
-            verify(emailService).sendWelcomeEmail("newuser@example.com", "New User");
-        }
+        Booking booking = mock(Booking.class);
+        lenient().when(booking.getId()).thenReturn(1L);
+        lenient().when(booking.getUser()).thenReturn(guest);
+        lenient().when(booking.getLot()).thenReturn(lot);
+        lenient().when(booking.getCheckInDate()).thenReturn(LocalDate.of(2026, 3, 15));
+        lenient().when(booking.getCheckOutDate()).thenReturn(LocalDate.of(2026, 3, 18));
+        lenient().when(booking.getNumGuests()).thenReturn(2);
+        lenient().when(booking.getTotalPrice()).thenReturn(BigDecimal.valueOf(150));
+
+        return booking;
     }
 
-    private KafkaBookingEvent createBookingEvent(String status) {
-        return new KafkaBookingEvent(
-                1L,
-                1L,
-                "John Murphy",
-                "guest@example.com",
-                1L,
-                "Riverside Pitch",
-                1L,
-                "Nore Valley Park",
-                LocalDate.of(2026, 3, 15),
-                LocalDate.of(2026, 3, 18),
-                2,
-                BigDecimal.valueOf(150),
-                status,
-                LocalDateTime.now()
-        );
-    }
+    private OfferClaim createMockClaim(boolean isTest) {
+        User guest = mock(User.class);
+        lenient().when(guest.getName()).thenReturn("John Murphy");
+        lenient().when(guest.getEmail()).thenReturn("guest@example.com");
 
-    private KafkaOfferEvent createOfferEvent(boolean isTest) {
-        return new KafkaOfferEvent(
-                1L,
-                1L,
-                "10% off Farm Shop",
-                1L,
-                "Green Acres Farm Shop",
-                1L,
-                "John Murphy",
-                "guest@example.com",
-                "ABC123XYZ",
-                "CLAIMED",
-                isTest,
-                LocalDateTime.now()
-        );
+        Supplier supplier = mock(Supplier.class);
+        lenient().when(supplier.getId()).thenReturn(1L);
+        lenient().when(supplier.getBusinessName()).thenReturn("Green Acres Farm Shop");
+
+        Offer offer = mock(Offer.class);
+        lenient().when(offer.getTitle()).thenReturn("10% off Farm Shop");
+        lenient().when(offer.getSupplier()).thenReturn(supplier);
+
+        OfferClaim claim = mock(OfferClaim.class);
+        lenient().when(claim.getId()).thenReturn(1L);
+        lenient().when(claim.getUser()).thenReturn(guest);
+        lenient().when(claim.getOffer()).thenReturn(offer);
+        lenient().when(claim.getClaimCode()).thenReturn("ABC123XYZ");
+        given(claim.isTest()).willReturn(isTest);
+
+        return claim;
     }
 
     private Owner createMockOwner(String email) {
@@ -291,6 +274,7 @@ class EventConsumerEmailTest {
         given(user.getEmail()).willReturn(email);
         Owner owner = mock(Owner.class);
         given(owner.getUser()).willReturn(user);
+        given(owner.isEmailNotificationsBookings()).willReturn(true);
         return owner;
     }
 

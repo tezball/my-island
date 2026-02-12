@@ -19,12 +19,6 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db/migration
 
-  kafka:
-    # Will be overridden by Testcontainers
-    bootstrap-servers: localhost:9092
-    consumer:
-      auto-offset-reset: earliest
-
 jwt:
   secret: test-jwt-secret-key-that-is-at-least-256-bits-long-for-testing
   expiration: 86400000

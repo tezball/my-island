@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -25,6 +26,9 @@ public abstract class BddTest {
     @Autowired
     protected MockMvc mockMvc;
 
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
+
     protected ResultActions result;
     protected String authToken;
 
@@ -34,6 +38,15 @@ public abstract class BddTest {
     protected void resetScenario() {
         result = null;
         authToken = null;
+    }
+
+    /**
+     * Delete all rows from the given tables (in order) using TRUNCATE CASCADE.
+     */
+    protected void truncateTables(String... tables) {
+        for (String table : tables) {
+            jdbcTemplate.execute("TRUNCATE TABLE " + table + " CASCADE");
+        }
     }
 
     /**
