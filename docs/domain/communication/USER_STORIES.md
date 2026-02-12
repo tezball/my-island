@@ -7,6 +7,7 @@
 - As a Guest, I want to see a "Message Owner" button on my confirmed/checked-in bookings so I can contact the property.
 - As a Guest, I want to send messages to the property owner about my booking.
 - As a Guest, I want to view the full message conversation for a booking on a dedicated page.
+- As a Guest, I want messages to persist and be tied to a specific booking so context is never lost.
 
 ## Owner (Implemented)
 

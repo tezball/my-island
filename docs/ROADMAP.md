@@ -35,7 +35,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 | Payment retry | Guest can retry failed payment authorization |
 | Webhook handling | Subscription lifecycle, Connect account updates, payment events |
 
-### Owner Portal (12 pages)
+### Owner Portal (13 pages)
 
 | Feature | Details |
 |---------|---------|
@@ -54,6 +54,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 | Guest modification requests | View, approve, or decline guest-initiated change requests |
 | Owner preferences | Notification settings, instant booking toggle, guest verification, modification policy (allow/deadline/approval) |
 | Reviews | View guest reviews with aggregate ratings, post owner responses |
+| Messages | Conversation list with unread counts, latest message preview, and inline chat panel |
 | Staff management | Invite staff by email, assign roles (Manager, Receptionist, Groundskeeper, Viewer), inline role editing |
 | Subscription & billing | Subscription status, Stripe Connect onboarding, billing portal access |
 
@@ -177,7 +178,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 |---------|---------|
 | Kafka event system | Spring ApplicationEvents → Kafka topics (booking-events, offer-events, user-events) |
 | Distributed scheduling | ShedLock for job deduplication (pre-arrival emails, post-stay review emails, featured expiry) |
-| E2E test suite | Playwright with 71 tests across 9 spec files (auth, browsing, navigation, booking flow, trips, owner portal, supplier portal, admin portal) |
+| E2E test suite | Playwright with 129 tests across 21 spec files (auth, browsing, navigation, booking flow, trips, owner portal, supplier portal, admin portal, review flow, minimum stay, saved favorites, messaging, booking cancel, owner check-in, booking modifications, date blocking, review submit, notifications, marketplace claims, owner settings) |
 | Video recording | Every E2E test run produces video recordings for visual review |
 
 ---
@@ -200,39 +201,42 @@ Pre-launch checklist items (not features):
 
 | # | Feature | Category | Notes |
 |---|---------|----------|-------|
-| 1 | ~~**In-app messaging**~~ | Communication | **Done.** Per-booking message threads between guests and owners. Guest messages page, owner conversation dashboard with inline chat. |
-| 2 | **Email delivery** | Notifications | Connect transactional email provider (e.g., Resend, SES) for booking confirmations, cancellations, and owner alerts. Currently notifications are in-app only. |
+| 1 | ~~**Post-stay review emails**~~ | Engagement | **Done.** Automated email 1 day after checkout prompting guest to leave a review. Daily scheduler with ShedLock. |
+| 2 | ~~**Minimum stay rules**~~ | Pricing | **Done.** Per-lot minimum night requirement with seasonal pricing override. Enforced at booking creation and modification. |
+| 3 | ~~**Persisted saved/favorites**~~ | Discovery | **Done.** Dual-mode persistence (API for authenticated, localStorage for anonymous). Merge on login via bulk endpoint. |
+| 4 | ~~**In-app messaging**~~ | Communication | **Done.** Per-booking message threads between guests and owners. Guest messages page, owner conversation dashboard with inline chat. |
+| 5 | **Email delivery** | Notifications | Connect transactional email provider (e.g., Resend, SES) for booking confirmations, cancellations, and owner alerts. Currently notifications are in-app only. |
 
 ### P2 — High Value (Post-Launch Sprint 2)
 
 | # | Feature | Category | Notes |
 |---|---------|----------|-------|
-| 4 | **Multi-lot timeline view** | Owner UX | Gantt-style horizontal timeline — lots as rows, bookings as bars. Critical for larger parks with 20+ lots. |
-| 5 | **Group bookings** | Booking | Book multiple lots under one reservation (families, events). |
-| 6 | **Bulk date blocking** | Owner UX | Select multiple lots at once and block a date range. Currently one lot at a time. |
-| 7 | **Weekend/bank holiday surcharge** | Pricing | Automatic price uplift for Fri/Sat or specified dates. Common revenue pattern for Irish parks. |
-| 8 | **Long-stay discounts** | Pricing | Percentage off for 7/14/28+ night bookings. Encourages longer stays in shoulder season. |
+| 1 | **Multi-lot timeline view** | Owner UX | Gantt-style horizontal timeline — lots as rows, bookings as bars. Critical for larger parks with 20+ lots. |
+| 2 | **Group bookings** | Booking | Book multiple lots under one reservation (families, events). |
+| 3 | **Bulk date blocking** | Owner UX | Select multiple lots at once and block a date range. Currently one lot at a time. |
+| 4 | **Weekend/bank holiday surcharge** | Pricing | Automatic price uplift for Fri/Sat or specified dates. Common revenue pattern for Irish parks. |
+| 5 | **Long-stay discounts** | Pricing | Percentage off for 7/14/28+ night bookings. Encourages longer stays in shoulder season. |
 
 ### P3 — Nice to Have (Future Sprints)
 
 | # | Feature | Category | Notes |
 |---|---------|----------|-------|
-| 9 | **Last-minute discounts** | Pricing | Auto-discount lots not booked within X days of date. Fills last-minute gaps. |
-| 10 | **Hold/reserve with auto-release** | Booking | Tentatively hold a lot for phone enquiry, auto-release after 24-48h if not converted. |
-| 11 | **Cleaning task list** | Operations | Auto-generated list of lots needing turnover after checkout. Assign to groundskeeping staff. |
-| 12 | **Recurring blocks** | Owner UX | Annual recurring blocks (e.g., field closed every March for maintenance). |
-| 13 | **SMS notifications** | Notifications | Optional SMS for booking confirmations and arrival reminders. |
-| 14 | **Staff activity log** | Staff & Permissions | Track staff actions — "Sarah confirmed booking #234". Uses existing audit log infrastructure. |
-| 15 | **Guest notes** | Booking | Internal notes on bookings visible only to owner/staff. Not shown to guest. |
-| 16 | **Waitlist** | Booking | Guests join waitlist when a lot type is full, notified on cancellation. |
-| 17 | **Booking extras** | Booking | Add-on services (electric hookup, firewood, bike rental) priced per night or per stay. Frontend has a hardcoded hookup option but no backend entity. |
-| 18 | **Export / reports** | Owner UX | Download bookings as CSV, monthly revenue PDF. Admin portal already has CSV export. |
-| 19 | **Drag-to-block on timeline** | Owner UX | Click and drag on timeline to create block or booking. Requires #4 (timeline view) first. |
-| 20 | **Week/month toggle on calendar** | Owner UX | Switch between week (detailed) and month (overview) calendar views. |
-| 21 | **Social login** | Identity | Google, Apple, Facebook OAuth. LinkedAccount entity planned but not built. |
-| 22 | **Account deletion** | Identity | GDPR right to be forgotten. Delete account and anonymize associated data. |
-| 23 | **Support tickets** | Support | Guest/owner support ticket system with staff response thread. Entities designed but not built. |
-| 24 | **Push notifications** | Notifications | Browser push and/or mobile push for booking alerts. |
+| 1 | **Last-minute discounts** | Pricing | Auto-discount lots not booked within X days of date. Fills last-minute gaps. |
+| 2 | **Hold/reserve with auto-release** | Booking | Tentatively hold a lot for phone enquiry, auto-release after 24-48h if not converted. |
+| 3 | **Cleaning task list** | Operations | Auto-generated list of lots needing turnover after checkout. Assign to groundskeeping staff. |
+| 4 | **Recurring blocks** | Owner UX | Annual recurring blocks (e.g., field closed every March for maintenance). |
+| 5 | **SMS notifications** | Notifications | Optional SMS for booking confirmations and arrival reminders. |
+| 6 | **Staff activity log** | Staff & Permissions | Track staff actions — "Sarah confirmed booking #234". Uses existing audit log infrastructure. |
+| 7 | **Guest notes** | Booking | Internal notes on bookings visible only to owner/staff. Not shown to guest. |
+| 8 | **Waitlist** | Booking | Guests join waitlist when a lot type is full, notified on cancellation. |
+| 9 | **Booking extras** | Booking | Add-on services (electric hookup, firewood, bike rental) priced per night or per stay. Frontend has a hardcoded hookup option but no backend entity. |
+| 10 | **Export / reports** | Owner UX | Download bookings as CSV, monthly revenue PDF. Admin portal already has CSV export. |
+| 11 | **Drag-to-block on timeline** | Owner UX | Click and drag on timeline to create block or booking. Requires P2 #1 (timeline view) first. |
+| 12 | **Week/month toggle on calendar** | Owner UX | Switch between week (detailed) and month (overview) calendar views. |
+| 13 | **Social login** | Identity | Google, Apple, Facebook OAuth. LinkedAccount entity planned but not built. |
+| 14 | **Account deletion** | Identity | GDPR right to be forgotten. Delete account and anonymize associated data. |
+| 15 | **Support tickets** | Support | Guest/owner support ticket system with staff response thread. Entities designed but not built. |
+| 16 | **Push notifications** | Notifications | Browser push and/or mobile push for booking alerts. |
 
 ---
 
@@ -261,6 +265,6 @@ Pre-launch checklist items (not features):
 | 2026-02 | Supplier preferences and notification settings |
 | 2026-02 | Post-stay review request emails (automated 1 day after checkout) |
 | 2026-02 | Minimum stay rules (per-lot default + seasonal pricing override) |
-| 2026-02 | E2E test suite (71 Playwright tests with video recording) |
+| 2026-02 | E2E test suite (129 Playwright tests across 21 spec files with video recording) |
 | 2026-02 | Persisted saved/favorites with dual-mode persistence (API + localStorage merge on login) |
 | 2026-02 | In-app messaging: per-booking guest-owner threads with conversation dashboard |

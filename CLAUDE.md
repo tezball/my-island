@@ -118,6 +118,7 @@ my-island-api/src/main/java/com/myisland/api/
     ├── accommodation/     # Owner, Lot, Amenity
     ├── booking/           # Booking entity and service
     ├── marketplace/       # Supplier, Offer, Claim
+    ├── communication/     # In-app messaging (Message entity, per-booking threads)
     └── admin/             # Platform admin: audit log, leads CRM, admin services
 ```
 
@@ -127,7 +128,7 @@ my-island-api/src/main/java/com/myisland/api/
 my-island-web/src/
 ├── App.tsx                 # Router with Layout wrapper
 ├── components/
-│   ├── booking/           # BookingModal
+│   ├── booking/           # BookingModal, BookingConversation, GuestModifyBookingModal
 │   ├── layout/            # Header, BottomNav
 │   └── ui/                # Reusable components
 ├── pages/                 # Page components
@@ -156,7 +157,7 @@ my-island-web/src/
 - **API**: RESTful with `/api` prefix, Swagger documentation
 - **Events**: Spring ApplicationEvents published to Kafka topics
 - **Path Alias**: `@/*` maps to `./src/*`
-- **Layout**: Header and BottomNav hidden on `/signin`, `/signup`, `/personalize`
+- **Layout**: Header and BottomNav hidden on `/signin`, `/signup`, `/personalize`, `/trips/*/messages`
 
 ## Test Accounts
 
@@ -244,6 +245,9 @@ Key endpoints:
 - `POST /api/bookings/{id}/modification-requests/{reqId}/cancel` - Cancel pending request
 - `GET /api/owner/modification-requests` - Owner's pending modification requests
 - `POST /api/owner/modification-requests/{reqId}/resolve` - Approve/decline request
+- `GET/POST /api/messages/booking/{bookingId}` - Get/send messages for a booking
+- `GET /api/messages/unread` - Unread message counts per booking
+- `GET /api/messages/owner/conversations` - Owner conversation list
 - `GET /api/marketplace/offers` - Browse offers
 - `POST /api/supplier/redeem/{code}` - Redeem voucher
 - `GET/POST/{lotId}/DELETE/{lotId} /api/saved` - Saved/favorites (list, save, unsave)

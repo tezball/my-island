@@ -1,6 +1,6 @@
 # Accommodation User Stories
 
-## Owner Stories
+## Owner Stories (Implemented)
 
 - As an Owner, I want to create and update campsite details (name, description, contact info) so that guests can see accurate information.
 - As an Owner, I want to manage lot inventory, pricing, and activation status so that I can maximize revenue.
@@ -11,8 +11,11 @@
 - As an Owner, I want to subscribe to access premium features (analytics, lot creation, receiving bookings).
 - As an Owner, I want to purchase a featured promotion so my property appears prominently on the homepage.
 - As an Owner, I want to set up Stripe Connect so I can receive booking payouts.
+- As an Owner, I want to set availability calendars and block dates manually to prevent bookings on specific days.
+- As an Owner, I want to set seasonal pricing rules (date range + price override per lot type).
+- As an Owner, I want to invite staff members with preset roles (Manager, Receptionist, Groundskeeper, Viewer) to help manage my property.
 
-## Guest Stories
+## Guest Stories (Implemented)
 
 - As a Guest, I want to view campsite details and facilities before booking.
 - As a Guest, I want to see accommodation options grouped by type with pricing and availability.
@@ -20,6 +23,5 @@
 
 ## Planned (Not Yet Built)
 
-- As an Owner, I want to set availability calendars and block dates manually to prevent bookings on specific days.
 - As an Owner, I want to configure check-in instructions so guests know how to arrive.
 - As a Guest, I want to see campsite rules before booking.
