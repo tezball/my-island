@@ -29,6 +29,9 @@
 - As an Owner, I want to set minimum stay rules per lot (default 1 night) enforced at booking creation and modification.
 - As an Owner, I want seasonal pricing rules to optionally override the minimum stay for their date range.
 - As an Owner, I want to create manual bookings for walk-ins and phone enquiries.
+- As an Owner, I want a Gantt-style timeline view showing all lots as rows and bookings as colored bars, so I can quickly see occupancy across the park.
+- As an Owner, I want to switch the timeline between 1-week, 2-week, and 1-month views and navigate forward/back.
+- As an Owner, I want to click a booking bar on the timeline to see guest name, dates, status, and price in a popover.
 
 ## Planned (Not Yet Built)
 

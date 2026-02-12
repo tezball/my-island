@@ -13,7 +13,7 @@ import { AuthProvider } from './context/AuthContext';
 import { SavedProvider } from './context/SavedContext';
 import { OwnerGuard } from './components/auth/OwnerGuard';
 import { OwnerLayout } from './components/owner/OwnerLayout';
-import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage, OwnerModificationRequestsPage, OwnerMessagesPage } from './pages/owner';
+import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage, OwnerModificationRequestsPage, OwnerMessagesPage, OwnerTimelinePage } from './pages/owner';
 import { BookingMessagesPage } from './pages/BookingMessagesPage';
 import { SupplierGuard } from './components/auth/SupplierGuard';
 import { AdminGuard } from './components/auth/AdminGuard';
@@ -126,6 +126,7 @@ function App() {
                 <Route path="lots" element={<OwnerLotsPage />} />
                 <Route path="bookings" element={<OwnerBookingsPage />} />
                 <Route path="calendar" element={<OwnerCalendarPage />} />
+                <Route path="timeline" element={<OwnerTimelinePage />} />
                 <Route path="reviews" element={<OwnerReviewsPage />} />
                 <Route path="property" element={<OwnerPropertyPage />} />
                 <Route path="pricing" element={<OwnerPricingPage />} />

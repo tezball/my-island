@@ -12,6 +12,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/owner/lots': 'My Lots',
     '/owner/bookings': 'Bookings',
     '/owner/calendar': 'Calendar',
+    '/owner/timeline': 'Timeline',
     '/owner/reviews': 'Reviews',
     '/owner/property': 'Property Details',
     '/owner/pricing': 'Pricing',
@@ -71,6 +72,7 @@ const OwnerLayoutContent: React.FC = () => {
                     {perms.lots?.canRead !== false && <OwnerNavLink to="/owner/lots" icon="grid_view" label="My Lots" />}
                     {perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />}
                     {perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />}
+                    {perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/timeline" icon="view_timeline" label="Timeline" />}
                     {perms.reviews?.canRead !== false && <OwnerNavLink to="/owner/reviews" icon="rate_review" label="Reviews" />}
                     {perms.property?.canRead !== false && <OwnerNavLink to="/owner/property" icon="home" label="Property Details" />}
                     {perms.pricing?.canRead !== false && <OwnerNavLink to="/owner/pricing" icon="payments" label="Pricing" />}

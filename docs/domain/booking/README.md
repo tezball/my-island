@@ -66,6 +66,7 @@ See [PAYMENT_FLOW.md](./PAYMENT_FLOW.md) for full payment integration details.
 - **OwnerTodayPage** — Today's arrivals and departures
 - **OwnerModificationRequestsPage** — Review and approve/decline guest modification requests
 - **GuestModifyBookingModal** — Guest-facing modal for modifying booking dates, lot, and power hookup
+- **OwnerTimelinePage** — Gantt-style horizontal timeline: lots as rows grouped by type, bookings as color-coded bars, blocked periods as striped bars. 1w/2w/1m range toggle, prev/next/today navigation, booking popover on click.
 - **BookingMessagesPage** (`/trips/{bookingId}/messages`) — Guest-side chat for a booking (see [communication module](../communication/README.md))
 
 ## Schedulers

@@ -10,3 +10,4 @@ export { OwnerReviewsPage } from './OwnerReviewsPage';
 export { OwnerStaffPage } from './OwnerStaffPage';
 export { OwnerModificationRequestsPage } from './OwnerModificationRequestsPage';
 export { OwnerMessagesPage } from './OwnerMessagesPage';
+export { OwnerTimelinePage } from './OwnerTimelinePage';

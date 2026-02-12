@@ -35,7 +35,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 | Payment retry | Guest can retry failed payment authorization |
 | Webhook handling | Subscription lifecycle, Connect account updates, payment events |
 
-### Owner Portal (13 pages)
+### Owner Portal (14 pages)
 
 | Feature | Details |
 |---------|---------|
@@ -45,6 +45,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 | Check-in / check-out | Record guest arrivals and departures |
 | Today view | Today's arrivals, departures, and in-house guests |
 | Calendar | Month view with color-coded booking status |
+| Timeline | Gantt-style horizontal timeline — lots as rows grouped by type, bookings as color-coded bars. 1w/2w/1m view range with prev/next/today navigation. Booking popover on click. Blocked periods as striped bars. |
 | Property settings | Edit campsite name, description, location, contact, amenities |
 | Pricing rules | Seasonal pricing (date range + price override per lot type) |
 | Minimum stay rules | Per-lot minimum night requirement (default 1). Seasonal pricing rules can override the minimum stay for their date range. Enforced at booking creation and modification. |
@@ -178,7 +179,7 @@ My Island is a camping/glamping booking platform for Ireland with an integrated 
 |---------|---------|
 | Kafka event system | Spring ApplicationEvents → Kafka topics (booking-events, offer-events, user-events) |
 | Distributed scheduling | ShedLock for job deduplication (pre-arrival emails, post-stay review emails, featured expiry) |
-| E2E test suite | Playwright with 129 tests across 21 spec files (auth, browsing, navigation, booking flow, trips, owner portal, supplier portal, admin portal, review flow, minimum stay, saved favorites, messaging, booking cancel, owner check-in, booking modifications, date blocking, review submit, notifications, marketplace claims, owner settings) |
+| E2E test suite | Playwright with 146 tests across 22 spec files (auth, browsing, navigation, booking flow, trips, owner portal, supplier portal, admin portal, review flow, minimum stay, saved favorites, messaging, booking cancel, owner check-in, booking modifications, date blocking, review submit, notifications, marketplace claims, owner settings, owner timeline) |
 | Video recording | Every E2E test run produces video recordings for visual review |
 
 ---
@@ -211,7 +212,7 @@ Pre-launch checklist items (not features):
 
 | # | Feature | Category | Notes |
 |---|---------|----------|-------|
-| 1 | **Multi-lot timeline view** | Owner UX | Gantt-style horizontal timeline — lots as rows, bookings as bars. Critical for larger parks with 20+ lots. |
+| 1 | ~~**Multi-lot timeline view**~~ | Owner UX | **Done.** Gantt-style horizontal timeline at `/owner/timeline` — lots as rows grouped by type, bookings as color-coded bars, blocked periods as striped bars. 1w/2w/1m range toggle, prev/next/today nav, booking popover on click. |
 | 2 | **Group bookings** | Booking | Book multiple lots under one reservation (families, events). |
 | 3 | **Bulk date blocking** | Owner UX | Select multiple lots at once and block a date range. Currently one lot at a time. |
 | 4 | **Weekend/bank holiday surcharge** | Pricing | Automatic price uplift for Fri/Sat or specified dates. Common revenue pattern for Irish parks. |
@@ -265,6 +266,7 @@ Pre-launch checklist items (not features):
 | 2026-02 | Supplier preferences and notification settings |
 | 2026-02 | Post-stay review request emails (automated 1 day after checkout) |
 | 2026-02 | Minimum stay rules (per-lot default + seasonal pricing override) |
-| 2026-02 | E2E test suite (129 Playwright tests across 21 spec files with video recording) |
+| 2026-02 | E2E test suite (146 Playwright tests across 22 spec files with video recording) |
 | 2026-02 | Persisted saved/favorites with dual-mode persistence (API + localStorage merge on login) |
 | 2026-02 | In-app messaging: per-booking guest-owner threads with conversation dashboard |
+| 2026-02 | Multi-lot timeline view: Gantt-style owner view with grouped lots, booking bars, and date navigation |
