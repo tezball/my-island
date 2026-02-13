@@ -168,7 +168,7 @@ wait_for_healthy() {
 start_docker_infra() {
     log_step "Starting Docker infrastructure..."
 
-    docker compose up -d postgres zookeeper kafka kafka-ui localstack mailpit grafana prometheus loki
+    docker compose up -d postgres localstack mailpit grafana prometheus loki
 
     # Wait for services to be healthy using Docker health checks
     log_info "Waiting for services to be healthy..."
@@ -178,14 +178,6 @@ start_docker_infra() {
         log_success "PostgreSQL ready"
     else
         log_error "PostgreSQL failed to become healthy"
-        return 1
-    fi
-
-    echo -n "  Kafka"
-    if wait_for_healthy "myisland-kafka" 90; then
-        log_success "Kafka ready"
-    else
-        log_error "Kafka failed to become healthy"
         return 1
     fi
 
@@ -341,7 +333,6 @@ open_browser_tabs() {
         "http://localhost:5173"
         "http://localhost:8080/api/swagger-ui.html"
         "http://localhost:8025"
-        "http://localhost:8081"
         "http://localhost:3000"
         "http://localhost:9090"
     )
@@ -349,7 +340,6 @@ open_browser_tabs() {
         "Frontend"
         "Swagger"
         "Mailpit"
-        "Kafka UI"
         "Grafana"
         "Prometheus"
     )
@@ -424,7 +414,6 @@ main() {
     echo ""
     echo "  Dev Tools:"
     echo "    Mailpit:     http://localhost:8025"
-    echo "    Kafka UI:    http://localhost:8081"
     echo "    Grafana:     http://localhost:3000  (admin / admin)"
     echo "    Prometheus:  http://localhost:9090"
     echo "    Loki:        http://localhost:3100"

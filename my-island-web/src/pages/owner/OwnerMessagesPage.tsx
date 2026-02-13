@@ -6,21 +6,32 @@ import type { ConversationSummary } from '../../types/message';
 export const OwnerMessagesPage: React.FC = () => {
     const [conversations, setConversations] = useState<ConversationSummary[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
 
     useEffect(() => {
+        let cancelled = false;
+
         const fetchConversations = async () => {
             try {
                 const data = await messageService.getOwnerConversations();
-                setConversations(data);
-            } catch (error) {
-                console.error('Failed to fetch conversations:', error);
+                if (!cancelled) {
+                    setConversations(data);
+                }
+            } catch (err) {
+                if (!cancelled) {
+                    console.error('Failed to fetch conversations:', err);
+                    setError('Unable to load conversations. Please try again.');
+                }
             } finally {
-                setIsLoading(false);
+                if (!cancelled) {
+                    setIsLoading(false);
+                }
             }
         };
 
         fetchConversations();
+        return () => { cancelled = true; };
     }, []);
 
     const formatDate = (dateStr: string) => {
@@ -64,6 +75,24 @@ export const OwnerMessagesPage: React.FC = () => {
         return (
             <div className="flex items-center justify-center py-20">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
+                    <span className="material-symbols-outlined text-3xl text-red-400">error</span>
+                </div>
+                <h3 className="text-lg font-semibold text-[#111418] dark:text-white mb-1">Something went wrong</h3>
+                <p className="text-sm text-gray-500 text-center max-w-sm mb-4">{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-[#20d85f] rounded-lg transition-colors"
+                >
+                    Retry
+                </button>
             </div>
         );
     }

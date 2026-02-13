@@ -439,7 +439,7 @@ export const HomePage: React.FC = () => {
                                     className="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-4 text-left transition-colors"
                                 >
                                     <div className="font-semibold text-[#111418] dark:text-white">{dest.county}</div>
-                                    <div className="text-sm text-gray-500">{dest.count} sites</div>
+                                    <div className="text-sm text-gray-500">{dest.count} {dest.count === 1 ? 'site' : 'sites'}</div>
                                 </button>
                             ))}
                         </div>

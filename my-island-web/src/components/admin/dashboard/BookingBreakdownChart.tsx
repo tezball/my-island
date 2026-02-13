@@ -5,6 +5,9 @@ import type { BookingBreakdown } from '../../../types/admin';
 
 const COLORS = ['#f59e0b', '#3b82f6', '#10b981', '#6366f1', '#ef4444', '#6b7280', '#f97316'];
 
+const formatStatus = (status: string) =>
+  status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
 export const BookingBreakdownChart: React.FC = () => {
   const [data, setData] = useState<BookingBreakdown[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,13 +27,13 @@ export const BookingBreakdownChart: React.FC = () => {
       ) : (
         <ResponsiveContainer width="100%" height={256}>
           <PieChart>
-            <Pie data={data} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={80} label={({ name }) => (name as string)?.replace(/_/g, ' ')}>
+            <Pie data={data} dataKey="count" nameKey="status" cx="50%" cy="40%" outerRadius={80}>
               {data.map((_, i) => (
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
-            <Legend />
+            <Tooltip formatter={(value, name) => [value, formatStatus(String(name))]} />
+            <Legend formatter={(value: string) => formatStatus(value)} wrapperStyle={{ fontSize: '11px' }} />
           </PieChart>
         </ResponsiveContainer>
       )}
