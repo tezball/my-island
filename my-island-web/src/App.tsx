@@ -58,6 +58,10 @@ import { BecomeHostPage } from './pages/supplier-onboarding';
 import { BecomeSupplierPage } from './pages/supplier-business-onboarding';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { FaqPage } from './pages/FaqPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
+import { Footer } from './components/layout/Footer';
+import { CookieConsentBanner } from './components/CookieConsentBanner';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -80,6 +84,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark text-[#111418] dark:text-white font-display">
       {!shouldHideNav && <Header />}
       {children}
+      {!shouldHideNav && <Footer />}
       {!shouldHideNav && <BottomNav />}
     </div>
   );
@@ -114,6 +119,8 @@ function App() {
               <Route path="/journal" element={<JournalPage />} />
               <Route path="/marketplace/supplier/:id" element={<SupplierDetailsPage />} />
               <Route path="/faq" element={<FaqPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
             </Routes>
           </Layout>
 
@@ -186,6 +193,8 @@ function App() {
           <Routes>
             <Route path="/become-a-supplier" element={<BecomeSupplierPage />} />
           </Routes>
+
+          <CookieConsentBanner />
         </SavedProvider>
       </AuthProvider>
     </BrowserRouter>

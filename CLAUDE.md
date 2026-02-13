@@ -129,7 +129,7 @@ my-island-web/src/
 ├── App.tsx                 # Router with Layout wrapper
 ├── components/
 │   ├── booking/           # BookingModal, BookingConversation, GuestModifyBookingModal
-│   ├── layout/            # Header, BottomNav
+│   ├── layout/            # Header, BottomNav, Footer
 │   └── ui/                # Reusable components
 ├── pages/                 # Page components
 │   ├── owner/            # Owner dashboard pages
@@ -157,11 +157,13 @@ my-island-web/src/
 - **API**: RESTful with `/api` prefix, Swagger documentation
 - **Events**: Spring ApplicationEvents with @Async + @TransactionalEventListener for post-commit email notifications
 - **Path Alias**: `@/*` maps to `./src/*`
-- **Layout**: Header and BottomNav hidden on `/signin`, `/signup`, `/personalize`, `/trips/*/messages`
+- **Layout**: Header, Footer, and BottomNav hidden on `/signin`, `/signup`, `/personalize`, `/trips/*/messages`
+- **Environment Gating**: `VITE_SHOW_TEST_USERS=true` in `.env.development` shows the test user dropdown on sign-in; `.env.production` hides it
+- **Cookie Consent**: `CookieConsentBanner` component stores `cookie_consent` in localStorage; appears on first visit, dismissed permanently on accept
 
 ## Test Accounts
 
-The login page has a dropdown that auto-fills credentials for these accounts.
+The login page has a dropdown that auto-fills credentials for these accounts (dev only, gated by `VITE_SHOW_TEST_USERS` env var). Test accounts are only seeded in the `dev` Spring profile.
 
 ### Subscribed Owners
 | Email | Password | Description |
@@ -211,9 +213,16 @@ The login page has a dropdown that auto-fills credentials for these accounts.
 
 ## Database
 
-Flyway migrations in `my-island-api/src/main/resources/db/migration/`:
+Flyway migrations in `my-island-api/src/main/resources/db/migration/` (schema only).
+Seed data lives in `my-island-api/src/main/resources/db/seed/` and is only loaded in the `dev` Spring profile.
+
 - V001-V007: Schema tables
-- V999: Seed data
+- `db/seed/V999+`: Test accounts, sample bookings, reviews, etc.
+
+**Important**: After moving seed files to `db/seed/`, existing dev databases need a wipe:
+```bash
+docker compose down -v && docker compose up -d
+```
 
 ## TypeScript Configuration
 

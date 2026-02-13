@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+const showTestUsers = import.meta.env.VITE_SHOW_TEST_USERS === 'true';
+
 // Test accounts for development
 const TEST_USERS = [
     // Subscribed Owners
@@ -32,8 +34,8 @@ const TEST_USERS = [
 export const SignInPage: React.FC = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const [email, setEmail] = React.useState(TEST_USERS[0].email);
-    const [password, setPassword] = React.useState(TEST_USERS[0].password);
+    const [email, setEmail] = React.useState(showTestUsers ? TEST_USERS[0].email : '');
+    const [password, setPassword] = React.useState(showTestUsers ? TEST_USERS[0].password : '');
     const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
@@ -74,32 +76,34 @@ export const SignInPage: React.FC = () => {
                 </div>
 
                 {/* Mock User Dropdown for Testing */}
-                <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800">
-                    <label className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2 block">
-                        Test Users (Auto-fill)
-                    </label>
-                    <div className="relative">
-                        <select
-                            className="w-full rounded-lg border-blue-200 dark:border-blue-800 bg-white dark:bg-[#1a2632] py-3 px-4 text-sm text-[#111418] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer appearance-none"
-                            onChange={(e) => {
-                                const selectedUser = TEST_USERS.find(u => u.email === e.target.value);
-                                if (selectedUser) {
-                                    setEmail(selectedUser.email);
-                                    setPassword(selectedUser.password);
-                                }
-                            }}
-                            value={email}
-                        >
-                            <option value="" disabled>Select a test user...</option>
-                            {TEST_USERS.map((user) => (
-                                <option key={user.email} value={user.email}>
-                                    {user.label}
-                                </option>
-                            ))}
-                        </select>
-                        <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xl">expand_more</span>
+                {showTestUsers && (
+                    <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800">
+                        <label className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2 block">
+                            Test Users (Auto-fill)
+                        </label>
+                        <div className="relative">
+                            <select
+                                className="w-full rounded-lg border-blue-200 dark:border-blue-800 bg-white dark:bg-[#1a2632] py-3 px-4 text-sm text-[#111418] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer appearance-none"
+                                onChange={(e) => {
+                                    const selectedUser = TEST_USERS.find(u => u.email === e.target.value);
+                                    if (selectedUser) {
+                                        setEmail(selectedUser.email);
+                                        setPassword(selectedUser.password);
+                                    }
+                                }}
+                                value={email}
+                            >
+                                <option value="" disabled>Select a test user...</option>
+                                {TEST_USERS.map((user) => (
+                                    <option key={user.email} value={user.email}>
+                                        {user.label}
+                                    </option>
+                                ))}
+                            </select>
+                            <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xl">expand_more</span>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                     {error && (

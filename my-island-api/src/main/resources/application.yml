@@ -99,6 +99,9 @@ spring:
     activate:
       on-profile: dev
 
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed
+
   jpa:
     show-sql: true
 

@@ -194,9 +194,9 @@ Pre-launch checklist items (not features):
 - Production environment deployment
 - Real Stripe keys (switch from test mode)
 - Domain + SSL setup
-- Seed data cleanup (remove test accounts)
-- Privacy policy & terms of service pages
-- GDPR cookie consent
+- ~~Seed data cleanup (remove test accounts)~~ **Done.** Seed data moved to `db/seed/`, only loaded in `dev` profile. Test user dropdown gated by `VITE_SHOW_TEST_USERS` env var.
+- ~~Privacy policy & terms of service pages~~ **Done.** `/privacy` and `/terms` routes with collapsible sections. Irish GDPR content. Footer with legal links added to all public pages.
+- ~~GDPR cookie consent~~ **Done.** `CookieConsentBanner` component with localStorage persistence. Links to `/privacy`.
 
 ### P1 — High Value (Post-Launch Sprint 1)
 
@@ -270,3 +270,4 @@ Pre-launch checklist items (not features):
 | 2026-02 | Persisted saved/favorites with dual-mode persistence (API + localStorage merge on login) |
 | 2026-02 | In-app messaging: per-booking guest-owner threads with conversation dashboard |
 | 2026-02 | Multi-lot timeline view: Gantt-style owner view with grouped lots, booking bars, and date navigation |
+| 2026-02 | Pre-launch: environment-gated seed data, privacy policy & terms of service, GDPR cookie consent, site footer |

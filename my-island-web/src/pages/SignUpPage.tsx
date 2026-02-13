@@ -162,7 +162,7 @@ export const SignUpPage: React.FC = () => {
                 </form>
 
                 <p className="mt-8 text-center text-xs text-gray-500 dark:text-gray-500 leading-relaxed px-4">
-                    By creating an account, you agree to our <a className="underline hover:text-primary transition-colors" href="#">Terms of Service</a> and <a className="underline hover:text-primary transition-colors" href="#">Privacy Policy</a>.
+                    By creating an account, you agree to our <Link to="/terms" className="underline hover:text-primary transition-colors">Terms of Service</Link> and <Link to="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</Link>.
                 </p>
             </main>
 
