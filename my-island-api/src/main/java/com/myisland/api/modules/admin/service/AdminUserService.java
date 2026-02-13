@@ -104,6 +104,20 @@ public class AdminUserService {
         return toDto(saved);
     }
 
+    @Transactional(readOnly = true)
+    public Page<Map<String, Object>> findEligibleOwners(String search, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> users = userRepository.findEligibleOwners(search == null ? "" : search, pageRequest);
+        return users.map(this::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Map<String, Object>> findEligibleSuppliers(String search, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<User> users = userRepository.findEligibleSuppliers(search == null ? "" : search, pageRequest);
+        return users.map(this::toDto);
+    }
+
     private Map<String, Object> toDto(User user) {
         Map<String, Object> dto = new HashMap<>();
         dto.put("id", user.getId());

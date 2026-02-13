@@ -73,6 +73,8 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | GET | `/admin/users/{id}` | User detail |
 | PUT | `/admin/users/{id}` | Update user |
 | PUT | `/admin/users/{id}/toggle-active` | Enable/disable user account |
+| GET | `/admin/users/eligible-owners` | Users eligible to become owners (not already an owner) |
+| GET | `/admin/users/eligible-suppliers` | Users eligible to become suppliers (not already a supplier) |
 
 ### Bookings
 | Method | Path | Description |
@@ -87,15 +89,19 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 |--------|------|-------------|
 | GET | `/admin/owners` | List owners with subscription filter |
 | GET | `/admin/owners/{id}` | Owner detail |
-| PUT | `/admin/owners/{id}` | Update owner |
+| POST | `/admin/owners` | Create owner (link existing user) |
+| PUT | `/admin/owners/{id}` | Update owner (all editable fields) |
+| PUT | `/admin/owners/{id}/deactivate` | Toggle owner deactivation |
 
 ### Suppliers
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/admin/suppliers` | List suppliers with category filter |
 | GET | `/admin/suppliers/{id}` | Supplier detail |
-| PUT | `/admin/suppliers/{id}` | Update supplier |
+| POST | `/admin/suppliers` | Create supplier (link existing user) |
+| PUT | `/admin/suppliers/{id}` | Update supplier (all editable fields) |
 | PUT | `/admin/suppliers/{id}/verify` | Toggle supplier verification |
+| PUT | `/admin/suppliers/{id}/deactivate` | Toggle supplier deactivation |
 
 ### Reviews
 | Method | Path | Description |
@@ -147,10 +153,10 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | `/admin/users/:id` | AdminUserDetail | User detail with edit form, toggle active |
 | `/admin/bookings` | AdminBookings | Booking list with status and date filters |
 | `/admin/bookings/:id` | AdminBookingDetail | Booking detail with cancel action |
-| `/admin/owners` | AdminOwners | Owner list with subscription status filter |
-| `/admin/owners/:id` | AdminOwnerDetail | Owner detail with edit form |
-| `/admin/suppliers` | AdminSuppliers | Supplier list with category filter |
-| `/admin/suppliers/:id` | AdminSupplierDetail | Supplier detail with verify toggle |
+| `/admin/owners` | AdminOwners | Owner list with subscription filter, create modal |
+| `/admin/owners/:id` | AdminOwnerDetail | Owner detail with full edit, deactivate toggle |
+| `/admin/suppliers` | AdminSuppliers | Supplier list with category filter, create modal |
+| `/admin/suppliers/:id` | AdminSupplierDetail | Supplier detail with full edit, verify/deactivate toggles |
 | `/admin/reviews` | AdminReviews | Unified review list with flag/delete actions |
 | `/admin/subscriptions` | AdminSubscriptions | Subscription overview with KPI cards |
 | `/admin/financial` | AdminFinancial | Financial charts with CSV export |
@@ -165,6 +171,7 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | V1049 | Schema changes (adds `is_active` to users) |
 | V1050 | Admin audit log table |
 | V1051 | Leads CRM tables (leads + lead_interactions) |
+| V1059 | Add `is_deactivated` column to owners table |
 
 ## Implementation Notes
 - All admin actions are automatically logged to `AdminAuditLog` with before/after value snapshots.

@@ -48,6 +48,22 @@ public class AdminUserController {
         return ResponseEntity.ok(userService.toggleActive(userDetails.getUserId(), id));
     }
 
+    @GetMapping("/eligible-owners")
+    public ResponseEntity<Page<Map<String, Object>>> eligibleOwners(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(userService.findEligibleOwners(search, page, size));
+    }
+
+    @GetMapping("/eligible-suppliers")
+    public ResponseEntity<Page<Map<String, Object>>> eligibleSuppliers(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(userService.findEligibleSuppliers(search, page, size));
+    }
+
     public record UpdateUserRequest(
             String name,
             Boolean isOwner,

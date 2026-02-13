@@ -491,6 +491,7 @@ Owner (Root)
 | allowGuestModifications | Boolean | Allow guests to modify their bookings (default true) |
 | modificationDeadlineDays | Integer | Min days before check-in for guest modifications (default 3) |
 | requireModificationApproval | Boolean | Require owner approval for guest modifications (default false) |
+| isDeactivated | Boolean | Admin soft-delete / deactivation flag (default false) |
 
 ---
 

@@ -32,13 +32,25 @@ public class AdminSupplierController {
         return ResponseEntity.ok(supplierService.getSupplier(id));
     }
 
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createSupplier(
+            @RequestBody CreateSupplierRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(supplierService.createSupplier(
+                userDetails.getUserId(), request.userId(), request.businessName(), request.county(),
+                request.town(), request.address(), request.category(), request.description(),
+                request.phone(), request.website(), request.latitude(), request.longitude()));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateSupplier(
             @PathVariable Long id,
             @RequestBody UpdateSupplierRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(supplierService.updateSupplier(
-                userDetails.getUserId(), id, request.businessName(), request.county(), request.description()));
+                userDetails.getUserId(), id, request.businessName(), request.county(),
+                request.town(), request.address(), request.category(), request.description(),
+                request.phone(), request.website(), request.latitude(), request.longitude()));
     }
 
     @PutMapping("/{id}/verify")
@@ -48,9 +60,37 @@ public class AdminSupplierController {
         return ResponseEntity.ok(supplierService.toggleVerified(userDetails.getUserId(), id));
     }
 
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Map<String, Object>> toggleDeactivated(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(supplierService.toggleDeactivated(userDetails.getUserId(), id));
+    }
+
+    public record CreateSupplierRequest(
+            Long userId,
+            String businessName,
+            String county,
+            String town,
+            String address,
+            String category,
+            String description,
+            String phone,
+            String website,
+            Double latitude,
+            Double longitude
+    ) {}
+
     public record UpdateSupplierRequest(
             String businessName,
             String county,
-            String description
+            String town,
+            String address,
+            String category,
+            String description,
+            String phone,
+            String website,
+            Double latitude,
+            Double longitude
     ) {}
 }

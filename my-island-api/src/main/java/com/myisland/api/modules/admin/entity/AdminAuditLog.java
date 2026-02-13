@@ -2,6 +2,8 @@ package com.myisland.api.modules.admin.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -29,12 +31,15 @@ public class AdminAuditLog {
     private String summary;
 
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String details;
 
     @Column(name = "previous_value", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String previousValue;
 
     @Column(name = "new_value", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String newValue;
 
     @CreationTimestamp

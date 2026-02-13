@@ -9,8 +9,10 @@ import type {
   AdminBooking,
   AdminOwner,
   AdminOwnerUpdate,
+  AdminOwnerCreate,
   AdminSupplier,
   AdminSupplierUpdate,
+  AdminSupplierCreate,
   AdminReview,
   SubscriptionOverview,
   SubscriptionEntry,
@@ -58,6 +60,12 @@ export const adminUserService = {
 
   toggleActive: (id: number) =>
     apiRequest<AdminUser>(`/admin/users/${id}/toggle-active`, { method: 'PUT' }),
+
+  eligibleOwners: (search: string = '', page: number = 0, size: number = 20) =>
+    apiRequest<PageResponse<AdminUser>>(`/admin/users/eligible-owners?search=${encodeURIComponent(search)}&page=${page}&size=${size}`),
+
+  eligibleSuppliers: (search: string = '', page: number = 0, size: number = 20) =>
+    apiRequest<PageResponse<AdminUser>>(`/admin/users/eligible-suppliers?search=${encodeURIComponent(search)}&page=${page}&size=${size}`),
 };
 
 // --- Bookings ---
@@ -85,8 +93,14 @@ export const adminOwnerService = {
   get: (id: number) =>
     apiRequest<AdminOwner>(`/admin/owners/${id}`),
 
+  create: (data: AdminOwnerCreate) =>
+    apiRequest<AdminOwner>('/admin/owners', { method: 'POST', body: data }),
+
   update: (id: number, data: AdminOwnerUpdate) =>
     apiRequest<AdminOwner>(`/admin/owners/${id}`, { method: 'PUT', body: data }),
+
+  toggleDeactivated: (id: number) =>
+    apiRequest<AdminOwner>(`/admin/owners/${id}/deactivate`, { method: 'PUT' }),
 };
 
 // --- Suppliers ---
@@ -98,11 +112,17 @@ export const adminSupplierService = {
   get: (id: number) =>
     apiRequest<AdminSupplier>(`/admin/suppliers/${id}`),
 
+  create: (data: AdminSupplierCreate) =>
+    apiRequest<AdminSupplier>('/admin/suppliers', { method: 'POST', body: data }),
+
   update: (id: number, data: AdminSupplierUpdate) =>
     apiRequest<AdminSupplier>(`/admin/suppliers/${id}`, { method: 'PUT', body: data }),
 
   toggleVerified: (id: number) =>
     apiRequest<AdminSupplier>(`/admin/suppliers/${id}/verify`, { method: 'PUT' }),
+
+  toggleDeactivated: (id: number) =>
+    apiRequest<AdminSupplier>(`/admin/suppliers/${id}/deactivate`, { method: 'PUT' }),
 };
 
 // --- Reviews ---

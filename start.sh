@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# My Island - Local Development Startup Script
+# My Island - Local Startup Script
 # Always starts fresh with clean data - stops everything, cleans, and rebuilds
+#
+# Usage:
+#   ./start.sh          Dev mode (default) — seed data, test users, dev tools
+#   ./start.sh --prod   Prod mode — clean DB, no seed data, no test users
 
 set -e
 
@@ -168,7 +172,11 @@ wait_for_healthy() {
 start_docker_infra() {
     log_step "Starting Docker infrastructure..."
 
-    docker compose up -d postgres localstack mailpit grafana prometheus loki
+    if [ "$MODE" = "prod" ]; then
+        docker compose up -d postgres localstack
+    else
+        docker compose up -d postgres localstack mailpit grafana prometheus loki
+    fi
 
     # Wait for services to be healthy using Docker health checks
     log_info "Waiting for services to be healthy..."
@@ -189,18 +197,20 @@ start_docker_infra() {
         return 1
     fi
 
-    echo -n "  Mailpit"
-    if wait_for_healthy "myisland-mailpit" 30; then
-        log_success "Mailpit ready"
-    else
-        log_warn "Mailpit not healthy (non-critical)"
-    fi
+    if [ "$MODE" = "dev" ]; then
+        echo -n "  Mailpit"
+        if wait_for_healthy "myisland-mailpit" 30; then
+            log_success "Mailpit ready"
+        else
+            log_warn "Mailpit not healthy (non-critical)"
+        fi
 
-    echo -n "  Grafana"
-    if wait_for_port 3000 "Grafana" 30; then
-        log_success "Grafana ready"
-    else
-        log_warn "Grafana not ready (non-critical)"
+        echo -n "  Grafana"
+        if wait_for_port 3000 "Grafana" 30; then
+            log_success "Grafana ready"
+        else
+            log_warn "Grafana not ready (non-critical)"
+        fi
     fi
 
     # Give services a moment to fully initialize
@@ -224,10 +234,15 @@ start_backend() {
     fi
 
     # Compile and start
-    log_info "Compiling and starting backend..."
-    nohup ./mvnw spring-boot:run \
-        -Dspring-boot.run.profiles=dev \
-        > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
+    log_info "Compiling and starting backend ($MODE mode)..."
+    if [ "$MODE" = "prod" ]; then
+        nohup ./mvnw spring-boot:run \
+            > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
+    else
+        nohup ./mvnw spring-boot:run \
+            -Dspring-boot.run.profiles=dev \
+            > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
+    fi
 
     local backend_pid=$!
     echo $backend_pid > "$SCRIPT_DIR/logs/backend.pid"
@@ -258,7 +273,11 @@ start_frontend() {
         npm install
     fi
 
-    nohup npm run dev > "$SCRIPT_DIR/logs/frontend.log" 2>&1 &
+    if [ "$MODE" = "prod" ]; then
+        VITE_SHOW_TEST_USERS=false nohup npm run dev > "$SCRIPT_DIR/logs/frontend.log" 2>&1 &
+    else
+        nohup npm run dev > "$SCRIPT_DIR/logs/frontend.log" 2>&1 &
+    fi
 
     local frontend_pid=$!
     echo $frontend_pid > "$SCRIPT_DIR/logs/frontend.pid"
@@ -329,20 +348,22 @@ open_browser_tabs() {
         return 0
     fi
 
-    local urls=(
-        "http://localhost:5173"
-        "http://localhost:8080/api/swagger-ui.html"
-        "http://localhost:8025"
-        "http://localhost:3000"
-        "http://localhost:9090"
-    )
-    local labels=(
-        "Frontend"
-        "Swagger"
-        "Mailpit"
-        "Grafana"
-        "Prometheus"
-    )
+    local urls=()
+    local labels=()
+
+    urls+=("http://localhost:5173")
+    labels+=("Frontend")
+    urls+=("http://localhost:8080/api/swagger-ui.html")
+    labels+=("Swagger")
+
+    if [ "$MODE" = "dev" ]; then
+        urls+=("http://localhost:8025")
+        labels+=("Mailpit")
+        urls+=("http://localhost:3000")
+        labels+=("Grafana")
+        urls+=("http://localhost:9090")
+        labels+=("Prometheus")
+    fi
 
     for i in "${!urls[@]}"; do
         $open_cmd "${urls[$i]}" &>/dev/null &
@@ -357,9 +378,25 @@ open_browser_tabs() {
 # Main
 # ============================================
 main() {
+    # Parse flags
+    MODE="dev"
+    for arg in "$@"; do
+        case "$arg" in
+            --prod) MODE="prod" ;;
+            *) log_error "Unknown flag: $arg"; echo "Usage: ./start.sh [--prod]"; exit 1 ;;
+        esac
+    done
+
+    local mode_label
+    if [ "$MODE" = "prod" ]; then
+        mode_label="PROD"
+    else
+        mode_label="DEV"
+    fi
+
     echo ""
     echo "=========================================="
-    echo "  My Island - Fresh Start"
+    echo "  My Island — Fresh Start ($mode_label)"
     echo "=========================================="
     echo ""
     log_warn "This will stop all services, clean data, and start fresh!"
@@ -404,7 +441,7 @@ main() {
 
     echo ""
     echo "=========================================="
-    echo "  All services running with fresh data!"
+    echo "  All services running — $mode_label mode"
     echo "=========================================="
     echo ""
     echo "  App & API:"
@@ -412,16 +449,26 @@ main() {
     echo "    API:         http://localhost:8080/api"
     echo "    Swagger:     http://localhost:8080/api/swagger-ui.html"
     echo ""
-    echo "  Dev Tools:"
-    echo "    Mailpit:     http://localhost:8025"
-    echo "    Grafana:     http://localhost:3000  (admin / admin)"
-    echo "    Prometheus:  http://localhost:9090"
-    echo "    Loki:        http://localhost:3100"
-    echo ""
+    if [ "$MODE" = "dev" ]; then
+        echo "  Dev Tools:"
+        echo "    Mailpit:     http://localhost:8025"
+        echo "    Grafana:     http://localhost:3000  (admin / admin)"
+        echo "    Prometheus:  http://localhost:9090"
+        echo "    Loki:        http://localhost:3100"
+        echo ""
+    fi
     echo "  Stripe:"
     echo "    Mode:        Sandbox (test payments)"
     echo "    Webhooks:    Forwarding to localhost:8080/api/webhooks/stripe"
     echo "    Test card:   4242 4242 4242 4242 (any expiry/CVC)"
+    echo ""
+    if [ "$MODE" = "dev" ]; then
+        echo "  Seed Data:     Loaded (test accounts available)"
+        echo "  Test Users:    Dropdown visible on sign-in page"
+    else
+        echo "  Seed Data:     None (schema only)"
+        echo "  Test Users:    Hidden"
+    fi
     echo ""
     echo "  Logs: $SCRIPT_DIR/logs/"
     echo "  To stop: ./stop.sh"

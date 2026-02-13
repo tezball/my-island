@@ -63,7 +63,12 @@ export const SUPPLIER_STAFF = {
 };
 
 export async function login(page: Page, email: string, password: string) {
+    // Dismiss cookie consent banner so it doesn't block the Sign In button
     await page.goto('/signin');
+    await page.evaluate(() => {
+        localStorage.setItem('cookie_consent', JSON.stringify({ accepted: true, timestamp: new Date().toISOString() }));
+    });
+    await page.reload();
     await page.locator('#email').fill(email);
     await page.locator('#password').fill(password);
     await page.getByRole('button', { name: 'Sign In' }).click();

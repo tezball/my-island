@@ -32,4 +32,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByIsOwnerTrue();
     long countByIsSupplierTrue();
     long countByIsActiveTrue();
+
+    @Query("""
+            SELECT u FROM User u
+            WHERE u.isOwner = false
+            AND NOT EXISTS (SELECT o FROM com.myisland.api.modules.accommodation.entity.Owner o WHERE o.user = u)
+            AND (LOWER(u.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                 OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')))
+            ORDER BY u.name ASC
+            """)
+    Page<User> findEligibleOwners(String search, Pageable pageable);
+
+    @Query("""
+            SELECT u FROM User u
+            WHERE u.isSupplier = false
+            AND NOT EXISTS (SELECT s FROM com.myisland.api.modules.marketplace.entity.Supplier s WHERE s.user = u)
+            AND (LOWER(u.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                 OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')))
+            ORDER BY u.name ASC
+            """)
+    Page<User> findEligibleSuppliers(String search, Pageable pageable);
 }

@@ -96,18 +96,42 @@ export interface AdminOwner {
   town: string | null;
   propertyType: string;
   description: string | null;
+  phone: string | null;
+  website: string | null;
+  latitude: number | null;
+  longitude: number | null;
   subscriptionStatus: string;
   rating: number | null;
   reviewCount: number;
   lotCount: number;
   isFeatured: boolean;
+  isDeactivated: boolean;
   createdAt: string;
 }
 
 export interface AdminOwnerUpdate {
   propertyName?: string;
   county?: string;
+  town?: string;
+  propertyType?: string;
   description?: string;
+  phone?: string;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface AdminOwnerCreate {
+  userId: number;
+  propertyName: string;
+  county: string;
+  town?: string;
+  propertyType: string;
+  description?: string;
+  phone?: string;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 // --- Suppliers ---
@@ -121,9 +145,16 @@ export interface AdminSupplier {
   category: string;
   county: string;
   town: string | null;
+  address: string | null;
   description: string | null;
+  phone: string | null;
+  website: string | null;
+  latitude: number | null;
+  longitude: number | null;
   subscriptionStatus: string;
   isVerified: boolean;
+  isDeactivated: boolean;
+  isFeatured: boolean;
   rating: number | null;
   reviewCount: number;
   offerCount: number;
@@ -133,7 +164,28 @@ export interface AdminSupplier {
 export interface AdminSupplierUpdate {
   businessName?: string;
   county?: string;
+  town?: string;
+  address?: string;
+  category?: string;
   description?: string;
+  phone?: string;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface AdminSupplierCreate {
+  userId: number;
+  businessName: string;
+  county: string;
+  town?: string;
+  address?: string;
+  category: string;
+  description?: string;
+  phone?: string;
+  website?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 // --- Reviews ---

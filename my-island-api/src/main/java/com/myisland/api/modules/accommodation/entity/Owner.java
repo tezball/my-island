@@ -131,6 +131,9 @@ public class Owner extends BaseEntity {
     @Column(name = "trial_used", nullable = false)
     private boolean trialUsed = false;
 
+    @Column(name = "is_deactivated", nullable = false)
+    private boolean isDeactivated = false;
+
     public enum SubscriptionStatus {
         NONE,       // Never subscribed
         TRIALING,   // Free trial period
@@ -294,6 +297,9 @@ public class Owner extends BaseEntity {
 
     public boolean isTrialUsed() { return trialUsed; }
     public void setTrialUsed(boolean trialUsed) { this.trialUsed = trialUsed; }
+
+    public boolean isDeactivated() { return isDeactivated; }
+    public void setDeactivated(boolean deactivated) { this.isDeactivated = deactivated; }
 
     // Preference getters and setters
     public boolean isEmailNotificationsBookings() { return emailNotificationsBookings; }

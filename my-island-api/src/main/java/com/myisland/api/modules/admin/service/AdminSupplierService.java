@@ -1,5 +1,7 @@
 package com.myisland.api.modules.admin.service;
 
+import com.myisland.api.modules.identity.entity.User;
+import com.myisland.api.modules.identity.repository.UserRepository;
 import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import org.springframework.data.domain.Page;
@@ -15,10 +17,12 @@ import java.util.Map;
 public class AdminSupplierService {
 
     private final SupplierRepository supplierRepository;
+    private final UserRepository userRepository;
     private final AdminAuditService adminAuditService;
 
-    public AdminSupplierService(SupplierRepository supplierRepository, AdminAuditService adminAuditService) {
+    public AdminSupplierService(SupplierRepository supplierRepository, UserRepository userRepository, AdminAuditService adminAuditService) {
         this.supplierRepository = supplierRepository;
+        this.userRepository = userRepository;
         this.adminAuditService = adminAuditService;
     }
 
@@ -37,27 +41,67 @@ public class AdminSupplierService {
     }
 
     @Transactional
-    public Map<String, Object> updateSupplier(Long adminUserId, Long supplierId, String businessName, String county, String description) {
-        Supplier supplier = supplierRepository.findById(supplierId)
-                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + supplierId));
+    public Map<String, Object> createSupplier(Long adminUserId, Long userId, String businessName, String county,
+            String town, String address, String category, String description, String phone, String website,
+            Double latitude, Double longitude) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        String previousValue = String.format("businessName=%s, county=%s, description=%s",
-                supplier.getBusinessName(), supplier.getCounty(), supplier.getDescription());
+        if (supplierRepository.findByUserId(userId).isPresent()) {
+            throw new RuntimeException("User is already a supplier");
+        }
 
-        if (businessName != null) {
-            supplier.setBusinessName(businessName);
-        }
-        if (county != null) {
-            supplier.setCounty(county);
-        }
-        if (description != null) {
-            supplier.setDescription(description);
-        }
+        Supplier supplier = Supplier.builder()
+                .user(user)
+                .businessName(businessName)
+                .county(county)
+                .town(town)
+                .address(address)
+                .category(category != null ? Supplier.SupplierCategory.valueOf(category) : Supplier.SupplierCategory.OTHER)
+                .description(description)
+                .phone(phone)
+                .website(website)
+                .latitude(latitude)
+                .longitude(longitude)
+                .build();
 
         Supplier saved = supplierRepository.save(supplier);
 
-        String newValue = String.format("businessName=%s, county=%s, description=%s",
-                saved.getBusinessName(), saved.getCounty(), saved.getDescription());
+        user.setSupplier(true);
+        userRepository.save(user);
+
+        adminAuditService.log(
+                adminUserId,
+                "CREATE_SUPPLIER",
+                "SUPPLIER",
+                saved.getId(),
+                "Created supplier: " + businessName + " for user: " + user.getEmail(),
+                null,
+                null
+        );
+
+        return toDto(saved);
+    }
+
+    @Transactional
+    public Map<String, Object> updateSupplier(Long adminUserId, Long supplierId, String businessName, String county,
+            String town, String address, String category, String description, String phone, String website,
+            Double latitude, Double longitude) {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + supplierId));
+
+        if (businessName != null) supplier.setBusinessName(businessName);
+        if (county != null) supplier.setCounty(county);
+        if (town != null) supplier.setTown(town);
+        if (address != null) supplier.setAddress(address);
+        if (category != null) supplier.setCategory(Supplier.SupplierCategory.valueOf(category));
+        if (description != null) supplier.setDescription(description);
+        if (phone != null) supplier.setPhone(phone);
+        if (website != null) supplier.setWebsite(website);
+        if (latitude != null) supplier.setLatitude(latitude);
+        if (longitude != null) supplier.setLongitude(longitude);
+
+        Supplier saved = supplierRepository.save(supplier);
 
         adminAuditService.log(
                 adminUserId,
@@ -65,8 +109,8 @@ public class AdminSupplierService {
                 "SUPPLIER",
                 supplierId,
                 "Updated supplier: " + supplier.getBusinessName(),
-                previousValue,
-                newValue
+                null,
+                null
         );
 
         return toDto(saved);
@@ -88,8 +132,31 @@ public class AdminSupplierService {
                 "SUPPLIER",
                 supplierId,
                 "Toggled verification status for supplier: " + supplier.getBusinessName(),
-                "isVerified=" + previousVerified,
-                "isVerified=" + saved.isVerified()
+                null,
+                null
+        );
+
+        return toDto(saved);
+    }
+
+    @Transactional
+    public Map<String, Object> toggleDeactivated(Long adminUserId, Long supplierId) {
+        Supplier supplier = supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + supplierId));
+
+        boolean previous = supplier.isDeactivated();
+        supplier.setDeactivated(!previous);
+
+        Supplier saved = supplierRepository.save(supplier);
+
+        adminAuditService.log(
+                adminUserId,
+                "TOGGLE_SUPPLIER_DEACTIVATED",
+                "SUPPLIER",
+                supplierId,
+                (saved.isDeactivated() ? "Deactivated" : "Reactivated") + " supplier: " + supplier.getBusinessName(),
+                null,
+                null
         );
 
         return toDto(saved);
@@ -105,9 +172,16 @@ public class AdminSupplierService {
         dto.put("category", supplier.getCategory() != null ? supplier.getCategory().name() : null);
         dto.put("county", supplier.getCounty());
         dto.put("town", supplier.getTown());
+        dto.put("address", supplier.getAddress());
         dto.put("description", supplier.getDescription());
+        dto.put("phone", supplier.getPhone());
+        dto.put("website", supplier.getWebsite());
+        dto.put("latitude", supplier.getLatitude());
+        dto.put("longitude", supplier.getLongitude());
         dto.put("subscriptionStatus", supplier.getSubscriptionStatus() != null ? supplier.getSubscriptionStatus().name() : "NONE");
         dto.put("isVerified", supplier.isVerified());
+        dto.put("isDeactivated", supplier.isDeactivated());
+        dto.put("isFeatured", supplier.isFeatured());
         dto.put("rating", supplier.getRating());
         dto.put("reviewCount", supplier.getReviewCount());
         dto.put("offerCount", supplier.getOffers() != null ? supplier.getOffers().size() : 0);

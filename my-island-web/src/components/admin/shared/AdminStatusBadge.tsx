@@ -23,6 +23,8 @@ const STATUS_STYLES: Record<string, string> = {
   QUALIFIED: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
   CONVERTED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
   LOST: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
+  // Entity statuses
+  DEACTIVATED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   // Booleans
   true: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
   false: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',

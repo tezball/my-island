@@ -267,8 +267,14 @@ Key endpoints:
 - `GET /api/admin/dashboard` - Admin dashboard stats
 - `GET /api/admin/users` - Admin user management
 - `GET /api/admin/bookings` - Admin booking management
-- `GET /api/admin/owners` - Admin owner management
-- `GET /api/admin/suppliers` - Admin supplier management
+- `GET/POST /api/admin/owners` - Admin owner management (list, create)
+- `PUT /api/admin/owners/{id}` - Update owner (expanded fields)
+- `PUT /api/admin/owners/{id}/deactivate` - Toggle owner deactivation
+- `GET/POST /api/admin/suppliers` - Admin supplier management (list, create)
+- `PUT /api/admin/suppliers/{id}` - Update supplier (expanded fields)
+- `PUT /api/admin/suppliers/{id}/deactivate` - Toggle supplier deactivation
+- `GET /api/admin/users/eligible-owners` - Users eligible to become owners
+- `GET /api/admin/users/eligible-suppliers` - Users eligible to become suppliers
 - `GET /api/admin/reviews` - Admin review moderation
 - `GET /api/admin/subscriptions` - Admin subscription overview
 - `GET /api/admin/financial/revenue` - Admin financial reports
