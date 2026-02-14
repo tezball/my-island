@@ -88,6 +88,11 @@ public class AuthService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        if (!user.isEmailVerified()) {
+            throw new BadRequestException(
+                    "Please verify your email address before signing in. Check your inbox for the verification link.");
+        }
+
         String token = jwtProvider.generateToken(authentication);
         log.info("User logged in: {}", user.getEmail());
 
@@ -219,6 +224,14 @@ public class AuthService {
         user.setEmailVerificationTokenExpiry(null);
         userRepository.save(user);
         log.info("Email verified for: {}", user.getEmail());
+    }
+
+    public void resendVerification(String email) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null || user.isEmailVerified()) {
+            return; // Silent no-op for unknown or already-verified emails
+        }
+        sendEmailVerification(user);
     }
 
     public User getCurrentUser(Long userId) {

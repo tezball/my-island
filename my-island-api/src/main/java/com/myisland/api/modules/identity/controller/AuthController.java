@@ -78,6 +78,15 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/resend-verification")
+    @Operation(summary = "Resend email verification link")
+    public ResponseEntity<java.util.Map<String, String>> resendVerification(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+        authService.resendVerification(request.email());
+        return ResponseEntity.ok(java.util.Map.of("message",
+                "If that email is registered and unverified, a new verification link has been sent."));
+    }
+
     @PostMapping("/upgrade/owner")
     @Operation(summary = "Upgrade current user to property owner")
     public ResponseEntity<AuthResponse> upgradeToOwner(

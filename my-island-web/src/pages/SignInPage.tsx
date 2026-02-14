@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/authService';
 
 const showTestUsers = import.meta.env.VITE_SHOW_TEST_USERS === 'true';
 
@@ -39,19 +40,39 @@ export const SignInPage: React.FC = () => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [error, setError] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
+    const [needsVerification, setNeedsVerification] = React.useState(false);
+    const [resendSent, setResendSent] = React.useState(false);
+    const [resending, setResending] = React.useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setNeedsVerification(false);
+        setResendSent(false);
         setIsLoading(true);
 
         try {
             await login(email, password);
             navigate('/');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to sign in');
+            const message = err instanceof Error ? err.message : 'Failed to sign in';
+            if (message.toLowerCase().includes('verify your email')) {
+                setNeedsVerification(true);
+            } else {
+                setError(message);
+            }
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleResendVerification = async () => {
+        setResending(true);
+        try {
+            await authService.resendVerification(email);
+            setResendSent(true);
+        } finally {
+            setResending(false);
         }
     };
 
@@ -109,6 +130,31 @@ export const SignInPage: React.FC = () => {
                     {error && (
                         <div className="p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm">
                             {error}
+                        </div>
+                    )}
+                    {needsVerification && (
+                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                            <div className="flex items-start gap-3">
+                                <span className="material-symbols-outlined text-amber-600 text-xl mt-0.5">mark_email_unread</span>
+                                <div className="flex-1">
+                                    <p className="text-amber-800 text-sm font-medium">Email verification required</p>
+                                    <p className="text-amber-700 text-xs mt-1">
+                                        Please check your inbox and click the verification link before signing in.
+                                    </p>
+                                    {resendSent ? (
+                                        <p className="text-green-700 text-xs font-medium mt-2">Verification email sent!</p>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={handleResendVerification}
+                                            disabled={resending}
+                                            className="text-amber-800 text-xs font-bold underline mt-2 hover:text-amber-900 disabled:opacity-50"
+                                        >
+                                            {resending ? 'Sending...' : 'Resend verification email'}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     )}
                     <div className="flex flex-col gap-1.5">

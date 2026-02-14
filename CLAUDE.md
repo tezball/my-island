@@ -244,7 +244,8 @@ Custom colors in `tailwind.config.js`:
 Full API documentation at `/api/swagger-ui.html` when running.
 
 Key endpoints:
-- `POST /api/auth/login` - Login
+- `POST /api/auth/login` - Login (blocks unverified emails)
+- `POST /api/auth/resend-verification` - Resend email verification link
 - `GET /api/campsites` - List campsites
 - `POST /api/bookings` - Create booking
 - `PUT /api/owner/bookings/{id}/modify` - Modify booking dates or lot (owner)

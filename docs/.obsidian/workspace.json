@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ROADMAP.md",
+                "file": "DEPLOYMENT_OPTIONS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ROADMAP"
+              "title": "DEPLOYMENT_OPTIONS"
             }
           }
         ]
@@ -187,6 +187,7 @@
   },
   "active": "e4a632610aa52cf7",
   "lastOpenFiles": [
+    "ROADMAP.md",
     "domain/DOMAIN_MODEL.md.tmp.319308.1770810549061",
     "domain/DOMAIN_MODEL.md.tmp.319308.1770810540552",
     "domain/DOMAIN_MODEL.md.tmp.319308.1770810532526",
@@ -198,11 +199,9 @@
     "domain/identity/README.md.tmp.319308.1770810484862",
     "README.md.tmp.319308.1770810480317",
     "domain/admin/README.md",
-    "domain/admin/README.md.tmp.319308.1770810470745",
     "audits/2026-02-11-endpoint-security-audit.md",
     "STRIPE_AUDIT.md",
     "00-Domain/DOMAIN_MODEL.md",
-    "ROADMAP.md",
     "README.md",
     "Graph for all pages.canvas",
     "screenshots/supplier-settings.png",

@@ -199,4 +199,12 @@ export const authService = {
         const response = await authFetch(`/auth/verify-email?token=${encodeURIComponent(token)}`);
         if (!response.ok) throw new ApiError('Invalid or expired verification link', response.status);
     },
+
+    async resendVerification(email: string): Promise<void> {
+        await authFetch('/auth/resend-verification', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+        });
+        // Always resolves — API returns 200 regardless of email state
+    },
 };

@@ -45,6 +45,7 @@ Example: A "Receptionist" role might have BOOKINGS(FULL) + ANALYTICS(VIEW_ONLY).
 | POST | `/api/auth/login` | Login (returns JWT) |
 | POST | `/api/auth/signup` | Register new user |
 | POST | `/api/auth/verify-email` | Verify email with token |
+| POST | `/api/auth/resend-verification` | Resend email verification link |
 | POST | `/api/auth/forgot-password` | Request password reset |
 | POST | `/api/auth/reset-password` | Reset password with token |
 | GET | `/api/owner/staff` | List owner's staff members |
@@ -75,6 +76,25 @@ Platform admins can manage users through the admin portal. See [Admin module](..
 | GET | `/api/admin/users/{id}` | User detail |
 | PUT | `/api/admin/users/{id}` | Update user |
 | PUT | `/api/admin/users/{id}/toggle-active` | Enable/disable user account |
+
+## Security
+
+### Email Verification at Login
+Users must verify their email address before signing in. Unverified users receive a 400 error with instructions to check their inbox. The sign-in page shows an amber banner with a "Resend verification email" button. Signup still issues a JWT immediately (for onboarding flow), but subsequent logins require verification.
+
+### Rate Limiting
+Auth endpoints are rate-limited per IP address:
+| Endpoint | Limit |
+|----------|-------|
+| `POST /auth/login` | 10 per 15 min |
+| `POST /auth/signup` | 5 per hour |
+| `POST /auth/forgot-password` | 3 per hour |
+| `POST /auth/resend-verification` | 3 per hour |
+
+Exceeding the limit returns `429 Too Many Requests`.
+
+### Image Endpoint Authorization
+All image mutation endpoints (upload, set primary, update order/alt text, delete) verify ownership via `StaffPermissionChecker`. Admin users bypass all checks. GET endpoints remain public.
 
 ## Not Yet Implemented
 - Social login (OAuth — Google, Apple, Facebook)
