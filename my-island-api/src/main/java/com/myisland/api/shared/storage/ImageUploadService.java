@@ -13,7 +13,9 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -106,6 +108,14 @@ public class ImageUploadService {
         return "https://" + bucketName + ".s3.amazonaws.com/" + key;
     }
 
+    // Magic byte signatures for supported image formats
+    private static final Map<String, byte[][]> MAGIC_BYTES = Map.of(
+            "image/jpeg", new byte[][]{{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF}},
+            "image/png", new byte[][]{{(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}},
+            "image/gif", new byte[][]{{0x47, 0x49, 0x46, 0x38, 0x37, 0x61}, {0x47, 0x49, 0x46, 0x38, 0x39, 0x61}},
+            "image/webp", new byte[][]{{0x52, 0x49, 0x46, 0x46}} // RIFF header; "WEBP" at offset 8 checked separately
+    );
+
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
@@ -117,6 +127,49 @@ public class ImageUploadService {
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
             throw new IllegalArgumentException("Invalid file type. Allowed: JPEG, PNG, GIF, WebP");
         }
+        validateMagicBytes(file, contentType);
+    }
+
+    private void validateMagicBytes(MultipartFile file, String contentType) {
+        try (InputStream is = file.getInputStream()) {
+            byte[] header = new byte[12];
+            int bytesRead = is.read(header);
+            if (bytesRead < 4) {
+                throw new IllegalArgumentException("File is too small to be a valid image");
+            }
+
+            byte[][] signatures = MAGIC_BYTES.get(contentType);
+            if (signatures == null) {
+                throw new IllegalArgumentException("Unsupported content type: " + contentType);
+            }
+
+            boolean matched = false;
+            for (byte[] signature : signatures) {
+                if (bytesRead >= signature.length && startsWith(header, signature)) {
+                    matched = true;
+                    break;
+                }
+            }
+
+            // WebP requires additional check: bytes 8-11 must be "WEBP"
+            if ("image/webp".equals(contentType) && matched && bytesRead >= 12) {
+                matched = header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P';
+            }
+
+            if (!matched) {
+                log.warn("Magic byte mismatch: declared={}, file={}", contentType, file.getOriginalFilename());
+                throw new IllegalArgumentException("File content does not match declared type " + contentType);
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to read file for validation");
+        }
+    }
+
+    private boolean startsWith(byte[] data, byte[] prefix) {
+        for (int i = 0; i < prefix.length; i++) {
+            if (data[i] != prefix[i]) return false;
+        }
+        return true;
     }
 
     private String getExtension(String filename) {

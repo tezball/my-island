@@ -23,15 +23,17 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class MarketplaceService {
 
     private static final Logger log = LoggerFactory.getLogger(MarketplaceService.class);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final String CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I/O/0/1 to avoid confusion
 
     private final SupplierRepository supplierRepository;
     private final OfferRepository offerRepository;
@@ -258,9 +260,8 @@ public class MarketplaceService {
                 .substring(0, Math.min(2, offer.getSupplier().getBusinessName().length()))
                 .toUpperCase()
                 .replaceAll("[^A-Z]", "X");
-        String year = String.valueOf(LocalDate.now().getYear());
-        String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
-        return String.format("%s-%s-%03d-%s", prefix, year, offer.getCurrentClaims() + 1, random);
+        String random = generateSecureRandomCode(8);
+        return String.format("%s-%s-%s", prefix, LocalDate.now().getYear(), random);
     }
 
     private String generateTestClaimCode(Offer offer) {
@@ -268,7 +269,15 @@ public class MarketplaceService {
                 .substring(0, Math.min(2, offer.getSupplier().getBusinessName().length()))
                 .toUpperCase()
                 .replaceAll("[^A-Z]", "X");
-        String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        String random = generateSecureRandomCode(8);
         return String.format("%s-TEST-%s", prefix, random);
+    }
+
+    private String generateSecureRandomCode(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(CODE_CHARS.charAt(SECURE_RANDOM.nextInt(CODE_CHARS.length())));
+        }
+        return sb.toString();
     }
 }

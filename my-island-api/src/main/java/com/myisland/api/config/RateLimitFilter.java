@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,10 +24,19 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private record RateLimitConfig(int maxTokens, long refillPeriodSeconds) {}
 
     private static final Map<String, RateLimitConfig> RATE_LIMITS = Map.of(
-            "/auth/login", new RateLimitConfig(30, 900),            // 30 per 15 min
-            "/auth/signup", new RateLimitConfig(5, 3600),           // 5 per hour
+            "/auth/login", new RateLimitConfig(100, 900),           // 100 per 15 min
+            "/auth/signup", new RateLimitConfig(10, 3600),          // 10 per hour
             "/auth/forgot-password", new RateLimitConfig(3, 3600),  // 3 per hour
-            "/auth/resend-verification", new RateLimitConfig(3, 3600) // 3 per hour
+            "/auth/resend-verification", new RateLimitConfig(3, 3600), // 3 per hour
+            "/bookings", new RateLimitConfig(20, 3600),             // 20 per hour
+            "/reviews", new RateLimitConfig(10, 3600)               // 10 per hour
+    );
+
+    // Prefix-based rate limits (matches paths starting with the prefix)
+    private record PrefixRateLimitConfig(String prefix, int maxTokens, long refillPeriodSeconds) {}
+
+    private static final List<PrefixRateLimitConfig> PREFIX_RATE_LIMITS = List.of(
+            new PrefixRateLimitConfig("/images/", 30, 3600) // 30 image uploads per hour
     );
 
     private static class TokenBucket {
@@ -72,17 +82,31 @@ public class RateLimitFilter extends OncePerRequestFilter {
         }
 
         String path = request.getServletPath();
+
+        // Check exact match first, then prefix match
         RateLimitConfig config = RATE_LIMITS.get(path);
+        String rateLimitKey = path;
+        if (config == null) {
+            for (PrefixRateLimitConfig prefix : PREFIX_RATE_LIMITS) {
+                if (path.startsWith(prefix.prefix())) {
+                    config = new RateLimitConfig(prefix.maxTokens(), prefix.refillPeriodSeconds());
+                    rateLimitKey = prefix.prefix();
+                    break;
+                }
+            }
+        }
+
         if (config == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String clientIp = extractClientIp(request);
-        String bucketKey = clientIp + ":" + path;
+        String bucketKey = clientIp + ":" + rateLimitKey;
 
+        RateLimitConfig finalConfig = config;
         TokenBucket bucket = buckets.computeIfAbsent(bucketKey,
-                k -> new TokenBucket(config.maxTokens, config.refillPeriodSeconds));
+                k -> new TokenBucket(finalConfig.maxTokens, finalConfig.refillPeriodSeconds));
 
         if (!bucket.tryConsume()) {
             log.warn("Rate limit exceeded for {} on {}", clientIp, path);
