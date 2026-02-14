@@ -24,4 +24,16 @@ public record MessageDto(
                 message.getCreatedAt()
         );
     }
+
+    public static MessageDto from(Message message, String displayName) {
+        return new MessageDto(
+                message.getId(),
+                message.getBooking().getId(),
+                message.getSender().getId(),
+                displayName,
+                message.getContent(),
+                message.isRead(),
+                message.getCreatedAt()
+        );
+    }
 }

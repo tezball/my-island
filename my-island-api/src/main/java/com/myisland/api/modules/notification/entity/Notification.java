@@ -19,7 +19,8 @@ public class Notification extends BaseEntity {
         BOOKING_MODIFICATION_APPROVED,
         BOOKING_MODIFICATION_DECLINED,
         OFFER_CLAIMED,
-        OFFER_REDEEMED
+        OFFER_REDEEMED,
+        MESSAGE_RECEIVED
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -15,8 +15,8 @@ UPDATE staff_members SET role = 'REDEEMER'
 WHERE email = 'staff@aillwee.ie' AND supplier_id IS NOT NULL;
 
 -- Add new Groundskeeper staff for Nore Valley
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('grounds@norevalley.com', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Seán O''Brien', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('grounds@norevalley.com', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Seán O''Brien', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, owner_id, user_id, status, role)
 VALUES (
@@ -28,8 +28,8 @@ VALUES (
 );
 
 -- Add new Viewer staff for Nore Valley
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('viewer@norevalley.com', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Maeve Doyle', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('viewer@norevalley.com', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Maeve Doyle', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, owner_id, user_id, status, role)
 VALUES (
@@ -41,8 +41,8 @@ VALUES (
 );
 
 -- Add new Associate staff for Green Acres
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('shop@greenacres.ie', '$2b$10$BU.7Ke9RaUYC661zG4yqA.JOir2D8hx868NHgwC1UBcx5g.5mLCOW', 'Pádraig Flynn', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('shop@greenacres.ie', '$2b$10$BU.7Ke9RaUYC661zG4yqA.JOir2D8hx868NHgwC1UBcx5g.5mLCOW', 'Pádraig Flynn', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, supplier_id, user_id, status, role)
 VALUES (

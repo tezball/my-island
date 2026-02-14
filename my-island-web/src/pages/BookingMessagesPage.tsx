@@ -14,12 +14,13 @@ export const BookingMessagesPage: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col h-screen bg-white dark:bg-background-dark">
+        <div className="flex flex-col h-[100dvh] bg-white dark:bg-background-dark">
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1a2632]">
                 <Link
                     to="/trips"
                     className="p-1.5 -ml-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    aria-label="Back to trips"
                 >
                     <span className="material-symbols-outlined text-[#111418] dark:text-white">arrow_back</span>
                 </Link>

@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { messageService } from '../../services/messageService';
 import type { Message } from '../../types/message';
+
+const POLL_INTERVAL_MS = 15_000;
+const MAX_MESSAGE_LENGTH = 5000;
 
 interface BookingConversationProps {
     bookingId: string;
@@ -17,7 +20,7 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const loadMessages = async () => {
+    const loadMessages = useCallback(async () => {
         try {
             const data = await messageService.getConversation(bookingId);
             setMessages(data);
@@ -27,23 +30,29 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
         } finally {
             setIsLoading(false);
         }
-    };
-
-    useEffect(() => {
-        loadMessages();
-        // Poll for new messages every 15 seconds
-        const interval = setInterval(loadMessages, 15000);
-        return () => clearInterval(interval);
     }, [bookingId]);
 
     useEffect(() => {
-        // Auto-scroll to latest message
+        loadMessages();
+
+        const interval = setInterval(() => {
+            // Only poll when tab is visible
+            if (document.visibilityState === 'visible') {
+                loadMessages();
+            }
+        }, POLL_INTERVAL_MS);
+
+        return () => clearInterval(interval);
+    }, [loadMessages]);
+
+    useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     const handleSend = async () => {
         if (!newMessage.trim() || isSending) return;
         setIsSending(true);
+        setError(null);
         try {
             const sent = await messageService.sendMessage(bookingId, newMessage.trim());
             setMessages(prev => [...prev, sent]);
@@ -52,7 +61,7 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
                 textareaRef.current.style.height = 'auto';
             }
         } catch {
-            setError('Failed to send message');
+            setError('Failed to send message. Please try again.');
         } finally {
             setIsSending(false);
         }
@@ -67,7 +76,6 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
 
     const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setNewMessage(e.target.value);
-        // Auto-resize textarea
         const textarea = e.target;
         textarea.style.height = 'auto';
         textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -75,6 +83,7 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
 
     const formatTime = (dateStr: string) => {
         const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return '';
         const now = new Date();
         const isToday = date.toDateString() === now.toDateString();
         const yesterday = new Date(now);
@@ -151,12 +160,16 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
                         onChange={handleTextareaInput}
                         onKeyDown={handleKeyDown}
                         placeholder="Type a message..."
+                        maxLength={MAX_MESSAGE_LENGTH}
                         rows={1}
-                        className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-[#111418] dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                        disabled={isSending}
+                        aria-label="Message input"
+                        className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-[#111418] dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50"
                     />
                     <button
                         onClick={handleSend}
                         disabled={!newMessage.trim() || isSending}
+                        aria-label="Send message"
                         className="flex-shrink-0 w-10 h-10 bg-primary hover:bg-emerald-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-full flex items-center justify-center transition-colors"
                     >
                         {isSending ? (
@@ -166,7 +179,14 @@ export const BookingConversation: React.FC<BookingConversationProps> = ({ bookin
                         )}
                     </button>
                 </div>
-                <p className="text-xs text-gray-400 mt-1.5 px-1">Press Enter to send, Shift+Enter for new line</p>
+                <div className="flex justify-between mt-1.5 px-1">
+                    <p className="text-xs text-gray-400">Press Enter to send, Shift+Enter for new line</p>
+                    {newMessage.length > MAX_MESSAGE_LENGTH * 0.9 && (
+                        <p className={`text-xs ${newMessage.length >= MAX_MESSAGE_LENGTH ? 'text-red-500' : 'text-gray-400'}`}>
+                            {newMessage.length}/{MAX_MESSAGE_LENGTH}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

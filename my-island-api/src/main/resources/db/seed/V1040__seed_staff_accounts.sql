@@ -1,8 +1,8 @@
 -- V1040: Seed staff accounts for testing
 
 -- Staff user for Nore Valley Park (Owner)
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('staff@norevalley.com', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Aoife Brennan', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('staff@norevalley.com', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Aoife Brennan', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, owner_id, user_id, status)
 VALUES (
@@ -13,8 +13,8 @@ VALUES (
 );
 
 -- Staff user for Burren Glamping Village (Owner)
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('staff@burrenglamp.ie', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Cian Walsh', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('staff@burrenglamp.ie', '$2b$10$sOF0W0oYpOFmEP0ftmaWhuqZ.j74lo9rZiI2N9ibNlW8RSiLpnS66', 'Cian Walsh', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, owner_id, user_id, status)
 VALUES (
@@ -25,8 +25,8 @@ VALUES (
 );
 
 -- Staff user for Green Acres Farm Shop (Supplier)
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('staff@greenacres.ie', '$2b$10$BU.7Ke9RaUYC661zG4yqA.JOir2D8hx868NHgwC1UBcx5g.5mLCOW', 'Niamh Kelly', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('staff@greenacres.ie', '$2b$10$BU.7Ke9RaUYC661zG4yqA.JOir2D8hx868NHgwC1UBcx5g.5mLCOW', 'Niamh Kelly', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, supplier_id, user_id, status)
 VALUES (
@@ -37,8 +37,8 @@ VALUES (
 );
 
 -- Staff user for Aillwee Farm Shop (Supplier)
-INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff)
-VALUES ('staff@aillwee.ie', '$2b$10$BU.7Ke9RaUYC661zG4yqA.JOir2D8hx868NHgwC1UBcx5g.5mLCOW', 'Roisín Murphy', 'STAFF', FALSE, FALSE, TRUE);
+INSERT INTO users (email, password_hash, name, role, is_owner, is_supplier, is_staff, email_verified)
+VALUES ('staff@aillwee.ie', '$2b$10$BU.7Ke9RaUYC661zG4yqA.JOir2D8hx868NHgwC1UBcx5g.5mLCOW', 'Roisín Murphy', 'STAFF', FALSE, FALSE, TRUE, TRUE);
 
 INSERT INTO staff_members (email, supplier_id, user_id, status)
 VALUES (

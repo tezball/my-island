@@ -8,6 +8,7 @@ import com.myisland.api.modules.communication.dto.ConversationSummaryDto;
 import com.myisland.api.modules.communication.dto.MessageDto;
 import com.myisland.api.modules.communication.entity.Message;
 import com.myisland.api.modules.communication.repository.MessageRepository;
+import com.myisland.api.modules.identity.entity.StaffMember;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.StaffMemberRepository;
 import com.myisland.api.modules.identity.repository.UserRepository;
@@ -24,6 +25,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
+
+    private static final Set<Booking.BookingStatus> MESSAGEABLE_STATUSES = Set.of(
+            Booking.BookingStatus.CONFIRMED,
+            Booking.BookingStatus.CHECKED_IN,
+            Booking.BookingStatus.COMPLETED
+    );
 
     private final MessageRepository messageRepository;
     private final BookingRepository bookingRepository;
@@ -55,19 +62,21 @@ public class MessageService {
         Booking booking = bookingRepository.findByIdWithDetails(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
 
+        validateBookingStatus(booking);
+
         User sender = userRepository.findById(senderUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", senderUserId));
 
-        // Validate that the sender is a participant (guest, owner, or owner's staff)
         validateParticipant(booking, senderUserId);
 
         Message message = new Message(booking, sender, content.trim());
         messageRepository.save(message);
 
-        // Create notification for the recipient
         createMessageNotification(booking, sender);
 
-        return MessageDto.from(message);
+        // Resolve display name: staff members show the campsite name
+        String displayName = resolveDisplayName(sender, booking, senderUserId);
+        return MessageDto.from(message, displayName);
     }
 
     @Transactional
@@ -81,7 +90,25 @@ public class MessageService {
         messageRepository.markReadByBookingIdAndNotSender(bookingId, userId);
 
         List<Message> messages = messageRepository.findByBookingIdOrderByCreatedAtAsc(bookingId);
-        return messages.stream().map(MessageDto::from).toList();
+
+        // Pre-compute owner/staff context for display name resolution
+        Long ownerUserId = booking.getLot().getOwner().getUser().getId();
+        Long ownerId = booking.getLot().getOwner().getId();
+        String campsiteName = booking.getLot().getOwner().getPropertyName();
+        Set<Long> staffUserIds = staffMemberRepository.findByOwnerId(ownerId).stream()
+                .map(sm -> sm.getUser().getId())
+                .collect(Collectors.toSet());
+
+        return messages.stream().map(msg -> {
+            Long senderId = msg.getSender().getId();
+            String displayName;
+            if (staffUserIds.contains(senderId) && !senderId.equals(ownerUserId)) {
+                displayName = campsiteName != null ? campsiteName : msg.getSender().getName();
+            } else {
+                displayName = msg.getSender().getName();
+            }
+            return MessageDto.from(msg, displayName);
+        }).toList();
     }
 
     public Map<Long, Long> getUnreadCounts(Long userId) {
@@ -107,7 +134,6 @@ public class MessageService {
             return Map.of();
         }
 
-        // Remove duplicates
         List<Long> uniqueBookingIds = bookingIds.stream().distinct().toList();
 
         List<Object[]> counts = messageRepository.countUnreadByBookingIds(uniqueBookingIds, userId);
@@ -118,6 +144,7 @@ public class MessageService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public List<ConversationSummaryDto> getOwnerConversations(Long userId) {
         // Find the owner for this user
         Owner owner = ownerRepository.findByUserId(userId).orElse(null);
@@ -140,30 +167,50 @@ public class MessageService {
             throw new ForbiddenException("Not an owner or owner staff");
         }
 
-        // Get all bookings for this owner
+        // Get all bookings for this owner that have messages
         List<Booking> ownerBookings = bookingRepository.findByOwnerId(ownerId);
+        List<Long> bookingIds = ownerBookings.stream().map(Booking::getId).toList();
 
-        // For each booking, get the latest message and unread count
+        if (bookingIds.isEmpty()) {
+            return List.of();
+        }
+
+        // Batch fetch: last message per booking and unread counts
+        List<Object[]> lastMessages = messageRepository.findLastMessagePerBooking(bookingIds);
+        Map<Long, Long> unreadCounts = new HashMap<>();
+        for (Object[] row : messageRepository.countUnreadByBookingIds(bookingIds, userId)) {
+            unreadCounts.put((Long) row[0], (Long) row[1]);
+        }
+
+        // Build lookup for bookings
+        Map<Long, Booking> bookingMap = ownerBookings.stream()
+                .collect(Collectors.toMap(Booking::getId, b -> b));
+
         List<ConversationSummaryDto> conversations = new ArrayList<>();
-        for (Booking booking : ownerBookings) {
-            List<Message> messages = messageRepository.findByBookingIdOrderByCreatedAtAsc(booking.getId());
-            if (messages.isEmpty()) continue;
+        for (Object[] row : lastMessages) {
+            Long bookingId = (Long) row[0];
+            String lastContent = (String) row[1];
+            String lastSenderName = (String) row[2];
+            java.time.LocalDateTime lastAt = (java.time.LocalDateTime) row[3];
 
-            Message lastMessage = messages.get(messages.size() - 1);
-            long unread = messageRepository.countUnreadByBookingIdAndNotSender(booking.getId(), userId);
+            Booking booking = bookingMap.get(bookingId);
+            if (booking == null) continue;
 
             String guestName = booking.getUser() != null ? booking.getUser().getName() : booking.getGuestName();
+            String preview = lastContent.length() > 100
+                    ? lastContent.substring(0, 100) + "..."
+                    : lastContent;
+            long unread = unreadCounts.getOrDefault(bookingId, 0L);
+
             conversations.add(new ConversationSummaryDto(
-                    booking.getId(),
+                    bookingId,
                     booking.getLot().getName(),
                     guestName,
                     booking.getCheckInDate().toString(),
                     booking.getCheckOutDate().toString(),
-                    lastMessage.getContent().length() > 100
-                            ? lastMessage.getContent().substring(0, 100) + "..."
-                            : lastMessage.getContent(),
-                    lastMessage.getSender().getName(),
-                    lastMessage.getCreatedAt(),
+                    preview,
+                    lastSenderName,
+                    lastAt,
                     unread
             ));
         }
@@ -171,6 +218,13 @@ public class MessageService {
         // Sort by last message time descending
         conversations.sort((a, b) -> b.lastMessageAt().compareTo(a.lastMessageAt()));
         return conversations;
+    }
+
+    private void validateBookingStatus(Booking booking) {
+        if (!MESSAGEABLE_STATUSES.contains(booking.getStatus())) {
+            throw new BadRequestException(
+                    "Messaging is not available for bookings with status: " + booking.getStatus());
+        }
     }
 
     private void validateParticipant(Booking booking, Long userId) {
@@ -195,6 +249,22 @@ public class MessageService {
         throw new ForbiddenException("You do not have access to this conversation");
     }
 
+    private String resolveDisplayName(User sender, Booking booking, Long senderUserId) {
+        Long ownerUserId = booking.getLot().getOwner().getUser().getId();
+        // If the sender is the owner themselves, use their name
+        if (ownerUserId.equals(senderUserId)) {
+            return sender.getName();
+        }
+        // If the sender is staff of the owner, show the campsite name
+        Long ownerId = booking.getLot().getOwner().getId();
+        boolean isStaff = staffMemberRepository.findByOwnerIdAndUserId(ownerId, senderUserId).isPresent();
+        if (isStaff) {
+            String propertyName = booking.getLot().getOwner().getPropertyName();
+            return propertyName != null ? propertyName : sender.getName();
+        }
+        return sender.getName();
+    }
+
     private void createMessageNotification(Booking booking, User sender) {
         User recipient;
         String link;
@@ -217,7 +287,7 @@ public class MessageService {
 
             Notification notification = Notification.builder()
                     .user(recipient)
-                    .type(Notification.NotificationType.BOOKING_CREATED) // Reuse existing type
+                    .type(Notification.NotificationType.MESSAGE_RECEIVED)
                     .title("New Message")
                     .message(preview)
                     .link(link)

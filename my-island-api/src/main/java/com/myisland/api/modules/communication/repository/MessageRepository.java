@@ -39,4 +39,16 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             GROUP BY m.booking.id
             """)
     List<Object[]> countUnreadByBookingIds(List<Long> bookingIds, Long userId);
+
+    @Query("""
+            SELECT m.booking.id, m.content, m.sender.name, m.createdAt
+            FROM Message m
+            WHERE m.id IN (
+                SELECT MAX(m2.id) FROM Message m2
+                WHERE m2.booking.id IN :bookingIds
+                GROUP BY m2.booking.id
+            )
+            ORDER BY m.createdAt DESC
+            """)
+    List<Object[]> findLastMessagePerBooking(List<Long> bookingIds);
 }

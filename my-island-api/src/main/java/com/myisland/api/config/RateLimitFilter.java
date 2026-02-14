@@ -23,7 +23,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private record RateLimitConfig(int maxTokens, long refillPeriodSeconds) {}
 
     private static final Map<String, RateLimitConfig> RATE_LIMITS = Map.of(
-            "/auth/login", new RateLimitConfig(10, 900),            // 10 per 15 min
+            "/auth/login", new RateLimitConfig(30, 900),            // 30 per 15 min
             "/auth/signup", new RateLimitConfig(5, 3600),           // 5 per hour
             "/auth/forgot-password", new RateLimitConfig(3, 3600),  // 3 per hour
             "/auth/resend-verification", new RateLimitConfig(3, 3600) // 3 per hour

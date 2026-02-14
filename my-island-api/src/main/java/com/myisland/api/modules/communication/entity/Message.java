@@ -17,7 +17,7 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, length = 5000)
     private String content;
 
     @Column(name = "is_read", nullable = false)

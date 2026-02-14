@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { messageService } from '../../services/messageService';
 import { BookingConversation } from '../../components/booking/BookingConversation';
 import type { ConversationSummary } from '../../types/message';
+
+const POLL_INTERVAL_MS = 15_000;
 
 export const OwnerMessagesPage: React.FC = () => {
     const [conversations, setConversations] = useState<ConversationSummary[]>([]);
@@ -9,33 +11,40 @@ export const OwnerMessagesPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        const fetchConversations = async () => {
-            try {
-                const data = await messageService.getOwnerConversations();
-                if (!cancelled) {
-                    setConversations(data);
-                }
-            } catch (err) {
-                if (!cancelled) {
-                    console.error('Failed to fetch conversations:', err);
-                    setError('Unable to load conversations. Please try again.');
-                }
-            } finally {
-                if (!cancelled) {
-                    setIsLoading(false);
-                }
-            }
-        };
-
-        fetchConversations();
-        return () => { cancelled = true; };
+    const fetchConversations = useCallback(async () => {
+        try {
+            const data = await messageService.getOwnerConversations();
+            setConversations(data);
+            setError(null);
+        } catch (err) {
+            console.error('Failed to fetch conversations:', err);
+            setError('Unable to load conversations. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchConversations();
+
+        const interval = setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                fetchConversations();
+            }
+        }, POLL_INTERVAL_MS);
+
+        return () => clearInterval(interval);
+    }, [fetchConversations]);
+
+    const handleBack = () => {
+        setSelectedBookingId(null);
+        // Refresh conversations when returning to list
+        fetchConversations();
+    };
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return '';
         const now = new Date();
         const diffMs = now.getTime() - date.getTime();
         const diffMins = Math.floor(diffMs / 60000);
@@ -51,11 +60,12 @@ export const OwnerMessagesPage: React.FC = () => {
 
     if (selectedBookingId) {
         return (
-            <div className="flex flex-col h-[calc(100vh-8rem)]">
+            <div className="flex flex-col h-[calc(100dvh-8rem)]">
                 <div className="flex items-center gap-3 mb-4">
                     <button
-                        onClick={() => setSelectedBookingId(null)}
+                        onClick={handleBack}
                         className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        aria-label="Back to conversations"
                     >
                         <span className="material-symbols-outlined text-[#111418] dark:text-white">arrow_back</span>
                     </button>
@@ -88,7 +98,7 @@ export const OwnerMessagesPage: React.FC = () => {
                 <h3 className="text-lg font-semibold text-[#111418] dark:text-white mb-1">Something went wrong</h3>
                 <p className="text-sm text-gray-500 text-center max-w-sm mb-4">{error}</p>
                 <button
-                    onClick={() => window.location.reload()}
+                    onClick={() => { setError(null); setIsLoading(true); fetchConversations(); }}
                     className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-[#20d85f] rounded-lg transition-colors"
                 >
                     Retry
@@ -124,7 +134,7 @@ export const OwnerMessagesPage: React.FC = () => {
                             <div className="flex items-center gap-2">
                                 <h3 className="font-semibold text-[#111418] dark:text-white truncate">{conv.guestName}</h3>
                                 {conv.unreadCount > 0 && (
-                                    <span className="shrink-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full">
+                                    <span className="shrink-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-primary rounded-full" aria-label={`${conv.unreadCount} unread messages`}>
                                         {conv.unreadCount}
                                     </span>
                                 )}
