@@ -176,10 +176,13 @@ The platform uses a database-backed feature toggle system managed from the admin
 | Name | Default | Description |
 |------|---------|-------------|
 | `SUBSCRIPTION_ENFORCEMENT` | `true` | When enabled, subscription checks are enforced for bookings, offers, and analytics. When disabled, all subscription gates are bypassed. |
+| `BOOKING_ENABLED` | `false` | When enabled, full booking functionality is available. When disabled, the platform operates as a listing-only directory (no booking creation, booking UI hidden). |
 
 ### Integration Points
 - **Backend**: `BookingService`, `SupplierService`, `OwnerService` check `featureToggleService.isSubscriptionEnforced()` before subscription gates
+- **Backend**: `BookingService.createBooking()` and `createManualBooking()` check `featureToggleService.isBookingEnabled()` before allowing booking creation
 - **Frontend**: `OwnerSubscriptionContext` and `SubscriptionContext` override `hasActiveSubscription=true` and `needsSubscription=false` when toggle is disabled, cascading to all downstream UI (SubscriptionGate, banners, lock icons)
+- **Frontend**: `CampsiteDetailsPage` replaces "Book Now" with "Booking Coming Soon"; `BottomNav` hides Trips tab; `TripsPage` shows coming-soon message; `OwnerLayout` hides 8 booking-related nav items and redirects `/owner` to `/owner/lots`
 
 ## Test Accounts
 

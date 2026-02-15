@@ -1,8 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
+import { useFeatureToggle } from '../../context/FeatureToggleContext';
 
 export const BottomNav: React.FC = () => {
+    const { isFeatureEnabled } = useFeatureToggle();
+    const bookingEnabled = isFeatureEnabled('BOOKING_ENABLED');
+
     return (
         <nav
             className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a2632] border-t border-gray-200 dark:border-gray-800 px-6 pt-2 z-50"
@@ -12,7 +16,7 @@ export const BottomNav: React.FC = () => {
                 <NavItem to="/" icon="search" label="Search" />
                 <NavItem to="/marketplace" icon="storefront" label="Marketplace" />
                 <NavItem to="/saved" icon="favorite" label="Saved" />
-                <NavItem to="/trips" icon="luggage" label="Trips" />
+                {bookingEnabled && <NavItem to="/trips" icon="luggage" label="Trips" />}
                 <NavItem to="/profile" icon="person" label="Profile" />
             </div>
         </nav>

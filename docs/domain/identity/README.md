@@ -83,13 +83,16 @@ Platform admins can manage users through the admin portal. See [Admin module](..
 Users must verify their email address before signing in. Unverified users receive a 400 error with instructions to check their inbox. The sign-in page shows an amber banner with a "Resend verification email" button. Signup still issues a JWT immediately (for onboarding flow), but subsequent logins require verification.
 
 ### Rate Limiting
-Auth endpoints are rate-limited per IP address:
+POST endpoints are rate-limited per IP address using an in-memory token bucket:
 | Endpoint | Limit |
 |----------|-------|
-| `POST /auth/login` | 10 per 15 min |
-| `POST /auth/signup` | 5 per hour |
+| `POST /auth/login` | 100 per 15 min |
+| `POST /auth/signup` | 10 per hour |
 | `POST /auth/forgot-password` | 3 per hour |
 | `POST /auth/resend-verification` | 3 per hour |
+| `POST /bookings` | 20 per hour |
+| `POST /reviews` | 10 per hour |
+| `POST /images/*` | 30 per hour |
 
 Exceeding the limit returns `429 Too Many Requests`.
 

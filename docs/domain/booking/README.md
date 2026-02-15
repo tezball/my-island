@@ -131,6 +131,23 @@ PENDING → APPROVED (owner approves, modification applied)
 - Within the modification deadline (too close to check-in)
 - A PENDING modification request already exists for this booking
 
+## Feature Toggle: BOOKING_ENABLED
+
+The entire booking system can be disabled via the `BOOKING_ENABLED` feature toggle (default: `false`). When disabled, the platform operates as a listing-only directory.
+
+### What changes when disabled
+- **Backend**: `createBooking()` and `createManualBooking()` reject with 400 "Bookings are not currently available."
+- **Guest UI**: "Book Now" buttons become "Booking Coming Soon" placeholders; "Trips" tab hidden from BottomNav; `/trips` shows a coming-soon message
+- **Owner UI**: 8 booking-related sidebar items hidden (Dashboard, Today, Bookings, Calendar, Timeline, Pricing, Modifications, Messages); `/owner` redirects to `/owner/lots`
+- **What stays visible**: Browse campsites, reviews, photos, marketplace, saved/favorites, owner lot management, property details, staff, settings
+
+### Design decisions
+- Toggle starts `false` — listing-only until admin enables it
+- Backend guards only on create — other booking endpoints are harmless with zero bookings
+- Frontend hides UI + backend rejects — defense in depth
+- Reviews stay visible — they're about the campsite, not tied to active bookings
+- Existing bookings remain viewable/manageable if they were created before the toggle was disabled
+
 ## Implementation Notes
 - Booking creation validates the lot's minimum stay requirement (accounting for seasonal pricing rule overrides). Guest and owner modifications also enforce minimum stay.
 - All payments use Stripe manual capture: authorize first, capture on confirmation.

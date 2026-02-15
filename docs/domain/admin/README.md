@@ -182,6 +182,7 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | V1051 | Leads CRM tables (leads + lead_interactions) |
 | V1059 | Add `is_deactivated` column to owners table |
 | V1061 | Feature toggle table with default `SUBSCRIPTION_ENFORCEMENT` toggle |
+| V1062 | Add `BOOKING_ENABLED` toggle (default: disabled) |
 
 ## Implementation Notes
 - All admin actions are automatically logged to `AdminAuditLog` with before/after value snapshots.
@@ -190,4 +191,5 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 - Financial CSV export generates a downloadable report of revenue, service fees, and booking volume.
 - The admin portal is accessible at `/admin` and uses a dedicated layout with sidebar navigation.
 - Feature toggles allow admins to enable/disable platform features at runtime. The `SUBSCRIPTION_ENFORCEMENT` toggle controls whether subscription checks are enforced in the backend (BookingService, SupplierService, OwnerService) and frontend (OwnerSubscriptionContext, SubscriptionContext). When disabled, all subscription gates are bypassed.
+- The `BOOKING_ENABLED` toggle (default: `false`) controls the entire booking system. When disabled: backend rejects booking creation, frontend hides "Book Now" buttons / Trips tab / owner booking nav items, platform operates as a listing-only directory. See [booking module docs](../booking/README.md#feature-toggle-booking_enabled) for full details.
 - Feature toggle state is fetched from the public `/feature-toggles/enabled` endpoint (no auth required) and provided via `FeatureToggleContext` to the entire React app.

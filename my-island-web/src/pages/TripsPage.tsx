@@ -5,9 +5,12 @@ import { PaymentForm } from '../components/booking/PaymentForm';
 import { GuestModifyBookingModal } from '../components/booking/GuestModifyBookingModal';
 import type { Booking, GuestModificationPolicy, ModificationRequest } from '../types/booking';
 import { Link } from 'react-router-dom';
+import { useFeatureToggle } from '../context/FeatureToggleContext';
 
 export const TripsPage: React.FC = () => {
     const { user } = useAuth();
+    const { isFeatureEnabled } = useFeatureToggle();
+    const bookingEnabled = isFeatureEnabled('BOOKING_ENABLED');
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
@@ -445,6 +448,24 @@ export const TripsPage: React.FC = () => {
             </div>
         );
     };
+
+    if (!bookingEnabled) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] p-4">
+                <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                    <span className="material-symbols-outlined text-4xl text-gray-400">schedule</span>
+                </div>
+                <h2 className="text-xl font-semibold text-[#111418] dark:text-white mb-2">Booking Coming Soon</h2>
+                <p className="text-gray-500 text-center mb-6">We're working on bringing you a seamless booking experience. Stay tuned!</p>
+                <Link
+                    to="/"
+                    className="bg-primary hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+                >
+                    Explore Campsites
+                </Link>
+            </div>
+        );
+    }
 
     if (!user) {
         return (

@@ -32,7 +32,7 @@ export const AdminFeatureTogglesPage: React.FC = () => {
 
   const onToggleClick = (toggle: FeatureToggle) => {
     // Show confirmation for critical toggles
-    if (toggle.name === 'SUBSCRIPTION_ENFORCEMENT') {
+    if (toggle.name === 'SUBSCRIPTION_ENFORCEMENT' || toggle.name === 'BOOKING_ENABLED') {
       setConfirmToggle(toggle);
     } else {
       handleToggle(toggle);
@@ -141,6 +141,13 @@ export const AdminFeatureTogglesPage: React.FC = () => {
                 {confirmToggle.enabled
                   ? 'Disabling this will allow all owners and suppliers to operate without active subscriptions.'
                   : 'Enabling this will enforce subscription checks for bookings, offers, and analytics.'}
+              </p>
+            )}
+            {confirmToggle.name === 'BOOKING_ENABLED' && (
+              <p className="text-sm text-amber-600 dark:text-amber-400 mb-4">
+                {confirmToggle.enabled
+                  ? 'Disabling this will hide all booking functionality and switch the platform to listing-only mode.'
+                  : 'Enabling this will activate the full booking system, allowing guests to create bookings.'}
               </p>
             )}
             <div className="flex gap-3 justify-end mt-6">

@@ -8,6 +8,7 @@ import { useSaved } from '../context/SavedContext';
 import { getImages, type EntityImage } from '../services/imageService';
 import { CampsiteImageGallery } from '../components/ui/CampsiteImageGallery';
 import { CampsiteMap } from '../components/ui/CampsiteMap';
+import { useFeatureToggle } from '../context/FeatureToggleContext';
 
 // Type configuration with display names and images
 const TYPE_CONFIG: Record<string, { label: string; pluralLabel: string; icon: string; defaultImage: string; description: string }> = {
@@ -71,6 +72,8 @@ export const CampsiteDetailsPage: React.FC = () => {
     const [showContactInfo, setShowContactInfo] = useState(false);
     const [campsiteImages, setCampsiteImages] = useState<EntityImage[]>([]);
     const { isSaved, toggleSaved } = useSaved();
+    const { isFeatureEnabled } = useFeatureToggle();
+    const bookingEnabled = isFeatureEnabled('BOOKING_ENABLED');
 
     useEffect(() => {
         if (!id) return;
@@ -315,7 +318,12 @@ export const CampsiteDetailsPage: React.FC = () => {
                                         </div>
                                     )}
 
-                                    {campsite.isAcceptingBookings === false ? (
+                                    {!bookingEnabled ? (
+                                        <div className="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-bold py-3 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                            <span className="material-symbols-outlined text-xl">schedule</span>
+                                            Booking Coming Soon
+                                        </div>
+                                    ) : campsite.isAcceptingBookings === false ? (
                                         <button
                                             onClick={() => setShowContactInfo(true)}
                                             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { OwnerSubscriptionProvider } from '../../context/OwnerSubscriptionContext';
 import { OwnerSubscriptionBanner } from './OwnerSubscriptionBanner';
 import { useAllStaffPermissions } from '../../hooks/useStaffPermission';
+import { useFeatureToggle } from '../../context/FeatureToggleContext';
 import clsx from 'clsx';
 
 const PAGE_TITLES: Record<string, string> = {
@@ -27,7 +28,16 @@ const OwnerLayoutContent: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const perms = useAllStaffPermissions('owner');
+    const { isFeatureEnabled } = useFeatureToggle();
+    const bookingEnabled = isFeatureEnabled('BOOKING_ENABLED');
     const pageTitle = PAGE_TITLES[location.pathname] || 'Owner Portal';
+
+    // Redirect /owner (Dashboard) to /owner/lots when bookings are disabled
+    useEffect(() => {
+        if (!bookingEnabled && location.pathname === '/owner') {
+            navigate('/owner/lots', { replace: true });
+        }
+    }, [bookingEnabled, location.pathname, navigate]);
 
     const handleLogout = async () => {
         await logout();
@@ -67,18 +77,18 @@ const OwnerLayoutContent: React.FC = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" onClick={() => setIsMobileMenuOpen(false)}>
-                    {perms.dashboard?.canRead !== false && <OwnerNavLink to="/owner" icon="dashboard" label="Dashboard" end />}
-                    {perms.today?.canRead !== false && <OwnerNavLink to="/owner/today" icon="today" label="Today" />}
+                    {bookingEnabled && perms.dashboard?.canRead !== false && <OwnerNavLink to="/owner" icon="dashboard" label="Dashboard" end />}
+                    {bookingEnabled && perms.today?.canRead !== false && <OwnerNavLink to="/owner/today" icon="today" label="Today" />}
                     {perms.lots?.canRead !== false && <OwnerNavLink to="/owner/lots" icon="grid_view" label="My Lots" />}
-                    {perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />}
-                    {perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />}
-                    {perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/timeline" icon="view_timeline" label="Timeline" />}
+                    {bookingEnabled && perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/bookings" icon="calendar_month" label="Bookings" />}
+                    {bookingEnabled && perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/calendar" icon="event" label="Calendar" />}
+                    {bookingEnabled && perms.calendar?.canRead !== false && <OwnerNavLink to="/owner/timeline" icon="view_timeline" label="Timeline" />}
                     {perms.reviews?.canRead !== false && <OwnerNavLink to="/owner/reviews" icon="rate_review" label="Reviews" />}
                     {perms.property?.canRead !== false && <OwnerNavLink to="/owner/property" icon="home" label="Property Details" />}
-                    {perms.pricing?.canRead !== false && <OwnerNavLink to="/owner/pricing" icon="payments" label="Pricing" />}
+                    {bookingEnabled && perms.pricing?.canRead !== false && <OwnerNavLink to="/owner/pricing" icon="payments" label="Pricing" />}
                     {perms.staff?.canRead !== false && <OwnerNavLink to="/owner/staff" icon="group" label="Staff" />}
-                    {perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/modification-requests" icon="edit_note" label="Modifications" />}
-                    {perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/messages" icon="chat" label="Messages" />}
+                    {bookingEnabled && perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/modification-requests" icon="edit_note" label="Modifications" />}
+                    {bookingEnabled && perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/messages" icon="chat" label="Messages" />}
                     {perms.settings?.canRead !== false && <OwnerNavLink to="/owner/settings" icon="settings" label="Settings" />}
                 </div>
 

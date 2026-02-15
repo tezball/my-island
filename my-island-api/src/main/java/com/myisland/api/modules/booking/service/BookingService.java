@@ -101,6 +101,10 @@ public class BookingService {
 
     @Transactional
     public BookingDto createBooking(Long userId, CreateBookingRequest request) {
+        if (!featureToggleService.isBookingEnabled()) {
+            throw new BadRequestException("Bookings are not currently available.");
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
@@ -406,6 +410,10 @@ public class BookingService {
     @Transactional
     public BookingDto createManualBooking(Long userId, CreateManualBookingRequest request) {
         Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.BOOKINGS, AccessLevel.FULL);
+
+        if (!featureToggleService.isBookingEnabled()) {
+            throw new BadRequestException("Bookings are not currently available.");
+        }
 
         if (featureToggleService.isSubscriptionEnforced() && !owner.hasActiveSubscription()) {
             throw new BadRequestException("An active subscription is required to create manual bookings.");

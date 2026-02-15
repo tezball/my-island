@@ -32,6 +32,11 @@ public class FeatureToggleService {
     }
 
     @Transactional(readOnly = true)
+    public boolean isBookingEnabled() {
+        return isEnabled("BOOKING_ENABLED");
+    }
+
+    @Transactional(readOnly = true)
     public List<FeatureToggle> getAllToggles() {
         return featureToggleRepository.findAll();
     }
