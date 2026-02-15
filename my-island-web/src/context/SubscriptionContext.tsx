@@ -4,6 +4,7 @@ import { supplierSubscriptionApi } from '../services/subscriptionApi';
 import { SubscriptionFormModal } from '../components/subscription/SubscriptionForm';
 import type { SubscriptionDto, SubscriptionStatus } from '../types/subscription';
 import { useAuth } from './AuthContext';
+import { useFeatureToggle } from './FeatureToggleContext';
 
 interface SubscriptionContextType {
   subscription: SubscriptionDto | null;
@@ -29,6 +30,7 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(u
 
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const { isFeatureEnabled } = useFeatureToggle();
   const [subscription, setSubscription] = useState<SubscriptionDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,15 +47,24 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     try {
       const data = await subscriptionService.getSubscriptionStatus();
-      setSubscription(data);
+      // When subscription enforcement is disabled, override to grant access
+      if (!isFeatureEnabled('SUBSCRIPTION_ENFORCEMENT')) {
+        setSubscription({ ...data, hasActiveSubscription: true, needsSubscription: false });
+      } else {
+        setSubscription(data);
+      }
     } catch (err) {
       console.error('Failed to fetch subscription:', err);
       setError('Failed to load subscription status');
-      setSubscription(defaultSubscription);
+      if (!isFeatureEnabled('SUBSCRIPTION_ENFORCEMENT')) {
+        setSubscription({ ...defaultSubscription, hasActiveSubscription: true, needsSubscription: false });
+      } else {
+        setSubscription(defaultSubscription);
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [user?.isSupplier]);
+  }, [user?.isSupplier, isFeatureEnabled]);
 
   useEffect(() => {
     if (user?.isSupplier) {

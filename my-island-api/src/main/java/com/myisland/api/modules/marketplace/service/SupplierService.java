@@ -10,6 +10,7 @@ import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.OfferClaimRepository;
 import com.myisland.api.modules.marketplace.repository.OfferRepository;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
+import com.myisland.api.modules.admin.service.FeatureToggleService;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -29,13 +30,16 @@ public class SupplierService {
     private final OfferRepository offerRepository;
     private final OfferClaimRepository offerClaimRepository;
     private final StaffPermissionChecker permissionChecker;
+    private final FeatureToggleService featureToggleService;
 
     public SupplierService(SupplierRepository supplierRepository, OfferRepository offerRepository,
-            OfferClaimRepository offerClaimRepository, StaffPermissionChecker permissionChecker) {
+            OfferClaimRepository offerClaimRepository, StaffPermissionChecker permissionChecker,
+            FeatureToggleService featureToggleService) {
         this.supplierRepository = supplierRepository;
         this.offerRepository = offerRepository;
         this.offerClaimRepository = offerClaimRepository;
         this.permissionChecker = permissionChecker;
+        this.featureToggleService = featureToggleService;
     }
 
     @Transactional(readOnly = true)
@@ -126,7 +130,7 @@ public class SupplierService {
         Supplier supplier = permissionChecker.resolveSupplierAndCheck(userId, PermissionGroup.OFFERS, AccessLevel.FULL);
 
         // Require active subscription to create offers
-        if (!supplier.hasActiveSubscription()) {
+        if (featureToggleService.isSubscriptionEnforced() && !supplier.hasActiveSubscription()) {
             throw new BadRequestException("An active subscription is required to create offers.");
         }
 
@@ -192,7 +196,7 @@ public class SupplierService {
             offer.setMaxClaims(request.maxClaims());
         }
         if (request.isActive() != null) {
-            if (request.isActive() && !supplier.hasActiveSubscription()) {
+            if (request.isActive() && featureToggleService.isSubscriptionEnforced() && !supplier.hasActiveSubscription()) {
                 throw new BadRequestException("An active subscription is required to activate offers.");
             }
             offer.setActive(request.isActive());

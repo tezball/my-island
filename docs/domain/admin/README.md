@@ -4,13 +4,14 @@
 Implemented
 
 ## Overview
-Platform administration portal for managing users, bookings, owners, suppliers, reviews, subscriptions, and financial reporting. Includes a lead CRM for tracking potential campsite partnerships, comprehensive audit logging for all admin actions, and CSV export capabilities for financial data.
+Platform administration portal for managing users, bookings, owners, suppliers, reviews, subscriptions, and financial reporting. Includes a lead CRM for tracking potential campsite partnerships, comprehensive audit logging for all admin actions, CSV export capabilities for financial data, and a feature toggle system for controlling platform behavior.
 
 ## Key Entities
 
 - **AdminAuditLog** -- Records every admin action with before/after snapshots. Tracks the admin user, action type, affected entity, summary, and JSONB detail fields for previous/new values.
 - **Lead** -- A prospective campsite owner or supplier tracked through the sales pipeline. Has a computed score (0-100), status lifecycle, business type, tags, and optional assignment to an admin user.
 - **LeadInteraction** -- A timestamped log entry on a Lead (call, email, meeting, or note). Tracks who created it and the interaction content.
+- **FeatureToggle** -- A named boolean flag for controlling platform features at runtime. Has a name (unique), enabled state, description, category, and tracks which admin last updated it.
 
 ## Lead Status Lifecycle
 
@@ -137,6 +138,13 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | GET | `/admin/leads/overdue` | Leads with overdue follow-ups |
 | GET | `/admin/leads/export` | CSV export of leads |
 
+### Feature Toggles
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/admin/feature-toggles` | List all feature toggles (admin) |
+| PUT | `/admin/feature-toggles/{name}` | Update a feature toggle (admin) |
+| GET | `/feature-toggles/enabled` | Get enabled toggles map (public, no auth) |
+
 ### Audit Log
 | Method | Path | Description |
 |--------|------|-------------|
@@ -163,6 +171,7 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | `/admin/leads` | AdminLeads | Lead CRM list with create, filters, CSV export |
 | `/admin/leads/:id` | AdminLeadDetail | Lead detail with interaction timeline |
 | `/admin/audit` | AdminAuditLog | Audit log with entity type and date filters |
+| `/admin/feature-toggles` | AdminFeatureToggles | Feature toggle table with on/off switches |
 
 ## Migrations
 
@@ -172,6 +181,7 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | V1050 | Admin audit log table |
 | V1051 | Leads CRM tables (leads + lead_interactions) |
 | V1059 | Add `is_deactivated` column to owners table |
+| V1061 | Feature toggle table with default `SUBSCRIPTION_ENFORCEMENT` toggle |
 
 ## Implementation Notes
 - All admin actions are automatically logged to `AdminAuditLog` with before/after value snapshots.
@@ -179,3 +189,5 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 - Lead scores are computed dynamically based on lead data and interaction count.
 - Financial CSV export generates a downloadable report of revenue, service fees, and booking volume.
 - The admin portal is accessible at `/admin` and uses a dedicated layout with sidebar navigation.
+- Feature toggles allow admins to enable/disable platform features at runtime. The `SUBSCRIPTION_ENFORCEMENT` toggle controls whether subscription checks are enforced in the backend (BookingService, SupplierService, OwnerService) and frontend (OwnerSubscriptionContext, SubscriptionContext). When disabled, all subscription gates are bypassed.
+- Feature toggle state is fetched from the public `/feature-toggles/enabled` endpoint (no auth required) and provided via `FeatureToggleContext` to the entire React app.

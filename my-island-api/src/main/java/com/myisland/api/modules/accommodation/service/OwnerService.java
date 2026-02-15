@@ -19,6 +19,7 @@ import com.myisland.api.modules.identity.repository.UserRepository;
 import com.myisland.api.modules.identity.service.AccessLevel;
 import com.myisland.api.modules.identity.service.PermissionGroup;
 import com.myisland.api.modules.identity.service.StaffPermissionChecker;
+import com.myisland.api.modules.admin.service.FeatureToggleService;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import com.myisland.api.shared.storage.EntityImage;
@@ -51,6 +52,7 @@ public class OwnerService {
     private final UserRepository userRepository;
     private final SeasonalPricingRuleRepository pricingRuleRepository;
     private final StaffPermissionChecker permissionChecker;
+    private final FeatureToggleService featureToggleService;
 
     public OwnerService(OwnerRepository ownerRepository, LotRepository lotRepository,
                         AmenityRepository amenityRepository, BookingRepository bookingRepository,
@@ -58,7 +60,8 @@ public class OwnerService {
                         LotBlockedPeriodRepository blockedPeriodRepository,
                         UserRepository userRepository,
                         SeasonalPricingRuleRepository pricingRuleRepository,
-                        StaffPermissionChecker permissionChecker) {
+                        StaffPermissionChecker permissionChecker,
+                        FeatureToggleService featureToggleService) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
         this.amenityRepository = amenityRepository;
@@ -68,6 +71,7 @@ public class OwnerService {
         this.userRepository = userRepository;
         this.pricingRuleRepository = pricingRuleRepository;
         this.permissionChecker = permissionChecker;
+        this.featureToggleService = featureToggleService;
     }
 
     @Transactional(readOnly = true)
@@ -777,7 +781,7 @@ public class OwnerService {
      * Helper method to enforce subscription requirement for premium features.
      */
     private void requireActiveSubscription(Owner owner) {
-        if (!owner.hasActiveSubscription()) {
+        if (featureToggleService.isSubscriptionEnforced() && !owner.hasActiveSubscription()) {
             throw new BadRequestException("An active subscription is required to access this feature.");
         }
     }

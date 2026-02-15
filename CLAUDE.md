@@ -160,6 +160,26 @@ my-island-web/src/
 - **Layout**: Header, Footer, and BottomNav hidden on `/signin`, `/signup`, `/personalize`, `/trips/*/messages`
 - **Environment Gating**: `VITE_SHOW_TEST_USERS=true` in `.env.development` shows the test user dropdown on sign-in; `.env.production` hides it
 - **Cookie Consent**: `CookieConsentBanner` component stores `cookie_consent` in localStorage; appears on first visit, dismissed permanently on accept
+- **Feature Toggles**: `FeatureToggleContext` fetches toggle state from public `/api/feature-toggles/enabled` endpoint on mount (no auth). `isFeatureEnabled(name)` defaults to `true` if toggle not found. Admin can manage toggles at `/admin/feature-toggles`.
+
+## Feature Toggles
+
+The platform uses a database-backed feature toggle system managed from the admin portal.
+
+### Architecture
+- **Backend**: `FeatureToggle` entity in admin module, `FeatureToggleService.isEnabled(name)` / `isSubscriptionEnforced()`
+- **Frontend**: `FeatureToggleContext` wraps entire app (outside AuthProvider), provides `isFeatureEnabled(name)`
+- **Public endpoint**: `GET /api/feature-toggles/enabled` returns `Map<String, Boolean>` (no auth required)
+- **Admin endpoints**: `GET/PUT /api/admin/feature-toggles` (ADMIN role required)
+
+### Current Toggles
+| Name | Default | Description |
+|------|---------|-------------|
+| `SUBSCRIPTION_ENFORCEMENT` | `true` | When enabled, subscription checks are enforced for bookings, offers, and analytics. When disabled, all subscription gates are bypassed. |
+
+### Integration Points
+- **Backend**: `BookingService`, `SupplierService`, `OwnerService` check `featureToggleService.isSubscriptionEnforced()` before subscription gates
+- **Frontend**: `OwnerSubscriptionContext` and `SubscriptionContext` override `hasActiveSubscription=true` and `needsSubscription=false` when toggle is disabled, cascading to all downstream UI (SubscriptionGate, banners, lock icons)
 
 ## Test Accounts
 
@@ -281,3 +301,5 @@ Key endpoints:
 - `GET /api/admin/financial/revenue` - Admin financial reports
 - `CRUD /api/admin/leads` - Admin leads CRM
 - `GET /api/admin/audit` - Admin audit log
+- `GET/PUT /api/admin/feature-toggles` - Admin feature toggle management
+- `GET /api/feature-toggles/enabled` - Public feature toggle state (no auth)

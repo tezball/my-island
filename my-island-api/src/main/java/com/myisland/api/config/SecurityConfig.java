@@ -80,6 +80,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/discovery/pois").permitAll()
                         .requestMatchers(HttpMethod.GET, "/discovery/pois/**").permitAll()
 
+                        // Public feature toggle endpoints
+                        .requestMatchers(HttpMethod.GET, "/feature-toggles/**").permitAll()
+
                         // Owner endpoints (accessible by owners and staff)
                         .requestMatchers("/owner/**").hasAnyRole("OWNER", "STAFF")
 

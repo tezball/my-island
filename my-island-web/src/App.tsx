@@ -62,6 +62,8 @@ import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from './pages/TermsOfServicePage';
 import { Footer } from './components/layout/Footer';
 import { CookieConsentBanner } from './components/CookieConsentBanner';
+import { FeatureToggleProvider } from './context/FeatureToggleContext';
+import { AdminFeatureTogglesPage } from './pages/admin/AdminFeatureTogglesPage';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -93,6 +95,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <BrowserRouter>
+      <FeatureToggleProvider>
       <AuthProvider>
         <SavedProvider>
           <Layout>
@@ -180,6 +183,7 @@ function App() {
                 <Route path="leads" element={<AdminLeadsPage />} />
                 <Route path="leads/:id" element={<AdminLeadDetailPage />} />
                 <Route path="audit" element={<AdminAuditPage />} />
+                <Route path="feature-toggles" element={<AdminFeatureTogglesPage />} />
               </Route>
             </Route>
           </Routes>
@@ -197,6 +201,7 @@ function App() {
           <CookieConsentBanner />
         </SavedProvider>
       </AuthProvider>
+      </FeatureToggleProvider>
     </BrowserRouter>
   );
 }

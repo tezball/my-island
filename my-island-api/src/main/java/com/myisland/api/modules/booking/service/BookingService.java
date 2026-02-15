@@ -21,6 +21,7 @@ import com.myisland.api.modules.identity.service.AccessLevel;
 import com.myisland.api.modules.identity.service.PermissionGroup;
 import com.myisland.api.modules.identity.service.StaffPermissionChecker;
 import com.myisland.api.shared.events.BookingEvent;
+import com.myisland.api.modules.admin.service.FeatureToggleService;
 import com.myisland.api.shared.exceptions.BadRequestException;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
 import com.stripe.exception.StripeException;
@@ -54,6 +55,7 @@ public class BookingService {
     private final StaffPermissionChecker permissionChecker;
     private final BookingModificationLogRepository modificationLogRepository;
     private final BookingModificationRequestRepository modificationRequestRepository;
+    private final FeatureToggleService featureToggleService;
 
     public BookingService(BookingRepository bookingRepository, LotRepository lotRepository,
             UserRepository userRepository, ApplicationEventPublisher eventPublisher,
@@ -61,7 +63,8 @@ public class BookingService {
             LotBlockedPeriodRepository blockedPeriodRepository, PricingService pricingService,
             OwnerRepository ownerRepository, StaffPermissionChecker permissionChecker,
             BookingModificationLogRepository modificationLogRepository,
-            BookingModificationRequestRepository modificationRequestRepository) {
+            BookingModificationRequestRepository modificationRequestRepository,
+            FeatureToggleService featureToggleService) {
         this.bookingRepository = bookingRepository;
         this.lotRepository = lotRepository;
         this.userRepository = userRepository;
@@ -74,6 +77,7 @@ public class BookingService {
         this.permissionChecker = permissionChecker;
         this.modificationLogRepository = modificationLogRepository;
         this.modificationRequestRepository = modificationRequestRepository;
+        this.featureToggleService = featureToggleService;
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +113,7 @@ public class BookingService {
 
         // Check owner subscription - owners must have active subscription to receive bookings
         Owner owner = lot.getOwner();
-        if (!owner.hasActiveSubscription()) {
+        if (featureToggleService.isSubscriptionEnforced() && !owner.hasActiveSubscription()) {
             throw new BadRequestException("This property is not currently accepting bookings.");
         }
 
@@ -403,7 +407,7 @@ public class BookingService {
     public BookingDto createManualBooking(Long userId, CreateManualBookingRequest request) {
         Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.BOOKINGS, AccessLevel.FULL);
 
-        if (!owner.hasActiveSubscription()) {
+        if (featureToggleService.isSubscriptionEnforced() && !owner.hasActiveSubscription()) {
             throw new BadRequestException("An active subscription is required to create manual bookings.");
         }
 

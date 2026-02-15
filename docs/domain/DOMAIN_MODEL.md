@@ -190,9 +190,9 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 - Handle account.updated webhooks
 
 ### 10. Admin Context
-**Purpose**: Platform administration, audit logging, and lead CRM for campsite partnerships.
+**Purpose**: Platform administration, audit logging, lead CRM for campsite partnerships, and feature toggle management.
 
-**Aggregates**: AdminAuditLog, Lead (with LeadInteraction)
+**Aggregates**: AdminAuditLog, Lead (with LeadInteraction), FeatureToggle
 
 **Key Operations**:
 - Dashboard KPIs and activity feed
@@ -203,6 +203,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 - Financial reporting with CSV export
 - Lead CRM with scoring, interactions, and follow-up tracking
 - Audit logging of all admin actions with before/after snapshots
+- Feature toggle management (e.g., SUBSCRIPTION_ENFORCEMENT)
 
 ---
 
@@ -640,6 +641,24 @@ Lead (Root)
 | content | String | Interaction details |
 | createdBy | String | Admin who created the interaction |
 | createdAt | Timestamp | When the interaction occurred |
+
+### FeatureToggle
+
+```
+FeatureToggle (standalone entity, no aggregate root)
+```
+
+**FeatureToggle**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| name | String | Unique toggle name (e.g., SUBSCRIPTION_ENFORCEMENT) |
+| enabled | Boolean | Whether the toggle is active |
+| description | String | Human-readable description of what the toggle controls |
+| category | String | Grouping category (e.g., BILLING, FEATURE) |
+| updatedBy | Long | Admin user who last changed the toggle |
+| updatedAt | Timestamp | When the toggle was last changed |
 
 ---
 
