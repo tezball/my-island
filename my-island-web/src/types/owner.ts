@@ -75,6 +75,15 @@ export interface UpdateLotRequest {
     amenityIds?: number[];
 }
 
+// --- Import/Export types ---
+
+export interface ImportLotsResult {
+    created: number;
+    skipped: number;
+    errors: string[];
+    warnings: string[];
+}
+
 // --- Analytics types ---
 
 export interface LotDetail {

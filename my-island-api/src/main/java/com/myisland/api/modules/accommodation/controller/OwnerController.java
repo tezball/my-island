@@ -26,11 +26,13 @@ import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +120,27 @@ public class OwnerController {
     ) {
         ownerService.deleteLot(userDetails.getUserId(), lotId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/lots/export")
+    @Operation(summary = "Export all lots as JSON")
+    public ResponseEntity<Map<String, Object>> exportLots(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Map<String, Object> export = ownerService.exportLots(userDetails.getUserId());
+        String filename = "lots-export-" + LocalDate.now() + ".json";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(export);
+    }
+
+    @PostMapping("/lots/import")
+    @Operation(summary = "Import lots from JSON")
+    public ResponseEntity<ImportLotsResponse> importLots(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody ImportLotsRequest request
+    ) {
+        return ResponseEntity.ok(ownerService.importLots(userDetails.getUserId(), request));
     }
 
     @GetMapping("/preferences")

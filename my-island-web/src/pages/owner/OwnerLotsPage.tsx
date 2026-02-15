@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ownerService } from '../../services/ownerService';
+import type { ImportLotsResult } from '../../types/owner';
 import type { Lot } from '../../types/booking';
 import { LotFormModal } from '../../components/owner/LotFormModal';
 import { OwnerLotsTable } from '../../components/owner/OwnerLotsTable';
@@ -24,6 +25,10 @@ export const OwnerLotsPage: React.FC = () => {
     const [typeFilter, setTypeFilter] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingLot, setEditingLot] = useState<Lot | null>(null);
+    const [isExporting, setIsExporting] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [importResult, setImportResult] = useState<ImportLotsResult | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const loadLots = useCallback(async () => {
         if (!user) return;
@@ -78,17 +83,110 @@ export const OwnerLotsPage: React.FC = () => {
                         )}
                     </p>
                 </div>
-                <button
-                    onClick={() => {
-                        setEditingLot(null);
-                        setIsModalOpen(true);
-                    }}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#20d85f] transition-colors text-sm font-medium w-full sm:w-auto"
-                >
-                    <span className="material-symbols-outlined text-lg">add</span>
-                    Add New Lot
-                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <button
+                        onClick={async () => {
+                            setIsExporting(true);
+                            try {
+                                await ownerService.exportLotsJson();
+                            } catch (err) {
+                                console.error('Export failed:', err);
+                            } finally {
+                                setIsExporting(false);
+                            }
+                        }}
+                        disabled={lots.length === 0 || isExporting}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="material-symbols-outlined text-lg">download</span>
+                        {isExporting ? 'Exporting...' : 'Export'}
+                    </button>
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isImporting}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span className="material-symbols-outlined text-lg">upload</span>
+                        {isImporting ? 'Importing...' : 'Import'}
+                    </button>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        className="hidden"
+                        onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setIsImporting(true);
+                            setImportResult(null);
+                            try {
+                                const result = await ownerService.importLotsJson(file);
+                                setImportResult(result);
+                                if (result.created > 0) {
+                                    await loadLots();
+                                }
+                            } catch (err) {
+                                setImportResult({ created: 0, skipped: 0, errors: [String(err)], warnings: [] });
+                            } finally {
+                                setIsImporting(false);
+                                e.target.value = '';
+                            }
+                        }}
+                    />
+                    <button
+                        onClick={() => {
+                            setEditingLot(null);
+                            setIsModalOpen(true);
+                        }}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#20d85f] transition-colors text-sm font-medium flex-1 sm:flex-none"
+                    >
+                        <span className="material-symbols-outlined text-lg">add</span>
+                        Add New Lot
+                    </button>
+                </div>
             </div>
+
+            {/* Import Result Banner */}
+            {importResult && (
+                <div className="bg-white dark:bg-[#1a2632] rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+                    <div className="flex items-start justify-between">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3 text-sm">
+                                {importResult.created > 0 && (
+                                    <span className="text-green-600 font-medium">
+                                        {importResult.created} lot{importResult.created !== 1 ? 's' : ''} created
+                                    </span>
+                                )}
+                                {importResult.skipped > 0 && (
+                                    <span className="text-gray-500 font-medium">
+                                        {importResult.skipped} skipped
+                                    </span>
+                                )}
+                            </div>
+                            {importResult.errors.length > 0 && (
+                                <ul className="text-sm text-red-600 space-y-1">
+                                    {importResult.errors.map((err, i) => (
+                                        <li key={i}>{err}</li>
+                                    ))}
+                                </ul>
+                            )}
+                            {importResult.warnings.length > 0 && (
+                                <ul className="text-sm text-amber-600 space-y-1">
+                                    {importResult.warnings.map((warn, i) => (
+                                        <li key={i}>{warn}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                        <button
+                            onClick={() => setImportResult(null)}
+                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                            <span className="material-symbols-outlined text-lg">close</span>
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Type Filter */}
             {Object.keys(typeCounts).length > 0 && (

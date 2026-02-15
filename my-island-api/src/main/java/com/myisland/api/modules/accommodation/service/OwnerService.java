@@ -777,6 +777,105 @@ public class OwnerService {
         return new OccupancyDetailResponse(summary, byType, weeklyTrend, peakDays);
     }
 
+    // --- Lot Export/Import ---
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> exportLots(Long userId) {
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.LOTS, AccessLevel.READ);
+        List<Lot> lots = lotRepository.findByOwnerId(owner.getId());
+
+        List<Map<String, Object>> lotEntries = lots.stream().map(lot -> {
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("name", lot.getName());
+            entry.put("lotType", lot.getLotType().name());
+            entry.put("description", lot.getDescription());
+            entry.put("pricePerNight", lot.getPricePerNight());
+            entry.put("maxGuests", lot.getMaxGuests());
+            entry.put("minStay", lot.getMinStay());
+            entry.put("isActive", lot.isActive());
+            entry.put("amenities", lot.getAmenities().stream()
+                    .map(Amenity::getName)
+                    .sorted()
+                    .toList());
+            return entry;
+        }).toList();
+
+        Map<String, Object> export = new LinkedHashMap<>();
+        export.put("exportedAt", java.time.LocalDateTime.now().toString());
+        export.put("propertyName", owner.getPropertyName());
+        export.put("lots", lotEntries);
+        return export;
+    }
+
+    @Transactional
+    public ImportLotsResponse importLots(Long userId, ImportLotsRequest request) {
+        Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.LOTS, AccessLevel.FULL);
+
+        // Batch-fetch all referenced amenity names
+        Set<String> allAmenityNames = new HashSet<>();
+        for (ImportLotEntry entry : request.lots()) {
+            if (entry.amenities() != null) {
+                allAmenityNames.addAll(entry.amenities());
+            }
+        }
+        Map<String, Amenity> amenityMap = new HashMap<>();
+        if (!allAmenityNames.isEmpty()) {
+            amenityRepository.findByNameIn(allAmenityNames)
+                    .forEach(a -> amenityMap.put(a.getName(), a));
+        }
+
+        int created = 0;
+        int skipped = 0;
+        List<String> errors = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
+
+        for (int i = 0; i < request.lots().size(); i++) {
+            ImportLotEntry entry = request.lots().get(i);
+            String label = "Lot #" + (i + 1) + " (" + entry.name() + ")";
+
+            // Validate lotType enum
+            Lot.LotType lotType;
+            try {
+                lotType = Lot.LotType.valueOf(entry.lotType());
+            } catch (IllegalArgumentException e) {
+                errors.add(label + ": invalid lot type '" + entry.lotType() + "'");
+                skipped++;
+                continue;
+            }
+
+            // Resolve amenities by name
+            Set<Amenity> amenities = new HashSet<>();
+            if (entry.amenities() != null) {
+                for (String amenityName : entry.amenities()) {
+                    Amenity amenity = amenityMap.get(amenityName);
+                    if (amenity != null) {
+                        amenities.add(amenity);
+                    } else {
+                        warnings.add(label + ": amenity '" + amenityName + "' not found, skipped");
+                    }
+                }
+            }
+
+            Lot lot = Lot.builder()
+                    .owner(owner)
+                    .name(entry.name())
+                    .lotType(lotType)
+                    .description(entry.description())
+                    .pricePerNight(entry.pricePerNight())
+                    .maxGuests(entry.maxGuests())
+                    .minStay(entry.minStay())
+                    .isActive(entry.isActive())
+                    .amenities(amenities)
+                    .build();
+
+            lotRepository.save(lot);
+            created++;
+        }
+
+        log.info("Import completed for owner {}: {} created, {} skipped", owner.getId(), created, skipped);
+        return new ImportLotsResponse(created, skipped, errors, warnings);
+    }
+
     /**
      * Helper method to enforce subscription requirement for premium features.
      */

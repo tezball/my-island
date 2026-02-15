@@ -283,6 +283,8 @@ Key endpoints:
 - `GET/POST/{lotId}/DELETE/{lotId} /api/saved` - Saved/favorites (list, save, unsave)
 - `GET /api/saved/check/{lotId}` - Check if lot is saved
 - `POST /api/saved/bulk` - Bulk save (merge localStorage on login)
+- `GET /api/owner/lots/export` - Export lots as JSON file
+- `POST /api/owner/lots/import` - Import lots from JSON
 - `GET/POST/DELETE /api/owner/staff` - Manage owner staff members
 - `GET/POST/DELETE /api/supplier/staff` - Manage supplier staff members
 - `GET /api/admin/dashboard` - Admin dashboard stats

@@ -1,8 +1,9 @@
-import { apiRequest, NotFoundError } from './apiClient';
+import { apiRequest, API_BASE, NotFoundError } from './apiClient';
 import type { Lot, Booking, BlockedPeriod, CreateBlockedPeriodRequest, SeasonalPricingRule, CreateSeasonalPricingRuleRequest, ModificationRequest } from '../types/booking';
 import type {
     Owner, OwnerStats, OwnerDashboardData,
     CreateLotRequest, UpdateLotRequest,
+    ImportLotsResult,
     LotsDetailResponse, BookingsDetailResponse,
     RevenueDetailResponse, OccupancyDetailResponse,
 } from '../types/owner';
@@ -11,6 +12,7 @@ import type {
 export type {
     Owner, OwnerStats, OwnerDashboardData,
     CreateLotRequest, UpdateLotRequest,
+    ImportLotsResult,
     LotsDetailResponse, BookingsDetailResponse,
     RevenueDetailResponse, OccupancyDetailResponse,
 } from '../types/owner';
@@ -409,6 +411,36 @@ export const ownerService = {
         return apiRequest<ModificationRequest>(`/owner/modification-requests/${requestId}/resolve`, {
             method: 'POST',
             body: { approve, declineReason },
+        });
+    },
+
+    // --- Lot Export/Import ---
+
+    async exportLotsJson(): Promise<void> {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/owner/lots/export`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!response.ok) throw new Error('Export failed');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = response.headers.get('Content-Disposition')
+            ?.match(/filename="(.+)"/)?.[1] || `lots-export-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    },
+
+    async importLotsJson(file: File): Promise<ImportLotsResult> {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        const lots = json.lots || json;
+        return apiRequest<ImportLotsResult>('/owner/lots/import', {
+            method: 'POST',
+            body: { lots: Array.isArray(lots) ? lots : [lots] },
         });
     },
 

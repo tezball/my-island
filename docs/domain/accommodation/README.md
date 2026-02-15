@@ -37,6 +37,8 @@ Note: Backend uses uppercase, frontend uses lowercase with dashes (e.g., `mobile
 | POST | `/api/owner/lots` | Create lot |
 | PUT | `/api/owner/lots/{id}` | Update lot |
 | DELETE | `/api/owner/lots/{id}` | Delete lot |
+| GET | `/api/owner/lots/export` | Export all lots as JSON (Content-Disposition download) |
+| POST | `/api/owner/lots/import` | Import lots from JSON (creates new lots) |
 | GET | `/api/owner/lots/{id}/blocked-periods` | Get blocked date ranges |
 | POST | `/api/owner/lots/{id}/blocked-periods` | Block dates |
 | DELETE | `/api/owner/blocked-periods/{id}` | Unblock dates |
@@ -57,7 +59,7 @@ Note: Backend uses uppercase, frontend uses lowercase with dashes (e.g., `mobile
 - **CampsiteDetailsPage** — Single campsite with gallery, lots, reviews, booking
 - **OwnerDashboardPage** — Owner analytics dashboard
 - **OwnerPropertyPage** — Edit campsite profile
-- **OwnerLotsPage** — Manage lots (CRUD, images, amenities)
+- **OwnerLotsPage** — Manage lots (CRUD, images, amenities, JSON export/import)
 - **OwnerPricingPage** — Seasonal pricing rules
 - **OwnerCalendarPage** — Availability calendar with blocked dates
 
@@ -67,4 +69,5 @@ Note: Backend uses uppercase, frontend uses lowercase with dashes (e.g., `mobile
 - Owner analytics include occupancy rates, revenue, and booking counts.
 - Featured listings are time-limited promotions purchased via Stripe (`FeaturedPromotionService`).
 - Lots have a `minStay` field (default 1) set via the lot create/update endpoints. SeasonalPricingRules can optionally override the minimum stay for their date range. The effective minimum stay is resolved by `PricingService` at booking time.
+- **Lot export** produces a portable JSON file with amenity names (not IDs), suitable for backup or migration between environments. **Lot import** creates new lots, resolving amenity names back to entities. Unmatched amenities produce warnings; invalid lot types skip that lot with an error.
 - Saved/favorites use dual-mode persistence: authenticated users save to the `saved_lots` table via the API; anonymous users save to localStorage. On login, `SavedContext` merges any localStorage favorites into the backend via the bulk endpoint, then clears localStorage. Toggle operations use optimistic UI updates with rollback on failure.
