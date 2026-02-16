@@ -1,12 +1,12 @@
 # Review
 
 ## Status
-Implemented (with AI moderation pipeline)
+Implemented (with AI moderation pipeline — separate process)
 
 ## Overview
 Guest feedback system for campsites and suppliers. Guests can submit reviews after completing a booking or redeeming an offer. Owners and suppliers can respond to reviews.
 
-When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `PENDING` state and are processed by a scheduled AI moderation pipeline before becoming publicly visible. When the toggle is disabled, reviews are immediately `APPROVED` (current default behavior).
+When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `PENDING` state and are processed by the `my-island-moderator` worker process before becoming publicly visible. When the toggle is disabled, reviews are immediately `APPROVED` (current default behavior).
 
 ## Key Entities
 
@@ -17,29 +17,32 @@ When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `
 ## Moderation Pipeline
 
 ### Architecture
-- **ReviewModerationService** — Calls Ollama (llama3.2) via Spring AI ChatClient to classify reviews as APPROVED or REJECTED
-- **ReviewModerationScheduler** — Runs every 5 minutes (ShedLock), processes all PENDING reviews through the AI service
-- **OllamaConfig** — Conditional bean: only created when `spring.ai.ollama.enabled=true`. Connects to Ollama at `spring.ai.ollama.base-url` (default: `http://localhost:11434`)
-- **Graceful degradation** — If Ollama is unavailable or ChatClient bean not created, reviews are auto-approved with a logged warning
+- **my-island-moderator** — Standalone Spring Boot app (`my-island-moderator/`) that polls the database for PENDING reviews and moderates them via Ollama. Uses JdbcTemplate (no JPA) to avoid duplicating entity classes.
+- **ModerationService** — Calls Ollama (llama3.2) via Spring AI ChatClient to classify reviews as APPROVED or REJECTED
+- **ModerationScheduler** — Runs every 5 minutes (ShedLock), processes all PENDING reviews through the AI service, recalculates owner/supplier ratings via SQL
+- **OllamaConfig** — Non-conditional: Ollama is always expected in the moderator process
+- **Graceful degradation** — If Ollama is temporarily unavailable, reviews are auto-approved with a logged warning
 - **Feature toggle** — `REVIEW_AI_MODERATION` (default: disabled in prod, enabled in dev seed data). When off, all new reviews skip moderation and go straight to APPROVED
 
 ### Infrastructure
 - **Ollama** — Runs as a Docker service (`ollama/ollama`) on port 11434 with a persistent volume for model storage
 - **Model pull** — A one-shot `ollama-pull` sidecar pulls `llama3.2` (~2GB) on first start; subsequent starts are instant
-- **Docker env vars**: `OLLAMA_ENABLED=true`, `OLLAMA_BASE_URL=http://ollama:11434` (mapped in application.yml to Spring AI properties)
+- **Docker env vars**: `OLLAMA_BASE_URL=http://ollama:11434` on the moderator service
+- **Main API** — No longer depends on Ollama or Spring AI. AI moderation deps are fully decoupled.
 
 ### Flow
-1. Guest submits review
+1. Guest submits review (handled by main API)
 2. If `REVIEW_AI_MODERATION` enabled → status = `PENDING`, rating not yet counted
-3. Scheduler picks up PENDING reviews every 5 minutes
+3. Moderator worker picks up PENDING reviews every 5 minutes
 4. AI checks for: spam, offensive language, irrelevant content, fake reviews
 5. Review transitions to `APPROVED` or `REJECTED`
-6. If APPROVED → owner/supplier rating recalculated
-7. Admin can manually approve/reject any review at any time
+6. If APPROVED → owner/supplier rating recalculated (via SQL in moderator)
+7. Admin can manually approve/reject any review at any time (main API)
+8. Admin "Requeue for AI" resets review to PENDING for the moderator to re-process
 
 ### Rating Calculation
 - Only `APPROVED` reviews are counted in average rating and review count
-- Rating is recalculated when a review is approved (by AI or admin)
+- Rating is recalculated when a review is approved (by AI moderator or admin)
 
 ## Business Rules
 
@@ -65,7 +68,7 @@ When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `
 | GET | `/api/admin/reviews` | Admin: list all reviews (with moderation status) |
 | PUT | `/api/admin/reviews/{type}/{id}/flag` | Admin: toggle flag on review |
 | PUT | `/api/admin/reviews/{type}/{id}/moderate` | Admin: manually approve/reject review |
-| POST | `/api/admin/reviews/{type}/{id}/ai-moderate` | Admin: rerun AI moderation on a review |
+| POST | `/api/admin/reviews/{type}/{id}/ai-moderate` | Admin: requeue review for AI moderation (resets to PENDING) |
 | DELETE | `/api/admin/reviews/{type}/{id}` | Admin: delete review |
 
 ## Frontend Pages
@@ -74,7 +77,7 @@ When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `
 - **SupplierReviewsSection** — Displays approved reviews on supplier detail page
 - **OwnerReviewsPage** — Owner views all reviews with moderation status badges (PENDING=yellow, REJECTED=red)
 - **SupplierReviewsPage** — Supplier views all reviews with moderation status badges
-- **AdminReviewsPage** — Admin view with moderation status column, approve/reject/flag/delete actions
+- **AdminReviewsPage** — Admin view with moderation status column, approve/reject/flag/delete/requeue-for-AI actions
 
 ## Database
 

@@ -63,7 +63,7 @@ docker compose up -d
 # - API: http://localhost:8080/api
 # - Swagger: http://localhost:8080/api/swagger-ui.html
 # - Mailpit: http://localhost:8025
-# - Ollama: http://localhost:11434 (AI review moderation, llama3.2)
+# - Ollama: http://localhost:11434 (used by moderator service for AI review moderation)
 ```
 
 ## Commands
@@ -114,6 +114,7 @@ docker compose --profile native up api-native postgres   # Run native API
 my-island/
 ├── my-island-web/          # React 19 frontend
 ├── my-island-api/          # Spring Boot 3.4 backend
+├── my-island-moderator/    # AI review moderation worker (Spring Boot + Ollama)
 ├── docker-compose.yml      # Full stack orchestration
 └── docs/                   # Documentation vault
 ```
@@ -163,7 +164,7 @@ my-island-web/src/
 | Backend | Spring Boot 3.4, Java 25, Spring Security |
 | Database | PostgreSQL 17 |
 | Events | Spring ApplicationEvents (@Async) |
-| AI | Spring AI + Ollama (llama3.2) for review moderation |
+| AI | Spring AI + Ollama (llama3.2) in separate moderator process |
 | Auth | JWT |
 
 ## Key Patterns
@@ -201,8 +202,8 @@ The platform uses a database-backed feature toggle system managed from the admin
 - **Frontend**: `OwnerSubscriptionContext` and `SubscriptionContext` override `hasActiveSubscription=true` and `needsSubscription=false` when toggle is disabled, cascading to all downstream UI (SubscriptionGate, banners, lock icons)
 - **Frontend**: `CampsiteDetailsPage` replaces "Book Now" with "Booking Coming Soon"; `BottomNav` hides Trips tab; `TripsPage` shows coming-soon message; `OwnerLayout` hides 8 booking-related nav items and redirects `/owner` to `/owner/lots`
 - **Backend**: `ReviewService.createReview()` and `SupplierReviewService.createReview()` check `featureToggleService.isReviewModerationEnabled()` — if enabled, new reviews get `PENDING` status; if disabled, `APPROVED` immediately
-- **Backend**: `ReviewModerationScheduler` processes PENDING reviews every 5 minutes via AI (Spring AI + OpenAI gpt-4o-mini)
-- **Frontend**: Owner/Supplier review pages show moderation status badges (yellow=PENDING, red=REJECTED); admin page has approve/reject buttons
+- **Moderator**: `my-island-moderator` standalone process polls PENDING reviews every 5 minutes via Ollama AI
+- **Frontend**: Owner/Supplier review pages show moderation status badges (yellow=PENDING, red=REJECTED); admin page has approve/reject/requeue buttons
 
 ## Test Accounts
 

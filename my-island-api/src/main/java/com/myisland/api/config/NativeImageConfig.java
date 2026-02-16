@@ -17,7 +17,6 @@ public class NativeImageConfig {
             registerJjwtHints(hints);
             registerShedLockHints(hints);
             registerFlywayHints(hints);
-            registerSpringAiHints(hints, classLoader);
             registerLoki4jHints(hints, classLoader);
             registerResourceHints(hints);
         }
@@ -81,32 +80,6 @@ public class NativeImageConfig {
             hints.proxies().registerJdkProxy(
                 net.javacrumbs.shedlock.core.LockProvider.class
             );
-        }
-
-        private void registerSpringAiHints(RuntimeHints hints, ClassLoader classLoader) {
-            // Register Spring AI Ollama hints if on classpath
-            if (isClassPresent("org.springframework.ai.ollama.OllamaChatModel", classLoader)) {
-                String[] ollamaClasses = {
-                    "org.springframework.ai.ollama.OllamaChatModel",
-                    "org.springframework.ai.ollama.api.OllamaApi",
-                    "org.springframework.ai.ollama.api.OllamaOptions"
-                };
-                registerReflectionForClasses(hints, ollamaClasses);
-            }
-
-            // Register Spring AI OpenAI hints if on classpath
-            if (isClassPresent("org.springframework.ai.openai.api.OpenAiApi", classLoader)) {
-                String[] openAiClasses = {
-                    "org.springframework.ai.openai.api.OpenAiApi",
-                    "org.springframework.ai.openai.api.OpenAiApi$ChatCompletion",
-                    "org.springframework.ai.openai.api.OpenAiApi$ChatCompletion$Choice",
-                    "org.springframework.ai.openai.api.OpenAiApi$ChatCompletionMessage",
-                    "org.springframework.ai.openai.api.OpenAiApi$ChatCompletionRequest",
-                    "org.springframework.ai.openai.OpenAiChatModel",
-                    "org.springframework.ai.openai.OpenAiChatOptions"
-                };
-                registerReflectionForClasses(hints, openAiClasses);
-            }
         }
 
         private void registerLoki4jHints(RuntimeHints hints, ClassLoader classLoader) {

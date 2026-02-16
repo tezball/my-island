@@ -10,9 +10,6 @@ interface VoucherQRModalProps {
     onClose: () => void;
 }
 
-// Hardcoded base URL for QR code redemption links
-const BASE_URL = 'http://localhost:5173';
-
 export const VoucherQRModal: React.FC<VoucherQRModalProps> = ({ voucher, isOpen, onClose }) => {
     if (!isOpen) return null;
 
@@ -25,7 +22,7 @@ export const VoucherQRModal: React.FC<VoucherQRModalProps> = ({ voucher, isOpen,
     };
 
     // Generate redemption URL for QR code
-    const redemptionUrl = `${BASE_URL}/supplier/redeem?id=${encodeURIComponent(voucher.id)}`;
+    const redemptionUrl = `${window.location.origin}/supplier/redeem?id=${encodeURIComponent(voucher.id)}`;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

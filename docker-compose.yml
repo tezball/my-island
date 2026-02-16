@@ -63,8 +63,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ollama:
-        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
@@ -74,8 +72,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
       UPLOAD_DIR: /app/uploads
-      OLLAMA_ENABLED: "true"
-      OLLAMA_BASE_URL: http://ollama:11434
     volumes:
       - uploads_data:/app/uploads
     healthcheck:
@@ -95,8 +91,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ollama:
-        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
@@ -106,8 +100,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
       UPLOAD_DIR: /app/uploads
-      OLLAMA_ENABLED: "true"
-      OLLAMA_BASE_URL: http://ollama:11434
     volumes:
       - uploads_data:/app/uploads
     healthcheck:
@@ -116,6 +108,28 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  moderator:
+    build:
+      context: ./my-island-moderator
+      dockerfile: Dockerfile
+    container_name: myisland-moderator
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/myisland
+      SPRING_DATASOURCE_USERNAME: myisland
+      SPRING_DATASOURCE_PASSWORD: myisland_dev_password
+      OLLAMA_BASE_URL: http://ollama:11434
+    healthcheck:
+      test: [ "CMD-SHELL", "pgrep -f 'java.*app.jar'" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   web:
     build:

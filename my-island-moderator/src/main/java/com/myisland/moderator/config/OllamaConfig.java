@@ -1,11 +1,10 @@
-package com.myisland.api.config;
+package com.myisland.moderator.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 public class OllamaConfig {
 
     @Bean
-    @ConditionalOnProperty(name = "spring.ai.ollama.enabled", havingValue = "true")
     public OllamaChatModel ollamaChatModel(
             @Value("${spring.ai.ollama.base-url:http://localhost:11434}") String baseUrl,
             @Value("${spring.ai.ollama.chat.options.model:llama3.2}") String model,
@@ -32,7 +30,6 @@ public class OllamaConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "spring.ai.ollama.enabled", havingValue = "true")
     public ChatClient chatClient(OllamaChatModel chatModel) {
         return ChatClient.builder(chatModel).build();
     }

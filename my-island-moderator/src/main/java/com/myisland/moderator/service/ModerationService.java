@@ -1,4 +1,4 @@
-package com.myisland.api.modules.review.service;
+package com.myisland.moderator.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,12 +6,11 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
-public class ReviewModerationService {
+public class ModerationService {
 
-    private static final Logger log = LoggerFactory.getLogger(ReviewModerationService.class);
+    private static final Logger log = LoggerFactory.getLogger(ModerationService.class);
 
     private final ChatClient chatClient;
 
@@ -40,21 +39,12 @@ public class ReviewModerationService {
             Where reason is a brief explanation (under 100 characters).
             """;
 
-    public ReviewModerationService(Optional<ChatClient> chatClient) {
-        this.chatClient = chatClient.orElse(null);
-        if (this.chatClient != null) {
-            log.info("ReviewModerationService initialized with AI moderation support (Ollama)");
-        } else {
-            log.info("ReviewModerationService initialized without AI support (Ollama not enabled)");
-        }
+    public ModerationService(ChatClient chatClient) {
+        this.chatClient = chatClient;
+        log.info("ModerationService initialized with Ollama ChatClient");
     }
 
     public ModerationResult moderate(String comment, BigDecimal rating) {
-        if (chatClient == null) {
-            log.warn("AI moderation not configured (Ollama not enabled), auto-approving review");
-            return new ModerationResult(true, "Auto-approved: AI moderation not configured");
-        }
-
         try {
             String prompt = String.format(MODERATION_PROMPT, comment, rating.toPlainString());
 
@@ -65,7 +55,7 @@ public class ReviewModerationService {
 
             return parseResponse(response);
         } catch (Exception e) {
-            log.error("AI moderation service unavailable, auto-approving review: {}", e.getMessage());
+            log.error("AI moderation failed, auto-approving review: {}", e.getMessage());
             return new ModerationResult(true, "Auto-approved: AI service unavailable");
         }
     }

@@ -93,7 +93,7 @@ export const AdminReviewsPage: React.FC = () => {
                     }}
                     disabled={isAiLoading}
                     className="p-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors disabled:opacity-50"
-                    title="Rerun AI Moderation"
+                    title="Requeue for AI"
                 >
                     {isAiLoading
                         ? <span className="block h-4 w-4 animate-spin rounded-full border-2 border-purple-300 border-t-purple-600" />

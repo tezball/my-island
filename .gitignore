@@ -13,6 +13,7 @@ target/
 # Environment
 .env
 .env.local
+.env.prod
 
 # Logs
 logs/
