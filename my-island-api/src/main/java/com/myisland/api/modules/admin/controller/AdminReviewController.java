@@ -45,6 +45,14 @@ public class AdminReviewController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{type}/{id}/ai-moderate")
+    public ResponseEntity<Map<String, String>> aiModerateReview(
+            @PathVariable String type,
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(reviewService.aiModerateReview(userDetails.getUserId(), type, id));
+    }
+
     @DeleteMapping("/{type}/{id}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable String type,

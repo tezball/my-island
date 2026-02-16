@@ -183,6 +183,9 @@ export const adminReviewService = {
 
   remove: (type: string, id: number) =>
     apiRequest<void>(`/admin/reviews/${type}/${id}`, { method: 'DELETE' }),
+
+  aiModerate: (type: string, id: number) =>
+    apiRequest<{ status: string; reason: string }>(`/admin/reviews/${type}/${id}/ai-moderate`, { method: 'POST' }),
 };
 
 // --- Subscriptions ---

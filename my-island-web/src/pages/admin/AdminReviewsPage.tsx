@@ -18,6 +18,7 @@ export const AdminReviewsPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [deleteTarget, setDeleteTarget] = useState<AdminReview | null>(null);
     const [moderateTarget, setModerateTarget] = useState<{ review: AdminReview; action: 'APPROVED' | 'REJECTED' } | null>(null);
+    const [aiModeratingId, setAiModeratingId] = useState<string | null>(null);
 
     const fetchReviews = useCallback(() => {
         setLoading(true);
@@ -78,8 +79,26 @@ export const AdminReviewsPage: React.FC = () => {
         { key: 'isFlagged', label: 'Flagged', render: (r: AdminReview) => (
             r.isFlagged ? <AdminStatusBadge status="CANCELLED" label="Flagged" /> : <span className="text-gray-400 text-xs">-</span>
         )},
-        { key: 'actions', label: '', render: (r: AdminReview) => (
+        { key: 'actions', label: '', render: (r: AdminReview) => {
+            const aiKey = `${r.type}-${r.id}`;
+            const isAiLoading = aiModeratingId === aiKey;
+            return (
             <div className="flex gap-1">
+                <button
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        setAiModeratingId(aiKey);
+                        try { await adminReviewService.aiModerate(r.type, r.id); fetchReviews(); } catch { /* ignore */ }
+                        finally { setAiModeratingId(null); }
+                    }}
+                    disabled={isAiLoading}
+                    className="p-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/10 transition-colors disabled:opacity-50"
+                    title="Rerun AI Moderation"
+                >
+                    {isAiLoading
+                        ? <span className="block h-4 w-4 animate-spin rounded-full border-2 border-purple-300 border-t-purple-600" />
+                        : <span className="material-symbols-outlined text-sm text-purple-600">smart_toy</span>}
+                </button>
                 {r.moderationStatus !== 'APPROVED' && (
                     <button onClick={(e) => { e.stopPropagation(); setModerateTarget({ review: r, action: 'APPROVED' }); }} className="p-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors" title="Approve">
                         <span className="material-symbols-outlined text-sm text-green-600">check_circle</span>
@@ -97,7 +116,8 @@ export const AdminReviewsPage: React.FC = () => {
                     <span className="material-symbols-outlined text-sm text-red-500">delete</span>
                 </button>
             </div>
-        )},
+            );
+        }},
     ];
 
     return (

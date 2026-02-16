@@ -63,6 +63,7 @@ docker compose up -d
 # - API: http://localhost:8080/api
 # - Swagger: http://localhost:8080/api/swagger-ui.html
 # - Mailpit: http://localhost:8025
+# - Ollama: http://localhost:11434 (AI review moderation, llama3.2)
 ```
 
 ## Commands
@@ -97,6 +98,10 @@ docker compose up -d              # Start all services
 docker compose up -d postgres        # Start dependencies only
 docker compose logs -f api        # View API logs
 docker compose down               # Stop all services
+
+# Ollama (AI review moderation)
+docker compose up -d ollama       # Start Ollama separately
+docker compose up -d ollama-pull  # Pull llama3.2 model (~2GB first time)
 
 # Native image (alternative to JRE-based api service)
 docker compose build api-native                                     # Build native image
@@ -158,6 +163,7 @@ my-island-web/src/
 | Backend | Spring Boot 3.4, Java 25, Spring Security |
 | Database | PostgreSQL 17 |
 | Events | Spring ApplicationEvents (@Async) |
+| AI | Spring AI + Ollama (llama3.2) for review moderation |
 | Auth | JWT |
 
 ## Key Patterns
@@ -317,6 +323,7 @@ Key endpoints:
 - `GET /api/admin/users/eligible-suppliers` - Users eligible to become suppliers
 - `GET /api/admin/reviews` - Admin review moderation
 - `PUT /api/admin/reviews/{type}/{id}/moderate` - Admin manually approve/reject review
+- `POST /api/admin/reviews/{type}/{id}/ai-moderate` - Admin rerun AI moderation on review
 - `GET /api/admin/subscriptions` - Admin subscription overview
 - `GET /api/admin/financial/revenue` - Admin financial reports
 - `CRUD /api/admin/leads` - Admin leads CRM

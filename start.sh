@@ -175,7 +175,7 @@ start_docker_infra() {
     if [ "$MODE" = "prod" ]; then
         docker compose up -d postgres localstack
     else
-        docker compose up -d postgres localstack mailpit grafana prometheus loki
+        docker compose up -d postgres localstack mailpit ollama grafana prometheus loki
     fi
 
     # Wait for services to be healthy using Docker health checks
@@ -205,6 +205,20 @@ start_docker_infra() {
             log_warn "Mailpit not healthy (non-critical)"
         fi
 
+        echo -n "  Ollama"
+        if wait_for_healthy "myisland-ollama" 60; then
+            log_success "Ollama ready"
+
+            # Pull the model via the ollama-pull sidecar (first run downloads ~2GB)
+            log_info "Pulling llama3.2 model (first run may take several minutes)..."
+            docker compose up -d ollama-pull
+            docker compose wait ollama-pull 2>/dev/null || \
+                docker wait myisland-ollama-pull 2>/dev/null || true
+            log_success "Ollama model ready"
+        else
+            log_warn "Ollama not healthy (AI moderation will auto-approve)"
+        fi
+
         echo -n "  Grafana"
         if wait_for_port 3000 "Grafana" 30; then
             log_success "Grafana ready"
@@ -218,10 +232,10 @@ start_docker_infra() {
 }
 
 # ============================================
-# Start Backend (GraalVM Native Image)
+# Start Backend (Spring Boot JAR)
 # ============================================
 start_backend() {
-    log_step "Building and starting native backend..."
+    log_step "Building and starting backend..."
 
     cd "$SCRIPT_DIR/my-island-api"
 
@@ -233,23 +247,23 @@ start_backend() {
         set +a
     fi
 
-    # Build native image
-    log_info "Compiling native image (this may take several minutes)..."
-    ./mvnw -Pnative native:compile -DskipTests -B \
-        > "$SCRIPT_DIR/logs/native-build.log" 2>&1
+    # Build JAR
+    log_info "Building JAR (skipping tests)..."
+    ./mvnw package -DskipTests -B \
+        > "$SCRIPT_DIR/logs/build.log" 2>&1
     if [ $? -ne 0 ]; then
-        log_error "Native compilation failed. Check logs/native-build.log"
+        log_error "Build failed. Check logs/build.log"
         return 1
     fi
-    log_success "Native image compiled"
+    log_success "JAR built"
 
-    # Start the native binary
-    log_info "Starting native backend ($MODE mode)..."
+    # Start the JAR
+    log_info "Starting backend ($MODE mode)..."
     if [ "$MODE" = "prod" ]; then
-        nohup ./target/my-island-api \
+        nohup java -jar target/my-island-api-*.jar \
             > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
     else
-        nohup ./target/my-island-api \
+        nohup java -jar target/my-island-api-*.jar \
             --spring.profiles.active=dev \
             > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
     fi
@@ -259,7 +273,7 @@ start_backend() {
 
     log_info "Backend starting (PID: $backend_pid), waiting for port 8080..."
     echo -n "  "
-    if wait_for_port 8080 "Backend" 30; then
+    if wait_for_port 8080 "Backend" 60; then
         log_success "Backend ready on http://localhost:8080"
     else
         log_error "Backend failed to start. Check logs/backend.log"
@@ -462,6 +476,7 @@ main() {
     if [ "$MODE" = "dev" ]; then
         echo "  Dev Tools:"
         echo "    Mailpit:     http://localhost:8025"
+        echo "    Ollama:      http://localhost:11434  (llama3.2)"
         echo "    Grafana:     http://localhost:3000  (admin / admin)"
         echo "    Prometheus:  http://localhost:9090"
         echo "    Loki:        http://localhost:3100"

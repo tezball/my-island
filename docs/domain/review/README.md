@@ -17,10 +17,16 @@ When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `
 ## Moderation Pipeline
 
 ### Architecture
-- **ReviewModerationService** — Calls OpenAI (gpt-4o-mini) via Spring AI ChatClient to classify reviews as APPROVED or REJECTED
-- **ReviewModerationScheduler** — Runs every 5 minutes, processes all PENDING reviews through the AI service
-- **Graceful degradation** — If OpenAI is unavailable, reviews are auto-approved with a logged warning
-- **Feature toggle** — `REVIEW_AI_MODERATION` (default: disabled). When off, all new reviews skip moderation and go straight to APPROVED
+- **ReviewModerationService** — Calls Ollama (llama3.2) via Spring AI ChatClient to classify reviews as APPROVED or REJECTED
+- **ReviewModerationScheduler** — Runs every 5 minutes (ShedLock), processes all PENDING reviews through the AI service
+- **OllamaConfig** — Conditional bean: only created when `spring.ai.ollama.enabled=true`. Connects to Ollama at `spring.ai.ollama.base-url` (default: `http://localhost:11434`)
+- **Graceful degradation** — If Ollama is unavailable or ChatClient bean not created, reviews are auto-approved with a logged warning
+- **Feature toggle** — `REVIEW_AI_MODERATION` (default: disabled in prod, enabled in dev seed data). When off, all new reviews skip moderation and go straight to APPROVED
+
+### Infrastructure
+- **Ollama** — Runs as a Docker service (`ollama/ollama`) on port 11434 with a persistent volume for model storage
+- **Model pull** — A one-shot `ollama-pull` sidecar pulls `llama3.2` (~2GB) on first start; subsequent starts are instant
+- **Docker env vars**: `OLLAMA_ENABLED=true`, `OLLAMA_BASE_URL=http://ollama:11434` (mapped in application.yml to Spring AI properties)
 
 ### Flow
 1. Guest submits review
@@ -59,6 +65,7 @@ When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `
 | GET | `/api/admin/reviews` | Admin: list all reviews (with moderation status) |
 | PUT | `/api/admin/reviews/{type}/{id}/flag` | Admin: toggle flag on review |
 | PUT | `/api/admin/reviews/{type}/{id}/moderate` | Admin: manually approve/reject review |
+| POST | `/api/admin/reviews/{type}/{id}/ai-moderate` | Admin: rerun AI moderation on a review |
 | DELETE | `/api/admin/reviews/{type}/{id}` | Admin: delete review |
 
 ## Frontend Pages
@@ -73,3 +80,4 @@ When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `
 
 - `V1063__add_review_moderation_status.sql` — Adds `moderation_status`, `moderation_reason`, `moderated_at` to both `reviews` and `supplier_reviews` tables
 - `V1064__add_review_moderation_toggle.sql` — Inserts `REVIEW_AI_MODERATION` feature toggle (default: disabled)
+- `V1100__reset_reviews_for_moderation.sql` (seed only) — Resets all reviews to PENDING, zeros ratings, enables `REVIEW_AI_MODERATION` toggle for dev E2E testing

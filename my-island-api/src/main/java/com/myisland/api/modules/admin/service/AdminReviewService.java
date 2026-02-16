@@ -4,6 +4,7 @@ import com.myisland.api.modules.review.entity.Review;
 import com.myisland.api.modules.review.entity.SupplierReview;
 import com.myisland.api.modules.review.repository.ReviewRepository;
 import com.myisland.api.modules.review.repository.SupplierReviewRepository;
+import com.myisland.api.modules.review.service.ReviewModerationService;
 import com.myisland.api.modules.review.service.ReviewService;
 import com.myisland.api.modules.review.service.SupplierReviewService;
 import org.springframework.stereotype.Service;
@@ -20,18 +21,21 @@ public class AdminReviewService {
     private final AdminAuditService adminAuditService;
     private final ReviewService reviewService;
     private final SupplierReviewService supplierReviewService;
+    private final ReviewModerationService reviewModerationService;
 
     public AdminReviewService(
             ReviewRepository reviewRepository,
             SupplierReviewRepository supplierReviewRepository,
             AdminAuditService adminAuditService,
             ReviewService reviewService,
-            SupplierReviewService supplierReviewService) {
+            SupplierReviewService supplierReviewService,
+            ReviewModerationService reviewModerationService) {
         this.reviewRepository = reviewRepository;
         this.supplierReviewRepository = supplierReviewRepository;
         this.adminAuditService = adminAuditService;
         this.reviewService = reviewService;
         this.supplierReviewService = supplierReviewService;
+        this.reviewModerationService = reviewModerationService;
     }
 
     @Transactional(readOnly = true)
@@ -180,6 +184,67 @@ public class AdminReviewService {
                     "moderationStatus=" + previousStatus,
                     "moderationStatus=" + status
             );
+        }
+    }
+
+    @Transactional
+    public Map<String, String> aiModerateReview(Long adminUserId, String type, Long reviewId) {
+        if ("OWNER".equals(type)) {
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+
+            String previousStatus = review.getModerationStatus().name();
+            ReviewModerationService.ModerationResult result = reviewModerationService.moderate(review.getComment(), review.getRating());
+
+            Review.ModerationStatus newStatus = result.approved() ? Review.ModerationStatus.APPROVED : Review.ModerationStatus.REJECTED;
+            review.setModerationStatus(newStatus);
+            review.setModerationReason(result.reason());
+            review.setModeratedAt(LocalDateTime.now());
+            reviewRepository.save(review);
+
+            if (newStatus == Review.ModerationStatus.APPROVED) {
+                reviewService.recalculateOwnerRating(review.getOwner());
+            }
+
+            adminAuditService.log(
+                    adminUserId,
+                    "AI_MODERATE_REVIEW",
+                    "OWNER_REVIEW",
+                    reviewId,
+                    "AI moderated owner review: " + newStatus,
+                    "moderationStatus=" + previousStatus,
+                    "moderationStatus=" + newStatus
+            );
+
+            return Map.of("status", newStatus.name(), "reason", result.reason());
+        } else {
+            SupplierReview review = supplierReviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Supplier review not found with id: " + reviewId));
+
+            String previousStatus = review.getModerationStatus().name();
+            ReviewModerationService.ModerationResult result = reviewModerationService.moderate(review.getComment(), review.getRating());
+
+            Review.ModerationStatus newStatus = result.approved() ? Review.ModerationStatus.APPROVED : Review.ModerationStatus.REJECTED;
+            review.setModerationStatus(newStatus);
+            review.setModerationReason(result.reason());
+            review.setModeratedAt(LocalDateTime.now());
+            supplierReviewRepository.save(review);
+
+            if (newStatus == Review.ModerationStatus.APPROVED) {
+                supplierReviewService.recalculateSupplierRating(review.getSupplier());
+            }
+
+            adminAuditService.log(
+                    adminUserId,
+                    "AI_MODERATE_REVIEW",
+                    "SUPPLIER_REVIEW",
+                    reviewId,
+                    "AI moderated supplier review: " + newStatus,
+                    "moderationStatus=" + previousStatus,
+                    "moderationStatus=" + newStatus
+            );
+
+            return Map.of("status", newStatus.name(), "reason", result.reason());
         }
     }
 
