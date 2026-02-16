@@ -100,7 +100,8 @@ fi
 log_info "Stopping Docker containers..."
 if [ "$KILL_VOLUMES" = true ]; then
     docker compose down -v
-    log_success "Docker containers stopped and volumes removed"
+    rm -rf "$SCRIPT_DIR/my-island-api/uploads"
+    log_success "Docker containers stopped, volumes and uploads removed"
 else
     docker compose down
     log_success "Docker containers stopped (volumes preserved)"

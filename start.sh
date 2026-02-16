@@ -139,6 +139,11 @@ clean_build_artifacts() {
     rm -rf "$SCRIPT_DIR/my-island-web/dist" 2>/dev/null || true
     log_success "Frontend caches cleaned"
 
+    # Clean uploads dir (DB is wiped via docker compose down -v, so uploads must match)
+    log_info "Cleaning uploads directory..."
+    rm -rf "$SCRIPT_DIR/my-island-api/uploads"
+    log_success "Uploads cleaned (SeedImageCopier will recreate on startup)"
+
     # Clean logs
     log_info "Cleaning old logs..."
     rm -rf "$SCRIPT_DIR/logs"
