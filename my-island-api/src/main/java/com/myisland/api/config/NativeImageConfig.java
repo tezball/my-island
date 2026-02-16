@@ -16,7 +16,6 @@ public class NativeImageConfig {
         public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
             registerJjwtHints(hints);
             registerShedLockHints(hints);
-            registerAwsS3Hints(hints);
             registerFlywayHints(hints);
             registerSpringAiHints(hints, classLoader);
             registerLoki4jHints(hints, classLoader);
@@ -82,35 +81,6 @@ public class NativeImageConfig {
             hints.proxies().registerJdkProxy(
                 net.javacrumbs.shedlock.core.LockProvider.class
             );
-        }
-
-        private void registerAwsS3Hints(RuntimeHints hints) {
-            String[] awsClasses = {
-                "software.amazon.awssdk.auth.credentials.AwsBasicCredentials",
-                "software.amazon.awssdk.auth.credentials.StaticCredentialsProvider",
-                "software.amazon.awssdk.services.s3.model.GetObjectRequest",
-                "software.amazon.awssdk.services.s3.model.GetObjectResponse",
-                "software.amazon.awssdk.services.s3.model.PutObjectRequest",
-                "software.amazon.awssdk.services.s3.model.PutObjectResponse",
-                "software.amazon.awssdk.services.s3.model.DeleteObjectRequest",
-                "software.amazon.awssdk.services.s3.model.DeleteObjectResponse",
-                "software.amazon.awssdk.services.s3.model.HeadBucketRequest",
-                "software.amazon.awssdk.services.s3.model.HeadBucketResponse",
-                "software.amazon.awssdk.services.s3.model.CreateBucketRequest",
-                "software.amazon.awssdk.services.s3.model.CreateBucketResponse",
-                "software.amazon.awssdk.services.s3.model.HeadObjectRequest",
-                "software.amazon.awssdk.services.s3.model.HeadObjectResponse",
-                "software.amazon.awssdk.services.s3.model.ListObjectsV2Request",
-                "software.amazon.awssdk.services.s3.model.ListObjectsV2Response",
-                "software.amazon.awssdk.services.s3.model.S3Object",
-                "software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest",
-                "software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest"
-            };
-            registerReflectionForClasses(hints, awsClasses);
-
-            // AWS SDK ServiceLoader resources
-            hints.resources().registerPattern("META-INF/services/software.amazon.awssdk.*");
-            hints.resources().registerPattern("software/amazon/awssdk/**");
         }
 
         private void registerSpringAiHints(RuntimeHints hints, ClassLoader classLoader) {
@@ -179,6 +149,9 @@ public class NativeImageConfig {
             // Flyway migrations and seed data
             hints.resources().registerPattern("db/migration/*");
             hints.resources().registerPattern("db/seed/*");
+
+            // Seed images for dev profile
+            hints.resources().registerPattern("seed-images/*");
 
             // Logback config
             hints.resources().registerPattern("logback-spring.xml");

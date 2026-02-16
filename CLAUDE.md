@@ -105,7 +105,7 @@ docker compose up -d ollama-pull  # Pull llama3.2 model (~2GB first time)
 
 # Native image (alternative to JRE-based api service)
 docker compose build api-native                                     # Build native image
-docker compose --profile native up api-native postgres localstack   # Run native API
+docker compose --profile native up api-native postgres   # Run native API
 ```
 
 ## Architecture
@@ -211,22 +211,22 @@ The login page has a dropdown that auto-fills credentials for these accounts (de
 ### Subscribed Owners
 | Email | Password | Description |
 |-------|----------|-------------|
-| norevalley@myisland.com | `NoreValley2025!Secured` | Nore Valley Park |
+| norevalley@myisland.com | `NoreValley2025Secured` | Nore Valley Park |
 | hello@burrenglampingvillage.ie | `BurrenGlamp$99Safe` | Burren Glamping Village |
 
 ### Subscribed Suppliers
 | Email | Password | Description |
 |-------|----------|-------------|
 | farmshop@greenacres.ie | `GreenAcres#Farm2025` | Green Acres Farm Shop |
-| info@aillweefarmshop.ie | `AillweeCh33se!Secure` | Aillwee Farm Shop & Cheese |
+| info@aillweefarmshop.ie | `AillweeCh33seSecure` | Aillwee Farm Shop & Cheese |
 
 ### No Subscription (for testing subscription gates)
 | Email | Password | Description |
 |-------|----------|-------------|
-| bookings@loughdergcamping.ie | `LoughDerg!Camp2025` | Lough Derg Lakeside (Owner) |
-| hello@dinglekayak.ie | `W@v3R!d3r$K3rrry#2026` | Dingle Kayak Adventures (Supplier) |
+| bookings@loughdergcamping.ie | `LoughDergCamp2025` | Lough Derg Lakeside (Owner) |
+| hello@dinglekayak.ie | `W@v3Rd3r$K3rrry#2026` | Dingle Kayak Adventures (Supplier) |
 
-### Owner Staff (all use password `OwnerStaff#2026!Secure`)
+### Owner Staff (all use password `OwnerStaff#2026Secure`)
 | Email | Role | Staff Of |
 |-------|------|----------|
 | staff@norevalley.com | Manager | Nore Valley |
@@ -234,7 +234,7 @@ The login page has a dropdown that auto-fills credentials for these accounts (de
 | grounds@norevalley.com | Groundskeeper | Nore Valley |
 | viewer@norevalley.com | Viewer | Nore Valley |
 
-### Supplier Staff (all use password `SupplierStaff#2026!Safe`)
+### Supplier Staff (all use password `SupplierStaff#2026Safe`)
 | Email | Role | Staff Of |
 |-------|------|----------|
 | staff@greenacres.ie | Manager | Green Acres |
@@ -244,13 +244,13 @@ The login page has a dropdown that auto-fills credentials for these accounts (de
 ### Platform Admin
 | Email | Password | Description |
 |-------|----------|-------------|
-| tezball86@gmail.com | `PlatformAdmin#2026!Secure` | Platform Admin (superuser) |
+| tezball86@gmail.com | `PlatformAdmin#2026Secure` | Platform Admin (superuser) |
 
 ### Guests
 | Email | Password | Description |
 |-------|----------|-------------|
-| family@example.com | `MurphyFamily!Trip2025` | Murphy Family (has bookings) |
-| testguest@example.com | `TestGuest#2026!Safe` | Clean account, no bookings |
+| family@example.com | `MurphyFamilyTrip2025` | Murphy Family (has bookings) |
+| testguest@example.com | `TestGuest#2026Safe` | Clean account, no bookings |
 
 **Note**: Users can hold multiple roles (e.g., be both Owner AND Supplier) via `isOwner`, `isSupplier`, and `isAdmin` flags. Staff users (`isStaff=true`) gain access to the portals of the Owner/Supplier who invited them. Admin users (`isAdmin=true`) access the platform admin portal at `/admin`.
 

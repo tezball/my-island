@@ -173,9 +173,9 @@ start_docker_infra() {
     log_step "Starting Docker infrastructure..."
 
     if [ "$MODE" = "prod" ]; then
-        docker compose up -d postgres localstack
+        docker compose up -d postgres
     else
-        docker compose up -d postgres localstack mailpit ollama grafana prometheus loki
+        docker compose up -d postgres mailpit ollama grafana prometheus loki
     fi
 
     # Wait for services to be healthy using Docker health checks
@@ -186,14 +186,6 @@ start_docker_infra() {
         log_success "PostgreSQL ready"
     else
         log_error "PostgreSQL failed to become healthy"
-        return 1
-    fi
-
-    echo -n "  LocalStack"
-    if wait_for_healthy "myisland-localstack" 90; then
-        log_success "LocalStack ready"
-    else
-        log_error "LocalStack failed to become healthy"
         return 1
     fi
 

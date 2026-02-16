@@ -2,7 +2,7 @@
 
 BASE_URL="http://localhost:8080/api"
 EMAIL="hello@dinglekayak.ie"
-PASSWORD="MyIslandStrongPass1!"
+PASSWORD="MyIslandStrongPass1"
 
 echo "1. Logging in..."
 LOGIN_RESPONSE=$(curl -s -X POST "$BASE_URL/auth/login" \

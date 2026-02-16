@@ -8,28 +8,28 @@ const showTestUsers = import.meta.env.VITE_SHOW_TEST_USERS === 'true';
 // Test accounts for development
 const TEST_USERS = [
     // Subscribed Owners
-    { email: 'norevalley@myisland.com', password: 'NoreValley2025!Secured', label: 'Nore Valley Park (Owner - Subscribed)' },
+    { email: 'norevalley@myisland.com', password: 'NoreValley2025Secured', label: 'Nore Valley Park (Owner - Subscribed)' },
     { email: 'hello@burrenglampingvillage.ie', password: 'BurrenGlamp$99Safe', label: 'Burren Glamping Village (Owner - Subscribed)' },
     // Subscribed Suppliers
     { email: 'farmshop@greenacres.ie', password: 'GreenAcres#Farm2025', label: 'Green Acres Farm Shop (Supplier - Subscribed)' },
-    { email: 'info@aillweefarmshop.ie', password: 'AillweeCh33se!Secure', label: 'Aillwee Farm Shop & Cheese (Supplier - Subscribed)' },
+    { email: 'info@aillweefarmshop.ie', password: 'AillweeCh33seSecure', label: 'Aillwee Farm Shop & Cheese (Supplier - Subscribed)' },
     // No Subscription (for testing subscription gates)
-    { email: 'bookings@loughdergcamping.ie', password: 'LoughDerg!Camp2025', label: 'Lough Derg Lakeside (Owner - No Sub)' },
-    { email: 'hello@dinglekayak.ie', password: 'W@v3R!d3r$K3rrry#2026', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },
+    { email: 'bookings@loughdergcamping.ie', password: 'LoughDergCamp2025', label: 'Lough Derg Lakeside (Owner - No Sub)' },
+    { email: 'hello@dinglekayak.ie', password: 'W@v3Rd3r$K3rrry#2026', label: 'Dingle Kayak Adventures (Supplier - No Sub)' },
     // Owner Staff (various roles)
-    { email: 'staff@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Aoife Brennan (Owner Staff - Manager)' },
-    { email: 'staff@burrenglamp.ie', password: 'OwnerStaff#2026!Secure', label: 'Cian Walsh (Owner Staff - Receptionist)' },
-    { email: 'grounds@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Declan O\'Brien (Owner Staff - Groundskeeper)' },
-    { email: 'viewer@norevalley.com', password: 'OwnerStaff#2026!Secure', label: 'Sinéad Doyle (Owner Staff - Viewer)' },
+    { email: 'staff@norevalley.com', password: 'OwnerStaff#2026Secure', label: 'Aoife Brennan (Owner Staff - Manager)' },
+    { email: 'staff@burrenglamp.ie', password: 'OwnerStaff#2026Secure', label: 'Cian Walsh (Owner Staff - Receptionist)' },
+    { email: 'grounds@norevalley.com', password: 'OwnerStaff#2026Secure', label: 'Declan O\'Brien (Owner Staff - Groundskeeper)' },
+    { email: 'viewer@norevalley.com', password: 'OwnerStaff#2026Secure', label: 'Sinéad Doyle (Owner Staff - Viewer)' },
     // Supplier Staff (various roles)
-    { email: 'staff@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Niamh Kelly (Supplier Staff - Manager)' },
-    { email: 'staff@aillwee.ie', password: 'SupplierStaff#2026!Safe', label: 'Roisín Murphy (Supplier Staff - Redeemer)' },
-    { email: 'shop@greenacres.ie', password: 'SupplierStaff#2026!Safe', label: 'Pádraig Flynn (Supplier Staff - Associate)' },
+    { email: 'staff@greenacres.ie', password: 'SupplierStaff#2026Safe', label: 'Niamh Kelly (Supplier Staff - Manager)' },
+    { email: 'staff@aillwee.ie', password: 'SupplierStaff#2026Safe', label: 'Roisín Murphy (Supplier Staff - Redeemer)' },
+    { email: 'shop@greenacres.ie', password: 'SupplierStaff#2026Safe', label: 'Pádraig Flynn (Supplier Staff - Associate)' },
     // Platform Admin
-    { email: 'tezball86@gmail.com', password: 'PlatformAdmin#2026!Secure', label: 'Platform Admin' },
+    { email: 'tezball86@gmail.com', password: 'PlatformAdmin#2026Secure', label: 'Platform Admin' },
     // Guests
-    { email: 'family@example.com', password: 'MurphyFamily!Trip2025', label: 'Murphy Family (Guest)' },
-    { email: 'testguest@example.com', password: 'TestGuest#2026!Safe', label: 'Test Guest (Guest - Clean Account)' },
+    { email: 'family@example.com', password: 'MurphyFamilyTrip2025', label: 'Murphy Family (Guest)' },
+    { email: 'testguest@example.com', password: 'TestGuest#2026Safe', label: 'Test Guest (Guest - Clean Account)' },
 ];
 
 export const SignInPage: React.FC = () => {

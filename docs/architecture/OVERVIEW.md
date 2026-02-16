@@ -16,14 +16,14 @@ flowchart TD
         PG["PostgreSQL 17"]
         Mail["Mailpit (SMTP)"]
         Stripe["Stripe (Payments)"]
-        S3["S3 (Images)"]
+        Uploads["Local Filesystem (Images)"]
     end
 
     FE -->|REST + JWT| API
     API --> PG
     API --> Mail
     API --> Stripe
-    API --> S3
+    API --> Uploads
 ```
 
 ## Tech Stack
@@ -128,7 +128,7 @@ The backend supports optional GraalVM Native Image compilation for faster startu
 ### How It Works
 
 - **Spring Boot AOT** — The `-Pnative` Maven profile activates Spring's ahead-of-time processing, which pre-computes bean definitions and generates reflection metadata at build time
-- **`NativeImageConfig.java`** — Programmatic `RuntimeHintsRegistrar` for JJWT, ShedLock, AWS S3, Spring AI, and Loki4j reflection/resource hints
+- **`NativeImageConfig.java`** — Programmatic `RuntimeHintsRegistrar` for JJWT, ShedLock, Spring AI, and Loki4j reflection/resource hints
 - **`reflect-config.json`** — Manual reflection metadata for the Stripe SDK (Gson-based serialization requires field/constructor access)
 - **`resource-config.json`** — Ensures Flyway migrations, Thymeleaf templates, and config files are included in the binary
 
@@ -143,7 +143,7 @@ cd my-island-api
 docker compose build api-native
 
 # Run native API with dependencies
-docker compose --profile native up api-native postgres localstack mailpit
+docker compose --profile native up api-native postgres mailpit
 ```
 
 ### Trade-offs

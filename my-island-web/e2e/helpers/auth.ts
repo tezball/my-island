@@ -3,19 +3,19 @@ import type { Page } from '@playwright/test';
 // Test accounts from CLAUDE.md
 export const GUEST = {
     email: 'family@example.com',
-    password: 'MurphyFamily!Trip2025',
+    password: 'MurphyFamilyTrip2025',
     name: 'Murphy Family',
 };
 
 export const GUEST_CLEAN = {
     email: 'testguest@example.com',
-    password: 'TestGuest#2026!Safe',
+    password: 'TestGuest#2026Safe',
     name: 'Test Guest',
 };
 
 export const OWNER = {
     email: 'norevalley@myisland.com',
-    password: 'NoreValley2025!Secured',
+    password: 'NoreValley2025Secured',
     name: 'Nore Valley Owner',
 };
 
@@ -33,33 +33,33 @@ export const SUPPLIER = {
 
 export const SUPPLIER_2 = {
     email: 'info@aillweefarmshop.ie',
-    password: 'AillweeCh33se!Secure',
+    password: 'AillweeCh33seSecure',
     name: 'Aillwee Farm Shop & Cheese',
 };
 
 export const OWNER_NO_SUB = {
     email: 'bookings@loughdergcamping.ie',
-    password: 'LoughDerg!Camp2025',
+    password: 'LoughDergCamp2025',
 };
 
 export const SUPPLIER_NO_SUB = {
     email: 'hello@dinglekayak.ie',
-    password: 'W@v3R!d3r$K3rrry#2026',
+    password: 'W@v3Rd3r$K3rrry#2026',
 };
 
 export const ADMIN = {
     email: 'tezball86@gmail.com',
-    password: 'PlatformAdmin#2026!Secure',
+    password: 'PlatformAdmin#2026Secure',
 };
 
 export const OWNER_STAFF = {
     email: 'staff@norevalley.com',
-    password: 'OwnerStaff#2026!Secure',
+    password: 'OwnerStaff#2026Secure',
 };
 
 export const SUPPLIER_STAFF = {
     email: 'staff@greenacres.ie',
-    password: 'SupplierStaff#2026!Safe',
+    password: 'SupplierStaff#2026Safe',
 };
 
 export async function login(page: Page, email: string, password: string) {

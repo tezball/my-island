@@ -5,16 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Duration;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -29,18 +27,16 @@ public class ImageUploadService {
     );
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    private final S3Client s3Client;
-    private final S3Presigner s3Presigner;
+    private final Path uploadDir;
 
-    @Value("${aws.s3.bucket:myisland-images}")
-    private String bucketName;
+    public ImageUploadService(@Value("${upload.dir:./uploads}") String uploadDirPath) {
+        this.uploadDir = Paths.get(uploadDirPath).toAbsolutePath().normalize();
+    }
 
-    @Value("${aws.s3.endpoint:}")
-    private String s3Endpoint;
-
-    public ImageUploadService(S3Client s3Client, S3Presigner s3Presigner) {
-        this.s3Client = s3Client;
-        this.s3Presigner = s3Presigner;
+    @PostConstruct
+    public void init() throws IOException {
+        Files.createDirectories(uploadDir);
+        log.info("Upload directory: {}", uploadDir);
     }
 
     public ImageUploadResult uploadImage(MultipartFile file, String folder) throws IOException {
@@ -50,62 +46,46 @@ public class ImageUploadService {
         String extension = getExtension(originalFilename);
         String key = folder + "/" + UUID.randomUUID() + extension;
 
-        log.debug("Uploading image: {} ({} bytes, type={}) to bucket={}, key={}",
-                originalFilename, file.getSize(), file.getContentType(), bucketName, key);
+        log.debug("Uploading image: {} ({} bytes, type={}) to key={}",
+                originalFilename, file.getSize(), file.getContentType(), key);
 
-        PutObjectRequest putRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .contentType(file.getContentType())
-                .build();
+        Path targetDir = uploadDir.resolve(folder);
+        Files.createDirectories(targetDir);
 
-        try {
-            s3Client.putObject(putRequest, RequestBody.fromBytes(file.getBytes()));
-        } catch (Exception e) {
-            log.error("S3 upload failed for key={} bucket={} endpoint={}: {}",
-                    key, bucketName, s3Endpoint, e.getMessage(), e);
-            throw e;
+        Path targetFile = uploadDir.resolve(key).normalize();
+        if (!targetFile.startsWith(uploadDir)) {
+            throw new IllegalArgumentException("Invalid upload path");
         }
+
+        Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
 
         log.debug("Uploaded image: {} to {}", originalFilename, key);
 
         String url = getPublicUrl(key);
-
         return new ImageUploadResult(key, url, file.getContentType(), file.getSize());
     }
 
-    public String getPresignedUrl(String key, Duration duration) {
-        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                .signatureDuration(duration)
-                .getObjectRequest(b -> b.bucket(bucketName).key(key))
-                .build();
-
-        return s3Presigner.presignGetObject(presignRequest).url().toString();
-    }
-
     public void deleteImage(String key) {
-        log.debug("Deleting image from S3: bucket={}, key={}", bucketName, key);
-        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build();
-
+        log.debug("Deleting image: key={}", key);
         try {
-            s3Client.deleteObject(deleteRequest);
+            Path file = uploadDir.resolve(key).normalize();
+            if (!file.startsWith(uploadDir)) {
+                throw new IllegalArgumentException("Invalid file path");
+            }
+            Files.deleteIfExists(file);
             log.debug("Deleted image: {}", key);
-        } catch (Exception e) {
-            log.error("S3 delete failed for key={} bucket={}: {}", key, bucketName, e.getMessage(), e);
-            throw e;
+        } catch (IOException e) {
+            log.error("Delete failed for key={}: {}", key, e.getMessage(), e);
+            throw new RuntimeException("Failed to delete image: " + key, e);
         }
     }
 
     public String getPublicUrl(String key) {
-        if (s3Endpoint != null && !s3Endpoint.isBlank()) {
-            // LocalStack - return relative URL routed through Vite proxy
-            return "/s3/" + bucketName + "/" + key;
-        }
-        // Production S3
-        return "https://" + bucketName + ".s3.amazonaws.com/" + key;
+        return "/api/uploads/" + key;
+    }
+
+    public Path getUploadDir() {
+        return uploadDir;
     }
 
     // Magic byte signatures for supported image formats

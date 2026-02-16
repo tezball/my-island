@@ -111,8 +111,8 @@ public class AdminReviewService {
                     "OWNER_REVIEW",
                     reviewId,
                     "Toggled flag status for owner review",
-                    "isFlagged=" + previousFlagged,
-                    "isFlagged=" + !previousFlagged
+                    "{\"isFlagged\":" + previousFlagged + "}",
+                    "{\"isFlagged\":" + !previousFlagged + "}"
             );
         } else {
             SupplierReview review = supplierReviewRepository.findById(reviewId)
@@ -128,8 +128,8 @@ public class AdminReviewService {
                     "SUPPLIER_REVIEW",
                     reviewId,
                     "Toggled flag status for supplier review",
-                    "isFlagged=" + previousFlagged,
-                    "isFlagged=" + !previousFlagged
+                    "{\"isFlagged\":" + previousFlagged + "}",
+                    "{\"isFlagged\":" + !previousFlagged + "}"
             );
         }
     }
@@ -158,8 +158,8 @@ public class AdminReviewService {
                     "OWNER_REVIEW",
                     reviewId,
                     "Manually moderated owner review: " + status,
-                    "moderationStatus=" + previousStatus,
-                    "moderationStatus=" + status
+                    "{\"moderationStatus\":\"" + previousStatus + "\"}",
+                    "{\"moderationStatus\":\"" + status + "\"}"
             );
         } else {
             SupplierReview review = supplierReviewRepository.findById(reviewId)
@@ -181,8 +181,8 @@ public class AdminReviewService {
                     "SUPPLIER_REVIEW",
                     reviewId,
                     "Manually moderated supplier review: " + status,
-                    "moderationStatus=" + previousStatus,
-                    "moderationStatus=" + status
+                    "{\"moderationStatus\":\"" + previousStatus + "\"}",
+                    "{\"moderationStatus\":\"" + status + "\"}"
             );
         }
     }
@@ -212,8 +212,8 @@ public class AdminReviewService {
                     "OWNER_REVIEW",
                     reviewId,
                     "AI moderated owner review: " + newStatus,
-                    "moderationStatus=" + previousStatus,
-                    "moderationStatus=" + newStatus
+                    "{\"moderationStatus\":\"" + previousStatus + "\"}",
+                    "{\"moderationStatus\":\"" + newStatus + "\"}"
             );
 
             return Map.of("status", newStatus.name(), "reason", result.reason());
@@ -240,8 +240,8 @@ public class AdminReviewService {
                     "SUPPLIER_REVIEW",
                     reviewId,
                     "AI moderated supplier review: " + newStatus,
-                    "moderationStatus=" + previousStatus,
-                    "moderationStatus=" + newStatus
+                    "{\"moderationStatus\":\"" + previousStatus + "\"}",
+                    "{\"moderationStatus\":\"" + newStatus + "\"}"
             );
 
             return Map.of("status", newStatus.name(), "reason", result.reason());
@@ -262,7 +262,7 @@ public class AdminReviewService {
                     "OWNER_REVIEW",
                     reviewId,
                     "Deleted owner review",
-                    "review_id=" + reviewId,
+                    "{\"review_id\":" + reviewId + "}",
                     null
             );
         } else {
@@ -277,7 +277,7 @@ public class AdminReviewService {
                     "SUPPLIER_REVIEW",
                     reviewId,
                     "Deleted supplier review",
-                    "review_id=" + reviewId,
+                    "{\"review_id\":" + reviewId + "}",
                     null
             );
         }

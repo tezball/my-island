@@ -62,6 +62,7 @@ public class SecurityConfig {
 
                         // Public image endpoints
                         .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
 
                         // Public campsite endpoints
                         .requestMatchers(HttpMethod.GET, "/campsites/**").permitAll()

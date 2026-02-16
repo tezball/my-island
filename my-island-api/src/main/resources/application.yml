@@ -73,13 +73,8 @@ stripe:
   service-fee-percent: ${STRIPE_SERVICE_FEE_PERCENT:0.10}
   dev-mode: ${STRIPE_DEV_MODE:false}
 
-aws:
-  s3:
-    endpoint: ${AWS_S3_ENDPOINT:}
-    bucket: ${AWS_S3_BUCKET:myisland-images}
-  region: ${AWS_REGION:eu-west-1}
-  access-key-id: ${AWS_ACCESS_KEY_ID:test}
-  secret-access-key: ${AWS_SECRET_ACCESS_KEY:test}
+upload:
+  dir: ${UPLOAD_DIR:./uploads}
 
 myisland:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}

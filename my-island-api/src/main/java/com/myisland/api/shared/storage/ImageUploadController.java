@@ -145,7 +145,7 @@ public class ImageUploadController {
     }
 
     @DeleteMapping("/{imageId}")
-    @Operation(summary = "Delete image", description = "Delete an image from S3 and the database")
+    @Operation(summary = "Delete image", description = "Delete an image file and its database record")
     public ResponseEntity<Map<String, String>> deleteImage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long imageId

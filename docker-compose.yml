@@ -55,24 +55,6 @@ services:
       OLLAMA_HOST: http://ollama:11434
     restart: "no"
 
-  localstack:
-    image: localstack/localstack:3.0
-    container_name: myisland-localstack
-    ports:
-      - "4566:4566"
-    environment:
-      SERVICES: s3
-      AWS_DEFAULT_REGION: eu-west-1
-      PERSISTENCE: 1
-    volumes:
-      - localstack_data:/var/lib/localstack
-      - ./localstack-init:/etc/localstack/init/ready.d
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:4566/_localstack/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   api:
     build:
       context: ./my-island-api
@@ -80,8 +62,6 @@ services:
     container_name: myisland-api
     depends_on:
       postgres:
-        condition: service_healthy
-      localstack:
         condition: service_healthy
       ollama:
         condition: service_healthy
@@ -93,13 +73,11 @@ services:
       SPRING_DATASOURCE_USERNAME: myisland
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
-      AWS_S3_ENDPOINT: http://localstack:4566
-      AWS_S3_BUCKET: myisland-images
-      AWS_REGION: eu-west-1
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
+      UPLOAD_DIR: /app/uploads
       OLLAMA_ENABLED: "true"
       OLLAMA_BASE_URL: http://ollama:11434
+    volumes:
+      - uploads_data:/app/uploads
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
       interval: 30s
@@ -117,8 +95,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      localstack:
-        condition: service_healthy
       ollama:
         condition: service_healthy
     ports:
@@ -129,13 +105,11 @@ services:
       SPRING_DATASOURCE_USERNAME: myisland
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
-      AWS_S3_ENDPOINT: http://localstack:4566
-      AWS_S3_BUCKET: myisland-images
-      AWS_REGION: eu-west-1
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
+      UPLOAD_DIR: /app/uploads
       OLLAMA_ENABLED: "true"
       OLLAMA_BASE_URL: http://ollama:11434
+    volumes:
+      - uploads_data:/app/uploads
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
       interval: 10s
@@ -192,6 +166,6 @@ services:
 
 volumes:
   postgres_data:
-  localstack_data:
+  uploads_data:
   grafana_data:
   ollama_data:

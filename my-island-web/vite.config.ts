@@ -16,11 +16,6 @@ export default defineConfig({
             proxyReq.setHeader('origin', 'http://localhost:5173');
           });
         }
-      },
-      '/s3': {
-        target: 'http://localhost:4566',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/s3/, '')
       }
     }
   }

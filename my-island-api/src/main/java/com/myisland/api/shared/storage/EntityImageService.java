@@ -39,10 +39,10 @@ public class EntityImageService {
         log.debug("Starting image upload for {} {} (file={}, size={}, primary={})",
                 entityType, entityId, file.getOriginalFilename(), file.getSize(), setAsPrimary);
 
-        // Determine folder based on entity type
-        String folder = entityType.name().toLowerCase() + "s";
+        // Determine folder based on entity type and ID: e.g. owners/1, lots/42
+        String folder = entityType.name().toLowerCase() + "s/" + entityId;
 
-        // Upload to S3
+        // Upload to filesystem
         ImageUploadService.ImageUploadResult result = uploadService.uploadImage(file, folder);
 
         // Get next display order

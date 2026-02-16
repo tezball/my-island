@@ -113,13 +113,6 @@
             <version>28.2.0</version>
         </dependency>
 
-        <!-- AWS S3 -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
-            <version>2.25.0</version>
-        </dependency>
-
         <!-- Spring AI -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

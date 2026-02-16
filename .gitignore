@@ -16,3 +16,6 @@ target/
 
 # Logs
 logs/
+
+# Uploaded files (local dev image storage)
+uploads/
