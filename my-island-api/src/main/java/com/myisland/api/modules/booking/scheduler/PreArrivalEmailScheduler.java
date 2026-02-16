@@ -62,7 +62,7 @@ public class PreArrivalEmailScheduler {
                 emailService.sendPreArrivalEmailToGuest(
                         booking.getUser().getEmail(), emailData, county, phone, mapUrl);
 
-                log.info("Sent pre-arrival email for booking #{} to {}", booking.getId(), booking.getUser().getEmail());
+                log.debug("Sent pre-arrival email for booking #{} to {}", booking.getId(), booking.getUser().getEmail());
             } catch (Exception e) {
                 log.error("Failed to send pre-arrival email for booking #{}: {}", booking.getId(), e.getMessage());
             }

@@ -74,7 +74,7 @@ public class WeeklySummaryScheduler {
                 );
 
                 emailService.sendWeeklySummaryToOwner(owner.getUser().getEmail(), data);
-                log.info("Sent weekly summary to owner {}: {} new bookings, {} revenue",
+                log.debug("Sent weekly summary to owner {}: {} new bookings, {} revenue",
                         owner.getId(), newBookings, revenue);
             } catch (Exception e) {
                 log.error("Failed to send weekly summary to owner {}: {}", owner.getId(), e.getMessage());

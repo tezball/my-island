@@ -1,5 +1,6 @@
 package com.myisland.api.modules.review.service;
 
+import com.myisland.api.modules.admin.service.FeatureToggleService;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.identity.repository.UserRepository;
 import com.myisland.api.modules.marketplace.entity.OfferClaim;
@@ -7,6 +8,7 @@ import com.myisland.api.modules.marketplace.entity.Supplier;
 import com.myisland.api.modules.marketplace.repository.OfferClaimRepository;
 import com.myisland.api.modules.marketplace.repository.SupplierRepository;
 import com.myisland.api.modules.review.dto.*;
+import com.myisland.api.modules.review.entity.Review;
 import com.myisland.api.modules.review.entity.SupplierReview;
 import com.myisland.api.modules.review.repository.SupplierReviewRepository;
 import com.myisland.api.shared.exceptions.BadRequestException;
@@ -26,20 +28,23 @@ public class SupplierReviewService {
     private final OfferClaimRepository offerClaimRepository;
     private final SupplierRepository supplierRepository;
     private final UserRepository userRepository;
+    private final FeatureToggleService featureToggleService;
 
     public SupplierReviewService(SupplierReviewRepository supplierReviewRepository,
                                  OfferClaimRepository offerClaimRepository,
                                  SupplierRepository supplierRepository,
-                                 UserRepository userRepository) {
+                                 UserRepository userRepository,
+                                 FeatureToggleService featureToggleService) {
         this.supplierReviewRepository = supplierReviewRepository;
         this.offerClaimRepository = offerClaimRepository;
         this.supplierRepository = supplierRepository;
         this.userRepository = userRepository;
+        this.featureToggleService = featureToggleService;
     }
 
     @Transactional(readOnly = true)
     public List<SupplierReviewDto> getReviewsBySupplier(Long supplierId) {
-        return supplierReviewRepository.findBySupplierIdWithDetails(supplierId).stream()
+        return supplierReviewRepository.findBySupplierIdAndModerationStatusWithDetails(supplierId, Review.ModerationStatus.APPROVED).stream()
                 .map(SupplierReviewDto::from)
                 .toList();
     }
@@ -74,8 +79,17 @@ public class SupplierReviewService {
                 .comment(request.comment())
                 .build();
 
+        if (featureToggleService.isReviewModerationEnabled()) {
+            review.setModerationStatus(Review.ModerationStatus.PENDING);
+        } else {
+            review.setModerationStatus(Review.ModerationStatus.APPROVED);
+        }
+
         review = supplierReviewRepository.save(review);
-        updateSupplierRating(supplier);
+
+        if (!featureToggleService.isReviewModerationEnabled()) {
+            recalculateSupplierRating(supplier);
+        }
 
         return SupplierReviewDto.from(review);
     }
@@ -134,9 +148,10 @@ public class SupplierReviewService {
                 .toList();
     }
 
-    private void updateSupplierRating(Supplier supplier) {
-        BigDecimal avgRating = supplierReviewRepository.calculateAverageRating(supplier.getId());
-        long count = supplierReviewRepository.countBySupplierId(supplier.getId());
+    @Transactional
+    public void recalculateSupplierRating(Supplier supplier) {
+        BigDecimal avgRating = supplierReviewRepository.calculateAverageRatingByStatus(supplier.getId(), Review.ModerationStatus.APPROVED);
+        long count = supplierReviewRepository.countBySupplierIdAndModerationStatus(supplier.getId(), Review.ModerationStatus.APPROVED);
 
         if (avgRating != null) {
             supplier.setRating(avgRating.setScale(1, RoundingMode.HALF_UP));

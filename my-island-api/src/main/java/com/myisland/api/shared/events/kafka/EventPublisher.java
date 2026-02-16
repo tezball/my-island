@@ -62,21 +62,21 @@ public class EventPublisher {
                 sendOwnerBookingEmail(booking, bookingData, "created",
                         (email, data) -> emailService.sendBookingCreatedToOwner(email, data));
                 emailService.sendBookingCreatedToGuest(guestEmail, bookingData);
-                log.info("Sent booking created emails for booking: {}", booking.getId());
+                log.debug("Sent booking created emails for booking: {}", booking.getId());
             }
             case CONFIRMED -> {
                 emailService.sendBookingConfirmedToGuest(guestEmail, bookingData);
-                log.info("Sent booking confirmed email for booking: {}", booking.getId());
+                log.debug("Sent booking confirmed email for booking: {}", booking.getId());
             }
             case CANCELLED -> {
                 sendOwnerBookingEmail(booking, bookingData, "cancelled",
                         (email, data) -> emailService.sendBookingCancelledToOwner(email, data));
                 emailService.sendBookingCancelledToGuest(guestEmail, bookingData);
-                log.info("Sent booking cancelled emails for booking: {}", booking.getId());
+                log.debug("Sent booking cancelled emails for booking: {}", booking.getId());
             }
             default -> {
                 emailService.sendBookingConfirmedToGuest(guestEmail, bookingData);
-                log.info("Sent booking confirmed email for event type {} on booking: {}", event.getType(), booking.getId());
+                log.debug("Sent booking confirmed email for event type {} on booking: {}", event.getType(), booking.getId());
             }
         }
     }
@@ -103,18 +103,18 @@ public class EventPublisher {
                 supplierOpt.ifPresent(supplier -> {
                     String supplierEmail = supplier.getUser().getEmail();
                     emailService.sendOfferClaimedToSupplier(supplierEmail, claimData);
-                    log.info("Sent claim notification to supplier: {}", supplierEmail);
+                    log.debug("Sent claim notification to supplier: {}", supplierEmail);
                 });
 
                 emailService.sendVoucherToGuest(claim.getUser().getEmail(), claimData);
-                log.info("Sent voucher to guest: {}", claim.getUser().getEmail());
+                log.debug("Sent voucher to guest: {}", claim.getUser().getEmail());
             }
             case REDEEMED -> {
                 if (claim.isTest()) {
                     log.debug("Ignoring test redemption event: claimId={}", claim.getId());
                     return;
                 }
-                log.info("Offer redeemed: claimId={}, offer={}, supplier={}",
+                log.debug("Offer redeemed: claimId={}, offer={}, supplier={}",
                         claim.getId(), claim.getOffer().getTitle(), claim.getOffer().getSupplier().getBusinessName());
             }
         }
@@ -127,9 +127,9 @@ public class EventPublisher {
             if (owner.isEmailNotificationsBookings()) {
                 String ownerEmail = owner.getUser().getEmail();
                 sender.send(ownerEmail, bookingData);
-                log.info("Sent booking {} notification to owner: {}", eventType, ownerEmail);
+                log.debug("Sent booking {} notification to owner: {}", eventType, ownerEmail);
             } else {
-                log.info("Skipping booking {} email for owner {} (notifications disabled)",
+                log.debug("Skipping booking {} email for owner {} (notifications disabled)",
                         eventType, owner.getId());
             }
         });

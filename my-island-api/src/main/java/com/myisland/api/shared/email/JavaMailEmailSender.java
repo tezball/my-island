@@ -35,7 +35,7 @@ public class JavaMailEmailSender implements EmailSender {
             helper.setText(htmlContent, true);
 
             mailSender.send(mimeMessage);
-            log.info("Email sent successfully: to={}, subject={}", to, subject);
+            log.debug("Email sent successfully: to={}, subject={}", to, subject);
         } catch (MessagingException e) {
             log.error("Failed to send email: to={}, subject={}, error={}", to, subject, e.getMessage());
         }

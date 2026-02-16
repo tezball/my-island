@@ -57,7 +57,7 @@ public class FeaturedPromotionService {
 
         // Dev mode: skip Stripe and directly activate featured promotion
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Activating featured promotion directly for owner {} with duration {}", owner.getId(), duration);
+            log.debug("Dev mode: Activating featured promotion directly for owner {} with duration {}", owner.getId(), duration);
             LocalDateTime newExpiry = calculateFeaturedExpiry(owner, duration);
             owner.setFeatured(true);
             owner.setFeaturedUntil(newExpiry);

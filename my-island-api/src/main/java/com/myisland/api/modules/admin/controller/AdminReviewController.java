@@ -35,6 +35,16 @@ public class AdminReviewController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{type}/{id}/moderate")
+    public ResponseEntity<Void> moderateReview(
+            @PathVariable String type,
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        reviewService.moderateReview(userDetails.getUserId(), type, id, body.get("status"), body.get("reason"));
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{type}/{id}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable String type,

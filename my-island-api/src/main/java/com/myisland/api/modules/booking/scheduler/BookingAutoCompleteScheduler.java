@@ -48,7 +48,7 @@ public class BookingAutoCompleteScheduler {
             booking.setStatus(Booking.BookingStatus.COMPLETED);
             bookingRepository.save(booking);
             eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CHECKED_OUT));
-            log.info("Auto-completed booking {} (checkout was {})", booking.getId(), booking.getCheckOutDate());
+            log.debug("Auto-completed booking {} (checkout was {})", booking.getId(), booking.getCheckOutDate());
         }
     }
 }

@@ -53,7 +53,7 @@ public class OwnerSubscriptionService {
 
         // Dev mode: directly activate subscription and redirect to success URL
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Activating subscription directly for owner {}", ownerId);
+            log.debug("Dev mode: Activating subscription directly for owner {}", ownerId);
             owner.setStripeCustomerId("cus_dev_" + ownerId);
             owner.setStripeSubscriptionId("sub_dev_" + ownerId);
             owner.setSubscriptionStatus(Owner.SubscriptionStatus.ACTIVE);
@@ -107,7 +107,7 @@ public class OwnerSubscriptionService {
 
         // Dev mode: return mock data
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Returning mock setup intent for owner {}", ownerId);
+            log.debug("Dev mode: Returning mock setup intent for owner {}", ownerId);
             String customerId = owner.getStripeCustomerId();
             if (customerId == null) {
                 customerId = "cus_dev_" + ownerId;
@@ -162,7 +162,7 @@ public class OwnerSubscriptionService {
 
         // Dev mode: directly activate subscription
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Activating subscription directly for owner {}", ownerId);
+            log.debug("Dev mode: Activating subscription directly for owner {}", ownerId);
             owner.setStripeSubscriptionId("sub_dev_" + ownerId);
             owner.setSubscriptionStatus(Owner.SubscriptionStatus.ACTIVE);
             owner.setSubscriptionCurrentPeriodEnd(Instant.now().plusSeconds(30 * 24 * 60 * 60)); // 30 days
@@ -227,7 +227,7 @@ public class OwnerSubscriptionService {
 
         // Dev mode: no real Stripe portal available
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Billing portal not available for owner {}", ownerId);
+            log.debug("Dev mode: Billing portal not available for owner {}", ownerId);
             return new CreatePortalSessionResponse(null, true);
         }
 

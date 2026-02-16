@@ -4,11 +4,13 @@ import com.myisland.api.modules.review.entity.Review;
 import com.myisland.api.modules.review.entity.SupplierReview;
 import com.myisland.api.modules.review.repository.ReviewRepository;
 import com.myisland.api.modules.review.repository.SupplierReviewRepository;
+import com.myisland.api.modules.review.service.ReviewService;
+import com.myisland.api.modules.review.service.SupplierReviewService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminReviewService {
@@ -16,14 +18,20 @@ public class AdminReviewService {
     private final ReviewRepository reviewRepository;
     private final SupplierReviewRepository supplierReviewRepository;
     private final AdminAuditService adminAuditService;
+    private final ReviewService reviewService;
+    private final SupplierReviewService supplierReviewService;
 
     public AdminReviewService(
             ReviewRepository reviewRepository,
             SupplierReviewRepository supplierReviewRepository,
-            AdminAuditService adminAuditService) {
+            AdminAuditService adminAuditService,
+            ReviewService reviewService,
+            SupplierReviewService supplierReviewService) {
         this.reviewRepository = reviewRepository;
         this.supplierReviewRepository = supplierReviewRepository;
         this.adminAuditService = adminAuditService;
+        this.reviewService = reviewService;
+        this.supplierReviewService = supplierReviewService;
     }
 
     @Transactional(readOnly = true)
@@ -43,6 +51,8 @@ public class AdminReviewService {
             reviewData.put("comment", review.getComment());
             reviewData.put("ownerResponse", review.getOwnerResponse());
             reviewData.put("isFlagged", review.isFlagged());
+            reviewData.put("moderationStatus", review.getModerationStatus().name());
+            reviewData.put("moderationReason", review.getModerationReason());
             reviewData.put("createdAt", review.getCreatedAt());
             allReviews.add(reviewData);
         });
@@ -60,6 +70,8 @@ public class AdminReviewService {
             reviewData.put("comment", review.getComment());
             reviewData.put("supplierResponse", review.getSupplierResponse());
             reviewData.put("isFlagged", review.isFlagged());
+            reviewData.put("moderationStatus", review.getModerationStatus().name());
+            reviewData.put("moderationReason", review.getModerationReason());
             reviewData.put("createdAt", review.getCreatedAt());
             allReviews.add(reviewData);
         });
@@ -114,6 +126,59 @@ public class AdminReviewService {
                     "Toggled flag status for supplier review",
                     "isFlagged=" + previousFlagged,
                     "isFlagged=" + !previousFlagged
+            );
+        }
+    }
+
+    @Transactional
+    public void moderateReview(Long adminUserId, String type, Long reviewId, String status, String reason) {
+        Review.ModerationStatus moderationStatus = Review.ModerationStatus.valueOf(status);
+
+        if ("OWNER".equals(type)) {
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found with id: " + reviewId));
+
+            String previousStatus = review.getModerationStatus().name();
+            review.setModerationStatus(moderationStatus);
+            review.setModerationReason(reason);
+            review.setModeratedAt(LocalDateTime.now());
+            reviewRepository.save(review);
+
+            if (moderationStatus == Review.ModerationStatus.APPROVED) {
+                reviewService.recalculateOwnerRating(review.getOwner());
+            }
+
+            adminAuditService.log(
+                    adminUserId,
+                    "MODERATE_REVIEW",
+                    "OWNER_REVIEW",
+                    reviewId,
+                    "Manually moderated owner review: " + status,
+                    "moderationStatus=" + previousStatus,
+                    "moderationStatus=" + status
+            );
+        } else {
+            SupplierReview review = supplierReviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Supplier review not found with id: " + reviewId));
+
+            String previousStatus = review.getModerationStatus().name();
+            review.setModerationStatus(moderationStatus);
+            review.setModerationReason(reason);
+            review.setModeratedAt(LocalDateTime.now());
+            supplierReviewRepository.save(review);
+
+            if (moderationStatus == Review.ModerationStatus.APPROVED) {
+                supplierReviewService.recalculateSupplierRating(review.getSupplier());
+            }
+
+            adminAuditService.log(
+                    adminUserId,
+                    "MODERATE_REVIEW",
+                    "SUPPLIER_REVIEW",
+                    reviewId,
+                    "Manually moderated supplier review: " + status,
+                    "moderationStatus=" + previousStatus,
+                    "moderationStatus=" + status
             );
         }
     }

@@ -1,37 +1,75 @@
 # Review
 
 ## Status
-Implemented
+Implemented (with AI moderation pipeline)
 
 ## Overview
 Guest feedback system for campsites and suppliers. Guests can submit reviews after completing a booking or redeeming an offer. Owners and suppliers can respond to reviews.
 
+When the `REVIEW_AI_MODERATION` feature toggle is enabled, new reviews enter a `PENDING` state and are processed by a scheduled AI moderation pipeline before becoming publicly visible. When the toggle is disabled, reviews are immediately `APPROVED` (current default behavior).
+
 ## Key Entities
 
-- **Review** — Guest review of a campsite/owner. Linked to a completed booking. Includes overall rating (1-5), category ratings (cleanliness, location, value, facilities), text comment, and optional owner response.
-- **SupplierReview** — Guest review of a supplier/offer. Similar structure to campsite reviews.
+- **Review** — Guest review of a campsite/owner. Linked to a completed booking. Includes rating (1-5), text comment, optional owner response, and moderation status.
+- **SupplierReview** — Guest review of a supplier/offer. Similar structure to campsite reviews but linked to an offer claim.
+- **Review.ModerationStatus** — Enum: `PENDING`, `APPROVED`, `REJECTED`. Shared by both Review and SupplierReview.
+
+## Moderation Pipeline
+
+### Architecture
+- **ReviewModerationService** — Calls OpenAI (gpt-4o-mini) via Spring AI ChatClient to classify reviews as APPROVED or REJECTED
+- **ReviewModerationScheduler** — Runs every 5 minutes, processes all PENDING reviews through the AI service
+- **Graceful degradation** — If OpenAI is unavailable, reviews are auto-approved with a logged warning
+- **Feature toggle** — `REVIEW_AI_MODERATION` (default: disabled). When off, all new reviews skip moderation and go straight to APPROVED
+
+### Flow
+1. Guest submits review
+2. If `REVIEW_AI_MODERATION` enabled → status = `PENDING`, rating not yet counted
+3. Scheduler picks up PENDING reviews every 5 minutes
+4. AI checks for: spam, offensive language, irrelevant content, fake reviews
+5. Review transitions to `APPROVED` or `REJECTED`
+6. If APPROVED → owner/supplier rating recalculated
+7. Admin can manually approve/reject any review at any time
+
+### Rating Calculation
+- Only `APPROVED` reviews are counted in average rating and review count
+- Rating is recalculated when a review is approved (by AI or admin)
 
 ## Business Rules
 
-1. Reviews can only be submitted for bookings with `status = COMPLETED`
-2. One review per booking (unique constraint)
-3. Rating range: 1-5 for overall and each category
-4. Reviews cannot be edited after an owner/supplier responds
+1. Reviews can only be submitted for bookings with `status = COMPLETED` or `CHECKED_IN`
+2. Supplier reviews require offer claim with `status = REDEEMED`
+3. One review per booking/claim (unique constraint)
+4. Rating range: 1-5
+5. Reviews cannot be edited after an owner/supplier responds
+6. Public-facing queries only return APPROVED reviews
+7. Owner/supplier dashboards show all reviews (with moderation status badges)
+8. Admin can manually approve, reject, flag, or delete any review
 
 ## API Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
 | POST | `/api/reviews` | Submit a campsite review |
-| GET | `/api/reviews/campsite/{campsiteId}` | Get reviews for a campsite |
-| GET | `/api/reviews/eligibility/{bookingId}` | Check review eligibility |
+| GET | `/api/reviews/campsite/{ownerId}` | Get approved reviews for a campsite |
+| GET | `/api/reviews/eligibility/{ownerId}` | Check review eligibility |
 | POST | `/api/reviews/{id}/respond` | Owner response to review |
 | POST | `/api/reviews/supplier` | Submit a supplier review |
-| GET | `/api/reviews/supplier/{supplierId}` | Get reviews for a supplier |
+| GET | `/api/reviews/supplier/{supplierId}` | Get approved reviews for a supplier |
+| GET | `/api/admin/reviews` | Admin: list all reviews (with moderation status) |
+| PUT | `/api/admin/reviews/{type}/{id}/flag` | Admin: toggle flag on review |
+| PUT | `/api/admin/reviews/{type}/{id}/moderate` | Admin: manually approve/reject review |
+| DELETE | `/api/admin/reviews/{type}/{id}` | Admin: delete review |
 
 ## Frontend Pages
 
-- **ReviewsSection** — Displays reviews on campsite detail page
-- **SupplierReviewsSection** — Displays reviews on supplier detail page
-- **OwnerReviewsPage** — Owner views and responds to reviews
-- **SupplierReviewsPage** — Supplier views and responds to reviews
+- **ReviewsSection** — Displays approved reviews on campsite detail page (no changes needed, API filters)
+- **SupplierReviewsSection** — Displays approved reviews on supplier detail page
+- **OwnerReviewsPage** — Owner views all reviews with moderation status badges (PENDING=yellow, REJECTED=red)
+- **SupplierReviewsPage** — Supplier views all reviews with moderation status badges
+- **AdminReviewsPage** — Admin view with moderation status column, approve/reject/flag/delete actions
+
+## Database
+
+- `V1063__add_review_moderation_status.sql` — Adds `moderation_status`, `moderation_reason`, `moderated_at` to both `reviews` and `supplier_reviews` tables
+- `V1064__add_review_moderation_toggle.sql` — Inserts `REVIEW_AI_MODERATION` feature toggle (default: disabled)

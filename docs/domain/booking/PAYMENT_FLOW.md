@@ -2,12 +2,16 @@
 
 ## Booking Status Lifecycle
 
-```
-PENDING_PAYMENT → PENDING → CONFIRMED → CHECKED_IN → COMPLETED
-                     ↓           ↓
-                 CANCELLED    CANCELLED
-      ↓
- PAYMENT_FAILED
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING_PAYMENT : booking created
+    PENDING_PAYMENT --> PENDING : payment authorized
+    PENDING_PAYMENT --> PAYMENT_FAILED : payment fails
+    PENDING --> CONFIRMED : owner confirms / auto-confirm
+    PENDING --> CANCELLED : cancel
+    CONFIRMED --> CHECKED_IN : guest arrives
+    CHECKED_IN --> COMPLETED : guest departs
+    CONFIRMED --> CANCELLED : cancel
 ```
 
 | Status | Description |
@@ -22,12 +26,14 @@ PENDING_PAYMENT → PENDING → CONFIRMED → CHECKED_IN → COMPLETED
 
 ## Payment Status Lifecycle
 
-```
-NONE → AUTHORIZED → CAPTURED
-         ↓             ↓
-      RELEASED      REFUNDED
-
-NONE → FAILED
+```mermaid
+stateDiagram-v2
+    [*] --> NONE : booking created
+    NONE --> AUTHORIZED : card authorized
+    NONE --> FAILED : authorization fails
+    AUTHORIZED --> CAPTURED : owner confirms
+    AUTHORIZED --> RELEASED : cancelled before capture
+    CAPTURED --> REFUNDED : refund issued
 ```
 
 | Status | Description |
@@ -61,6 +67,39 @@ When `instantBooking=false`:
 4. Or owner clicks **Reject** → Stripe releases authorization → status: `CANCELLED` / payment: `RELEASED`
 
 ## Stripe Integration
+
+### Booking Creation Sequence
+
+```mermaid
+sequenceDiagram
+    actor Guest
+    participant Frontend
+    participant API
+    participant Stripe
+
+    Guest->>Frontend: Select dates & lot
+    Frontend->>API: POST /bookings
+    API-->>Frontend: Booking (PENDING_PAYMENT)
+    Frontend->>API: POST /payments/{id}/create-intent
+    API->>Stripe: Create PaymentIntent (manual capture)
+    Stripe-->>API: clientSecret
+    API-->>Frontend: clientSecret
+    Frontend->>Stripe: confirmCardPayment(clientSecret)
+    Stripe-->>Frontend: Payment authorized
+
+    alt Instant Booking
+        Frontend->>API: POST /payments/{id}/confirm-authorization
+        API->>Stripe: Capture payment
+        Stripe-->>API: Captured
+        API-->>Frontend: CONFIRMED / CAPTURED
+    else Manual Approval
+        Frontend->>API: POST /payments/{id}/confirm-authorization
+        API-->>Frontend: PENDING / AUTHORIZED
+        Note over API: Owner reviews booking
+        API->>Stripe: Capture payment (on confirm)
+        Stripe-->>API: Captured
+    end
+```
 
 ### Manual Capture Mode
 

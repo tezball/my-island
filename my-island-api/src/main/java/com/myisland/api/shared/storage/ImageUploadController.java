@@ -70,14 +70,14 @@ public class ImageUploadController {
             @RequestParam(value = "primary", defaultValue = "false") boolean setAsPrimary,
             @RequestParam(value = "altText", required = false) String altText
     ) throws IOException {
-        log.info("Upload request: entityType={}, entityId={}, file={}, size={}, contentType={}, primary={}",
+        log.debug("Upload request: entityType={}, entityId={}, file={}, size={}, contentType={}, primary={}",
                 entityType, entityId, file.getOriginalFilename(), file.getSize(), file.getContentType(), setAsPrimary);
 
         EntityImage.EntityType type = parseEntityType(entityType);
         verifyOwnership(userDetails, type, entityId);
         EntityImage image = entityImageService.uploadImage(type, entityId, file, setAsPrimary, altText);
 
-        log.info("Upload complete: imageId={}, url={}", image.getId(), image.getUrl());
+        log.debug("Upload complete: imageId={}, url={}", image.getId(), image.getUrl());
         return ResponseEntity.ok(toDto(image));
     }
 
@@ -151,7 +151,7 @@ public class ImageUploadController {
             @PathVariable Long imageId
     ) {
         verifyImageOwnership(userDetails, imageId);
-        log.info("Deleting image {}", imageId);
+        log.debug("Deleting image {}", imageId);
         entityImageService.deleteImage(imageId);
         return ResponseEntity.ok(Map.of("message", "Image deleted"));
     }

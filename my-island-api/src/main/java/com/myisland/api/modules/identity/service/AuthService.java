@@ -94,7 +94,7 @@ public class AuthService {
         }
 
         String token = jwtProvider.generateToken(authentication);
-        log.info("User logged in: {}", user.getEmail());
+        log.debug("User logged in: {}", user.getEmail());
 
         StaffService.StaffPermissionsPayload perms = user.isStaff() ? staffService.getStaffPermissionsPayload(user.getId()) : null;
         return new AuthResponse(token, jwtProvider.getExpirationMs(), AuthResponse.UserDto.from(user, perms));

@@ -201,6 +201,8 @@ export interface AdminReview {
   comment: string;
   response: string | null;
   isFlagged: boolean;
+  moderationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+  moderationReason: string | null;
   createdAt: string;
 }
 

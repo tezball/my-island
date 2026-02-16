@@ -3,6 +3,28 @@ import { reviewService } from '../../services/reviewService';
 import type { Review } from '../../types/review';
 import { StarDisplay } from '../../components/review/StarRating';
 
+const ModerationBadge: React.FC<{ status?: string; reason?: string }> = ({ status, reason }) => {
+    if (!status || status === 'APPROVED') return null;
+
+    const config = status === 'PENDING'
+        ? { bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-400', label: 'Awaiting Moderation' }
+        : { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-400', label: 'Rejected' };
+
+    return (
+        <div className="mt-2">
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+                <span className="material-symbols-outlined text-xs">
+                    {status === 'PENDING' ? 'hourglass_top' : 'block'}
+                </span>
+                {config.label}
+            </span>
+            {status === 'REJECTED' && reason && (
+                <p className="text-xs text-red-500 mt-1">Reason: {reason}</p>
+            )}
+        </div>
+    );
+};
+
 export const OwnerReviewsPage: React.FC = () => {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -44,8 +66,9 @@ export const OwnerReviewsPage: React.FC = () => {
         }
     };
 
-    const averageRating = reviews.length > 0
-        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    const approvedReviews = reviews.filter(r => r.moderationStatus !== 'PENDING' && r.moderationStatus !== 'REJECTED');
+    const averageRating = approvedReviews.length > 0
+        ? approvedReviews.reduce((sum, r) => sum + r.rating, 0) / approvedReviews.length
         : 0;
 
     const formatDate = (dateStr: string) => {
@@ -69,11 +92,11 @@ export const OwnerReviewsPage: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="text-2xl font-bold text-[#111418] dark:text-white">Guest Reviews</h1>
-                    {reviews.length > 0 && (
+                    {approvedReviews.length > 0 && (
                         <div className="flex items-center gap-2 mt-1">
                             <StarDisplay rating={averageRating} size="sm" />
                             <span className="font-semibold text-[#111418] dark:text-white">{averageRating.toFixed(1)}</span>
-                            <span className="text-gray-500 text-sm">({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})</span>
+                            <span className="text-gray-500 text-sm">({approvedReviews.length} {approvedReviews.length === 1 ? 'review' : 'reviews'})</span>
                         </div>
                     )}
                 </div>
@@ -103,16 +126,18 @@ export const OwnerReviewsPage: React.FC = () => {
 
                             <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">{review.comment}</p>
 
+                            <ModerationBadge status={review.moderationStatus} reason={review.moderationReason} />
+
                             {review.ownerResponse ? (
-                                <div className="pl-4 border-l-2 border-primary bg-gray-50 dark:bg-gray-800/50 p-3 rounded-r-lg">
+                                <div className="pl-4 border-l-2 border-primary bg-gray-50 dark:bg-gray-800/50 p-3 rounded-r-lg mt-3">
                                     <p className="text-xs font-semibold text-primary mb-1">Your Response</p>
                                     <p className="text-gray-600 dark:text-gray-400 text-sm">{review.ownerResponse}</p>
                                     {review.ownerResponseAt && (
                                         <p className="text-xs text-gray-400 mt-1">Responded on {formatDate(review.ownerResponseAt)}</p>
                                     )}
                                 </div>
-                            ) : respondingTo === review.id ? (
-                                <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
+                            ) : review.moderationStatus === 'APPROVED' && respondingTo === review.id ? (
+                                <div className="border-t border-gray-100 dark:border-gray-700 pt-4 mt-3">
                                     <textarea
                                         value={responseText}
                                         onChange={(e) => setResponseText(e.target.value)}
@@ -138,15 +163,15 @@ export const OwnerReviewsPage: React.FC = () => {
                                         </button>
                                     </div>
                                 </div>
-                            ) : (
+                            ) : review.moderationStatus === 'APPROVED' && !review.ownerResponse ? (
                                 <button
                                     onClick={() => setRespondingTo(review.id)}
-                                    className="text-primary hover:text-emerald-600 text-sm font-medium flex items-center gap-1 transition-colors"
+                                    className="text-primary hover:text-emerald-600 text-sm font-medium flex items-center gap-1 transition-colors mt-3"
                                 >
                                     <span className="material-symbols-outlined text-base">reply</span>
                                     Reply
                                 </button>
-                            )}
+                            ) : null}
                         </div>
                     ))}
                 </div>

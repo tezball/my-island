@@ -54,7 +54,7 @@ public class BookingCleanupScheduler {
 
                 booking.setStatus(Booking.BookingStatus.CANCELLED);
                 bookingRepository.save(booking);
-                log.info("Auto-cancelled stale PENDING_PAYMENT booking {}", booking.getId());
+                log.debug("Auto-cancelled stale PENDING_PAYMENT booking {}", booking.getId());
             } catch (StripeException e) {
                 log.error("Failed to release authorization for stale booking {}: {}", booking.getId(), e.getMessage());
                 // Still cancel the booking even if Stripe release fails

@@ -50,7 +50,7 @@ public class ImageUploadService {
         String extension = getExtension(originalFilename);
         String key = folder + "/" + UUID.randomUUID() + extension;
 
-        log.info("Uploading image: {} ({} bytes, type={}) to bucket={}, key={}",
+        log.debug("Uploading image: {} ({} bytes, type={}) to bucket={}, key={}",
                 originalFilename, file.getSize(), file.getContentType(), bucketName, key);
 
         PutObjectRequest putRequest = PutObjectRequest.builder()
@@ -67,7 +67,7 @@ public class ImageUploadService {
             throw e;
         }
 
-        log.info("Uploaded image: {} to {}", originalFilename, key);
+        log.debug("Uploaded image: {} to {}", originalFilename, key);
 
         String url = getPublicUrl(key);
 
@@ -84,7 +84,7 @@ public class ImageUploadService {
     }
 
     public void deleteImage(String key) {
-        log.info("Deleting image from S3: bucket={}, key={}", bucketName, key);
+        log.debug("Deleting image from S3: bucket={}, key={}", bucketName, key);
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -92,7 +92,7 @@ public class ImageUploadService {
 
         try {
             s3Client.deleteObject(deleteRequest);
-            log.info("Deleted image: {}", key);
+            log.debug("Deleted image: {}", key);
         } catch (Exception e) {
             log.error("S3 delete failed for key={} bucket={}: {}", key, bucketName, e.getMessage(), e);
             throw e;

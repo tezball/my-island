@@ -14,12 +14,16 @@ Handles the full reservation lifecycle from creation through payment, confirmati
 
 ## Booking Status Lifecycle
 
-```
-PENDING_PAYMENT → PENDING → CONFIRMED → CHECKED_IN → COMPLETED
-                     ↓           ↓
-                 CANCELLED    CANCELLED
-      ↓
- PAYMENT_FAILED
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING_PAYMENT : booking created
+    PENDING_PAYMENT --> PENDING : payment authorized
+    PENDING_PAYMENT --> PAYMENT_FAILED : payment fails
+    PENDING --> CONFIRMED : owner confirms / auto-confirm
+    PENDING --> CANCELLED : cancel
+    CONFIRMED --> CHECKED_IN : guest arrives
+    CHECKED_IN --> COMPLETED : guest departs
+    CONFIRMED --> CANCELLED : cancel
 ```
 
 | Status | Description |
@@ -106,13 +110,31 @@ Guests can modify their own CONFIRMED bookings (dates, lot, power hookup) subjec
 
 ### Modification Request Status
 
-```
-PENDING → APPROVED (owner approves, modification applied)
-        → DECLINED (owner declines with optional reason)
-        → CANCELLED (guest cancels their own request)
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING : guest submits request
+    PENDING --> APPROVED : owner approves
+    PENDING --> DECLINED : owner declines
+    PENDING --> CANCELLED : guest cancels
 ```
 
 ### Guest Flow
+
+```mermaid
+flowchart TD
+    A["Guest clicks Modify"] --> B{"canModify?"}
+    B -->|No| C["Show blocked reason"]
+    B -->|Yes| D["Guest submits changes"]
+    D --> E{"requireModificationApproval?"}
+    E -->|No| F["Auto-approve: apply changes immediately"]
+    F --> G["Notify owner"]
+    E -->|Yes| H["Create PENDING request"]
+    H --> I["Notify owner"]
+    I --> J{"Owner decision"}
+    J -->|Approve| K["Apply modification"]
+    J -->|Decline| L["Notify guest of decline"]
+```
+
 1. Guest clicks "Modify" on a confirmed booking → frontend fetches modification policy
 2. If `canModify=true`, modal opens showing current booking + change form (dates, lot, power)
 3. Guest submits changes with optional reason

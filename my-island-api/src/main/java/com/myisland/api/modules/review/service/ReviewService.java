@@ -2,6 +2,7 @@ package com.myisland.api.modules.review.service;
 
 import com.myisland.api.modules.accommodation.entity.Owner;
 import com.myisland.api.modules.accommodation.repository.OwnerRepository;
+import com.myisland.api.modules.admin.service.FeatureToggleService;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.modules.identity.entity.User;
@@ -30,18 +31,21 @@ public class ReviewService {
     private final BookingRepository bookingRepository;
     private final OwnerRepository ownerRepository;
     private final UserRepository userRepository;
+    private final FeatureToggleService featureToggleService;
 
     public ReviewService(ReviewRepository reviewRepository, BookingRepository bookingRepository,
-                         OwnerRepository ownerRepository, UserRepository userRepository) {
+                         OwnerRepository ownerRepository, UserRepository userRepository,
+                         FeatureToggleService featureToggleService) {
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
         this.ownerRepository = ownerRepository;
         this.userRepository = userRepository;
+        this.featureToggleService = featureToggleService;
     }
 
     @Transactional(readOnly = true)
     public List<ReviewDto> getReviewsByOwner(Long ownerId) {
-        return reviewRepository.findByOwnerIdWithDetails(ownerId).stream()
+        return reviewRepository.findByOwnerIdAndModerationStatusWithDetails(ownerId, Review.ModerationStatus.APPROVED).stream()
                 .map(ReviewDto::from)
                 .toList();
     }
@@ -76,8 +80,17 @@ public class ReviewService {
                 .comment(request.comment())
                 .build();
 
+        if (featureToggleService.isReviewModerationEnabled()) {
+            review.setModerationStatus(Review.ModerationStatus.PENDING);
+        } else {
+            review.setModerationStatus(Review.ModerationStatus.APPROVED);
+        }
+
         review = reviewRepository.save(review);
-        updateOwnerRating(owner);
+
+        if (!featureToggleService.isReviewModerationEnabled()) {
+            recalculateOwnerRating(owner);
+        }
 
         return ReviewDto.from(review);
     }
@@ -137,9 +150,10 @@ public class ReviewService {
                 .toList();
     }
 
-    private void updateOwnerRating(Owner owner) {
-        BigDecimal avgRating = reviewRepository.calculateAverageRating(owner.getId());
-        long count = reviewRepository.countByOwnerId(owner.getId());
+    @Transactional
+    public void recalculateOwnerRating(Owner owner) {
+        BigDecimal avgRating = reviewRepository.calculateAverageRatingByStatus(owner.getId(), Review.ModerationStatus.APPROVED);
+        long count = reviewRepository.countByOwnerIdAndModerationStatus(owner.getId(), Review.ModerationStatus.APPROVED);
 
         if (avgRating != null) {
             owner.setRating(avgRating.setScale(1, RoundingMode.HALF_UP));

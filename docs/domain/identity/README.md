@@ -38,6 +38,52 @@ Example: A "Receptionist" role might have BOOKINGS(FULL) + ANALYTICS(VIEW_ONLY).
 2. Invitee signs up → `AuthService.signup()` calls `staffService.activateStaffOnSignup()` → user gets `isStaff=true`
 3. Staff user logs in → route guards allow access to the inviting owner's/supplier's portal
 
+## Authentication Flows
+
+### Signup Sequence
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant API
+    participant Mail as Mailpit / SMTP
+
+    User->>Frontend: Fill signup form
+    Frontend->>API: POST /auth/signup
+    API->>Mail: Send verification email (token link)
+    API-->>Frontend: JWT + user (emailVerified=false)
+    Frontend->>Frontend: Redirect to onboarding
+
+    Note over User,Mail: User checks inbox
+
+    User->>Frontend: Click verification link
+    Frontend->>API: POST /auth/verify-email?token=...
+    API-->>Frontend: emailVerified=true
+```
+
+### Login Flow
+
+```mermaid
+flowchart TD
+    A["POST /auth/login"] --> B{"Valid credentials?"}
+    B -->|No| C["401 Unauthorized"]
+    B -->|Yes| D{"emailVerified?"}
+    D -->|No| E["400 Email not verified"]
+    D -->|Yes| F{"isActive?"}
+    F -->|No| G["400 Account disabled"]
+    F -->|Yes| H["Return JWT"]
+```
+
+### Staff Activation
+
+```mermaid
+stateDiagram-v2
+    [*] --> INVITED : owner/supplier invites email
+    INVITED --> ACTIVE : invitee signs up (auto-activation)
+    note right of ACTIVE : User.isStaff = true
+```
+
 ## API Endpoints
 
 | Method | Path | Description |

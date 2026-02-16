@@ -41,10 +41,10 @@ public class S3Config {
                 .forcePathStyle(true);
 
         if (endpoint != null && !endpoint.isBlank()) {
-            log.info("Configuring S3 client with custom endpoint: {}, region: {}", endpoint, region);
+            log.debug("Configuring S3 client with custom endpoint: {}, region: {}", endpoint, region);
             builder.endpointOverride(URI.create(endpoint));
         } else {
-            log.info("Configuring S3 client with default AWS endpoint, region: {}", region);
+            log.debug("Configuring S3 client with default AWS endpoint, region: {}", region);
         }
 
         return builder.build();

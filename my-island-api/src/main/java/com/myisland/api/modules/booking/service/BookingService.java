@@ -342,12 +342,12 @@ public class BookingService {
             booking.setPaymentStatus(Booking.PaymentStatus.CAPTURED);
             booking = bookingRepository.save(booking);
             eventPublisher.publishEvent(new BookingEvent(this, booking.getId(), BookingEvent.Type.CONFIRMED));
-            log.info("Dev mode: Simulated payment success and auto-confirmed booking {}", bookingId);
+            log.debug("Dev mode: Simulated payment success and auto-confirmed booking {}", bookingId);
         } else {
             booking.setStatus(Booking.BookingStatus.PENDING);
             booking.setPaymentStatus(Booking.PaymentStatus.AUTHORIZED);
             booking = bookingRepository.save(booking);
-            log.info("Dev mode: Simulated payment success for booking {}", bookingId);
+            log.debug("Dev mode: Simulated payment success for booking {}", bookingId);
         }
 
         return BookingDto.from(booking);

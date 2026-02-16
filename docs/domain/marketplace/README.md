@@ -14,10 +14,11 @@ Enables local suppliers (restaurants, activity providers, gear rental, etc.) to 
 
 ## Offer Claim Lifecycle
 
-```
-CLAIMED → REDEEMED
-   ↓
-EXPIRED (validUntil date passed)
+```mermaid
+stateDiagram-v2
+    [*] --> CLAIMED : guest claims offer
+    CLAIMED --> REDEEMED : supplier scans QR
+    CLAIMED --> EXPIRED : validUntil passed
 ```
 
 | Status | Description |
@@ -28,6 +29,28 @@ EXPIRED (validUntil date passed)
 
 ## Offer Categories
 `FOOD` | `ACTIVITIES` | `GEAR` | `ATTRACTIONS` | `TRANSPORT`
+
+## Offer Claim & Redeem Flow
+
+```mermaid
+sequenceDiagram
+    actor Guest
+    participant Frontend
+    participant API
+    participant Supplier
+
+    Guest->>Frontend: Click "Claim Offer"
+    Frontend->>API: POST /marketplace/offers/{id}/claim
+    API-->>Frontend: OfferClaim (CLAIMED)
+    API->>Guest: Voucher email with QR code
+    API->>Supplier: New claim notification
+
+    Note over Guest,Supplier: Guest visits supplier location
+
+    Guest->>Supplier: Shows QR code
+    Supplier->>API: POST /supplier/redeem/{code}
+    API-->>Supplier: Claim marked REDEEMED
+```
 
 ## API Endpoints
 

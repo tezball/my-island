@@ -322,7 +322,7 @@ public class OwnerService {
         List<BookingDto> departures = bookingRepository.findTodayDepartures(owner.getId(), today)
                 .stream().map(BookingDto::from).toList();
 
-        log.info("Today's movements for owner {}: {} arrivals, {} departures",
+        log.debug("Today's movements for owner {}: {} arrivals, {} departures",
                 owner.getId(), arrivals.size(), departures.size());
 
         return Map.of("arrivals", arrivals, "departures", departures);
@@ -333,7 +333,7 @@ public class OwnerService {
         Owner owner = permissionChecker.resolveOwnerAndCheck(userId, PermissionGroup.BOOKINGS, AccessLevel.READ);
 
         List<Booking> bookings = bookingRepository.findByOwnerId(owner.getId());
-        log.info("Found {} bookings for owner {}", bookings.size(), owner.getId());
+        log.debug("Found {} bookings for owner {}", bookings.size(), owner.getId());
 
         return bookings.stream()
                 .map(BookingDto::from)

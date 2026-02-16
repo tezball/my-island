@@ -141,6 +141,8 @@ interface RawReview {
   ownerResponse?: string;
   supplierResponse?: string;
   isFlagged: boolean;
+  moderationStatus?: string;
+  moderationReason?: string;
   createdAt: string;
 }
 
@@ -158,6 +160,8 @@ export const adminReviewService = {
       comment: r.comment,
       response: r.ownerResponse ?? r.supplierResponse ?? null,
       isFlagged: r.isFlagged,
+      moderationStatus: (r.moderationStatus as 'PENDING' | 'APPROVED' | 'REJECTED') ?? 'APPROVED',
+      moderationReason: r.moderationReason ?? null,
       createdAt: r.createdAt,
     }));
     return {
@@ -173,6 +177,9 @@ export const adminReviewService = {
 
   flag: (type: string, id: number) =>
     apiRequest<void>(`/admin/reviews/${type}/${id}/flag`, { method: 'PUT' }),
+
+  moderate: (type: string, id: number, status: string, reason: string) =>
+    apiRequest<void>(`/admin/reviews/${type}/${id}/moderate`, { method: 'PUT', body: { status, reason } }),
 
   remove: (type: string, id: number) =>
     apiRequest<void>(`/admin/reviews/${type}/${id}`, { method: 'DELETE' }),

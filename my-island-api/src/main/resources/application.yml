@@ -33,6 +33,15 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db/migration
 
+  ai:
+    ollama:
+      enabled: ${OLLAMA_ENABLED:false}
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${OLLAMA_MODEL:llama3.2}
+          temperature: 0.1
+
   mail:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:1025}
@@ -113,11 +122,6 @@ jwt:
 stripe:
   dev-mode: true
 
-logging:
-  level:
-    com.myisland: DEBUG
-    org.springframework.security: DEBUG
-
 ---
 spring:
   config:
@@ -126,7 +130,3 @@ spring:
 
   jpa:
     show-sql: false
-
-logging:
-  level:
-    com.myisland: INFO

@@ -92,7 +92,7 @@ public class BookingPaymentService {
 
         // Dev mode: return mock payment intent
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Creating mock payment intent for booking {}", bookingId);
+            log.debug("Dev mode: Creating mock payment intent for booking {}", bookingId);
             String mockPaymentIntentId = "pi_dev_booking_" + bookingId;
             booking.setStripePaymentIntentId(mockPaymentIntentId);
             bookingRepository.save(booking);
@@ -302,7 +302,7 @@ public class BookingPaymentService {
 
         // Dev mode: simulate capture
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Capturing payment for booking {}", bookingId);
+            log.debug("Dev mode: Capturing payment for booking {}", bookingId);
             booking.setPaymentStatus(PaymentStatus.CAPTURED);
             booking.setPaymentCapturedAt(Instant.now());
             bookingRepository.save(booking);
@@ -337,7 +337,7 @@ public class BookingPaymentService {
 
         // Dev mode: simulate release
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Releasing authorization for booking {}", bookingId);
+            log.debug("Dev mode: Releasing authorization for booking {}", bookingId);
             booking.setPaymentStatus(PaymentStatus.RELEASED);
             bookingRepository.save(booking);
             return;
@@ -372,7 +372,7 @@ public class BookingPaymentService {
 
         // Dev mode: simulate refund
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Processing refund for booking {}, amount: {}", bookingId, refundAmount);
+            log.debug("Dev mode: Processing refund for booking {}, amount: {}", bookingId, refundAmount);
             booking.setPaymentStatus(PaymentStatus.REFUNDED);
             booking.setRefundAmount(refundAmount);
             bookingRepository.save(booking);
@@ -421,7 +421,7 @@ public class BookingPaymentService {
 
         // Dev mode: simulate transfer
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Creating payout to owner {} for booking {}, amount: {}",
+            log.debug("Dev mode: Creating payout to owner {} for booking {}, amount: {}",
                     owner.getId(), bookingId, transferAmount);
             booking.setStripeTransferId("tr_dev_" + bookingId);
             bookingRepository.save(booking);

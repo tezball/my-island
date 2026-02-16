@@ -16,6 +16,8 @@ public record SupplierReviewDto(
         String comment,
         String supplierResponse,
         LocalDateTime supplierResponseAt,
+        String moderationStatus,
+        String moderationReason,
         LocalDateTime createdAt
 ) {
     public static SupplierReviewDto from(SupplierReview review) {
@@ -30,6 +32,8 @@ public record SupplierReviewDto(
                 review.getComment(),
                 review.getSupplierResponse(),
                 review.getSupplierResponseAt(),
+                review.getModerationStatus().name(),
+                review.getModerationReason(),
                 review.getCreatedAt()
         );
     }

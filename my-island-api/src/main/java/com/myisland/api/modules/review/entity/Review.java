@@ -13,6 +13,10 @@ import java.time.LocalDateTime;
 @Table(name = "reviews")
 public class Review extends BaseEntity {
 
+    public enum ModerationStatus {
+        PENDING, APPROVED, REJECTED
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -39,6 +43,16 @@ public class Review extends BaseEntity {
 
     @Column(name = "is_flagged", nullable = false)
     private boolean isFlagged = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status", nullable = false)
+    private ModerationStatus moderationStatus = ModerationStatus.APPROVED;
+
+    @Column(name = "moderation_reason", columnDefinition = "TEXT")
+    private String moderationReason;
+
+    @Column(name = "moderated_at")
+    private LocalDateTime moderatedAt;
 
     public Review() {}
 
@@ -94,4 +108,13 @@ public class Review extends BaseEntity {
 
     public boolean isFlagged() { return isFlagged; }
     public void setFlagged(boolean flagged) { isFlagged = flagged; }
+
+    public ModerationStatus getModerationStatus() { return moderationStatus; }
+    public void setModerationStatus(ModerationStatus moderationStatus) { this.moderationStatus = moderationStatus; }
+
+    public String getModerationReason() { return moderationReason; }
+    public void setModerationReason(String moderationReason) { this.moderationReason = moderationReason; }
+
+    public LocalDateTime getModeratedAt() { return moderatedAt; }
+    public void setModeratedAt(LocalDateTime moderatedAt) { this.moderatedAt = moderatedAt; }
 }

@@ -53,7 +53,7 @@ public class SubscriptionService {
 
         // Dev mode: directly activate subscription and redirect to success URL
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Activating subscription directly for supplier {}", supplierId);
+            log.debug("Dev mode: Activating subscription directly for supplier {}", supplierId);
             supplier.setStripeCustomerId("cus_dev_supplier_" + supplierId);
             supplier.setStripeSubscriptionId("sub_dev_supplier_" + supplierId);
             supplier.setSubscriptionStatus(Supplier.SubscriptionStatus.ACTIVE);
@@ -107,7 +107,7 @@ public class SubscriptionService {
 
         // Dev mode: return mock data
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Returning mock setup intent for supplier {}", supplierId);
+            log.debug("Dev mode: Returning mock setup intent for supplier {}", supplierId);
             String customerId = supplier.getStripeCustomerId();
             if (customerId == null) {
                 customerId = "cus_dev_supplier_" + supplierId;
@@ -162,7 +162,7 @@ public class SubscriptionService {
 
         // Dev mode: directly activate subscription
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Activating subscription directly for supplier {}", supplierId);
+            log.debug("Dev mode: Activating subscription directly for supplier {}", supplierId);
             supplier.setStripeSubscriptionId("sub_dev_supplier_" + supplierId);
             supplier.setSubscriptionStatus(Supplier.SubscriptionStatus.ACTIVE);
             supplier.setSubscriptionCurrentPeriodEnd(Instant.now().plusSeconds(30 * 24 * 60 * 60)); // 30 days
@@ -227,7 +227,7 @@ public class SubscriptionService {
 
         // Dev mode: no real Stripe portal available
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Billing portal not available for supplier {}", supplierId);
+            log.debug("Dev mode: Billing portal not available for supplier {}", supplierId);
             return new CreatePortalSessionResponse(null, true);
         }
 

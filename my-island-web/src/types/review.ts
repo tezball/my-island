@@ -9,6 +9,8 @@ export interface Review {
     comment: string;
     ownerResponse?: string;
     ownerResponseAt?: string;
+    moderationStatus?: string;
+    moderationReason?: string;
     createdAt: string;
 }
 
@@ -43,6 +45,8 @@ export interface SupplierReview {
     comment: string;
     supplierResponse?: string;
     supplierResponseAt?: string;
+    moderationStatus?: string;
+    moderationReason?: string;
     createdAt: string;
 }
 

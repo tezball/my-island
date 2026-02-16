@@ -218,10 +218,10 @@ start_docker_infra() {
 }
 
 # ============================================
-# Start Backend (Spring Boot)
+# Start Backend (GraalVM Native Image)
 # ============================================
 start_backend() {
-    log_step "Starting Spring Boot backend..."
+    log_step "Building and starting native backend..."
 
     cd "$SCRIPT_DIR/my-island-api"
 
@@ -233,14 +233,24 @@ start_backend() {
         set +a
     fi
 
-    # Compile and start
-    log_info "Compiling and starting backend ($MODE mode)..."
+    # Build native image
+    log_info "Compiling native image (this may take several minutes)..."
+    ./mvnw -Pnative native:compile -DskipTests -B \
+        > "$SCRIPT_DIR/logs/native-build.log" 2>&1
+    if [ $? -ne 0 ]; then
+        log_error "Native compilation failed. Check logs/native-build.log"
+        return 1
+    fi
+    log_success "Native image compiled"
+
+    # Start the native binary
+    log_info "Starting native backend ($MODE mode)..."
     if [ "$MODE" = "prod" ]; then
-        nohup ./mvnw spring-boot:run \
+        nohup ./target/my-island-api \
             > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
     else
-        nohup ./mvnw spring-boot:run \
-            -Dspring-boot.run.profiles=dev \
+        nohup ./target/my-island-api \
+            --spring.profiles.active=dev \
             > "$SCRIPT_DIR/logs/backend.log" 2>&1 &
     fi
 
@@ -249,7 +259,7 @@ start_backend() {
 
     log_info "Backend starting (PID: $backend_pid), waiting for port 8080..."
     echo -n "  "
-    if wait_for_port 8080 "Backend" 180; then
+    if wait_for_port 8080 "Backend" 30; then
         log_success "Backend ready on http://localhost:8080"
     else
         log_error "Backend failed to start. Check logs/backend.log"

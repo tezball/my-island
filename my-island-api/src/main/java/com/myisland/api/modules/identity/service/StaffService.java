@@ -317,7 +317,7 @@ public class StaffService {
         if (remaining.isEmpty()) {
             user.setStaff(false);
             userRepository.save(user);
-            log.info("Removed staff flag from user {} — no remaining memberships", user.getEmail());
+            log.debug("Removed staff flag from user {} — no remaining memberships", user.getEmail());
         }
     }
 }

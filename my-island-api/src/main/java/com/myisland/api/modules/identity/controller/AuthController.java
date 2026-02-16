@@ -36,7 +36,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Authenticate and get JWT token")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
-        logger.info("User {} is attempting to login", request.email());
+        logger.debug("User {} is attempting to login", request.email());
         return ResponseEntity.ok(authService.login(request));
     }
 

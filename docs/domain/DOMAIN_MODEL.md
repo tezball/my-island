@@ -22,7 +22,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | Admin | Implemented | Platform admin portal, audit logging, lead CRM, financial reporting |
 | Booking | Implemented | Booking CRUD, Stripe payment intents (authorize/capture), trip viewing |
 | Identity | Partially implemented | Email auth, password reset, email verification, profile editing. No social auth or account deletion |
-| Review | Not yet built | No entities, endpoints, or UI |
+| Review | Implemented | Review & SupplierReview entities, AI moderation pipeline, admin moderation |
 | Communication | Partially implemented | In-app messaging (per-booking threads between guests and owners). No email delivery yet. |
 | Support | Not yet built | No entities, endpoints, or UI |
 | Marketplace | Implemented | Supplier onboarding, Offer CRUD, Claim/Redeem with QR codes, test claims |
@@ -535,27 +535,54 @@ Supplier (Root)
 
 ---
 
-### Review Aggregate — *Not Yet Built*
+### Review Aggregate — *Implemented*
 
 ```
 Review (Root)
-└── ReviewCategories (Value Object)
+SupplierReview (Root)
 ```
 
-**Review** (planned)
+**Review**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Unique identifier |
-| userId | UUID | Author |
-| campsiteId | UUID | Reviewed campsite |
-| bookingId | UUID | Associated booking (one review per booking) |
-| rating | Integer | Overall score (1-5) |
+| id | Long | Unique identifier |
+| user | User | Author (ManyToOne) |
+| owner | Owner | Reviewed campsite owner (ManyToOne) |
+| booking | Booking | Associated booking (OneToOne, unique) |
+| rating | BigDecimal | Overall score (1-5, precision 2 scale 1) |
 | comment | String | Review text |
-| categories | ReviewCategories | Category scores |
-| helpfulCount | Integer | Upvotes |
-| ownerResponse | String | Host reply |
-| createdAt | Timestamp | Submission time |
+| ownerResponse | String | Host reply (nullable) |
+| ownerResponseAt | LocalDateTime | When host replied |
+| isFlagged | boolean | Admin flag |
+| moderationStatus | ModerationStatus | AI moderation state (PENDING, APPROVED, REJECTED) |
+| moderationReason | String | AI or admin moderation reason |
+| moderatedAt | LocalDateTime | When moderation decision was made |
+
+**SupplierReview**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | Unique identifier |
+| user | User | Author (ManyToOne) |
+| supplier | Supplier | Reviewed supplier (ManyToOne) |
+| offerClaim | OfferClaim | Associated claim (OneToOne, unique) |
+| rating | BigDecimal | Overall score (1-5) |
+| comment | String | Review text |
+| supplierResponse | String | Supplier reply (nullable) |
+| supplierResponseAt | LocalDateTime | When supplier replied |
+| isFlagged | boolean | Admin flag |
+| moderationStatus | ModerationStatus | AI moderation state (reuses Review.ModerationStatus) |
+| moderationReason | String | AI or admin moderation reason |
+| moderatedAt | LocalDateTime | When moderation decision was made |
+
+**ModerationStatus** (inner enum on Review)
+
+| Value | Description |
+|-------|-------------|
+| PENDING | Awaiting AI moderation |
+| APPROVED | Passed moderation, publicly visible |
+| REJECTED | Failed moderation, hidden from public |
 
 ---
 
@@ -716,18 +743,16 @@ Message (standalone entity, references Booking and User)
 
 ### BookingStatus (State Machine)
 
-```
-┌─────────────────┐   payment    ┌─────────┐   confirm    ┌───────────┐             ┌───────────┐
-│ PENDING_PAYMENT │─────────────►│ PENDING │──────────────►│ CONFIRMED │────────────►│ COMPLETED │
-└─────────────────┘              └─────────┘               └───────────┘             └───────────┘
-         │                            │                          │
-         │ payment fails              │        cancel            │       cancel
-         ▼                            └──────────────────────────┘
-┌────────────────┐                                               │
-│ PAYMENT_FAILED │                                               ▼
-└────────────────┘                                         ┌───────────┐
-                                                           │ CANCELLED │
-                                                           └───────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING_PAYMENT : booking created
+    PENDING_PAYMENT --> PENDING : payment authorized
+    PENDING_PAYMENT --> PAYMENT_FAILED : payment fails
+    PENDING --> CONFIRMED : owner confirms / auto-confirm
+    PENDING --> CANCELLED : cancel
+    CONFIRMED --> CHECKED_IN : guest arrives
+    CHECKED_IN --> COMPLETED : guest departs
+    CONFIRMED --> CANCELLED : cancel
 ```
 
 | Status | Description |
@@ -739,12 +764,52 @@ Message (standalone entity, references Booking and User)
 | CANCELLED | Booking cancelled |
 | PAYMENT_FAILED | Payment authorization failed |
 
+### PaymentStatus (State Machine)
+
+```mermaid
+stateDiagram-v2
+    [*] --> NONE : booking created
+    NONE --> AUTHORIZED : card authorized
+    NONE --> FAILED : authorization fails
+    AUTHORIZED --> CAPTURED : owner confirms
+    AUTHORIZED --> RELEASED : cancelled before capture
+    CAPTURED --> REFUNDED : refund issued
+```
+
+| Status | Description |
+|--------|-------------|
+| NONE | No payment initiated |
+| AUTHORIZED | Card authorized, hold placed (not yet charged) |
+| CAPTURED | Payment captured (funds charged) |
+| RELEASED | Authorization released without charge |
+| REFUNDED | Payment refunded after capture |
+| FAILED | Payment authorization failed |
+
+### ModificationRequestStatus (State Machine)
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING : guest submits request
+    PENDING --> APPROVED : owner approves
+    PENDING --> DECLINED : owner declines
+    PENDING --> CANCELLED : guest cancels
+```
+
+| Status | Description |
+|--------|-------------|
+| PENDING | Awaiting owner review |
+| APPROVED | Owner approved, modification applied |
+| DECLINED | Owner declined with optional reason |
+| CANCELLED | Guest cancelled their own request |
+
 ### TicketStatus — *Not Yet Built*
 
-```
-┌──────┐   assign   ┌─────────────┐   resolve   ┌──────────┐   close   ┌────────┐
-│ OPEN │───────────►│ IN_PROGRESS │────────────►│ RESOLVED │─────────►│ CLOSED │
-└──────┘            └─────────────┘             └──────────┘          └────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> OPEN : ticket created
+    OPEN --> IN_PROGRESS : assign
+    IN_PROGRESS --> RESOLVED : resolve
+    RESOLVED --> CLOSED : close
 ```
 
 | Status | Description |
@@ -830,16 +895,11 @@ Message (standalone entity, references Booking and User)
 
 ### ClaimStatus (State Machine)
 
-```
-┌─────────┐    redeem    ┌──────────┐
-│ CLAIMED │─────────────►│ REDEEMED │
-└─────────┘              └──────────┘
-     │
-     │ expires (validUntil passed)
-     ▼
-┌─────────┐
-│ EXPIRED │
-└─────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> CLAIMED : guest claims offer
+    CLAIMED --> REDEEMED : supplier scans QR
+    CLAIMED --> EXPIRED : validUntil passed
 ```
 
 | Status | Description |
@@ -857,10 +917,14 @@ Message (standalone entity, references Booking and User)
 
 ### LeadStatus (Admin, State Machine)
 
-```
-NEW --> CONTACTED --> QUALIFIED --> CONVERTED
-                        |
-                       LOST
+```mermaid
+stateDiagram-v2
+    [*] --> NEW : lead created
+    NEW --> CONTACTED : initial outreach
+    CONTACTED --> QUALIFIED : shows interest
+    CONTACTED --> LOST : no response
+    QUALIFIED --> CONVERTED : signs up
+    QUALIFIED --> LOST : drops off
 ```
 
 | Status | Description |
@@ -888,7 +952,20 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 | APPLE_PAY | Apple Pay |
 | GOOGLE_PAY | Google Pay |
 
-### SubscriptionStatus
+### SubscriptionStatus (State Machine)
+
+```mermaid
+stateDiagram-v2
+    [*] --> NONE
+    NONE --> TRIALING : owner/supplier upgrade (14-day trial)
+    TRIALING --> ACTIVE : trial ends, payment succeeds
+    TRIALING --> CANCELED : user cancels during trial
+    ACTIVE --> PAST_DUE : payment fails
+    ACTIVE --> CANCELED : user cancels
+    PAST_DUE --> ACTIVE : payment retry succeeds
+    PAST_DUE --> UNPAID : payment retries exhausted
+    UNPAID --> ACTIVE : payment succeeds
+```
 
 | Status | Description |
 |--------|-------------|
@@ -898,6 +975,19 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 | PAST_DUE | Payment failed, in grace period |
 | CANCELED | Subscription was canceled |
 | UNPAID | Payment failed, subscription suspended |
+
+### StaffStatus (State Machine)
+
+```mermaid
+stateDiagram-v2
+    [*] --> INVITED : owner/supplier invites email
+    INVITED --> ACTIVE : invitee signs up
+```
+
+| Status | Description |
+|--------|-------------|
+| INVITED | Staff member invited, awaiting signup |
+| ACTIVE | Staff member has signed up and is linked to user |
 
 ### SocialProvider — *Not Yet Built*
 
@@ -997,69 +1087,79 @@ NEW --> CONTACTED --> QUALIFIED --> CONVERTED
 
 ## Entity Relationships
 
-> Solid lines = implemented. Dashed descriptions = not yet built.
+> Solid lines = implemented. Dotted lines = not yet built.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ IDENTITY CONTEXT                                                            │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ User                                                                        │
-│   │                                                                         │
-│   ├──── (0..*) StaffMember ── (0..1) Owner / (0..1) Supplier               │
-│   ├──── (0..*) SavedLot ── (1) Lot    — Persisted favorites                │
-│   ├──── (0..*) LinkedAccount          — NOT YET BUILT                       │
-│   └──── (0..*) Notification           — NOT YET BUILT                       │
-└─────────────────────────────────────────────────────────────────────────────┘
-      │
-      │ userId references
-      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ ACCOMMODATION CONTEXT                                                       │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ User (isOwner=true) ─────── (0..1) Owner                                    │
-│                                      │                                      │
-│                                      ├── (0..*) Lot ── (0..*) Amenity       │
-│                                      ├── (0..*) Amenity (property-level)    │
-│                                      ├── (0..*) EntityImage                 │
-│                                      ├── (0..*) Extra          — NOT YET BUILT
-│                                      └── (0..1) CheckInInstr.  — NOT YET BUILT
-└─────────────────────────────────────────────────────────────────────────────┘
-      │
-      │ lotId references
-      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ BOOKING CONTEXT                                                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ User ─────── (0..*) Booking ─────────────────────────────────── (1) Lot     │
-│                      │                                                      │
-│                      ├── Payment fields (embedded)                          │
-│                      ├── (0..*) BookingExtra       — NOT YET BUILT          │
-│                      ├── (0..*) Message            — Communication Context   │
-│                      └── (0..1) Review             — NOT YET BUILT          │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Identity["Identity Context"]
+        User
+        StaffMember
+        SavedLot
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ SUPPORT CONTEXT — NOT YET BUILT                                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ User ─────── (0..*) SupportTicket ── (0..*) TicketMessage                   │
-└─────────────────────────────────────────────────────────────────────────────┘
+    subgraph Accommodation["Accommodation Context"]
+        Owner
+        Lot
+        Amenity
+        EntityImage
+        SeasonalPricingRule
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ MARKETPLACE CONTEXT                                                         │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ User (isSupplier=true) ───── (0..1) Supplier ── (0..*) Offer                │
-│                                                      │                      │
-│ User (Guest) ─────────────────────── (0..*) OfferClaim                      │
-└─────────────────────────────────────────────────────────────────────────────┘
+    subgraph Booking["Booking Context"]
+        BookingEntity["Booking"]
+        ModLog["BookingModificationLog"]
+        ModRequest["BookingModificationRequest"]
+        Message
+    end
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ ADMIN CONTEXT                                                               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ User (isAdmin=true) ──── (0..*) AdminAuditLog                               │
-│                                                                             │
-│ Lead ── (0..*) LeadInteraction                                              │
-│   └── (0..1) convertedUserId ──► User                                      │
-└─────────────────────────────────────────────────────────────────────────────┘
+    subgraph Marketplace["Marketplace Context"]
+        Supplier
+        Offer
+        OfferClaim
+    end
+
+    subgraph Admin["Admin Context"]
+        AdminAuditLog
+        Lead
+        LeadInteraction
+        FeatureToggle
+    end
+
+    subgraph Support["Support Context (planned)"]
+        SupportTicket
+        TicketMessage
+    end
+
+    User -->|isOwner| Owner
+    User -->|isSupplier| Supplier
+    User --> StaffMember
+    User --> SavedLot
+    SavedLot --> Lot
+    StaffMember -.-> Owner
+    StaffMember -.-> Supplier
+
+    Owner --> Lot
+    Owner --> Amenity
+    Owner --> EntityImage
+    Owner --> SeasonalPricingRule
+    Lot --> Amenity
+
+    User --> BookingEntity
+    BookingEntity --> Lot
+    BookingEntity --> ModLog
+    BookingEntity --> ModRequest
+    BookingEntity --> Message
+
+    Supplier --> Offer
+    Offer --> OfferClaim
+    User --> OfferClaim
+
+    User -->|isAdmin| AdminAuditLog
+    Lead --> LeadInteraction
+    Lead -.->|convertedUserId| User
+
+    User --> SupportTicket
+    SupportTicket --> TicketMessage
 ```
 
 ---

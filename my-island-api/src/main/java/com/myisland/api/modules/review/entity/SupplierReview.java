@@ -3,6 +3,7 @@ package com.myisland.api.modules.review.entity;
 import com.myisland.api.modules.identity.entity.User;
 import com.myisland.api.modules.marketplace.entity.OfferClaim;
 import com.myisland.api.modules.marketplace.entity.Supplier;
+import com.myisland.api.modules.review.entity.Review;
 import com.myisland.api.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 
@@ -39,6 +40,16 @@ public class SupplierReview extends BaseEntity {
 
     @Column(name = "is_flagged", nullable = false)
     private boolean isFlagged = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status", nullable = false)
+    private Review.ModerationStatus moderationStatus = Review.ModerationStatus.APPROVED;
+
+    @Column(name = "moderation_reason", columnDefinition = "TEXT")
+    private String moderationReason;
+
+    @Column(name = "moderated_at")
+    private LocalDateTime moderatedAt;
 
     public SupplierReview() {}
 
@@ -94,4 +105,13 @@ public class SupplierReview extends BaseEntity {
 
     public boolean isFlagged() { return isFlagged; }
     public void setFlagged(boolean flagged) { isFlagged = flagged; }
+
+    public Review.ModerationStatus getModerationStatus() { return moderationStatus; }
+    public void setModerationStatus(Review.ModerationStatus moderationStatus) { this.moderationStatus = moderationStatus; }
+
+    public String getModerationReason() { return moderationReason; }
+    public void setModerationReason(String moderationReason) { this.moderationReason = moderationReason; }
+
+    public LocalDateTime getModeratedAt() { return moderatedAt; }
+    public void setModeratedAt(LocalDateTime moderatedAt) { this.moderatedAt = moderatedAt; }
 }

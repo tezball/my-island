@@ -70,7 +70,7 @@ public class PostStayReviewEmailScheduler {
                 booking.setReviewEmailSentAt(Instant.now());
                 bookingRepository.save(booking);
 
-                log.info("Sent review request email for booking #{} to {}", booking.getId(), booking.getUser().getEmail());
+                log.debug("Sent review request email for booking #{} to {}", booking.getId(), booking.getUser().getEmail());
             } catch (Exception e) {
                 log.error("Failed to send review request email for booking #{}: {}", booking.getId(), e.getMessage());
             }

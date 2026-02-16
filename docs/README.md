@@ -22,6 +22,7 @@ Core business logic and entity documentation. Each module has a `README.md` with
 
 Cross-cutting references:
 - [Domain Model](domain/DOMAIN_MODEL.md) — Entity relationships, state machines, bounded contexts
+- [Visual Flows](FLOWS.md) — Mermaid diagrams for platform flows and user journeys
 - [FAQ](domain/FAQ.md) — Accommodation types and domain concepts
 
 ### Architecture
@@ -31,6 +32,7 @@ Cross-cutting references:
 ### Operations
 - [Mobile Testing](operations/MOBILE_TESTING.md) — LAN access, tunneling, device testing
 - [Seed Data](operations/SEED_DATA.md) — Test accounts, data inventory
+- [Load Testing](../gatling/README.md) — Gatling E2E load tests, smoke/load/stress profiles
 
 ### Audits
 Point-in-time reports (historical, not living docs):

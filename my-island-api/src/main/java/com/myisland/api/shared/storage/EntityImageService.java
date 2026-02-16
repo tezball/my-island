@@ -36,7 +36,7 @@ public class EntityImageService {
             boolean setAsPrimary,
             String altText
     ) throws IOException {
-        log.info("Starting image upload for {} {} (file={}, size={}, primary={})",
+        log.debug("Starting image upload for {} {} (file={}, size={}, primary={})",
                 entityType, entityId, file.getOriginalFilename(), file.getSize(), setAsPrimary);
 
         // Determine folder based on entity type
@@ -71,7 +71,7 @@ public class EntityImageService {
                 .build();
 
         image = imageRepository.save(image);
-        log.info("Uploaded image {} for {} {}", image.getId(), entityType, entityId);
+        log.debug("Uploaded image {} for {} {}", image.getId(), entityType, entityId);
 
         return image;
     }
@@ -118,7 +118,7 @@ public class EntityImageService {
         image.setPrimary(true);
         image = imageRepository.save(image);
 
-        log.info("Set image {} as primary for {} {}", imageId, image.getEntityType(), image.getEntityId());
+        log.debug("Set image {} as primary for {} {}", imageId, image.getEntityType(), image.getEntityId());
         return image;
     }
 
@@ -133,7 +133,7 @@ public class EntityImageService {
         image.setDisplayOrder(newOrder);
         imageRepository.save(image);
 
-        log.info("Updated image {} order to {}", imageId, newOrder);
+        log.debug("Updated image {} order to {}", imageId, newOrder);
     }
 
     /**
@@ -175,7 +175,7 @@ public class EntityImageService {
 
         // Delete record
         imageRepository.delete(image);
-        log.info("Deleted image {} for {} {}", imageId, image.getEntityType(), image.getEntityId());
+        log.debug("Deleted image {} for {} {}", imageId, image.getEntityType(), image.getEntityId());
     }
 
     /**
@@ -197,6 +197,6 @@ public class EntityImageService {
 
         // Delete all records
         imageRepository.deleteAllByEntity(entityType, entityId);
-        log.info("Deleted all {} images for {} {}", images.size(), entityType, entityId);
+        log.debug("Deleted all {} images for {} {}", images.size(), entityType, entityId);
     }
 }

@@ -37,6 +37,11 @@ public class FeatureToggleService {
     }
 
     @Transactional(readOnly = true)
+    public boolean isReviewModerationEnabled() {
+        return isEnabled("REVIEW_AI_MODERATION");
+    }
+
+    @Transactional(readOnly = true)
     public List<FeatureToggle> getAllToggles() {
         return featureToggleRepository.findAll();
     }

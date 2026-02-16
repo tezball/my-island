@@ -57,7 +57,7 @@ public class SupplierFeaturedPromotionService {
 
         // Dev mode: skip Stripe and directly activate featured promotion
         if (stripeProperties.isDevMode()) {
-            log.info("Dev mode: Activating featured promotion directly for supplier {} with duration {}", supplier.getId(), duration);
+            log.debug("Dev mode: Activating featured promotion directly for supplier {} with duration {}", supplier.getId(), duration);
             LocalDateTime newExpiry = calculateFeaturedExpiry(supplier, duration);
             supplier.setFeatured(true);
             supplier.setFeaturedUntil(newExpiry);

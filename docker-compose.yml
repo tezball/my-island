@@ -76,6 +76,38 @@ services:
       retries: 3
       start_period: 60s
 
+  api-native:
+    build:
+      context: ./my-island-api
+      dockerfile: Dockerfile.native
+    container_name: myisland-api-native
+    profiles:
+      - native
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/myisland
+      SPRING_DATASOURCE_USERNAME: myisland
+      SPRING_DATASOURCE_PASSWORD: myisland_dev_password
+      JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
+      AWS_S3_ENDPOINT: http://localstack:4566
+      AWS_S3_BUCKET: myisland-images
+      AWS_REGION: eu-west-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
   web:
     build:
       context: ./my-island-web

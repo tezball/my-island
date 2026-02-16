@@ -84,6 +84,12 @@ npm run preview  # Preview production build
 ./mvnw package            # Build JAR
 ```
 
+### Native Image Build (`my-island-api/`)
+
+```bash
+./mvnw -Pnative native:compile -DskipTests   # Local native build (needs GraalVM 21+)
+```
+
 ### Docker
 
 ```bash
@@ -91,6 +97,10 @@ docker compose up -d              # Start all services
 docker compose up -d postgres        # Start dependencies only
 docker compose logs -f api        # View API logs
 docker compose down               # Stop all services
+
+# Native image (alternative to JRE-based api service)
+docker compose build api-native                                     # Build native image
+docker compose --profile native up api-native postgres localstack   # Run native API
 ```
 
 ## Architecture
@@ -177,12 +187,16 @@ The platform uses a database-backed feature toggle system managed from the admin
 |------|---------|-------------|
 | `SUBSCRIPTION_ENFORCEMENT` | `true` | When enabled, subscription checks are enforced for bookings, offers, and analytics. When disabled, all subscription gates are bypassed. |
 | `BOOKING_ENABLED` | `false` | When enabled, full booking functionality is available. When disabled, the platform operates as a listing-only directory (no booking creation, booking UI hidden). |
+| `REVIEW_AI_MODERATION` | `false` | When enabled, new reviews go through AI moderation (PENDING state) before becoming publicly visible. When disabled, reviews are immediately APPROVED. |
 
 ### Integration Points
 - **Backend**: `BookingService`, `SupplierService`, `OwnerService` check `featureToggleService.isSubscriptionEnforced()` before subscription gates
 - **Backend**: `BookingService.createBooking()` and `createManualBooking()` check `featureToggleService.isBookingEnabled()` before allowing booking creation
 - **Frontend**: `OwnerSubscriptionContext` and `SubscriptionContext` override `hasActiveSubscription=true` and `needsSubscription=false` when toggle is disabled, cascading to all downstream UI (SubscriptionGate, banners, lock icons)
 - **Frontend**: `CampsiteDetailsPage` replaces "Book Now" with "Booking Coming Soon"; `BottomNav` hides Trips tab; `TripsPage` shows coming-soon message; `OwnerLayout` hides 8 booking-related nav items and redirects `/owner` to `/owner/lots`
+- **Backend**: `ReviewService.createReview()` and `SupplierReviewService.createReview()` check `featureToggleService.isReviewModerationEnabled()` — if enabled, new reviews get `PENDING` status; if disabled, `APPROVED` immediately
+- **Backend**: `ReviewModerationScheduler` processes PENDING reviews every 5 minutes via AI (Spring AI + OpenAI gpt-4o-mini)
+- **Frontend**: Owner/Supplier review pages show moderation status badges (yellow=PENDING, red=REJECTED); admin page has approve/reject buttons
 
 ## Test Accounts
 
@@ -302,6 +316,7 @@ Key endpoints:
 - `GET /api/admin/users/eligible-owners` - Users eligible to become owners
 - `GET /api/admin/users/eligible-suppliers` - Users eligible to become suppliers
 - `GET /api/admin/reviews` - Admin review moderation
+- `PUT /api/admin/reviews/{type}/{id}/moderate` - Admin manually approve/reject review
 - `GET /api/admin/subscriptions` - Admin subscription overview
 - `GET /api/admin/financial/revenue` - Admin financial reports
 - `CRUD /api/admin/leads` - Admin leads CRM

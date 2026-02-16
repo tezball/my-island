@@ -15,10 +15,14 @@ Platform administration portal for managing users, bookings, owners, suppliers, 
 
 ## Lead Status Lifecycle
 
-```
-NEW --> CONTACTED --> QUALIFIED --> CONVERTED
-                        |
-                       LOST
+```mermaid
+stateDiagram-v2
+    [*] --> NEW : lead created
+    NEW --> CONTACTED : initial outreach
+    CONTACTED --> QUALIFIED : shows interest
+    CONTACTED --> LOST : no response
+    QUALIFIED --> CONVERTED : signs up
+    QUALIFIED --> LOST : drops off
 ```
 
 | Status | Description |
@@ -183,6 +187,17 @@ All endpoints require `ROLE_ADMIN` and are prefixed with `/api/admin`.
 | V1059 | Add `is_deactivated` column to owners table |
 | V1061 | Feature toggle table with default `SUBSCRIPTION_ENFORCEMENT` toggle |
 | V1062 | Add `BOOKING_ENABLED` toggle (default: disabled) |
+
+## Feature Toggle Propagation
+
+```mermaid
+flowchart LR
+    Admin["Admin Portal"] -->|PUT /admin/feature-toggles| DB["PostgreSQL"]
+    DB -->|GET /feature-toggles/enabled| FE["Frontend Context"]
+    DB -->|isEnabled()| BE["Backend Services"]
+    FE -->|isFeatureEnabled| UI["UI Components"]
+    BE -->|guards| API["API Endpoints"]
+```
 
 ## Implementation Notes
 - All admin actions are automatically logged to `AdminAuditLog` with before/after value snapshots.

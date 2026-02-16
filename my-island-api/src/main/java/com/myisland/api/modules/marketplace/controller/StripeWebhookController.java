@@ -68,7 +68,7 @@ public class StripeWebhookController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
         }
 
-        log.info("Received Stripe webhook: {}", event.getType());
+        log.debug("Received Stripe webhook: {}", event.getType());
 
         try {
             switch (event.getType()) {
