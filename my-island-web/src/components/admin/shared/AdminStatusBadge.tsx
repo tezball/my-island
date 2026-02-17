@@ -23,6 +23,16 @@ const STATUS_STYLES: Record<string, string> = {
   QUALIFIED: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
   CONVERTED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
   LOST: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
+  // Support ticket statuses
+  OPEN: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  IN_PROGRESS: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+  RESOLVED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+  CLOSED: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
+  // Support ticket priorities
+  LOW: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400',
+  NORMAL: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  HIGH: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+  URGENT: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   // Entity statuses
   DEACTIVATED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
   // Booleans

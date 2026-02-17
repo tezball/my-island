@@ -15,6 +15,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/supplier/profile': 'Business Profile',
     '/supplier/staff': 'Staff',
     '/supplier/settings': 'Settings',
+    '/supplier/support': 'Support',
 };
 
 const SupplierLayoutContent: React.FC = () => {
@@ -75,6 +76,7 @@ const SupplierLayoutContent: React.FC = () => {
                     {perms.profile?.canRead !== false && <SupplierNavLink to="/supplier/profile" icon="store" label="Business Profile" />}
                     {perms.staff?.canRead !== false && <SupplierNavLink to="/supplier/staff" icon="group" label="Staff" />}
                     {perms.settings?.canRead !== false && <SupplierNavLink to="/supplier/settings" icon="settings" label="Settings" />}
+                    <SupplierNavLink to="/supplier/support" icon="support_agent" label="Support" />
 
                     <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
                         <p className="px-3 text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Browse</p>

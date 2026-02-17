@@ -14,6 +14,7 @@ import { SavedProvider } from './context/SavedContext';
 import { OwnerGuard } from './components/auth/OwnerGuard';
 import { OwnerLayout } from './components/owner/OwnerLayout';
 import { OwnerDashboardPage, OwnerLotsPage, OwnerBookingsPage, OwnerCalendarPage, OwnerPropertyPage, OwnerSettingsPage, OwnerPricingPage, OwnerTodayPage, OwnerReviewsPage, OwnerStaffPage, OwnerModificationRequestsPage, OwnerMessagesPage, OwnerTimelinePage } from './pages/owner';
+import { OwnerSupportPage } from './pages/owner/OwnerSupportPage';
 import { BookingMessagesPage } from './pages/BookingMessagesPage';
 import { SupplierGuard } from './components/auth/SupplierGuard';
 import { AdminGuard } from './components/auth/AdminGuard';
@@ -42,6 +43,7 @@ import { SupplierReviewsPage } from './pages/supplier/SupplierReviewsPage';
 import { SupplierProfilePage } from './pages/supplier/SupplierProfilePage';
 import { SupplierSettingsPage } from './pages/supplier/SupplierSettingsPage';
 import { SupplierStaffPage } from './pages/supplier/SupplierStaffPage';
+import { SupplierSupportPage } from './pages/supplier/SupplierSupportPage';
 import { CampsiteDetailsPage } from './pages/CampsiteDetailsPage';
 import { SupplierDetailsPage } from './pages/SupplierDetailsPage';
 import { TripsPage } from './pages/TripsPage';
@@ -64,6 +66,8 @@ import { Footer } from './components/layout/Footer';
 import { CookieConsentBanner } from './components/CookieConsentBanner';
 import { FeatureToggleProvider } from './context/FeatureToggleContext';
 import { AdminFeatureTogglesPage } from './pages/admin/AdminFeatureTogglesPage';
+import { AdminSupportPage } from './pages/admin/AdminSupportPage';
+import { AdminSupportDetailPage } from './pages/admin/AdminSupportDetailPage';
 
 // Layout wrapper to conditionally show Header/BottomNav
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -143,6 +147,7 @@ function App() {
                 <Route path="staff" element={<OwnerStaffPage />} />
                 <Route path="modification-requests" element={<OwnerModificationRequestsPage />} />
                 <Route path="messages" element={<OwnerMessagesPage />} />
+                <Route path="support" element={<OwnerSupportPage />} />
                 <Route path="settings" element={<OwnerSettingsPage />} />
               </Route>
             </Route>
@@ -159,6 +164,7 @@ function App() {
                 <Route path="reviews" element={<SupplierReviewsPage />} />
                 <Route path="profile" element={<SupplierProfilePage />} />
                 <Route path="staff" element={<SupplierStaffPage />} />
+                <Route path="support" element={<SupplierSupportPage />} />
                 <Route path="settings" element={<SupplierSettingsPage />} />
               </Route>
             </Route>
@@ -184,6 +190,8 @@ function App() {
                 <Route path="leads/:id" element={<AdminLeadDetailPage />} />
                 <Route path="audit" element={<AdminAuditPage />} />
                 <Route path="feature-toggles" element={<AdminFeatureTogglesPage />} />
+                <Route path="support" element={<AdminSupportPage />} />
+                <Route path="support/:id" element={<AdminSupportDetailPage />} />
               </Route>
             </Route>
           </Routes>

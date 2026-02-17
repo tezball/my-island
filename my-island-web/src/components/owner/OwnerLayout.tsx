@@ -21,6 +21,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/owner/modification-requests': 'Modification Requests',
     '/owner/messages': 'Messages',
     '/owner/settings': 'Settings',
+    '/owner/support': 'Support',
 };
 
 const OwnerLayoutContent: React.FC = () => {
@@ -89,6 +90,7 @@ const OwnerLayoutContent: React.FC = () => {
                     {perms.staff?.canRead !== false && <OwnerNavLink to="/owner/staff" icon="group" label="Staff" />}
                     {bookingEnabled && perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/modification-requests" icon="edit_note" label="Modifications" />}
                     {bookingEnabled && perms.bookings?.canRead !== false && <OwnerNavLink to="/owner/messages" icon="chat" label="Messages" />}
+                    <OwnerNavLink to="/owner/support" icon="support_agent" label="Support" />
                     {perms.settings?.canRead !== false && <OwnerNavLink to="/owner/settings" icon="settings" label="Settings" />}
                 </div>
 

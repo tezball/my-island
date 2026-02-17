@@ -15,6 +15,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/admin/leads': 'Leads CRM',
     '/admin/audit': 'Audit Log',
     '/admin/feature-toggles': 'Feature Toggles',
+    '/admin/support': 'Support Tickets',
 };
 
 export const AdminLayout: React.FC = () => {
@@ -73,6 +74,7 @@ export const AdminLayout: React.FC = () => {
                     <AdminNavLink to="/admin/leads" icon="contact_phone" label="Leads CRM" />
                     <AdminNavLink to="/admin/audit" icon="history" label="Audit Log" />
                     <AdminNavLink to="/admin/feature-toggles" icon="toggle_on" label="Feature Toggles" />
+                    <AdminNavLink to="/admin/support" icon="support_agent" label="Support Tickets" />
                 </div>
 
                 <div className="p-4 border-t border-gray-100 dark:border-gray-800">

@@ -24,7 +24,7 @@ This document defines the domain objects, states, bounded contexts, and ubiquito
 | Identity | Partially implemented | Email auth, password reset, email verification, profile editing. No social auth or account deletion |
 | Review | Implemented | Review & SupplierReview entities, AI moderation pipeline, admin moderation |
 | Communication | Partially implemented | In-app messaging (per-booking threads between guests and owners). No email delivery yet. |
-| Support | Not yet built | No entities, endpoints, or UI |
+| Support | Implemented | Ticket-based support with threaded conversations, admin management |
 | Marketplace | Implemented | Supplier onboarding, Offer CRUD, Claim/Redeem with QR codes, test claims |
 | Subscription | Implemented | Stripe subscriptions for Owners and Suppliers, featured promotions |
 | Payout | Implemented | Stripe Connect Express onboarding for Owners and Suppliers |
@@ -586,25 +586,39 @@ SupplierReview (Root)
 
 ---
 
-### Support Aggregate — *Not Yet Built*
+### Support Aggregate
 
 ```
 SupportTicket (Root)
-└── TicketMessage[] (Entity)
+└── SupportTicketMessage[] (Entity)
 ```
 
-**SupportTicket** (planned)
+**SupportTicket**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | UUID | Unique identifier |
-| userId | UUID | Ticket creator |
-| subject | String | Issue title |
-| description | String | Issue details |
-| category | String | Issue type |
-| status | TicketStatus | Current state |
-| relatedBookingId | UUID | Optional booking reference |
-| createdAt | Timestamp | Creation time |
+| id | Long | PK, auto-generated |
+| user | User (FK) | Ticket creator |
+| subject | String(255) | Issue title |
+| description | Text | Issue details |
+| category | TicketCategory | GENERAL, BILLING, TECHNICAL, ACCOUNT, BOOKING, OTHER |
+| status | TicketStatus | OPEN, IN_PROGRESS, RESOLVED, CLOSED |
+| priority | TicketPriority | LOW, NORMAL, HIGH, URGENT |
+| relatedBooking | Booking (FK) | Optional booking reference |
+| assignedAdmin | User (FK) | Optional admin assignment |
+| closedAt | LocalDateTime | Set when resolved/closed |
+| createdAt | LocalDateTime | Auto-set |
+| updatedAt | LocalDateTime | Auto-updated |
+
+**SupportTicketMessage**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | Long | PK, auto-generated |
+| ticket | SupportTicket (FK) | CASCADE delete |
+| sender | User (FK) | Message author |
+| content | Text | Message body |
+| createdAt | LocalDateTime | Auto-set |
 
 ---
 

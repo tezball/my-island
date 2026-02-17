@@ -331,3 +331,6 @@ Key endpoints:
 - `GET /api/admin/audit` - Admin audit log
 - `GET/PUT /api/admin/feature-toggles` - Admin feature toggle management
 - `GET /api/feature-toggles/enabled` - Public feature toggle state (no auth)
+- `CRUD /api/support/tickets` - User support tickets + messages
+- `CRUD /api/admin/support/tickets` - Admin support ticket management
+- `GET /api/admin/support/stats` - Ticket counts by status
