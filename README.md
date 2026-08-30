@@ -36,6 +36,23 @@ All passwords are `password`.
 
 ## Development Modes
 
+### Dev Container (VS Code / Cursor)
+
+A ready-to-use development container is provided in `.devcontainer/` (JDK 25 + Node 22 + Maven 3.9). It starts PostgreSQL and Mailpit automatically and installs project dependencies on create.
+
+1. Open the repository in VS Code or Cursor and choose **Reopen in Container**.
+2. Once it finishes, run the API and web app from the integrated terminal:
+
+```bash
+# Terminal 1 - API (runs Flyway migrations + seed data on first boot)
+cd my-island-api && SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run
+
+# Terminal 2 - Web
+cd my-island-web && npm run dev
+```
+
+Ports 5173 (web), 8080 (API), 8025 (Mailpit) and 5432 (PostgreSQL) are forwarded automatically.
+
 ### Full Stack (Docker)
 
 ```bash
@@ -69,7 +86,7 @@ npm run dev
 ```
 my-island/
 ├── my-island-web/          # React 19 + TypeScript + Vite
-├── my-island-api/          # Spring Boot 3.4 + Java 25
+├── my-island-api/          # Spring Boot 4.1 + Java 25
 ├── docker-compose.yml      # Full stack orchestration
 └── docs/                   # Documentation
 ```
@@ -79,7 +96,7 @@ my-island/
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19, TypeScript 5.9, Vite 7, Tailwind CSS 4 |
-| Backend | Spring Boot 3.4, Java 25, Spring Security |
+| Backend | Spring Boot 4.1, Java 25, Spring Security 7 |
 | Database | PostgreSQL 17 |
 | Messaging | Apache Kafka |
 | API Docs | OpenAPI 3 (Springdoc) |

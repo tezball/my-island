@@ -113,7 +113,7 @@ docker compose --profile native up api-native postgres   # Run native API
 ```
 my-island/
 ├── my-island-web/          # React 19 frontend
-├── my-island-api/          # Spring Boot 3.4 backend
+├── my-island-api/          # Spring Boot 4.1 backend
 ├── my-island-moderator/    # AI review moderation worker (Spring Boot + Ollama)
 ├── docker-compose.yml      # Full stack orchestration
 └── docs/                   # Documentation vault
@@ -161,7 +161,7 @@ my-island-web/src/
 |-------|------------|
 | Frontend | React 19, TypeScript 5.9, Vite 7, Tailwind CSS 4 |
 | Routing | React Router 7 |
-| Backend | Spring Boot 3.4, Java 25, Spring Security |
+| Backend | Spring Boot 4.1, Java 25, Spring Security 7 |
 | Database | PostgreSQL 17 |
 | Events | Spring ApplicationEvents (@Async) |
 | AI | Spring AI + Ollama (llama3.2) in separate moderator process |
