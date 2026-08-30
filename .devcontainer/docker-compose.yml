@@ -1,0 +1,26 @@
+# Dev Container override: adds a "devcontainer" workspace service that reuses the
+# postgres and mailpit services from the root docker-compose.yml. The API and web
+# app are run by the developer inside this container (see .devcontainer/postCreate.sh).
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/my-island:cached
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/myisland
+      SPRING_DATASOURCE_USERNAME: myisland
+      SPRING_DATASOURCE_PASSWORD: myisland_dev_password
+      JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      OLLAMA_BASE_URL: http://ollama:11434
+      VITE_API_URL: http://localhost:8080/api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy

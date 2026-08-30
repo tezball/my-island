@@ -1,0 +1,32 @@
+{
+  "name": "My Island (Java 25 + Node 22)",
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/my-island",
+  "runServices": ["devcontainer", "postgres", "mailpit"],
+  "forwardPorts": [5173, 8080, 8025, 5432],
+  "portsAttributes": {
+    "5173": { "label": "Frontend (Vite)", "onAutoForward": "notify" },
+    "8080": { "label": "API (Spring Boot)", "onAutoForward": "notify" },
+    "8025": { "label": "Mailpit UI", "onAutoForward": "silent" },
+    "5432": { "label": "PostgreSQL", "onAutoForward": "silent" }
+  },
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-boot-dev-pack",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "java.jdt.ls.java.home": "/opt/java/openjdk",
+        "maven.executable.path": "/opt/maven/bin/mvn"
+      }
+    }
+  }
+}
