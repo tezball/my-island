@@ -5,9 +5,11 @@ A full-stack booking platform for camping and glamping accommodations in Ireland
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-org/my-island.git
-cd my-island
-docker compose up -d
+# Local prod-like instance — wipes volumes, rebuilds, auto-loads Ireland e2e seed
+./start.sh --fast
+
+# Full observability stack (Ollama, Grafana, Prometheus, Stripe CLI) as well
+./start.sh
 ```
 
 ### Access Points

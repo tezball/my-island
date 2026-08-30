@@ -4,8 +4,12 @@
 # Always starts fresh with clean data - stops everything, cleans, and rebuilds
 #
 # Usage:
-#   ./start.sh          Dev mode (default) — seed data, test users, dev tools
+#   ./start.sh          Dev mode (default) — Ireland e2e seed auto-loads via Flyway
+#   ./start.sh --fast   Dev mode without Ollama/Grafana/Prometheus (faster catalogue preview)
 #   ./start.sh --prod   Prod mode — clean DB, no seed data, no test users
+#
+# Dev mode always wipes Docker volumes and re-applies schema + seed, so the
+# Ireland-wide mock catalogue (all 32 counties) is loaded automatically.
 
 set -e
 
@@ -44,7 +48,7 @@ is_port_in_use() {
 wait_for_port() {
     local port=$1
     local service=$2
-    local max_attempts=${3:-30}
+    local max_attempts=${3:-90}
     local attempt=1
 
     while ! is_port_in_use "$port"; do
@@ -179,6 +183,8 @@ start_docker_infra() {
 
     if [ "$MODE" = "prod" ]; then
         docker compose up -d postgres
+    elif [ "$FAST" = "true" ]; then
+        docker compose up -d postgres mailpit
     else
         docker compose up -d postgres mailpit ollama grafana prometheus loki alertmanager
     fi
@@ -202,25 +208,29 @@ start_docker_infra() {
             log_warn "Mailpit not healthy (non-critical)"
         fi
 
-        echo -n "  Ollama"
-        if wait_for_healthy "myisland-ollama" 60; then
-            log_success "Ollama ready"
-
-            # Pull the model via the ollama-pull sidecar (first run downloads ~2GB)
-            log_info "Pulling llama3.2 model (first run may take several minutes)..."
-            docker compose up -d ollama-pull
-            docker compose wait ollama-pull 2>/dev/null || \
-                docker wait myisland-ollama-pull 2>/dev/null || true
-            log_success "Ollama model ready"
+        if [ "$FAST" = "true" ]; then
+            log_info "Fast mode: skipping Ollama, Grafana, Prometheus, Loki, Alertmanager"
         else
-            log_warn "Ollama not healthy (AI moderation will auto-approve)"
-        fi
+            echo -n "  Ollama"
+            if wait_for_healthy "myisland-ollama" 60; then
+                log_success "Ollama ready"
 
-        echo -n "  Grafana"
-        if wait_for_port 3000 "Grafana" 30; then
-            log_success "Grafana ready"
-        else
-            log_warn "Grafana not ready (non-critical)"
+                # Pull the model via the ollama-pull sidecar (first run downloads ~2GB)
+                log_info "Pulling llama3.2 model (first run may take several minutes)..."
+                docker compose up -d ollama-pull
+                docker compose wait ollama-pull 2>/dev/null || \
+                    docker wait myisland-ollama-pull 2>/dev/null || true
+                log_success "Ollama model ready"
+            else
+                log_warn "Ollama not healthy (AI moderation will auto-approve)"
+            fi
+
+            echo -n "  Grafana"
+            if wait_for_port 3000 "Grafana" 30; then
+                log_success "Grafana ready"
+            else
+                log_warn "Grafana not ready (non-critical)"
+            fi
         fi
     fi
 
@@ -270,8 +280,11 @@ start_backend() {
 
     log_info "Backend starting (PID: $backend_pid), waiting for port 8080..."
     echo -n "  "
-    if wait_for_port 8080 "Backend" 60; then
+    if wait_for_port 8080 "Backend" 120; then
         log_success "Backend ready on http://localhost:8080"
+        # Flyway applies schema + seed on startup (dev profile). Give it a beat, then summarise.
+        sleep 3
+        print_catalogue_summary
     else
         log_error "Backend failed to start. Check logs/backend.log"
         return 1
@@ -380,12 +393,14 @@ open_browser_tabs() {
     if [ "$MODE" = "dev" ]; then
         urls+=("http://localhost:8025")
         labels+=("Mailpit")
-        urls+=("http://localhost:3000")
-        labels+=("Grafana")
-        urls+=("http://localhost:9090")
-        labels+=("Prometheus")
-        urls+=("http://localhost:9093")
-        labels+=("Alertmanager")
+        if [ "$FAST" != "true" ]; then
+            urls+=("http://localhost:3000")
+            labels+=("Grafana")
+            urls+=("http://localhost:9090")
+            labels+=("Prometheus")
+            urls+=("http://localhost:9093")
+            labels+=("Alertmanager")
+        fi
     fi
 
     for i in "${!urls[@]}"; do
@@ -398,21 +413,65 @@ open_browser_tabs() {
 }
 
 # ============================================
+# Print Ireland catalogue summary (dev seed)
+# ============================================
+print_catalogue_summary() {
+    if [ "$MODE" != "dev" ]; then
+        return 0
+    fi
+
+    log_step "Ireland catalogue (auto-loaded by Flyway)..."
+
+    local sql="SELECT
+        (SELECT COUNT(*) FROM owners) AS campsites,
+        (SELECT COUNT(DISTINCT county) FROM owners) AS counties,
+        (SELECT COUNT(*) FROM lots) AS lots,
+        (SELECT COUNT(*) FROM bookings) AS bookings,
+        (SELECT COUNT(*) FROM reviews) AS reviews,
+        (SELECT COUNT(*) FROM suppliers) AS suppliers,
+        (SELECT COUNT(*) FROM offers) AS offers,
+        (SELECT COUNT(*) FROM points_of_interest) AS pois;"
+
+    local row
+    row=$(docker exec myisland-postgres psql -U myisland -d myisland -t -A -F '|' -c "$sql" 2>/dev/null || true)
+    if [ -z "$row" ]; then
+        log_warn "Could not query seed counts yet (API may still be migrating). Browse http://localhost:5173 once the UI is up."
+        return 0
+    fi
+
+    IFS='|' read -r campsites counties lots bookings reviews suppliers offers pois <<< "$row"
+    echo "    Campsites:  ${campsites// /} across ${counties// /} counties"
+    echo "    Lots:       ${lots// /}"
+    echo "    Bookings:   ${bookings// /}"
+    echo "    Reviews:    ${reviews// /}"
+    echo "    Suppliers:  ${suppliers// /}"
+    echo "    Offers:     ${offers// /}"
+    echo "    POIs:       ${pois// /}"
+    echo ""
+    echo "    Browse the map:  http://localhost:5173/explore"
+    echo "    Book a stay:     http://localhost:5173/search"
+}
+
+# ============================================
 # Main
 # ============================================
 main() {
     # Parse flags
     MODE="dev"
+    FAST="false"
     for arg in "$@"; do
         case "$arg" in
             --prod) MODE="prod" ;;
-            *) log_error "Unknown flag: $arg"; echo "Usage: ./start.sh [--prod]"; exit 1 ;;
+            --fast) FAST="true" ;;
+            *) log_error "Unknown flag: $arg"; echo "Usage: ./start.sh [--fast|--prod]"; exit 1 ;;
         esac
     done
 
     local mode_label
     if [ "$MODE" = "prod" ]; then
         mode_label="PROD"
+    elif [ "$FAST" = "true" ]; then
+        mode_label="DEV (fast)"
     else
         mode_label="DEV"
     fi
@@ -458,8 +517,12 @@ main() {
     echo ""
     start_frontend
     echo ""
-    start_stripe_cli
-    echo ""
+    if [ "$FAST" = "true" ]; then
+        log_info "Fast mode: skipping Stripe CLI"
+    else
+        start_stripe_cli
+        echo ""
+    fi
     open_browser_tabs
 
     echo ""
@@ -475,22 +538,30 @@ main() {
     if [ "$MODE" = "dev" ]; then
         echo "  Dev Tools:"
         echo "    Mailpit:     http://localhost:8025"
-        echo "    Ollama:      http://localhost:11434  (llama3.2)"
-        echo "    Grafana:     http://localhost:3000  (admin / admin)"
-        echo "    Prometheus:  http://localhost:9090"
-        echo "    Alertmanager: http://localhost:9093"
-        echo "    Loki:        http://localhost:3100"
-        echo "    MCP:         grafana (mcp-grafana, read-only) in .mcp.json"
+        if [ "$FAST" = "true" ]; then
+            echo "    (fast mode skipped Ollama, Grafana, Prometheus, Loki, Alertmanager, Stripe CLI)"
+        else
+            echo "    Ollama:      http://localhost:11434  (llama3.2)"
+            echo "    Grafana:     http://localhost:3000  (admin / admin)"
+            echo "    Prometheus:  http://localhost:9090"
+            echo "    Alertmanager: http://localhost:9093"
+            echo "    Loki:        http://localhost:3100"
+            echo "    MCP:         grafana (mcp-grafana, read-only) in .mcp.json"
+        fi
         echo ""
     fi
-    echo "  Stripe:"
-    echo "    Mode:        Sandbox (test payments)"
-    echo "    Webhooks:    Forwarding to localhost:8080/api/webhooks/stripe"
-    echo "    Test card:   4242 4242 4242 4242 (any expiry/CVC)"
-    echo ""
+    if [ "$FAST" != "true" ]; then
+        echo "  Stripe:"
+        echo "    Mode:        Sandbox (test payments)"
+        echo "    Webhooks:    Forwarding to localhost:8080/api/webhooks/stripe"
+        echo "    Test card:   4242 4242 4242 4242 (any expiry/CVC)"
+        echo ""
+    fi
     if [ "$MODE" = "dev" ]; then
-        echo "  Seed Data:     Loaded (test accounts available)"
+        echo "  Seed Data:     Ireland e2e catalogue auto-loaded (all 32 counties)"
+        echo "  Bookings:      Enabled (BOOKING_ENABLED=true in this seed)"
         echo "  Test Users:    Dropdown visible on sign-in page"
+        echo "  Extra owners:  password is 'password' (catalogue accounts not in the dropdown)"
     else
         echo "  Seed Data:     None (schema only)"
         echo "  Test Users:    Hidden"

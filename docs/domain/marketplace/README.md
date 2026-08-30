@@ -89,7 +89,7 @@ sequenceDiagram
 
 ## Implementation Notes
 - Supplier subscription is required to publish offers (managed via `SubscriptionService` + Stripe).
-- Featured supplier listings are time-limited promotions (7/30 days) purchased via Stripe.
+- Featured supplier listings are time-limited promotions (7/30 days) purchased via Stripe. V1102 seeds a few featured suppliers plus extra businesses in Dublin, Kildare, Carlow, Cavan, Longford, Monaghan, Roscommon, Armagh, Tyrone, and Derry so the explore map is not west-coast-only.
 - Stripe Connect Express is used for supplier payouts (`StripeConnectService`).
 - QR codes contain the OfferClaim UUID — scanned by the supplier to trigger redemption.
 - Supplier notification preferences (email, claim alerts, weekly report, marketing) stored on Supplier entity.

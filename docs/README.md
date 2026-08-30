@@ -31,7 +31,7 @@ Cross-cutting references:
 
 ### Operations
 - [Mobile Testing](operations/MOBILE_TESTING.md) — LAN access, tunneling, device testing
-- [Seed Data](operations/SEED_DATA.md) — Test accounts, data inventory
+- [Seed Data](operations/SEED_DATA.md) — Test accounts, Ireland e2e catalogue, `./start.sh`
 - [Load Testing](../gatling/README.md) — Gatling E2E load tests, smoke/load/stress profiles
 
 ### Automation (MCP / agent ops)

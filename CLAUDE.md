@@ -56,8 +56,12 @@ My Island is a camping/glamping booking platform for Ireland with a marketplace 
 ## Quick Start
 
 ```bash
-# Full stack with Docker
+# Recommended: local prod-like instance with the Ireland e2e catalogue auto-loaded
+./start.sh --fast
+
+# Full stack with Docker (also loads seed when SPRING_PROFILES_ACTIVE=dev)
 docker compose up -d
+```
 
 # Access points
 # - Frontend: http://localhost:5173
@@ -198,7 +202,7 @@ The platform uses a database-backed feature toggle system managed from the admin
 | Name | Default | Description |
 |------|---------|-------------|
 | `SUBSCRIPTION_ENFORCEMENT` | `true` | When enabled, subscription checks are enforced for bookings, offers, and analytics. When disabled, all subscription gates are bypassed. |
-| `BOOKING_ENABLED` | `false` | When enabled, full booking functionality is available. When disabled, the platform operates as a listing-only directory (no booking creation, booking UI hidden). |
+| `BOOKING_ENABLED` | `false` in schema; local V1102 seed sets `true` | When enabled, full booking functionality is available. When disabled, the platform operates as a listing-only directory (no booking creation, booking UI hidden). |
 | `REVIEW_AI_MODERATION` | `false` | When enabled, new reviews go through AI moderation (PENDING state) before becoming publicly visible. When disabled, reviews are immediately APPROVED. |
 
 ### Integration Points
@@ -266,7 +270,8 @@ Flyway migrations in `my-island-api/src/main/resources/db/migration/` (schema on
 Seed data lives in `my-island-api/src/main/resources/db/seed/` and is only loaded in the `dev` Spring profile.
 
 - V001-V007: Schema tables
-- `db/seed/V999+`: Test accounts, sample bookings, reviews, etc.
+- `db/seed/V999+`: Test accounts, Ireland-wide catalogue, sample bookings, reviews, etc.
+- `db/seed/V1102__ireland_e2e_catalogue.sql`: Production-like mock listings covering all 32 counties (regenerate with `python3 scripts/generate_ireland_e2e_seed.py`)
 
 **Important**: After moving seed files to `db/seed/`, existing dev databases need a wipe:
 ```bash

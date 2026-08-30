@@ -14,31 +14,74 @@ const CATEGORIES = [
 
 // County images for featured destinations
 const COUNTY_IMAGES: Record<string, string> = {
-    'Cork': 'https://images.unsplash.com/photo-1590089415225-401ed6f9db8e?auto=format&fit=crop&q=80&w=800',
-    'Kerry': 'https://images.unsplash.com/photo-1564959130747-897fb406b9af?auto=format&fit=crop&q=80&w=800',
+    'Antrim': 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800',
+    'Armagh': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800',
+    'Carlow': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+    'Cavan': 'https://images.unsplash.com/photo-1439066615861-d1cad629e3d5?auto=format&fit=crop&q=80&w=800',
     'Clare': 'https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?auto=format&fit=crop&q=80&w=800',
-    'Galway': 'https://images.unsplash.com/photo-1569429593410-b498b3fb3387?auto=format&fit=crop&q=80&w=800',
+    'Cork': 'https://images.unsplash.com/photo-1590089415225-401ed6f9db8e?auto=format&fit=crop&q=80&w=800',
+    'Derry': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
     'Donegal': 'https://images.unsplash.com/photo-1575986767340-5d17ae767ab0?auto=format&fit=crop&q=80&w=800',
-    'Wicklow': 'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&q=80&w=800',
-    'Mayo': 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800',
-    'Waterford': 'https://images.unsplash.com/photo-1558981001-792f6c0d5068?auto=format&fit=crop&q=80&w=800',
+    'Down': 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800',
+    'Dublin': 'https://images.unsplash.com/photo-1549918864-9aa28423daa2?auto=format&fit=crop&q=80&w=800',
+    'Fermanagh': 'https://images.unsplash.com/photo-1439066615861-d1cad629e3d5?auto=format&fit=crop&q=80&w=800',
+    'Galway': 'https://images.unsplash.com/photo-1569429593410-b498b3fb3387?auto=format&fit=crop&q=80&w=800',
+    'Kerry': 'https://images.unsplash.com/photo-1564959130747-897fb406b9af?auto=format&fit=crop&q=80&w=800',
+    'Kildare': 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&q=80&w=800',
     'Kilkenny': 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800',
+    'Laois': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800',
+    'Leitrim': 'https://images.unsplash.com/photo-1439066615861-d1cad629e3d5?auto=format&fit=crop&q=80&w=800',
+    'Limerick': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800',
+    'Longford': 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=800',
+    'Louth': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
+    'Mayo': 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800',
+    'Meath': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+    'Monaghan': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800',
+    'Offaly': 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=800',
+    'Roscommon': 'https://images.unsplash.com/photo-1439066615861-d1cad629e3d5?auto=format&fit=crop&q=80&w=800',
+    'Sligo': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+    'Tipperary': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+    'Tyrone': 'https://images.unsplash.com/photo-1483728642387-6fa7afb05c54?auto=format&fit=crop&q=80&w=800',
+    'Waterford': 'https://images.unsplash.com/photo-1558981001-792f6c0d5068?auto=format&fit=crop&q=80&w=800',
+    'Westmeath': 'https://images.unsplash.com/photo-1439066615861-d1cad629e3d5?auto=format&fit=crop&q=80&w=800',
     'Wexford': 'https://images.unsplash.com/photo-1590089415225-401ed6f9db8e?auto=format&fit=crop&q=80&w=800',
+    'Wicklow': 'https://images.unsplash.com/photo-1590077428593-a55bb07c4665?auto=format&fit=crop&q=80&w=800',
     'default': 'https://images.unsplash.com/photo-1499678329028-101435549a4e?auto=format&fit=crop&q=80&w=800',
 };
 
-// Campsite placeholder images based on property type
+// Campsite placeholder images based on property type (aligned with PropertyType enum)
 const CAMPSITE_IMAGES: Record<string, string[]> = {
-    'CAMPSITE': [
+    'TENT': [
         'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=800',
-        'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800',
         'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1508873696983-2dfd5898f08b?auto=format&fit=crop&q=80&w=800',
         'https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?auto=format&fit=crop&q=80&w=800',
+    ],
+    'TOURING': [
+        'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1527786356703-4b4e2d23890b?auto=format&fit=crop&q=80&w=800',
     ],
     'GLAMPING': [
         'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&q=80&w=800',
         'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&q=80&w=800',
         'https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?auto=format&fit=crop&q=80&w=800',
+    ],
+    'CABIN': [
+        'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1482192505345-56501afb27d7?auto=format&fit=crop&q=80&w=800',
+    ],
+    'MOBILE_HOME': [
+        'https://images.unsplash.com/photo-1566438480900-0609be27a4be?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    ],
+    // Legacy property-type labels still returned by some older records
+    'CAMPSITE': [
+        'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?auto=format&fit=crop&q=80&w=800',
     ],
 };
 

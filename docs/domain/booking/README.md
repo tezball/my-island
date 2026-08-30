@@ -164,7 +164,8 @@ The entire booking system can be disabled via the `BOOKING_ENABLED` feature togg
 - **What stays visible**: Browse campsites, reviews, photos, marketplace, saved/favorites, owner lot management, property details, staff, settings
 
 ### Design decisions
-- Toggle starts `false` — listing-only until admin enables it
+- Toggle starts `false` in schema — listing-only until admin enables it
+- Local `dev` seed (V1102) turns the toggle **on** so `./start.sh` can exercise the full booking marketplace against the Ireland catalogue. Production is unchanged.
 - Backend guards only on create — other booking endpoints are harmless with zero bookings
 - Frontend hides UI + backend rejects — defense in depth
 - Reviews stay visible — they're about the campsite, not tied to active bookings

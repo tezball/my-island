@@ -10,8 +10,12 @@
 ### Quick Start
 
 ```bash
-# Start all services
+# Local prod-like instance (Ireland catalogue auto-loaded via Flyway)
+./start.sh --fast
+
+# Start all services (Docker Compose only)
 docker compose up -d
+```
 
 # Access points:
 # - Frontend: http://localhost:5173

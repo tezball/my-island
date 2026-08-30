@@ -11,6 +11,8 @@ import com.myisland.api.modules.accommodation.repository.OwnerRepository;
 import com.myisland.api.modules.booking.entity.Booking;
 import com.myisland.api.modules.booking.repository.BookingRepository;
 import com.myisland.api.shared.exceptions.ResourceNotFoundException;
+import com.myisland.api.shared.storage.EntityImage;
+import com.myisland.api.shared.storage.EntityImageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -28,13 +31,16 @@ public class CampsiteService {
     private final LotRepository lotRepository;
     private final BookingRepository bookingRepository;
     private final LotBlockedPeriodRepository blockedPeriodRepository;
+    private final EntityImageService entityImageService;
 
     public CampsiteService(OwnerRepository ownerRepository, LotRepository lotRepository,
-                           BookingRepository bookingRepository, LotBlockedPeriodRepository blockedPeriodRepository) {
+                           BookingRepository bookingRepository, LotBlockedPeriodRepository blockedPeriodRepository,
+                           EntityImageService entityImageService) {
         this.ownerRepository = ownerRepository;
         this.lotRepository = lotRepository;
         this.bookingRepository = bookingRepository;
         this.blockedPeriodRepository = blockedPeriodRepository;
+        this.entityImageService = entityImageService;
     }
 
     public List<OwnerDto> getAllCampsites() {
@@ -63,24 +69,32 @@ public class CampsiteService {
         ownerRepository.findById(campsiteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite", campsiteId));
 
-        return lotRepository.findByOwnerIdAndIsActiveTrue(campsiteId).stream()
-                .map(LotDto::from)
-                .toList();
+        return toLotDtos(lotRepository.findByOwnerIdAndIsActiveTrue(campsiteId));
     }
 
     public List<LotDto> getAvailableLots(Long campsiteId, LocalDate checkIn, LocalDate checkOut) {
         ownerRepository.findById(campsiteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Campsite", campsiteId));
 
-        return lotRepository.findAvailableLotsByOwner(campsiteId, checkIn, checkOut).stream()
-                .map(LotDto::from)
-                .toList();
+        return toLotDtos(lotRepository.findAvailableLotsByOwner(campsiteId, checkIn, checkOut));
     }
 
     public LotDto getLotById(Long lotId) {
-        return lotRepository.findById(lotId)
-                .map(LotDto::from)
+        Lot lot = lotRepository.findById(lotId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lot", lotId));
+        return toLotDtos(List.of(lot)).get(0);
+    }
+
+    private List<LotDto> toLotDtos(List<Lot> lots) {
+        if (lots.isEmpty()) {
+            return List.of();
+        }
+        List<Long> lotIds = lots.stream().map(Lot::getId).toList();
+        Map<Long, List<EntityImage>> imagesByLotId = entityImageService
+                .getImagesForEntities(EntityImage.EntityType.LOT, lotIds);
+        return lots.stream()
+                .map(lot -> LotDto.from(lot, imagesByLotId.getOrDefault(lot.getId(), List.of())))
+                .toList();
     }
 
     public List<OwnerDto> getFeaturedCampsites() {
