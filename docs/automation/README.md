@@ -13,6 +13,7 @@ This folder documents **how things work today** and the **gaps that block that v
 | [TARGET_LOOP.md](TARGET_LOOP.md) | Desired closed loop (observe → decide → change → verify → deploy) |
 | [OBSERVABILITY_MCP_OPTIONS.md](OBSERVABILITY_MCP_OPTIONS.md) | Free/near-free logs·metrics·alerts stacks with MCP (self-host or Cloud) |
 | [OBSERVABILITY_SETUP.md](OBSERVABILITY_SETUP.md) | Implemented stack: compose, Alertmanager, mcp-grafana wiring |
+| [JENKINS.md](JENKINS.md) | Co-hosted Jenkins: build → test → deploy → confirm prod |
 
 ## Related existing docs
 

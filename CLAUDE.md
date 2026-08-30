@@ -25,7 +25,7 @@ My Island is a camping/glamping booking platform for Ireland with a marketplace 
 - **Specific flows**: `docs/domain/{module}/*.md` (e.g., `booking/PAYMENT_FLOW.md`)
 - **Architecture**: `docs/architecture/OVERVIEW.md`
 - **Operations**: `docs/operations/` (testing guides, seed data)
-- **Automation / MCP ops vision**: `docs/automation/` — current commit→deploy flow, gaps, target loop
+- **Automation / MCP ops vision**: `docs/automation/` — current commit→deploy flow, gaps, target loop, Jenkins CI/CD
 - **Roadmap**: `docs/ROADMAP.md`
 - **Full index**: `docs/README.md`
 

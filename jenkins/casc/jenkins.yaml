@@ -1,0 +1,62 @@
+jenkins:
+  systemMessage: |
+    My Island CI/CD — build, test, deploy, confirm prod.
+    Open job "my-island". Default SOURCE=local uses the bind-mounted repo.
+  numExecutors: 2
+  mode: NORMAL
+  scmCheckoutRetryCount: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID:-admin}"
+          password: "${JENKINS_ADMIN_PASSWORD:-admin}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: MY_ISLAND_GIT_URL
+            value: "${MY_ISLAND_GIT_URL:-file:///var/my-island}"
+          - key: MY_ISLAND_GIT_BRANCH
+            value: "${MY_ISLAND_GIT_BRANCH:-main}"
+          - key: PROD_ENV_FILE
+            value: "${PROD_ENV_FILE:-/run/secrets/env.prod}"
+          - key: CONFIRM_BASE_URL
+            value: "${CONFIRM_BASE_URL:-http://host.docker.internal:80}"
+          - key: LOCAL_REPO
+            value: "/var/my-island"
+
+unclassified:
+  location:
+    url: http://localhost:8088/
+  timestamper:
+    allPipelines: true
+
+jobs:
+  - script: |
+      pipelineJob('my-island') {
+        description('Build → test → (optional) E2E → deploy prod → confirm')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url(System.getenv('MY_ISLAND_GIT_URL') ?: 'file:///var/my-island')
+                }
+                branches('*/main', '**')
+                extensions {
+                  cleanBeforeCheckout()
+                  localBranch()
+                }
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(false)
+          }
+        }
+        properties {
+          disableConcurrentBuilds()
+        }
+      }

@@ -1,20 +1,27 @@
 # Current Flow: Commit → Test → Safe → Deploy
 
-How My Island is built, verified, and “deployed” **as of the repo state today**. There is no git-push production pipeline.
+How My Island is built, verified, and deployed. Prefer **Jenkins** (`docs/automation/JENKINS.md`) for automated build → test → deploy → confirm. Manual compose remains available.
 
 ---
 
 ## 1. How deploy works today
 
-### Reality check
+### Automated (Jenkins)
 
-Production deployment is **documented as options** (`docs/DEPLOYMENT_OPTIONS.md`) and **scripted for a single host via Docker Compose**, but:
+```bash
+./scripts/start-jenkins.sh
+# http://localhost:8088  → job "my-island"
+# DEPLOY_PROD=true runs docker-compose.prod.yml then scripts/confirm-prod.sh
+```
 
-- There is **no `.github/workflows` CI/CD** in the repository.
-- Roadmap still lists “Production environment deployment” as a pre-launch checklist item.
-- No staging or production host, secrets store, or deploy credentials are defined in-repo.
+### Manual compose
 
-What exists is a **manual compose-based deploy recipe**.
+Production deployment is also **scripted for a single host via Docker Compose**:
+
+- Roadmap still lists broader hosting/DNS as pre-launch items.
+- Secrets live in `.env.prod` / `jenkins/secrets/env.prod` (not committed).
+
+What exists is a **compose-based deploy recipe**, now triggerable from Jenkins.
 
 ### Production compose (manual)
 
@@ -70,26 +77,23 @@ Builds/runs `api`, `web` (dev Dockerfile + volume mount), postgres, mailpit, oll
 ```mermaid
 flowchart LR
   A[Edit locally or via Cursor agent] --> B[git commit]
-  B --> C[git push / open PR]
-  C --> D{CI?}
-  D -->|None configured| E[Human review]
-  E --> F[Merge to main]
-  F --> G{Production host?}
-  G -->|Not automated| H[SSH / manual docker compose up --build]
-  H --> I[Flyway migrate on API boot]
-  I --> J[Manual smoke in browser]
+  B --> C[Push / SOURCE=local]
+  C --> D[Jenkins my-island]
+  D --> E[mvn test + npm lint/build]
+  E --> F{DEPLOY_PROD?}
+  F -->|no| G[Green CI artifact]
+  F -->|yes| H[docker compose.prod up --build]
+  H --> I[confirm-prod.sh]
+  I --> J[Health + smoke OK]
 ```
 
 | Step | What happens | Automation? |
 |------|--------------|-------------|
-| Author change | IDE / Cursor Cloud Agent (branch `cursor/…`, commit, push, PR) | Agent can create/act on code |
-| Review | Human on GitHub | Partial (Bugbot/security review agents exist as Cursor tools; not required) |
-| CI on PR | **Missing** — no workflow files | No |
-| Merge | Human merge to `main` | No auto-merge gates |
-| Build artifacts | On deploy host: Docker build or `mvnw package` | Manual |
-| Deploy | `docker compose -f docker-compose.prod.yml … up -d --build` | Manual |
-| Post-deploy verify | Human + optional local scripts | Manual |
-| Rollback | Redeploy previous image/tag or git checkout + rebuild | Manual; no documented rollback runbook |
+| Author change | IDE / Cursor Cloud Agent | Agent can create/act on code |
+| CI | Jenkins job `my-island` | Yes (co-hosted) |
+| Deploy | Parameter `DEPLOY_PROD` + compose prod | Yes when checked |
+| Post-deploy verify | `scripts/confirm-prod.sh` | Yes |
+| Rollback | Redeploy previous git SHA via Jenkins SOURCE/scm | Manual choice of revision |
 
 **Cloud Agent constraints that matter for this path:**
 

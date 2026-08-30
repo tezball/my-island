@@ -23,9 +23,9 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 | Gap | Severity | Detail |
 |-----|----------|--------|
-| No CI/CD workflows | **Blocker** | No `.github/workflows`. Nothing builds, tests, or deploys on push/PR. |
+| No CI/CD workflows | **Mitigated** | Co-hosted **Jenkins** (`docker-compose.jenkins.yml`, job `my-island`) builds, tests, deploys, confirms. Not GitHub Actions; not auto on every PR yet. |
 | No production target in-repo | **Blocker** | Hosting is a doc checklist (`DEPLOYMENT_OPTIONS.md`); no Terraform/Ansible/Fly/Railway config, no deploy environments. |
-| No deploy MCP / credentials for agents | **Blocker** | Cloud agents cannot SSH, push images to a registry, or trigger a host deploy. `gh` is read-only. |
+| No deploy MCP / credentials for agents | **Major** | Jenkins can deploy with host docker.sock + `jenkins/secrets/env.prod`. Agents still lack a deploy MCP; trigger Jenkins UI/CLI manually. |
 | No artifact registry / image tagging | **Major** | Prod compose builds from source on the host; no immutable image tags, SBOM, or provenance. |
 | No blue/green or rollback automation | **Major** | Rollback = manual rebuild of an older commit. |
 | Prod compose lacks observability stack | **Major → mitigated** | Opt-in `--profile observability` on `docker-compose.prod.yml` (Grafana/Prometheus/Loki/Alertmanager). Still not default. |
@@ -107,11 +107,11 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 | Gap | Severity | Detail |
 |-----|----------|--------|
-| E2E not in CI | **Blocker** | Playwright/Cucumber never required on PR. |
+| E2E not in CI | **Mitigated (optional)** | Jenkins `RUN_E2E` stage runs Playwright; off by default (slow). |
 | E2E assumes pre-started stack | **Major** | No compose-up-in-CI job; flaky if ports/seed differ. |
 | `start.sh` skips tests | **Major** | `-DskipTests` on every fresh start. |
 | Dual E2E stacks (Playwright + Cucumber) | **Major** | Overlap/cost; neither is the merge gate. |
-| No post-deploy smoke suite | **Blocker** | Nothing hits production health + critical journeys after compose up. |
+| No post-deploy smoke suite | **Mitigated** | `scripts/confirm-prod.sh` in Jenkins Confirm Prod stage. |
 | Coverage gaps | **Major** | Discovery 0% in audit; other modules incomplete — “green E2E” ≠ product-safe. |
 | Load tests not gated | **Minor** | Gatling exists but is optional. |
 | Security findings not re-validated | **Major** | Audits under `docs/audits/` are point-in-time; no continuous scanning in pipeline. |
