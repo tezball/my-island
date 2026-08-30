@@ -20,3 +20,10 @@ logs/
 
 # Uploaded files (local dev image storage)
 uploads/
+
+# Jenkins PR-bot workspace output
+.jenkins/
+
+# Python
+**/__pycache__/
+*.pyc

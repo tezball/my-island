@@ -12,9 +12,9 @@ Organized by capability. Severity: **Blocker** (vision impossible), **Major** (u
 Desired:  Alert/anomaly → agent reads logs/metrics/SQL → opens PR → CI green →
           auto or one-click deploy → post-deploy smoke → observe again
 
-Today:    Human notices issue → local start.sh/compose → optional MCP on laptop →
-          agent can code+PR → NO CI → human merges → manual compose on VPS →
-          browser smoke → local Grafana only (if running)
+Today:    Human/agent opens a PR → Jenkins CI + Ollama review → autofix/merge →
+          main auto-deploys compose prod + confirm-prod. Observe/SQL MCP still
+          laptop-local; alert→agent spawn is not wired.
 ```
 
 ---
@@ -23,7 +23,7 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 | Gap | Severity | Detail |
 |-----|----------|--------|
-| No CI/CD workflows | **Mitigated** | Co-hosted **Jenkins** (`docker-compose.jenkins.yml`, job `my-island`) builds, tests, deploys, confirms. Not GitHub Actions; not auto on every PR yet. |
+| No CI/CD workflows | **Mitigated** | Co-hosted **Jenkins** (`docker-compose.jenkins.yml`). Job `my-island-github` AI-reviews, autofixes, squash-merges PRs and auto-deploys `main`. |
 | No production target in-repo | **Blocker** | Hosting is a doc checklist (`DEPLOYMENT_OPTIONS.md`); no Terraform/Ansible/Fly/Railway config, no deploy environments. |
 | No deploy MCP / credentials for agents | **Major** | Jenkins can deploy with host docker.sock + `jenkins/secrets/env.prod`. Agents still lack a deploy MCP; trigger Jenkins UI/CLI manually. |
 | No artifact registry / image tagging | **Major** | Prod compose builds from source on the host; no immutable image tags, SBOM, or provenance. |
@@ -32,7 +32,7 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 | Secrets management | **Major** | `.env.prod.example` only; no Vault/Doppler/GitHub Environments wiring for agents. |
 | Domain/SSL/CDN not automated | **Minor** | Checklist items; outside compose. |
 
-**Implication:** An agent can **create and push a change**, but cannot **deploy** or verify production without a human on a server.
+**Implication:** An agent can open a PR and Jenkins will review/merge/deploy on the Jenkins host. Cloud agents still cannot SSH to a remote VPS; compose prod runs where Jenkins' docker.sock points.
 
 ---
 
@@ -136,15 +136,15 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 Recommended build order (technical dependency, not calendar estimate):
 
-1. **CI required checks** — Maven test, frontend build/lint, Playwright against compose in GitHub Actions.
+1. **CI required checks** — **Done (Jenkins):** Maven test, frontend build, Ollama PR review, squash-merge. Playwright still optional (`RUN_E2E`).
 2. **Staging environment** — always-on compose or PaaS; health URL; read-only DB; same observability as local.
 3. **Fix metrics scrape + ship prod/staging observability** — permit Prometheus scrape securely; Alertmanager; basic dashboards.
 4. **MCP pack for agents** — Loki query, Prometheus query, read-only SQL, docker/logs for staging; remove laptop-hardcoded paths.
-5. **Deploy pipeline** — build/push images on merge; deploy staging automatically; prod with approval; expose deploy status to agents (or a thin deploy MCP).
+5. **Deploy pipeline** — **Done (Jenkins host):** auto-deploy `main` via compose prod + `confirm-prod.sh`. Still no image registry or remote VPS MCP.
 6. **Alert → agent loop** — webhook/automation that opens a Cloud Agent with alert payload + MCP access.
-7. **Post-deploy smoke + rollback** — automated confirm-safe; one-command rollback.
+7. **Post-deploy smoke + rollback** — smoke is automated; rollback is still a manual older SHA rebuild.
 
-Until steps 1–5 exist, “fully automate running this app” with MCP remains a **local-dev assistant** story, not a **production autopilot**.
+Until steps 2–4 and 6 exist, MCP observe→act is still a **local-dev assistant** story; PR→deploy is Jenkins-hosted.
 
 ---
 
