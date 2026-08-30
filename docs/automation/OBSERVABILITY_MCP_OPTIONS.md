@@ -1,142 +1,74 @@
-# Logs, Metrics, Alerts — MCP Options (Free / Near-Free)
+# Logs, Metrics, Alerts — Stack Options (Free / Near-Free + MCP)
 
-Options for giving agents MCP access to observability, biased toward **self-host next to My Island** (compose on the same VPS) or **Grafana Cloud Free**. Prices and free-tier limits change; verify before committing.
+Per-section stack choices for co-hosting beside My Island or using a free SaaS tier. **Recommended** rows are the default for this project.
 
-**Your stack already has (local only):** Grafana + Prometheus + Loki in `docker-compose.yml`, API → Loki via Loki4j, Actuator Prometheus scrape. **Missing:** Alertmanager, MCP servers, prod compose inclusion, scrape auth fix.
-
----
-
-## Recommendation (for co-hosting)
-
-| Priority | Choice | Why |
-|----------|--------|-----|
-| **Best fit** | Keep **Grafana OSS + Prometheus + Loki + Alertmanager** beside the app; add **official `mcp-grafana`** (read-only flags) | One MCP covers metrics + logs + alert rules; you already run 3/4 of the stack |
-| **Add** | Prometheus Alertmanager container + Grafana-managed or Prometheus rule files | Unlocks alert MCP path (via Grafana or dedicated Alertmanager MCP) |
-| **Optional split** | Also run `pab1it0/prometheus-mcp-server` + Loki MCP if you want direct PromQL/LogQL without Grafana in the middle | Useful when Grafana is down or for lighter agents |
-| **SaaS alternative** | Grafana Cloud Free + OSS `mcp-grafana` (or Cloud MCP) | Zero local disk for retention; free tier caps apply |
-
-Do **not** start with Datadog/New Relic/Elastic Cloud for this goal — paid, and MCP is secondary to cost.
+You already run (local only): Grafana + Prometheus + Loki. Missing: Alertmanager, MCP wiring, prod compose, Actuator scrape auth fix.
 
 ---
 
-## Backend stacks (what you host or subscribe to)
+## Metrics
 
-| Stack | Cost model | Logs | Metrics | Alerts | Fits “host beside app”? |
-|-------|------------|------|---------|--------|-------------------------|
-| **LGTM OSS** (Loki + Grafana + Tempo optional + Prometheus/Mimir) | $0 software; VPS RAM/disk | Loki | Prometheus | Grafana Alerting and/or Alertmanager | **Yes — already partial** |
-| **Prometheus + Alertmanager + Grafana** (no Loki) | $0 | Weak (need something else) | Prometheus | Alertmanager | Yes, but you already have Loki |
-| **VictoriaMetrics + vmalert + Grafana** | $0 OSS | Needs Loki/other | VictoriaMetrics (PromQL-ish) | vmalert | Yes; replace Prometheus if you outgrow single-node |
-| **Grafana Cloud Free** | Free tier (e.g. ~10k metrics series, ~50 GB logs/mo, ~14d retention — confirm current pricing page) | Managed Loki | Managed Prometheus/Mimir | Grafana Alerting / OnCall (limits) | No local store; agent talks to cloud URL |
-| **SigNoz / Jaeger+** | OSS self-host | Possible | Possible | Built-in | Heavier; weaker MCP ecosystem than Grafana |
+| | Stack | MCP access | Cost | Co-host? | Notes |
+|---|-------|------------|------|----------|-------|
+| **Recommended** | **Prometheus** (already in compose) + Grafana datasource | **`mcp-grafana`** PromQL tools (or optional `pab1it0/prometheus-mcp-server`) | $0 + VPS | Yes | Already scraping Actuator; fix scrape auth; short retention on small VPS |
+| | VictoriaMetrics (single-node) + Grafana | `mcp-grafana` via Prometheus-compatible DS | $0 | Yes | Only if Prometheus disk/series grow; PromQL-compatible |
+| | Grafana Cloud Free (Managed Prometheus / Mimir) | `mcp-grafana` → Cloud URL | Free ~**10k** active series, **14d** retention | No | Use when VPS RAM/disk is tight |
+| | InfluxDB OSS | Weak / custom MCP | $0 | Yes | Skip — worse PromQL/MCP fit than Prometheus |
+| | Datadog / New Relic metrics | Vendor MCP (paid) | Paid | No | Out of scope for free/near-free |
 
-For My Island on a small Hetzner-class box: **extend current compose** rather than introducing a second product family.
-
----
-
-## MCP servers (agent access layer)
-
-### A. One-stop: Grafana MCP (recommended)
-
-| | |
-|--|--|
-| **Project** | [grafana/mcp-grafana](https://github.com/grafana/mcp-grafana) (`uvx mcp-grafana` or Docker) |
-| **Cost** | Free / Apache-2.0; self-host the MCP process |
-| **Talks to** | Your Grafana OSS **or** Grafana Cloud |
-| **Gives agents** | PromQL via Prometheus datasources, LogQL via Loki, dashboards, **alert rules / routing / silences**, incidents/OnCall if enabled |
-| **Safety** | Prefer `--disable-write` + Viewer service account token for agents |
-| **Auth** | `GRAFANA_URL` + `GRAFANA_SERVICE_ACCOUNT_TOKEN` |
-
-**Also:** Grafana Cloud hosts an MCP endpoint (OAuth). Querying data through it does not burn Grafana Assistant tokens; connecting still counts as an “active AI user” on Cloud’s Assistant metering — fine for a solo Free stack if you stay within Free AI caps, or use the **self-hosted OSS MCP** pointed at Cloud/OSS Grafana to keep Assistant out of the path.
-
-### B. Metrics-only: Prometheus MCP
-
-| | |
-|--|--|
-| **Project** | [pab1it0/prometheus-mcp-server](https://github.com/pab1it0/prometheus-mcp-server) (Docker Hub / GHCR) |
-| **Cost** | Free / MIT |
-| **Tools** | Instant/range PromQL, list metrics, metadata, scrape targets |
-| **Host** | Point `PROMETHEUS_URL` at `http://prometheus:9090` on the Docker network (or host port) |
-
-### C. Logs-only: Loki MCP
-
-| | |
-|--|--|
-| **Projects** | [grafana/loki-mcp](https://github.com/grafana/loki-mcp); [incu6us/loki-mcp-server](https://github.com/incu6us/loki-mcp-server) (discovery-first: labels → values → query) |
-| **Cost** | Free / OSS |
-| **Tools** | LogQL query / range; discovery variants list labels/series |
-| **Host** | `LOKI_URL=http://loki:3100` |
-
-### D. Alerts-only: Alertmanager MCP
-
-| | |
-|--|--|
-| **Projects** | [ntk148v/alertmanager-mcp-server](https://github.com/ntk148v/alertmanager-mcp-server); [talkops-alertmanager-mcp-server](https://pypi.org/project/talkops-alertmanager-mcp-server/) |
-| **Cost** | Free / Apache-2.0 |
-| **Requires** | Running Alertmanager (not in repo today) |
-| **Tools** | List alerts/groups, silences CRUD, receivers/status (write tools — lock down for agents) |
-
-Grafana MCP can cover **Grafana-managed** alert rules without a separate Alertmanager MCP; use Alertmanager MCP if you run classic Prometheus → Alertmanager and want agents on that API directly.
-
-### E. Unified / kitchen-sink (optional)
-
-| Project | Notes |
-|---------|--------|
-| [ThoTischner/observability-mcp](https://github.com/ThoTischner/observability-mcp) | Gateway over Prometheus/Loki (+ more); anomaly helpers; more moving parts |
-| [MoebiusX/otel-mcp-server](https://github.com/MoebiusX/otel-mcp-server) | Many backends (Prom, Loki, Alertmanager, Grafana, …); heavier ops surface |
-| [opendatahub-io/rhoai-observability-mcp](https://github.com/opendatahub-io/rhoai-observability-mcp) | Strong Prom/Loki/Alertmanager/Grafana set; oriented to OpenShift/vLLM — reuse ideas, not a first pick for this VPS |
+**Why recommended:** Prometheus is already in `docker-compose.yml` and Micrometer exports `/api/actuator/prometheus`. One Grafana MCP covers metrics without a second product.
 
 ---
 
-## Capability matrix (MCP → signal)
+## Logs
 
-| Option | Metrics | Logs | Alerts | Host beside app | Rough cost |
-|--------|---------|------|--------|-----------------|------------|
-| Grafana OSS + **mcp-grafana** | Yes (via DS) | Yes (via DS) | Yes (Grafana Alerting) | Yes | $0 + VPS |
-| Prometheus + **prometheus-mcp** | Yes | No | No | Yes | $0 |
-| Loki + **loki-mcp** | No* | Yes | No | Yes | $0 |
-| Alertmanager + **alertmanager-mcp** | No | No | Yes | Yes | $0 |
-| Grafana Cloud Free + mcp-grafana | Yes | Yes | Yes | No (SaaS) | $0 within free caps |
-| Grafana Cloud MCP (hosted) | Yes | Yes | Yes | No | Free tier; Assistant “active user” metering |
-| Split trio (Prom + Loki + AM MCPs) | Yes | Yes | Yes | Yes | $0; more MCP entries to maintain |
+| | Stack | MCP access | Cost | Co-host? | Notes |
+|---|-------|------------|------|----------|-------|
+| **Recommended** | **Loki** (already in compose) + Grafana datasource | **`mcp-grafana`** LogQL tools (or `grafana/loki-mcp` / `incu6us/loki-mcp-server`) | $0 + VPS | Yes | API already pushes via Loki4j; add Promtail/Alloy later for nginx/postgres/moderator |
+| | Grafana Cloud Free (Managed Loki) | `mcp-grafana` → Cloud URL | Free ~**50 GB**/mo ingest, **14d** retention | No | Offload retention when disk is scarce |
+| | ELK / OpenSearch self-host | Sparse MCP vs Grafana | $0 but heavy RAM | Painful on 2 GB VPS | Skip for MVP ops |
+| | Graylog / VictoriaLogs | Limited MCP ecosystem | $0 | Maybe | Weaker agent tooling than Loki + Grafana |
+| | “Just `docker compose logs` / files” + filesystem MCP | Filesystem / Docker MCP | $0 | Yes | Fine for laptop; not a durable prod log store |
 
-\*Loki can do metric queries from logs (LogQL); not a replacement for Actuator/Prometheus app metrics.
+**Why recommended:** Loki is already running and the API is instrumented (`logback` → Loki). Grafana MCP queries it through the existing datasource; no new log backend.
 
 ---
 
-## Co-host layout (compose sketch)
+## Alerts
 
-```text
-[web] [api] [postgres] [moderator?]
-        │         │
-        │         └── Actuator /prometheus ──► Prometheus
-        └── Loki4j ──────────────────────────► Loki
-                                               │
-                         Alertmanager ◄── rules (Grafana or Prometheus)
-                                               │
-                                         Grafana ◄── datasources
-                                               │
-                                    mcp-grafana (stdio on laptop / SSE on VPS)
-                                               │
-                                         Cursor / Cloud Agent
-```
+| | Stack | MCP access | Cost | Co-host? | Notes |
+|---|-------|------------|------|----------|-------|
+| **Recommended** | **Grafana Alerting** + **Alertmanager** container (add to compose) | **`mcp-grafana`** alert rules / routing / silences (`--disable-write` for agents) | $0 + VPS | Yes | Rules in Grafana UI/provisioning; AM for notification routing (email/webhook) |
+| | Classic Prometheus rules → Alertmanager only | `ntk148v/alertmanager-mcp-server` or talkops Alertmanager MCP | $0 | Yes | Good if you prefer YAML-in-Prometheus; needs separate MCP |
+| | Grafana Cloud Alerting / OnCall (Free limits) | `mcp-grafana` or Cloud MCP | Free tier limits | No | Less local ops; OnCall features may be capped |
+| | Healthchecks.io / UptimeRobot free + webhook | No rich MCP (webhook → agent only) | Free | External | Cheap uptime ping; not app metrics/log correlation |
+| | PagerDuty / Opsgenie | Vendor APIs | Paid | No | Skip until you need paid on-call |
 
-**RAM note (single small VPS):** Grafana + Prometheus + Loki + Alertmanager often want ~1–2 GB combined at light load. On a 2 GB box shared with Spring Boot + Postgres, prefer **short retention** (e.g. 3–7d), disable unused Grafana plugins, or put observability on a second cheap micro-VPS / use Grafana Cloud Free for storage.
+**Why recommended:** You already use Grafana. Grafana Alerting + one Alertmanager service unlocks agent-visible firing rules via the **same** `mcp-grafana` used for logs/metrics. No third MCP required for v1.
 
 ---
 
-## What to fix in-app before MCP is useful
+## MCP layer (how the agent talks to the stacks)
 
-1. **Permit Prometheus scrape securely** (network-local scrape token or `permitAll` only on private Docker network) — today only `/actuator/health` is public.
-2. **Add Alertmanager** (and a few rules: API down, high 5xx, disk, scrape fail).
-3. **Ship prod compose observability** (or remote-write/push to Grafana Cloud Free).
-4. **Run MCP read-only** (`--disable-write`, Viewer token); never give agents Admin Grafana or Alertmanager silence-delete without a human gate.
-5. **Cloud Agents** need the MCP reachable from *their* environment (SSE/HTTP MCP on a private URL, or Cursor desktop against your VPS) — laptop `.mcp.json` alone does not wire cloud agents.
+| | Option | Covers | Cost | Notes |
+|---|--------|--------|------|-------|
+| **Recommended** | **[mcp-grafana](https://github.com/grafana/mcp-grafana)** (OSS, `uvx` or Docker) | Metrics + logs + alerts (+ dashboards) | $0 | Point at local Grafana or Cloud; use Viewer token + `--disable-write` |
+| | Split: Prometheus MCP + Loki MCP + Alertmanager MCP | One signal each | $0 | More config; use if Grafana is down or you want direct APIs |
+| | Grafana Cloud hosted MCP | Same as Grafana Cloud datasources | Free tier; counts as Assistant “active AI user” | Prefer OSS `mcp-grafana` if you want to avoid Cloud Assistant metering |
+| | Unified gateways (`observability-mcp`, `otel-mcp-server`) | Many backends | $0 OSS | Defer until single Grafana MCP is proven |
+
+**Why recommended:** One MCP, three signals, official Grafana project, works with the stack you already partially run.
 
 ---
 
-## Suggested path for this project
+## Combined default for this repo
 
-1. **Short term:** Extend compose with Alertmanager + provisioned alert rules; add `mcp-grafana` to local `.mcp.json` with `--disable-write`.
-2. **Same host prod:** Mirror Grafana/Prometheus/Loki/Alertmanager into `docker-compose.prod.yml` with disk retention limits; bind Grafana/MCP to VPN or SSH tunnel only.
-3. **If the VPS is too tight:** Keep Prometheus+Loki local for short retention **or** remote-write metrics/logs to **Grafana Cloud Free** and point `mcp-grafana` at the Cloud URL.
-4. **Defer** multi-MCP kitchen-sink servers until the Grafana single-MCP path is proven with a real incident triage session.
+| Section | Pick |
+|---------|------|
+| Metrics | Prometheus (existing) |
+| Logs | Loki (existing) |
+| Alerts | Grafana Alerting + Alertmanager (**add**) |
+| Agent access | `mcp-grafana` read-only |
+| Escape hatch if VPS is full | Grafana Cloud Free for storage; same MCP pointed at Cloud |
+
+Before this is useful: fix Prometheus scrape auth, put the stack in prod compose (or Cloud), and expose MCP to Cloud Agents (HTTP/SSE / tunnel), not only laptop `.mcp.json`.
