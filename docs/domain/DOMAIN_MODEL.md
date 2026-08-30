@@ -619,6 +619,7 @@ SupportTicket (Root)
 | sender | User (FK) | Message author |
 | content | Text | Message body |
 | createdAt | LocalDateTime | Auto-set |
+| updatedAt | LocalDateTime | Auto-updated |
 
 ---
 

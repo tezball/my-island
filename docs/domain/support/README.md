@@ -32,6 +32,7 @@ Ticket-based support system that allows owners and suppliers to contact platform
 | sender | User (FK) | Message author |
 | content | Text | Required |
 | createdAt | LocalDateTime | Auto-set |
+| updatedAt | LocalDateTime | Auto-updated (BaseEntity) |
 
 ## Endpoints
 
@@ -81,5 +82,6 @@ Requires ADMIN role.
 ## Migration
 
 - `V1065__create_support_tickets.sql` — Creates `support_tickets` and `support_ticket_messages` tables with indexes
+- `V1102__add_updated_at_to_support_ticket_messages.sql` — Adds `updated_at` so messages match `BaseEntity`
 
 See [NOTES.md](./NOTES.md) for aggregate and domain model details.
