@@ -168,7 +168,7 @@ These are **not** wired into CI or `start.sh`.
 
 **Caveats:**
 
-- Security allows anonymous `/actuator/health` only; **`/actuator/prometheus` is authenticated** unless reached in a way that bypasses that (scraping from Docker network still hits Spring Security). This can break or empty Prometheus scrapes unless credentials or a permitAll rule are added.
+- `/actuator/health` and `/actuator/prometheus` are `permitAll` for probes/scrapes; keep those ports off the public internet in prod.
 - Prod compose includes observability via **`--profile observability`** (not on by default).
 - Loki receives API logs when the API process can reach Loki (`LOGGING_LOKI_URL`); other containers (web, postgres, moderator) are not systematically shipped unless configured separately.
 
