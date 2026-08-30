@@ -163,13 +163,14 @@ These are **not** wired into CI or `start.sh`.
 | Metrics | Micrometer → `/api/actuator/prometheus`; Prometheus scrapes `api:8080` every 15s |
 | Logs | API Logback Loki4j appender → `http://localhost:3100/loki/api/v1/push`; console + `logs/*.log` |
 | UI | Grafana `:3000` (admin/admin) with Prometheus + Loki datasources provisioned |
-| Alerts | **None** — no Alertmanager, no provisioned alert rules/dashboards beyond datasources |
+| Alerts | Alertmanager + Prometheus/Grafana rules (default receiver keeps alerts in AM UI) |
+| MCP | `.mcp.json` → `mcp-grafana --disable-write` (laptop Cursor) |
 
 **Caveats:**
 
 - Security allows anonymous `/actuator/health` only; **`/actuator/prometheus` is authenticated** unless reached in a way that bypasses that (scraping from Docker network still hits Spring Security). This can break or empty Prometheus scrapes unless credentials or a permitAll rule are added.
-- Prod compose **omits** Prometheus/Grafana/Loki entirely.
-- Loki receives API logs when the API process can reach Loki; other containers (web, postgres, moderator) are not systematically shipped unless configured separately.
+- Prod compose includes observability via **`--profile observability`** (not on by default).
+- Loki receives API logs when the API process can reach Loki (`LOGGING_LOKI_URL`); other containers (web, postgres, moderator) are not systematically shipped unless configured separately.
 
 ### MCP wiring for a local engineer (`.mcp.json`)
 
