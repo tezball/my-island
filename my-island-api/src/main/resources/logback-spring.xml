@@ -8,15 +8,16 @@
         <http>
             <url>${lokiUrl}</url>
         </http>
-        <format>
-            <label>
-                <pattern>app=my-island-api,host=${HOSTNAME},level=%level</pattern>
-            </label>
-            <message>
-                <pattern>${FILE_LOG_PATTERN}</pattern>
-            </message>
-            <sortByTime>true</sortByTime>
-        </format>
+        <labels>
+            app=my-island-api
+            host=${HOSTNAME}
+        </labels>
+        <structuredMetadata>
+            level=%level
+        </structuredMetadata>
+        <message>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </message>
     </appender>
 
     <springProfile name="dev">

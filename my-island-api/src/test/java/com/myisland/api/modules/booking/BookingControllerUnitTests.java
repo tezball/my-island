@@ -8,8 +8,8 @@ import com.myisland.api.security.CustomUserDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -31,18 +31,18 @@ public class BookingControllerUnitTests {
         @Autowired
         private MockMvc mockMvc;
 
-        @MockBean
+        @MockitoBean
         private BookingService bookingService;
 
-        @MockBean
+        @MockitoBean
         private com.myisland.api.modules.booking.service.BookingPaymentService bookingPaymentService;
 
-        @MockBean
+        @MockitoBean
         private org.springframework.security.core.userdetails.UserDetailsService userDetailsService;
 
         // JwtAuthenticationFilter is now a real bean (imported), so we mock its
         // dependency
-        @MockBean
+        @MockitoBean
         private com.myisland.api.security.JwtProvider jwtProvider;
 
         // Minimal security config to avoid loading full security chain if needed,
