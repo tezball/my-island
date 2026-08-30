@@ -34,6 +34,13 @@ Cross-cutting references:
 - [Seed Data](operations/SEED_DATA.md) — Test accounts, data inventory
 - [Load Testing](../gatling/README.md) — Gatling E2E load tests, smoke/load/stress profiles
 
+### Automation (MCP / agent ops)
+Vision: observe (logs, metrics, alerts, SQL) → change → verify → deploy via MCP and Cloud Agents.
+- [Overview](automation/README.md) — Quick verdict matrix
+- [Current Flow](automation/CURRENT_FLOW.md) — Commit → test → safe → how deploy works today
+- [Automation Gaps](automation/AUTOMATION_GAPS.md) — What blocks full automation
+- [Target Loop](automation/TARGET_LOOP.md) — Desired closed loop and safety contract
+
 ### Audits
 Point-in-time reports (historical, not living docs):
 - [2026-02-10 Stripe Audit](audits/2026-02-10-stripe-audit.md)

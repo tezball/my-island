@@ -53,6 +53,12 @@ docker compose logs -f api    # API only
 - Webhook handling via `StripeWebhookController`
 - Dev mode (`STRIPE_DEV_MODE=true`) simulates payments locally without Stripe API calls
 
+## Observability (local)
+
+Dev `docker compose` / `./start.sh` starts Grafana (`:3000`), Prometheus (`:9090`), and Loki (`:3100`). The API pushes logs via Loki4j and exposes Micrometer metrics at `/api/actuator/prometheus`. Production compose does **not** include this stack yet.
+
+For commit→deploy reality, MCP automation gaps, and the target agent loop, see [docs/automation/](../automation/).
+
 ## Future Considerations
 - Redis for caching
 - AWS S3 for image storage (currently local/embedded)
