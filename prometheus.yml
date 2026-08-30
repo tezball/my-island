@@ -1,8 +1,30 @@
 global:
   scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+rule_files:
+  - /etc/prometheus/alerts.yml
 
 scrape_configs:
-  - job_name: 'my-island-api'
-    metrics_path: '/api/actuator/prometheus'
+  # API running as a Docker Compose service
+  - job_name: "my-island-api"
+    metrics_path: "/api/actuator/prometheus"
     static_configs:
-      - targets: ['api:8080']
+      - targets: ["api:8080"]
+        labels:
+          env: local
+          service: api
+
+  # API running on the host (./start.sh hybrid mode)
+  - job_name: "my-island-api-host"
+    metrics_path: "/api/actuator/prometheus"
+    static_configs:
+      - targets: ["host.docker.internal:8080"]
+        labels:
+          env: local
+          service: api

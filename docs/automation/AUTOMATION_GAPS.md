@@ -28,7 +28,7 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 | No deploy MCP / credentials for agents | **Blocker** | Cloud agents cannot SSH, push images to a registry, or trigger a host deploy. `gh` is read-only. |
 | No artifact registry / image tagging | **Major** | Prod compose builds from source on the host; no immutable image tags, SBOM, or provenance. |
 | No blue/green or rollback automation | **Major** | Rollback = manual rebuild of an older commit. |
-| Prod compose lacks observability stack | **Major** | Grafana/Prometheus/Loki exist only in **dev** `docker-compose.yml`. |
+| Prod compose lacks observability stack | **Major → mitigated** | Opt-in `--profile observability` on `docker-compose.prod.yml` (Grafana/Prometheus/Loki/Alertmanager). Still not default. |
 | Secrets management | **Major** | `.env.prod.example` only; no Vault/Doppler/GitHub Environments wiring for agents. |
 | Domain/SSL/CDN not automated | **Minor** | Checklist items; outside compose. |
 
@@ -40,10 +40,10 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 | Gap | Severity | Detail |
 |-----|----------|--------|
-| No Loki/Grafana MCP on cloud agent | **Blocker** | Agent cannot query `LogQL` or dashboards via MCP in the default cloud toolset. |
-| Local `.mcp.json` not = cloud MCP | **Blocker** | Laptop MCP (docker, postgres, filesystem) does not automatically apply to Cloud Agents. |
+| No Loki/Grafana MCP on cloud agent | **Blocker** | Local `.mcp.json` now includes **mcp-grafana** (read-only). Cloud Agents still need HTTP/SSE MCP reachability. |
+| Local `.mcp.json` not = cloud MCP | **Blocker** | Laptop MCP (docker, postgres, filesystem, **grafana**) does not automatically apply to Cloud Agents. |
 | Filesystem MCP path is machine-specific | **Major** | Hardcoded `/home/tezball/projects/my-island` — breaks other machines/agents. |
-| Prod has no log pipeline | **Blocker** | Prod compose does not run Loki; no central log store for production. |
+| Prod has no log pipeline | **Major → mitigated** | Loki available via observability profile; API `LOGGING_LOKI_URL` defaults to in-compose Loki. |
 | Incomplete log coverage | **Major** | API pushes to Loki via Loki4j; nginx/web, postgres, moderator, ollama are not first-class in the same pipeline. |
 | Local file logs only on hybrid start | **Minor** | `logs/*.log` from `start.sh`; Docker-only mode needs `docker compose logs`. |
 
@@ -55,10 +55,10 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 | Gap | Severity | Detail |
 |-----|----------|--------|
-| No Prometheus MCP | **Blocker** | Cannot PromQL “is error rate up?” from the agent. |
-| Prometheus scrape may be auth-blocked | **Major** | Only `/actuator/health` is `permitAll`; `/actuator/prometheus` requires auth → scrapes can fail/empty. |
-| No provisioned dashboards/recording rules | **Major** | Grafana has datasources only — no JSON dashboards, no SLO boards. |
-| Metrics only on local compose | **Major** | Not in `docker-compose.prod.yml`. |
+| No Prometheus MCP | **Major → mitigated** | `mcp-grafana` queries Prometheus datasource locally; dedicated Prom MCP optional. Cloud Agent still needs reachable MCP. |
+| Prometheus scrape may be auth-blocked | **Mitigated** | `/actuator/prometheus` is `permitAll` (same as health) for scrape targets. |
+| No provisioned dashboards/recording rules | **Major** | Grafana has datasources + alerting; still no SLO dashboards. |
+| Metrics only on local compose | **Mitigated** | Prod `--profile observability` includes Prometheus. |
 | Limited custom business metrics | **Minor** | Actuator/Micrometer defaults; few domain-level meters (bookings/payments) for alert quality. |
 
 **Needed for vision:** Public or network-local scrape endpoint for Prometheus; Prometheus MCP (or Grafana MCP); baseline RED/USE + booking/payment metrics; same stack in staging/prod.
@@ -69,9 +69,9 @@ Today:    Human notices issue → local start.sh/compose → optional MCP on lap
 
 | Gap | Severity | Detail |
 |-----|----------|--------|
-| No Alertmanager / alert rules | **Blocker** | Nothing pages or opens an incident when health/error rate fails. |
-| No alert → agent webhook | **Blocker** | No path from “alert fired” to “spawn Cloud Agent with context”. |
-| No on-call / notification channel | **Major** | No Slack/PagerDuty/email alert routing. |
+| No Alertmanager / alert rules | **Mitigated (local)** | Alertmanager + Prometheus/Grafana rules provisioned; default receiver is silent (AM UI only). |
+| No alert → agent webhook | **Blocker** | Still no path from “alert fired” to “spawn Cloud Agent with context”. |
+| No on-call / notification channel | **Major** | No Slack/PagerDuty/email alert routing yet (AM receiver is empty). |
 | Cursor subscriptions ≠ app alerts | **Minor** | `subscribe_github_ci` / `subscribe_timer` help **agent workflow**, not **app** uptime. |
 
 **Needed for vision:** Alert rules (API down, 5xx, Flyway fail, disk, payment webhook errors) → notification + optional automation that starts an agent with runbook + MCP access.

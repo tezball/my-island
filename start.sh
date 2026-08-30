@@ -180,7 +180,7 @@ start_docker_infra() {
     if [ "$MODE" = "prod" ]; then
         docker compose up -d postgres
     else
-        docker compose up -d postgres mailpit ollama grafana prometheus loki
+        docker compose up -d postgres mailpit ollama grafana prometheus loki alertmanager
     fi
 
     # Wait for services to be healthy using Docker health checks
@@ -384,6 +384,8 @@ open_browser_tabs() {
         labels+=("Grafana")
         urls+=("http://localhost:9090")
         labels+=("Prometheus")
+        urls+=("http://localhost:9093")
+        labels+=("Alertmanager")
     fi
 
     for i in "${!urls[@]}"; do
@@ -476,7 +478,9 @@ main() {
         echo "    Ollama:      http://localhost:11434  (llama3.2)"
         echo "    Grafana:     http://localhost:3000  (admin / admin)"
         echo "    Prometheus:  http://localhost:9090"
+        echo "    Alertmanager: http://localhost:9093"
         echo "    Loki:        http://localhost:3100"
+        echo "    MCP:         grafana (mcp-grafana, read-only) in .mcp.json"
         echo ""
     fi
     echo "  Stripe:"

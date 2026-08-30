@@ -63,12 +63,14 @@ You already run (local only): Grafana + Prometheus + Loki. Missing: Alertmanager
 
 ## Combined default for this repo
 
-| Section | Pick |
-|---------|------|
-| Metrics | Prometheus (existing) |
-| Logs | Loki (existing) |
-| Alerts | Grafana Alerting + Alertmanager (**add**) |
-| Agent access | `mcp-grafana` read-only |
-| Escape hatch if VPS is full | Grafana Cloud Free for storage; same MCP pointed at Cloud |
+| Section | Pick | Status |
+|---------|------|--------|
+| Metrics | Prometheus (existing) | Wired in compose; `/actuator/prometheus` public for scrape |
+| Logs | Loki (existing) | API `LOGGING_LOKI_URL` for Docker; Loki4j |
+| Alerts | Grafana Alerting + Alertmanager | **Added** (rules + contact point) |
+| Agent access | `mcp-grafana` read-only | **Added** in `.mcp.json` |
+| Escape hatch if VPS is full | Grafana Cloud Free for storage; same MCP pointed at Cloud | Documented option |
 
-Before this is useful: fix Prometheus scrape auth, put the stack in prod compose (or Cloud), and expose MCP to Cloud Agents (HTTP/SSE / tunnel), not only laptop `.mcp.json`.
+See [OBSERVABILITY_SETUP.md](OBSERVABILITY_SETUP.md) for URLs and prod `--profile observability`.
+
+Before Cloud Agents can use this: expose MCP via HTTP/SSE (or tunnel), not only laptop `.mcp.json` stdio.

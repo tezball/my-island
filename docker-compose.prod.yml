@@ -52,6 +52,7 @@ services:
       STRIPE_BOOKING_SUCCESS_URL: ${STRIPE_BOOKING_SUCCESS_URL:-http://localhost/trips?payment=success}
       STRIPE_BOOKING_CANCEL_URL: ${STRIPE_BOOKING_CANCEL_URL:-http://localhost/trips?payment=cancelled}
       STRIPE_DEV_MODE: "false"
+      LOGGING_LOKI_URL: ${LOGGING_LOKI_URL:-http://loki:3100/loki/api/v1/push}
     volumes:
       - uploads_data:/app/uploads
     healthcheck:
@@ -122,7 +123,76 @@ services:
     ports:
       - "${WEB_PORT:-80}:80"
 
+  # ---------------------------------------------------------------------------
+  # Observability (opt-in): docker compose -f docker-compose.prod.yml
+  #   --profile observability --env-file .env.prod up -d
+  # ---------------------------------------------------------------------------
+  alertmanager:
+    profiles: ["observability"]
+    image: prom/alertmanager:v0.28.1
+    container_name: myisland-prod-alertmanager
+    restart: unless-stopped
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+
+  prometheus:
+    profiles: ["observability"]
+    image: prom/prometheus:v3.2.1
+    container_name: myisland-prod-prometheus
+    restart: unless-stopped
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION:-7d}"
+      - "--web.enable-lifecycle"
+    depends_on:
+      - alertmanager
+
+  loki:
+    profiles: ["observability"]
+    image: grafana/loki:3.4.2
+    container_name: myisland-prod-loki
+    restart: unless-stopped
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    profiles: ["observability"]
+    image: grafana/grafana:11.5.2
+    container_name: myisland-prod-grafana
+    restart: unless-stopped
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:?GF_SECURITY_ADMIN_PASSWORD is required when using observability profile}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_UNIFIED_ALERTING_ENABLED: "true"
+      GF_ALERTING_ENABLED: "false"
+    depends_on:
+      - prometheus
+      - loki
+      - alertmanager
+
 volumes:
   postgres_data:
   uploads_data:
   ollama_data:
+  prometheus_data:
+  alertmanager_data:
+  grafana_data:

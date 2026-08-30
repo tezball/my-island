@@ -55,12 +55,23 @@ docker compose logs -f api    # API only
 
 ## Observability (local)
 
-Dev `docker compose` / `./start.sh` starts Grafana (`:3000`), Prometheus (`:9090`), and Loki (`:3100`). The API pushes logs via Loki4j and exposes Micrometer metrics at `/api/actuator/prometheus`. Production compose does **not** include this stack yet.
+Dev `docker compose` / `./start.sh` starts:
 
-For commit→deploy reality, MCP automation gaps, and the target agent loop, see [docs/automation/](../automation/).
+| Service | Port | Role |
+|---------|------|------|
+| Grafana | 3000 | UI + Grafana Alerting (admin/admin in dev) |
+| Prometheus | 9090 | Metrics scrape + rule evaluation |
+| Alertmanager | 9093 | Alert routing (default: keep in AM) |
+| Loki | 3100 | Logs (API Loki4j appender) |
+
+Agent access: official **mcp-grafana** (read-only) in `.mcp.json`. See [Observability setup](../automation/OBSERVABILITY_SETUP.md).
+
+Production: opt-in with `docker compose -f docker-compose.prod.yml --profile observability`.
 
 ## Future Considerations
 - Redis for caching
 - AWS S3 for image storage (currently local/embedded)
 - AWS SES for email delivery
 - Elasticsearch for advanced search
+- Wire Alertmanager receivers (email/Slack webhook) for real notifications
+- Expose MCP over SSE for Cloud Agents (not only laptop stdio)

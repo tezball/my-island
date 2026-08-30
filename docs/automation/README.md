@@ -12,6 +12,7 @@ This folder documents **how things work today** and the **gaps that block that v
 | [AUTOMATION_GAPS.md](AUTOMATION_GAPS.md) | Gap inventory vs the full MCP automation vision |
 | [TARGET_LOOP.md](TARGET_LOOP.md) | Desired closed loop (observe → decide → change → verify → deploy) |
 | [OBSERVABILITY_MCP_OPTIONS.md](OBSERVABILITY_MCP_OPTIONS.md) | Free/near-free logs·metrics·alerts stacks with MCP (self-host or Cloud) |
+| [OBSERVABILITY_SETUP.md](OBSERVABILITY_SETUP.md) | Implemented stack: compose, Alertmanager, mcp-grafana wiring |
 
 ## Related existing docs
 

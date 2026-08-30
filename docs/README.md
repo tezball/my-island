@@ -40,6 +40,8 @@ Vision: observe (logs, metrics, alerts, SQL) → change → verify → deploy vi
 - [Current Flow](automation/CURRENT_FLOW.md) — Commit → test → safe → how deploy works today
 - [Automation Gaps](automation/AUTOMATION_GAPS.md) — What blocks full automation
 - [Target Loop](automation/TARGET_LOOP.md) — Desired closed loop and safety contract
+- [Observability MCP options](automation/OBSERVABILITY_MCP_OPTIONS.md) — Stack choices
+- [Observability setup](automation/OBSERVABILITY_SETUP.md) — Implemented Prometheus/Loki/Alertmanager + mcp-grafana
 
 ### Audits
 Point-in-time reports (historical, not living docs):

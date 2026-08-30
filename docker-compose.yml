@@ -72,6 +72,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
       UPLOAD_DIR: /app/uploads
+      LOGGING_LOKI_URL: http://loki:3100/loki/api/v1/push
     volumes:
       - uploads_data:/app/uploads
     healthcheck:
@@ -100,6 +101,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
       UPLOAD_DIR: /app/uploads
+      LOGGING_LOKI_URL: http://loki:3100/loki/api/v1/push
     volumes:
       - uploads_data:/app/uploads
     healthcheck:
@@ -148,7 +150,7 @@ services:
       VITE_API_URL: http://localhost:8080/api
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.5.2
     container_name: myisland-grafana
     ports:
       - "3000:3000"
@@ -156,23 +158,51 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_UNIFIED_ALERTING_ENABLED: "true"
+      GF_ALERTING_ENABLED: "false"
+      GF_FEATURE_TOGGLES_ENABLE: provisioning
     depends_on:
       - prometheus
       - loki
+      - alertmanager
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.2.1
     container_name: myisland-prometheus
     ports:
       - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=7d"
+      - "--web.enable-lifecycle"
+    depends_on:
+      - alertmanager
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    container_name: myisland-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+      - "--web.external-url=http://localhost:9093"
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.4.2
     container_name: myisland-loki
     ports:
       - "3100:3100"
@@ -183,3 +213,5 @@ volumes:
   uploads_data:
   grafana_data:
   ollama_data:
+  prometheus_data:
+  alertmanager_data:
