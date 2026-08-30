@@ -1,6 +1,5 @@
 {
   "mcpServers": {
-
     "context7": {
       "type": "stdio",
       "command": "npx",
@@ -43,6 +42,18 @@
         "postgresql://myisland:myisland_dev_password@localhost:5432/myisland"
       ],
       "env": {}
+    },
+    "grafana": {
+      "command": "uvx",
+      "args": [
+        "mcp-grafana",
+        "--disable-write"
+      ],
+      "env": {
+        "GRAFANA_URL": "http://localhost:3000",
+        "GRAFANA_USERNAME": "admin",
+        "GRAFANA_PASSWORD": "admin"
+      }
     }
   }
 }

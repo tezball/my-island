@@ -53,8 +53,25 @@ docker compose logs -f api    # API only
 - Webhook handling via `StripeWebhookController`
 - Dev mode (`STRIPE_DEV_MODE=true`) simulates payments locally without Stripe API calls
 
+## Observability (local)
+
+Dev `docker compose` / `./start.sh` starts:
+
+| Service | Port | Role |
+|---------|------|------|
+| Grafana | 3000 | UI + Grafana Alerting (admin/admin in dev) |
+| Prometheus | 9090 | Metrics scrape + rule evaluation |
+| Alertmanager | 9093 | Alert routing (default: keep in AM) |
+| Loki | 3100 | Logs (API Loki4j appender) |
+
+Agent access: official **mcp-grafana** (read-only) in `.mcp.json`. See [Observability setup](../automation/OBSERVABILITY_SETUP.md).
+
+Production: opt-in with `docker compose -f docker-compose.prod.yml --profile observability`.
+
 ## Future Considerations
 - Redis for caching
 - AWS S3 for image storage (currently local/embedded)
 - AWS SES for email delivery
 - Elasticsearch for advanced search
+- Wire Alertmanager receivers (email/Slack webhook) for real notifications
+- Expose MCP over SSE for Cloud Agents (not only laptop stdio)

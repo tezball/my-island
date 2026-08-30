@@ -25,6 +25,7 @@ My Island is a camping/glamping booking platform for Ireland with a marketplace 
 - **Specific flows**: `docs/domain/{module}/*.md` (e.g., `booking/PAYMENT_FLOW.md`)
 - **Architecture**: `docs/architecture/OVERVIEW.md`
 - **Operations**: `docs/operations/` (testing guides, seed data)
+- **Automation / MCP ops vision**: `docs/automation/` — current commit→deploy flow, gaps, target loop, Jenkins CI/CD
 - **Roadmap**: `docs/ROADMAP.md`
 - **Full index**: `docs/README.md`
 
@@ -63,6 +64,10 @@ docker compose up -d
 # - API: http://localhost:8080/api
 # - Swagger: http://localhost:8080/api/swagger-ui.html
 # - Mailpit: http://localhost:8025
+# - Grafana: http://localhost:3000 (admin/admin) — metrics/logs/alerts; MCP: mcp-grafana in .mcp.json
+# - Prometheus: http://localhost:9090
+# - Alertmanager: http://localhost:9093
+# - Loki: http://localhost:3100
 # - Ollama: http://localhost:11434 (used by moderator service for AI review moderation)
 ```
 
