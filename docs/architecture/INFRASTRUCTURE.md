@@ -68,6 +68,15 @@ Agent access: official **mcp-grafana** (read-only) in `.mcp.json`. See [Observab
 
 Production: opt-in with `docker compose -f docker-compose.prod.yml --profile observability`.
 
+## Jenkins CI/CD
+
+`./scripts/start-jenkins.sh` starts a co-hosted controller at http://localhost:8088.
+
+- GitHub PRs: AI review (Ollama) → autofix → squash-merge
+- `main`: auto-deploy `docker-compose.prod.yml` + `scripts/confirm-prod.sh`
+
+See [Jenkins](../automation/JENKINS.md). Requires a GitHub PAT in `jenkins/secrets/github-token`.
+
 ## Future Considerations
 - Redis for caching
 - AWS S3 for image storage (currently local/embedded)

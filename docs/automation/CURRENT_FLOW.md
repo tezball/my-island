@@ -9,9 +9,11 @@ How My Island is built, verified, and deployed. Prefer **Jenkins** (`docs/automa
 ### Automated (Jenkins)
 
 ```bash
+echo 'ghp_...' > jenkins/secrets/github-token   # repo PAT for PR review/merge
 ./scripts/start-jenkins.sh
-# http://localhost:8088  → job "my-island"
-# DEPLOY_PROD=true runs docker-compose.prod.yml then scripts/confirm-prod.sh
+# http://localhost:8088
+#   my-island-github — PRs auto-reviewed/merged; main auto-deploys
+#   my-island        — manual; DEPLOY_PROD still opt-in
 ```
 
 ### Manual compose
@@ -76,22 +78,26 @@ Builds/runs `api`, `web` (dev Dockerfile + volume mount), postgres, mailpit, oll
 
 ```mermaid
 flowchart LR
-  A[Edit locally or via Cursor agent] --> B[git commit]
-  B --> C[Push / SOURCE=local]
-  C --> D[Jenkins my-island]
-  D --> E[mvn test + npm lint/build]
-  E --> F{DEPLOY_PROD?}
-  F -->|no| G[Green CI artifact]
-  F -->|yes| H[docker compose.prod up --build]
-  H --> I[confirm-prod.sh]
-  I --> J[Health + smoke OK]
+  A[PR opened / pushed] --> B[Jenkins my-island-github]
+  B --> C[mvn test + npm build]
+  C --> D[Ollama AI review]
+  D --> E{Blocking findings?}
+  E -->|yes| F[Autofix push / hold]
+  F --> B
+  E -->|no| G[Approve + squash-merge]
+  G --> H[Jenkins builds main]
+  H --> I[compose.prod up --build]
+  I --> J[confirm-prod.sh]
 ```
 
 | Step | What happens | Automation? |
 |------|--------------|-------------|
 | Author change | IDE / Cursor Cloud Agent | Agent can create/act on code |
-| CI | Jenkins job `my-island` | Yes (co-hosted) |
-| Deploy | Parameter `DEPLOY_PROD` + compose prod | Yes when checked |
+| CI | Jenkins `my-island-github` on every PR | Yes (poll ~2 min or GitHub webhook) |
+| AI review | Ollama `llama3.2` posts a GitHub review | Yes |
+| Autofix | Search/replace edits pushed to the PR branch | Yes, max 3 attempts |
+| Merge | Squash-merge when CI + review are green | Yes (skip `hold` / forks) |
+| Deploy | GitHub `main` job runs compose prod | Yes (`AUTO_DEPLOY_MAIN`) |
 | Post-deploy verify | `scripts/confirm-prod.sh` | Yes |
 | Rollback | Redeploy previous git SHA via Jenkins SOURCE/scm | Manual choice of revision |
 
@@ -105,7 +111,11 @@ flowchart LR
 
 ## 3. Test E2E and “confirm safe”
 
-There is **no single automated “safe to deploy” gate**. Safety is a **manual composition** of local checks.
+**Merge gate (automated):** Jenkins `my-island-github` requires Maven tests + frontend build + Ollama AI review before squash-merge. Playwright is still optional (`RUN_E2E`).
+
+**Prod gate (automated on `main`):** `scripts/confirm-prod.sh` after compose deploy.
+
+Local checks below remain available for humans and for the optional E2E stage.
 
 ### 3.1 Frontend E2E (primary UI confidence)
 

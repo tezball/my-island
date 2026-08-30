@@ -25,7 +25,7 @@ My Island is a camping/glamping booking platform for Ireland with a marketplace 
 - **Specific flows**: `docs/domain/{module}/*.md` (e.g., `booking/PAYMENT_FLOW.md`)
 - **Architecture**: `docs/architecture/OVERVIEW.md`
 - **Operations**: `docs/operations/` (testing guides, seed data)
-- **Automation / MCP ops vision**: `docs/automation/` — current commit→deploy flow, gaps, target loop, Jenkins CI/CD
+- **Automation / MCP ops vision**: `docs/automation/` — current commit→deploy flow, gaps, target loop, Jenkins (AI review + auto-merge + deploy)
 - **Roadmap**: `docs/ROADMAP.md`
 - **Full index**: `docs/README.md`
 
@@ -68,7 +68,8 @@ docker compose up -d
 # - Prometheus: http://localhost:9090
 # - Alertmanager: http://localhost:9093
 # - Loki: http://localhost:3100
-# - Ollama: http://localhost:11434 (used by moderator service for AI review moderation)
+# - Jenkins: http://localhost:8088 (admin/admin) — ./scripts/start-jenkins.sh (PR AI review → merge → deploy)
+# - Ollama: http://localhost:11434 (used by moderator service and Jenkins PR review)
 ```
 
 ## Commands
@@ -111,6 +112,10 @@ docker compose up -d ollama-pull  # Pull llama3.2 model (~2GB first time)
 # Native image (alternative to JRE-based api service)
 docker compose build api-native                                     # Build native image
 docker compose --profile native up api-native postgres   # Run native API
+
+# Jenkins CI/CD (PR AI review → merge → deploy)
+echo 'ghp_...' > jenkins/secrets/github-token   # repo-scoped PAT
+./scripts/start-jenkins.sh                      # http://localhost:8088
 ```
 
 ## Architecture

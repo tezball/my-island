@@ -82,11 +82,13 @@ Migrations: expand/contract preferred; agent must not run irreversible data dele
 
 ## Minimum viable automation (first slice)
 
-Smallest slice that proves the loop without full prod autopilot:
+**Shipped (Jenkins, this repo):** GitHub PR → Maven/npm CI → Ollama AI review → autofix → squash-merge → compose prod deploy → `confirm-prod.sh`.
 
-1. GitHub Actions: test + Playwright on PR.
+Still open:
+
+1. Playwright as a required PR gate (`RUN_E2E` is opt-in).
 2. Staging compose host with Grafana/Prometheus/Loki + read-only DB MCP.
-3. On merge to `main`: auto-deploy staging; smoke script; notify on failure.
-4. Agent can: query staging logs/metrics/SQL, open fix PR, wait on CI subscription.
+3. Agent can query staging logs/metrics/SQL and wait on Jenkins via an MCP/API bridge.
+4. Alert-driven Cloud Agent spawn.
 
-Prod deploy and alert-driven agent spawn can follow once staging loop is trustworthy.
+See [JENKINS.md](JENKINS.md).

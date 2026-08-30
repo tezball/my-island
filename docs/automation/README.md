@@ -13,7 +13,7 @@ This folder documents **how things work today** and the **gaps that block that v
 | [TARGET_LOOP.md](TARGET_LOOP.md) | Desired closed loop (observe → decide → change → verify → deploy) |
 | [OBSERVABILITY_MCP_OPTIONS.md](OBSERVABILITY_MCP_OPTIONS.md) | Free/near-free logs·metrics·alerts stacks with MCP (self-host or Cloud) |
 | [OBSERVABILITY_SETUP.md](OBSERVABILITY_SETUP.md) | Implemented stack: compose, Alertmanager, mcp-grafana wiring |
-| [JENKINS.md](JENKINS.md) | Co-hosted Jenkins: build → test → deploy → confirm prod |
+| [JENKINS.md](JENKINS.md) | Co-hosted Jenkins: PR AI review → autofix → merge → deploy → confirm |
 
 ## Related existing docs
 
@@ -33,5 +33,5 @@ This folder documents **how things work today** and the **gaps that block that v
 | Alerts | None (no Alertmanager) | No alert MCP | None |
 | SQL reads | Postgres MCP in `.mcp.json` (local) | Not available on cloud agent by default | No read-only prod DB MCP |
 | Create change | Human / Cursor agent | Cloud agent: branch, commit, push, PR | N/A |
-| Deploy change | Rebuild local containers / restart JAR | No deploy MCP; `gh` is read-only for agents | No CI/CD pipeline in repo |
-| E2E / safe gate | Playwright + Maven + Gatling (manual) | No required CI on PR | No automated prod smoke |
+| Deploy change | Rebuild local containers / restart JAR | No deploy MCP; `gh` is read-only for agents | Jenkins auto-deploys `main` after squash-merge |
+| E2E / safe gate | Playwright + Maven + Gatling (manual) | Jenkins PR job is the merge gate (unit/build + AI review) | `confirm-prod.sh` after deploy |

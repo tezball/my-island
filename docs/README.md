@@ -42,7 +42,7 @@ Vision: observe (logs, metrics, alerts, SQL) → change → verify → deploy vi
 - [Target Loop](automation/TARGET_LOOP.md) — Desired closed loop and safety contract
 - [Observability MCP options](automation/OBSERVABILITY_MCP_OPTIONS.md) — Stack choices
 - [Observability setup](automation/OBSERVABILITY_SETUP.md) — Implemented Prometheus/Loki/Alertmanager + mcp-grafana
-- [Jenkins CI/CD](automation/JENKINS.md) — Build, test, deploy, confirm prod
+- [Jenkins CI/CD](automation/JENKINS.md) — PR AI review, autofix, auto-merge, deploy, confirm prod
 
 ### Audits
 Point-in-time reports (historical, not living docs):

@@ -17,7 +17,7 @@ docker compose up -d
 | Frontend | http://localhost:5173 | React SPA |
 | API | http://localhost:8080/api | REST API |
 | Swagger UI | http://localhost:8080/api/swagger-ui.html | API Documentation |
-| Jenkins CI/CD | http://localhost:8088 | Build / test / deploy (`./scripts/start-jenkins.sh`) |
+| Jenkins CI/CD | http://localhost:8088 | PR AI review → merge → deploy (`./scripts/start-jenkins.sh`) |
 
 ## Test Accounts
 
