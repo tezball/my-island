@@ -63,6 +63,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mailpit:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
@@ -71,6 +73,8 @@ services:
       SPRING_DATASOURCE_USERNAME: myisland
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
       UPLOAD_DIR: /app/uploads
     volumes:
       - uploads_data:/app/uploads
@@ -91,6 +95,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mailpit:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
@@ -99,6 +105,8 @@ services:
       SPRING_DATASOURCE_USERNAME: myisland
       SPRING_DATASOURCE_PASSWORD: myisland_dev_password
       JWT_SECRET: myisland-dev-jwt-secret-key-that-is-at-least-256-bits-long
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
       UPLOAD_DIR: /app/uploads
     volumes:
       - uploads_data:/app/uploads

@@ -1,5 +1,5 @@
-# Build stage - using JDK 21 LTS
-FROM eclipse-temurin:21-jdk-alpine AS builder
+# Build stage - using JDK 25 LTS
+FROM eclipse-temurin:25-jdk-alpine AS builder
 WORKDIR /app
 
 # Install Maven
@@ -18,7 +18,7 @@ COPY src src
 RUN mvn package -DskipTests -B
 
 # Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 # Copy jar from builder
