@@ -59,7 +59,7 @@ Logs land in `logs/backend.log`, `logs/frontend.log`, `logs/build.log`.
 
 **B. Full Docker Compose** — `docker compose up -d`
 
-Builds/runs `api`, `web` (dev Dockerfile + volume mount), postgres, mailpit, ollama, moderator, and the observability trio (Grafana/Prometheus/Loki).
+Builds/runs `api`, `web` (dev Dockerfile + volume mount), postgres, mailpit, ollama, moderator, and observability (Grafana/Prometheus/Loki/Alertmanager).
 
 **Stop:** `./stop.sh` (add `-k` to remove volumes).
 
