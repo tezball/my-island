@@ -50,6 +50,7 @@ Point-in-time reports (historical, not living docs):
 - [2026-02-08 Supplier Portal](audits/2026-02-08-supplier-portal.md)
 
 ### Other
+- [MVP Feature Set](MVP_FEATURE_SET.md) — Canonical MVP scope (sectioned feature list + out-of-scope)
 - [Roadmap](ROADMAP.md) — Feature priorities and status
 - [MVP Launch Checklist](MVP_LAUNCH_CHECKLIST.md) — Launch readiness tracker
 - [Campsite Leads](leads/CAMPSITE_LEADS.md) — Partnership outreach tracking

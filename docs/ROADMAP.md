@@ -6,6 +6,8 @@
 
 My Island is a camping/glamping booking platform for Ireland with an integrated local supplier marketplace. The platform serves four user types: **Guests** (browse & book), **Owners** (manage properties & bookings), **Suppliers** (promote local offers), and **Platform Admins** (oversee the entire system).
 
+**MVP scope**: See [MVP Feature Set](MVP_FEATURE_SET.md) for the canonical sectioned list of in-scope and out-of-scope features.
+
 ---
 
 ## What's Built (Shipped)

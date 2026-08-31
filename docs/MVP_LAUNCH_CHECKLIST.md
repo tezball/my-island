@@ -1,8 +1,10 @@
 # MVP Launch Checklist - My Island
 
 > **Generated**: 2026-02-01
-> **Last Updated**: 2026-02-01
+> **Last Updated**: 2026-08-31
 > **Status**: 🚧 In Progress - Core Features Complete
+>
+> **Canonical MVP features**: [MVP Feature Set](MVP_FEATURE_SET.md) — use that doc for scope; this checklist tracks launch readiness and historical implementation status.
 
 ## Executive Summary
 
