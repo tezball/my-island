@@ -346,6 +346,19 @@ common source of bugs in two-sided marketplaces — design for it from day one.
 - **TRV-JRN-019** — As a Traveller, I want to bulk-log a completed multi-day trail. **C**
 - **TRV-JRN-020** — As a Traveller, I want my journal entries retained if I delete a booking from view, so that history is not lost by accident. **S**
 
+- **TRV-JRN-021** — As a Traveller, I want to distinguish "been there" from "stayed there" when I check a place off, so that a day visit and an overnight are not conflated. **M**
+  - **AC** Visit type is a first-class field from day one — `VISITED` | `STAYED`; retrofitting it later means re-asking every user about every entry
+  - **AC** A place that cannot be stayed at (a viewpoint, a shop) only offers `VISITED`
+- **TRV-JRN-022** — As a Traveller, I want to check a place off in one tap directly from the directory list, map pin or detail page, so that recording is effortless. **M**
+  - **AC** No modal, no mandatory fields — one tap records it; detail can be added later
+- **TRV-JRN-023** — As a Traveller, I want to record roughly when I was there (exact date, month, or just a year), so that I can log trips from memory. **M**
+  - **AC** Date precision is stored explicitly; "2019 sometime" must not become 1 January 2019
+- **TRV-JRN-024** — As a Traveller, I want to un-check or edit an entry, so that I can fix a mistake. **M**
+- **TRV-JRN-025** — As a Traveller, I want to check off several places at once from a list, so that back-filling years of travel is not a hundred taps. **S**
+- **TRV-JRN-026** — As a Traveller, I want to check off a place that is not in the directory by dropping a pin and naming it, so that the record is mine, not limited by our coverage. **S**
+  - **AC** User-created places are private by default; promoting one into the public directory is a curator decision
+- **TRV-JRN-027** — As a Traveller, I want my check-offs to be private by default, so that recording is not a performance. **M**
+
 ### TRV-OFR — Offers, vouchers & marketplace
 
 - **TRV-OFR-001** — As a Traveller, I want to browse local supplier offers filtered by area and category. **M**
@@ -371,6 +384,20 @@ common source of bugs in two-sided marketplaces — design for it from day one.
 ---
 
 ## 4. HST — Host (accommodation partner)
+
+### HST-CLM — Claiming a directory entry
+
+> The bridge from a curator-seeded directory to a self-service partner platform. Cheap to build,
+> and it produces a qualified lead list that de-risks everything in `HST-ONB` below.
+
+- **HST-CLM-001** — As a business owner, I want to see a "this is my business — claim it" action on my directory entry, so that I can take control of it. **M**
+- **HST-CLM-002** — As a claimant, I want to submit a claim with my contact details and evidence of ownership. **M**
+- **HST-CLM-003** — As a claimant, I want to be told what happens next and roughly when. **M**
+- **HST-CLM-004** — As a claimant, I want to suggest a correction without claiming, so that fixing an error is low-commitment. **M**
+- **HST-CLM-005** — As a Visitor, I want to suggest a place or business that is missing from the directory. **S**
+- **HST-CLM-006** — As an Admin, I want a queue of claims and corrections to approve or reject. **M**
+- **HST-CLM-007** — As an Admin, I want approving a claim to create a Partner account linked to the existing entry, preserving its check-off history. **S**
+- **HST-CLM-008** — As an Admin, I want claims to flow into the lead CRM, so that partner acquisition starts from real demand. **S**
 
 ### HST-ONB — Onboarding
 
@@ -768,6 +795,28 @@ common source of bugs in two-sided marketplaces — design for it from day one.
 
 ## 10. CUR — Curator (editorial content)
 
+### CUR-DIR — Directory entries
+
+> `CUR-PLC` below covers editorial Places (trails, landmarks). These cover the rest of the directory —
+> campsites, B&Bs, suppliers, experience operators — before any of them have a Partner account.
+
+- **CUR-DIR-001** — As a Curator, I want to create a directory entry for a business that has no account yet, so that the directory can be populated before the partner side exists. **M**
+- **CUR-DIR-002** — As a Curator, I want to record category, type, location, description, photos, website, phone and opening season on an entry. **M**
+- **CUR-DIR-003** — As a Curator, I want to bulk-import entries from a spreadsheet or an open data source. **M**
+- **CUR-DIR-004** — As a Curator, I want imports deduplicated against existing entries by name and proximity. **M**
+- **CUR-DIR-005** — As a Curator, I want to mark an entry unverified, verified, or permanently closed. **M**
+- **CUR-DIR-006** — As a Curator, I want an entry to record its data source and last-verified date, so that staleness is measurable. **M**
+  - **AC** Every entry carries `sourceType`, `sourceRef` and `lastVerifiedAt` — a directory nobody can audit rots silently
+- **CUR-DIR-007** — As a Curator, I want a queue of entries not verified within N months, so that the directory stays trustworthy. **S**
+- **CUR-DIR-008** — As a Curator, I want to review traveller-suggested corrections and additions. **S**
+- **CUR-DIR-009** — As a Curator, I want to merge duplicate entries without losing travellers' check-offs against either. **S**
+  - **AC** Merging re-points existing visit records; no user silently loses a logged visit
+- **CUR-DIR-010** — As a Curator, I want to see check-off counts per entry, so that I know which entries matter and deserve better data. **S**
+- **CUR-DIR-011** — As a Curator, I want to unpublish an entry without deleting the visit history attached to it. **M**
+- **CUR-DIR-012** — As a Curator, I want geographic coverage reporting by county and category, so that I know where the directory is thin. **S**
+
+### CUR-PLC — Places & trails
+
 - **CUR-PLC-001** — As a Curator, I want to create a Place with name, description, category, coordinates and photos. **M**
 - **CUR-PLC-002** — As a Curator, I want to record trail attributes: distance, ascent, difficulty, estimated time, route type. **M**
 - **CUR-PLC-003** — As a Curator, I want to upload a GPX route and have it render on the map. **S**
@@ -958,38 +1007,115 @@ common source of bugs in two-sided marketplaces — design for it from day one.
 
 ---
 
-## 15. Release slicing
+## 15. Delivery phases
 
-### 15.1 MVP — "Find a place, book it, remember it"
+> **The MVP is defined in `docs/MVP.md`.** It is deliberately much smaller than the sections below:
+> a directory of places you can check off. No booking, no payments, no partner portal.
+>
+> Everything else is sequenced here. Each phase names the question it answers — if a phase's question
+> is already answered "no" by the previous phase, do not build it.
 
-The narrowest slice that is genuinely useful to all three sides.
+### Phase 0 — MVP: the checkable directory
 
-| Area | Included |
+**Question:** will people bother recording where they have been?
+
+See `docs/MVP.md`. Directory browsing, map, entry pages, accounts, check-off, personal list and map,
+curator authoring, claim/correction capture. **Nothing transactional.**
+
+**Exit:** a defined proportion of registered users have checked off more than one place, and come
+back to do it again. If that fails, no later phase is worth building.
+
+### Phase 1 — Partners own their entries
+
+**Question:** will businesses maintain their own listing for free?
+
+| Epic | Stories |
 |---|---|
-| Visitor | Search + filters, map, listing pages, places/hikes browsing, legal & consent |
-| Traveller | Account, booking with payment, trips, messaging, reviews, **auto travel record + personal map** |
-| Host | Onboarding, listing & unit management, calendar & blocking, base + seasonal pricing, booking management, Today view, payouts, subscription with trial |
-| Supplier | Onboarding, offers, QR redemption, subscription |
-| Admin | User/booking/partner admin, feature toggles, audit log |
-| Moderator | AI-assisted review moderation queue |
-| Cross-cutting | Accessibility AA, GDPR basics, transactional email, observability |
+| Claim → account | `HST-CLM-006..008`, `TRV-ACC-013`, `TRV-ACC-014` |
+| Self-service listing | `HST-ONB-003..006`, `HST-ONB-008`, `HST-ONB-011..012`, `HST-LST-001`, `HST-LST-003`, `HST-LST-005..010`, `HST-LST-013..014`, `HST-LST-017` |
+| Photos & media | `HST-LST-005..008` |
+| Moderation of partner edits | `MOD-LST-001..003`, `MOD-IMG-001..002` |
+| Partner support | `SPL-ANL-011`, `AGT-QUE-001..003`, `AGT-TKT-001..005` |
 
-**Deliberately out of MVP:** Experiences, staff/RBAC, analytics, iCal sync, extras, multi-property,
-deposits, waitlists, badges, social features.
+**Exit:** partners keep entries current without being chased. If they will not maintain a free
+listing, they will not pay for one — stop and rethink before Phase 3.
 
-### 15.2 Release 2 — "Run your business here"
+### Phase 2 — Enquiry, then booking
 
-Staff & RBAC · Analytics dashboards · Extras · Multi-property · iCal import · Automated guest
-messaging · Featured placements · Support ticketing · Curator tooling & editorial collections.
+**Question:** does the directory actually drive business to partners?
 
-### 15.3 Release 3 — "The whole trip"
+Do this in two steps and measure between them.
 
-Experiences (sessions, tickets, waivers) · Itineraries · Wishlists & collaboration · Badges &
-year-in-review · Deposits & split payments · Waitlists · Public shareable maps · Irish language.
+**2a — Enquiry only.** A traveller can contact a partner through the platform; the partner replies.
+No inventory, no money.
+`TRV-MSG-001..003`, `TRV-MSG-006..008`, `HST-COM-001..003`, `HST-COM-007`, `XCT-NTF-001..002`.
 
-### 15.4 Later
+**2b — Booking and payment.** Only if 2a proves demand.
+`HST-INV-001..007`, `HST-CAL-001..005`, `HST-PRC-001..002`, `HST-PRC-009`, `HST-PRC-014`,
+`TRV-BKG-001..005`, `TRV-BKG-007`, `TRV-BKG-010..011`, `TRV-BKG-018..020`,
+`TRV-TRP-001..003`, `TRV-TRP-007..008`, `HST-BKG-001..003`, `HST-BKG-005..006`,
+`HST-BKG-010..013`, `HST-FIN-001..003`, `HST-FIN-008`, `XCT-PRF-005`.
+Plus `VIS-LST-002..008` and `VIS-DSC-006`, which only become meaningful once inventory exists.
 
-OTA two-way sync · Dynamic pricing suggestions · Social following · Native apps · Second country.
+**Exit:** bookings complete end to end, money reaches partners, refunds work.
+
+### Phase 3 — Monetisation
+
+**Question:** what will partners pay for?
+
+`HST-SUB-001..008`, `HST-SUB-011`, `SPL-ANL-006`, `ADM-CFG-004`, `ADM-FIN-001..005`.
+Then featured placement: `HST-SUB-009..010`, `SPL-ANL-007`.
+
+Gate **management leverage**, never visibility or the ability to receive a booking — see §0.5.
+
+**Exit:** a paying cohort renews past its second billing period.
+
+### Phase 4 — Running a business
+
+**Question:** what keeps them subscribed?
+
+| Epic | Stories |
+|---|---|
+| Analytics | `HST-ANL-001..010`, `SPL-ANL-001..005` |
+| Staff & RBAC | `HST-STF-001..010`, all of `STF` |
+| Calendar depth | `HST-CAL-006..013` |
+| Pricing depth | `HST-PRC-003..013` |
+| Extras | `HST-INV-009..011`, `TRV-BKG-006` |
+| Multi-property | `HST-LST-002`, `HST-LST-020..023` |
+| Automation | `HST-COM-004..006` |
+| Modifications | `TRV-TRP-004..006`, `HST-BKG-008..009` |
+
+### Phase 5 — Reviews & trust
+
+**Question:** can we add public opinion without wrecking the tone?
+
+`TRV-RVW-001..011`, `HST-RVW-001..008`, `VIS-LST-009..011`, `VIS-LST-013..014`,
+all of `MOD-RVW`, `MOD-POL-001..005`.
+
+Deliberately late. Reviews pull in the whole moderation service, appeals, and a permanent
+partner-relations burden. The private check-off in Phase 0 gives travellers a reason to return
+without any of that.
+
+### Phase 6 — The wider marketplace
+
+Suppliers and offers: `SPL-OFR-*`, `SPL-RDM-*`, `TRV-OFR-*`.
+Experiences: all of `EXP`.
+
+### Phase 7 — Community & sharing
+
+`TRV-JRN-010..019`, `TRV-SRC-001..011`, `VIS-PLC-005`, `VIS-PLC-008`, `CUR-COL-*`.
+Badges, year-in-review, public maps, wishlists, itineraries, editorial collections.
+
+### Ongoing — not a phase
+
+These run from Phase 0 and never stop: `XCT-A11Y`, `XCT-PRV`, `XCT-PRF`, `XCT-SEO`,
+`ADM-AUD`, `OPS-*`. Accessibility and privacy in particular are cheaper built in than retrofitted.
+
+### Explicitly deferred
+
+`HST-CAL-010` (OTA two-way sync) · `HST-PRC-013` (dynamic pricing) · `TRV-JRN-017` (following other
+travellers) · `MOD-IMG-003` (stolen-photo detection) · `SPL-ANL-012` (host/supplier cross-promotion)
+· `XCT-I18N-006` (multilingual partner content) · native apps · a second country.
 
 ---
 
@@ -1031,28 +1157,31 @@ visibility and booking capability must never be.
 | Role | Stories |
 |---|---|
 | VIS — Visitor | 77 |
-| TRV — Traveller | 120 |
-| HST — Host | 155 |
+| TRV — Traveller | 127 |
+| HST — Host | 163 |
 | SPL — Supplier | 40 |
 | EXP — Experience Provider | 31 |
 | STF — Staff | 22 |
 | AGT — Support Agent | 24 |
 | MOD — Moderator | 21 |
-| CUR — Curator | 19 |
+| CUR — Curator | 31 |
 | BIZ — Partnerships | 12 |
 | ADM — Admin | 39 |
 | OPS — Engineer | 32 |
 | XCT — Cross-cutting | 44 |
-| **Total** | **636** |
+| **Total** | **663** |
 
-Of these, **41** carry explicit acceptance criteria — the ones where getting it wrong is expensive
+Of these, **48** carry explicit acceptance criteria — the ones where getting it wrong is expensive
 or where the requirement is genuinely ambiguous. Write the rest at grooming time.
 
 | Priority | Count |
 |---|---|
-| **M** — Must (MVP) | 285 |
-| **S** — Should | 229 |
+| **M** — Must | 302 |
+| **S** — Should | 239 |
 | **C** — Could | 115 |
 | **W** — Won't this cycle | 7 |
 
 **$** stories (subscription-gated): **41**
+
+> **M** here means "must exist in the finished product", not "must be in the MVP". The MVP is a
+> strict subset defined in `docs/MVP.md` — roughly 136 referenced stories, not 302.
