@@ -3,24 +3,34 @@
 Product definition for a mobile directory of places in Ireland worth going to — points of interest,
 experiences, campsites and B&Bs — that you tick off as you go.
 
-**Start here: [`product/`](product/).**
+**Engineering work tracker:** open [`ops/`](ops/) as an Obsidian vault. Start at
+[`ops/HOME.md`](ops/HOME.md). The current mandate is the **agent workflow**, not the consumer app.
+
+**Product canon:** [`product/BRIEFING.md`](product/BRIEFING.md), then [`product/`](product/).
 
 ## Status
 
-Product definition, awaiting sign-off. **No code, and no technology chosen yet.**
+Product definition, awaiting sign-off. **No application code yet.** Backend is a
+**Java / Spring house**. Logs, metrics and alerts are queried through MCP, OSS
+first. Details: [`product/STACK.md`](product/STACK.md).
+
+The team’s tickets, kanban, plans, and run logs live in `ops/` (markdown in git).
+Local MCP substrate: `./ops/scripts/start-local.sh`.
 
 The previous build — a camping and glamping booking platform — has had its code, CI and
-infrastructure removed. Its documentation is retained in [`docs/`](docs/) for reference: domain
-model, flows, audits and operational notes. Read it as history, not as requirements — it describes
-a booking platform, which is not what we are building.
+infrastructure removed. Its documentation is retained in [`docs/`](docs/) for reference.
+Read it as history, not as requirements. Full previous codebase: git tag `legacy-platform`.
 
-The full previous codebase remains in git history at tag `legacy-platform`.
+## Stack
 
-## Choosing a stack
+House decisions are in [`product/STACK.md`](product/STACK.md):
 
-The product documents deliberately state *capabilities*, not technologies. Nothing in `product/`
-prescribes a language, framework, database or hosting model. Selection happens against the
-requirements in [`product/MVP.md`](product/MVP.md) §3 and the `NFR-*` stories in §4 — most notably:
+- **Java + Spring Boot** for all backend services
+- **Logs, metrics and alerts** via MCP (Prometheus, Loki, Grafana Alerting;
+  `mcp-grafana`; self-hosted OSS first)
+
+Client framework, database and host remain open. They still have to meet
+[`product/MVP.md`](product/MVP.md) §3 and the `NFR-*` stories — most notably:
 
 - Mobile-first, one-handed, installable to a phone home screen without an app-store gate
 - Readable and usable offline; writes made offline queue and sync idempotently

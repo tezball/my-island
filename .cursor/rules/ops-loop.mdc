@@ -1,0 +1,14 @@
+---
+description: Operations vault is the work tracker. Do not build the product MVP unless a PRD ticket is in implement.
+alwaysApply: true
+---
+
+# Ops loop
+
+You are working in a git-tracked Obsidian vault at `ops/`.
+
+- Start from `ops/HOME.md` and `ops/BOARD.md` (regenerate with `python3 ops/scripts/board_sync.py`).
+- Roles: planner writes `ops/plans/`. Implementer opens a PR. Reviewer comments only — never merge.
+- One ticket per session. Prefix `WF-` = this workflow. `PRD-` = product (none until we say so).
+- No Jenkins. No prod writes. No secrets in notes.
+- Full loop: `ops/workflow/LOOP.md`. Safety: `ops/workflow/SAFETY.md`.

@@ -1,0 +1,7 @@
+{
+  "types": {
+    "status": "text",
+    "priority": "text",
+    "id": "text"
+  }
+}

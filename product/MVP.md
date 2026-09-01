@@ -201,6 +201,9 @@ Priority: **M** = in MVP. **D** = deferred, listed so it is not re-proposed.
 - **NFR-07** — Structured data and link previews on place pages for search and sharing. **M**
 - **NFR-08** — Clean, stable, human-readable URLs. **M**
 - **NFR-09** — Structured logging, error tracking, uptime and core-path alerting. **M**
+  - **AC** Logs, metrics and alerts are queryable through MCP in every environment that runs the app. Human dashboards are not a substitute.
+  - **AC** Default is self-hosted OSS: Prometheus, Loki, Grafana Alerting + Alertmanager, accessed by agents via `mcp-grafana` (read-only). Prefer $0. Paid APM is not the system of record.
+  - **AC** See `STACK.md`
 - **NFR-10** — CI runs build, unit, integration and E2E on every PR; merge blocked on failure. **M**
 - **NFR-11** — Automated encrypted backups with a periodically tested restore. **M**
 - **NFR-12** — Secrets in a secret manager; rate limiting on auth and write endpoints. **M**
@@ -301,7 +304,7 @@ Roughly, for a small team. Adjust to your capacity — the ordering matters more
 
 | | Focus | Why here |
 |---|---|---|
-| 0 | **Choose the stack** against §3 and `NFR-*` | Do this first and once. See `README.md` |
+| 0 | **Service skeleton on the house stack** | Java / Spring Boot; Micrometer + structured logs from commit one. See `STACK.md` |
 | 1–2 | Data model, service skeleton, auth, CI, environments | Foundations. Get NFR-10..14 in before there is code to retrofit |
 | 2–4 | Curator tooling (`CUR-*`) and content import | **Start content acquisition first.** It has the longest lead time and is the usual cause of a slipped launch |
 | 3–6 | Explore: list, filters, map (`DIR-*`, `MAP-*`) | The browse surface |
@@ -323,4 +326,5 @@ Decide where seed content comes from in week one — see `VISION.md` §10 questi
 - [ ] WCAG 2.2 AA verified on the three core screens
 - [ ] GDPR export and deletion working, not planned
 - [ ] Restore from backup tested, not assumed
+- [ ] Logs, metrics and core-path alerts queryable through MCP (not only a human dashboard)
 - [ ] Success thresholds agreed and written down before launch day

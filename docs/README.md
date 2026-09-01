@@ -1,5 +1,9 @@
 # My Island Documentation
 
+> **History.** This folder describes the previous camping booking platform. It is not
+> the work tracker and not the rebuild spec. Work: [`../ops/`](../ops/). Product:
+> [`../product/`](../product/).
+
 Camping/glamping booking platform for Ireland with a local supplier marketplace.
 
 ## Navigation

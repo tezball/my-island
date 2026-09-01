@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "grafana": {
+      "command": "uvx",
+      "args": ["mcp-grafana", "--disable-write"],
+      "env": {
+        "GRAFANA_URL": "http://127.0.0.1:3030",
+        "GRAFANA_USERNAME": "admin",
+        "GRAFANA_PASSWORD": "admin"
+      }
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://ops_reader:ops_reader@127.0.0.1:5433/ops"
+      ]
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "-e",
+        "GITHUB_TOOLSETS=context,repos,pull_requests,actions,users",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "envFile": "${workspaceFolder}/.env.ops"
+    },
+    "docker": {
+      "command": "docker",
+      "args": ["mcp", "gateway", "run", "--servers", "docker"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    }
+  }
+}

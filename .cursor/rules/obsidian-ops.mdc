@@ -1,0 +1,14 @@
+---
+description: How to edit ops/ tickets, plans, board, and workflow notes
+globs: ops/**/*.md
+alwaysApply: false
+---
+
+# Obsidian ops notes
+
+- Tickets live in `ops/tickets/<id>.md` with YAML `id`, `status`, `priority`, `title`.
+- Statuses: `inbox` | `ready` | `plan` | `implement` | `review` | `done` | `blocked`.
+- After changing a ticket, run `python3 ops/scripts/board_sync.py`. Do not hand-edit `ops/BOARD.md`.
+- New tickets: copy `ops/templates/ticket.md`. Next id is max `WF-N` + 1.
+- Wikilinks are vault-relative (`ops/` is the vault): `[[tickets/WF-001]]`, `[[workflow/LOOP]]`.
+- Keep notes short. Put design in `ops/plans/`, logs in `ops/runs/`.

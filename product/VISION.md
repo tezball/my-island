@@ -109,6 +109,8 @@ I have made these calls to keep the build moving. Each is reversible, at the sta
 | 4 | **Check-off works before signup, stored locally** | Removes the biggest first-run barrier. Prompt to create an account to keep it | Low |
 | 5 | **`visitType` (visited / stayed) in the schema from day one, surfaced only for stays** | Costs nothing now; retrofitting means re-asking every user about every entry | High if skipped |
 | 6 | **No reviews or ratings in MVP** | Pulls in the entire moderation stack and a permanent partner-relations burden | Low — it is additive |
+| 7 | **Java / Spring house** | We already know this stack; a second backend language would split a small team. Client stays open against `MVP.md` §3 | High once services exist |
+| 8 | **Logs, metrics and alerts via MCP, OSS first** | Agents cannot operate the platform from a human dashboard. Prometheus + Loki + Grafana Alerting + `mcp-grafana` is $0 and already researched. Paid APM is not the interface | Medium to change backends; not acceptable to drop MCP access |
 
 ## 10. Open questions for the business
 
@@ -117,7 +119,9 @@ These need answers from outside product before the chunks they gate.
 | # | Question | Gates |
 |---|---|---|
 | 1 | Where does the seed content come from — licensed, scraped, open data, or written in-house? | MVP. This is the critical path, not the code |
-| 5 | Which stack? Nothing here prescribes one — selection runs against `MVP.md` §3 and the `NFR-*` stories | The build, not the product definition |
 | 2 | What is the eventual revenue model — partner subscription, commission, or advertising? | Chunk 7 |
 | 3 | Do we have, or can we get, a content person? | MVP quality |
 | 4 | Is there an existing audience to launch into, or do we start cold? | Launch plan, success thresholds |
+
+Stack is decided: Java / Spring house; observability via MCP, OSS first. See `STACK.md`.
+Client framework, database and host remain open against `MVP.md` §3.
