@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up - Campsite Booking App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee6c",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#183221",
+                        "text-main": "#111813",
+                        "text-secondary": "#61896f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased">
+<div class="relative mx-auto flex h-screen max-w-md w-full flex-col overflow-hidden bg-surface-light dark:bg-surface-dark shadow-xl sm:rounded-xl sm:h-[90vh] sm:my-[5vh]">
+<header class="flex items-center justify-between px-4 py-3 shrink-0">
+<button class="flex size-10 items-center justify-center rounded-full text-text-main dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Sign Up</h2>
+<div class="size-10"></div>
+</header>
+<div class="px-6 py-2 shrink-0">
+<div class="flex justify-between items-center mb-2">
+<p class="text-text-main dark:text-gray-200 text-sm font-medium">Step 1 of 2</p>
+<p class="text-text-secondary dark:text-gray-400 text-xs font-normal">Account Details</p>
+</div>
+<div class="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/2 rounded-full"></div>
+</div>
+</div>
+<main class="flex-1 overflow-y-auto no-scrollbar px-6 pt-4 pb-24">
+<div class="mb-6">
+<h1 class="text-text-main dark:text-white text-[28px] leading-9 font-bold tracking-tight mb-2">
+                    Create your account
+                </h1>
+<p class="text-text-secondary dark:text-gray-400 text-base font-normal leading-relaxed">
+                    Book the best camping spots across Ireland and start your adventure.
+                </p>
+</div>
+<form class="flex flex-col gap-5">
+<div class="flex flex-col items-center justify-center gap-2 mb-2">
+<div class="relative group cursor-pointer">
+<input accept="image/*" class="hidden" id="profile-upload" type="file"/>
+<label class="flex h-24 w-24 items-center justify-center rounded-full bg-background-light dark:bg-background-dark border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-primary dark:hover:border-primary transition-all cursor-pointer" for="profile-upload">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors" style="font-size: 32px;">photo_camera</span>
+</label>
+<button class="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-[#052e16] shadow-sm ring-2 ring-white dark:ring-surface-dark hover:scale-105 transition-transform" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+</button>
+</div>
+<button class="text-sm font-bold text-primary hover:text-[#20d85f] transition-colors" onclick="document.getElementById('profile-upload').click()" type="button">
+                        Add Photo
+                    </button>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-text-main dark:text-gray-200 text-sm font-semibold" for="fullname">Full Name</label>
+<div class="relative group">
+<input class="peer block w-full rounded-xl border-0 bg-background-light dark:bg-background-dark py-4 px-4 text-text-main dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-surface-dark transition-all placeholder:text-gray-400 sm:text-sm sm:leading-6" id="fullname" placeholder="e.g. Ciara O'Connor" type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-primary opacity-0 peer-valid:opacity-0 hidden peer-[&amp;:not(:placeholder-shown)]:block">
+</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-text-main dark:text-gray-200 text-sm font-semibold" for="email">Email Address</label>
+<div class="relative">
+<input class="peer block w-full rounded-xl border-0 bg-background-light dark:bg-background-dark py-4 px-4 text-text-main dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-surface-dark transition-all placeholder:text-gray-400 sm:text-sm sm:leading-6" id="email" placeholder="name@example.com" type="email"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" style="font-size: 20px;">mail</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-text-main dark:text-gray-200 text-sm font-semibold" for="password">Password</label>
+<div class="relative">
+<input class="block w-full rounded-xl border-0 bg-background-light dark:bg-background-dark py-4 px-4 text-text-main dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-gray-700 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-surface-dark transition-all placeholder:text-gray-400 sm:text-sm sm:leading-6 pr-12" id="password" placeholder="Min. 8 characters" type="password"/>
+<button class="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-gray-500 hover:text-text-main dark:hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 20px;">visibility_off</span>
+</button>
+</div>
+<p class="text-xs text-text-secondary dark:text-gray-500 mt-1 pl-1">Must contain at least 8 characters</p>
+</div>
+</form>
+<p class="mt-8 text-center text-xs text-text-secondary dark:text-gray-500 leading-relaxed px-4">
+                By creating an account, you agree to our <a class="underline hover:text-primary transition-colors" href="#">Terms of Service</a> and <a class="underline hover:text-primary transition-colors" href="#">Privacy Policy</a>.
+            </p>
+</main>
+<div class="absolute bottom-0 left-0 w-full bg-surface-light dark:bg-surface-dark border-t border-gray-100 dark:border-white/5 p-4 pb-8">
+<button class="w-full rounded-xl bg-primary py-4 px-4 text-center text-base font-bold text-[#052e16] hover:bg-[#20d85f] active:scale-[0.99] transition-all shadow-sm">
+                Continue
+            </button>
+<div class="mt-4 text-center">
+<span class="text-text-main dark:text-gray-300 text-sm font-medium">Already have an account? </span>
+<a class="text-primary hover:text-[#20d85f] text-sm font-bold transition-colors" href="#">Log in</a>
+</div>
+</div>
+</div>
+</body></html>

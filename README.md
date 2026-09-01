@@ -9,8 +9,12 @@ experiences, campsites and B&Bs — that you tick off as you go.
 
 Product definition, awaiting sign-off. **No code, and no technology chosen yet.**
 
-The previous build — a camping and glamping booking platform — has been removed. It remains in git
-history at tag `legacy-platform` if it is ever needed.
+The previous build — a camping and glamping booking platform — has had its code, CI and
+infrastructure removed. Its documentation is retained in [`docs/`](docs/) for reference: domain
+model, flows, audits and operational notes. Read it as history, not as requirements — it describes
+a booking platform, which is not what we are building.
+
+The full previous codebase remains in git history at tag `legacy-platform`.
 
 ## Choosing a stack
 

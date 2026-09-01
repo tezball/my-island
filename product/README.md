@@ -24,5 +24,7 @@ Draft, awaiting sign-off. **Nothing built, and no technology chosen.**
 These documents state capabilities, never technologies. Stack selection runs against `MVP.md` §3
 and the `NFR-*` stories — see the root `README.md`.
 
-The previous camping-platform build has been removed from the working tree. It remains in git
-history at tag `legacy-platform`.
+The previous camping-platform build has had its code removed from the working tree; its
+documentation is retained in `../docs/` for reference. That material describes a booking platform
+and is superseded by this directory — read it as history, not as requirements. The full previous
+codebase remains in git history at tag `legacy-platform`.

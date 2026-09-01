@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add Campsite Listing Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#059669", // Emerald Green
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "irish-green": "#15803d",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-[#111418] dark:text-white">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-28">
+<div class="sticky top-0 z-30 bg-background-light dark:bg-background-dark border-b border-gray-200 dark:border-gray-800">
+<div class="flex items-center justify-between px-4 py-4">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-gray-200/50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[#111418] dark:text-white">arrow_back</span>
+</button>
+<h1 class="text-[#111418] dark:text-white text-lg font-bold">New Listing</h1>
+<div class="w-10"></div> 
+</div>
+<div class="w-full h-1.5 bg-gray-200 dark:bg-gray-800">
+<div class="h-full w-2/5 bg-primary rounded-r-full shadow-[0_0_10px_rgba(5,150,105,0.5)]"></div>
+</div>
+</div>
+<div class="px-5 py-6 flex flex-col gap-8">
+<div class="flex flex-col gap-5">
+<h2 class="text-[#111418] dark:text-white text-xl font-bold">Basic Info</h2>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-300">Campsite Name</label>
+<input class="w-full rounded-xl border-gray-200 bg-white dark:bg-gray-800 p-3.5 text-sm font-medium focus:border-primary focus:ring-primary dark:border-gray-700 dark:text-white placeholder-gray-400 shadow-sm" placeholder="e.g. Eagle's Point Camping" type="text" value="Eagle's Point Camping"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-300">Location</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">location_on</span>
+<input class="w-full rounded-xl border-gray-200 bg-white dark:bg-gray-800 pl-10 p-3.5 text-sm font-medium focus:border-primary focus:ring-primary dark:border-gray-700 dark:text-white placeholder-gray-400 shadow-sm" placeholder="City, County" type="text" value="Bantry, Co. Cork, Ireland"/>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-300">Categories</label>
+<div class="flex flex-wrap gap-2.5">
+<button class="rounded-full bg-primary/10 border border-primary text-primary px-4 py-2 text-xs font-bold transition-colors flex items-center gap-1">
+                        Sea View <span class="material-symbols-outlined text-sm">close</span>
+</button>
+<button class="rounded-full bg-primary/10 border border-primary text-primary px-4 py-2 text-xs font-bold transition-colors flex items-center gap-1">
+                        Family Friendly <span class="material-symbols-outlined text-sm">close</span>
+</button>
+<button class="rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Mountain
+                    </button>
+<button class="rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Forest
+                    </button>
+<button class="rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">add</span> Add New
+                    </button>
+</div>
+</div>
+</div>
+<div class="h-px bg-gray-200 dark:bg-gray-800 w-full"></div>
+<div class="flex flex-col gap-5">
+<h2 class="text-[#111418] dark:text-white text-xl font-bold">Description</h2>
+<div class="flex flex-col gap-2">
+<textarea class="w-full rounded-xl border-gray-200 bg-white dark:bg-gray-800 p-3.5 text-sm font-medium focus:border-primary focus:ring-primary dark:border-gray-700 dark:text-white placeholder-gray-400 resize-none shadow-sm leading-relaxed" placeholder="Describe the atmosphere, surroundings, and what makes your site unique..." rows="5">Experience the rugged beauty of West Cork at Eagle's Point. Located directly on the Wild Atlantic Way, our site offers panoramic views of Bantry Bay. Whether you're pitching a tent or parking an RV, you'll wake up to the sound of waves.</textarea>
+<p class="text-xs text-right text-gray-400">243/500</p>
+</div>
+</div>
+<div class="h-px bg-gray-200 dark:bg-gray-800 w-full"></div>
+<div class="flex flex-col gap-5">
+<h2 class="text-[#111418] dark:text-white text-xl font-bold">Photos</h2>
+<div class="grid grid-cols-3 gap-3">
+<button class="aspect-square rounded-xl border-2 border-dashed border-primary/40 bg-primary/5 flex flex-col items-center justify-center gap-1 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl">add_a_photo</span>
+<span class="text-xs font-bold text-primary">Add</span>
+</button>
+<div class="aspect-square rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden relative group shadow-sm">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0RikADtiHtrwnSYuy-gVcKb023rzntZklpoBusdWjW41GtGvrR1kmQZbZlJpz24qbMWYGfHV1xUuCUP9KRosTViEf_KyJBg3crl3UaVKHcNz60x3mVBkWrfvN45kQ9_WKn7xKMLiOQr0V14EUe3k55kz_7EGAn4uoXf6N0AtgHXCniSepBBHR9pMV3_m7btmArh2LXMp0Fb1I5tJr4FdvzbPFfOJxydECEZMxwSbASGfD1_DyCOU72WHHyMxFNLa5se2ZC6Dpi7k"/>
+<button class="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-white rounded-full p-1 hover:bg-red-500 transition-colors"><span class="material-symbols-outlined text-xs">close</span></button>
+</div>
+<div class="aspect-square rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnRn-Fv8x1A9YOJIGFsKqL8BeqChmecBONcGxkxGRchMV4feh1a57aiubGQA79jrddTrW_irhIa-qjSk0JS57QBsFT1Hgz1UCyhlV9JT68SHPAmXvelXggTmxFOI5oqwa1BzD2lfz6ZZJJe_bhywsR5WmuciopGamm9humaYP75-1cRVaMKrDcP4_ru2XRdUNOQm2eexqWr_J2pPRbkV7GEfO0y2pfqUSzEpWdmBDC_aAQxuNdImyNMjovKpKnDGwcE1xx69k7XlA"/>
+<button class="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-white rounded-full p-1 hover:bg-red-500 transition-colors"><span class="material-symbols-outlined text-xs">close</span></button>
+</div>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400">Drag to reorder. Add at least 3 photos to showcase your campsite.</p>
+</div>
+<div class="h-px bg-gray-200 dark:bg-gray-800 w-full"></div>
+<div class="flex flex-col gap-5">
+<h2 class="text-[#111418] dark:text-white text-xl font-bold">Amenities</h2>
+<div class="grid grid-cols-2 gap-3">
+<button class="group flex items-center gap-3 p-3.5 rounded-xl bg-primary/5 border border-primary transition-all text-left shadow-sm">
+<span class="material-symbols-outlined text-primary">wifi</span>
+<span class="text-sm font-bold text-primary">Wi-Fi</span>
+<span class="material-symbols-outlined text-primary ml-auto text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="group flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all text-left shadow-sm">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300">bolt</span>
+<span class="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Electric</span>
+</button>
+<button class="group flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all text-left shadow-sm">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300">water_drop</span>
+<span class="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Water</span>
+</button>
+<button class="group flex items-center gap-3 p-3.5 rounded-xl bg-primary/5 border border-primary transition-all text-left shadow-sm">
+<span class="material-symbols-outlined text-primary">pets</span>
+<span class="text-sm font-bold text-primary">Pets</span>
+<span class="material-symbols-outlined text-primary ml-auto text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="group flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all text-left shadow-sm">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300">shower</span>
+<span class="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Showers</span>
+</button>
+<button class="group flex items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all text-left shadow-sm">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300">local_laundry_service</span>
+<span class="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white">Laundry</span>
+</button>
+</div>
+<button class="text-primary text-sm font-bold self-start hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">add_circle</span> Show more amenities
+            </button>
+</div>
+<div class="h-px bg-gray-200 dark:bg-gray-800 w-full"></div>
+<div class="flex flex-col gap-5">
+<h2 class="text-[#111418] dark:text-white text-xl font-bold">Pricing</h2>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-gray-700 dark:text-gray-300">Base Price (per night)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-900 dark:text-white font-bold text-xl">€</span>
+<input class="w-full rounded-xl border-gray-200 bg-white dark:bg-gray-800 pl-10 p-4 text-xl font-bold text-[#111418] dark:text-white focus:border-primary focus:ring-primary dark:border-gray-700 placeholder-gray-400 shadow-sm" placeholder="0.00" type="number" value="45"/>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">This is the starting price before seasonal adjustments.</p>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-5 py-4 pb-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<button class="w-full bg-primary hover:bg-emerald-700 text-white text-base font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-emerald-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            Save &amp; Continue
+        </button>
+</div>
+</div>
+
+</body></html>
