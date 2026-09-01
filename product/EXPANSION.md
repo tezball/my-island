@@ -254,7 +254,7 @@ weather policy; participant lists offline in the field; digital waivers; guide a
 
 **Question:** does going native materially improve the field experience?
 
-**Entry gate:** evidence from PWA usage that offline and location limits are costing us check-offs —
+**Entry gate:** evidence from real usage that offline and location limits are costing us check-offs —
 not because native feels more legitimate.
 
 ### Scope

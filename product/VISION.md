@@ -103,7 +103,7 @@ I have made these calls to keep the build moving. Each is reversible, at the sta
 
 | # | Decision | Rationale | Cost to reverse |
 |---|---|---|---|
-| 1 | **Installable PWA, not native, for MVP** | Fastest to ship, no app store gate, one codebase, still installs to the home screen and works offline. Native is Chunk 8 | Low if the API stays client-agnostic — which it will |
+| 1 | **The MVP ships to the phone without an app-store gate** | We need to iterate on the first-run experience daily. A release process gated on store review is the wrong shape for testing an unproven assumption. Whichever technology delivers that is a stack question, not a product one | Low, provided the data layer stays client-agnostic |
 | 2 | **Ireland only at launch** | Focus. Density in one country beats thin coverage everywhere. Country/region are still modelled as data | Low |
 | 3 | **Curator-seeded directory, not user-generated** | Quality gate. UGC needs moderation we should not build yet | Medium — adds a moderation queue |
 | 4 | **Check-off works before signup, stored locally** | Removes the biggest first-run barrier. Prompt to create an account to keep it | Low |
@@ -117,6 +117,7 @@ These need answers from outside product before the chunks they gate.
 | # | Question | Gates |
 |---|---|---|
 | 1 | Where does the seed content come from — licensed, scraped, open data, or written in-house? | MVP. This is the critical path, not the code |
+| 5 | Which stack? Nothing here prescribes one — selection runs against `MVP.md` §3 and the `NFR-*` stories | The build, not the product definition |
 | 2 | What is the eventual revenue model — partner subscription, commission, or advertising? | Chunk 7 |
 | 3 | Do we have, or can we get, a content person? | MVP quality |
 | 4 | Is there an existing audience to launch into, or do we start cold? | Launch plan, success thresholds |

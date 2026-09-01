@@ -45,7 +45,7 @@ aspirations.
 | **The tick is always reachable** | A check-off control on the list card, the map pin sheet, and the detail page. Never more than one tap from seeing a place to recording it |
 | **Map is a first-class surface** | Not a tab you visit. Explore opens to a map/list toggle with the map as an equal peer |
 | **Works on bad signal** | Rural 3G is the design target. Directory data cached; a check-off made offline is queued and syncs on reconnect |
-| **Installable** | PWA with a manifest, service worker, home-screen icon and splash. Launches without browser chrome |
+| **Installable** | Installs to the phone home screen with its own icon and splash, and launches without browser chrome. No app-store gate on the MVP release cycle |
 | **Location-aware** | "Near me now" is the default first-run view when permission is granted, with a graceful non-permission fallback |
 | **Light payloads** | Responsive images, modern formats, lazy-loaded below the fold. Explore is interactive in under 2.5s on mid-range Android over 4G |
 | **Legible outdoors** | High contrast, large tap targets (44px minimum), no hover-dependent interaction |
@@ -193,7 +193,7 @@ Priority: **M** = in MVP. **D** = deferred, listed so it is not re-proposed.
 
 - **NFR-01** — Explore is interactive within 2.5s on a mid-range Android phone on 4G. **M**
 - **NFR-02** — The app is usable on rural 3G and degrades gracefully with no signal. **M**
-- **NFR-03** — Installable PWA: manifest, service worker, offline shell, home-screen icon. **M**
+- **NFR-03** — Installs to the home screen on both iOS and Android, with an offline shell that renders before any network call. **M**
 - **NFR-04** — WCAG 2.2 AA: contrast, focus, labels, 44px targets, screen-reader map alternative. **M**
 - **NFR-05** — GDPR: consent before non-essential cookies, export, erasure, published retention. **M**
 - **NFR-06** — A user's home area is never inferable publicly from their record. **M**
@@ -301,12 +301,13 @@ Roughly, for a small team. Adjust to your capacity — the ordering matters more
 
 | | Focus | Why here |
 |---|---|---|
-| 1–2 | Data model, API skeleton, auth, CI, environments | Foundations. Get NFR-10..14 in before there is code to retrofit |
+| 0 | **Choose the stack** against §3 and `NFR-*` | Do this first and once. See `README.md` |
+| 1–2 | Data model, service skeleton, auth, CI, environments | Foundations. Get NFR-10..14 in before there is code to retrofit |
 | 2–4 | Curator tooling (`CUR-*`) and content import | **Start content acquisition first.** It has the longest lead time and is the usual cause of a slipped launch |
 | 3–6 | Explore: list, filters, map (`DIR-*`, `MAP-*`) | The browse surface |
 | 5–7 | Place detail (`PLC-*`) | |
 | 6–8 | Check-off and My Places (`CHK-*`, `ME-*`) | The core loop. Built last, but designed first |
-| 7–9 | PWA, offline, performance, accessibility (`NFR-*`) | |
+| 7–9 | Install, offline, performance, accessibility (`NFR-*`) | |
 | 9–10 | Admin (`ADM-*`), analytics instrumentation, launch prep | Instrument §7's metrics before launch, not after |
 
 **Content is the critical path, not the code.** A working app over an empty directory tests nothing.
@@ -318,7 +319,7 @@ Decide where seed content comes from in week one — see `VISION.md` §10 questi
 - [ ] Every one of §7's metrics instrumented and visible in a dashboard **before** launch
 - [ ] Core loop works end to end on a real mid-range Android phone, outdoors, on mobile data
 - [ ] Check off → lose signal → regain signal → the check-off is there, once
-- [ ] Installs to the home screen on both iOS and Android
+- [ ] Installs to the home screen on both iOS and Android, and launches offline
 - [ ] WCAG 2.2 AA verified on the three core screens
 - [ ] GDPR export and deletion working, not planned
 - [ ] Restore from backup tested, not assumed

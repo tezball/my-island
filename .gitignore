@@ -1,29 +1,3 @@
-# Maven
-target/
-**/target/
-
-# IDEs
-.idea/
-.vscode/
-*.iml
-
-# OS
 .DS_Store
-
-# Environment
 .env
 .env.local
-.env.prod
-
-# Logs
-logs/
-
-# Uploaded files (local dev image storage)
-uploads/
-
-# Jenkins PR-bot workspace output
-.jenkins/
-
-# Python
-**/__pycache__/
-*.pyc
