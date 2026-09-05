@@ -6,6 +6,17 @@ experiences, campsites and B&Bs — that you tick off as you go.
 **Engineering work tracker:** open [`ops/`](ops/) as an Obsidian vault. Start at
 [`ops/HOME.md`](ops/HOME.md). The current mandate is the **agent workflow**, not the consumer app.
 
+**Run (laptop, Dev Container, Cloud Agent, CI):**
+
+```bash
+git clone https://github.com/tezball/my-island.git
+cd my-island
+./scripts/dev up      # Postgres + Grafana/Loki/Prometheus/Alertmanager
+./scripts/dev test    # same pytest CI runs
+```
+
+Open the folder in Cursor / VS Code and **Reopen in Container** to attach to the `workspace` service in [`compose.yml`](compose.yml). Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
+
 **Product canon:** [`product/BRIEFING.md`](product/BRIEFING.md), then [`product/`](product/).
 
 ## Status

@@ -1,0 +1,17 @@
+{
+  "name": "my-island",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "ports": [
+    { "name": "Grafana", "port": 3030 },
+    { "name": "Prometheus", "port": 9091 },
+    { "name": "Loki", "port": 3101 },
+    { "name": "Alertmanager", "port": 9094 },
+    { "name": "Postgres", "port": 5433 }
+  ]
+}

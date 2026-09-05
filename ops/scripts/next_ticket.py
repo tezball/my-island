@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import argparse
+import os
 import pathlib
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parents[1]
-TICKETS = ROOT / "tickets"
 PRIORITY_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+
+
+def root() -> pathlib.Path:
+    env = os.environ.get("OPS_ROOT")
+    if env:
+        return pathlib.Path(env)
+    return pathlib.Path(__file__).resolve().parents[1]
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:
@@ -26,25 +32,33 @@ def parse_frontmatter(text: str) -> dict[str, str]:
     return data
 
 
-def tickets() -> list[tuple[pathlib.Path, dict[str, str]]]:
+def tickets(
+    tickets_dir: pathlib.Path | None = None,
+) -> list[tuple[pathlib.Path, dict[str, str]]]:
+    tickets_dir = tickets_dir or (root() / "tickets")
     rows = []
-    for path in TICKETS.glob("*.md"):
+    for path in tickets_dir.glob("*.md"):
         if path.name.startswith("_"):
             continue
         meta = parse_frontmatter(path.read_text())
         if meta.get("id"):
             rows.append((path, meta))
-    rows.sort(key=lambda r: (PRIORITY_RANK.get(r[1].get("priority", "P2"), 9), r[1]["id"]))
+    rows.sort(
+        key=lambda r: (PRIORITY_RANK.get(r[1].get("priority", "P2"), 9), r[1]["id"])
+    )
     return rows
 
 
-def pick(role: str) -> tuple[pathlib.Path, dict[str, str]] | None:
+def pick(
+    role: str,
+    rows: list[tuple[pathlib.Path, dict[str, str]]] | None = None,
+) -> tuple[pathlib.Path, dict[str, str]] | None:
     want = {
         "planner": "ready",
         "implementer": "implement",
         "reviewer": "review",
     }[role]
-    for path, meta in tickets():
+    for path, meta in rows if rows is not None else tickets():
         if meta.get("status") == want:
             return path, meta
     return None
@@ -63,8 +77,9 @@ def main() -> int:
         if args.role == "auto"
         else [args.role]
     )
+    rows = tickets()
     for role in order:
-        hit = pick(role)
+        hit = pick(role, rows)
         if hit:
             path, meta = hit
             print(f"role={role}")

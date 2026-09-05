@@ -38,7 +38,8 @@ The same human may wear all three hats. **The same agent session must not.** If 
 ```bash
 python3 ops/scripts/next_ticket.py          # next ready or implement
 python3 ops/scripts/board_sync.py           # regenerate BOARD.md from tickets
-./ops/scripts/start-local.sh                # Grafana / Loki / Prometheus / Postgres
+./ops/scripts/start-local.sh                # Grafana / Loki / Prometheus / Postgres (same as ./scripts/dev up)
+./scripts/dev test                           # pytest (CI uses this too)
 ```
 
 ## PR convention

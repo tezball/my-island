@@ -22,6 +22,7 @@ kanban-plugin: basic
 
 ## Review
 
+- [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 
 ## Blocked
 

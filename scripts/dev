@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# One entrypoint for clone/run, Dev Containers, Cloud Agents, and CI.
+#   ./scripts/dev up     start Postgres + Grafana stack
+#   ./scripts/dev test   unit tests; stack tests if REQUIRE_STACK=1 or stack is up
+#   ./scripts/dev down
+set -euo pipefail
+
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO"
+
+COMPOSE=(docker compose -f "$REPO/compose.yml")
+STACK_SERVICES=(postgres loki prometheus alertmanager grafana)
+
+usage() {
+  cat <<'EOF'
+Usage: ./scripts/dev <command>
+
+  up        Start the Compose stack (Postgres, Grafana, Loki, Prometheus, Alertmanager)
+  down      Stop the stack
+  ps        Compose status
+  test      Run pytest (same path as CI)
+  wait      Wait until Grafana answers /api/health
+  config    Validate compose.yml
+
+Environment:
+  REQUIRE_STACK=1          Fail if Grafana/Postgres are not reachable (CI sets this)
+  DEV_TEST_IN_WORKSPACE=1  Run pytest inside the workspace image (CI stack job)
+EOF
+}
+
+in_workspace() {
+  [ "${IN_WORKSPACE:-}" = "1" ]
+}
+
+compose_ok() {
+  command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1
+}
+
+cmd_up() {
+  "${COMPOSE[@]}" up -d "${STACK_SERVICES[@]}" --wait --wait-timeout 300
+  cmd_wait
+}
+
+cmd_down() {
+  "${COMPOSE[@]}" down
+}
+
+cmd_ps() {
+  "${COMPOSE[@]}" ps
+}
+
+cmd_config() {
+  "${COMPOSE[@]}" config -q
+  echo "compose.yml ok"
+}
+
+cmd_wait() {
+  local url="${GRAFANA_URL:-}"
+  local candidates=()
+  [ -n "$url" ] && candidates+=("$url")
+  candidates+=(http://grafana:3000 http://127.0.0.1:3030)
+  local i
+  for i in $(seq 1 40); do
+    local c
+    for c in "${candidates[@]}"; do
+      if curl -sf "${c}/api/health" >/dev/null 2>&1; then
+        echo "Grafana ${c}"
+        return 0
+      fi
+    done
+    sleep 2
+  done
+  echo "Grafana did not become ready" >&2
+  if compose_ok; then
+    "${COMPOSE[@]}" ps >&2 || true
+  fi
+  return 1
+}
+
+cmd_test() {
+  local extra=("$@")
+  if in_workspace; then
+    exec python3 -m pytest ops/tests -q "${extra[@]}"
+  fi
+  if [ "${DEV_TEST_IN_WORKSPACE:-}" = "1" ] && compose_ok; then
+    "${COMPOSE[@]}" run --rm --no-deps \
+      -e REQUIRE_STACK="${REQUIRE_STACK:-}" \
+      workspace python3 -m pytest ops/tests -q "${extra[@]}"
+    return
+  fi
+  if python3 -c "import pytest" >/dev/null 2>&1; then
+    python3 -m pytest ops/tests -q "${extra[@]}"
+    return
+  fi
+  if compose_ok; then
+    "${COMPOSE[@]}" run --rm --no-deps \
+      -e REQUIRE_STACK="${REQUIRE_STACK:-}" \
+      workspace python3 -m pytest ops/tests -q "${extra[@]}"
+    return
+  fi
+  echo "pytest not found. pip install -r ops/tests/requirements.txt" >&2
+  return 1
+}
+
+cmd="${1:-}"
+if [ $# -gt 0 ]; then
+  shift
+fi
+
+case "$cmd" in
+  up) cmd_up ;;
+  down) cmd_down ;;
+  ps) cmd_ps ;;
+  wait) cmd_wait ;;
+  test) cmd_test "$@" ;;
+  config) cmd_config ;;
+  -h|--help|help|"") usage; [ -n "$cmd" ] || exit 1 ;;
+  *) usage; echo "unknown command: $cmd" >&2; exit 1 ;;
+esac
