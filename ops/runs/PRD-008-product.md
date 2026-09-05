@@ -4,7 +4,7 @@ ticket: "[[tickets/PRD-008]]"
 role: product
 started: 2026-09-05
 finished: 2026-09-05
-pr:
+pr: https://github.com/tezball/my-island/pull/16
 ---
 
 # Run PRD-008 product AC amend
