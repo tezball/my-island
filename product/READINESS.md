@@ -16,10 +16,11 @@ CI, MCP, curator API). Not enough to implement the **product** to MVP done
 without a spec freeze. Do not treat `docs/` as requirements.
 
 Canonical product: [`MVP.md`](MVP.md), [`VISION.md`](VISION.md).
-Canonical house: [`STACK.md`](STACK.md).
-CTO proposal (unsigned): [`ENGINEERING.md`](ENGINEERING.md).
+Canonical house: [`STACK.md`](STACK.md) (CEO lock 2026-09-05).
+CTO loop/safety (does not compete with STACK): [`ENGINEERING.md`](ENGINEERING.md).
 `docs/` is the previous company plus a parallel reboot backlog that **conflicts**
-with `product/MVP.md`.
+with `product/MVP.md`. CEO: do not implement from `docs/`. Close/ignore draft
+PRs #2, #4, #5. Tag `legacy-platform` is archaeology.
 
 ---
 
@@ -28,8 +29,8 @@ with `product/MVP.md`.
 | Workstream | Ready? | Why |
 |---|---|---|
 | Define the feature backlog | **Yes, with a freeze** | `product/MVP.md` has 92 Must stories, a journey, a data sketch, explicit out-of-scope, and a build order. That is enough to slice epics. |
-| Implement DX / platform | **Yes, start now** | Java/Spring, Grafana MCP, NFR-09..14, and `ENGINEERING.md` are enough to stand up compose, Dev Container, Actions, Playwright harness, and a Place/Visit schema. Use CTO calls as working assumptions; write them down. |
-| Implement user-facing MVP | **Not yet, ~1 week of freeze** | No canonical UI, no facility list, no map/auth/sync contracts, two conflicting MVPs, unsigned client/DB/host, no content. A strong team will invent these; they will invent them twice if `docs/MVP.md` is in the mix. |
+| Implement DX / platform | **Yes, start now** | Java/Spring, Vite+React PWA, PostGIS, Grafana MCP, NFR-09..14, and `STACK.md` are enough to stand up compose, Dev Container, Actions, Playwright harness, and a Place/Visit schema — **when a `PRD-*` ticket is `implement`**. |
+| Implement user-facing MVP | **Not yet, ~1 week of freeze** | No canonical UI, no facility list, no map/auth/sync contracts, two conflicting MVPs, unsigned host/OIDC, no content. A strong team will invent these; they will invent them twice if `docs/MVP.md` is in the mix. |
 | Hit MVP definition of done | **No** | 500 places, success thresholds, content owner, brand, legal pages, Google/Apple apps, staging, backups — none are in the repo. |
 
 ---
@@ -83,18 +84,19 @@ CTO review does **not** fill these. It fills how the team operates, not what a P
 
 ---
 
-## 4. Unsigned engineering calls (safe to assume for a spike)
+## 4. Signed house vs still-open calls
 
-`ENGINEERING.md` is draft. A DX team should treat these as **working assumptions** and implement behind them, unless CEO overrides in week 0:
+`STACK.md` is **signed** (CEO 2026-09-05). Do not invent a competing stack.
 
-| Call | If you wait for a meeting |
+| Signed | Still open |
 |---|---|
-| PostgreSQL 17 + PostGIS | Geo work cannot start |
-| Vite + React PWA | Two client stacks will appear |
-| GitHub Actions + Playwright required | CI will be a science project |
-| Dev Container + compose Grafana pack | Agent loop will be laptop folklore |
-| No Jenkins, no auto-merge, no agent prod deploy | Someone will port `docs/automation/JENKINS.md` |
-| MinIO local / R2 later | Image upload will hit a disk |
+| Java / Spring Boot | Exact host (Fly / Hetzner / Railway / …) |
+| Vite + React PWA (not Next-heavy) | OIDC / IdP |
+| PostgreSQL 17 + PostGIS, Flyway | Curator admin depth (role routes vs separate tool) |
+| Grafana OSS MCP pack | Always-on staging budget / Cursor cap |
+| GitHub Actions; no Jenkins; no agent prod merge | Seed content, brand, success thresholds |
+
+Object storage (MinIO local / S3-compatible later) remains the CTO default and does not fight the house.
 
 Still **blocked on the business**, not assumable by DX:
 
@@ -112,9 +114,9 @@ Still **blocked on the business**, not assumable by DX:
 
 Not “build Explore”. Not “port the old API”.
 
-1. **Spec freeze (product + CTO, one sitting).** Canonical = `product/`. Add a banner to `docs/README.md` and `docs/MVP.md`: historical / superseded. Close the facilities list, URL scheme, nearby rule, verification N, import columns.
-2. **Sign or amend `ENGINEERING.md` calls** (DB, client, CI, host class).
-3. **Stand up the skeleton:** Dev Container, compose (API, web, Postgres+PostGIS, Grafana, Mailpit, MinIO), `AGENTS.md`, MCP pack (grafana + postgres-RO + GitHub), GitHub Actions with a trivial Playwright health test.
+1. **Spec freeze leftovers.** Canonical = `product/`. History banners are on `docs/README.md` and `docs/MVP.md`. Close the facilities list, URL scheme, nearby rule, verification N, import columns.
+2. **Do not start the consumer skeleton until `PRD-*` is `implement`.** Shape is Spring Boot + Vite/React PWA + PostGIS per `STACK.md`. Not Next, not FastAPI, not Neon.
+3. **Stand up the skeleton (when that ticket is implement):** Dev Container, compose (API, web, Postgres+PostGIS, Grafana, Mailpit, MinIO), `AGENTS.md`, MCP pack (grafana + postgres-RO + GitHub), GitHub Actions with a trivial Playwright health test.
 4. **Implement Place + Curator CRUD + CSV import** against the frozen facility list, with 20 fake places in all four categories. That unblocks both content work and Explore.
 5. **Do not** start Google/Apple, PWA branding, or 500-place import until name + content source exist.
 

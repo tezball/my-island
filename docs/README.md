@@ -1,9 +1,16 @@
 # My Island Documentation
 
-> **History.** This folder describes the previous camping booking platform. It is not
-> the company OS, not the work tracker, and not the rebuild spec. Company OS (Obsidian):
-> [`../ops/`](../ops/HOME.md). Product canon: [`../product/`](../product/). Do not open
-> this folder as the vault.
+> **History only (CEO 2026-09-05).** This folder describes the previous camping
+> booking platform. It is **not** the company OS, **not** the work tracker, and
+> **not** the rebuild spec. **Do not implement from these files.** Tag
+> `legacy-platform` is archaeology. Canon is [`../product/`](../product/) and
+> [`../ops/`](../ops/HOME.md). House stack: [`../product/STACK.md`](../product/STACK.md)
+> (Java / Spring, Vite+React PWA — not Next, Postgres+PostGIS, Grafana MCP).
+> Draft PRs that treat this folder as requirements (#2, #4, #5) are to be
+> closed or ignored.
+>
+> Company OS (Obsidian): [`../ops/`](../ops/HOME.md). Do not open this folder as
+> the vault.
 
 Camping/glamping booking platform for Ireland with a local supplier marketplace.
 

@@ -10,7 +10,7 @@ escalates_to: eng-infra
 
 ## Purpose
 
-Java / Spring services: place catalog, visits, identity, later booking. House: [`product/STACK.md`](../../../product/STACK.md).
+Java / Spring Boot services: place catalog, visits, identity, later booking. House (locked): [`product/STACK.md`](../../../product/STACK.md) — PostgreSQL 17 + PostGIS, Flyway, Micrometer, OTEL. Not FastAPI, not a TypeScript API.
 
 ## Inputs
 
@@ -30,4 +30,4 @@ Future `src/` / service modules (not present today). **Do not resurrect `legacy-
 
 ## Must not
 
-Enums for listing category. Payments or inventory on directory tickets. Prod SQL writes. Museum-preserving the old Spring app.
+Enums for listing category. Payments or inventory on directory tickets. Prod SQL writes. Museum-preserving the old Spring app. Recommending Next.js, FastAPI, or Neon as the house backend/data layer.

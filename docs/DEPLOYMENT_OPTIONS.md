@@ -1,5 +1,10 @@
 # Deployment Options for My Island
 
+> **History only (CEO 2026-09-05).** Neon, Vercel, and other picks in this note
+> are **not** the house. Do not implement from this file. Signed stack:
+> [`product/STACK.md`](../product/STACK.md) (Spring Boot, Vite+React PWA, PostgreSQL
+> 17 + PostGIS, Grafana OSS MCP). Host remains an open non-house pick there.
+
 > [!info] Last Updated
 > February 2026 — Prices verified against provider websites
 

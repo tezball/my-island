@@ -11,6 +11,11 @@ tags:
 
 # MVP — The Checkable Directory
 
+> **History only (CEO 2026-09-05).** This is the previous-company / parallel
+> reboot MVP. **Do not implement from it.** Canonical Release 1 is
+> [`product/MVP.md`](../product/MVP.md). House stack is
+> [`product/STACK.md`](../product/STACK.md). This folder is archaeology.
+
 > **One sentence:** a browsable directory of places to stay and visit in Ireland, where a signed-in
 > user can tick off everywhere they have **been** or **stayed**, and see it all on their own map.
 >

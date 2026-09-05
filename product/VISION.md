@@ -99,7 +99,8 @@ phase before it — see `EXPANSION.md`.
 
 ## 9. Decisions made, and how to overturn them
 
-I have made these calls to keep the build moving. Each is reversible, at the stated cost.
+I have made these calls to keep the build moving. House/client/data in `STACK.md`
+are CEO-locked (2026-09-05). Other product calls are reversible at the stated cost.
 
 | # | Decision | Rationale | Cost to reverse |
 |---|---|---|---|
@@ -109,8 +110,10 @@ I have made these calls to keep the build moving. Each is reversible, at the sta
 | 4 | **Check-off works before signup, stored locally** | Removes the biggest first-run barrier. Prompt to create an account to keep it | Low |
 | 5 | **`visitType` (visited / stayed) in the schema from day one, surfaced only for stays** | Costs nothing now; retrofitting means re-asking every user about every entry | High if skipped |
 | 6 | **No reviews or ratings in MVP** | Pulls in the entire moderation stack and a permanent partner-relations burden | Low — it is additive |
-| 7 | **Java / Spring house** | We already know this stack; a second backend language would split a small team. Client stays open against `MVP.md` §3 | High once services exist |
+| 7 | **Java / Spring house** | We already know this stack; a second backend language would split a small team. **Locked CEO 2026-09-05** — Architecture does not overturn. Client is the light Vite+React PWA in `STACK.md`, not Next.js | High once services exist |
 | 8 | **Logs, metrics and alerts via MCP, OSS first** | Agents cannot operate the platform from a human dashboard. Prometheus + Loki + Grafana Alerting + `mcp-grafana` is $0 and already researched. Paid APM is not the interface | Medium to change backends; not acceptable to drop MCP access |
+| 9 | **PostgreSQL 17 + PostGIS, Flyway** | Map/geo is a first-class MVP surface. Signed with the house | High once Place data exists |
+| 10 | **Light Vite + React PWA (not Next-heavy)** | Phone-first, installable, Spring owns the API. Heavy full-stack JS needs Architecture + Product | Medium after Explore exists |
 
 ## 10. Open questions for the business
 
@@ -123,5 +126,6 @@ These need answers from outside product before the chunks they gate.
 | 3 | Do we have, or can we get, a content person? | MVP quality |
 | 4 | Is there an existing audience to launch into, or do we start cold? | Launch plan, success thresholds |
 
-Stack is decided: Java / Spring house; observability via MCP, OSS first. See `STACK.md`.
-Client framework, database and host remain open against `MVP.md` §3.
+Stack is decided: Java / Spring Boot house; light Vite + React PWA (not Next);
+PostgreSQL 17 + PostGIS; Flyway; observability via MCP, OSS first. See `STACK.md`.
+Host, OIDC provider, and curator-admin depth remain open.

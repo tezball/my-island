@@ -19,6 +19,15 @@ Full argument: [`product/VISION.md`](../../product/VISION.md).
 6. **Businesses after users** — a marketplace with one empty side is a website.
 7. **Category is data** — do not hard-code “campsite” as the only listing type.
 
+## House (CEO 2026-09-05)
+
+Canon: [`product/STACK.md`](../../product/STACK.md). Log: [[DECISIONS]].
+
+1. **Java / Spring Boot** is the only default backend. Not TypeScript/FastAPI APIs.
+2. **Light Vite + React PWA** — not Next.js-heavy, not a Next BFF. Spring owns the API.
+3. **PostgreSQL 17 + PostGIS**, Flyway in the API. Not Neon as the house database.
+4. **Grafana OSS + `mcp-grafana`** for logs, metrics, alerts. Vercel is not the default host.
+
 ## Ops
 
 1. **Git is the company.** Tickets, plans, run logs, and the handbook live here.

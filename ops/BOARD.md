@@ -7,10 +7,13 @@ kanban-plugin: basic
 ## Inbox
 
 - [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
-- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton
+- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
-- [ ] [[tickets/PRD-003|PRD-003]] P0 Guest explore, map, and one-tap check-off
+- [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
 - [ ] [[tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
+- [ ] [[tickets/WF-009|WF-009]] P2 Alertmanager webhook to spawn an agent
+- [ ] [[tickets/WF-012|WF-012]] P2 GHCR image registry and digest deploys
+- [ ] [[tickets/WF-014|WF-014]] P2 Document human one-time OIDC console setup
 
 ## Ready
 
@@ -29,9 +32,15 @@ kanban-plugin: basic
 
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 - [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
+- [ ] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
 
 ## Blocked
 
 - [ ] [[tickets/WF-004|WF-004]] P1 Remote Grafana MCP for staging/prod observe
+- [ ] [[tickets/WF-010|WF-010]] P1 Always-on EU staging for API + Grafana sidecars
+- [ ] [[tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
+- [ ] [[tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
 
 ## Done
+
+- [ ] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5

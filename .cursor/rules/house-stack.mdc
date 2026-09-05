@@ -1,0 +1,16 @@
+---
+description: Signed house stack — Spring, light Vite+React PWA, Postgres/PostGIS, Grafana MCP
+alwaysApply: true
+---
+
+# House stack
+
+Canon: `product/STACK.md` (CEO lock 2026-09-05). Decisions: `ops/company/DECISIONS.md`.
+
+- **Backend:** Java / Spring Boot only. Do not recommend TypeScript, FastAPI, or a second API language.
+- **Client:** Vite + React TypeScript PWA (light, phone-first). Do not default to Next.js App Router, a Next BFF, or a heavy full-stack JS framework. Spring owns the API.
+- **Data:** PostgreSQL 17 + PostGIS. Migrations: Flyway. Not Neon as the house database.
+- **Observe:** Grafana OSS (Prometheus, Loki, Alertmanager) via `mcp-grafana`. Not Datadog/New Relic as the system of record.
+- **CI/CD:** GitHub Actions. Playwright against job-started compose once a `PRD-*` UI exists. Staging auto on `main`; prod = GitHub Environment + human. Do not rebuild Jenkins. Do not treat Vercel as the default host.
+- Do not implement the consumer app unless the ticket is `PRD-*` and `status: implement`.
+- Do not implement from `docs/`. History only. Tag `legacy-platform` is archaeology.

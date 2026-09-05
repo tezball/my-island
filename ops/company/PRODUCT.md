@@ -13,7 +13,7 @@ Living spec is **outside** this vault. Do not fork it.
 | Vision | [`product/VISION.md`](../../product/VISION.md) |
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |
 | Expansion / marketplace | [`product/EXPANSION.md`](../../product/EXPANSION.md) |
-| Stack | [`product/STACK.md`](../../product/STACK.md) |
+| Stack (signed) | [`product/STACK.md`](../../product/STACK.md) — Spring, Vite+React PWA, PostGIS, Grafana MCP |
 
 ## One sentence
 
@@ -32,4 +32,6 @@ Booking, payments, partner portals, reviews, guest–host messaging, native apps
 - Directory epic: [[tickets/PRD-000]]
 - Marketplace epic (gated): [[tickets/PRD-004]]
 
-History of the camping booking build: [`docs/README.md`](../../docs/README.md).
+History of the camping booking build: [`docs/README.md`](../../docs/README.md). Do not implement from `docs/`.
+
+House (CEO 2026-09-05): Java / Spring Boot, light Vite+React PWA (**not** Next), PostgreSQL 17 + PostGIS, Flyway, Grafana OSS MCP. [[DECISIONS]]

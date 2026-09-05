@@ -1,9 +1,10 @@
 ---
 title: Engineering — CTO review
 type: product
-status: draft
+status: active
 owner: Engineering
 created: 2026-09-01
+updated: 2026-09-05
 ---
 
 # Engineering — CTO review
@@ -13,12 +14,15 @@ stands. This document is the engineering counterpart: how we run a **Java /
 Spring house** so that **AI agents have the same end-to-end loop as a human
 engineer**, through MCP, from the first service skeleton.
 
-House constraints already signed: [`STACK.md`](STACK.md). Product: [`VISION.md`](VISION.md),
+House constraints already signed: [`STACK.md`](STACK.md) (CEO lock 2026-09-05). Product: [`VISION.md`](VISION.md),
 [`MVP.md`](MVP.md). Legacy automation research (do not treat as current system):
 [`docs/automation/`](../docs/automation/).
 
-**Status:** draft recommendations. Calls below are proposed defaults. Asks are
-blocked on CEO / budget / policy.
+**Status:** House, client, database, migrations, observability, and CI/CD policy
+are **signed** in [`STACK.md`](STACK.md). This document is the AI-engineer loop,
+safety contract, and remaining **non-house** questions (exact host, OIDC
+provider, curator-admin depth). Do **not** treat §3 as a competing unsigned
+stack. Policy asks (auto-merge, prod deploy, Cursor budget) still sit with CEO.
 
 ---
 
@@ -78,18 +82,19 @@ values.
 
 ## 3. Recommended choices
 
-Legend: **Call** = proposed default. **Open** = still a real fork.
+Legend: **Signed** = [`STACK.md`](STACK.md) (CEO 2026-09-05). **Call** = still a
+CTO default that does not fight the house. **Open** = non-house fork.
 
 ### 3.1 Runtime and data
 
 | Item | Call | Why |
 |---|---|---|
-| Backend | Java + Spring Boot *(already signed)* | House. Micrometer, Actuator, Flyway, Security from commit one. |
-| Database | **PostgreSQL 17 + PostGIS** | Map/geo is a first-class MVP surface. Spring Data JDBC/JPA + Flyway. One engine for relational and distance queries. |
-| Migrations | Flyway in the API | Agents never “fix prod” with ad-hoc SQL DDL. Expand/contract only. |
+| Backend | Java + Spring Boot **(signed)** | House. Not TypeScript/FastAPI. Micrometer, Actuator, Flyway, Security from commit one. |
+| Database | PostgreSQL 17 + PostGIS **(signed)** | Map/geo is a first-class MVP surface. One engine for relational and distance queries. |
+| Migrations | Flyway in the API **(signed)** | Agents never “fix prod” with ad-hoc SQL DDL. Expand/contract only. |
 | Object storage | **MinIO locally; S3-compatible in staging/prod** (Cloudflare R2 free tier is enough at first) | Uploads on a local disk will not survive a second instance or a Cloud Agent. |
 | Mail | **Mailpit** local; transactional provider later (Resend free tier is enough until volume) | Agents inspect captured mail via Mailpit HTTP, not by hoping SMTP worked. |
-| Client | **TypeScript PWA** (Vite + React) | Meets `MVP.md` §3 (installable, offline). Highest agent-coding leverage in Cursor. Same SPA for Explore and curator/admin with role routes. Spring serves the API, not the consumer UI. |
+| Client | Light TypeScript PWA — Vite + React **(signed)** | Meets `MVP.md` §3. **Not** Next.js App Router / Next BFF. Spring owns the API. Same SPA for Explore and thin curator/admin via role routes. |
 
 ### 3.2 Observability (already signed, made concrete)
 
@@ -240,9 +245,8 @@ Budget, policy and product. Engineering cannot close these alone.
 
 ### Product / stack leftovers
 
-11. **Client framework override?** Call is Vite + React PWA. Overturn now if
-    you want HTMX/Thymeleaf (worse agent and map ecosystem) or a native app
-    (Chunk 10 in `EXPANSION.md`).
+11. **Client framework override?** **Signed:** Vite + React PWA, not Next-heavy
+    (`STACK.md`). Overturn only with Architecture + Product note.
 12. **Host: VPS (Hetzner, EU, compose) vs PaaS (Fly.io, more MCP-friendly
     deploys, less Grafana-beside-the-app)?** VPS fits the OSS Grafana pack
     and GDPR. PaaS fits “no ops hire”. We are a Spring house with a Grafana
@@ -280,9 +284,9 @@ content exists, agents can change the product without inventing ops.
 
 | Call | Cost to reverse |
 |---|---|
-| PostgreSQL + PostGIS | High after Place data exists |
-| GitHub Actions instead of Jenkins | Low until we have tens of workflows |
+| PostgreSQL + PostGIS | **Signed.** High after Place data exists |
+| GitHub Actions instead of Jenkins | **Signed.** Low until we have tens of workflows |
 | Playwright as the only E2E | Low in the first month; high after hundreds of tests |
-| Vite + React client | Medium after Explore exists |
+| Vite + React client (not Next-heavy) | **Signed.** Medium after Explore exists |
 | No prod write MCP | Reverse only with a written policy |
 | Remote MCP for Cloud Agents | If skipped, the whole “AI engineer” claim is local-only |
