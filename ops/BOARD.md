@@ -18,7 +18,6 @@ kanban-plugin: basic
 ## Ready
 
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
-- [ ] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
 
 ## Plan
 
@@ -43,3 +42,5 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
 
 ## Done
+
+- [ ] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5

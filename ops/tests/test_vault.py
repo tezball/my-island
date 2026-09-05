@@ -156,3 +156,4 @@ def test_prd_skeleton_stays_gated() -> None:
     assert by_id["PRD-001"]["status"] != "implement"
     assert by_id["PRD-003"]["status"] != "implement"
     assert "implement" in by_id["PRD-001"].get("blocked_reason", "").lower()
+    assert by_id["WF-008"]["status"] == "done"

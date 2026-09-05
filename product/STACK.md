@@ -9,8 +9,8 @@ updated: 2026-09-05
 
 # Stack
 
-Technology decisions for the rebuild. Product capabilities live in `MVP.md`;
-this document records the house they run in.
+Technology decisions for the rebuild. Product capabilities live in
+[`MVP.md`](MVP.md); this document records the house they run in.
 
 **CEO lock (2026-09-05):** Java / Spring backend is permanent. Architecture does
 not re-litigate the house. Client stays **light and fast** (not a Next.js-heavy
@@ -115,10 +115,10 @@ markdown via the repo, not a desktop-only vault MCP.
 
 | Gap | Why it matters | Unblock |
 |---|---|---|
-| **Remote / staging MCP** | Cloud Agents cannot use laptop `.mcp.json` stdio | HTTP/SSE (or Cursor catalog) for Grafana + Postgres-RO on always-on EU staging |
-| **Alert → agent** | On-call still human-only | Alertmanager webhook → Cursor automation / Cloud Agent with firing payload |
-| **Always-on staging** | Nowhere safe for an agent to be wrong | Small EU staging from first deployable API + web |
-| **Required Playwright in CI** | Agents ship UI that “looks right” in a screenshot | Playwright required on PR; job starts compose |
+| **Remote / staging MCP** | Cloud Agents cannot use laptop `.mcp.json` stdio | HTTP/SSE (or Cursor catalog) for Grafana + Postgres-RO on always-on EU staging. Ticket: [`ops/tickets/WF-004.md`](../ops/tickets/WF-004.md) |
+| **Alert → agent** | On-call still human-only | Alertmanager webhook → Cursor automation / Cloud Agent with firing payload. Ticket: [`ops/tickets/WF-009.md`](../ops/tickets/WF-009.md) |
+| **Always-on staging** | Nowhere safe for an agent to be wrong | Small EU staging from first deployable API + web. Ticket: [`ops/tickets/WF-010.md`](../ops/tickets/WF-010.md) |
+| **Required Playwright in CI** | Agents ship UI that “looks right” in a screenshot | Playwright required on PR; job starts compose. Ticket: [`ops/tickets/WF-011.md`](../ops/tickets/WF-011.md) |
 | **Image registry + digest deploys** | Cannot roll back a bad agent deploy | GHCR; deploy by SHA digest |
 | **Deploy MCP** | Host pick may lack a first-class MCP | Prefer hosts with API/`fly`/`gh` scriptability; accept CLI until a connector exists |
 | **Auth provider console** | OIDC setup is often dashboard-only | Document human one-time setup; agents use Spring config thereafter |
@@ -126,7 +126,7 @@ markdown via the repo, not a desktop-only vault MCP.
 ## Still open (non-house)
 
 | Item | Constraint |
-|---|---|---|
+|---|---|
 | Exact host (Fly / Hetzner / Railway / …) | EU latency, backups, runs Grafana sidecars |
 | OIDC / IdP choice | Works with Spring Security; GDPR-friendly |
 | Curator admin depth | Thin role routes in the PWA vs separate tool — Product |
@@ -134,7 +134,7 @@ markdown via the repo, not a desktop-only vault MCP.
 ## Overturning
 
 | Decision | Policy |
-|---|---|---|
+|---|---|
 | Java / Spring house | **Locked by CEO 2026-09-05.** Architecture does not overturn. A second backend language requires a written exception here plus CEO/Orchestrator sign-off. |
 | Light TS PWA (not Next-heavy) | Locked with the house decision. Moving to a heavy full-stack JS framework needs Architecture + Product note. |
 | Observability via MCP, OSS first | Medium cost to change backends if `mcp-grafana` (or one equivalent MCP) still covers logs, metrics and alerts. **Dropping MCP access is not allowed.** |
