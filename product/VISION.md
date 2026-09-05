@@ -1,13 +1,16 @@
 ---
 title: Product Vision
 type: product
-status: active
+status: signed
 owner: Product
 created: 2026-09-01
+signed: 2026-09-05
 ---
 
 # Product Vision
 
+> **Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md).
+>
 > **Working name:** `PLACEHOLDER` — see `NAMING.md`. Not a blocker for MVP build, but must be
 > settled before the first public release.
 
@@ -110,7 +113,7 @@ are CEO-locked (2026-09-05). Other product calls are reversible at the stated co
 | 4 | **Check-off works before signup, stored locally** | Removes the biggest first-run barrier. Prompt to create an account to keep it | Low |
 | 5 | **`visitType` (visited / stayed) in the schema from day one, surfaced only for stays** | Costs nothing now; retrofitting means re-asking every user about every entry | High if skipped |
 | 6 | **No reviews or ratings in MVP** | Pulls in the entire moderation stack and a permanent partner-relations burden | Low — it is additive |
-| 7 | **Java / Spring house** | We already know this stack; a second backend language would split a small team. **Locked CEO 2026-09-05** — Architecture does not overturn. Client is the light Vite+React PWA in `STACK.md`, not Next.js | High once services exist |
+| 7 | **Java / Spring house** | We already know this stack; a second backend language would split a small team. **Locked CEO 2026-09-05** — Architecture does not overturn. Client is the light Vite+React PWA in `STACK.md`, not Next.js. Product freeze: [`SIGNED.md`](SIGNED.md) | High once services exist |
 | 8 | **Logs, metrics and alerts via MCP, OSS first** | Agents cannot operate the platform from a human dashboard. Prometheus + Loki + Grafana Alerting + `mcp-grafana` is $0 and already researched. Paid APM is not the interface | Medium to change backends; not acceptable to drop MCP access |
 | 9 | **PostgreSQL 17 + PostGIS, Flyway** | Map/geo is a first-class MVP surface. Signed with the house | High once Place data exists |
 | 10 | **Light Vite + React PWA (not Next-heavy)** | Phone-first, installable, Spring owns the API. Heavy full-stack JS needs Architecture + Product | Medium after Explore exists |
@@ -128,4 +131,5 @@ These need answers from outside product before the chunks they gate.
 
 Stack is decided: Java / Spring Boot house; light Vite + React PWA (not Next);
 PostgreSQL 17 + PostGIS; Flyway; observability via MCP, OSS first. See `STACK.md`.
-Host, OIDC provider, and curator-admin depth remain open.
+Host, OIDC provider, and curator-admin depth remain open. Product freeze:
+[`SIGNED.md`](SIGNED.md).

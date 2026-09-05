@@ -1,27 +1,29 @@
 ---
 title: CEO Briefing
 type: product
-status: active
+status: signed
 owner: Product
 created: 2026-09-01
+signed: 2026-09-05
 ---
 
 # CEO Briefing
 
-What this repository contains, what the company is building, and what is waiting
-on a sign-off. Source: this folder and `docs/` as of 1 September 2026.
+What this repository contains, what the company is building, and what remains
+open for the business. Source: this folder and `docs/` as of 1 September 2026.
+Sign-off: [`SIGNED.md`](SIGNED.md) (CEO, 2026-09-05).
 
-> **This is not a running platform.** The working tree is **Product drafted**
-> (CEO 2026-09-05). There is no application code. The house is **Java / Spring
-> Boot** with a **light Vite + React PWA** (not Next.js), **PostgreSQL 17 +
-> PostGIS**, Flyway, and Grafana OSS MCP — see [`STACK.md`](STACK.md). The
-> previous camping booking product was deleted on purpose. Its full codebase is
-> still in git at tag `legacy-platform`. The `docs/` folder is history, not the
-> build spec.
+> **This is not a running platform.** The working tree is a **signed** product
+> definition (CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md)). There is no application
+> code. The house is **Java / Spring Boot** with a **light Vite + React PWA**
+> (not Next.js), **PostgreSQL 17 + PostGIS**, Flyway, and Grafana OSS MCP — see
+> [`STACK.md`](STACK.md). The previous camping booking product was deleted on
+> purpose. Its full codebase is still in git at tag `legacy-platform`. The
+> `docs/` folder is history, not the build spec.
 
 | | |
 |---|---|
-| Current state | Product drafted (CEO 2026-09-05). No consumer app in tree |
+| Current state | Product signed 2026-09-05 ([`SIGNED.md`](SIGNED.md)). No consumer app in tree |
 | House | Java / Spring Boot — not open for overturn |
 | Client | Light Vite + React PWA (not Next.js) |
 | Data | PostgreSQL 17 + PostGIS, Flyway |
@@ -36,11 +38,11 @@ on a sign-off. Source: this folder and `docs/` as of 1 September 2026.
 
 Two products live in this repo, stacked in time.
 
-**Working tree (current).** Product drafted (CEO 2026-09-05): vision, 92-story MVP,
-10-chunk expansion, naming shortlist, **signed house stack**. Start at
-[`README.md`](README.md). Backend is Java / Spring Boot. Client is a light
-Vite + React PWA (not Next). Database is PostgreSQL 17 + PostGIS. Host and OIDC
-provider are still open.
+**Working tree (current).** Product signed 2026-09-05 ([`SIGNED.md`](SIGNED.md)):
+vision, 92-story MVP, 10-chunk expansion, naming shortlist, **signed house
+stack**. Start at [`README.md`](README.md). Backend is Java / Spring Boot.
+Client is a light Vite + React PWA (not Next). Database is PostgreSQL 17 +
+PostGIS. Host and OIDC provider are still open.
 
 **Previous build (history).** A near-complete camping and glamping booking
 platform: guests, campsite owners, local suppliers, admin, Stripe payments,
@@ -245,7 +247,8 @@ These remaining questions are outside product and they gate the build.
 - [x] **Stack.** Java / Spring Boot house (locked). Light Vite + React PWA,
       not Next.js. PostgreSQL 17 + PostGIS, Flyway. Logs, metrics and alerts
       via MCP, OSS first. Host and OIDC provider still open. See
-      [`STACK.md`](STACK.md). Log: `ops/company/DECISIONS.md`.
+      [`STACK.md`](STACK.md). Product freeze: [`SIGNED.md`](SIGNED.md). Log:
+      `ops/company/DECISIONS.md`.
 - [ ] **Public name** before first release. Shortlist in [`NAMING.md`](NAMING.md):
       **Cairn** (recommended), Rian, Waymark, Inis, Turas. Hold Meitheal for a
       partner programme. Avoid Fáilte / Wild Atlantic Way and any camping-coded
@@ -253,8 +256,9 @@ These remaining questions are outside product and they gate the build.
 - [ ] **Revenue model** — partner subscription, commission, or advertising.
       Gates chunk 7, not the MVP. Rule already written: never paywall visibility
       or the ability to receive an enquiry.
-- [x] **Sign off** [`VISION.md`](VISION.md) and [`MVP.md`](MVP.md) as **Product
-      drafted** (CEO 2026-09-05). Implementation still requires a `PRD-*`
+- [x] **Sign off** [`VISION.md`](VISION.md) and [`MVP.md`](MVP.md).
+      Signed 2026-09-05 — [`SIGNED.md`](SIGNED.md). House locked in
+      [`STACK.md`](STACK.md). Implementation still requires a `PRD-*`
       ticket in `implement`. Success = return tick rate; kill if near-zero
       after a fair launch.
 - [ ] **Engineering loop.** Incoming CTO review: [`ENGINEERING.md`](ENGINEERING.md).

@@ -1,13 +1,16 @@
 ---
 title: MVP — Release 1
 type: product
-status: active
+status: signed
 owner: Product
 created: 2026-09-01
+signed: 2026-09-05
 ---
 
 # MVP — Release 1
 
+> **Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md).
+>
 > **Ship:** a mobile web app where you browse a curated directory of Irish places and tick off the
 > ones you have been to.
 >
