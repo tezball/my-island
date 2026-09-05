@@ -41,7 +41,7 @@ Keep app stubs **minimal or absent**. Empty tree beats a fake marketplace.
 
 New ticket: `python3 ops/scripts/new_ticket.py --prefix WF --type workflow --title "…"`.
 
-Product direction (Ireland stays: campsites, B&Bs, experiences) is **signed** 2026-09-05 — [`product/SIGNED.md`](product/SIGNED.md). Marketplace epic (gated): [`ops/tickets/PRD-004.md`](ops/tickets/PRD-004.md). Do not implement it on this workflow mandate.
+Product direction (**Halfdoor** — places to stay & explore across Ireland) is **signed** 2026-09-05 — [`product/SIGNED.md`](product/SIGNED.md). Marketplace epic (gated): [`ops/tickets/PRD-004.md`](ops/tickets/PRD-004.md). Do not implement it on this workflow mandate.
 
 ## Run (laptop, Dev Container, Cloud Agent, CI)
 

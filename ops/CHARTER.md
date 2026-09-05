@@ -6,7 +6,7 @@ owner: orchestrator
 
 # Company charter
 
-**Company:** Terry’s Ireland stays company (working product name TBD — see `product/NAMING.md`; repo `my-island`).
+**Company:** Halfdoor (public brand; subtitle “Halfdoor — places to stay & explore across Ireland.”). **Inis** is internal / affectionate only. Repo stays `my-island`. Canon: `product/NAMING.md`.
 **Owner:** Terry (GitHub: [tezball](https://github.com/tezball)).
 **How we run:** Grok Bot teammates + Cursor agents operate from this git repo. Markdown in `ops/` is Jira + Confluence + the handbook. **The asset is the automated agent loop**, not a consumer app in this tree.
 
@@ -45,7 +45,7 @@ There is no second tracker. If it is not in git, the company does not know it.
 
 ## Brand and naming
 
-Public name is unset. Shortlist: `product/NAMING.md`. Vault naming: [[NAMING]].
+Public brand is **Halfdoor**. **Inis** is internal / affectionate only. Do not use **Ireland Stays** as a public brand. Canon: `product/NAMING.md`. Vault naming: [[NAMING]].
 
 ## Who does the work
 
