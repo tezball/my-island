@@ -20,3 +20,5 @@ success
 ## Follow-up
 
 Human merges the plan PR. A **new** implementer session lands `services/catalog`. Do not merge from an agent. Pairing UI stays [[tickets/PRD-003]].
+
+2026-09-05 Product + Architecture on PR #13: Visit Flyway stub (`visitType`, `datePrecision`) is in this ticket; User/accounts API still deferred; `partner_id` unused seam; 32 counties including NI; no booking columns on Place.
