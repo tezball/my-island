@@ -29,7 +29,7 @@ Architecture’s draft is canon. Do not invent a competing stack.
 
 | Layer | Lock | Ticket |
 |---|---|---|
-| Backend | Java / Spring Boot (permanent) | [[tickets/PRD-001]] (gated on `implement`) |
+| Backend | Java / Spring Boot (permanent) | [[tickets/PRD-001]] (plan [[plans/PRD-001]] approved; `implement`) |
 | Client | Vite + React light PWA, **not** Next | [[tickets/PRD-003]] (gated on `implement`) |
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[tickets/WF-004]] |

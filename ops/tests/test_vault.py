@@ -100,14 +100,14 @@ def test_tickets_have_required_frontmatter() -> None:
 
 
 def test_prd_app_code_tickets_are_not_implement() -> None:
-    """Spring/PWA/import/marketplace stay gated. Data-only content tickets may be implement."""
+    """Spring/PWA/import/marketplace stay gated except PRD-001 with an approved plan."""
     app_code = {"PRD-001", "PRD-002", "PRD-003", "PRD-004"}
     hot = [
         meta["id"]
         for _, meta in next_ticket.tickets(OPS / "tickets")
         if meta["id"] in app_code and meta.get("status") == "implement"
     ]
-    assert hot == []
+    assert hot == ["PRD-001"]
 
 
 def test_starter_prd_tickets_exist() -> None:
@@ -154,11 +154,21 @@ def test_agent_roles_do_not_prefer_next_or_fastapi() -> None:
     assert "Not FastAPI" in backend or "not a TypeScript API" in backend
 
 
-def test_prd_skeleton_stays_gated() -> None:
+def test_prd_001_is_implement_with_plan() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
-    assert by_id["PRD-001"]["status"] != "implement"
+    assert by_id["PRD-001"]["status"] == "implement"
+    assert "plans/PRD-001" in by_id["PRD-001"].get("plan", "")
+    plan = (OPS / "plans/PRD-001.md").read_text()
+    assert plan.startswith("---")
+    assert "status: approved" in plan
+    assert "No consumer" in plan or "no consumer" in plan
+    assert "partner_id" in plan
+    assert "Visit schema stub" in plan or "Visit Flyway" in plan
+    assert "VISITED" in plan and "STAYED" in plan
+    assert "datePrecision" in plan or "date_precision" in plan
+    assert "including NI" in plan
+    assert "No booking columns" in plan or "no booking columns" in plan
     assert by_id["PRD-003"]["status"] != "implement"
-    assert "implement" in by_id["PRD-001"].get("blocked_reason", "").lower()
     assert by_id["WF-008"]["status"] == "done"
 
 

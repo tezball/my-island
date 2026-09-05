@@ -14,7 +14,6 @@ kanban-plugin: basic
 ## Ready
 
 - [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
-- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
 - [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
 - [ ] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
@@ -28,6 +27,7 @@ kanban-plugin: basic
 
 ## Implement
 
+- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [ ] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
