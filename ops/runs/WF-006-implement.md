@@ -3,8 +3,8 @@ id: WF-006
 ticket: "[[tickets/WF-006]]"
 role: implementer
 started: 2026-09-05
-finished:
-pr:
+finished: 2026-09-05
+pr: https://github.com/tezball/my-island/pull/8
 ---
 
 # Run WF-006
@@ -15,7 +15,7 @@ Expanded `ops/` into the company OS: charter, naming, Obsidian plugin list, agen
 
 ## Result
 
-success (pending PR)
+success
 
 ## Follow-up
 
