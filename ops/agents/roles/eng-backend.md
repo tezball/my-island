@@ -22,12 +22,12 @@ PRs with services, Flyway/migrations when they exist, API tests. Micrometer + st
 
 ## Owned folders
 
-Future `src/` / service modules (not present today). Do not resurrect `legacy-platform` into the working tree wholesale.
+Future `src/` / service modules (not present today). **Do not resurrect `legacy-platform`.** New services are scaffolding until a `PRD-*` ticket says otherwise.
 
 ## Escalation
 
-Infra for compose/CI. Trust-safety for GDPR export/erasure design. Product if the ticket grows past MVP.
+[[eng-infra]] for compose. [[automation-expert]] for CI. Trust-safety for GDPR export/erasure. Product if the ticket grows past MVP.
 
 ## Must not
 
-Enums for listing category. Payments or inventory on directory tickets. Prod SQL writes.
+Enums for listing category. Payments or inventory on directory tickets. Prod SQL writes. Museum-preserving the old Spring app.

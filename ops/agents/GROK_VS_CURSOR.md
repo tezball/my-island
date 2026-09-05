@@ -11,7 +11,7 @@ Two runtimes, one git repo. Do not pretend they are interchangeable.
 |---|---|---|
 | Job | Coordination and ops: tickets, digests, support drafts, content outlines, escalation | Change **this repository**: code, tests, vault notes that land in a PR |
 | Writes | `ops/tickets`, `ops/daily`, `ops/runs`, comments on GitHub when tools allow | Branches, commits, `gh`/`ManagePullRequest`, pytest |
-| Must not | Push application code, merge PRs, hold prod secrets | Merge PRs, prod deploy, implement `PRD-*` unless status is `implement` |
+| Must not | Push application code, merge PRs, hold prod secrets | Merge PRs, prod deploy, implement `PRD-*` unless status is `implement`, polish disposable app code |
 | Typical trigger | Chat, weekly digest schedule, inbound guest/host message | Board runner, PR opened, human “work the next ticket” |
 | Source of truth | Same `ops/` vault after a human or Cursor agent commits the note | Same |
 
@@ -20,8 +20,10 @@ Two runtimes, one git repo. Do not pretend they are interchangeable.
 | Role | Default runtime | Why |
 |---|---|---|
 | orchestrator | Grok for intake and digest; Cursor for vault PRs | Split coordination from git |
+| automation-expert | Cursor | CI, skills, hooks, Automations YAML/docs; Grok only to describe a routine |
 | product | Grok | Specs and ticket shaping; Cursor only if `product/` files must change on a branch |
-| eng-frontend / eng-backend / eng-infra | Cursor | Code and compose |
+| eng-frontend / eng-backend | Cursor | Future app (scaffolding). Dormant |
+| eng-infra | Cursor | Compose + MCP runtime |
 | guest-support / host-onboarding / content-seo / trust-safety | Grok | Language and policy; they **file** `PRD-*` / `INC-*` for Cursor to implement |
 | ops-incidents | Grok declares; Cursor patches if the fix is in this repo | Follow [[runbooks/GUEST_SUPPORT]] and [[workflow/SAFETY]] |
 

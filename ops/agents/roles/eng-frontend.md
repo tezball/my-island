@@ -30,4 +30,4 @@ Backend if the API contract is missing. Infra if preview/E2E cannot run. Orchest
 
 ## Must not
 
-Desktop-first layouts. App-store-only release as the MVP path. Hard-coding campsite as the only category.
+Desktop-first layouts. App-store-only release as the MVP path. Hard-coding campsite as the only category. Porting `docs/Designs` or `legacy-platform` UI as a preservation project — the app is [[company/SCAFFOLDING|scaffolding]].

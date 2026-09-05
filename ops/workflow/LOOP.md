@@ -43,6 +43,7 @@ python3 ops/scripts/board_sync.py           # regenerate BOARD.md from tickets
 python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"
 ./ops/scripts/start-local.sh                # Grafana / Loki / Prometheus / Postgres (same as ./scripts/dev up)
 ./scripts/dev test                           # pytest (CI uses this too)
+# Fast OS tests (no Docker): python3 -m pytest ops/tests -q -m "not stack"
 ```
 
 ## PR convention

@@ -11,6 +11,7 @@ You are working in a git-tracked Obsidian vault at `ops/` — the company OS.
 - Roles: planner writes `ops/plans/`. Implementer opens a PR. Reviewer comments only — never merge.
 - One ticket per session. Skip `type: epic`. Prefix `WF-` = workflow. `PRD-` = product. `INC-` = incident.
 - New tickets: `python3 ops/scripts/new_ticket.py`. Naming: `ops/NAMING.md`. Roster: `ops/agents/_index.md`.
+- App code is disposable scaffolding (`ops/company/SCAFFOLDING.md`). Do not polish it.
 - No Jenkins. No prod writes. No secrets in notes.
-- Full loop: `ops/workflow/LOOP.md`. Safety: `ops/workflow/SAFETY.md`.
+- Full loop: `ops/workflow/LOOP.md`. CI: `ops/workflow/CI.md`. Safety: `ops/workflow/SAFETY.md`.
 - Do not implement product unless `PRD-*` and `status: implement`.

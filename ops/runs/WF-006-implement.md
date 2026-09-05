@@ -11,7 +11,7 @@ pr: https://github.com/tezball/my-island/pull/8
 
 ## What happened
 
-Expanded `ops/` into the company OS: charter, naming, Obsidian plugin list, agent roster, runbooks, ticket templates, starter `PRD-*` tickets. README now describes the company OS. `docs/` and `product/` were not moved. `next_ticket.py` skips epics. `new_ticket.py` allocates ids.
+Expanded `ops/` into the company OS. Follow-up (Terry): automation-first, not app preservation. Added Automation Expert, `ops/company/SCAFFOLDING.md`, CI + skills catalogs, `automation` Cursor skill. No consumer app code.
 
 ## Result
 
@@ -19,4 +19,4 @@ success
 
 ## Follow-up
 
-Human merge. Activate: weekly digest, ticket loop on WF-003, do not start PRD children until sign-off.
+Human merge. Activate: ticket loop (`WF-003` or remaining `WF-001`/`WF-002`), weekly digest, Automation Expert routines (`ADD_SKILL`, CI). Do not start PRD children to “save” an app.

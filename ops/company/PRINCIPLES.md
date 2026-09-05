@@ -28,7 +28,8 @@ Full argument: [`product/VISION.md`](../../product/VISION.md).
 5. **No prod deploy, no prod SQL writes, Grafana read-only.**
 6. **Do not rebuild Jenkins** from `docs/automation/`.
 7. **Do not implement product** unless `id` is `PRD-*` and `status` is `implement`.
-8. **Preserve history.** `docs/` and tag `legacy-platform` stay. Do not delete to tidy.
+8. **App code is disposable scaffolding.** Do not polish or preserve it. [[SCAFFOLDING]]
+9. **CI and skills are first-class.** [[workflow/CI]] · [[workflow/SKILLS]]
 
 ## Trust, safety, GDPR
 

@@ -19,10 +19,12 @@ REQUIRED_VAULT = [
     "company/PRINCIPLES.md",
     "company/PEOPLE.md",
     "company/PRODUCT.md",
+    "company/SCAFFOLDING.md",
     "agents/_index.md",
     "agents/GROK_VS_CURSOR.md",
     "agents/roles/orchestrator.md",
     "agents/roles/product.md",
+    "agents/roles/automation-expert.md",
     "agents/roles/eng-frontend.md",
     "agents/roles/eng-backend.md",
     "agents/roles/eng-infra.md",
@@ -32,6 +34,7 @@ REQUIRED_VAULT = [
     "agents/roles/trust-safety.md",
     "agents/roles/ops-incidents.md",
     "runbooks/_index.md",
+    "runbooks/ADD_SKILL.md",
     "runbooks/TICKET_LOOP.md",
     "runbooks/GUEST_SUPPORT.md",
     "runbooks/LISTING_ROLLOUT.md",
@@ -47,6 +50,8 @@ REQUIRED_VAULT = [
     "templates/daily.md",
     ".obsidian/community-plugins.json",
     ".obsidian/daily-notes.json",
+    "workflow/CI.md",
+    "workflow/SKILLS.md",
 ]
 
 REQUIRED_TICKET_KEYS = ("id", "title", "status", "priority", "type")
@@ -72,6 +77,15 @@ def test_repo_readme_points_at_obsidian_ops() -> None:
     assert "Open the company vault" in text
     assert "ops/" in text
     assert "Obsidian" in text
+    assert "disposable scaffolding" in text.lower()
+
+
+def test_automation_skill_exists() -> None:
+    skill = REPO / ".cursor/skills/automation/SKILL.md"
+    assert skill.is_file()
+    body = skill.read_text()
+    assert "automation-expert" in body
+    assert (OPS / "agents/roles/automation-expert.md").is_file()
 
 
 def test_tickets_have_required_frontmatter() -> None:

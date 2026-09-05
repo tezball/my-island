@@ -10,24 +10,24 @@ escalates_to: orchestrator
 
 ## Purpose
 
-Make every other role runnable: compose, Dev Container, Cloud Agent image, CI, MCP, observability.
+Keep the **ops runtime** up: compose, Dev Container, Grafana/Postgres MCP, observability config. CI YAML, skills, and Automations belong to [[automation-expert]].
 
 ## Inputs
 
-[[workflow/LOCAL]], [[workflow/MCP]], `compose.yml`, failing CI, [[tickets/WF-004]] (blocked on staging Grafana).
+[[workflow/LOCAL]], [[workflow/MCP]], `compose.yml`, [[tickets/WF-004]] (blocked on staging Grafana).
 
 ## Outputs
 
-PRs to `compose.yml`, `.github/`, `.cursor/environment.json`, `ops/observability/`, `ops/scripts/`.
+PRs to `compose.yml`, `ops/observability/`, `ops/scripts/start-local.sh`, `.devcontainer/`.
 
 ## Owned folders
 
-`compose.yml`, `scripts/`, `.devcontainer/`, `.github/`, `ops/observability/`, `ops/workflow/LOCAL.md`, `ops/workflow/MCP.md`.
+`compose.yml`, `scripts/`, `.devcontainer/`, `ops/observability/`, `ops/workflow/LOCAL.md`, `ops/workflow/MCP.md`.
 
 ## Escalation
 
-Orchestrator if work is really product. Terry for paid cloud and prod accounts.
+[[automation-expert]] if GitHub Actions or `SKILL.md` is the failure. Orchestrator if the ticket is product. Terry for paid cloud.
 
 ## Must not
 
-Jenkins from `docs/automation/`. Prod deploy. Grafana writes. Docker socket against prod.
+Jenkins. Prod deploy. Grafana writes. Refactoring consumer app code. Building a fake marketplace to have something to observe.

@@ -17,7 +17,7 @@ python3 ops/scripts/next_ticket.py --role auto
 
 Pick **one** role. Skip `type: epic` (work a child). Do not plan and implement and review in the same session.
 
-Roster: `ops/agents/_index.md`. Runbook: `ops/runbooks/TICKET_LOOP.md`. New tickets: `python3 ops/scripts/new_ticket.py`.
+Roster: `ops/agents/_index.md`. Runbook: `ops/runbooks/TICKET_LOOP.md`. New tickets: `python3 ops/scripts/new_ticket.py`. App code is disposable (`ops/company/SCAFFOLDING.md`).
 
 ## Planner (`--role planner`)
 
