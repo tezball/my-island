@@ -161,6 +161,12 @@ def test_prd_001_is_implement_with_plan() -> None:
     assert plan.startswith("---")
     assert "status: approved" in plan
     assert "No consumer" in plan or "no consumer" in plan
+    assert "partner_id" in plan
+    assert "Visit schema stub" in plan or "Visit Flyway" in plan
+    assert "VISITED" in plan and "STAYED" in plan
+    assert "datePrecision" in plan or "date_precision" in plan
+    assert "including NI" in plan
+    assert "No booking columns" in plan or "no booking columns" in plan
     assert by_id["PRD-003"]["status"] != "implement"
     assert by_id["WF-008"]["status"] == "done"
 
