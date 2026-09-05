@@ -1,5 +1,7 @@
 # Workflow
 
+Policy. Procedures: [[runbooks/_index]].
+
 | Note | Purpose |
 |---|---|
 | [[LOOP]] | Plan → implement PR → review. Humans merge |

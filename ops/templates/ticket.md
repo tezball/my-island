@@ -3,7 +3,10 @@ id: WF-XXX
 title:
 status: inbox
 priority: P2
-type: workflow
+type: story
+owner:
+area:
+parent:
 plan:
 pr:
 blocked_reason:
@@ -14,6 +17,10 @@ blocked_reason:
 ## Outcome
 
 ## Notes
+
+## Verify
+
+- [ ]
 
 ## Links
 

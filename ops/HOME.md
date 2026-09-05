@@ -3,37 +3,45 @@ title: Operations home
 type: moc
 ---
 
-# Operations
+# Company OS
 
-This vault is the team’s Jira, Confluence, and runbook. **Markdown in git is the system of record.** Cursor agents read and write these files. There is no other ticket tracker.
+This vault (`ops/`) is the company operating system: handbook, Jira, Confluence, and runbooks. **Markdown in git is the system of record.** Open this folder as an Obsidian vault.
 
-Open this folder as an Obsidian vault (`ops/`). Product canon lives outside: [[../product/BRIEFING|briefing]], [[../product/MVP|MVP]], [[../product/ENGINEERING|CTO review]]. Do not implement the product MVP until a ticket in this vault says so.
+Charter: [[CHARTER]]. Product canon lives outside the vault: [`product/`](../product/README.md). Historical booking platform: [`docs/`](../docs/README.md) — not requirements. Do not implement the consumer app until a `PRD-*` ticket in this vault is `implement`.
 
 ## Right now
 
-→ **[[BOARD]]** — kanban. Agents pick the top `ready` ticket.
+→ **[[BOARD]]** — kanban. Agents pick the top non-epic ticket for their role (`python3 ops/scripts/next_ticket.py --role auto`).
 
 → **[[workflow/LOOP]]** — plan → implement → PR → review. Humans merge.
 
-→ **[[workflow/LOCAL]]** — compose + Dev Container + MCP (start here).
+→ **[[runbooks/_index|Runbooks]]** — ticket loop, guest support, listing rollout, weekly digest.
 
-→ **[[workflow/MCP]]** — local vs prod servers, safety.
+→ **[[agents/_index|Agent roster]]** — who does what, Grok vs Cursor.
 
-→ **[[workflow/AUTOMATIONS]]** — Cursor cloud jobs (PR review, board runner).
+→ **[[workflow/LOCAL]]** — compose + Dev Container + MCP.
+
+→ **[[NAMING]]** — how to add notes without making a mess.
 
 ## Folders
 
 | Folder | What |
 |---|---|
-| [[tickets/]] | One note per ticket (`WF-…` workflow, later `PRD-…` product) |
-| [[plans/]] | Implementation plans. No code without a plan linked from the ticket |
-| [[runs/]] | Agent run logs (what happened, PR URL, what failed) |
-| [[workflow/]] | How the loop works. Change these like you change code: PR |
-| [[templates/]] | New ticket / plan / run |
+| [[tickets/_index\|tickets/]] | One note per ticket (`WF-` workflow, `PRD-` product, `INC-` incident) |
+| [[plans/_index\|plans/]] | Implementation plans. No code without a plan linked from the ticket |
+| [[runs/_index\|runs/]] | Agent run logs |
+| [[workflow/_index\|workflow/]] | How the loop works. Change these like code: PR |
+| [[runbooks/_index\|runbooks/]] | Reusable procedures agents follow |
+| [[agents/_index\|agents/]] | Org chart and role notes |
+| [[company/_index\|company/]] | Charter details, brand, principles, people |
+| [[data/_index\|data/]] | Dataview-friendly reference (regions, listing types) |
+| [[daily/_index\|daily/]] | Daily notes (YYYY-MM-DD) |
+| [[templates/_index\|templates/]] | Ticket / plan / run / daily |
 
 ## Rules for agents
 
 1. Work **one ticket**. Update its `status`. Run `python3 ops/scripts/board_sync.py`.
 2. **Planner** writes `plans/<id>.md`. **Implementer** opens a PR. **Reviewer** only comments — never merge.
 3. No production writes. Grafana/Postgres MCP is **read-only**.
-4. This repo’s current mandate is the **agent workflow**, not the consumer app.
+4. Skip `type: epic` — work a child story/bug/incident.
+5. New ids: `python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"`.

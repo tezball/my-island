@@ -5,6 +5,8 @@
 ops/.obsidian/workspace.json
 ops/.obsidian/workspace-mobile.json
 ops/.obsidian/cache
+ops/.obsidian/plugins/
+ops/.obsidian/themes/
 __pycache__/
 *.py[cod]
 .pytest_cache/

@@ -2,6 +2,12 @@
   "types": {
     "status": "text",
     "priority": "text",
-    "id": "text"
+    "id": "text",
+    "type": "text",
+    "owner": "text",
+    "area": "text",
+    "role": "text",
+    "runtime": "text",
+    "parent": "text"
   }
 }

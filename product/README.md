@@ -13,7 +13,7 @@ Product definition for the rebuild. Start here.
 | [`ENGINEERING.md`](ENGINEERING.md) | CTO review — MCP-accessible AI engineer loop, recommended choices, open questions |
 | [`READINESS.md`](READINESS.md) | Can a team implement yet? What is enough, what forks, what to freeze |
 
-Day-to-day engineering is not this folder. Tickets and the agent loop live in [`../ops/`](../ops/).
+Day-to-day engineering is not this folder. The company OS, tickets, and agent loop live in [`../ops/`](../ops/HOME.md) (open that folder in Obsidian).
 
 ## The short version
 

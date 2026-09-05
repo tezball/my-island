@@ -1,12 +1,48 @@
-# my-island
+# my-island — company OS
 
-Product definition for a mobile directory of places in Ireland worth going to — points of interest,
-experiences, campsites and B&Bs — that you tick off as you go.
+This repository is **everything the company needs to function**: product canon, the agent-operated handbook, tickets, and the local ops runtime. It is not an empty app repo and not a second copy of the old camping marketplace.
 
-**Engineering work tracker:** open [`ops/`](ops/) as an Obsidian vault. Start at
-[`ops/HOME.md`](ops/HOME.md). The current mandate is the **agent workflow**, not the consumer app.
+**Owner:** Terry ([tezball](https://github.com/tezball)). **Operators:** Grok Bot teammates (coordination/ops) and Cursor agents (changes in this git repo).
 
-**Run (laptop, Dev Container, Cloud Agent, CI):**
+## Open the company vault (Obsidian)
+
+The vault is **`ops/`**, not the repo root and not `docs/`.
+
+1. Install [Obsidian](https://obsidian.md).
+2. Open vault → Open folder as vault → select `ops/`.
+3. Community plugins: turn off Restricted mode, install the list in [`ops/PLUGINS.md`](ops/PLUGINS.md) (Kanban, Dataview, Tasks, Calendar, Templater). Plugin binaries are not committed.
+4. Start at [`ops/HOME.md`](ops/HOME.md) and [`ops/BOARD.md`](ops/BOARD.md).
+
+Tickets live in markdown with YAML `status`. After you change a ticket, run `python3 ops/scripts/board_sync.py`. Do not hand-edit `BOARD.md`.
+
+## Layout
+
+| Path | What |
+|---|---|
+| [`ops/`](ops/HOME.md) | **Company OS** (Obsidian): charter, agents, runbooks, tickets, plans, dailies |
+| [`product/`](product/README.md) | Living product canon (directory MVP → gated marketplace) |
+| [`docs/`](docs/README.md) | **History** — previous camping/glamping booking platform. Not requirements |
+| [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres + Grafana stack for agents |
+| git tag `legacy-platform` | Full previous application codebase |
+
+Nothing valuable was deleted for this OS. `docs/` and `product/` stay put. `ops/` is the expanded vault (it already existed as the work tracker).
+
+## What we are building
+
+Long-term: an Ireland stays marketplace (campsites, B&Bs, experiences) — search/book/message for guests; listing/calendar/pricing for hosts; trust, reviews, cancellations, GDPR.
+
+**Release 1** is a checkable directory, not booking. Canon: [`product/BRIEFING.md`](product/BRIEFING.md), [`product/VISION.md`](product/VISION.md), [`product/MVP.md`](product/MVP.md). Marketplace epic (gated): [`ops/tickets/PRD-004.md`](ops/tickets/PRD-004.md). Do not implement product code unless a `PRD-*` ticket is `implement`.
+
+## How agents work
+
+1. Read [`ops/HOME.md`](ops/HOME.md), [`ops/workflow/SAFETY.md`](ops/workflow/SAFETY.md), [`ops/agents/_index.md`](ops/agents/_index.md).
+2. `python3 ops/scripts/next_ticket.py --role auto` — one role, one ticket. Epics are skipped.
+3. Planner → plan. Implementer → PR. Reviewer → comment. **Humans merge.**
+4. Grok vs Cursor: [`ops/agents/GROK_VS_CURSOR.md`](ops/agents/GROK_VS_CURSOR.md).
+
+New ticket: `python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"`.
+
+## Run (laptop, Dev Container, Cloud Agent, CI)
 
 ```bash
 git clone https://github.com/tezball/my-island.git
@@ -17,35 +53,8 @@ cd my-island
 
 Open the folder in Cursor / VS Code and **Reopen in Container** to attach to the `workspace` service in [`compose.yml`](compose.yml). Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
 
-**Product canon:** [`product/BRIEFING.md`](product/BRIEFING.md), then [`product/`](product/).
+Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`.
 
 ## Status
 
-Product definition, awaiting sign-off. **No application code yet.** Backend is a
-**Java / Spring house**. Logs, metrics and alerts are queried through MCP, OSS
-first. Details: [`product/STACK.md`](product/STACK.md).
-
-The team’s tickets, kanban, plans, and run logs live in `ops/` (markdown in git).
-Local MCP substrate: `./ops/scripts/start-local.sh`.
-
-The previous build — a camping and glamping booking platform — has had its code, CI and
-infrastructure removed. Its documentation is retained in [`docs/`](docs/) for reference.
-Read it as history, not as requirements. Full previous codebase: git tag `legacy-platform`.
-
-## Stack
-
-House decisions are in [`product/STACK.md`](product/STACK.md):
-
-- **Java + Spring Boot** for all backend services
-- **Logs, metrics and alerts** via MCP (Prometheus, Loki, Grafana Alerting;
-  `mcp-grafana`; self-hosted OSS first)
-
-Client framework, database and host remain open. They still have to meet
-[`product/MVP.md`](product/MVP.md) §3 and the `NFR-*` stories — most notably:
-
-- Mobile-first, one-handed, installable to a phone home screen without an app-store gate
-- Readable and usable offline; writes made offline queue and sync idempotently
-- Interactive within 2.5s on a mid-range Android phone over 4G
-- Map-heavy, with clustering and location awareness
-- A curator-facing content tool alongside the public app
-- WCAG 2.2 AA, GDPR export and erasure from day one
+Company OS is in `ops/`. Product definition is in `product/`, awaiting sign-off. **No consumer application code yet.** Backend house is **Java / Spring**. Logs/metrics/alerts via MCP, OSS first — [`product/STACK.md`](product/STACK.md).
