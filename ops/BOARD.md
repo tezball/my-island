@@ -31,7 +31,6 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [ ] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
-- [ ] [[tickets/WF-015|WF-015]] P1 Halfdoor brand lock and CEO role alias
 
 ## Review
 
@@ -39,6 +38,7 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 - [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
 - [ ] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
+- [ ] [[tickets/WF-015|WF-015]] P1 Halfdoor brand lock and CEO role alias
 
 ## Blocked
 
