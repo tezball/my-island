@@ -26,7 +26,7 @@ Protect the MVP question: will people record where they have been? Shape `PRD-*`
 
 ## Escalation
 
-Orchestrator if someone starts building booking on a `WF-*` ticket. Terry if canon itself should change.
+CEO if someone starts building booking on a `WF-*` ticket. Terry if canon itself should change.
 
 ## Must not
 

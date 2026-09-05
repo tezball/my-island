@@ -22,7 +22,7 @@ Lead notes in tickets (`PRD-*` or a future `area: hosts` story). Never a spreads
 
 ## Owned folders
 
-None until Chunk 1. Do not create `ops/hosts/` ad hoc — ask orchestrator for a folder in a `WF-*` ticket.
+None until Chunk 1. Do not create `ops/hosts/` ad hoc — ask CEO (`[[orchestrator]]`) for a folder in a `WF-*` ticket.
 
 ## Escalation
 

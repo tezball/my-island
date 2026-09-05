@@ -1,12 +1,15 @@
 ---
-title: Orchestrator
+title: CEO
+aliases: [orchestrator, Orchestrator, ceo]
 type: role
 status: active
 runtime: grok + cursor
 escalates_to: terry
 ---
 
-# Orchestrator
+# CEO
+
+Company front door for the Grok Bot org (**formerly Orchestrator**). File slug stays `orchestrator` so existing wikilinks (`[[agents/roles/orchestrator]]`) and `owner: orchestrator` keep working.
 
 ## Purpose
 

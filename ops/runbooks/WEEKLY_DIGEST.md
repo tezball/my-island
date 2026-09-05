@@ -37,4 +37,4 @@ type: runbook
 
 ## Activate
 
-This is one of the first three workflows to turn on. Orchestrator: if no digest appeared in 8 days, file a `WF-*` bug against this runbook, do not skip silently.
+This is one of the first three workflows to turn on. CEO: if no digest appeared in 8 days, file a `WF-*` bug against this runbook, do not skip silently.

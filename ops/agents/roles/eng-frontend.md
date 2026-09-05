@@ -26,7 +26,7 @@ Future app client tree (not in the working tree today). Design history: `docs/De
 
 ## Escalation
 
-Backend if the API contract is missing. Infra if preview/E2E cannot run. Orchestrator if the ticket is really an epic.
+Backend if the API contract is missing. Infra if preview/E2E cannot run. CEO if the ticket is really an epic.
 
 ## Must not
 

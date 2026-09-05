@@ -56,7 +56,7 @@ blocked_reason:
 - `status`: `inbox` \| `ready` \| `plan` \| `implement` \| `review` \| `done` \| `blocked`
 - `priority`: `P0` \| `P1` \| `P2` \| `P3`
 - `type`: `epic` \| `story` \| `bug` \| `incident` \| `workflow`
-- `owner`: role slug from [[agents/_index]] (not a person’s display name)
+- `owner`: role slug from [[agents/_index]] (not a person’s display name). The company front-door role **displays as CEO**; the file slug is `orchestrator` (formerly Orchestrator).
 - `area`: short noun (`ops`, `catalog`, `explore`, `trust`, …)
 - Wikilinks in YAML are quoted: `plan: "[[plans/PRD-001]]"`
 

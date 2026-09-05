@@ -31,6 +31,7 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [ ] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
+- [ ] [[tickets/WF-015|WF-015]] P1 Halfdoor brand lock and CEO role alias
 
 ## Review
 

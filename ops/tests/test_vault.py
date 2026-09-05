@@ -198,3 +198,35 @@ def test_leads_pipeline_tickets_cite_landed_schema() -> None:
     assert "32 county" in prd008.lower().replace("-", " ")
     assert "country table" in prd008.lower() or "country enum" in prd008.lower()
     assert "32-county" in prd007
+
+
+def test_public_brand_is_halfdoor() -> None:
+    brand = (OPS / "company/BRAND.md").read_text()
+    charter = (OPS / "CHARTER.md").read_text()
+    people = (OPS / "company/PEOPLE.md").read_text()
+    decisions = (OPS / "company/DECISIONS.md").read_text()
+    assert "Halfdoor" in brand
+    assert "internal-only" in brand
+    assert "my-island" in brand
+    assert "Inis Mór" in brand
+    assert "Inishowen" in brand
+    assert "Public product name is **unset**" not in brand
+    assert "Current recommendation there: **Cairn**" not in brand
+    assert "Halfdoor" in charter
+    assert "working product name TBD" not in charter
+    assert "Ireland stays company" not in charter
+    assert "Halfdoor" in people
+    assert "public name, revenue" not in people.lower()
+    assert "Public brand: Halfdoor" in decisions
+
+
+def test_ceo_is_company_front_door() -> None:
+    role = (OPS / "agents/roles/orchestrator.md").read_text()
+    index = (OPS / "agents/_index.md").read_text()
+    grok = (OPS / "agents/GROK_VS_CURSOR.md").read_text()
+    assert "title: CEO" in role
+    assert "formerly Orchestrator" in role
+    assert "CEO" in index
+    assert "formerly orchestrator" in index.lower()
+    assert "slug remains `orchestrator`" in index
+    assert "CEO (`orchestrator`; formerly Orchestrator)" in grok

@@ -26,7 +26,7 @@ PRs to `compose.yml`, `ops/observability/`, `ops/scripts/start-local.sh`, `.devc
 
 ## Escalation
 
-[[automation-expert]] if GitHub Actions or `SKILL.md` is the failure. Orchestrator if the ticket is product. Terry for paid cloud.
+[[automation-expert]] if GitHub Actions or `SKILL.md` is the failure. CEO if the ticket is product. Terry for paid cloud.
 
 ## Must not
 
