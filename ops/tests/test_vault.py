@@ -194,3 +194,7 @@ def test_leads_pipeline_tickets_cite_landed_schema() -> None:
     for status in ("lead", "reviewed", "rejected", "promoted"):
         assert f"`{status}`" in prd008
     assert "`licence`" in prd009
+    assert "country: NI" in prd008
+    assert "32 county" in prd008.lower().replace("-", " ")
+    assert "country table" in prd008.lower() or "country enum" in prd008.lower()
+    assert "32-county" in prd007
