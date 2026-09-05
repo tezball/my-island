@@ -15,11 +15,11 @@ Living spec is **outside** this vault. Do not fork it.
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |
 | Expansion / marketplace | [`product/EXPANSION.md`](../../product/EXPANSION.md) |
 | Stack (signed) | [`product/STACK.md`](../../product/STACK.md) — Spring, Vite+React PWA, PostGIS, Grafana MCP |
-| Public brand | **Halfdoor** — Inis internal only. [`product/NAMING.md`](../../product/NAMING.md) |
+| Public brand | **Halfdoor** — Inis internal / affectionate only. Not Ireland Stays. [`product/NAMING.md`](../../product/NAMING.md) |
 
 ## One sentence
 
-**Halfdoor** — a mobile directory of Irish POIs, experiences, campsites and B&Bs that you tick off as you go. Later: hosts, booking, messages, reviews — only when expansion gates pass. Public brand is Halfdoor; Inis is internal only.
+**Halfdoor** — a mobile directory of Irish POIs, experiences, campsites and B&Bs that you tick off as you go. Later: hosts, booking, messages, reviews — only when expansion gates pass. Public brand is Halfdoor; Inis is internal / affectionate only.
 
 ## MVP includes
 

@@ -22,7 +22,7 @@ Signed calls. Product freeze: [`product/SIGNED.md`](../../product/SIGNED.md). Ca
 | 4 | **UI light, easy, fast.** Thin Vite + React PWA (or equivalent). **Not** Next.js-heavy unless later evidence. | [`product/STACK.md`](../../product/STACK.md) |
 | 5 | **Ruthless agent loop.** Solid tools + MCP servers + clear idea→prod workflows with logs, metrics, alerts. | [`product/STACK.md`](../../product/STACK.md) gaps |
 | 6 | **Leads-only scrape.** Aggressive multi-source collection is approved for Research **leads** with provenance. Leads are not published places. Counsel before publish. No auth/CAPTCHA bypass. | [`data/leads/`](../../data/leads/README.md), [[tickets/PRD-006]], [[tickets/PRD-007]], [[tickets/PRD-009]] |
-| 7 | **Public brand = Halfdoor.** Subtitle: “Halfdoor — places to stay & explore across Ireland.” **Inis** is internal only. Geographic Inis/Inish place names keep full names. Domain/TM solicitor still recommended later; working public name is locked. Repo stays `my-island`. | [`product/NAMING.md`](../../product/NAMING.md) |
+| 7 | **Public brand = Halfdoor.** Subtitle: “Halfdoor — places to stay & explore across Ireland.” **Inis** is internal / affectionate only. Do not use **Ireland Stays** as a public brand. Geographic Inis/Inish place names keep full names. Domain/TM solicitor still recommended later; working public name is locked. Repo stays `my-island`. | [`product/NAMING.md`](../../product/NAMING.md) |
 
 ## Signed house (`product/STACK.md`)
 

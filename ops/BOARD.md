@@ -6,7 +6,7 @@ kanban-plugin: basic
 
 ## Inbox
 
-- [ ] [[tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
+- [ ] [[tickets/PRD-004|PRD-004]] P2 Halfdoor marketplace (hosts, booking, trust)
 - [ ] [[tickets/WF-009|WF-009]] P2 Alertmanager webhook to spawn an agent
 - [ ] [[tickets/WF-012|WF-012]] P2 GHCR image registry and digest deploys
 - [ ] [[tickets/WF-014|WF-014]] P2 Document human one-time OIDC console setup

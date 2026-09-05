@@ -15,7 +15,7 @@ tags:
 
 **Subtitle:** Halfdoor — places to stay & explore across Ireland.
 
-**Inis** is **internal only**. Not a public marketing name.
+**Inis** is **internal / affectionate only**. Not a public marketing name.
 
 **Brand vs place:** product brand = Halfdoor. Geographic Inis / Inish place names keep their full names (Inis Mór, Inis Oírr, and so on). The product is not those places.
 
@@ -27,10 +27,11 @@ GitHub repository stays `tezball/my-island`. Do not rename the repo for this loc
 
 1. Public / company / product brand is **Halfdoor**.
 2. Public subtitle is **“Halfdoor — places to stay & explore across Ireland.”**
-3. **Inis** is internal-only (repo DNA, internal shorthand). Do not use Inis as a customer-facing product name.
-4. Geographic Inis / Inish names are place names, not the brand — keep the full name.
-5. Domain, trademark, and solicitor work are still recommended before a loud public launch. They do not block using Halfdoor as the working public name.
-6. Do not rename the GitHub repository `my-island`.
+3. **Inis** is internal / affectionate only (repo DNA, internal shorthand). Do not use Inis as a customer-facing product name.
+4. Do not use **Ireland Stays** as a public / company / product brand.
+5. Geographic Inis / Inish names are place names, not the brand — keep the full name (Inis Mór, Inis Oírr, …).
+6. Domain, trademark, and solicitor work are still recommended before a loud public launch. They do not block using Halfdoor as the working public name.
+7. Do not rename the GitHub repository `my-island`.
 
 ## What the name has to carry
 
@@ -162,7 +163,7 @@ Working public name is locked. These remain good hygiene before a loud launch:
 
 - [x] Working / public name is **Halfdoor** (CEO via Personal PA, 2026-09-05)
 - [x] Subtitle locked: “Halfdoor — places to stay & explore across Ireland.”
-- [x] Inis = internal only; brand-vs-place rule written
+- [x] Inis = internal / affectionate only; brand-vs-place rule written; Ireland Stays is not a public brand
 - [x] Working name fixed in `VISION.md`
 - [ ] Register domain and social handles before a public announcement (recommended, not a name-lock blocker)
 - [ ] **Do not** rename the GitHub repository `my-island`

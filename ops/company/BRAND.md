@@ -7,7 +7,7 @@ type: company
 
 Public / company / product brand is **Halfdoor**. Subtitle: “Halfdoor — places to stay & explore across Ireland.”
 
-**Inis** is internal only — not public marketing. Geographic Inis / Inish place names keep their full names (Inis Mór, Inis Oírr, …). GitHub repo stays `my-island`; do not print that on a customer surface.
+**Inis** is internal / affectionate only — not public marketing. Do not use **Ireland Stays** as a public brand. Geographic Inis / Inish place names keep their full names (Inis Mór, Inis Oírr, …). GitHub repo stays `my-island`; do not print that on a customer surface.
 
 Canon: [`product/NAMING.md`](../../product/NAMING.md). Marketing solicitor and domain park remain recommended later; the working public name is locked (CEO via Personal PA, 2026-09-05).
 
@@ -21,5 +21,5 @@ Canon: [`product/NAMING.md`](../../product/NAMING.md). Marketing solicitor and d
 
 - Fáilte, Wild Atlantic Way, Discover Ireland, or other state tourism marks as product names.
 - Camping-coded public names (`Camp*`, `Pitch*`, `*-bnb`).
-- Using **Inis** as a public product name.
+- Using **Inis** as a public product name, or **Ireland Stays** as a public brand.
 - Inventing a different ship name in tickets or UI copy. Use **Halfdoor** (or “the directory” / “the app” in internal ops notes).

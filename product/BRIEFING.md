@@ -40,7 +40,7 @@ Two products live in this repo, stacked in time.
 
 **Working tree (current).** Product signed 2026-09-05 ([`SIGNED.md`](SIGNED.md)):
 vision, 92-story MVP, 10-chunk expansion, **Halfdoor** public brand
-([`NAMING.md`](NAMING.md); Inis internal only), **signed house
+([`NAMING.md`](NAMING.md); Inis internal / affectionate only), **signed house
 stack**. Start at [`README.md`](README.md). Backend is Java / Spring Boot.
 Client is a light Vite + React PWA (not Next). Database is PostgreSQL 17 +
 PostGIS. Host and OIDC provider are still open.
@@ -65,8 +65,9 @@ checklist.
 
 ## 2. The product
 
-**A mobile directory of places in Ireland worth going to — points of interest,
-experiences, campsites and B&Bs — that you tick off as you go.**
+**Halfdoor — places to stay & explore across Ireland.** A mobile directory of
+places worth going to — points of interest, experiences, campsites and B&Bs —
+that you tick off as you go.
 
 Booking sites forget you were there. Tourism lists are static. Activity
 trackers record routes, not destinations. Nobody joins a good directory of
@@ -252,8 +253,9 @@ These remaining questions are outside product and they gate the build.
       `ops/company/DECISIONS.md`.
 - [x] **Public name.** **Halfdoor** is the working / public / company / product
       brand (CEO via Personal PA, 2026-09-05). Subtitle: “Halfdoor — places to
-      stay & explore across Ireland.” **Inis** is internal only — not public
-      marketing. Geographic Inis/Inish place names keep full names. Repo stays
+      stay & explore across Ireland.” **Inis** is internal / affectionate only —
+      not public marketing. Do not use **Ireland Stays** as a public brand.
+      Geographic Inis/Inish place names keep full names. Repo stays
       `my-island`. Marketing solicitor / domain park still recommended later;
       the working public name is locked. Canon: [`NAMING.md`](NAMING.md).
 - [ ] **Revenue model** — partner subscription, commission, or advertising.

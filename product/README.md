@@ -27,8 +27,9 @@ Day-to-day engineering is not this folder. The company OS, tickets, and agent lo
 
 ## The short version
 
-A mobile directory of places in Ireland worth going to — points of interest, experiences, campsites
-and B&Bs — that you tick off as you go.
+**Halfdoor** — places to stay & explore across Ireland. A mobile directory of
+places worth going to — points of interest, experiences, campsites and B&Bs —
+that you tick off as you go.
 
 The MVP tests one thing: **will people bother to record where they have been?** Everything else is
 gated on the answer.
@@ -36,8 +37,8 @@ gated on the answer.
 ## Status
 
 **Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md). **Nothing built.**
-Public brand is **Halfdoor** ([`NAMING.md`](NAMING.md)); **Inis** is internal
-only. House is **signed** in [`STACK.md`](STACK.md): Java / Spring Boot, light
+Public brand is **Halfdoor** ([`NAMING.md`](NAMING.md)); **Inis** is internal /
+affectionate only. House is **signed** in [`STACK.md`](STACK.md): Java / Spring Boot, light
 Vite+React PWA (not Next.js), PostgreSQL 17 + PostGIS, Flyway, GitHub Actions,
 Grafana OSS MCP. Host, OIDC provider, and curator-admin depth remain open. Do
 not start the skeleton until a `PRD-*` ticket is `implement`.

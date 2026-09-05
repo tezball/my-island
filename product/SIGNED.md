@@ -21,8 +21,8 @@ record. It does not add stories and does **not** rewrite [`STACK.md`](STACK.md).
 
 ## Directory MVP — one-pager
 
-A **phone-first Ireland directory** of places worth going to: points of
-interest, experiences, campsites, and B&Bs. Browse as a **list and a map**.
+**Halfdoor** is a **phone-first Ireland directory** of places worth going to:
+points of interest, experiences, campsites, and B&Bs. Browse as a **list and a map**.
 **One-tap check-off**, including **before signup** (stored locally, migrate on
 account). Ticked places become **My Places** (list, map, count). The directory
 is **curator-seeded**, not user-generated at launch.
@@ -69,7 +69,7 @@ Activation, depth, coverage, and unsolicited claims stay as drafted in
 | 2 | Backend = **Java / Spring always** | Locked in [`STACK.md`](STACK.md) (Architecture, WF-007). Do not rewrite from this note. |
 | 3 | UI = **light/fast thin Vite/React-style PWA**; no Next / heavy framework until a proven need | Locked in [`STACK.md`](STACK.md) |
 | 4 | **Ruthless bar:** a solid app slice + tools + MCP + an automated agent path from idea to value | Engineering loop (`ops/`, [`ENGINEERING.md`](ENGINEERING.md)) |
-| 5 | Public / company / product brand = **Halfdoor**. Subtitle: “Halfdoor — places to stay & explore across Ireland.” **Inis** is internal only. Geographic Inis/Inish place names keep full names. Repo stays `my-island`. | [`NAMING.md`](NAMING.md) |
+| 5 | Public / company / product brand = **Halfdoor**. Subtitle: “Halfdoor — places to stay & explore across Ireland.” **Inis** is internal / affectionate only. Do not use **Ireland Stays** as a public brand. Geographic Inis/Inish place names keep full names. Repo stays `my-island`. | [`NAMING.md`](NAMING.md) |
 
 Host and OIDC remain open. Database is PostgreSQL 17 + PostGIS (see [`STACK.md`](STACK.md)). Working public name is **Halfdoor** ([`NAMING.md`](NAMING.md)).
 
@@ -77,4 +77,4 @@ Host and OIDC remain open. Database is PostgreSQL 17 + PostGIS (see [`STACK.md`]
 
 ## Status
 
-**Signed by CEO 2026-09-05.** Product canon = `product/`. House = [`STACK.md`](STACK.md). Public brand = **Halfdoor** ([`NAMING.md`](NAMING.md)); Inis internal only.
+**Signed by CEO 2026-09-05.** Product canon = `product/`. House = [`STACK.md`](STACK.md). Public brand = **Halfdoor** ([`NAMING.md`](NAMING.md)); Inis internal / affectionate only.
