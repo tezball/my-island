@@ -6,10 +6,6 @@ kanban-plugin: basic
 
 ## Inbox
 
-- [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
-- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
-- [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
-- [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
 - [ ] [[tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
 - [ ] [[tickets/WF-009|WF-009]] P2 Alertmanager webhook to spawn an agent
 - [ ] [[tickets/WF-012|WF-012]] P2 GHCR image registry and digest deploys
@@ -17,6 +13,11 @@ kanban-plugin: basic
 
 ## Ready
 
+- [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
+- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
+- [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
+- [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
+- [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
 ## Plan
