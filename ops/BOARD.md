@@ -17,6 +17,9 @@ kanban-plugin: basic
 - [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
 - [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
+- [ ] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
+- [ ] [[tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
+- [ ] [[tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
 - [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
