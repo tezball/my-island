@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tezball/my-island/data/leads/schema.json",
+  "title": "Place lead",
+  "description": "One unpublished place lead. Not a published catalog record. Research fills these; curators promote after Engineering import.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "place_type",
+    "country",
+    "source_url",
+    "source_name",
+    "fetched_at",
+    "licence",
+    "status",
+    "dedupe_key"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Stable kebab-case id. Do not reuse after reject/promote."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "place_type": {
+      "type": "string",
+      "enum": ["campsite", "bnb", "experience", "poi", "other"],
+      "description": "Aligns with ops/data/listing-types.md plus other."
+    },
+    "county": {
+      "type": "string",
+      "minLength": 1,
+      "description": "County or equivalent. Omit when unknown."
+    },
+    "country": {
+      "type": "string",
+      "enum": ["IE", "NI"],
+      "description": "IE = Republic of Ireland; NI = Northern Ireland."
+    },
+    "address": {
+      "type": "string",
+      "minLength": 1
+    },
+    "eircode": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Irish Eircode when known. Omit rather than '-'."
+    },
+    "lat": {
+      "type": "number",
+      "description": "WGS84 latitude. Omit when unknown; do not invent."
+    },
+    "lng": {
+      "type": "number",
+      "description": "WGS84 longitude. Omit when unknown; do not invent."
+    },
+    "website": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Operator or listing URL. Not a scrape-target instruction."
+    },
+    "phone_public": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Public business phone as published by the operator."
+    },
+    "email_public": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Public business mailbox only. Omit personal addresses (gmail/yahoo/named inboxes)."
+    },
+    "notes_original": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 280,
+      "description": "Short original research note only. Never paste copyrighted prose or photo URLs destined for publish fields."
+    },
+    "source_url": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Primary provenance: http(s) URL or repo-relative path."
+    },
+    "source_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "fetched_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+      "description": "ISO-8601 UTC timestamp of this record (seed conversion or later fetch)."
+    },
+    "licence": {
+      "type": "string",
+      "minLength": 1,
+      "description": "How we may use the captured facts (e.g. internal-research). Not a grant to republish third-party copy."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["lead", "reviewed", "rejected", "promoted"]
+    },
+    "dedupe_key": {
+      "type": "string",
+      "minLength": 1,
+      "description": "place_type:county-slug:name-slug (county-slug may be unknown)."
+    },
+    "raw_refs": {
+      "type": "array",
+      "description": "Extra source URLs or repo paths (starter table, aggregators).",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
