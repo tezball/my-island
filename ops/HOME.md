@@ -15,7 +15,7 @@ Open this folder as an Obsidian vault (`ops/`). Product canon lives outside: [[.
 
 → **[[workflow/LOOP]]** — plan → implement → PR → review. Humans merge.
 
-→ **[[workflow/LOCAL]]** — compose + MCP on a laptop (start here).
+→ **[[workflow/LOCAL]]** — compose + Dev Container + MCP (start here).
 
 → **[[workflow/MCP]]** — local vs prod servers, safety.
 

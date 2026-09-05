@@ -5,4 +5,8 @@
 ops/.obsidian/workspace.json
 ops/.obsidian/workspace-mobile.json
 ops/.obsidian/cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
 

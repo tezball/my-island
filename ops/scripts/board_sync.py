@@ -2,11 +2,8 @@
 """Regenerate ops/BOARD.md from ticket frontmatter. Vault-relative links."""
 from __future__ import annotations
 
+import os
 import pathlib
-
-ROOT = pathlib.Path(__file__).resolve().parents[1]
-TICKETS = ROOT / "tickets"
-BOARD = ROOT / "BOARD.md"
 
 COLUMNS = [
     ("inbox", "Inbox"),
@@ -19,6 +16,13 @@ COLUMNS = [
 ]
 
 PRIORITY_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+
+
+def root() -> pathlib.Path:
+    env = os.environ.get("OPS_ROOT")
+    if env:
+        return pathlib.Path(env)
+    return pathlib.Path(__file__).resolve().parents[1]
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:
@@ -37,9 +41,10 @@ def parse_frontmatter(text: str) -> dict[str, str]:
     return data
 
 
-def load_tickets() -> list[dict[str, str]]:
+def load_tickets(tickets_dir: pathlib.Path | None = None) -> list[dict[str, str]]:
+    tickets_dir = tickets_dir or (root() / "tickets")
     rows = []
-    for path in sorted(TICKETS.glob("*.md")):
+    for path in sorted(tickets_dir.glob("*.md")):
         if path.name.startswith("_"):
             continue
         meta = parse_frontmatter(path.read_text())
@@ -56,8 +61,7 @@ def load_tickets() -> list[dict[str, str]]:
     return rows
 
 
-def main() -> None:
-    tickets = load_tickets()
+def render_board(tickets: list[dict[str, str]]) -> str:
     by_status: dict[str, list[dict[str, str]]] = {k: [] for k, _ in COLUMNS}
     for t in tickets:
         status = t.get("status", "inbox")
@@ -84,9 +88,22 @@ def main() -> None:
                 f"- [ ] [[tickets/{ident}|{ident}]] {pri} {title_text}".rstrip()
             )
         lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
 
-    BOARD.write_text("\n".join(lines).rstrip() + "\n")
-    print(f"wrote {BOARD.relative_to(ROOT.parent)} ({len(tickets)} tickets)")
+
+def write_board(ops_root: pathlib.Path | None = None) -> pathlib.Path:
+    ops_root = ops_root or root()
+    tickets = load_tickets(ops_root / "tickets")
+    board = ops_root / "BOARD.md"
+    board.write_text(render_board(tickets))
+    return board
+
+
+def main() -> None:
+    ops_root = root()
+    board = write_board(ops_root)
+    tickets = load_tickets(ops_root / "tickets")
+    print(f"wrote {board.relative_to(ops_root.parent)} ({len(tickets)} tickets)")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,28 @@
+{
+  "name": "my-island",
+  "dockerComposeFile": ["../compose.yml", "docker-compose.yml"],
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": true,
+  "runServices": ["postgres", "loki", "prometheus", "alertmanager", "grafana"],
+  "remoteUser": "ubuntu",
+  "postStartCommand": "bash /workspace/.devcontainer/post-start.sh",
+  "forwardPorts": [3030, 3101, 5433, 9091, 9094],
+  "portsAttributes": {
+    "3030": { "label": "Grafana", "onAutoForward": "notify" },
+    "3101": { "label": "Loki" },
+    "5433": { "label": "Postgres" },
+    "9091": { "label": "Prometheus" },
+    "9094": { "label": "Alertmanager" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "ms-python.python",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
