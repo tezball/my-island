@@ -39,7 +39,8 @@ Sign-off: [`SIGNED.md`](SIGNED.md) (CEO, 2026-09-05).
 Two products live in this repo, stacked in time.
 
 **Working tree (current).** Product signed 2026-09-05 ([`SIGNED.md`](SIGNED.md)):
-vision, 92-story MVP, 10-chunk expansion, naming shortlist, **signed house
+vision, 92-story MVP, 10-chunk expansion, **Halfdoor** public brand
+([`NAMING.md`](NAMING.md); Inis internal only), **signed house
 stack**. Start at [`README.md`](README.md). Backend is Java / Spring Boot.
 Client is a light Vite + React PWA (not Next). Database is PostgreSQL 17 +
 PostGIS. Host and OIDC provider are still open.
@@ -249,10 +250,12 @@ These remaining questions are outside product and they gate the build.
       via MCP, OSS first. Host and OIDC provider still open. See
       [`STACK.md`](STACK.md). Product freeze: [`SIGNED.md`](SIGNED.md). Log:
       `ops/company/DECISIONS.md`.
-- [ ] **Public name** before first release. Shortlist in [`NAMING.md`](NAMING.md):
-      **Cairn** (recommended), Rian, Waymark, Inis, Turas. Hold Meitheal for a
-      partner programme. Avoid Fáilte / Wild Atlantic Way and any camping-coded
-      name.
+- [x] **Public name.** **Halfdoor** is the working / public / company / product
+      brand (CEO via Personal PA, 2026-09-05). Subtitle: “Halfdoor — places to
+      stay & explore across Ireland.” **Inis** is internal only — not public
+      marketing. Geographic Inis/Inish place names keep full names. Repo stays
+      `my-island`. Marketing solicitor / domain park still recommended later;
+      the working public name is locked. Canon: [`NAMING.md`](NAMING.md).
 - [ ] **Revenue model** — partner subscription, commission, or advertising.
       Gates chunk 7, not the MVP. Rule already written: never paywall visibility
       or the ability to receive an enquiry.

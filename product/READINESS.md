@@ -31,7 +31,7 @@ PRs #2, #4, #5. Tag `legacy-platform` is archaeology.
 | Define the feature backlog | **Yes, with a freeze** | `product/MVP.md` has 92 Must stories, a journey, a data sketch, explicit out-of-scope, and a build order. That is enough to slice epics. |
 | Implement DX / platform | **Yes, start now** | Java/Spring, Vite+React PWA, PostGIS, Grafana MCP, NFR-09..14, and `STACK.md` are enough to stand up compose, Dev Container, Actions, Playwright harness, and a Place/Visit schema — **when a `PRD-*` ticket is `implement`**. |
 | Implement user-facing MVP | **Not yet, ~1 week of freeze** | No canonical UI, no facility list, no map/auth/sync contracts, two conflicting MVPs, unsigned host/OIDC, no content. A strong team will invent these; they will invent them twice if `docs/MVP.md` is in the mix. |
-| Hit MVP definition of done | **No** | 500 places, success thresholds, content owner, brand, legal pages, Google/Apple apps, staging, backups — none are in the repo. |
+| Hit MVP definition of done | **No** | 500 places, success thresholds, content owner, legal pages, Google/Apple apps, staging, backups — none are in the repo. Public brand is **Halfdoor**. |
 
 ---
 
@@ -70,7 +70,7 @@ These are not “nice to have in grooming”. Two engineers will ship two produc
 | **URL scheme** | NFR-08 | `/places/{county}/{slug}` vs `/p/{slug}` |
 | **Image pipeline** | CUR-03, NFR-01 | Max size, variants (card/hero), formats, moderation (none in MVP?), EXIF stripping. |
 | **Auth providers** | ACC-02 | Google and Apple **are** in MVP. Need Apple Developer + Google Cloud apps, redirect URLs, and a name. Cannot finish signup without them. |
-| **PWA chrome** | NFR-03 | Name, icon, splash, theme colour — blocked on `NAMING.md`. Working name is `PLACEHOLDER`. |
+| **PWA chrome** | NFR-03 | Name is **Halfdoor** ([`NAMING.md`](NAMING.md)). Icon, splash, theme colour still unset. |
 | **Legal copy** | NFR-05 | Privacy, terms, cookie categories, retention periods. Not drafted for this product. |
 | **Seed data for NFR-14** | All E2E | Anonymised places across 32 counties. No fixture exists. |
 | **Instrumentation** | MVP §7, ADM-07 | Event names for activation/depth/return/coverage. Thresholds explicitly **not** set. |
@@ -94,7 +94,7 @@ CTO review does **not** fill these. It fills how the team operates, not what a P
 | Vite + React PWA (not Next-heavy) | OIDC / IdP |
 | PostgreSQL 17 + PostGIS, Flyway | Curator admin depth (role routes vs separate tool) |
 | Grafana OSS MCP pack | Always-on staging budget / Cursor cap |
-| GitHub Actions; no Jenkins; no agent prod merge | Seed content, brand, success thresholds |
+| GitHub Actions; no Jenkins; no agent prod merge | Seed content, success thresholds |
 
 Object storage (MinIO local / S3-compatible later) remains the CTO default and does not fight the house.
 
@@ -104,7 +104,7 @@ Still **blocked on the business**, not assumable by DX:
 - Cursor as mandated runtime / Cloud Agent budget / always-on staging
 - GitHub org + bot user
 - EU log residency
-- Brand name (blocks PWA, Apple/Google consent screens, emails)
+- Domain/TM solicitor and social handles (recommended later; public name **Halfdoor** is locked — [`NAMING.md`](NAMING.md). Repo stays `my-island`)
 - Success thresholds (blocks “launch”, not “code”)
 - Auto-merge / agent-prod policy (CTO already recommended no)
 
@@ -118,7 +118,7 @@ Not “build Explore”. Not “port the old API”.
 2. **Do not start the consumer skeleton until `PRD-*` is `implement`.** Shape is Spring Boot + Vite/React PWA + PostGIS per `STACK.md`. Not Next, not FastAPI, not Neon.
 3. **Stand up the skeleton (when that ticket is implement):** Dev Container, compose (API, web, Postgres+PostGIS, Grafana, Mailpit, MinIO), `AGENTS.md`, MCP pack (grafana + postgres-RO + GitHub), GitHub Actions with a trivial Playwright health test.
 4. **Implement Place + Curator CRUD + CSV import** against the frozen facility list, with 20 fake places in all four categories. That unblocks both content work and Explore.
-5. **Do not** start Google/Apple, PWA branding, or 500-place import until name + content source exist.
+5. **Do not** start Google/Apple, PWA chrome (icon/splash/theme), or 500-place import until content source exists. Public name is **Halfdoor**; do not rename the GitHub repo.
 
 Code can move in parallel with content. **Launch cannot.**
 

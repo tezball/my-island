@@ -1,8 +1,9 @@
 ---
-title: Naming Candidates
+title: Naming
 type: product
-status: draft
+status: signed
 created: 2026-09-01
+signed: 2026-09-05
 tags:
   - branding
   - naming
@@ -10,7 +11,26 @@ tags:
 
 # Naming
 
-> Needed before the first public release. Not a blocker for the build — see `VISION.md`.
+**Working / public brand: Halfdoor.** Locked by Terry (human CEO) via Personal PA **2026-09-05**. Ship now — do not wait on domain or trademark.
+
+**Subtitle:** Halfdoor — places to stay & explore across Ireland.
+
+**Inis** is **internal only**. Not a public marketing name.
+
+**Brand vs place:** product brand = Halfdoor. Geographic Inis / Inish place names keep their full names (Inis Mór, Inis Oírr, and so on). The product is not those places.
+
+Marketing solicitor review and a domain park remain **recommended later**. Status is **working public name locked**.
+
+GitHub repository stays `tezball/my-island`. Do not rename the repo for this lock.
+
+## Locked rules
+
+1. Public / company / product brand is **Halfdoor**.
+2. Public subtitle is **“Halfdoor — places to stay & explore across Ireland.”**
+3. **Inis** is internal-only (repo DNA, internal shorthand). Do not use Inis as a customer-facing product name.
+4. Geographic Inis / Inish names are place names, not the brand — keep the full name.
+5. Domain, trademark, and solicitor work are still recommended before a loud public launch. They do not block using Halfdoor as the working public name.
+6. Do not rename the GitHub repository `my-island`.
 
 ## What the name has to carry
 
@@ -38,25 +58,29 @@ Also crowded: anything `*-bnb`, `*-booking`, `Camp*`, `Pitch*`.
 
 ---
 
-## Tier 1 — Recommended shortlist
+## Shortlist (history)
 
-| Name | Origin / meaning | Why it works | Risks |
+The tables below are the pre-lock shortlist. They are **not** the current public name. Halfdoor is
+the working public brand as of 2026-09-05. **Inis** in this shortlist is internal-only — not a
+public mark.
+
+### Tier 1 — former recommended shortlist
+
+| Name | Origin / meaning | Why it was considered | Risks |
 |---|---|---|---|
 | **Cairn** | A stack of stones marking a trail; walkers add a stone as they pass | Near-perfect fit. The core loop *is* "visit a place, leave your mark, build a record". One syllable, spellable, pronounceable by every tourist, works as a verb ("cairn it"). Scales past Ireland. | Generic-ish word; `cairn.com` taken, `.ie`/`cairn.travel` likely available. Existing Cairn Energy / Cairn Homes (different classes) |
 | **Rian** | Irish: *trace, track, the mark left behind* (REE-un) | Names the journal/passport feature directly and beautifully. Short, soft, ownable. Genuinely Irish without being a cliché | Pronunciation needs a one-time cue. Also a given name |
 | **Waymark** | The painted/posted markers along a waymarked trail | Bridges both halves: trail markers for hikers, "mark your way" for the travel record. Ireland has an official *National Waymarked Trails* network, so it reads native | Compound English; less distinctive than Cairn |
-| **Inis** | Irish: *island* (IN-ish) — as in Inis Mór, Inis Oírr | Keeps the "my island" DNA, drops the camping baggage. Short, clean, unmistakably Irish, easy to say | Very common Irish place-name prefix, so SEO is contested |
+| **Inis** | Irish: *island* (IN-ish) — as in Inis Mór, Inis Oírr | Keeps the "my island" DNA, drops the camping baggage. Short, clean, unmistakably Irish, easy to say | **Internal only** after the 2026-09-05 lock. Very common Irish place-name prefix, so SEO is contested. Do not use as public brand |
 | **Turas** | Irish: *journey, trip, pilgrimage* (TUR-us) | Literally the product noun. Covers stays, experiences and trails in one word | Slightly abstract; two syllables |
 | **Meitheal** | Irish: the old custom of neighbours gathering to help with each other's work (MEH-hal) | Best *story* of the lot — it is exactly a two-sided local marketplace of hosts and suppliers helping each other. Superb brand narrative for the partner side | Hardest to pronounce/spell for international users. Consider as a partner-programme sub-brand rather than the main mark |
 
-**Recommendation:** **Cairn** for the consumer brand — it survives internationalisation, is trivially
-pronounceable, and the "leave a stone at each place" metaphor gives you a ready-made visual system,
-map pin, loyalty mechanic and copy voice. Hold **Meitheal** as the name of the host/supplier
-partner programme.
+**Historical recommendation (superseded 2026-09-05):** Cairn for the consumer brand; hold Meitheal
+as a host/supplier partner-programme name. Public brand is now **Halfdoor**.
 
 ---
 
-## Tier 2 — Strong alternatives
+## Tier 2 — Strong alternatives (history)
 
 ### Irish-rooted
 
@@ -81,7 +105,7 @@ partner programme.
 | Name | Note |
 |---|---|
 | **Isleway** | Island + route; compound but clear |
-| **Inisway** | Irish *inis* + way |
+| **Inisway** | Irish *inis* + way — do not use as a public product name; Inis is internal only |
 | **Headland** | Coastal, solid, English |
 | **Shoreline** | Warm, coastal |
 | **Ninewaves** | From the mythic nine waves that bound Ireland's shore |
@@ -123,23 +147,22 @@ partner programme.
 5. **Two-sided** — works in *both* "book your stay on X" and "list your business on X"
 6. **Visual hook** — gives designers a mark, a map pin and a colour story for free
 
-## Before committing
+## Still recommended later (not a blocker)
 
-- [ ] Domain check: `.ie`, `.com`, `.travel`, `.co`
+Working public name is locked. These remain good hygiene before a loud launch:
+
+- [ ] Domain check / park: `.ie`, `.com`, `.travel`, `.co`
 - [ ] Trademark search: IPOI (Ireland) and EUIPO, classes **39** (travel arrangement) and **43** (accommodation/food)
+- [ ] Marketing solicitor review
 - [ ] Social handle availability across Instagram / TikTok / X
 - [ ] Say it aloud on a phone call — does it survive being spelled over the phone?
 - [ ] Check it does not mean something unfortunate in German, French, Spanish or Dutch (top inbound markets)
 
-## When the name is chosen
+## After this lock
 
-There is no code yet, so the name costs nothing to apply beyond the repository itself:
-
-- [ ] Register the domain and social handles before announcing
-- [ ] Rename the GitHub repository and update the remote
-- [ ] Use it from the first commit of the build — never a placeholder that has to be found and
-      replaced later
-- [ ] Fix the working name in `VISION.md`
-
-This is the one genuine advantage of restarting: the naming decision is free right now, and it will
-never be this cheap again.
+- [x] Working / public name is **Halfdoor** (CEO via Personal PA, 2026-09-05)
+- [x] Subtitle locked: “Halfdoor — places to stay & explore across Ireland.”
+- [x] Inis = internal only; brand-vs-place rule written
+- [x] Working name fixed in `VISION.md`
+- [ ] Register domain and social handles before a public announcement (recommended, not a name-lock blocker)
+- [ ] **Do not** rename the GitHub repository `my-island`

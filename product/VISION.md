@@ -11,8 +11,9 @@ signed: 2026-09-05
 
 > **Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md).
 >
-> **Working name:** `PLACEHOLDER` — see `NAMING.md`. Not a blocker for MVP build, but must be
-> settled before the first public release.
+> **Working / public name: Halfdoor** — “Halfdoor — places to stay & explore across Ireland.”
+> **Inis** is internal only. Brand vs place: geographic Inis/Inish names keep full names.
+> Canon: [`NAMING.md`](NAMING.md). Locked CEO via Personal PA 2026-09-05.
 
 ## 1. The product in one sentence
 
