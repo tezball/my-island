@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import board_sync
@@ -173,4 +174,23 @@ def test_leads_pipeline_tickets_exist() -> None:
     assert by_id["PRD-009"]["owner"] == "product"
     reason = by_id["PRD-008"].get("blocked_reason", "").lower()
     assert "prd-001" in reason
-    assert "prd-006" in reason or "leads schema" in reason
+    assert "prd-006" in reason or "schema.json" in reason
+
+
+def test_leads_pipeline_tickets_cite_landed_schema() -> None:
+    schema = json.loads((REPO / "data" / "leads" / "schema.json").read_text())
+    required = schema["required"]
+    prd007 = (OPS / "tickets" / "PRD-007.md").read_text()
+    prd008 = (OPS / "tickets" / "PRD-008.md").read_text()
+    prd009 = (OPS / "tickets" / "PRD-009.md").read_text()
+    for text, ident in ((prd007, "PRD-007"), (prd008, "PRD-008"), (prd009, "PRD-009")):
+        assert "data/leads/schema.json" in text, ident
+        assert "PR #14" in text, ident
+    for key in required:
+        assert f"`{key}`" in prd007, key
+    for key in ("source_url", "source_name", "licence"):
+        assert f"`{key}`" in prd008, key
+    assert "`source`" not in prd008
+    for status in ("lead", "reviewed", "rejected", "promoted"):
+        assert f"`{status}`" in prd008
+    assert "`licence`" in prd009

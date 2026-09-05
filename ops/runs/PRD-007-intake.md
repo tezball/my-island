@@ -19,6 +19,8 @@ Product ticket filing only. PRD-006 already landed as the Research leads *store*
 
 Updated [[tickets/PRD-002]] notes to point at the leads pipeline. Synced [[BOARD]]. No application code. No STACK rewrite.
 
+Follow-up (same PR): tickets aligned to landed [`data/leads/schema.json`](../../data/leads/schema.json) (PR #14). Promote copies `source_url` / `source_name` / `licence`; lead `status` enum only (`lead` / `reviewed` / `rejected` / `promoted`). No parallel schema.
+
 ## Result
 
 success
