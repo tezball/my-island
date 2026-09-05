@@ -26,7 +26,7 @@ Reply draft, `INC-*` or `PRD-*` bug ticket, link to the ticket in the daily note
 
 ## Escalation
 
-Trust-safety: GDPR, abuse, minors, scams. Ops-incidents: checkout/payment down (future). Orchestrator: no ticket template fits.
+Trust-safety: GDPR, abuse, minors, scams. Ops-incidents: checkout/payment down (future). CEO (`[[orchestrator]]`): no ticket template fits.
 
 ## Must not
 

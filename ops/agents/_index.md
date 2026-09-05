@@ -11,7 +11,7 @@ Grok vs Cursor: [[GROK_VS_CURSOR]].
 
 | Role | Runtime | Status | Owns |
 |---|---|---|---|
-| [[roles/orchestrator]] | grok + cursor | active | `ops/` loop, board, runbooks |
+| [[roles/orchestrator|CEO]] | grok + cursor | active | company front door: `ops/` loop, board, runbooks. Formerly Orchestrator; slug remains `orchestrator` |
 | [[roles/automation-expert]] | cursor | active | CI/CD, agent skills/hooks, Automations, enterprise DX |
 | [[roles/product]] | grok | active | `product/` (notes only), `PRD-*` intake |
 | [[roles/eng-frontend]] | cursor | dormant until `PRD-*` implement | client app (future, scaffolding) |
@@ -25,11 +25,13 @@ Grok vs Cursor: [[GROK_VS_CURSOR]].
 
 **Dormant** means: do not invent work. If a ticket is filed, follow the runbook and escalate. Do not build product surfaces to give the role something to do.
 
+Public brand is **Halfdoor** ([[company/BRAND]]). Do not use **Inis** or Ireland Stays as the public name.
+
 ## Escalation spine
 
 ```
 guest-support / host-onboarding / content-seo
-  → orchestrator (process) or trust-safety (people/data)
+  → CEO / orchestrator (process) or trust-safety (people/data)
       → ops-incidents (if production is hurting)
           → Terry (merge, legal, prod, money)
 
@@ -37,4 +39,4 @@ clone/test/CI/skills broken → automation-expert
 compose/Grafana/Postgres MCP down → eng-infra
 ```
 
-Engineering (frontend / backend / infra) escalates broken plans to orchestrator. Automation Expert owns the factory (CI, skills, DX), not the product UI.
+Engineering (frontend / backend / infra) escalates broken plans to CEO (`orchestrator`). Automation Expert owns the factory (CI, skills, DX), not the product UI.

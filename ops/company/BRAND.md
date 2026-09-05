@@ -5,9 +5,22 @@ type: company
 
 # Brand
 
-Public product name is **unset**. Working title in git: `my-island`. Do not print that on a customer surface.
+**Public company/product name: Halfdoor.**
 
-Shortlist and trademark landmines: [`product/NAMING.md`](../../product/NAMING.md). Current recommendation there: **Cairn** for the consumer brand; hold **Meitheal** for a host/supplier programme.
+**Inis** is internal-only (working/internal nickname). Do not use it on customer surfaces, marketing, or guest/host copy.
+
+Git repo stays `my-island`. Do not print the repo name on a customer surface.
+
+Product owns [`product/NAMING.md`](../../product/NAMING.md). Do not edit that file from ops work; Product updates it separately. This note is the ops lock.
+
+## Brand vs place
+
+| Use | Rule |
+|---|---|
+| Product / company | **Halfdoor**. **Inis** only in internal notes if needed. |
+| Real places | Keep full Inis/Inish names — Inis Mór, Inishowen, and the like. |
+
+Vault search must not blur the internal nickname with geography.
 
 ## Voice
 
@@ -17,6 +30,9 @@ Shortlist and trademark landmines: [`product/NAMING.md`](../../product/NAMING.md
 
 ## Must not
 
+- Present **Ireland Stays** (or “Ireland stays”) as the public brand.
+- Print **Inis** on a customer surface, marketing, or guest/host copy.
+- Shorten real place names to “Inis” in a way that collides with the internal nickname.
 - Fáilte, Wild Atlantic Way, Discover Ireland, or other state tourism marks as product names.
 - Camping-coded public names (`Camp*`, `Pitch*`, `*-bnb`).
-- Inventing a ship name in tickets or UI copy. Use “the directory” / “the app” until `product/NAMING.md` is decided.
+- Invent a second public ship name in tickets or UI copy. Use **Halfdoor**, or “the directory” / “the app” when the legal name is not needed.

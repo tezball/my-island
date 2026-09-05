@@ -22,6 +22,7 @@ Signed calls. Product freeze: [`product/SIGNED.md`](../../product/SIGNED.md). Ca
 | 4 | **UI light, easy, fast.** Thin Vite + React PWA (or equivalent). **Not** Next.js-heavy unless later evidence. | [`product/STACK.md`](../../product/STACK.md) |
 | 5 | **Ruthless agent loop.** Solid tools + MCP servers + clear idea→prod workflows with logs, metrics, alerts. | [`product/STACK.md`](../../product/STACK.md) gaps |
 | 6 | **Leads-only scrape.** Aggressive multi-source collection is approved for Research **leads** with provenance. Leads are not published places. Counsel before publish. No auth/CAPTCHA bypass. | [`data/leads/`](../../data/leads/README.md), [[tickets/PRD-006]], [[tickets/PRD-007]], [[tickets/PRD-009]] |
+| 7 | **Public brand: Halfdoor.** Inis is internal-only (not customer, marketing, or guest/host copy). Repo stays `my-island`. Brand-vs-place: real Inis/Inish geography keeps full names. Product owns [`product/NAMING.md`](../../product/NAMING.md) — ops does not edit it. | [[BRAND]], [[tickets/WF-015]] |
 
 ## Signed house (`product/STACK.md`)
 

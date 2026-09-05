@@ -19,7 +19,7 @@ Two runtimes, one git repo. Do not pretend they are interchangeable.
 
 | Role | Default runtime | Why |
 |---|---|---|
-| orchestrator | Grok for intake and digest; Cursor for vault PRs | Split coordination from git |
+| CEO (`orchestrator`; formerly Orchestrator) | Grok for intake and digest; Cursor for vault PRs | Split coordination from git |
 | automation-expert | Cursor | CI, skills, hooks, Automations YAML/docs; Grok only to describe a routine |
 | product | Grok | Specs and ticket shaping; Cursor only if `product/` files must change on a branch |
 | eng-frontend / eng-backend | Cursor | Future app (scaffolding). Dormant |

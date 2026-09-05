@@ -26,7 +26,7 @@ Grafana MCP (read-only), CI, [[BOARD]], open PRs, inbound “the site is down”
 
 ## Escalation
 
-Orchestrator for process. Infra for compose/CI patches. Terry if prod (there is no prod yet — do not invent one).
+CEO for process. Infra for compose/CI patches. Terry if prod (there is no prod yet — do not invent one).
 
 ## Must not
 

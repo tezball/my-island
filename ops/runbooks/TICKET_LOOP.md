@@ -17,7 +17,7 @@ One role per session. If you planned it, stop. Do not review your own implement 
 
 Skip `type: epic`. Work a child.
 
-## 1. Intake (Grok or orchestrator)
+## 1. Intake (Grok or CEO)
 
 1. Is this already a ticket? Search `ops/tickets/` by title before creating.
 2. Create with `python3 ops/scripts/new_ticket.py --prefix WF|PRD|INC --type story|bug|incident --title "…" --owner <role>`.

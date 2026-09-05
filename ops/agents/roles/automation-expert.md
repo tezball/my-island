@@ -28,7 +28,7 @@ PRs to `.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/environment.jso
 
 ## Escalation
 
-[[eng-infra]] when the local Grafana/Postgres stack is the failure, not CI YAML. Orchestrator if a “DX” ticket is secretly product. Terry for paid CI minutes, org secrets, Automations UI confirm.
+[[eng-infra]] when the local Grafana/Postgres stack is the failure, not CI YAML. CEO if a “DX” ticket is secretly product. Terry for paid CI minutes, org secrets, Automations UI confirm.
 
 ## Must not
 
