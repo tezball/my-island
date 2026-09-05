@@ -159,3 +159,18 @@ def test_prd_skeleton_stays_gated() -> None:
     assert by_id["PRD-003"]["status"] != "implement"
     assert "implement" in by_id["PRD-001"].get("blocked_reason", "").lower()
     assert by_id["WF-008"]["status"] == "done"
+
+
+def test_leads_pipeline_tickets_exist() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    for ident in ("PRD-007", "PRD-008", "PRD-009"):
+        assert ident in by_id, ident
+        assert by_id[ident]["type"] == "story"
+        assert by_id[ident]["status"] == "ready"
+        assert by_id[ident]["status"] != "implement"
+    assert by_id["PRD-007"]["owner"] == "product"
+    assert by_id["PRD-008"]["owner"] == "eng-backend"
+    assert by_id["PRD-009"]["owner"] == "product"
+    reason = by_id["PRD-008"].get("blocked_reason", "").lower()
+    assert "prd-001" in reason
+    assert "prd-006" in reason or "leads schema" in reason

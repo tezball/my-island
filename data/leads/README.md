@@ -70,4 +70,4 @@ Starter seed (2026-09-05): converted from [`docs/leads/CAMPSITE_LEADS.md`](../..
 
 ## Ticket
 
-Vault: [`ops/tickets/PRD-006.md`](../../ops/tickets/PRD-006.md). Downstream import: [`ops/tickets/PRD-002.md`](../../ops/tickets/PRD-002.md).
+Vault: [`ops/tickets/PRD-006.md`](../../ops/tickets/PRD-006.md) (store). Pipeline acceptance: [`ops/tickets/PRD-007.md`](../../ops/tickets/PRD-007.md). Promote-from-lead: [`ops/tickets/PRD-008.md`](../../ops/tickets/PRD-008.md). Counsel before publish: [`ops/tickets/PRD-009.md`](../../ops/tickets/PRD-009.md). Bulk import / coverage: [`ops/tickets/PRD-002.md`](../../ops/tickets/PRD-002.md).
