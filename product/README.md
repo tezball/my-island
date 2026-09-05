@@ -1,9 +1,19 @@
+---
+title: Product
+type: product
+status: signed
+owner: Product
+created: 2026-09-01
+signed: 2026-09-05
+---
+
 # Product
 
 Product definition for the rebuild. Start here.
 
 | Document | What it is |
 |---|---|
+| [`SIGNED.md`](SIGNED.md) | CEO sign-off 2026-09-05 — directory MVP, kill list, house bar |
 | [`BRIEFING.md`](BRIEFING.md) | CEO briefing — what the repo is, what we are building, what was built before, open decisions |
 | [`VISION.md`](VISION.md) | What we are building and why. Principles, roles, decisions made, open questions for the business |
 | [`MVP.md`](MVP.md) | Release 1 — the checkable directory. 92 stories, data model, success criteria, definition of done |
@@ -25,11 +35,11 @@ gated on the answer.
 
 ## Status
 
-**Product drafted** (CEO 2026-09-05). **Nothing built.** House is **signed** in
-[`STACK.md`](STACK.md): Java / Spring Boot, light Vite+React PWA (not Next.js),
-PostgreSQL 17 + PostGIS, Flyway, GitHub Actions, Grafana OSS MCP. Host, OIDC
-provider, and curator-admin depth remain open. Do not start the skeleton until a
-`PRD-*` ticket is `implement`.
+**Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md). **Nothing built.**
+House is **signed** in [`STACK.md`](STACK.md): Java / Spring Boot, light
+Vite+React PWA (not Next.js), PostgreSQL 17 + PostGIS, Flyway, GitHub Actions,
+Grafana OSS MCP. Host, OIDC provider, and curator-admin depth remain open. Do
+not start the skeleton until a `PRD-*` ticket is `implement`.
 
 The previous camping-platform build has had its code removed from the working tree; its
 documentation is retained in `../docs/` for reference. That material describes a booking platform

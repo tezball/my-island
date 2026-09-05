@@ -1,13 +1,13 @@
 # My Island Documentation
 
 > **History only (CEO 2026-09-05).** This folder describes the previous camping
-> booking platform. It is **not** the company OS, **not** the work tracker, and
-> **not** the rebuild spec. **Do not implement from these files.** Tag
-> `legacy-platform` is archaeology. Canon is [`../product/`](../product/) and
-> [`../ops/`](../ops/HOME.md). House stack: [`../product/STACK.md`](../product/STACK.md)
-> (Java / Spring, Vite+React PWA — not Next, Postgres+PostGIS, Grafana MCP).
-> Draft PRs that treat this folder as requirements (#2, #4, #5) are to be
-> closed or ignored.
+> booking platform. It is superseded by [`../product/`](../product/) — **do not
+> implement from here.** It is **not** the company OS, **not** the work tracker,
+> and **not** the rebuild spec. Tag `legacy-platform` is archaeology. Product
+> canon: [`../product/SIGNED.md`](../product/SIGNED.md). House stack:
+> [`../product/STACK.md`](../product/STACK.md) (Java / Spring, Vite+React PWA —
+> not Next, Postgres+PostGIS, Grafana MCP). Draft PRs that treat this folder as
+> requirements (#2, #4, #5) are closed or ignored.
 >
 > Company OS (Obsidian): [`../ops/`](../ops/HOME.md). Do not open this folder as
 > the vault.

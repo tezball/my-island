@@ -9,6 +9,7 @@ Living spec is **outside** this vault. Do not fork it.
 
 | Canon | Path |
 |---|---|
+| Signed decisions (CEO 2026-09-05) | [`product/SIGNED.md`](../../product/SIGNED.md) |
 | CEO briefing | [`product/BRIEFING.md`](../../product/BRIEFING.md) |
 | Vision | [`product/VISION.md`](../../product/VISION.md) |
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |

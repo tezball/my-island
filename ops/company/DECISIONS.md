@@ -8,15 +8,15 @@ created: 2026-09-05
 
 # CEO decisions
 
-Signed calls. Canon for product house is [`product/STACK.md`](../../product/STACK.md). Do not re-litigate in a ticket.
+Signed calls. Product freeze: [`product/SIGNED.md`](../../product/SIGNED.md). Canon for product house is [`product/STACK.md`](../../product/STACK.md). Do not re-litigate in a ticket.
 
 ## 2026-09-05 — Directory MVP, cleanup, house stack
 
-**Terry.** Directory MVP is **signed as Product drafted**. Working tree is not a running consumer app.
+**Terry.** Directory MVP is **signed** (CEO 2026-09-05 — [`product/SIGNED.md`](../../product/SIGNED.md)). Working tree is not a running consumer app.
 
 | # | Decision | Where it lives |
 |---|---|---|
-| 1 | **Directory MVP** — phone-first curated Ireland directory (POI / experience / campsite / B&B), list + map, one-tap check-off (pre-signup), My Places, curator seed; discovery near-me / not-been-yet / nearby. **Out:** booking, payments, partner portals, reviews, messaging, native apps. **Success:** return tick rate. **Kill** if near-zero after a fair launch. | [`product/MVP.md`](../../product/MVP.md), [`product/VISION.md`](../../product/VISION.md), [[tickets/PRD-000]] |
+| 1 | **Directory MVP** — phone-first curated Ireland directory (POI / experience / campsite / B&B), list + map, one-tap check-off (pre-signup), My Places, curator seed; discovery near-me / not-been-yet / nearby. **Out:** booking, payments, partner portals, reviews, messaging, native apps. **Success:** return tick rate. **Kill** if near-zero after a fair launch. | [`product/SIGNED.md`](../../product/SIGNED.md), [`product/MVP.md`](../../product/MVP.md), [`product/VISION.md`](../../product/VISION.md), [[tickets/PRD-000]] |
 | 2 | **Cleanup.** `docs/` is past-company history only. Do not implement from it. Tag `legacy-platform` is archaeology only. Canon = `product/` + `ops/`. Draft PRs #2 / #4 / #5 / #7 **closed** by Orchestrator (2026-09-05). | [`docs/README.md`](../../docs/README.md), [[tickets/WF-008]] (done) |
 | 3 | **Backend always Java / Spring Boot.** House rule. Permanent. Do not recommend TypeScript or FastAPI APIs as the default. | [`product/STACK.md`](../../product/STACK.md) |
 | 4 | **UI light, easy, fast.** Thin Vite + React PWA (or equivalent). **Not** Next.js-heavy unless later evidence. | [`product/STACK.md`](../../product/STACK.md) |

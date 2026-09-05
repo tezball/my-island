@@ -22,7 +22,7 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 | Path | What |
 |---|---|
 | [`ops/`](ops/HOME.md) | **Company OS** (Obsidian): charter, agents, runbooks, tickets, CI/skills docs |
-| [`product/`](product/README.md) | Product canon (read). Implement only on `PRD-*` + `implement` |
+| [`product/`](product/README.md) | Product canon, **signed** 2026-09-05 ([`SIGNED.md`](product/SIGNED.md)). Implement only on `PRD-*` + `implement` |
 | [`docs/`](docs/README.md) | Historical booking platform — not requirements, not a migration source |
 | [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres + Grafana **ops** stack for agents |
 | `.github/` + `.cursor/skills/` | CI and agent skills (Automation Expert) |
@@ -40,7 +40,7 @@ Keep app stubs **minimal or absent**. Empty tree beats a fake marketplace.
 
 New ticket: `python3 ops/scripts/new_ticket.py --prefix WF --type workflow --title "…"`.
 
-Product direction (Ireland stays: campsites, B&Bs, experiences) lives in [`product/`](product/README.md). Marketplace epic (gated): [`ops/tickets/PRD-004.md`](ops/tickets/PRD-004.md). Do not implement it on this workflow mandate.
+Product direction (Ireland stays: campsites, B&Bs, experiences) is **signed** 2026-09-05 — [`product/SIGNED.md`](product/SIGNED.md). Marketplace epic (gated): [`ops/tickets/PRD-004.md`](ops/tickets/PRD-004.md). Do not implement it on this workflow mandate.
 
 ## Run (laptop, Dev Container, Cloud Agent, CI)
 
@@ -57,4 +57,6 @@ Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` �
 
 ## Status
 
-Company OS + agent loop is the work. **No consumer application to protect.** Signed house for *later* product work: Java / Spring Boot, Vite+React PWA (not Next), PostgreSQL 17 + PostGIS, Grafana MCP — [`product/STACK.md`](product/STACK.md). Do not start that skeleton unless a `PRD-*` ticket is `implement`. CEO locks: [`ops/company/DECISIONS.md`](ops/company/DECISIONS.md).
+Company OS + agent loop is the work. **No consumer application to protect.**
+
+Product canon is **signed** 2026-09-05 — [`product/SIGNED.md`](product/SIGNED.md). Signed house for *later* product work: Java / Spring Boot, Vite+React PWA (not Next), PostgreSQL 17 + PostGIS, Grafana MCP — [`product/STACK.md`](product/STACK.md). Do not start that skeleton unless a `PRD-*` ticket is `implement`. CEO locks: [`ops/company/DECISIONS.md`](ops/company/DECISIONS.md).
