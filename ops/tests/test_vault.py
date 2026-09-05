@@ -109,6 +109,7 @@ def test_prd_app_code_tickets_are_not_implement() -> None:
     ]
     assert hot == ["PRD-001"]
 
+
 def test_starter_prd_tickets_exist() -> None:
     ids = {meta["id"] for _, meta in next_ticket.tickets(OPS / "tickets")}
     for ident in ("PRD-000", "PRD-001", "PRD-002", "PRD-003", "PRD-004", "PRD-006"):
