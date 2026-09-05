@@ -25,6 +25,7 @@ kanban-plugin: basic
 
 ## Implement
 
+- [ ] [[tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [ ] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook

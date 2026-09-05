@@ -64,7 +64,7 @@ Point-in-time reports (historical, not living docs):
 ### Other
 - [Roadmap](ROADMAP.md) — Feature priorities and status
 - [MVP Launch Checklist](MVP_LAUNCH_CHECKLIST.md) — Launch readiness tracker
-- [Campsite Leads](leads/CAMPSITE_LEADS.md) — Partnership outreach tracking
+- [Campsite Leads](leads/CAMPSITE_LEADS.md) — Archaeology. Living store: [`../data/leads/`](../data/leads/README.md)
 
 ### Assets
 - `Designs/` — UI design mockups and visual diagrams (Event Storm, page flow)

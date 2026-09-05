@@ -23,6 +23,7 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 |---|---|
 | [`ops/`](ops/HOME.md) | **Company OS** (Obsidian): charter, agents, runbooks, tickets, CI/skills docs |
 | [`product/`](product/README.md) | Product canon, **signed** 2026-09-05 ([`SIGNED.md`](product/SIGNED.md)). Implement only on `PRD-*` + `implement` |
+| [`data/leads/`](data/leads/README.md) | Research place leads (not the published catalog) |
 | [`docs/`](docs/README.md) | Historical booking platform — not requirements, not a migration source |
 | [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres + Grafana **ops** stack for agents |
 | `.github/` + `.cursor/skills/` | CI and agent skills (Automation Expert) |
