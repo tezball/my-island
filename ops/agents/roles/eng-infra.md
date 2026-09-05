@@ -30,4 +30,4 @@ PRs to `compose.yml`, `ops/observability/`, `ops/scripts/start-local.sh`, `.devc
 
 ## Must not
 
-Jenkins. Prod deploy. Grafana writes. Refactoring consumer app code. Building a fake marketplace to have something to observe.
+Jenkins. Prod deploy. Grafana writes. Refactoring consumer app code. Building a fake marketplace to have something to observe. Treating Neon or Vercel as the signed house (host is still open; data layer is Postgres/PostGIS in [`product/STACK.md`](../../../product/STACK.md)).

@@ -10,7 +10,7 @@ This repository is the **company OS**. Mandate: **fully automated agent workflow
 6. Do not polish, preserve, or refactor application code for its own sake. It is disposable scaffolding.
 7. Do not merge PRs. Do not deploy production. Grafana and Postgres MCP are read-only.
 
-Product canon (read-only until `PRD-*` + `implement`): `product/`. Historical app: `docs/` and tag `legacy-platform` — not a migration source. Open **`ops/`** in Obsidian, not `docs/`.
+Product canon (read-only until `PRD-*` + `implement`): `product/`. House stack (CEO 2026-09-05): **Java / Spring Boot**, **Vite + React PWA** (not Next.js), **PostgreSQL 17 + PostGIS**, Flyway, Grafana OSS MCP — `product/STACK.md`. Historical app: `docs/` and tag `legacy-platform` — not a migration source. Open **`ops/`** in Obsidian, not `docs/`. Do not recommend FastAPI, Neon, or Vercel as defaults.
 
 Local MCP: `./scripts/dev up` then reload MCP. Details: `ops/workflow/LOCAL.md`.
 

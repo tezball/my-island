@@ -57,4 +57,4 @@ Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` �
 
 ## Status
 
-Company OS + agent loop is the work. **No consumer application to protect.** Backend house for *later* product work is Java / Spring (`product/STACK.md`) — not a reason to start scaffolding an app in this PR.
+Company OS + agent loop is the work. **No consumer application to protect.** Signed house for *later* product work: Java / Spring Boot, Vite+React PWA (not Next), PostgreSQL 17 + PostGIS, Grafana MCP — [`product/STACK.md`](product/STACK.md). Do not start that skeleton unless a `PRD-*` ticket is `implement`. CEO locks: [`ops/company/DECISIONS.md`](ops/company/DECISIONS.md).

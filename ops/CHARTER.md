@@ -25,8 +25,8 @@ Everything the **company OS** needs to function. Not a museum of the last app.
 | Path | Role |
 |---|---|
 | [[HOME]] (`ops/`) | Operating system — tickets, agents, runbooks, skills catalog |
-| `product/` | Product canon (read; do not implement until `PRD-*` + `implement`) |
-| `docs/` | Historical booking platform. Ignore for workflow work |
+| `product/` | Product canon (read; do not implement until `PRD-*` + `implement`). House: [`product/STACK.md`](../product/STACK.md) |
+| `docs/` | Historical booking platform. Ignore for workflow work. Do not implement from it |
 | `scripts/`, `compose.yml` | Local ops runtime (Postgres + Grafana) for agents |
 | git tag `legacy-platform` | Old app. Do not port or protect it |
 
@@ -41,6 +41,7 @@ There is no second tracker. If it is not in git, the company does not know it.
 5. **Secrets never live in notes.** Env and Cursor MCP settings only.
 6. **CI any agent can run.** [[workflow/CI]]
 7. **Directory before marketplace** *when* product work starts. Do not sneak booking into `WF-*`.
+8. **House stack.** Java / Spring Boot, light Vite+React PWA (not Next), Postgres+PostGIS, Grafana MCP. [[company/DECISIONS]]
 
 ## Brand and naming
 

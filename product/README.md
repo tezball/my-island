@@ -9,8 +9,8 @@ Product definition for the rebuild. Start here.
 | [`MVP.md`](MVP.md) | Release 1 — the checkable directory. 92 stories, data model, success criteria, definition of done |
 | [`EXPANSION.md`](EXPANSION.md) | Everything after, in 10 chunks. Each with the question it answers and the evidence needed to start it |
 | [`NAMING.md`](NAMING.md) | Candidate names, trademark landmines to avoid, and the selection criteria |
-| [`STACK.md`](STACK.md) | House technology: Java / Spring; logs, metrics and alerts via MCP (OSS first) |
-| [`ENGINEERING.md`](ENGINEERING.md) | CTO review — MCP-accessible AI engineer loop, recommended choices, open questions |
+| [`STACK.md`](STACK.md) | **Signed house** (CEO 2026-09-05): Java / Spring Boot; Vite+React PWA (not Next); PostgreSQL 17 + PostGIS; Flyway; Grafana OSS MCP |
+| [`ENGINEERING.md`](ENGINEERING.md) | CTO review — agent loop and safety. Does not compete with `STACK.md` |
 | [`READINESS.md`](READINESS.md) | Can a team implement yet? What is enough, what forks, what to freeze |
 
 Day-to-day engineering is not this folder. The company OS, tickets, and agent loop live in [`../ops/`](../ops/HOME.md) (open that folder in Obsidian).
@@ -25,12 +25,14 @@ gated on the answer.
 
 ## Status
 
-Draft, awaiting sign-off. **Nothing built.** Backend is a **Java / Spring house**;
-logs, metrics and alerts are queried through MCP, OSS first — see [`STACK.md`](STACK.md).
-Client framework, database and host are still open against `MVP.md` §3 and the
-`NFR-*` stories.
+**Product drafted** (CEO 2026-09-05). **Nothing built.** House is **signed** in
+[`STACK.md`](STACK.md): Java / Spring Boot, light Vite+React PWA (not Next.js),
+PostgreSQL 17 + PostGIS, Flyway, GitHub Actions, Grafana OSS MCP. Host, OIDC
+provider, and curator-admin depth remain open. Do not start the skeleton until a
+`PRD-*` ticket is `implement`.
 
 The previous camping-platform build has had its code removed from the working tree; its
 documentation is retained in `../docs/` for reference. That material describes a booking platform
 and is superseded by this directory — read it as history, not as requirements. The full previous
-codebase remains in git history at tag `legacy-platform`.
+codebase remains in git history at tag `legacy-platform`. Draft PRs that implement from `docs/`
+(#2, #4, #5) are to be closed or ignored.

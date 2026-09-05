@@ -11,19 +11,22 @@ created: 2026-09-01
 What this repository contains, what the company is building, and what is waiting
 on a sign-off. Source: this folder and `docs/` as of 1 September 2026.
 
-> **This is not a running platform.** The working tree is a product definition
-> awaiting sign-off. There is no application code. The house is **Java / Spring**;
-> logs, metrics and alerts are queried through MCP, OSS first — see
-> [`STACK.md`](STACK.md). The previous camping booking product was deleted on
-> purpose. Its full codebase is still in git at tag `legacy-platform`. The
-> `docs/` folder is history, not the build spec.
+> **This is not a running platform.** The working tree is **Product drafted**
+> (CEO 2026-09-05). There is no application code. The house is **Java / Spring
+> Boot** with a **light Vite + React PWA** (not Next.js), **PostgreSQL 17 +
+> PostGIS**, Flyway, and Grafana OSS MCP — see [`STACK.md`](STACK.md). The
+> previous camping booking product was deleted on purpose. Its full codebase is
+> still in git at tag `legacy-platform`. The `docs/` folder is history, not the
+> build spec.
 
 | | |
 |---|---|
-| Current state | Product definition, draft |
-| House | Java / Spring |
+| Current state | Product drafted (CEO 2026-09-05). No consumer app in tree |
+| House | Java / Spring Boot — not open for overturn |
+| Client | Light Vite + React PWA (not Next.js) |
+| Data | PostgreSQL 17 + PostGIS, Flyway |
 | Observability | MCP — Prometheus, Loki, Grafana Alerting, OSS first |
-| MVP | 92 stories |
+| MVP | 92 stories — signed as Product drafted |
 | After MVP | 10 evidence-gated chunks |
 | Launch geography | Ireland only |
 
@@ -33,10 +36,11 @@ on a sign-off. Source: this folder and `docs/` as of 1 September 2026.
 
 Two products live in this repo, stacked in time.
 
-**Working tree (current).** Product definition: vision, 92-story MVP, 10-chunk
-expansion, naming shortlist, house stack. Status: draft, awaiting sign-off.
-Start at [`README.md`](README.md). Backend is Java / Spring. Client framework,
-database and host are still open.
+**Working tree (current).** Product drafted (CEO 2026-09-05): vision, 92-story MVP,
+10-chunk expansion, naming shortlist, **signed house stack**. Start at
+[`README.md`](README.md). Backend is Java / Spring Boot. Client is a light
+Vite + React PWA (not Next). Database is PostgreSQL 17 + PostGIS. Host and OIDC
+provider are still open.
 
 **Previous build (history).** A near-complete camping and glamping booking
 platform: guests, campsite owners, local suppliers, admin, Stripe payments,
@@ -223,9 +227,10 @@ between trips.
 
 ## 6. Decisions that sit with you
 
-Product has already made eight reversible calls (Ireland only, curator content,
+Product has already made ten reversible calls (Ireland only, curator content,
 check-off before signup, PWA not app stores, `visitType` in the schema from
-day one, no reviews in MVP, **Java / Spring house**, **observability via MCP**).
+day one, no reviews in MVP, **Java / Spring house**, **observability via MCP**,
+**Postgres+PostGIS**, **light Vite+React PWA not Next**).
 See [`VISION.md`](VISION.md) §9 and [`STACK.md`](STACK.md).
 
 These remaining questions are outside product and they gate the build.
@@ -237,9 +242,10 @@ These remaining questions are outside product and they gate the build.
       an empty directory tests nothing.
 - [ ] **Audience.** Is there an existing audience to launch into, or do we
       start cold? Sets launch plan and success thresholds.
-- [x] **Stack.** Java / Spring house. Logs, metrics and alerts via MCP, OSS
-      first (Prometheus, Loki, Grafana Alerting, `mcp-grafana`). Client,
-      database and host still open. See [`STACK.md`](STACK.md).
+- [x] **Stack.** Java / Spring Boot house (locked). Light Vite + React PWA,
+      not Next.js. PostgreSQL 17 + PostGIS, Flyway. Logs, metrics and alerts
+      via MCP, OSS first. Host and OIDC provider still open. See
+      [`STACK.md`](STACK.md). Log: `ops/company/DECISIONS.md`.
 - [ ] **Public name** before first release. Shortlist in [`NAMING.md`](NAMING.md):
       **Cairn** (recommended), Rian, Waymark, Inis, Turas. Hold Meitheal for a
       partner programme. Avoid Fáilte / Wild Atlantic Way and any camping-coded
@@ -247,12 +253,13 @@ These remaining questions are outside product and they gate the build.
 - [ ] **Revenue model** — partner subscription, commission, or advertising.
       Gates chunk 7, not the MVP. Rule already written: never paywall visibility
       or the ability to receive an enquiry.
-- [ ] **Sign off** [`VISION.md`](VISION.md) and [`MVP.md`](MVP.md), or send
-      them back. Until then the repo is a definition, not a company platform.
+- [x] **Sign off** [`VISION.md`](VISION.md) and [`MVP.md`](MVP.md) as **Product
+      drafted** (CEO 2026-09-05). Implementation still requires a `PRD-*`
+      ticket in `implement`. Success = return tick rate; kill if near-zero
+      after a fair launch.
 - [ ] **Engineering loop.** Incoming CTO review: [`ENGINEERING.md`](ENGINEERING.md).
-      Proposed defaults for Postgres, client, CI, and a full MCP pack. Policy
-      questions (auto-merge, prod deploy, Cursor as mandated runtime, staging
-      budget) still sit with you.
+      House is signed in [`STACK.md`](STACK.md). Policy questions (auto-merge,
+      prod deploy, Cursor as mandated runtime, staging budget) still sit with you.
 
 ### How you will know Release 1 worked
 
