@@ -110,7 +110,7 @@ services:
       POSTGRES_USER: ops_reader
       POSTGRES_PASSWORD: ops_reader
       POSTGRES_DB: ops
-      PYTEST_ADDOPTS: "--cache-dir=/tmp/pytest-cache"
+      PYTEST_ADDOPTS: "-o cache_dir=/tmp/pytest-cache"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
