@@ -5,7 +5,7 @@ type: moc
 
 # Company data
 
-Small reference tables for Dataview and agents. **Not a CMS.** Place copy does not live here.
+Small reference tables for Dataview and agents. **Not a CMS.** Place copy does not live here. Research **leads** (unpublished) live outside the vault: [`../../data/leads/`](../../data/leads/README.md).
 
 | Note | What |
 |---|---|

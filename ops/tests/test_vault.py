@@ -98,18 +98,20 @@ def test_tickets_have_required_frontmatter() -> None:
         assert meta["type"] in VALID_TYPE, path.name
 
 
-def test_prd_tickets_are_not_implement() -> None:
+def test_prd_app_code_tickets_are_not_implement() -> None:
+    """Spring/PWA/import/marketplace stay gated. Data-only content tickets may be implement."""
+    app_code = {"PRD-001", "PRD-002", "PRD-003", "PRD-004"}
     hot = [
         meta["id"]
         for _, meta in next_ticket.tickets(OPS / "tickets")
-        if meta["id"].startswith("PRD-") and meta.get("status") == "implement"
+        if meta["id"] in app_code and meta.get("status") == "implement"
     ]
     assert hot == []
 
 
 def test_starter_prd_tickets_exist() -> None:
     ids = {meta["id"] for _, meta in next_ticket.tickets(OPS / "tickets")}
-    for ident in ("PRD-000", "PRD-001", "PRD-002", "PRD-003", "PRD-004"):
+    for ident in ("PRD-000", "PRD-001", "PRD-002", "PRD-003", "PRD-004", "PRD-006"):
         assert ident in ids
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["PRD-000"]["type"] == "epic"

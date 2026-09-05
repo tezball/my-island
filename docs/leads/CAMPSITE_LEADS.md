@@ -1,6 +1,8 @@
 # Irish Campsite Leads
 
-This document contains real-world campsites around Ireland for potential partnership outreach.
+> **Archaeology.** This table is a historical starter (~29 campsites). The living Research store is [`../../data/leads/`](../../data/leads/README.md) (`places.jsonl`). Do not add new rows here. Do not treat this file as the published catalog.
+
+This document contains real-world campsites around Ireland for potential partnership outreach. Migrated 2026-09-05 into `data/leads/places.jsonl`.
 
 ## Lead Tracking
 

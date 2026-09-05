@@ -20,7 +20,7 @@ Listing **types** and **counties** are data, not code enums. Canon: `product/MVP
 ## Region (county / island)
 
 1. MVP geography is **Ireland, 32 counties**. Adding a county that already exists is a content ticket, not a schema ticket.
-2. Coverage gaps: `PRD-*` for curator import, owned by [[roles/content-seo]].
+2. Coverage gaps: `PRD-*` for curator import, owned by [[roles/content-seo]]. Research collects unpublished leads in [`data/leads/`](../../data/leads/README.md) ([[tickets/PRD-006]]).
 3. Outside Ireland: product must say yes. Default is no (`VISION.md` Ireland-only).
 4. Update `ops/data/regions.md` if we add a jurisdiction (e.g. a later country). Do not list every town in the vault.
 
