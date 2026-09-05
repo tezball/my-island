@@ -6,6 +6,11 @@ kanban-plugin: basic
 
 ## Inbox
 
+- [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
+- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton
+- [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
+- [ ] [[tickets/PRD-003|PRD-003]] P0 Guest explore, map, and one-tap check-off
+- [ ] [[tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
 
 ## Ready
 
@@ -23,6 +28,7 @@ kanban-plugin: basic
 ## Review
 
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
+- [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
 
 ## Blocked
 

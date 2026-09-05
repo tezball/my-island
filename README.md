@@ -1,51 +1,60 @@
-# my-island
+# my-island — company OS
 
-Product definition for a mobile directory of places in Ireland worth going to — points of interest,
-experiences, campsites and B&Bs — that you tick off as you go.
+This repository is the **operating system for an AI-operated company**: Obsidian vault, tickets, agent org, runbooks, CI, and automation skills. Grok Bot + Cursor agents run from here.
 
-**Engineering work tracker:** open [`ops/`](ops/) as an Obsidian vault. Start at
-[`ops/HOME.md`](ops/HOME.md). The current mandate is the **agent workflow**, not the consumer app.
+**Owner:** Terry ([tezball](https://github.com/tezball)).
 
-**Run (laptop, Dev Container, Cloud Agent, CI):**
+**Application code is disposable scaffolding.** Do not polish, preserve, or refactor the current/legacy app for its own sake. It will be replaced as workflows develop. History: [`docs/`](docs/README.md), git tag `legacy-platform`. Details: [`ops/company/SCAFFOLDING.md`](ops/company/SCAFFOLDING.md).
+
+## Open the company vault (Obsidian)
+
+The vault is **`ops/`**, not the repo root and not `docs/`.
+
+1. Install [Obsidian](https://obsidian.md).
+2. Open vault → Open folder as vault → select `ops/`.
+3. Community plugins: turn off Restricted mode, install [`ops/PLUGINS.md`](ops/PLUGINS.md) (Kanban, Dataview, Tasks, Calendar, Templater). Plugin binaries are not committed.
+4. Start at [`ops/HOME.md`](ops/HOME.md) and [`ops/BOARD.md`](ops/BOARD.md).
+
+Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. Do not hand-edit `BOARD.md`.
+
+## Layout
+
+| Path | What |
+|---|---|
+| [`ops/`](ops/HOME.md) | **Company OS** (Obsidian): charter, agents, runbooks, tickets, CI/skills docs |
+| [`product/`](product/README.md) | Product canon (read). Implement only on `PRD-*` + `implement` |
+| [`docs/`](docs/README.md) | Historical booking platform — not requirements, not a migration source |
+| [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres + Grafana **ops** stack for agents |
+| `.github/` + `.cursor/skills/` | CI and agent skills (Automation Expert) |
+| git tag `legacy-platform` | Old app dump. Disposable. |
+
+Keep app stubs **minimal or absent**. Empty tree beats a fake marketplace.
+
+## What we automate
+
+1. Read [`ops/HOME.md`](ops/HOME.md), [`ops/workflow/SAFETY.md`](ops/workflow/SAFETY.md), [`ops/agents/_index.md`](ops/agents/_index.md).
+2. `python3 ops/scripts/next_ticket.py --role auto` — one role, one ticket. Epics skipped.
+3. Planner → plan. Implementer → PR. Reviewer → comment. **Humans merge.**
+4. Skills/routines: [`ops/workflow/SKILLS.md`](ops/workflow/SKILLS.md). CI: [`ops/workflow/CI.md`](ops/workflow/CI.md).
+5. Grok vs Cursor: [`ops/agents/GROK_VS_CURSOR.md`](ops/agents/GROK_VS_CURSOR.md). **Automation Expert:** [`ops/agents/roles/automation-expert.md`](ops/agents/roles/automation-expert.md).
+
+New ticket: `python3 ops/scripts/new_ticket.py --prefix WF --type workflow --title "…"`.
+
+Product direction (Ireland stays: campsites, B&Bs, experiences) lives in [`product/`](product/README.md). Marketplace epic (gated): [`ops/tickets/PRD-004.md`](ops/tickets/PRD-004.md). Do not implement it on this workflow mandate.
+
+## Run (laptop, Dev Container, Cloud Agent, CI)
 
 ```bash
 git clone https://github.com/tezball/my-island.git
 cd my-island
 ./scripts/dev up      # Postgres + Grafana/Loki/Prometheus/Alertmanager
-./scripts/dev test    # same pytest CI runs
+./scripts/dev test    # same pytest CI runs (ops stack, not a consumer app)
 ```
 
-Open the folder in Cursor / VS Code and **Reopen in Container** to attach to the `workspace` service in [`compose.yml`](compose.yml). Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
+Open in Cursor / VS Code and **Reopen in Container**. Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
 
-**Product canon:** [`product/BRIEFING.md`](product/BRIEFING.md), then [`product/`](product/).
+Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`.
 
 ## Status
 
-Product definition, awaiting sign-off. **No application code yet.** Backend is a
-**Java / Spring house**. Logs, metrics and alerts are queried through MCP, OSS
-first. Details: [`product/STACK.md`](product/STACK.md).
-
-The team’s tickets, kanban, plans, and run logs live in `ops/` (markdown in git).
-Local MCP substrate: `./ops/scripts/start-local.sh`.
-
-The previous build — a camping and glamping booking platform — has had its code, CI and
-infrastructure removed. Its documentation is retained in [`docs/`](docs/) for reference.
-Read it as history, not as requirements. Full previous codebase: git tag `legacy-platform`.
-
-## Stack
-
-House decisions are in [`product/STACK.md`](product/STACK.md):
-
-- **Java + Spring Boot** for all backend services
-- **Logs, metrics and alerts** via MCP (Prometheus, Loki, Grafana Alerting;
-  `mcp-grafana`; self-hosted OSS first)
-
-Client framework, database and host remain open. They still have to meet
-[`product/MVP.md`](product/MVP.md) §3 and the `NFR-*` stories — most notably:
-
-- Mobile-first, one-handed, installable to a phone home screen without an app-store gate
-- Readable and usable offline; writes made offline queue and sync idempotently
-- Interactive within 2.5s on a mid-range Android phone over 4G
-- Map-heavy, with clustering and location awareness
-- A curator-facing content tool alongside the public app
-- WCAG 2.2 AA, GDPR export and erasure from day one
+Company OS + agent loop is the work. **No consumer application to protect.** Backend house for *later* product work is Java / Spring (`product/STACK.md`) — not a reason to start scaffolding an app in this PR.

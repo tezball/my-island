@@ -59,6 +59,8 @@ def pick(
         "reviewer": "review",
     }[role]
     for path, meta in rows if rows is not None else tickets():
+        if meta.get("type") == "epic":
+            continue
         if meta.get("status") == want:
             return path, meta
     return None

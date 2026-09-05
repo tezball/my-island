@@ -41,7 +41,7 @@ Open the repo in Cursor or VS Code and **Reopen in Container**. `.devcontainer/d
 ## Once (laptop MCP extras)
 
 1. Docker running (compose **and**, for the Docker MCP Toolkit, the gateway).
-2. Open `ops/` as an Obsidian vault. Install community plugin **Kanban** when prompted.
+2. Open `ops/` as an Obsidian vault (not `docs/`). Plugins: [[PLUGINS]].
 3. Gitignored `.env.ops` in the repo root with `GITHUB_PERSONAL_ACCESS_TOKEN=` (fine-grained: contents, pull requests, Actions read). Never commit it, never paste it in chat. See [[MCP]].
 4. `uvx` on PATH (Grafana MCP) if you are **not** in the Dev Container — the workspace image already has `uv`. `npx` for Postgres + Playwright. `python3` 3.11+.
 

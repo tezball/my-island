@@ -9,13 +9,15 @@ description: >-
 
 # Ops loop
 
-Read `ops/HOME.md`, `ops/workflow/LOOP.md`, `ops/workflow/SAFETY.md`. Then:
+Read `ops/HOME.md`, `ops/CHARTER.md`, `ops/workflow/LOOP.md`, `ops/workflow/SAFETY.md`. Then:
 
 ```bash
 python3 ops/scripts/next_ticket.py --role auto
 ```
 
-Pick **one** role. Do not plan and implement and review in the same session.
+Pick **one** role. Skip `type: epic` (work a child). Do not plan and implement and review in the same session.
+
+Roster: `ops/agents/_index.md`. Runbook: `ops/runbooks/TICKET_LOOP.md`. New tickets: `python3 ops/scripts/new_ticket.py`. App code is disposable (`ops/company/SCAFFOLDING.md`).
 
 ## Planner (`--role planner`)
 

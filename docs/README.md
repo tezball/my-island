@@ -1,8 +1,9 @@
 # My Island Documentation
 
 > **History.** This folder describes the previous camping booking platform. It is not
-> the work tracker and not the rebuild spec. Work: [`../ops/`](../ops/). Product:
-> [`../product/`](../product/).
+> the company OS, not the work tracker, and not the rebuild spec. Company OS (Obsidian):
+> [`../ops/`](../ops/HOME.md). Product canon: [`../product/`](../product/). Do not open
+> this folder as the vault.
 
 Camping/glamping booking platform for Ireland with a local supplier marketplace.
 

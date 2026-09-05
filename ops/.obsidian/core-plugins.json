@@ -17,7 +17,7 @@
   "outline": true,
   "word-count": true,
   "file-recovery": true,
-  "daily-notes": false,
+  "daily-notes": true,
   "publish": false,
   "sync": false,
   "webviewer": false,

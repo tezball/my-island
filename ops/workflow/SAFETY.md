@@ -15,3 +15,4 @@ Copied from the CTO review. Non-negotiable for agents.
 6. **Secrets stay in env / Cursor MCP settings.** Not in `ops/` notes.
 7. **Do not rebuild Jenkins** from `docs/automation/`. GitHub PRs + Cursor Automations are the path.
 8. **Do not implement product MVP** unless the ticket id starts with `PRD-` and status is `implement`.
+9. **Do not polish application code** on `WF-*` tickets. App trees are disposable scaffolding ([[company/SCAFFOLDING]]).

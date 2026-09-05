@@ -33,13 +33,17 @@ The same human may wear all three hats. **The same agent session must not.** If 
 
 `blocked` from any state. Reason in the ticket body.
 
+`type: epic` appears on the board but is not picked by `next_ticket.py`. Implement children.
+
 ## Commands
 
 ```bash
-python3 ops/scripts/next_ticket.py          # next ready or implement
+python3 ops/scripts/next_ticket.py          # next ready or implement (skips epics)
 python3 ops/scripts/board_sync.py           # regenerate BOARD.md from tickets
+python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"
 ./ops/scripts/start-local.sh                # Grafana / Loki / Prometheus / Postgres (same as ./scripts/dev up)
 ./scripts/dev test                           # pytest (CI uses this too)
+# Fast OS tests (no Docker): python3 -m pytest ops/tests -q -m "not stack"
 ```
 
 ## PR convention
