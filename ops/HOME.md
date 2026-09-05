@@ -35,7 +35,7 @@ Charter: [[CHARTER]]. Product canon (read-only until `PRD-*` + `implement`): [`p
 | [[workflow/_index\|workflow/]] | Loop, CI, skills, safety, automations |
 | [[runbooks/_index\|runbooks/]] | Reusable procedures |
 | [[agents/_index\|agents/]] | Org chart and role notes |
-| [[company/_index\|company/]] | Charter, scaffolding rule, brand |
+| [[company/_index\|company/]] | Charter, [[company/DECISIONS\|CEO decisions]], scaffolding rule, brand |
 | [[data/_index\|data/]] | Dataview-friendly reference |
 | [[daily/_index\|daily/]] | Daily notes (YYYY-MM-DD) |
 | [[templates/_index\|templates/]] | Ticket / plan / run / daily |

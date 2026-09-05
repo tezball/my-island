@@ -10,11 +10,11 @@ escalates_to: eng-backend
 
 ## Purpose
 
-Guest and curator UI: mobile-first directory, map, one-tap check-off. Later: host calendar and booking surfaces.
+Guest and curator UI: **light Vite + React + TypeScript PWA** (phone-first directory, map, one-tap check-off). Later: host calendar and booking surfaces. Spring owns the API.
 
 ## Inputs
 
-`PRD-*` ticket + plan, [`product/MVP.md`](../../../product/MVP.md) DIR/MAP/PLC/CHK/ME, [`product/STACK.md`](../../../product/STACK.md) (client still open).
+`PRD-*` ticket + plan, [`product/MVP.md`](../../../product/MVP.md) DIR/MAP/PLC/CHK/ME, [`product/STACK.md`](../../../product/STACK.md) (Vite + React PWA, **not** Next.js).
 
 ## Outputs
 
@@ -30,4 +30,4 @@ Backend if the API contract is missing. Infra if preview/E2E cannot run. Orchest
 
 ## Must not
 
-Desktop-first layouts. App-store-only release as the MVP path. Hard-coding campsite as the only category. Porting `docs/Designs` or `legacy-platform` UI as a preservation project — the app is [[company/SCAFFOLDING|scaffolding]].
+Desktop-first layouts. App-store-only release as the MVP path. Hard-coding campsite as the only category. **Next.js App Router / Next BFF / Vercel-as-default** — the house client is a thin Vite+React PWA talking to Spring. Porting `docs/Designs` or `legacy-platform` UI as a preservation project — the app is [[company/SCAFFOLDING|scaffolding]].

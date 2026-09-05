@@ -22,8 +22,8 @@ type: company
 
 1. Do not open drive-by refactors of application code on `WF-*` tickets.
 2. Do not spend a session “saving” legacy modules. Link the git tag if someone needs to read it.
-3. Keep app stubs **minimal** or absent. Empty folders and TODOs are better than a fake Spring app.
-4. If a workflow needs a stub (health endpoint, fixture), make it throwaway and say so in the ticket.
+3. Keep app stubs **minimal** or absent. Empty folders and TODOs are better than a fake marketplace. The first real skeleton is **Spring Boot + Vite/React PWA** on [[tickets/PRD-001]] / [[tickets/PRD-003]] only when those tickets are `implement` — see [`product/STACK.md`](../../product/STACK.md).
+4. If a workflow needs a stub (health endpoint, fixture), make it throwaway and say so in the ticket. Still Spring + light PWA, not Next/FastAPI/Neon.
 5. Product *canon* (`product/`) is not app code. You may **read** it. You do not rewrite it to match old `docs/`.
 
 ## What we automate instead

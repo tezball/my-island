@@ -20,6 +20,7 @@ REQUIRED_VAULT = [
     "company/PEOPLE.md",
     "company/PRODUCT.md",
     "company/SCAFFOLDING.md",
+    "company/DECISIONS.md",
     "agents/_index.md",
     "agents/GROK_VS_CURSOR.md",
     "agents/roles/orchestrator.md",
@@ -125,3 +126,33 @@ def test_obsidian_lists_kanban_and_dataview() -> None:
     core = json.loads((OPS / ".obsidian/core-plugins.json").read_text())
     assert core.get("daily-notes") is True
     assert core.get("templates") is True
+
+
+def test_signed_stack_is_spring_and_light_pwa() -> None:
+    text = (REPO / "product/STACK.md").read_text()
+    assert "CEO lock (2026-09-05)" in text
+    assert "Java + Spring Boot" in text
+    assert "Vite + React" in text
+    assert "Not** Next.js" in text or "**Not** Next.js" in text
+    assert "PostgreSQL 17 + PostGIS" in text
+    assert "Flyway" in text
+    assert "mcp-grafana" in text
+    assert (OPS / "company/DECISIONS.md").is_file()
+    assert "2026-09-05" in (OPS / "company/DECISIONS.md").read_text()
+
+
+def test_agent_roles_do_not_prefer_next_or_fastapi() -> None:
+    frontend = (OPS / "agents/roles/eng-frontend.md").read_text()
+    backend = (OPS / "agents/roles/eng-backend.md").read_text()
+    assert "Vite + React" in frontend
+    assert "not** Next.js" in frontend or "**not** Next.js" in frontend or "not Next.js" in frontend
+    assert "Spring Boot" in backend
+    assert "FastAPI" in backend
+    assert "Not FastAPI" in backend or "not a TypeScript API" in backend
+
+
+def test_prd_skeleton_stays_gated() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-001"]["status"] != "implement"
+    assert by_id["PRD-003"]["status"] != "implement"
+    assert "implement" in by_id["PRD-001"].get("blocked_reason", "").lower()

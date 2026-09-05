@@ -16,7 +16,7 @@ Agents must be able to **clone → test → PR** without a human laptop ritual.
 | `unit` | `python3 -m pytest ops/tests -q -m "not stack"` | Vault, tickets, board_sync, next_ticket — no Docker |
 | `stack` | `./scripts/dev test` with compose | Ops runtime (Postgres/Grafana) still boots |
 
-There is **no consumer app CI**. Do not add Playwright/Maven jobs until a `PRD-*` ticket in `implement` needs them. Do not keep red app jobs “for later”.
+There is **no consumer app CI**. Do not add Playwright/Maven jobs until a `PRD-*` ticket in `implement` needs them ([[tickets/WF-011]]). Do not keep red app jobs “for later”. House when they land: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
 
 ## Agent rules
 

@@ -38,9 +38,10 @@ Product ideas → `PRD-*`. Agent-loop glue → `WF-*`. Live breakage → `INC-*`
 
 1. Require plan + `status: implement`.
 2. Branch from latest `main` (`wf/<id>-slug` or Cloud Agent `cursor/…`).
-3. Do only that ticket. Run its verify steps.
-4. Open a PR. Body links ticket + plan.
-5. Set `pr: <url>`, `status: review`. Sync board. Run note. **Do not merge.**
+3. House stack is [`product/STACK.md`](../../product/STACK.md): Spring Boot, Vite+React PWA (**not** Next), Postgres+PostGIS. Do not implement from `docs/`.
+4. Do only that ticket. Run its verify steps.
+5. Open a PR. Body links ticket + plan.
+6. Set `pr: <url>`, `status: review`. Sync board. Run note. **Do not merge.**
 
 ## 4. Verify
 

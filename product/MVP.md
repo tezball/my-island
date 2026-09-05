@@ -304,7 +304,7 @@ Roughly, for a small team. Adjust to your capacity — the ordering matters more
 
 | | Focus | Why here |
 |---|---|---|
-| 0 | **Service skeleton on the house stack** | Java / Spring Boot; Micrometer + structured logs from commit one. See `STACK.md` |
+| 0 | **Service skeleton on the house stack** | Java / Spring Boot + PostgreSQL 17/PostGIS/Flyway; light Vite+React PWA (not Next). Micrometer + structured logs from commit one. See `STACK.md`. **Gated** on `PRD-*` + `implement` |
 | 1–2 | Data model, service skeleton, auth, CI, environments | Foundations. Get NFR-10..14 in before there is code to retrofit |
 | 2–4 | Curator tooling (`CUR-*`) and content import | **Start content acquisition first.** It has the longest lead time and is the usual cause of a slipped launch |
 | 3–6 | Explore: list, filters, map (`DIR-*`, `MAP-*`) | The browse surface |
