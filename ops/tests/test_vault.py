@@ -91,15 +91,15 @@ def test_repo_readme_points_at_obsidian_ops() -> None:
 
 
 def test_repo_root_company_dashboard() -> None:
-    home = REPO / "HOME.md"
+    home = REPO / "docs" / "HOME.md"
     assert home.is_file()
     text = home.read_text()
     assert "title: Company home" in text
     assert "type: dashboard" in text
     assert "owner: Product" in text
-    assert "](ops/HOME.md)" in text
-    assert "](product/SIGNED.md)" in text
-    assert "](product/MILESTONES.md)" in text
+    assert "ops/HOME.md" in text
+    assert "product/SIGNED.md" in text
+    assert "product/MILESTONES.md" in text
     assert "[[ops/BOARD]]" in text
     assert "[[product/SIGNED]]" in text
     assert 'FROM "ops/tickets"' in text
@@ -706,7 +706,7 @@ def test_product_milestones_freeze() -> None:
     assert "MILESTONES.md" in readme
     signed = (REPO / "product" / "SIGNED.md").read_text()
     assert "MILESTONES.md" in signed
-    dash = (REPO / "HOME.md").read_text()
+    dash = (REPO / "docs" / "HOME.md").read_text()
     assert "product/MILESTONES.md" in dash
     root_readme = (REPO / "README.md").read_text()
     assert "MILESTONES.md" in root_readme
@@ -740,7 +740,7 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert meta["type"] == "workflow"
     board = (OPS / "BOARD.md").read_text()
     assert "- [x] [[tickets/WF-022|WF-022]]" in board
-    home = (REPO / "HOME.md").read_text()
+    home = (REPO / "docs" / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
     assert "WF-000" in doing
     assert "WF-017" not in doing
