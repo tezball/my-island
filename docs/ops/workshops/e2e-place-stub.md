@@ -35,3 +35,7 @@ Repeatable compose sim (Engineering): [[ops/runbooks/PLACE_LISTING_SIM]] — `./
 - Drill: [[ops/runbooks/STACK_E2E_PLACE_STUB]] (skill `stack-e2e-place-stub`)
 - MCP/chaos run: [[ops/runs/e2e-place-stub-mcp-chaos-2026-09-06]] — E2E-001 stays `ready`. Gaps: [[ops/tickets/WF-016]] · [[ops/tickets/WF-017]] · [[ops/tickets/WF-018]]
 - Sim: [[ops/runbooks/PLACE_LISTING_SIM]] · [[ops/tickets/WF-019]] — `./scripts/sim-place-listing.sh`
+
+## Path map
+
+Obsidian vault = repo `docs/`. Wikilinks above are vault-relative. Repo paths: this brief `docs/ops/workshops/e2e-place-stub.md`; canvas `docs/ops/workflow/e2e-place-stub.canvas`; STACK-E2E `docs/ops/workflow/STACK-E2E-place-stub.md`. Runtime stays at repo root (`services/catalog`, compose, `scripts/`).
