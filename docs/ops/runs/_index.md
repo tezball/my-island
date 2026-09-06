@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[WF-023-implement]] — living markdown under docs/; PR #52
 - [[WF-016-close]] — grants landed on #48; ticket `done`; no reopen scope
 - [[PRD-007-close]] — Wave 1 deposit accepted; ticket `done`; pr #45 (folded into #44)
 - [[WF-017-close]] — human merged PR #36; ticket `done` (folded into #44)

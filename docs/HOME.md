@@ -17,7 +17,7 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 ## Right now
 
 > [!todo] Doing / Review
-> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). [`WF-023`](ops/tickets/WF-023.md) · [[ops/tickets/WF-023]] re-homes living markdown under `docs/`.
+> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). [`WF-023`](ops/tickets/WF-023.md) · [[ops/tickets/WF-023]] living markdown under `docs/` is in **review** ([#52](https://github.com/tezball/my-island/pull/52)).
 
 > [!success] Landed
 > [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)), [`PRD-007`](ops/tickets/PRD-007.md) Wave 1 leads ([#45](https://github.com/tezball/my-island/pull/45)), [`WF-016`](ops/tickets/WF-016.md) Cloud Agent mcp-grafana + Postgres-RO ([#48](https://github.com/tezball/my-island/pull/48)) — all `done`.

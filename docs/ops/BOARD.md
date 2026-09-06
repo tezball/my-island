@@ -27,10 +27,10 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
-- [ ] [[ops/tickets/WF-023|WF-023]] P0 Re-home living markdown under docs/ (Obsidian vault)
 
 ## In review
 
+- [ ] [[ops/tickets/WF-023|WF-023]] P0 Re-home living markdown under docs/ (Obsidian vault)
 
 ## Blocked
 
