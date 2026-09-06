@@ -22,6 +22,8 @@ kanban-plugin: basic
 - [ ] [[tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
 - [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
+- [ ] [[tickets/WF-015|WF-015]] P1 Postgres-RO SELECT on catalog.place for MCP review
+- [ ] [[tickets/WF-016|WF-016]] P1 Align E2E-001 place JSON fields with catalog stub
 
 ## Plan
 

@@ -30,3 +30,4 @@ Plumbing + demo-able tests. CI green. Not polish. Not a consumer UI.
 - Architecture: [[workflow/STACK-E2E-place-stub]]
 - Canvas: [[workflow/e2e-place-stub]] — path `ops/workflow/e2e-place-stub.canvas`
 - Stack: [`product/STACK.md`](../../product/STACK.md)
+- Happy-path MCP review: [[runs/e2e-place-stub-mcp-2026-09-06]] — chaos not run. Gaps: [[tickets/WF-015]], [[tickets/WF-016]]
