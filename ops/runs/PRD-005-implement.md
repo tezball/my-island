@@ -4,7 +4,7 @@ ticket: "[[tickets/PRD-005]]"
 role: implementer
 started: 2026-09-06
 finished: 2026-09-06
-pr:
+pr: https://github.com/tezball/my-island/pull/27
 ---
 
 # Run PRD-005
