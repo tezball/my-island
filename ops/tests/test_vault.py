@@ -174,6 +174,8 @@ def test_prd_001_is_done_with_plan() -> None:
     assert "No booking columns" in plan or "no booking columns" in plan
     assert by_id["PRD-003"]["status"] != "implement"
     assert by_id["WF-008"]["status"] == "done"
+    assert by_id["PRD-005"]["status"] == "done"
+    assert "github.com/tezball/my-island/pull/29" in by_id["PRD-005"].get("pr", "")
 
 
 def test_leads_pipeline_tickets_exist() -> None:
