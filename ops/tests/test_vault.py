@@ -426,13 +426,14 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "spine strip" in by_id["WF-015"]["title"].lower()
     for ident in ("WF-016", "WF-018"):
         assert ident in by_id, ident
-        assert by_id[ident]["status"] == "ready"
         assert by_id[ident]["owner"] == "automation-expert"
         assert by_id[ident]["type"] == "workflow"
         assert "tickets/E2E-001" in by_id[ident].get("parent", "")
         body = (OPS / "tickets" / f"{ident}.md").read_text()
         assert "[[tickets/E2E-001]]" in body
         assert "[[workflow/STACK-E2E-place-stub]]" in body
+    assert by_id["WF-016"]["status"] == "ready"
+    assert by_id["WF-018"]["status"] == "review"
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
     assert "[[tickets/E2E-001]]" in wf017
     assert "[[workflow/STACK-E2E-place-stub]]" in wf017
