@@ -22,7 +22,6 @@ kanban-plugin: basic
 - [ ] [[tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 - [ ] [[tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
-- [ ] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
 - [ ] [[tickets/WF-018|WF-018]] P1 Align E2E-001 place JSON fields with catalog stub
 
 ## Plan
@@ -36,6 +35,7 @@ kanban-plugin: basic
 
 ## Review
 
+- [ ] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
 
 ## Blocked
 

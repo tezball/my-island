@@ -32,5 +32,6 @@ Repeatable compose sim (Engineering): [[runbooks/PLACE_LISTING_SIM]] — `./scri
 - Architecture: [[workflow/STACK-E2E-place-stub]]
 - Canvas: [[workflow/e2e-place-stub]] — path `ops/workflow/e2e-place-stub.canvas`
 - Stack: [`product/STACK.md`](../../product/STACK.md)
+- Drill: [[runbooks/STACK_E2E_PLACE_STUB]] (skill `stack-e2e-place-stub`)
 - MCP/chaos run: [[runs/e2e-place-stub-mcp-chaos-2026-09-06]] — E2E-001 stays `ready`. Gaps: [[tickets/WF-016]] · [[tickets/WF-017]] · [[tickets/WF-018]]
 - Sim: [[runbooks/PLACE_LISTING_SIM]] · [[tickets/WF-019]] — `./scripts/sim-place-listing.sh`

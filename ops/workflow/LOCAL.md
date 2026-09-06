@@ -82,6 +82,8 @@ docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog
 
 That sets Spring profile `chaos` (and library profile `chaos-monkey`; latency + exceptions; kill stays off). Health + prometheus stay on the default path.
 
+Full drill (HTTP + MCP-or-HTTP observe + overlay down): [[runbooks/STACK_E2E_PLACE_STUB]]. Required CI must not enable chaos.
+
 ## Dev Container
 
 Open the repo in Cursor or VS Code and **Reopen in Container**. `.devcontainer/devcontainer.json` starts `compose.yml` and attaches to the `workspace` service (Java 21, Python 3, Node, Docker CLI). A post-start script maps Grafana/Postgres onto `127.0.0.1:3030` / `5433` so `.cursor/mcp.json` still works.
