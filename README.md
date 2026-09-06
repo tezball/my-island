@@ -1,5 +1,7 @@
 # my-island — company OS
 
+**Start here: [`HOME.md`](HOME.md)** — company dashboard (current-work snapshot). Company OS hub: [`ops/HOME.md`](ops/HOME.md).
+
 This repository is the **operating system for an AI-operated company**: Obsidian vault, tickets, agent org, runbooks, CI, and automation skills. Grok Bot + Cursor agents run from here.
 
 **Owner:** Terry ([tezball](https://github.com/tezball)).
@@ -8,12 +10,19 @@ This repository is the **operating system for an AI-operated company**: Obsidian
 
 ## Open the company vault (Obsidian)
 
-The vault is **`ops/`**, not the repo root and not `docs/`.
+Two vault options (this repo does **not** force-move the vault):
+
+| Option | Open as vault | Use when |
+|---|---|---|
+| **Current (OS-focused)** | `ops/` | Day-to-day tickets, BOARD kanban, Dataview `FROM "tickets"` |
+| **Company-wide** | **repo root** | Dashboard [`HOME.md`](HOME.md) + `product/` + `ops/` in one graph; Dataview `FROM "ops/tickets"` |
+
+Default today: the vault is **`ops/`**, not `docs/`. Root [`HOME.md`](HOME.md) still works on GitHub with relative links.
 
 1. Install [Obsidian](https://obsidian.md).
-2. Open vault → Open folder as vault → select `ops/`.
-3. Community plugins: turn off Restricted mode, install [`ops/PLUGINS.md`](ops/PLUGINS.md) (Kanban, Dataview, Tasks, Calendar, Templater). Plugin binaries are not committed.
-4. Start at [`ops/HOME.md`](ops/HOME.md) and [`ops/BOARD.md`](ops/BOARD.md).
+2. Open vault → Open folder as vault → select `ops/` (OS-focused) **or** the repository root (company-wide).
+3. Community plugins: turn off Restricted mode, install [`ops/PLUGINS.md`](ops/PLUGINS.md) (Kanban, Dataview, Tasks, Calendar, Templater; Homepage optional if vault is root). Plugin binaries are not committed.
+4. Start at [`HOME.md`](HOME.md) (dashboard) then [`ops/HOME.md`](ops/HOME.md) and [`ops/BOARD.md`](ops/BOARD.md).
 
 Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. Do not hand-edit `BOARD.md`.
 
@@ -21,6 +30,7 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 
 | Path | What |
 |---|---|
+| [`HOME.md`](HOME.md) | **Company dashboard** (repo root) — snapshot + links |
 | [`ops/`](ops/HOME.md) | **Company OS** (Obsidian): charter, agents, runbooks, tickets, CI/skills docs |
 | [`product/`](product/README.md) | Product canon, **signed** 2026-09-05 ([`SIGNED.md`](product/SIGNED.md)). Implement only on `PRD-*` + `implement` |
 | [`data/leads/`](data/leads/README.md) | Research place leads (not the published catalog) |

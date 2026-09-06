@@ -3,6 +3,8 @@ title: Operations home
 type: moc
 ---
 
+Company dashboard (repo root): [`../HOME.md`](../HOME.md)
+
 # Company OS
 
 This vault (`ops/`) is the company operating system. **Markdown in git is the system of record.** Open this folder as an Obsidian vault.
