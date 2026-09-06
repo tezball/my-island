@@ -22,8 +22,8 @@ Implementer hat (automation-expert). CEO ask for a simple local CLI.
 
 ## Result
 
-success — PR #35 open. Vault unit tests 46 passed. Local `./scripts/app test` OVERALL PASS (exit 0). Forced-fail path (dead `CATALOG_URL`) OVERALL FAIL (exit 1). Do not merge.
+success — PR #35 merged. Vault unit tests 46 passed. Local `./scripts/app test` OVERALL PASS (exit 0). Forced-fail path (dead `CATALOG_URL`) OVERALL FAIL (exit 1). Run closed.
 
 ## Follow-up
 
-Human merges when CI is green. Do not merge from this session.
+None. Ticket is `done`.

@@ -184,6 +184,8 @@ def test_merged_pr_tickets_are_done() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     expected = {
         "WF-020": "https://github.com/tezball/my-island/pull/33",
+        "WF-019": "https://github.com/tezball/my-island/pull/31",
+        "WF-021": "https://github.com/tezball/my-island/pull/35",
         "WF-005": "https://github.com/tezball/my-island/pull/6",
         "WF-006": "https://github.com/tezball/my-island/pull/8",
         "WF-007": "https://github.com/tezball/my-island/pull/11",
@@ -360,6 +362,8 @@ def test_wf_019_place_listing_sim() -> None:
     assert "mcp-grafana" in by_id["WF-016"]["title"].lower() or "postgres" in by_id["WF-016"]["title"].lower()
     assert "WF-019" in by_id
     meta = by_id["WF-019"]
+    assert meta["status"] == "done"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/31"
     assert meta["type"] == "workflow"
     assert meta["owner"] == "eng-backend"
     assert meta["priority"] == "P0"
@@ -414,6 +418,8 @@ def test_wf_021_human_cli_ticket() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert "WF-021" in by_id
     meta = by_id["WF-021"]
+    assert meta["status"] == "done"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/35"
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
     assert meta["priority"] == "P1"
