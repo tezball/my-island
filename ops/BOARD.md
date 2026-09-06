@@ -34,6 +34,7 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [ ] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
+- [ ] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 
 ## Review
 
