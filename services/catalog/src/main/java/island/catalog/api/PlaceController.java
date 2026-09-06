@@ -27,7 +27,11 @@ public class PlaceController {
 
   @PostMapping
   public ResponseEntity<PlaceResponse> create(@Valid @RequestBody CreatePlaceRequest request) {
-    PlaceResponse body = places.create(request);
+    PlaceService.PlaceWrite write = places.write(request);
+    if (!write.created()) {
+      return ResponseEntity.ok(write.place());
+    }
+    PlaceResponse body = write.place();
     return ResponseEntity.created(URI.create("/api/v1/places/" + body.id())).body(body);
   }
 
