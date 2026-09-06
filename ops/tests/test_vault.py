@@ -129,6 +129,8 @@ def test_repo_root_company_dashboard() -> None:
     assert "countyId" in text
     assert "latitude" in text
     assert "longitude" in text
+    assert "the Obsidian vault is **`docs/`**" in text
+    assert "Obsidian vault is the **repo root**" not in text
     ops_home = (OPS / "HOME.md").read_text()
     assert "[`../HOME.md`](../HOME.md)" in ops_home
     plugins = (OPS / "PLUGINS.md").read_text()
@@ -250,6 +252,8 @@ def test_merged_pr_tickets_are_done() -> None:
         "WF-022": "https://github.com/tezball/my-island/pull/39",
         "PRD-007": "https://github.com/tezball/my-island/pull/45",
         "WF-016": "https://github.com/tezball/my-island/pull/48",
+        "PRD-008": "https://github.com/tezball/my-island/pull/47",
+        "WF-023": "https://github.com/tezball/my-island/pull/52",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
@@ -266,16 +270,15 @@ def test_leads_pipeline_tickets_exist() -> None:
     assert "pull/40" not in by_id["PRD-007"].get("pr", "")
     assert not by_id["PRD-007"].get("blocked_reason")
     assert "plans/PRD-007" in by_id["PRD-007"].get("plan", "")
-    assert by_id["PRD-008"]["status"] in {"implement", "review"}
+    assert by_id["PRD-008"]["status"] == "done"
+    assert by_id["PRD-008"].get("pr", "") == "https://github.com/tezball/my-island/pull/47"
+    assert not by_id["PRD-008"].get("blocked_reason")
     assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
     assert by_id["PRD-009"]["status"] == "ready"
     assert by_id["PRD-009"]["status"] != "implement"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
     assert by_id["PRD-009"]["owner"] == "product"
-    reason = by_id["PRD-008"].get("blocked_reason", "").lower()
-    assert "prd-001" in reason
-    assert "prd-006" in reason or "schema.json" in reason
     assert (OPS / "plans" / "PRD-007.md").is_file()
     assert (OPS / "plans" / "PRD-008.md").is_file()
 
@@ -802,8 +805,8 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     home = (REPO / "docs" / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
     assert "WF-000" in doing
-    assert "PRD-008" in doing
-    assert "pull/47" in doing
+    assert "PRD-008" not in doing
+    assert "WF-023" not in doing
     assert "Review is empty" not in doing
     assert "In review" not in doing
     assert "WF-016" not in doing
@@ -820,6 +823,10 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert "PRD-007" in landed
     assert "WF-016" in landed
     assert "pull/48" in landed
+    assert "PRD-008" in landed
+    assert "pull/47" in landed
+    assert "WF-023" in landed
+    assert "pull/52" in landed
     ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
     assert "WF-016" not in ready
     planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
@@ -831,3 +838,35 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     ticket = (OPS / "tickets" / "WF-022.md").read_text()
     assert "retrospective" in ticket.lower()
     assert not (OPS / "plans" / "WF-022.md").exists()
+
+
+def test_prd_008_and_wf_023_closed() -> None:
+    """Merged #47 and #52 must not stay in review. Vault root wording is docs/."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-008"]["status"] == "done"
+    assert by_id["PRD-008"].get("pr", "") == "https://github.com/tezball/my-island/pull/47"
+    assert not by_id["PRD-008"].get("blocked_reason")
+    assert by_id["WF-023"]["status"] == "done"
+    assert by_id["WF-023"].get("pr", "") == "https://github.com/tezball/my-island/pull/52"
+    assert not by_id["WF-023"].get("blocked_reason")
+    board = (OPS / "BOARD.md").read_text()
+    review = board.split("## In review", 1)[1].split("## Blocked", 1)[0]
+    done = board.split("## Done", 1)[1]
+    assert "PRD-008" not in review
+    assert "WF-023" not in review
+    assert "- [x] [[ops/tickets/PRD-008|PRD-008]]" in done
+    assert "- [x] [[ops/tickets/WF-023|WF-023]]" in done
+    home = (REPO / "docs" / "HOME.md").read_text()
+    doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
+    landed = home.split("Landed", 1)[1].split("Ready / Up next", 1)[0]
+    assert "PRD-008" not in doing
+    assert "WF-023" not in doing
+    assert "PRD-008" in landed and "pull/47" in landed
+    assert "WF-023" in landed and "pull/52" in landed
+    assert "the Obsidian vault is **`docs/`**" in home
+    assert "Obsidian vault is the **repo root**" not in home
+    skills = (OPS / "workflow" / "SKILLS.md").read_text()
+    assert "open **`docs/`** in Obsidian" in skills
+    assert "open `ops/` in Obsidian" not in skills
+    assert (OPS / "runs" / "PRD-008-close.md").is_file()
+    assert (OPS / "runs" / "WF-023-close.md").is_file()

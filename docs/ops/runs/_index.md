@@ -2,6 +2,8 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-008-close]] — human merged PR #47; ticket `done`
+- [[WF-023-close]] — human merged PR #52; ticket `done`; vault = `docs/`
 - [[PRD-008-rebase]] — rebase #47 onto `2d8617f` (#52); draft-only import gates
 - [[PRD-008-implement]] — Eng import draft Places; PR #47
 - [[WF-023-rebase]] — rebase #52 onto `ca90665` (#51); Product AC links

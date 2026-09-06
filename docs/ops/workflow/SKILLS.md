@@ -36,7 +36,7 @@ How agents learn the loop without a wiki outside git. Owner: [[ops/agents/roles/
 2. **Routines live in `ops/runbooks/`**, not in Slack. If Grok cannot open a PR, it files a ticket.
 3. **Hooks stay tiny.** Point at `ops/HOME.md`. Do not encode product behaviour.
 4. **No app-framework skills** until a `PRD-*` ticket is `implement`. A Spring skill today would petrify scaffolding.
-5. **Enterprise DX** = clone, `./scripts/dev up`, `./scripts/dev test`, open `ops/` in Obsidian, `next_ticket.py`. If that path breaks, it is an automation-expert ticket, not a frontend ticket.
+5. **Enterprise DX** = clone, `./scripts/dev up`, `./scripts/dev test`, open **`docs/`** in Obsidian, `next_ticket.py`. If that path breaks, it is an automation-expert ticket, not a frontend ticket.
 
 ## Grok vs Cursor
 

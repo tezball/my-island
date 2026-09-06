@@ -29,8 +29,6 @@ kanban-plugin: basic
 
 ## In review
 
-- [ ] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
-- [ ] [[ops/tickets/WF-023|WF-023]] P0 Re-home living markdown under docs/ (Obsidian vault)
 
 ## Blocked
 
@@ -44,6 +42,7 @@ kanban-plugin: basic
 - [x] [[ops/tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [x] [[ops/tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
 - [x] [[ops/tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
+- [x] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 - [x] [[ops/tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [x] [[ops/tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
 - [x] [[ops/tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
@@ -52,6 +51,7 @@ kanban-plugin: basic
 - [x] [[ops/tickets/WF-015|WF-015]] P0 Workshop-only spine strip (KEEP catalog compose chaos)
 - [x] [[ops/tickets/WF-019|WF-019]] P0 Repeatable place listing create/list/get sim
 - [x] [[ops/tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
+- [x] [[ops/tickets/WF-023|WF-023]] P0 Re-home living markdown under docs/ (Obsidian vault)
 - [x] [[ops/tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [x] [[ops/tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
 - [x] [[ops/tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
