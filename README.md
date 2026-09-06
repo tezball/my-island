@@ -49,11 +49,11 @@ Product direction (Ireland stays: campsites, B&Bs, experiences) is **signed** 20
 ```bash
 git clone https://github.com/tezball/my-island.git
 cd my-island
-./scripts/dev up      # PostGIS + Grafana/Loki/Prometheus/Alertmanager + catalog API
-./scripts/dev test    # same pytest CI runs
+./scripts/app start   # PostGIS + Grafana/Loki/Prometheus/Alertmanager + catalog API
+./scripts/app test    # PASS/FAIL: pytest + catalog mvn + HTTP smoke
 ```
 
-Open in Cursor / VS Code and **Reopen in Container**. Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
+Same stack: `./scripts/dev up` / `test` / `down` (CI and agents). Open in Cursor / VS Code and **Reopen in Container**. Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
 
 Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`. Catalog: http://127.0.0.1:8081. Repeatable create→list→get: `./scripts/sim-place-listing.sh` after `./scripts/dev up`.
 

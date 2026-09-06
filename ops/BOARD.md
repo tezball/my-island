@@ -37,6 +37,7 @@ kanban-plugin: basic
 ## Review
 
 - [ ] [[tickets/WF-019|WF-019]] P0 Repeatable place listing create/list/get sim
+- [ ] [[tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
 
 ## Blocked
 

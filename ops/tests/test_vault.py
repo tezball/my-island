@@ -408,3 +408,23 @@ def test_wf_019_place_listing_sim() -> None:
     assert "sim-place-listing.sh" in local
     assert (OPS / "plans" / "WF-019.md").is_file()
     assert not (OPS / "plans" / "WF-016.md").exists()
+
+
+def test_wf_021_human_cli_ticket() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-021" in by_id
+    meta = by_id["WF-021"]
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert meta["priority"] == "P1"
+    assert "tickets/WF-005" in meta.get("parent", "")
+    body = (OPS / "tickets" / "WF-021.md").read_text()
+    assert "./scripts/app start" in body
+    assert "./scripts/app stop" in body
+    assert "./scripts/app test" in body
+    assert "WF-019" in body
+    local = (OPS / "workflow" / "LOCAL.md").read_text()
+    assert "./scripts/app start" in local
+    plan = (OPS / "plans" / "WF-021.md").read_text()
+    assert "status: approved" in plan
+    assert "./scripts/app" in plan

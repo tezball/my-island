@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # One entrypoint for clone/run, Dev Containers, Cloud Agents, and CI.
+# Humans: prefer ./scripts/app (start / stop / test).
 #   ./scripts/dev up     start PostGIS + Grafana stack + catalog API
+#   ./scripts/dev start  same as up, then open local URLs if a display exists
 #   ./scripts/dev test   unit tests; stack tests if REQUIRE_STACK=1 or stack is up
 #   ./scripts/dev sim    happy-path place create/list/get (see scripts/sim-place-listing.sh)
 #   ./scripts/dev down
@@ -12,17 +14,30 @@ cd "$REPO"
 COMPOSE=(docker compose -f "$REPO/compose.yml")
 INFRA_SERVICES=(postgres loki prometheus alertmanager grafana)
 
+# Human tabs after start. No consumer UI yet (PRD-003).
+READY_URLS=(
+  http://127.0.0.1:8081/actuator/health
+  http://127.0.0.1:8081/api/v1/places
+  http://127.0.0.1:3030
+  http://127.0.0.1:9091
+  http://127.0.0.1:9094
+)
+
 usage() {
   cat <<'EOF'
 Usage: ./scripts/dev <command>
 
+  start     Start the stack, open local URLs if a display exists, print a ready summary
+  stop      Stop the stack
   up        Start the Compose stack (PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API)
-  down      Stop the stack
+  down      Stop the stack (no extra message)
   ps        Compose status
   test      Run pytest (same path as CI)
   sim       Happy-path catalog create→list→get (no chaos). Same as ./scripts/sim-place-listing.sh
   wait      Wait until Grafana answers /api/health
   config    Validate compose.yml (and chaos overlay)
+
+Humans: ./scripts/app start | stop | test | help
 
 Environment:
   REQUIRE_STACK=1          Fail if Grafana/Postgres are not reachable (CI sets this)
@@ -65,6 +80,61 @@ ensure_catalog_db() {
 
 cmd_down() {
   "${COMPOSE[@]}" down
+}
+
+have_gui() {
+  case "$(uname -s)" in
+    Darwin) command -v open >/dev/null 2>&1 ;;
+    *)
+      [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ] && command -v xdg-open >/dev/null 2>&1
+      ;;
+  esac
+}
+
+cmd_open_tabs() {
+  if ! have_gui; then
+    echo "No display — skipped opening browser tabs."
+    return 0
+  fi
+  local opener url
+  if [ "$(uname -s)" = Darwin ]; then
+    opener=open
+  else
+    opener=xdg-open
+  fi
+  echo "Opening local URLs…"
+  for url in "${READY_URLS[@]}"; do
+    "$opener" "$url" >/dev/null 2>&1 || echo "Could not open $url (continuing)"
+  done
+}
+
+cmd_ready() {
+  cat <<'EOF'
+
+Halfdoor stack is ready.
+
+  Catalog health     http://127.0.0.1:8081/actuator/health
+  Catalog places     http://127.0.0.1:8081/api/v1/places
+  Grafana            http://127.0.0.1:3030  (admin / admin)
+  Prometheus         http://127.0.0.1:9091
+  Alertmanager       http://127.0.0.1:9094
+
+No consumer UI yet (PRD-003). Chaos is off on this start.
+Stop:  ./scripts/app stop
+Test:  ./scripts/app test
+EOF
+}
+
+cmd_start() {
+  cmd_up
+  cmd_open_tabs
+  cmd_ready
+}
+
+cmd_stop() {
+  cmd_down
+  echo "Stack stopped."
+  echo "Start again: ./scripts/app start"
 }
 
 cmd_ps() {
@@ -136,6 +206,8 @@ if [ $# -gt 0 ]; then
 fi
 
 case "$cmd" in
+  start) cmd_start ;;
+  stop) cmd_stop ;;
   up) cmd_up ;;
   down) cmd_down ;;
   ps) cmd_ps ;;
