@@ -10,7 +10,7 @@ signed: 2026-09-05
 # Signed decisions
 
 > CEO signed **2026-09-05**. Product canon is this folder. House stack is
-> Architecture’s [`STACK.md`](STACK.md) (locked in WF-007). Company OS is `ops/`.
+> Architecture’s [`STACK.md`](STACK.md) (locked in WF-007). Company OS notes live under `ops/` in this vault (`docs/ops/`).
 
 The directory MVP and kill list are **approved as drafted** in this folder
 ([`VISION.md`](VISION.md), [`MVP.md`](MVP.md), [`BRIEFING.md`](BRIEFING.md),

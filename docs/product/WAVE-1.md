@@ -12,7 +12,7 @@ Terry (via CEO, 2026-09-06) green-lit **Research Wave 1**: deposit and update pl
 
 ## What Wave 1 is
 
-Research deposits and updates leads in [`data/leads/places.jsonl`](../data/leads/places.jsonl) using the **landed** contract in [`data/leads/schema.json`](../data/leads/schema.json) (PR #14 / [`PRD-006`](../ops/tickets/PRD-006.md), **done**). One JSON object per line. No second schema.
+Research deposits and updates leads in [`data/leads/places.jsonl`](../../data/leads/places.jsonl) using the **landed** contract in [`data/leads/schema.json`](../../data/leads/schema.json) (PR #14 / [`PRD-006`](../ops/tickets/PRD-006.md), **done**). One JSON object per line. No second schema.
 
 **Leads are not published places.** The live directory stays curator-seeded ([`SIGNED.md`](SIGNED.md)). A row in `places.jsonl` is Research inventory, not a catalog Place.
 
