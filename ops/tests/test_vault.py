@@ -239,6 +239,10 @@ def test_e2e_001_place_stub_workshop() -> None:
     assert "workflow/e2e-place-stub" in brief
     canvas_path = OPS / "workflow" / "e2e-place-stub.canvas"
     assert canvas_path.is_file()
+    found = {p.resolve() for p in REPO.rglob("e2e-place-stub.canvas")}
+    assert found == {canvas_path.resolve()}, found
+    assert not (REPO / "docs" / "e2e-place-stub.canvas").exists()
+    assert not (REPO / "docs" / "ops" / "workflow" / "e2e-place-stub.canvas").exists()
     assert list(OPS.glob("*.canvas")) == []
     for path in (OPS / "workflow").glob("*.canvas"):
         assert path.name == path.name.lower()
