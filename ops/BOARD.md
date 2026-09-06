@@ -31,7 +31,6 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [ ] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
-- [ ] [[tickets/WF-015|WF-015]] P0 Workshop-only spine strip (KEEP catalog compose chaos)
 
 ## Review
 
@@ -50,4 +49,5 @@ kanban-plugin: basic
 ## Done
 
 - [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
+- [ ] [[tickets/WF-015|WF-015]] P0 Workshop-only spine strip (KEEP catalog compose chaos)
 - [ ] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
