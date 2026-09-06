@@ -6,8 +6,11 @@ from pathlib import Path
 import board_sync
 import next_ticket
 
-OPS = Path(__file__).resolve().parents[1]
-REPO = OPS.parent
+RUNTIME = Path(__file__).resolve().parents[1]
+REPO = RUNTIME.parent
+OPS = REPO / "docs" / "ops"
+DOCS = REPO / "docs"
+PRODUCT = DOCS / "product"
 
 REQUIRED_VAULT = [
     "HOME.md",
@@ -53,8 +56,6 @@ REQUIRED_VAULT = [
     "templates/bug.md",
     "templates/incident.md",
     "templates/daily.md",
-    ".obsidian/community-plugins.json",
-    ".obsidian/daily-notes.json",
     "workflow/CI.md",
     "workflow/SKILLS.md",
     "tickets/E2E-001.md",
@@ -78,6 +79,27 @@ VALID_TYPE = {"epic", "story", "bug", "incident", "workflow"}
 def test_required_vault_files_exist() -> None:
     missing = [rel for rel in REQUIRED_VAULT if not (OPS / rel).is_file()]
     assert missing == []
+    for rel in (
+        ".obsidian/community-plugins.json",
+        ".obsidian/daily-notes.json",
+        ".obsidian/core-plugins.json",
+    ):
+        assert (DOCS / rel).is_file(), rel
+
+
+def test_living_markdown_is_under_docs() -> None:
+    root_md = sorted(path.name for path in REPO.glob("*.md"))
+    assert root_md == ["README.md"], root_md
+    assert not (REPO / "HOME.md").exists()
+    assert not (REPO / "AGENTS.md").exists()
+    assert not (REPO / "product" / "STACK.md").exists()
+    assert not (REPO / "ops" / "HOME.md").exists()
+    assert (DOCS / "HOME.md").is_file()
+    assert (DOCS / "AGENTS.md").is_file()
+    assert (PRODUCT / "STACK.md").is_file()
+    assert (OPS / "tickets" / "WF-023.md").is_file()
+    assert (RUNTIME / "tests" / "requirements.txt").is_file()
+    assert (RUNTIME / "scripts" / "board_sync.py").is_file()
 
 
 def test_repo_readme_points_at_obsidian_ops() -> None:
@@ -86,8 +108,8 @@ def test_repo_readme_points_at_obsidian_ops() -> None:
     assert "ops/" in text
     assert "Obsidian" in text
     assert "disposable scaffolding" in text.lower()
-    assert "[`HOME.md`](HOME.md)" in text
-    assert "repo root" in text.lower()
+    assert "[`docs/HOME.md`](docs/HOME.md)" in text
+    assert "docs/" in text
 
 
 def test_repo_root_company_dashboard() -> None:
@@ -111,10 +133,10 @@ def test_repo_root_company_dashboard() -> None:
     assert "[`../HOME.md`](../HOME.md)" in ops_home
     plugins = (OPS / "PLUGINS.md").read_text()
     assert 'FROM "ops/tickets"' in plugins
-    assert "repo root" in plugins.lower()
-    agents = (REPO / "AGENTS.md").read_text()
-    assert "HOME.md" in agents
-    assert "repo root" in agents.lower()
+    assert "docs/" in plugins.lower()
+    agents = (DOCS / "AGENTS.md").read_text()
+    assert "docs/HOME.md" in agents
+    assert "docs/" in agents
 
 
 def test_automation_skill_exists() -> None:
@@ -158,16 +180,16 @@ def test_starter_prd_tickets_exist() -> None:
 def test_obsidian_lists_kanban_and_dataview() -> None:
     import json
 
-    plugins = json.loads((OPS / ".obsidian/community-plugins.json").read_text())
+    plugins = json.loads((DOCS / ".obsidian/community-plugins.json").read_text())
     assert "obsidian-kanban" in plugins
     assert "dataview" in plugins
-    core = json.loads((OPS / ".obsidian/core-plugins.json").read_text())
+    core = json.loads((DOCS / ".obsidian/core-plugins.json").read_text())
     assert core.get("daily-notes") is True
     assert core.get("templates") is True
 
 
 def test_signed_stack_is_spring_and_light_pwa() -> None:
-    text = (REPO / "product/STACK.md").read_text()
+    text = (PRODUCT / "STACK.md").read_text()
     assert "CEO lock (2026-09-05)" in text
     assert "Java + Spring Boot" in text
     assert "Vite + React" in text
@@ -294,7 +316,7 @@ def test_leads_pipeline_tickets_cite_landed_schema() -> None:
 
 
 def test_wave1_acceptance_note() -> None:
-    wave = (REPO / "product" / "WAVE-1.md").read_text()
+    wave = (PRODUCT / "WAVE-1.md").read_text()
     assert "data/leads/places.jsonl" in wave
     assert "schema.json" in wave
     assert "PRD-006" in wave and "PRD-007" in wave and "PRD-008" in wave and "PRD-009" in wave
@@ -304,7 +326,7 @@ def test_wave1_acceptance_note() -> None:
     assert "dedupe_key" in wave
     assert "SIGNED.md" in wave
     assert "LEGAL.md" in wave
-    readme = (REPO / "data" / "leads" / "README.md").read_text()
+    readme = (DOCS / "data" / "leads" / "README.md").read_text()
     assert "WAVE-1.md" in readme
     assert "PRD-007" in readme
     plan = (OPS / "plans" / "PRD-007.md").read_text()
@@ -312,9 +334,9 @@ def test_wave1_acceptance_note() -> None:
     assert "schema.json" in plan
     assert "test_leads.py" in plan
     assert "dedupe_key" in plan
-    signed = (REPO / "product" / "SIGNED.md").read_text()
+    signed = (PRODUCT / "SIGNED.md").read_text()
     assert "WAVE-1.md" in signed
-    product_index = (REPO / "product" / "README.md").read_text()
+    product_index = (PRODUCT / "README.md").read_text()
     assert "WAVE-1.md" in product_index
     plan008 = (OPS / "plans" / "PRD-008.md").read_text()
     assert "WAVE-1.md" in plan008
@@ -350,18 +372,18 @@ def test_e2e_001_place_stub_workshop() -> None:
     assert "tezball/my-island" in ticket
     assert "Public brand naming is OPEN" in ticket
     board = (OPS / "BOARD.md").read_text()
-    assert "[[tickets/E2E-001|E2E-001]] P0" in board
+    assert "[[ops/tickets/E2E-001|E2E-001]] P0" in board
     index = (OPS / "tickets" / "_index.md").read_text()
     assert "E2E-" in index
     brief = (OPS / "workshops" / "e2e-place-stub.md").read_text()
-    assert "[[tickets/E2E-001]]" in brief
+    assert "[[ops/tickets/E2E-001]]" in brief
     assert "workflow/e2e-place-stub" in brief
     canvas_path = OPS / "workflow" / "e2e-place-stub.canvas"
     assert canvas_path.is_file()
     found = {p.resolve() for p in REPO.rglob("e2e-place-stub.canvas")}
     assert found == {canvas_path.resolve()}, found
     assert not (REPO / "docs" / "e2e-place-stub.canvas").exists()
-    assert not (REPO / "docs" / "ops" / "workflow" / "e2e-place-stub.canvas").exists()
+    assert (REPO / "docs" / "ops" / "workflow" / "e2e-place-stub.canvas").is_file()
     assert list(OPS.glob("*.canvas")) == []
     for path in (OPS / "workflow").glob("*.canvas"):
         assert path.name == path.name.lower()
@@ -371,8 +393,8 @@ def test_e2e_001_place_stub_workshop() -> None:
     assert 15 <= len(canvas["nodes"]) <= 40
     assert canvas["edges"]
     files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
-    assert "tickets/E2E-001.md" in files
-    assert "workshops/e2e-place-stub.md" in files
+    assert "ops/tickets/E2E-001.md" in files
+    assert "ops/workshops/e2e-place-stub.md" in files
     blob = json.dumps(canvas)
     assert "create" in blob.lower()
     assert "STACK" in blob or "stack" in blob.lower()
@@ -406,7 +428,7 @@ def test_stack_e2e_place_stub_architecture_handoff() -> None:
     path = OPS / "workflow" / "STACK-E2E-place-stub.md"
     assert path.is_file()
     text = path.read_text()
-    assert "[[tickets/E2E-001]]" in text
+    assert "[[ops/tickets/E2E-001]]" in text
     assert "POST /api/v1/places" in text
     assert "GET /api/v1/places" in text
     assert "/actuator/health" in text
@@ -439,9 +461,9 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "SPRING_PROFILES_ACTIVE" in text
     assert "compose.chaos.yml" in text
     assert "mcp-grafana" in text
-    assert "[[tickets/WF-016]]" in text
-    assert "[[tickets/WF-017]]" in text
-    assert "[[tickets/WF-018]]" in text
+    assert "[[ops/tickets/WF-016]]" in text
+    assert "[[ops/tickets/WF-017]]" in text
+    assert "[[ops/tickets/WF-018]]" in text
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["E2E-001"]["status"] == "ready"
     assert by_id["WF-015"]["status"] == "done"
@@ -453,8 +475,8 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "tickets/E2E-001" in by_id["WF-018"].get("parent", "")
     assert by_id["WF-018"].get("pr", "") == "https://github.com/tezball/my-island/pull/37"
     wf018 = (OPS / "tickets" / "WF-018.md").read_text()
-    assert "[[tickets/E2E-001]]" in wf018
-    assert "[[workflow/STACK-E2E-place-stub]]" in wf018
+    assert "[[ops/tickets/E2E-001]]" in wf018
+    assert "[[ops/workflow/STACK-E2E-place-stub]]" in wf018
     assert by_id["WF-016"]["owner"] == "automation-expert"
     assert by_id["WF-016"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-016"].get("parent", "")
@@ -464,9 +486,9 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-017"]["status"] == "done"
     assert by_id["WF-017"].get("pr", "") == "https://github.com/tezball/my-island/pull/36"
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
-    assert "[[tickets/E2E-001]]" in wf017
-    assert "[[workflow/STACK-E2E-place-stub]]" in wf017
-    assert "[[runbooks/STACK_E2E_PLACE_STUB]]" in wf017
+    assert "[[ops/tickets/E2E-001]]" in wf017
+    assert "[[ops/workflow/STACK-E2E-place-stub]]" in wf017
+    assert "[[ops/runbooks/STACK_E2E_PLACE_STUB]]" in wf017
     assert by_id["WF-017"]["owner"] == "automation-expert"
     assert by_id["WF-017"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-017"].get("parent", "")
@@ -510,7 +532,7 @@ def test_wf_017_stack_e2e_skill_and_runbook() -> None:
     assert "Ticket ACs still say" not in skill_text
     assert "not the E2E-001 AC names" not in runbook
     skills = (OPS / "workflow" / "SKILLS.md").read_text()
-    assert "[[runbooks/STACK_E2E_PLACE_STUB]]" in (OPS / "workflow" / "STACK-E2E-place-stub.md").read_text()
+    assert "[[ops/runbooks/STACK_E2E_PLACE_STUB]]" in (OPS / "workflow" / "STACK-E2E-place-stub.md").read_text()
     assert "stack-e2e-place-stub" in skills
     index = (OPS / "runbooks" / "_index.md").read_text()
     assert "STACK_E2E_PLACE_STUB" in index
@@ -539,9 +561,9 @@ def test_wf_019_place_listing_sim() -> None:
         ("plans/WF-019.md", plan),
         ("BOARD.md", board),
     ):
-        assert "docs/ops" not in text, rel
+        assert "docs/ops/tickets" not in text, rel
     assert (OPS / "tickets" / "WF-019.md").is_file()
-    assert not (REPO / "docs" / "ops" / "tickets" / "WF-019.md").exists()
+    assert not (REPO / "ops" / "tickets" / "WF-019.md").exists()
     assert "./scripts/sim-place-listing.sh" in ticket
     assert "categoryId" in ticket
     assert "countyId" in ticket
@@ -549,7 +571,7 @@ def test_wf_019_place_listing_sim() -> None:
     assert "longitude" in ticket
     assert "compose.chaos.yml" in ticket
     for reserved in ("WF-015", "WF-016", "WF-017", "WF-018"):
-        assert f"[[tickets/{reserved}]]" in ticket
+        assert f"[[ops/tickets/{reserved}]]" in ticket
     runbook = (OPS / "runbooks" / "PLACE_LISTING_SIM.md").read_text()
     assert "./scripts/sim-place-listing.sh" in runbook
     assert "POST /api/v1/places" in runbook
@@ -560,7 +582,7 @@ def test_wf_019_place_listing_sim() -> None:
     wrapper = (REPO / "scripts" / "sim-place-listing.sh").read_text()
     assert "sim_place_listing.py" in wrapper
     assert "compose.chaos.yml" not in wrapper
-    sim = (OPS / "scripts" / "sim_place_listing.py").read_text()
+    sim = (RUNTIME / "scripts" / "sim_place_listing.py").read_text()
     assert "compose.chaos.yml" not in sim
     assert "SPRING_PROFILES_ACTIVE" not in sim
     assert '"categoryId"' in sim
@@ -612,7 +634,7 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     assert "Catalog SELECT verify" in ticket
     assert "no PR yet" not in ticket.lower()
 
-    sql = (OPS / "observability" / "postgres-grant-catalog-reader.sql").read_text()
+    sql = (RUNTIME / "observability" / "postgres-grant-catalog-reader.sql").read_text()
     assert "GRANT CONNECT ON DATABASE catalog TO ops_reader" in sql
     assert "GRANT USAGE ON SCHEMA public TO ops_reader" in sql
     assert "GRANT SELECT ON ALL TABLES IN SCHEMA public TO ops_reader" in sql
@@ -664,7 +686,7 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     runbook = (OPS / "runbooks" / "STACK_E2E_PLACE_STUB.md").read_text()
     assert "127.0.0.1:9091/api/v1/query" in runbook
     assert "Engineering grants" in runbook or "TODO" in runbook
-    agents = (REPO / "AGENTS.md").read_text()
+    agents = (DOCS / "AGENTS.md").read_text()
     assert "stdio" in agents.lower()
     assert "does **not** attach" in agents or "does not attach" in agents
     assert "TODO Engineering" in agents
@@ -699,7 +721,7 @@ def test_wf_021_human_cli_ticket() -> None:
 
 
 def test_product_milestones_freeze() -> None:
-    path = REPO / "product" / "MILESTONES.md"
+    path = PRODUCT / "MILESTONES.md"
     assert path.is_file()
     text = path.read_text()
     for needle in (
@@ -718,9 +740,9 @@ def test_product_milestones_freeze() -> None:
         "PRD-003",
     ):
         assert needle in text, needle
-    readme = (REPO / "product" / "README.md").read_text()
+    readme = (PRODUCT / "README.md").read_text()
     assert "MILESTONES.md" in readme
-    signed = (REPO / "product" / "SIGNED.md").read_text()
+    signed = (PRODUCT / "SIGNED.md").read_text()
     assert "MILESTONES.md" in signed
     dash = (REPO / "docs" / "HOME.md").read_text()
     assert "product/MILESTONES.md" in dash
@@ -729,11 +751,11 @@ def test_product_milestones_freeze() -> None:
     kanban = (OPS / "MILESTONES.md").read_text()
     assert "kanban-plugin: basic" in kanban
     assert "board_sync" in kanban
-    assert "[[BOARD]]" in kanban
+    assert "[[ops/BOARD]]" in kanban
     assert "**M0**" in kanban
     assert "Chunk 1" in kanban
     home = (OPS / "HOME.md").read_text()
-    assert "[[MILESTONES]]" in home
+    assert "[[ops/MILESTONES]]" in home
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["WF-000"]["status"] == "implement"
     assert by_id["E2E-001"]["status"] == "ready"
@@ -755,7 +777,7 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert "pull/39" in meta.get("pr", "")
     assert meta["type"] == "workflow"
     board = (OPS / "BOARD.md").read_text()
-    assert "- [x] [[tickets/WF-022|WF-022]]" in board
+    assert "- [x] [[ops/tickets/WF-022|WF-022]]" in board
     home = (REPO / "docs" / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
     assert "WF-000" in doing

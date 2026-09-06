@@ -169,7 +169,7 @@ def test_dev_start_stop_skip_gui_and_no_chaos() -> None:
 
 
 def test_local_md_documents_app_cli() -> None:
-    text = (REPO / "ops" / "workflow" / "LOCAL.md").read_text()
+    text = (REPO / "docs" / "ops" / "workflow" / "LOCAL.md").read_text()
     assert "./scripts/app start" in text
     assert "./scripts/app stop" in text
     assert "./scripts/app test" in text

@@ -4,6 +4,8 @@ from pathlib import Path
 
 import new_ticket
 
+VAULT = Path(__file__).resolve().parents[2] / "docs" / "ops"
+
 
 def test_next_id_uses_max_plus_one(tmp_path: Path) -> None:
     tickets = tmp_path / "tickets"
@@ -16,7 +18,7 @@ def test_next_id_uses_max_plus_one(tmp_path: Path) -> None:
 
 
 def test_render_fills_frontmatter_and_heading() -> None:
-    template = (Path(__file__).resolve().parents[1] / "templates" / "story.md").read_text()
+    template = (VAULT / "templates" / "story.md").read_text()
     body = new_ticket.render(
         template,
         ident="PRD-009",
@@ -43,7 +45,7 @@ def test_dry_run_does_not_write(tmp_path: Path, monkeypatch, capsys) -> None:
     (tmp_path / "tickets").mkdir()
     (tmp_path / "templates").mkdir()
     (tmp_path / "templates" / "story.md").write_text(
-        Path(__file__).resolve().parents[1].joinpath("templates/story.md").read_text()
+        Path(__file__).resolve().parents[2].joinpath("docs/ops/templates/story.md").read_text()
     )
     monkeypatch.setattr(
         "sys.argv",

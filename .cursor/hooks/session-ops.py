@@ -6,7 +6,7 @@ import json
 import sys
 
 CONTEXT = """This repo’s current mandate is the ops agent loop, not the product MVP.
-Read ops/HOME.md and ops/BOARD.md. Follow ops/workflow/LOOP.md.
+Obsidian vault is docs/. Read docs/ops/HOME.md and docs/ops/BOARD.md. Follow docs/ops/workflow/LOOP.md.
 One ticket per session. Do not merge PRs. Do not deploy prod.
 Grafana/Postgres MCP is read-only. Ticket prefix WF- = workflow; PRD- = product (none until assigned).
 python3 ops/scripts/next_ticket.py --role auto

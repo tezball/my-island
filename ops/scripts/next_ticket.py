@@ -10,11 +10,16 @@ import sys
 PRIORITY_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 
 
+def repo() -> pathlib.Path:
+    """Repository root (ops/scripts/ → repo)."""
+    return pathlib.Path(__file__).resolve().parents[2]
+
+
 def root() -> pathlib.Path:
     env = os.environ.get("OPS_ROOT")
     if env:
         return pathlib.Path(env)
-    return pathlib.Path(__file__).resolve().parents[1]
+    return repo() / "docs" / "ops"
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:

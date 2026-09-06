@@ -6,6 +6,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 LEADS = REPO / "data" / "leads"
+LEADS_DOCS = REPO / "docs" / "data" / "leads"
 SCHEMA = json.loads((LEADS / "schema.json").read_text())
 JSONL = LEADS / "places.jsonl"
 STARTER = REPO / "docs" / "leads" / "CAMPSITE_LEADS.md"
@@ -61,15 +62,17 @@ def _records() -> list[dict]:
 
 
 def test_leads_docs_exist() -> None:
-    for name in ("README.md", "schema.json", "places.jsonl", "SOURCES.md", "LEGAL.md"):
+    for name in ("schema.json", "places.jsonl"):
         assert (LEADS / name).is_file(), name
-    readme = (LEADS / "README.md").read_text()
+    for name in ("README.md", "SOURCES.md", "LEGAL.md"):
+        assert (LEADS_DOCS / name).is_file(), name
+    readme = (LEADS_DOCS / "README.md").read_text()
     assert "lead → reviewed → promoted" in readme or "lead → reviewed" in readme
     assert "No live catalog writes" in readme or "no live catalog" in readme.lower()
     assert "CAPTCHA" in readme
     assert "WAVE-1.md" in readme
     assert "PRD-007" in readme
-    legal = (LEADS / "LEGAL.md").read_text()
+    legal = (LEADS_DOCS / "LEGAL.md").read_text()
     assert "database-right" in legal.lower() or "database right" in legal.lower()
     assert "counsel" in legal.lower()
 
@@ -132,7 +135,7 @@ def test_starter_doc_points_at_data_leads() -> None:
 
 
 def test_prd006_links_research_store() -> None:
-    ticket = (REPO / "ops" / "tickets" / "PRD-006.md").read_text()
+    ticket = (REPO / "docs" / "ops" / "tickets" / "PRD-006.md").read_text()
     assert "data/leads" in ticket
-    prd002 = (REPO / "ops" / "tickets" / "PRD-002.md").read_text()
+    prd002 = (REPO / "docs" / "ops" / "tickets" / "PRD-002.md").read_text()
     assert "data/leads" in prd002
