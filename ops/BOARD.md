@@ -41,6 +41,7 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 - [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
 - [ ] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
+- [ ] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 
 ## Blocked
 
