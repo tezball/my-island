@@ -700,7 +700,10 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     assert "TODO" in local
     stack = (OPS / "workflow" / "STACK-E2E-place-stub.md").read_text()
     assert "stdio" in stack.lower()
-    assert "TODO Engineering" in stack
+    assert "postgres-catalog" in stack
+    assert "via grants" in stack
+    assert "docs/ops/workflow/STACK-E2E-place-stub.md" in stack
+    assert "TODO Engineering" not in stack
     runbook = (OPS / "runbooks" / "STACK_E2E_PLACE_STUB.md").read_text()
     assert "127.0.0.1:9091/api/v1/query" in runbook
     assert "Engineering grants" in runbook or "TODO" in runbook
