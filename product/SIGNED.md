@@ -48,6 +48,8 @@ Full backlog remains [`MVP.md`](MVP.md). Expansion remains
 Activation, depth, coverage, and unsolicited claims stay as drafted in
 [`MVP.md`](MVP.md) §7. Thresholds are still written down before launch day.
 
+Milestone map (M0–M7 and gated chunks): [`MILESTONES.md`](MILESTONES.md).
+
 ---
 
 ## Kill / archive
@@ -76,4 +78,9 @@ Host and OIDC remain open. Database is PostgreSQL 17 + PostGIS (see [`STACK.md`]
 
 ## Status
 
+<<<<<<< HEAD
 **Signed by CEO 2026-09-05.** Product canon = `product/`. House = [`STACK.md`](STACK.md). Research Wave 1 (leads only; counsel before publish still [`PRD-009`](../ops/tickets/PRD-009.md)): [`WAVE-1.md`](WAVE-1.md).
+=======
+**Signed by CEO 2026-09-05.** Product canon = `product/`. House = [`STACK.md`](STACK.md).
+Release 1 sequence and gated chunks: [`MILESTONES.md`](MILESTONES.md).
+>>>>>>> 105f499 (product: freeze MVP milestone map)

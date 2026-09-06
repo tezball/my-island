@@ -18,6 +18,7 @@ Product definition for the rebuild. Start here.
 | [`BRIEFING.md`](BRIEFING.md) | CEO briefing — what the repo is, what we are building, what was built before, open decisions |
 | [`VISION.md`](VISION.md) | What we are building and why. Principles, roles, decisions made, open questions for the business |
 | [`MVP.md`](MVP.md) | Release 1 — the checkable directory. 92 stories, data model, success criteria, definition of done |
+| [`MILESTONES.md`](MILESTONES.md) | Frozen map — MVP M0–M7 and gated chunks 1–8. Visual: [`ops/MILESTONES.md`](../ops/MILESTONES.md) |
 | [`EXPANSION.md`](EXPANSION.md) | Everything after, in 10 chunks. Each with the question it answers and the evidence needed to start it |
 | [`NAMING.md`](NAMING.md) | Candidate names, trademark landmines to avoid, and the selection criteria |
 | [`STACK.md`](STACK.md) | **Signed house** (CEO 2026-09-05): Java / Spring Boot; Vite+React PWA (not Next); PostgreSQL 17 + PostGIS; Flyway; Grafana OSS MCP |
