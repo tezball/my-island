@@ -1,11 +1,13 @@
 # Chaos overlay — not used by ./scripts/dev up.
-# No extra sidecars. Sets Spring profile `chaos` on the existing catalog service.
+# No extra sidecars. Sets Spring profiles chaos,chaos-monkey on catalog.
 #
-#   docker compose -f compose.yml -f compose.chaos.yml up -d catalog --wait
+#   docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 #
 name: my-island
 
 services:
   catalog:
+    profiles:
+      - chaos
     environment:
       SPRING_PROFILES_ACTIVE: chaos,chaos-monkey

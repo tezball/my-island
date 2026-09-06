@@ -50,14 +50,14 @@ curl -s http://127.0.0.1:8081/api/v1/places
 curl -s http://127.0.0.1:8081/api/v1/places/skellig-michael
 ```
 
-Public display name is **Halfdoor**. Package / repo remain `island.catalog` / my-island. No consumer UI here ([[tickets/PRD-003]]).
+Package / repo remain `island.catalog` / my-island. Brand is open — no public product name on the API. No consumer UI here ([[tickets/PRD-003]]).
 
 ### Chaos Monkey (workshop only)
 
-Default `./scripts/dev up` does **not** enable assaults. Overlay:
+Default `./scripts/dev up` does **not** enable assaults. Overlay + compose profile:
 
 ```bash
-docker compose -f compose.yml -f compose.chaos.yml up -d catalog --wait
+docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 ```
 
 That sets Spring profile `chaos` (and library profile `chaos-monkey`; latency + exceptions; kill stays off). Health + prometheus stay on the default path.

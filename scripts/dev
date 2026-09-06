@@ -28,7 +28,7 @@ Environment:
 
 Catalog API (after up): http://127.0.0.1:8081
 If Postgres was created before PostGIS, recreate volumes: docker compose down -v && ./scripts/dev up
-Chaos Monkey (not default): docker compose -f compose.yml -f compose.chaos.yml up -d catalog --wait
+Chaos Monkey (not default): docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 EOF
 }
 

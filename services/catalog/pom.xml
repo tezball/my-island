@@ -14,8 +14,8 @@
   <groupId>island</groupId>
   <artifactId>catalog</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Halfdoor catalog</name>
-  <description>Place catalog stub for Halfdoor (package island.catalog)</description>
+  <name>Place catalog stub</name>
+  <description>Place catalog stub (package island.catalog)</description>
 
   <properties>
     <java.version>21</java.version>

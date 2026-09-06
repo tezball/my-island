@@ -1,4 +1,4 @@
-# Halfdoor catalog API (island.catalog). Temurin 21 — not the workspace toolchain image.
+# Place catalog API (island.catalog). Temurin 21 — not the workspace toolchain image.
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /src
 COPY mvnw pom.xml ./
