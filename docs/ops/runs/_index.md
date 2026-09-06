@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-009-plan]] — counsel gate before publish; ticket `plan`; no app code
 - [[PRD-008-close]] — human merged PR #47; ticket `done`
 - [[WF-023-close]] — human merged PR #52; ticket `done`; vault = `docs/`
 - [[PRD-008-rebase]] — rebase #47 onto `2d8617f` (#52); draft-only import gates

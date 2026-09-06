@@ -274,13 +274,23 @@ def test_leads_pipeline_tickets_exist() -> None:
     assert by_id["PRD-008"].get("pr", "") == "https://github.com/tezball/my-island/pull/47"
     assert not by_id["PRD-008"].get("blocked_reason")
     assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
-    assert by_id["PRD-009"]["status"] == "ready"
+    assert by_id["PRD-009"]["status"] in ("ready", "plan")
     assert by_id["PRD-009"]["status"] != "implement"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
     assert by_id["PRD-009"]["owner"] == "product"
     assert (OPS / "plans" / "PRD-007.md").is_file()
     assert (OPS / "plans" / "PRD-008.md").is_file()
+    if by_id["PRD-009"]["status"] == "plan":
+        assert "plans/PRD-009" in by_id["PRD-009"].get("plan", "")
+        assert (OPS / "plans" / "PRD-009.md").is_file()
+    home = (REPO / "docs" / "HOME.md").read_text()
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
+    assert "(still `ready`)" not in planning
+    if by_id["PRD-009"]["status"] == "plan":
+        assert "PRD-009" in planning
+        assert "PRD-009" not in ready
 
 
 def test_leads_pipeline_tickets_cite_landed_schema() -> None:

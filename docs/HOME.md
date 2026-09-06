@@ -31,11 +31,10 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 | [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] | P0 | Ireland directory MVP (epic) |
 | [`PRD-002`](ops/tickets/PRD-002.md) · [[ops/tickets/PRD-002]] | P0 | Curator seed content pipeline |
 | [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA |
-| [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 
 > [!info] Planning
-> Empty. Next product plan is [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] (still `ready`).
+> [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] counsel gate [[ops/plans/PRD-009]] (`plan`; policy only; human sets `implement`).
 
 > [!success] Workshop — E2E place-listing stub
 > Field source of truth on the running stub: `categoryId` / `countyId` / `latitude` / `longitude` (not `categorySlug` / `countySlug` / `lon`+`lat`).
