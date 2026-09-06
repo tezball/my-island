@@ -18,8 +18,10 @@ Many agents write in this vault. These rules keep it searchable.
 | Runbook | `runbooks/<SLUG>.md` | `runbooks/WEEKLY_DIGEST.md` |
 | Daily | `daily/YYYY-MM-DD.md` | `daily/2026-09-05.md` |
 | Folder index | `<folder>/_index.md` | `agents/_index.md` |
+| Canvas | `workflow/<kebab>.canvas` | `workflow/e2e-place-listing.canvas` |
 
 - **kebab-case** for role slugs. **SCREAMING_SNAKE** for runbooks and durable company notes. **YYYY-MM-DD** for dailies.
+- Living canvases only; do not put date stamps in the filename; do not drop canvases at vault root.
 - Ticket **filename stem = `id`**. Never `tickets/prd-1-explore.md`.
 - Do not nest tickets in subfolders. Status is frontmatter, not a directory.
 - Do not put spaces in filenames.
