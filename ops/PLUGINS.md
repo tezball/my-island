@@ -5,7 +5,14 @@ type: workflow
 
 # Recommended Obsidian plugins
 
-Open **`ops/`** as the vault (not the repo root, not `docs/`). Core settings in `.obsidian/` are committed. **Do not commit plugin binaries** (`main.js`). Install community plugins on your machine.
+Two vault options (this repo does **not** force-move the vault from `ops/`):
+
+| Option | Open as vault | Dataview `FROM` | Start |
+|---|---|---|---|
+| **Current (OS-focused)** | `ops/` | `"tickets"` | [[HOME]] (`ops/HOME.md`) |
+| **Company-wide** | **repo root** | `"ops/tickets"` | repo-root [`HOME.md`](../HOME.md) so `product/` + `ops/` + dashboard share one graph |
+
+Core settings in `ops/.obsidian/` are committed for the **ops/** vault. **Do not commit plugin binaries** (`main.js`). Install community plugins on your machine. If you open the repo root as a vault, create a separate `.obsidian/` there locally — do not treat `docs/` as a vault.
 
 ## Core (enabled in `.obsidian/core-plugins.json`)
 
@@ -27,21 +34,36 @@ Install via Settings → Community plugins → Browse. Restricted mode off.
 | Plugin id | Name | Use |
 |---|---|---|
 | `obsidian-kanban` | Kanban | Optional view of [[BOARD]]. **Source of truth is ticket frontmatter + `board_sync.py`.** If the board and a ticket disagree, the ticket wins — regenerate. |
-| `dataview` | Dataview | Query tickets and company data (examples in [[data/_index]]) |
+| `dataview` | Dataview | Query tickets and company data (examples in [[data/_index]]). Paths depend on vault root — see below. |
 | `templater-obsidian` | Templater | Optional; core Templates is enough for agents |
 | `obsidian-tasks-plugin` | Tasks | Checklists in runbooks and dailies |
 | `calendar` | Calendar | Jump to daily notes |
+
+**Homepage** (`homepage`) is optional and **not** in the committed `community-plugins.json`. Install it only if the vault is the **repo root**, and set the homepage note to `HOME.md`. If the vault is still `ops/`, opening [[HOME]] is enough.
 
 The historical `docs/` vault used Tasks + Advanced Tables + themes. Do not copy those plugin folders here.
 
 ## Dataview snippets
 
-Tickets in flight:
+`FROM` is vault-relative. **ops/ vault:** `"tickets"`. **Repo-root vault:** `"ops/tickets"` (as on [`HOME.md`](../HOME.md)).
+
+Tickets in flight (ops/ vault):
 
 ````markdown
 ```dataview
 TABLE status, priority, owner, area
 FROM "tickets"
+WHERE id AND status != "done" AND type != "epic"
+SORT priority ASC, id ASC
+```
+````
+
+Tickets in flight (repo-root vault / company dashboard):
+
+````markdown
+```dataview
+TABLE status, priority, owner
+FROM "ops/tickets"
 WHERE id AND status != "done" AND type != "epic"
 SORT priority ASC, id ASC
 ```

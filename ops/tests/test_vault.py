@@ -84,6 +84,34 @@ def test_repo_readme_points_at_obsidian_ops() -> None:
     assert "ops/" in text
     assert "Obsidian" in text
     assert "disposable scaffolding" in text.lower()
+    assert "[`HOME.md`](HOME.md)" in text
+    assert "repo root" in text.lower()
+
+
+def test_repo_root_company_dashboard() -> None:
+    home = REPO / "HOME.md"
+    assert home.is_file()
+    text = home.read_text()
+    assert "title: Company home" in text
+    assert "type: dashboard" in text
+    assert "owner: Product" in text
+    assert "](ops/HOME.md)" in text
+    assert "](product/SIGNED.md)" in text
+    assert "[[ops/BOARD]]" in text
+    assert "[[product/SIGNED]]" in text
+    assert 'FROM "ops/tickets"' in text
+    assert "categoryId" in text
+    assert "countyId" in text
+    assert "latitude" in text
+    assert "longitude" in text
+    ops_home = (OPS / "HOME.md").read_text()
+    assert "[`../HOME.md`](../HOME.md)" in ops_home
+    plugins = (OPS / "PLUGINS.md").read_text()
+    assert 'FROM "ops/tickets"' in plugins
+    assert "repo root" in plugins.lower()
+    agents = (REPO / "AGENTS.md").read_text()
+    assert "HOME.md" in agents
+    assert "repo root" in agents.lower()
 
 
 def test_automation_skill_exists() -> None:

@@ -2,6 +2,8 @@
 
 This repository is the **company OS**. Mandate: **fully automated agent workflows**, not the consumer app.
 
+Company dashboard: `HOME.md` at the repo root.
+
 1. Read `ops/HOME.md`, `ops/CHARTER.md`, `ops/company/SCAFFOLDING.md`, and `ops/BOARD.md`.
 2. Follow `ops/workflow/LOOP.md`, `ops/workflow/SAFETY.md`, `ops/workflow/CI.md`, `ops/runbooks/TICKET_LOOP.md`.
 3. Use the `ops-loop` skill. For CI/skills/DX use the `automation` skill. Wear one hat from `ops/agents/_index.md`.
