@@ -67,6 +67,8 @@ def test_leads_docs_exist() -> None:
     assert "lead → reviewed → promoted" in readme or "lead → reviewed" in readme
     assert "No live catalog writes" in readme or "no live catalog" in readme.lower()
     assert "CAPTCHA" in readme
+    assert "WAVE-1.md" in readme
+    assert "PRD-007" in readme
     legal = (LEADS / "LEGAL.md").read_text()
     assert "database-right" in legal.lower() or "database right" in legal.lower()
     assert "counsel" in legal.lower()

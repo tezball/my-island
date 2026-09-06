@@ -6,6 +6,10 @@ Engineering later imports leads into Spring (`PRD-002`). Curators promote a subs
 
 Seed file: [`places.jsonl`](places.jsonl) (one JSON object per line). Schema: [`schema.json`](schema.json). Intended sources: [`SOURCES.md`](SOURCES.md). Legal: [`LEGAL.md`](LEGAL.md).
 
+## Wave 1
+
+Product acceptance for the first Research deposits: [`product/WAVE-1.md`](../../product/WAVE-1.md). Vault ticket: [`ops/tickets/PRD-007.md`](../../ops/tickets/PRD-007.md) (plan [`ops/plans/PRD-007.md`](../../ops/plans/PRD-007.md)). Create/update here is JSONL append or update by `dedupe_key`. Promote/create **draft** Places is [`PRD-008`](../../ops/tickets/PRD-008.md). Publish still needs counsel ([`PRD-009`](../../ops/tickets/PRD-009.md)).
+
 ## Who writes here
 
 | Role | Does |

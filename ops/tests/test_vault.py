@@ -230,14 +230,18 @@ def test_leads_pipeline_tickets_exist() -> None:
     for ident in ("PRD-007", "PRD-008", "PRD-009"):
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
-        assert by_id[ident]["status"] == "ready"
         assert by_id[ident]["status"] != "implement"
+    assert by_id["PRD-007"]["status"] == "plan"
+    assert "plans/PRD-007" in by_id["PRD-007"].get("plan", "")
+    assert by_id["PRD-008"]["status"] == "ready"
+    assert by_id["PRD-009"]["status"] == "ready"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
     assert by_id["PRD-009"]["owner"] == "product"
     reason = by_id["PRD-008"].get("blocked_reason", "").lower()
     assert "prd-001" in reason
     assert "prd-006" in reason or "schema.json" in reason
+    assert (OPS / "plans" / "PRD-007.md").is_file()
 
 
 def test_leads_pipeline_tickets_cite_landed_schema() -> None:
@@ -261,6 +265,39 @@ def test_leads_pipeline_tickets_cite_landed_schema() -> None:
     assert "32 county" in prd008.lower().replace("-", " ")
     assert "country table" in prd008.lower() or "country enum" in prd008.lower()
     assert "32-county" in prd007
+    assert "WAVE-1.md" in prd007
+    assert "WAVE-1.md" in prd008
+    assert "does **not** waive counsel" in prd009 or "does **not** waive counsel for publish" in prd009
+    assert "draft" in prd008.lower()
+    assert "categoryId" in prd008
+    assert "countyId" in prd008
+    assert "latitude" in prd008
+    assert "longitude" in prd008
+
+
+def test_wave1_acceptance_note() -> None:
+    wave = (REPO / "product" / "WAVE-1.md").read_text()
+    assert "data/leads/places.jsonl" in wave
+    assert "schema.json" in wave
+    assert "PRD-006" in wave and "PRD-007" in wave and "PRD-008" in wave and "PRD-009" in wave
+    assert "counsel" in wave.lower()
+    assert "latitude" in wave and "longitude" in wave
+    assert "categoryId" in wave and "countyId" in wave
+    assert "dedupe_key" in wave
+    assert "SIGNED.md" in wave
+    assert "LEGAL.md" in wave
+    readme = (REPO / "data" / "leads" / "README.md").read_text()
+    assert "WAVE-1.md" in readme
+    assert "PRD-007" in readme
+    plan = (OPS / "plans" / "PRD-007.md").read_text()
+    assert "WAVE-1.md" in plan
+    assert "schema.json" in plan
+    assert "test_leads.py" in plan
+    assert "dedupe_key" in plan
+    signed = (REPO / "product" / "SIGNED.md").read_text()
+    assert "WAVE-1.md" in signed
+    product_index = (REPO / "product" / "README.md").read_text()
+    assert "WAVE-1.md" in product_index
 
 
 def test_e2e_001_place_stub_workshop() -> None:
