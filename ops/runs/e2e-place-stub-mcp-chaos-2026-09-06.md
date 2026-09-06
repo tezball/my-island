@@ -13,6 +13,8 @@ Cloud Agent workshop pass on `tezball/my-island` `main` after PR #21. Hat: [[age
 
 Handoff: [[workflow/STACK-E2E-place-stub]]. Canvas: [[workflow/e2e-place-stub]].
 
+Rebase note (same day): landed onto `main` after the workshop spine strip. [[tickets/WF-015]] on `main` is that strip (`done`). Gap tickets from this run were **renumbered** so they do not clobber it. Happy-path-only PR #28 is superseded by this pass.
+
 ## What happened
 
 VM had booted the **pre-stub** compose (`postgres:17-alpine`, no catalog) from a stale snapshot. Recreated per [[workflow/LOCAL]]: `docker compose down -v && ./scripts/dev up`. PostGIS 17-3.5 + catalog image built and became healthy.
@@ -31,7 +33,7 @@ VM had booted the **pre-stub** compose (`postgres:17-alpine`, no catalog) from a
 | Prometheus | `GET http://127.0.0.1:8081/actuator/prometheus` | **200** | 16550 bytes, `text/plain;version=0.0.4` |
 | Grafana | `GET http://127.0.0.1:3030/api/health` | **200** | 11.6.0, database ok |
 
-Workshop exception: **no auth** on the stub (called out on PR #21). Payload used stub fields `categoryId` / `countyId` (not the ticket’s `categorySlug` / `countySlug` names).
+Workshop exception: **no auth** on the stub (called out on PR #21). Payload used stub fields `categoryId` / `countyId` (not the ticket’s `categorySlug` / `countySlug` names) → [[tickets/WF-018]].
 
 ### Observe (HTTP vs MCP)
 
@@ -42,7 +44,7 @@ Workshop exception: **no auth** on the stub (called out on PR #21). Payload used
 | `http_server_requests_seconds_count` after smoke | SUCCESS 200 on `/actuator/health` and `/actuator/prometheus` (place series appear after next scrape) |
 | Postgres `ops_reader` @ db `ops` | `SELECT` `mcp_ping` **ok** |
 | Postgres `ops_reader` @ db `catalog` | `SELECT` `place` → **permission denied** |
-| `mcp-grafana` / Postgres MCP tools on this Cloud Agent | **missing** — namespaces were GitHub, Gmail, Calendar, Drive, cursor-cloud, subscriptions. `.cursor/mcp.json` stdio is not in the toolbox. `uvx` is installed. **Expected until [[tickets/WF-004]] / [[tickets/WF-010]] for remote staging; still a local-compose DX hole → [[tickets/WF-015]]** |
+| `mcp-grafana` / Postgres MCP tools on this Cloud Agent | **missing** — namespaces were GitHub, Gmail, Calendar, Drive, cursor-cloud, subscriptions. `.cursor/mcp.json` stdio is not in the toolbox. `uvx` is installed. **Expected until [[tickets/WF-004]] / [[tickets/WF-010]] for remote staging; still a local-compose DX hole → [[tickets/WF-016]]** |
 | `/actuator/chaosmonkey` | **404** (exposed: health, info, prometheus only) |
 
 Cloud environment snapshot `environmentJson` ports listed Grafana/Prometheus/Loki/Alertmanager/Postgres but **not** Catalog `:8081`. Repo `.cursor/environment.json` already has Catalog; the running snapshot is behind `main`. HTTP from inside the VM still reached 8081.
@@ -76,11 +78,12 @@ CI `.github/workflows/ci.yml` `catalog` job is `./mvnw -B test` (no chaos profil
 
 ## Result
 
-success — happy smoke proved; ≥2 gaps filed as [[tickets/WF-015]] and [[tickets/WF-016]]. E2E-001 not marked done.
+success — happy smoke proved; chaos overlay proved; gaps filed as [[tickets/WF-016]], [[tickets/WF-017]], and [[tickets/WF-018]]. E2E-001 not marked done.
 
 ## Follow-up
 
-- [[tickets/WF-015]] — attach mcp-grafana + Postgres-RO (catalog SELECT) to Cloud Agents against local compose
-- [[tickets/WF-016]] — skill + runbook for the MCP/HTTP + chaos overlay drill
+- [[tickets/WF-016]] — attach mcp-grafana + Postgres-RO (catalog SELECT) to Cloud Agents against local compose
+- [[tickets/WF-017]] — skill + runbook for the MCP/HTTP + chaos overlay drill
+- [[tickets/WF-018]] — align E2E-001 `categorySlug`/`countySlug` with stub `categoryId`/`countyId`
 - Staging remote MCP remains [[tickets/WF-004]] / [[tickets/WF-010]] (blocked)
 - Human merges this PR. Agents do not merge.

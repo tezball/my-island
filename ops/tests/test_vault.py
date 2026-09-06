@@ -313,11 +313,14 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "SPRING_PROFILES_ACTIVE" in text
     assert "compose.chaos.yml" in text
     assert "mcp-grafana" in text
-    assert "[[tickets/WF-015]]" in text
     assert "[[tickets/WF-016]]" in text
+    assert "[[tickets/WF-017]]" in text
+    assert "[[tickets/WF-018]]" in text
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["E2E-001"]["status"] == "ready"
-    for ident in ("WF-015", "WF-016"):
+    assert by_id["WF-015"]["status"] == "done"
+    assert "spine strip" in by_id["WF-015"]["title"].lower()
+    for ident in ("WF-016", "WF-017", "WF-018"):
         assert ident in by_id, ident
         assert by_id[ident]["status"] == "ready"
         assert by_id[ident]["owner"] == "automation-expert"

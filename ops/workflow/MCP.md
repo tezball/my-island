@@ -34,4 +34,4 @@ When Grafana exists remotely:
 
 - If a tool can `INSERT`/`UPDATE`/`DELETE`, it is misconfigured. Stop.
 - Do not put PATs or Grafana passwords in tickets, plans, or PR bodies.
-- Cloud Automations: only dashboard-catalog MCP servers work. Laptop `.cursor/mcp.json` does not follow Cloud Agents. That is why prod Grafana must be added on cursor.com, not only here. Workshop 2026-09-06: a Cloud Agent on this VM could HTTP Grafana/Prometheus/catalog, but had **no** `grafana` / `postgres` MCP tools — [[tickets/WF-015]].
+- Cloud Automations: only dashboard-catalog MCP servers work. Laptop `.cursor/mcp.json` does not follow Cloud Agents. That is why prod Grafana must be added on cursor.com, not only here. Workshop 2026-09-06: a Cloud Agent on this VM could HTTP Grafana/Prometheus/catalog, but had **no** `grafana` / `postgres` MCP tools — [[tickets/WF-016]].
