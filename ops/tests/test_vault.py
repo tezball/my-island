@@ -249,7 +249,7 @@ def test_e2e_001_place_stub_workshop() -> None:
         assert not any(part.isdigit() and len(part) == 4 for part in path.stem.split("-"))
     canvas = json.loads(canvas_path.read_text())
     assert "nodes" in canvas and "edges" in canvas
-    assert 15 <= len(canvas["nodes"]) <= 25
+    assert 15 <= len(canvas["nodes"]) <= 40
     assert canvas["edges"]
     files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
     assert "tickets/E2E-001.md" in files

@@ -216,6 +216,66 @@
 			"width": 400,
 			"height": 120,
 			"color": "4"
+		},
+		{
+			"id": "group_observe",
+			"type": "group",
+			"x": 1120,
+			"y": 360,
+			"width": 1120,
+			"height": 420,
+			"label": "Observe \u2192 Chaos \u2192 Automation",
+			"color": "2"
+		},
+		{
+			"id": "n_actuator",
+			"type": "text",
+			"text": "# Actuator\n\n`/actuator/health` \u2014 liveness/readiness + datasource.\n`/actuator/prometheus` scrape on local compose.",
+			"x": 1160,
+			"y": 400,
+			"width": 320,
+			"height": 160,
+			"color": "3"
+		},
+		{
+			"id": "n_mcp",
+			"type": "text",
+			"text": "# MCP review\n\nQuery the **running** local compose service via `mcp-grafana` (read-only).\nPromQL / LogQL \u2014 not a dashboard screenshot.",
+			"x": 1520,
+			"y": 400,
+			"width": 340,
+			"height": 160,
+			"color": "5"
+		},
+		{
+			"id": "n_chaos",
+			"type": "text",
+			"text": "# Chaos Monkey\n\nSpring profile `chaos` **only**.\nInject **latency** + **exceptions**.\nDefault compose stays **clean** (no chaos profile).",
+			"x": 1900,
+			"y": 400,
+			"width": 300,
+			"height": 180,
+			"color": "1"
+		},
+		{
+			"id": "n_gaps",
+			"type": "text",
+			"text": "# Gap tickets\n\nAutomation files tickets from Chaos / MCP findings.\nNew `WF-*` / follow-ups \u2014 do not silently expand E2E-001 ACs.",
+			"x": 1160,
+			"y": 580,
+			"width": 340,
+			"height": 160,
+			"color": "6"
+		},
+		{
+			"id": "n_fixloop",
+			"type": "text",
+			"text": "# Review \u2192 fix loop\n\nFindings \u2192 review \u2192 fix \u2192 re-run tests / MCP / chaos.\nAgents do not merge.",
+			"x": 1540,
+			"y": 580,
+			"width": 340,
+			"height": 160,
+			"color": "6"
 		}
 	],
 	"edges": [
@@ -364,6 +424,77 @@
 			"fromSide": "right",
 			"toNode": "n_done",
 			"toSide": "left"
+		},
+		{
+			"id": "e_ci_actuator",
+			"fromNode": "n_ci",
+			"fromSide": "bottom",
+			"toNode": "n_actuator",
+			"toSide": "top",
+			"label": "health / prometheus"
+		},
+		{
+			"id": "e_impl_actuator",
+			"fromNode": "n_impl",
+			"fromSide": "bottom",
+			"toNode": "n_actuator",
+			"toSide": "left"
+		},
+		{
+			"id": "e_actuator_mcp",
+			"fromNode": "n_actuator",
+			"fromSide": "right",
+			"toNode": "n_mcp",
+			"toSide": "left",
+			"label": "MCP"
+		},
+		{
+			"id": "e_mcp_chaos",
+			"fromNode": "n_mcp",
+			"fromSide": "right",
+			"toNode": "n_chaos",
+			"toSide": "left",
+			"label": "profile chaos"
+		},
+		{
+			"id": "e_mcp_gaps",
+			"fromNode": "n_mcp",
+			"fromSide": "bottom",
+			"toNode": "n_gaps",
+			"toSide": "top",
+			"label": "findings"
+		},
+		{
+			"id": "e_chaos_gaps",
+			"fromNode": "n_chaos",
+			"fromSide": "bottom",
+			"toNode": "n_gaps",
+			"toSide": "right",
+			"label": "findings"
+		},
+		{
+			"id": "e_gaps_fix",
+			"fromNode": "n_gaps",
+			"fromSide": "right",
+			"toNode": "n_fixloop",
+			"toSide": "left",
+			"label": "tickets"
+		},
+		{
+			"id": "e_fix_impl",
+			"fromNode": "n_fixloop",
+			"fromSide": "top",
+			"toNode": "n_impl",
+			"toSide": "bottom",
+			"label": "fix"
+		},
+		{
+			"id": "e_fix_ci",
+			"fromNode": "n_fixloop",
+			"fromSide": "right",
+			"toNode": "n_ci",
+			"toSide": "bottom",
+			"label": "re-run"
 		}
 	]
 }
