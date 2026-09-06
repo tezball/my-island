@@ -54,6 +54,9 @@ REQUIRED_VAULT = [
     ".obsidian/daily-notes.json",
     "workflow/CI.md",
     "workflow/SKILLS.md",
+    "tickets/E2E-001.md",
+    "workshops/e2e-place-stub.md",
+    "workflow/e2e-place-stub.canvas",
 ]
 
 REQUIRED_TICKET_KEYS = ("id", "title", "status", "priority", "type")
@@ -208,3 +211,49 @@ def test_leads_pipeline_tickets_cite_landed_schema() -> None:
     assert "32 county" in prd008.lower().replace("-", " ")
     assert "country table" in prd008.lower() or "country enum" in prd008.lower()
     assert "32-county" in prd007
+
+
+def test_e2e_001_place_stub_workshop() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "E2E-001" in by_id
+    meta = by_id["E2E-001"]
+    assert meta["status"] == "ready"
+    assert meta["priority"] == "P0"
+    assert meta["type"] == "story"
+    assert meta["owner"] == "eng-backend"
+    assert meta.get("area") == "catalog"
+    assert "tickets/PRD-001" in meta.get("parent", "")
+    ticket = (OPS / "tickets" / "E2E-001.md").read_text()
+    assert "POST /api/v1/places" in ticket
+    assert "GET /api/v1/places" in ticket
+    assert "GET /api/v1/places/{id}" in ticket
+    assert "workshop exception" in ticket.lower()
+    assert "tezball/my-island" in ticket
+    assert "Public brand naming is OPEN" in ticket
+    board = (OPS / "BOARD.md").read_text()
+    assert "[[tickets/E2E-001|E2E-001]] P0" in board
+    index = (OPS / "tickets" / "_index.md").read_text()
+    assert "E2E-" in index
+    brief = (OPS / "workshops" / "e2e-place-stub.md").read_text()
+    assert "[[tickets/E2E-001]]" in brief
+    assert "workflow/e2e-place-stub" in brief
+    canvas_path = OPS / "workflow" / "e2e-place-stub.canvas"
+    assert canvas_path.is_file()
+    found = {p.resolve() for p in REPO.rglob("e2e-place-stub.canvas")}
+    assert found == {canvas_path.resolve()}, found
+    assert not (REPO / "docs" / "e2e-place-stub.canvas").exists()
+    assert not (REPO / "docs" / "ops" / "workflow" / "e2e-place-stub.canvas").exists()
+    assert list(OPS.glob("*.canvas")) == []
+    for path in (OPS / "workflow").glob("*.canvas"):
+        assert path.name == path.name.lower()
+        assert not any(part.isdigit() and len(part) == 4 for part in path.stem.split("-"))
+    canvas = json.loads(canvas_path.read_text())
+    assert "nodes" in canvas and "edges" in canvas
+    assert 15 <= len(canvas["nodes"]) <= 25
+    assert canvas["edges"]
+    files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
+    assert "tickets/E2E-001.md" in files
+    assert "workshops/e2e-place-stub.md" in files
+    blob = json.dumps(canvas)
+    assert "create" in blob.lower()
+    assert "STACK" in blob or "stack" in blob.lower()
