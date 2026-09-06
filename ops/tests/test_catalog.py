@@ -66,6 +66,8 @@ def test_chaos_monkey_is_off_on_default_compose() -> None:
     assert "--profile chaos" in overlay
     app = (CATALOG / "src/main/resources/application.yml").read_text()
     assert "enabled: false" in app
+    assert "group:" in app
+    assert "- chaos-monkey" in app
     chaos = (CATALOG / "src/main/resources/application-chaos.yml").read_text()
     assert "enabled: true" in chaos
     assert "kill-application-active: false" in chaos

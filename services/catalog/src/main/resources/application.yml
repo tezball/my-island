@@ -1,6 +1,10 @@
 spring:
   application:
     name: catalog
+  profiles:
+    group:
+      chaos:
+        - chaos-monkey
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://127.0.0.1:5433/catalog}
     username: ${SPRING_DATASOURCE_USERNAME:ops}

@@ -60,6 +60,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
+    <!-- Assaults only when Spring profile `chaos` is active (see application-chaos.yml + compose.chaos.yml). -->
     <dependency>
       <groupId>de.codecentric</groupId>
       <artifactId>chaos-monkey-spring-boot</artifactId>
