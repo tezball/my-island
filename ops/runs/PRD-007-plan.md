@@ -4,7 +4,7 @@ ticket: "[[tickets/PRD-007]]"
 role: planner
 started: 2026-09-06
 finished: 2026-09-06
-pr:
+pr: https://github.com/tezball/my-island/pull/40
 ---
 
 # Run PRD-007 plan (Wave 1 vault)
