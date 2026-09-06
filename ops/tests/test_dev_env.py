@@ -43,6 +43,7 @@ def test_environment_json_starts_compose() -> None:
     assert data["install"] == "bash .cursor/install.sh"
     assert data["start"] == "bash .cursor/start.sh"
     assert data["user"] == "ubuntu"
+    assert "mcpServers" not in data
 
 
 def test_ops_compose_is_include_wrapper() -> None:
