@@ -4,7 +4,7 @@ ticket: "[[tickets/PRD-008]]"
 role: planner
 started: 2026-09-06
 finished: 2026-09-06
-pr:
+pr: https://github.com/tezball/my-island/pull/43
 ---
 
 # Run PRD-008 plan
