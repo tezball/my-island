@@ -61,6 +61,7 @@ def test_chaos_monkey_is_off_on_default_compose() -> None:
     default_compose = (REPO / "compose.yml").read_text()
     assert "SPRING_PROFILES_ACTIVE: chaos" not in default_compose
     overlay = (REPO / "compose.chaos.yml").read_text()
+    assert "SPRING_PROFILES_ACTIVE: chaos,chaos-monkey" in overlay
     assert "SPRING_PROFILES_ACTIVE: chaos" in overlay
     app = (CATALOG / "src/main/resources/application.yml").read_text()
     assert "enabled: false" in app

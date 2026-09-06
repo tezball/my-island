@@ -60,7 +60,7 @@ Default `./scripts/dev up` does **not** enable assaults. Overlay:
 docker compose -f compose.yml -f compose.chaos.yml up -d catalog --wait
 ```
 
-That sets Spring profile `chaos` (latency + exceptions; kill stays off). Health + prometheus stay on the default path.
+That sets Spring profile `chaos` (and library profile `chaos-monkey`; latency + exceptions; kill stays off). Health + prometheus stay on the default path.
 
 ## Dev Container
 

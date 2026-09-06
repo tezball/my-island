@@ -8,4 +8,4 @@ name: my-island
 services:
   catalog:
     environment:
-      SPRING_PROFILES_ACTIVE: chaos
+      SPRING_PROFILES_ACTIVE: chaos,chaos-monkey
