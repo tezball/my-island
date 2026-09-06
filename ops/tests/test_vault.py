@@ -420,6 +420,11 @@ def test_wf_017_stack_e2e_skill_and_runbook() -> None:
     assert "api/ds/query" in runbook
     assert "docker compose -f compose.yml up -d catalog" in runbook
     assert "Required CI must not" in runbook or "required CI must not" in runbook.lower()
+    for needle in ("categoryId", "countyId", "latitude", "longitude"):
+        assert needle in skill_text, needle
+        assert needle in runbook, needle
+    assert "Ticket ACs still say" not in skill_text
+    assert "not the E2E-001 AC names" not in runbook
     skills = (OPS / "workflow" / "SKILLS.md").read_text()
     assert "[[runbooks/STACK_E2E_PLACE_STUB]]" in (OPS / "workflow" / "STACK-E2E-place-stub.md").read_text()
     assert "stack-e2e-place-stub" in skills

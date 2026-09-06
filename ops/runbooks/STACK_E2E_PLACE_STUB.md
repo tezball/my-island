@@ -23,7 +23,7 @@ Check: `docker compose exec catalog sh -c 'printenv SPRING_PROFILES_ACTIVE || tr
 
 ## 2. HTTP create / list / get + actuators
 
-Stub JSON (not the E2E-001 AC names — [[tickets/WF-018]]):
+Stub contract (`categoryId` / `countyId` / `latitude` / `longitude`; WF-018 decision: stub wins):
 
 ```bash
 curl -sS -D - -o /tmp/place.json -X POST http://127.0.0.1:8081/api/v1/places \

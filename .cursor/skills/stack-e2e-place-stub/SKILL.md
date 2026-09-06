@@ -31,6 +31,6 @@ Handoff: `ops/workflow/STACK-E2E-place-stub.md`. Workshop: [[tickets/E2E-001]]. 
 - Touch [[tickets/WF-015]] (spine strip).
 - Merge, prod-deploy, or put secrets in notes.
 
-JSON create body uses the **running stub** (`categoryId` / `countyId`). Ticket ACs still say `categorySlug` / `countySlug` — that gap is [[tickets/WF-018]], not this drill.
+JSON create body uses the **stub contract**: `categoryId` / `countyId` / `latitude` / `longitude` (WF-018 decision: stub wins). Do not invent `categorySlug` / `countySlug` / `lon` / `lat`.
 
 Cloud Agents often have **no** grafana MCP today — use the runbook HTTP fallback ([[tickets/WF-016]]).
