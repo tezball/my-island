@@ -211,19 +211,30 @@ def test_prd_000_e2e_program_plan_and_mvp_children() -> None:
     ):
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
-        assert by_id[ident]["status"] == "ready"
+        if ident == "PRD-010":
+            assert by_id[ident]["status"] == "plan"
+            assert "plans/PRD-010" in by_id[ident].get("plan", "")
+        else:
+            assert by_id[ident]["status"] == "ready"
         assert by_id[ident]["status"] != "implement"
         assert by_id[ident]["priority"] == "P0"
         assert by_id[ident]["owner"] == owner
         assert by_id[ident].get("area") == area
         assert "tickets/PRD-000" in by_id[ident].get("parent", "")
+    auth_plan = (OPS / "plans" / "PRD-010.md").read_text()
+    assert "Spring Security" in auth_plan
+    assert "OIDC" in auth_plan
+    assert "PRD-012" in auth_plan
+    assert "FastAPI" in auth_plan
     prd003 = (OPS / "tickets" / "PRD-003.md").read_text()
     assert "Explore only" in prd003 or "Explore list" in prd003
     assert "PRD-011" in prd003 and "PRD-012" in prd003 and "PRD-013" in prd003
     home = (REPO / "docs" / "HOME.md").read_text()
     ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
     planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
-    assert "PRD-010" in ready and "PRD-014" in ready
+    assert "PRD-010" not in ready
+    assert "PRD-014" in ready
+    assert "PRD-010" in planning
     assert "PRD-000" in planning
     miles = (PRODUCT / "MILESTONES.md").read_text()
     assert "PRD-010" in miles and "PRD-011" in miles and "PRD-014" in miles

@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-010-plan]] — visitor auth plan (Spring Security + OIDC); no app code
 - [[PRD-000-plan]] — program e2e plan + MVP child tickets; Wave 1 planners dispatched
 - [[PRD-008-close]] — human merged PR #47; ticket `done`
 - [[WF-023-close]] — human merged PR #52; ticket `done`; vault = `docs/`
