@@ -731,6 +731,9 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     home = (REPO / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
     assert "WF-000" in doing
+    assert "Review is empty" not in doing
+    assert "WF-016" in doing
+    assert "pull/46" in doing
     assert "WF-017" not in doing
     assert "WF-018" not in doing
     assert "WF-019" not in doing
@@ -742,6 +745,8 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert "pull/45" in home
     landed = home.split("Landed", 1)[1].split("Ready / Up next", 1)[0]
     assert "PRD-007" in landed
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    assert "WF-016" not in ready
     planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
     assert "PRD-008" in planning
     assert "PRD-007" not in planning
