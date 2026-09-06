@@ -84,6 +84,34 @@ def test_repo_readme_points_at_obsidian_ops() -> None:
     assert "ops/" in text
     assert "Obsidian" in text
     assert "disposable scaffolding" in text.lower()
+    assert "[`HOME.md`](HOME.md)" in text
+    assert "repo root" in text.lower()
+
+
+def test_repo_root_company_dashboard() -> None:
+    home = REPO / "HOME.md"
+    assert home.is_file()
+    text = home.read_text()
+    assert "title: Company home" in text
+    assert "type: dashboard" in text
+    assert "owner: Product" in text
+    assert "](ops/HOME.md)" in text
+    assert "](product/SIGNED.md)" in text
+    assert "[[ops/BOARD]]" in text
+    assert "[[product/SIGNED]]" in text
+    assert 'FROM "ops/tickets"' in text
+    assert "categoryId" in text
+    assert "countyId" in text
+    assert "latitude" in text
+    assert "longitude" in text
+    ops_home = (OPS / "HOME.md").read_text()
+    assert "[`../HOME.md`](../HOME.md)" in ops_home
+    plugins = (OPS / "PLUGINS.md").read_text()
+    assert 'FROM "ops/tickets"' in plugins
+    assert "repo root" in plugins.lower()
+    agents = (REPO / "AGENTS.md").read_text()
+    assert "HOME.md" in agents
+    assert "repo root" in agents.lower()
 
 
 def test_automation_skill_exists() -> None:
@@ -184,6 +212,8 @@ def test_merged_pr_tickets_are_done() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     expected = {
         "WF-020": "https://github.com/tezball/my-island/pull/33",
+        "WF-019": "https://github.com/tezball/my-island/pull/31",
+        "WF-021": "https://github.com/tezball/my-island/pull/35",
         "WF-005": "https://github.com/tezball/my-island/pull/6",
         "WF-006": "https://github.com/tezball/my-island/pull/8",
         "WF-007": "https://github.com/tezball/my-island/pull/11",
@@ -397,6 +427,8 @@ def test_wf_019_place_listing_sim() -> None:
     assert "mcp-grafana" in by_id["WF-016"]["title"].lower() or "postgres" in by_id["WF-016"]["title"].lower()
     assert "WF-019" in by_id
     meta = by_id["WF-019"]
+    assert meta["status"] == "done"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/31"
     assert meta["type"] == "workflow"
     assert meta["owner"] == "eng-backend"
     assert meta["priority"] == "P0"
@@ -451,6 +483,8 @@ def test_wf_021_human_cli_ticket() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert "WF-021" in by_id
     meta = by_id["WF-021"]
+    assert meta["status"] == "done"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/35"
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
     assert meta["priority"] == "P1"

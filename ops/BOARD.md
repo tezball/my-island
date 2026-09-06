@@ -36,8 +36,6 @@ kanban-plugin: basic
 
 ## Review
 
-- [ ] [[tickets/WF-019|WF-019]] P0 Repeatable place listing create/list/get sim
-- [ ] [[tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
 
 ## Blocked
 
@@ -54,6 +52,8 @@ kanban-plugin: basic
 - [x] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
 - [x] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
 - [x] [[tickets/WF-015|WF-015]] P0 Workshop-only spine strip (KEEP catalog compose chaos)
+- [x] [[tickets/WF-019|WF-019]] P0 Repeatable place listing create/list/get sim
 - [x] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 - [x] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [x] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
+- [x] [[tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
