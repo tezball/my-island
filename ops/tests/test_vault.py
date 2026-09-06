@@ -294,7 +294,38 @@ def test_stack_e2e_place_stub_architecture_handoff() -> None:
     assert "mcp-grafana" in text
     assert "product/STACK.md" in text
     assert "ops/workflow/e2e-place-stub.canvas" in text
+    assert "compose.chaos.yml" in text
     index = (OPS / "workflow" / "_index.md").read_text()
     assert "STACK-E2E-place-stub" in index
     brief = (OPS / "workshops" / "e2e-place-stub.md").read_text()
     assert "STACK-E2E-place-stub" in brief
+
+
+def test_e2e_place_stub_mcp_chaos_followups() -> None:
+    """Workshop pass files gaps; E2E-001 stays ready (not done)."""
+    run = OPS / "runs" / "e2e-place-stub-mcp-chaos-2026-09-06.md"
+    assert run.is_file()
+    text = run.read_text()
+    assert "POST http://127.0.0.1:8081/api/v1/places" in text
+    assert "**201**" in text
+    assert "/actuator/health" in text
+    assert "/actuator/prometheus" in text
+    assert "SPRING_PROFILES_ACTIVE" in text
+    assert "compose.chaos.yml" in text
+    assert "mcp-grafana" in text
+    assert "[[tickets/WF-015]]" in text
+    assert "[[tickets/WF-016]]" in text
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["E2E-001"]["status"] == "ready"
+    for ident in ("WF-015", "WF-016"):
+        assert ident in by_id, ident
+        assert by_id[ident]["status"] == "ready"
+        assert by_id[ident]["owner"] == "automation-expert"
+        assert by_id[ident]["type"] == "workflow"
+        assert "tickets/E2E-001" in by_id[ident].get("parent", "")
+        body = (OPS / "tickets" / f"{ident}.md").read_text()
+        assert "[[tickets/E2E-001]]" in body
+        assert "[[workflow/STACK-E2E-place-stub]]" in body
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "compose.chaos.yml" not in ci
+    assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
