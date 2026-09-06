@@ -257,3 +257,25 @@ def test_e2e_001_place_stub_workshop() -> None:
     blob = json.dumps(canvas)
     assert "create" in blob.lower()
     assert "STACK" in blob or "stack" in blob.lower()
+
+
+def test_stack_e2e_place_stub_architecture_handoff() -> None:
+    path = OPS / "workflow" / "STACK-E2E-place-stub.md"
+    assert path.is_file()
+    text = path.read_text()
+    assert "[[tickets/E2E-001]]" in text
+    assert "POST /api/v1/places" in text
+    assert "GET /api/v1/places" in text
+    assert "/actuator/health" in text
+    assert "/actuator/prometheus" in text
+    assert "./scripts/dev up" in text
+    assert "--profile chaos" in text
+    assert "de.codecentric:chaos-monkey-spring-boot" in text
+    assert "Toxiproxy" in text and "Gremlin" in text and "Chaos Mesh" in text
+    assert "mcp-grafana" in text
+    assert "product/STACK.md" in text
+    assert "ops/workflow/e2e-place-stub.canvas" in text
+    index = (OPS / "workflow" / "_index.md").read_text()
+    assert "STACK-E2E-place-stub" in index
+    brief = (OPS / "workshops" / "e2e-place-stub.md").read_text()
+    assert "STACK-E2E-place-stub" in brief

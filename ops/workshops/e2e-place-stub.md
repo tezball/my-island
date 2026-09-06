@@ -20,12 +20,13 @@ Plumbing + demo-able tests. CI green. Not polish. Not a consumer UI.
 | Hat | Does |
 |---|---|
 | **product** | ACs on [[tickets/E2E-001]], this brief, canvas |
-| **Architecture** | STACK constraints (read-only; no STACK rewrite) |
+| **Architecture** | STACK constraints (read-only; no STACK rewrite). Draft: [[workflow/STACK-E2E-place-stub]] |
 | **eng-backend** | Implement create / list / get when the ticket is `implement` |
 | **human** | Merge PRs |
 
 ## Links
 
 - Ticket: [[tickets/E2E-001]] (parent [[tickets/PRD-001]])
+- Architecture: [[workflow/STACK-E2E-place-stub]]
 - Canvas: [[workflow/e2e-place-stub]] — path `ops/workflow/e2e-place-stub.canvas`
 - Stack: [`product/STACK.md`](../../product/STACK.md)

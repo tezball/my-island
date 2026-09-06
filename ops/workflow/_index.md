@@ -12,5 +12,6 @@ Policy. Procedures: [[runbooks/_index]].
 | [[AUTOMATIONS]] | Cursor cloud jobs |
 | [[SAFETY]] | Non-negotiables |
 | [[e2e-place-stub]] | Place listing stub e2e workshop (living canvas) |
+| [[STACK-E2E-place-stub]] | Architecture draft: compose + chaos + MCP for E2E-001 stub |
 
 Living canvases: `workflow/<kebab>.canvas` ([[NAMING]]).
