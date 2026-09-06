@@ -14,14 +14,15 @@ Agents must be able to **clone → test → PR** without a human laptop ritual.
 | Job | Command | Why |
 |---|---|---|
 | `unit` | `python3 -m pytest ops/tests -q -m "not stack"` | Vault, tickets, board_sync, next_ticket — no Docker |
-| `stack` | `./scripts/dev test` with compose | Ops runtime (Postgres/Grafana) still boots |
+| `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS) | Place catalog stub ([[tickets/PRD-001]]) |
+| `stack` | `./scripts/dev test` with compose | Ops runtime (Postgres/Grafana) + catalog compose boot |
 
-There is **no consumer app CI**. Do not add Playwright/Maven jobs until a `PRD-*` ticket in `implement` needs them ([[tickets/WF-011]]). Do not keep red app jobs “for later”. House when they land: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
+There is **no consumer UI CI**. Playwright waits on [[tickets/WF-011]]. Do not keep red app jobs “for later”. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
 
 ## Agent rules
 
 1. **Same commands locally and in Actions.** `./scripts/dev test` is CI. Do not invent a third runner.
-2. **Fast path first.** Vault/docs/script PRs must pass `not stack` without compose. Put slow jobs behind `stack`.
+2. **Fast path first.** Vault/docs/script PRs must pass `not stack` without compose. Put slow jobs behind `stack` / `catalog`.
 3. **Never `--no-verify`.** Never force-push `main`.
 4. **No secrets in logs or notes.** CI has `contents: read` only. Do not add deploy keys on a `WF-*` ticket.
 5. **One ticket’s diff.** Do not “while I’m here” rewrite workflows to support an app that will be replaced.
