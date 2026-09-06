@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-008-implement]] — Eng import draft Places; PR #47
 - [[WF-023-rebase]] — rebase #52 onto `ca90665` (#51); Product AC links
 - [[WF-023-implement]] — living markdown under docs/; PR #52
 - [[WF-016-close]] — grants landed on #48; ticket `done`; no reopen scope
