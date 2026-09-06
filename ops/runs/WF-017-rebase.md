@@ -7,15 +7,18 @@ finished: 2026-09-06
 pr: https://github.com/tezball/my-island/pull/36
 ---
 
-# Run WF-017 (rebase onto main post-#31)
+# Run WF-017 (rebase onto latest main)
 
-Hat: Engineering implementer. Did not merge. Did not touch [[tickets/WF-015]]. Did not enable chaos in CI.
+Hat: Engineering implementer. Did not merge. Did not touch [[tickets/WF-015]]. Did not enable chaos in CI. Pushed only to existing PR #36 (`cursor/wf-017-stack-e2e-drill-c69e`).
 
 ## What happened
 
-Rebased `cursor/wf-017-stack-e2e-drill-c69e` onto `origin/main` (`0aa1d4e`, includes #31 WF-019 sim). First two commits applied with auto-merge. `ops/BOARD.md` conflicted on the last commit (Review column: main had WF-019/WF-021; ours had stale Review cards plus WF-017). Resolved by `python3 ops/scripts/board_sync.py` after ticket `status: review` + `pr:` URL. Did not hand-edit columns.
+Rebased onto `origin/main` twice:
 
-Also kept main’s LOCAL / STACK-E2E / workshop / runbook-index / vault-test additions (`PLACE_LISTING_SIM`, `./scripts/app`, sim JSON). Skill + runbook now state the stub contract (`categoryId` / `countyId` / `latitude` / `longitude`; WF-018: stub wins). Did not fight [[tickets/WF-018]] / PR #37.
+1. Onto `0aa1d4e` (includes #31 WF-019 sim, plus #32–#35). `ops/BOARD.md` Review conflict (ours still listed tickets now Done). Resolved with `python3 ops/scripts/board_sync.py`.
+2. Onto `a642cba` after #38 (WF-019/WF-021 `done`) and #39 (repo `HOME.md`). Same BOARD conflict pattern: ours still had WF-019/WF-021 in Review. `board_sync.py` again — Review is only WF-017.
+
+Did not hand-edit columns. Skill + runbook use stub contract (`categoryId` / `countyId` / `latitude` / `longitude`; WF-018: stub wins). Did not fight [[tickets/WF-018]] / PR #37.
 
 ## Result
 
