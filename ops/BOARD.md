@@ -28,10 +28,10 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
-- [ ] [[tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
 
 ## In review
 
+- [ ] [[tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
 - [ ] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
 - [ ] [[tickets/WF-018|WF-018]] P1 Align E2E-001 place JSON fields with catalog stub
 

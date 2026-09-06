@@ -445,8 +445,9 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-016"]["owner"] == "automation-expert"
     assert by_id["WF-016"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-016"].get("parent", "")
-    assert by_id["WF-016"]["status"] in {"implement", "review"}
+    assert by_id["WF-016"]["status"] == "review"
     assert "plans/WF-016" in by_id["WF-016"].get("plan", "")
+    assert by_id["WF-016"].get("pr", "") == "https://github.com/tezball/my-island/pull/46"
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
     assert "[[tickets/E2E-001]]" in wf017
     assert "[[workflow/STACK-E2E-place-stub]]" in wf017
@@ -564,7 +565,8 @@ def test_wf_016_cloud_mcp_and_catalog_grants() -> None:
     """WF-016: catalog SELECT grants + Cloud Agent MCP attach docs (HTTP fallback)."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     meta = by_id["WF-016"]
-    assert meta["status"] in {"implement", "review"}
+    assert meta["status"] == "review"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/46"
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
     assert "plans/WF-016" in meta.get("plan", "")
