@@ -15,7 +15,7 @@ Agents must be able to **clone → test → PR** without a human laptop ritual.
 |---|---|---|
 | `unit` | `python3 -m pytest ops/tests -q -m "not stack"` | Vault, tickets, board_sync, next_ticket — no Docker |
 | `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS) | Place catalog stub ([[tickets/PRD-001]]) |
-| `stack` | `./scripts/dev test` with compose | Ops runtime (Postgres/Grafana) + catalog compose boot |
+| `stack` | `./scripts/dev test` with compose | Ops runtime (Postgres/Grafana) + catalog compose boot. Live `./scripts/sim-place-listing.sh` path is covered by `@pytest.mark.stack` |
 
 There is **no consumer UI CI**. Playwright waits on [[tickets/WF-011]]. Do not keep red app jobs “for later”. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
 

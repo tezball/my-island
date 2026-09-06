@@ -2,6 +2,7 @@
 # One entrypoint for clone/run, Dev Containers, Cloud Agents, and CI.
 #   ./scripts/dev up     start PostGIS + Grafana stack + catalog API
 #   ./scripts/dev test   unit tests; stack tests if REQUIRE_STACK=1 or stack is up
+#   ./scripts/dev sim    happy-path place create/list/get (see scripts/sim-place-listing.sh)
 #   ./scripts/dev down
 set -euo pipefail
 
@@ -19,6 +20,7 @@ Usage: ./scripts/dev <command>
   down      Stop the stack
   ps        Compose status
   test      Run pytest (same path as CI)
+  sim       Happy-path catalog create→list→get (no chaos). Same as ./scripts/sim-place-listing.sh
   wait      Wait until Grafana answers /api/health
   config    Validate compose.yml (and chaos overlay)
 
@@ -73,6 +75,11 @@ cmd_config() {
   "${COMPOSE[@]}" config -q
   docker compose -f "$REPO/compose.yml" -f "$REPO/compose.chaos.yml" config -q
   echo "compose.yml ok"
+}
+
+cmd_sim() {
+  local sim="$REPO/ops/scripts/sim_place_listing.py"
+  python3 "$sim" "$@"
 }
 
 cmd_wait() {
@@ -134,6 +141,7 @@ case "$cmd" in
   ps) cmd_ps ;;
   wait) cmd_wait ;;
   test) cmd_test "$@" ;;
+  sim) cmd_sim "$@" ;;
   config) cmd_config ;;
   -h|--help|help|"") usage; [ -n "$cmd" ] || exit 1 ;;
   *) usage; echo "unknown command: $cmd" >&2; exit 1 ;;

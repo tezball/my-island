@@ -72,3 +72,5 @@ def test_chaos_monkey_is_off_on_default_compose() -> None:
     dev = (REPO / "scripts/dev").read_text()
     up_block = dev.split("cmd_up()")[1].split("ensure_catalog_db")[0]
     assert "compose.chaos.yml" not in up_block
+    sim_block = dev.split("cmd_sim()")[1].split("cmd_wait()")[0]
+    assert "compose.chaos.yml" not in sim_block

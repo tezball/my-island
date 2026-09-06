@@ -15,6 +15,8 @@ Thin HTTP stub on Spring catalog: **create → list → get**. Agents can demo t
 
 Plumbing + demo-able tests. CI green. Not polish. Not a consumer UI.
 
+Repeatable compose sim (Engineering): [[runbooks/PLACE_LISTING_SIM]] — `./scripts/sim-place-listing.sh` after `./scripts/dev up`.
+
 ## Roles
 
 | Hat | Does |
@@ -31,3 +33,4 @@ Plumbing + demo-able tests. CI green. Not polish. Not a consumer UI.
 - Canvas: [[workflow/e2e-place-stub]] — path `ops/workflow/e2e-place-stub.canvas`
 - Stack: [`product/STACK.md`](../../product/STACK.md)
 - MCP/chaos run: [[runs/e2e-place-stub-mcp-chaos-2026-09-06]] — E2E-001 stays `ready`. Gaps: [[tickets/WF-016]] · [[tickets/WF-017]] · [[tickets/WF-018]]
+- Sim: [[runbooks/PLACE_LISTING_SIM]] · [[tickets/WF-019]] — `./scripts/sim-place-listing.sh`

@@ -40,6 +40,7 @@ REQUIRED_VAULT = [
     "runbooks/TICKET_LOOP.md",
     "runbooks/GUEST_SUPPORT.md",
     "runbooks/LISTING_ROLLOUT.md",
+    "runbooks/PLACE_LISTING_SIM.md",
     "runbooks/WEEKLY_DIGEST.md",
     "data/_index.md",
     "data/listing-types.md",
@@ -312,6 +313,8 @@ def test_stack_e2e_place_stub_architecture_handoff() -> None:
     assert "product/STACK.md" in text
     assert "ops/workflow/e2e-place-stub.canvas" in text
     assert "compose.chaos.yml" in text
+    assert "./scripts/sim-place-listing.sh" in text
+    assert "PLACE_LISTING_SIM" in text
     index = (OPS / "workflow" / "_index.md").read_text()
     assert "STACK-E2E-place-stub" in index
     brief = (OPS / "workshops" / "e2e-place-stub.md").read_text()
@@ -349,3 +352,49 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "compose.chaos.yml" not in ci
     assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
+
+
+def test_wf_019_place_listing_sim() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["WF-016"]["owner"] == "automation-expert"
+    assert "mcp-grafana" in by_id["WF-016"]["title"].lower() or "postgres" in by_id["WF-016"]["title"].lower()
+    assert "WF-019" in by_id
+    meta = by_id["WF-019"]
+    assert meta["type"] == "workflow"
+    assert meta["owner"] == "eng-backend"
+    assert meta["priority"] == "P0"
+    assert "tickets/E2E-001" in meta.get("parent", "")
+    ticket = (OPS / "tickets" / "WF-019.md").read_text()
+    assert "./scripts/sim-place-listing.sh" in ticket
+    assert "categoryId" in ticket
+    assert "countyId" in ticket
+    assert "latitude" in ticket
+    assert "longitude" in ticket
+    assert "compose.chaos.yml" in ticket
+    for reserved in ("WF-015", "WF-016", "WF-017", "WF-018"):
+        assert f"[[tickets/{reserved}]]" in ticket
+    runbook = (OPS / "runbooks" / "PLACE_LISTING_SIM.md").read_text()
+    assert "./scripts/sim-place-listing.sh" in runbook
+    assert "POST /api/v1/places" in runbook
+    assert "GET /api/v1/places/{id}" in runbook
+    assert "/actuator/health" in runbook
+    assert "/actuator/prometheus" in runbook
+    assert "--iterations" in runbook
+    wrapper = (REPO / "scripts" / "sim-place-listing.sh").read_text()
+    assert "sim_place_listing.py" in wrapper
+    assert "compose.chaos.yml" not in wrapper
+    sim = (OPS / "scripts" / "sim_place_listing.py").read_text()
+    assert "compose.chaos.yml" not in sim
+    assert "SPRING_PROFILES_ACTIVE" not in sim
+    assert '"categoryId"' in sim
+    assert '"countyId"' in sim
+    assert '"latitude"' in sim
+    assert '"longitude"' in sim
+    assert "categorySlug" not in sim
+    assert "countySlug" not in sim
+    index = (OPS / "runbooks" / "_index.md").read_text()
+    assert "PLACE_LISTING_SIM" in index
+    local = (OPS / "workflow" / "LOCAL.md").read_text()
+    assert "sim-place-listing.sh" in local
+    assert (OPS / "plans" / "WF-019.md").is_file()
+    assert not (OPS / "plans" / "WF-016.md").exists()
