@@ -36,6 +36,7 @@ kanban-plugin: basic
 
 ## Review
 
+- [ ] [[tickets/WF-019|WF-019]] P0 Repeatable place listing create/list/get sim
 
 ## Blocked
 

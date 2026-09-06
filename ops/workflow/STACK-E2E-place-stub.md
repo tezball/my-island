@@ -63,7 +63,7 @@ Catalog module tests on PR (happy-path create/list/get + actuators). **Never** e
 
 After local/compose up:
 
-1. HTTP against catalog (`POST`/`GET` places, actuators). Cloud Agents can curl `127.0.0.1:8081` when compose is up. Stub JSON today uses `categoryId`/`countyId` (ticket ACs say `categorySlug`/`countySlug` — [[tickets/WF-018]]).
+1. HTTP against catalog (`POST`/`GET` places, actuators). Repeatable: `./scripts/sim-place-listing.sh` ([[runbooks/PLACE_LISTING_SIM]], [[tickets/WF-019]]). Cloud Agents can curl `127.0.0.1:8081` when compose is up. Stub JSON uses `categoryId`/`countyId`/`latitude`/`longitude` ([[tickets/WF-018]]).
 2. Optional: Postgres-RO MCP (`SELECT` only). `.cursor/mcp.json` targets db `ops`; catalog rows need grants (see [[tickets/WF-016]]).
 3. Optional: `mcp-grafana` PromQL against the catalog `/actuator/prometheus` scrape. Laptop Cursor loads stdio MCP; Cloud Agent toolbox today does **not** — HTTP Grafana/Prometheus is the fallback until [[tickets/WF-016]] / [[tickets/WF-004]].
 

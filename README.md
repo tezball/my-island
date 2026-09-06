@@ -55,7 +55,7 @@ cd my-island
 
 Open in Cursor / VS Code and **Reopen in Container**. Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
 
-Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`. Catalog: http://127.0.0.1:8081.
+Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`. Catalog: http://127.0.0.1:8081. Repeatable create→list→get: `./scripts/sim-place-listing.sh` after `./scripts/dev up`.
 
 ## Status
 

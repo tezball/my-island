@@ -14,5 +14,6 @@ Reusable procedures. Workflow *policy* stays in [[workflow/_index]]. These are t
 | [[WEEKLY_DIGEST]] | Company health, typically Monday |
 | [[GUEST_SUPPORT]] | Inbound guest/explorer message |
 | [[LISTING_ROLLOUT]] | New listing type or region |
+| [[PLACE_LISTING_SIM]] | Repeatable catalog create→list→get against compose (no chaos) |
 
 If a runbook and [[workflow/SAFETY]] disagree, safety wins.

@@ -38,7 +38,16 @@ cd my-island
 
 Cursor project MCP (`.cursor/mcp.json`) points at Grafana/Postgres. After compose is up, reload MCP.
 
-### Catalog stub (curl)
+### Catalog stub (create → list → get)
+
+Repeatable sim (happy path, no chaos): [[runbooks/PLACE_LISTING_SIM]]
+
+```bash
+./scripts/sim-place-listing.sh
+./scripts/sim-place-listing.sh --iterations 10
+```
+
+Manual curl:
 
 ```bash
 curl -s http://127.0.0.1:8081/actuator/health
