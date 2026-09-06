@@ -261,15 +261,15 @@ def test_leads_pipeline_tickets_exist() -> None:
     for ident in ("PRD-007", "PRD-008", "PRD-009"):
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
-        assert by_id[ident]["status"] != "implement"
     assert by_id["PRD-007"]["status"] == "done"
     assert by_id["PRD-007"].get("pr", "") == "https://github.com/tezball/my-island/pull/45"
     assert "pull/40" not in by_id["PRD-007"].get("pr", "")
     assert not by_id["PRD-007"].get("blocked_reason")
     assert "plans/PRD-007" in by_id["PRD-007"].get("plan", "")
-    assert by_id["PRD-008"]["status"] == "plan"
+    assert by_id["PRD-008"]["status"] in {"implement", "review"}
     assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
     assert by_id["PRD-009"]["status"] == "ready"
+    assert by_id["PRD-009"]["status"] != "implement"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
     assert by_id["PRD-009"]["owner"] == "product"
