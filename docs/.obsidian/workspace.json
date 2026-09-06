@@ -1,0 +1,252 @@
+{
+  "main": {
+    "id": "7b41707e9f154c55",
+    "type": "split",
+    "children": [
+      {
+        "id": "3fb5661a090b83e2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e4a632610aa52cf7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "HOME.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "HOME"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "31932b119fa470b5",
+    "type": "split",
+    "children": [
+      {
+        "id": "c7c90c27af710718",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fa52abc0471d0032",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "551f63e6d079d6e0",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "60d977c3d197bf48",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 407.5
+  },
+  "right": {
+    "id": "62f417dc1f6f45ad",
+    "type": "split",
+    "children": [
+      {
+        "id": "0df65a8c7e56cc5e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d257bb442bb98617",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "USER_STORIES.md",
+                "collapseAll": true,
+                "extraContext": true,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for USER_STORIES"
+            }
+          },
+          {
+            "id": "3f371515baf1e60e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "USER_STORIES.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from USER_STORIES"
+            }
+          },
+          {
+            "id": "3b00493b46bd1201",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "1cc9b8777ade5d05",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "4bfacca73f2bc141",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "booking-flow-review.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of booking-flow-review"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 469.5,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "obsidian-kanban:Create new board": false,
+      "omnisearch:Omnisearch": false
+    }
+  },
+  "active": "e4a632610aa52cf7",
+  "lastOpenFiles": [
+    "README.md",
+    "HOME.md",
+    "leads/CAMPSITE_LEADS.md",
+    "leads",
+    "product/README.md",
+    "product/SIGNED.md",
+    "product/STACK.md",
+    "product/VISION.md",
+    "ops/NAMING.md",
+    "ops/PLUGINS.md",
+    "ops/HOME.md",
+    "ops/CHARTER.md",
+    "ops/BOARD.md",
+    "ops/workshops/e2e-place-stub.md",
+    "ops/workflow/STACK-E2E-place-stub.md",
+    "ops/workflow/SKILLS.md",
+    "ops/workflow/SAFETY.md",
+    "ops/workflow/MCP.md",
+    "ops/workflow/LOOP.md",
+    "ops/workflow/LOCAL.md",
+    "ops/workflow/e2e-place-stub.canvas",
+    "ops/tickets/WF-009.md",
+    "ops/tickets/PRD-009.md",
+    "ops/data/listing-types.md",
+    "ops/daily/_index.md",
+    "ops/company/PEOPLE.md",
+    "ops/company/DECISIONS.md",
+    "ops/company/BRAND.md",
+    "data/leads/schema.json",
+    "data/leads/places.jsonl",
+    "data/leads",
+    "data",
+    "ops/observability/grafana/provisioning/dashboards/json/ops-local.json",
+    "ops/observability/grafana/provisioning/dashboards/json",
+    "ops/observability/grafana/provisioning/dashboards/dashboards.yml",
+    "ops/observability/grafana/provisioning/datasources/datasources.yml",
+    "ops/observability/grafana/provisioning/dashboards",
+    "screenshots/forgot-password.png",
+    "screenshots/campsite-detail.png",
+    "screenshots/become-a-supplier.png",
+    "screenshots/become-a-host.png",
+    "test-images/camping-tent-forest.jpg",
+    "test-images/camping-mountain-view.jpg",
+    "test-images/camping-lake-tent.jpg",
+    "Graph for all pages.canvas",
+    "screenshots/supplier-settings.png",
+    "screenshots/supplier-profile.png",
+    "screenshots/supplier-reviews.png",
+    "00-Domain/Event Storm.canvas",
+    "04-User-Flows/owner-admin/owner-admin-flow.canvas",
+    "04-User-Flows/profile/profile-flow.canvas",
+    "04-User-Flows/reviews/reviews-flow.canvas",
+    "04-User-Flows/discovery/discovery-flow.canvas",
+    "04-User-Flows/booking/booking-flow.canvas",
+    "04-User-Flows/auth/auth-flow.canvas",
+    "04-User-Flows/user-flows.canvas"
+  ]
+}
