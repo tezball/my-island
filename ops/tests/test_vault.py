@@ -220,6 +220,8 @@ def test_prd_000_e2e_program_plan_and_mvp_children() -> None:
     prd003 = (OPS / "tickets" / "PRD-003.md").read_text()
     assert "Explore only" in prd003 or "Explore list" in prd003
     assert "PRD-011" in prd003 and "PRD-012" in prd003 and "PRD-013" in prd003
+    assert by_id["PRD-003"]["status"] in ("ready", "plan")
+    assert by_id["PRD-003"]["status"] != "implement"
     home = (REPO / "docs" / "HOME.md").read_text()
     ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
     planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
@@ -284,6 +286,32 @@ def test_prd_001_is_done_with_plan() -> None:
     assert by_id["WF-008"]["status"] == "done"
     assert by_id["PRD-005"]["status"] == "done"
     assert "github.com/tezball/my-island/pull/29" in by_id["PRD-005"].get("pr", "")
+
+
+def test_prd_003_explore_plan_is_gated() -> None:
+    """Explore list+map plan exists; no Vite until a human sets implement."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-003"]["status"] == "plan"
+    assert by_id["PRD-003"]["status"] != "implement"
+    assert "plans/PRD-003" in by_id["PRD-003"].get("plan", "")
+    plan = (OPS / "plans" / "PRD-003.md").read_text()
+    assert plan.startswith("---")
+    assert "web/" in plan
+    assert "Vite" in plan and "React" in plan
+    assert "Next.js" in plan
+    assert "8081" in plan
+    assert "DIR-" in plan and "MAP-" in plan
+    assert "PRD-011" in plan and "PRD-012" in plan and "PRD-013" in plan
+    assert "WF-011" in plan
+    assert "StayÉire" in plan or "StayEire" in plan
+    ticket = (OPS / "tickets" / "PRD-003.md").read_text()
+    assert "Explore only" in ticket or "Explore list" in ticket
+    assert (OPS / "runs" / "PRD-003-plan.md").is_file()
+    home = (REPO / "docs" / "HOME.md").read_text()
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
+    assert "PRD-003" not in ready
+    assert "PRD-003" in planning
 
 
 def test_merged_pr_tickets_are_done() -> None:

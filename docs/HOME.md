@@ -29,7 +29,6 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 |---|---|---|
 | [`E2E-001`](ops/tickets/E2E-001.md) · [[ops/tickets/E2E-001]] | P0 | Place listing stub — close-out (create/list/get already on catalog) |
 | [`PRD-002`](ops/tickets/PRD-002.md) · [[ops/tickets/PRD-002]] | P0 | Curator seed content pipeline |
-| [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA — Explore list+map |
 | [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
 | [`PRD-010`](ops/tickets/PRD-010.md) · [[ops/tickets/PRD-010]] | P0 | Visitor auth |
 | [`PRD-011`](ops/tickets/PRD-011.md) · [[ops/tickets/PRD-011]] | P0 | Place detail |
@@ -39,7 +38,7 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 
 > [!info] Planning
-> [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] program e2e plan [[ops/plans/PRD-000]]. Wave 1 child tickets still `ready` (human sets `implement` after each child plan).
+> [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] program e2e plan [[ops/plans/PRD-000]]. [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] Explore PWA plan [[ops/plans/PRD-003]] (`web/`, list+map only — not `implement`). Other Wave 1 children still `ready` until a human sets `implement` after each child plan.
 
 > [!success] Workshop — E2E place-listing stub
 > Field source of truth on the running stub: `categoryId` / `countyId` / `latitude` / `longitude` (not `categorySlug` / `countySlug` / `lon`+`lat`).
