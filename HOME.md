@@ -17,10 +17,10 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 ## Right now
 
 > [!todo] Doing / Review
-> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). [`WF-017`](ops/tickets/WF-017.md) · [[ops/tickets/WF-017]] is `review` ([#36](https://github.com/tezball/my-island/pull/36) merged; close-out [#42](https://github.com/tezball/my-island/pull/42)). Open PR still `ready` on the board: [WF-018 #37](https://github.com/tezball/my-island/pull/37).
+> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). Review is empty.
 
 > [!success] Landed
-> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)) — all `done`.
+> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)) — all `done`.
 
 > [!info] Ready / Up next
 > From [[ops/BOARD]] `ready`. `PRD-000` is an epic — children do the work.
@@ -35,7 +35,6 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 | [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 | [`WF-016`](ops/tickets/WF-016.md) · [[ops/tickets/WF-016]] | P1 | Cloud Agent mcp-grafana + Postgres-RO vs local compose |
-| [`WF-018`](ops/tickets/WF-018.md) · [[ops/tickets/WF-018]] | P1 | Align E2E-001 place JSON fields with catalog stub |
 
 > [!info] Planning
 > [`PRD-007`](ops/tickets/PRD-007.md) · [[ops/tickets/PRD-007]] Research→leads pipeline acceptance (`status: plan`, [#40](https://github.com/tezball/my-island/pull/40)).

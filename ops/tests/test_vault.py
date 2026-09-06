@@ -223,6 +223,9 @@ def test_merged_pr_tickets_are_done() -> None:
         "PRD-006": "https://github.com/tezball/my-island/pull/14",
         "WF-001": "https://github.com/tezball/my-island/pull/6",
         "WF-002": "https://github.com/tezball/my-island/pull/8",
+        "WF-017": "https://github.com/tezball/my-island/pull/36",
+        "WF-018": "https://github.com/tezball/my-island/pull/37",
+        "WF-022": "https://github.com/tezball/my-island/pull/39",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
@@ -435,10 +438,11 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-015"]["status"] == "done"
     assert "spine strip" in by_id["WF-015"]["title"].lower()
     assert "WF-018" in by_id
-    assert by_id["WF-018"]["status"] == "review"
+    assert by_id["WF-018"]["status"] == "done"
     assert by_id["WF-018"]["owner"] == "automation-expert"
     assert by_id["WF-018"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-018"].get("parent", "")
+    assert by_id["WF-018"].get("pr", "") == "https://github.com/tezball/my-island/pull/37"
     wf018 = (OPS / "tickets" / "WF-018.md").read_text()
     assert "[[tickets/E2E-001]]" in wf018
     assert "[[workflow/STACK-E2E-place-stub]]" in wf018
@@ -448,6 +452,8 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-016"]["status"] == "review"
     assert "plans/WF-016" in by_id["WF-016"].get("plan", "")
     assert by_id["WF-016"].get("pr", "") == "https://github.com/tezball/my-island/pull/46"
+    assert by_id["WF-017"]["status"] == "done"
+    assert by_id["WF-017"].get("pr", "") == "https://github.com/tezball/my-island/pull/36"
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
     assert "[[tickets/E2E-001]]" in wf017
     assert "[[workflow/STACK-E2E-place-stub]]" in wf017
@@ -455,8 +461,9 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-017"]["owner"] == "automation-expert"
     assert by_id["WF-017"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-017"].get("parent", "")
-    assert by_id["WF-017"]["status"] in {"implement", "review"}
+    assert by_id["WF-017"]["status"] == "done"
     assert "plans/WF-017" in by_id["WF-017"].get("plan", "")
+    assert "github.com/tezball/my-island/pull/36" in by_id["WF-017"].get("pr", "")
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "compose.chaos.yml" not in ci
     assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
@@ -694,7 +701,8 @@ def test_product_milestones_freeze() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["WF-000"]["status"] == "implement"
     assert by_id["E2E-001"]["status"] == "ready"
-    assert by_id["WF-018"]["status"] == "review"
+    assert by_id["WF-018"]["status"] == "done"
+    assert by_id["WF-018"].get("pr", "") == "https://github.com/tezball/my-island/pull/37"
     board = (OPS / "BOARD.md").read_text()
     assert "## Upcoming" in board
     assert "## Doing" in board
@@ -714,9 +722,15 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert "- [x] [[tickets/WF-022|WF-022]]" in board
     home = (REPO / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
-    assert "WF-017" in doing
+    assert "WF-000" in doing
+    assert "WF-017" not in doing
+    assert "WF-018" not in doing
     assert "WF-019" not in doing
     assert "WF-021" not in doing
+    assert "WF-017" in home
+    assert "WF-018" in home
+    assert "pull/36" in home
+    assert "pull/37" in home
     assert "| P0 | review | Repeatable place listing" not in home
     assert "| P1 | review | Simple local CLI" not in home
     assert "Public product name is **OPEN**" in home

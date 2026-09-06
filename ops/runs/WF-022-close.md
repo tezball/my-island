@@ -21,4 +21,4 @@ success
 
 ## Follow-up
 
-None for this ticket. [[tickets/WF-017]] stays `review` on main until its close-out PR. [[tickets/WF-018]] stays `ready` with open #37.
+None for this ticket. [[tickets/WF-017]] and [[tickets/WF-018]] close on the same hygiene PR (#44).

@@ -2,7 +2,13 @@
 
 Copy [[templates/run]] at the end of a planner / implementer / reviewer session.
 
+<<<<<<< HEAD
 - [[PRD-008-plan]] — Eng import draft Places from data/leads
+=======
+- [[WF-017-close]] — human merged PR #36; ticket `done` (folded into #44)
+- [[WF-018-close]] — human merged PR #37; ticket `done` (folded into #44)
+- [[WF-022-close]] — retrospective for root HOME.md dashboard; PR #39
+>>>>>>> 954bd19 (ops: close WF-017 and WF-018 after merged PRs #36 and #37)
 - [[WF-018-rebase]] — rebase #37 onto main; docs-only stub field names
 - [[PRD-007-plan]] — Wave 1 vault acceptance; Research→leads plan
 - [[WF-021-implement]] — human `./scripts/app` start/stop/test; PR #35 merged

@@ -32,8 +32,6 @@ kanban-plugin: basic
 ## In review
 
 - [ ] [[tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
-- [ ] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
-- [ ] [[tickets/WF-018|WF-018]] P1 Align E2E-001 place JSON fields with catalog stub
 
 ## Blocked
 
@@ -56,5 +54,7 @@ kanban-plugin: basic
 - [x] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 - [x] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [x] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
+- [x] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
+- [x] [[tickets/WF-018|WF-018]] P1 Align E2E-001 place JSON fields with catalog stub
 - [x] [[tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
 - [x] [[tickets/WF-022|WF-022]] P1 Root HOME.md company dashboard
