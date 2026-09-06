@@ -15,8 +15,8 @@ Added `data/leads/` as the Research source of truth. Migrated 29 campsites from 
 
 ## Result
 
-success
+success — PR #14 merged. Run closed.
 
 ## Follow-up
 
-Human merges https://github.com/tezball/my-island/pull/14. Do not implement Spring import until [[tickets/PRD-002]] is `implement` with a plan. Counsel before publish (`data/leads/LEGAL.md`).
+None. Ticket is `done`. Do not implement Spring import until [[tickets/PRD-002]] is `implement` with a plan. Counsel before publish (`data/leads/LEGAL.md`).

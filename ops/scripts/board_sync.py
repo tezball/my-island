@@ -84,8 +84,9 @@ def render_board(tickets: list[dict[str, str]]) -> str:
             ident = t["id"]
             title_text = t.get("title") or ident
             pri = t.get("priority", "")
+            mark = "x" if key == "done" else " "
             lines.append(
-                f"- [ ] [[tickets/{ident}|{ident}]] {pri} {title_text}".rstrip()
+                f"- [{mark}] [[tickets/{ident}|{ident}]] {pri} {title_text}".rstrip()
             )
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"

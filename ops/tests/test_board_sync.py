@@ -28,14 +28,20 @@ def test_render_board_groups_and_sorts(tmp_path: Path) -> None:
     (tickets / "WF-001.md").write_text(
         "---\nid: WF-001\ntitle: First\nstatus: ready\npriority: P0\n---\n"
     )
+    (tickets / "WF-003.md").write_text(
+        "---\nid: WF-003\ntitle: Finished\nstatus: done\npriority: P0\n---\n"
+    )
     (tickets / "_skip.md").write_text("---\nid: WF-999\n---\n")
     (tickets / "no-id.md").write_text("---\ntitle: nope\n---\n")
 
     rendered = board_sync.render_board(board_sync.load_tickets(tickets))
     ready = rendered.split("## Ready", 1)[1].split("## Plan", 1)[0]
+    done = rendered.split("## Done", 1)[1]
     assert "WF-001" in ready
     assert "WF-002" in ready
     assert ready.index("WF-001") < ready.index("WF-002")
+    assert "- [ ] [[tickets/WF-001|WF-001]]" in ready
+    assert "- [x] [[tickets/WF-003|WF-003]]" in done
     assert "WF-999" not in rendered
 
 

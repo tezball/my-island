@@ -15,8 +15,8 @@ Replayed STACK + DECISIONS + tickets onto `main` after PR #8 merged. Closed PR #
 
 ## Result
 
-success
+success — PR #11 merged. Run closed.
 
 ## Follow-up
 
-Human merges this PR when CI is green. Do not start the Spring/Vite skeleton until a `PRD-*` ticket is `implement`.
+None. Ticket is `done`. Do not start the Spring/Vite skeleton until a `PRD-*` ticket is `implement`.
