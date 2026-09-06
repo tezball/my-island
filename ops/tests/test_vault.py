@@ -355,7 +355,10 @@ def test_e2e_001_place_stub_workshop() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert "E2E-001" in by_id
     meta = by_id["E2E-001"]
-    assert meta["status"] == "ready"
+    assert meta["status"] == "plan"
+    assert meta["status"] != "done"
+    assert "plans/E2E-001" in meta.get("plan", "")
+    assert (OPS / "plans" / "E2E-001.md").is_file()
     assert meta["priority"] == "P0"
     assert meta["type"] == "story"
     assert meta["owner"] == "eng-backend"
@@ -453,7 +456,7 @@ def test_stack_e2e_place_stub_architecture_handoff() -> None:
 
 
 def test_e2e_place_stub_mcp_chaos_followups() -> None:
-    """Workshop pass files gaps; E2E-001 stays ready (not done)."""
+    """Workshop pass files gaps; E2E-001 stays plan (not done)."""
     run = OPS / "runs" / "e2e-place-stub-mcp-chaos-2026-09-06.md"
     assert run.is_file()
     text = run.read_text()
@@ -468,7 +471,8 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "[[ops/tickets/WF-017]]" in text
     assert "[[ops/tickets/WF-018]]" in text
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
-    assert by_id["E2E-001"]["status"] == "ready"
+    assert by_id["E2E-001"]["status"] == "plan"
+    assert by_id["E2E-001"]["status"] != "done"
     assert by_id["WF-015"]["status"] == "done"
     assert "spine strip" in by_id["WF-015"]["title"].lower()
     assert "WF-018" in by_id
@@ -782,7 +786,8 @@ def test_product_milestones_freeze() -> None:
     assert "[[ops/MILESTONES]]" in home
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["WF-000"]["status"] == "implement"
-    assert by_id["E2E-001"]["status"] == "ready"
+    assert by_id["E2E-001"]["status"] == "plan"
+    assert by_id["E2E-001"]["status"] != "done"
     assert by_id["WF-018"]["status"] == "done"
     assert by_id["WF-018"].get("pr", "") == "https://github.com/tezball/my-island/pull/37"
     board = (OPS / "BOARD.md").read_text()
