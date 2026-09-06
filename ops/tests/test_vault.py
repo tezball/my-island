@@ -227,6 +227,7 @@ def test_merged_pr_tickets_are_done() -> None:
         "WF-018": "https://github.com/tezball/my-island/pull/37",
         "WF-022": "https://github.com/tezball/my-island/pull/39",
         "PRD-007": "https://github.com/tezball/my-island/pull/45",
+        "WF-016": "https://github.com/tezball/my-island/pull/48",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
@@ -457,7 +458,7 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-016"]["owner"] == "automation-expert"
     assert by_id["WF-016"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-016"].get("parent", "")
-    assert by_id["WF-016"]["status"] == "review"
+    assert by_id["WF-016"]["status"] == "done"
     assert "plans/WF-016" in by_id["WF-016"].get("plan", "")
     assert by_id["WF-016"].get("pr", "") == "https://github.com/tezball/my-island/pull/48"
     assert by_id["WF-017"]["status"] == "done"
@@ -577,11 +578,26 @@ def test_wf_019_place_listing_sim() -> None:
 
 
 def test_wf_016_cloud_mcp_attach_docs() -> None:
-    """WF-016 docs slice (#46): Cloud Agent MCP attach + HTTP fallback."""
+    """WF-016 closed after #48 grants; docs/MCP attach was #46."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     meta = by_id["WF-016"]
-    assert meta["status"] == "review"
+    assert meta["status"] == "done"
     assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/48"
+    assert not meta.get("blocked_reason")
+    close = (OPS / "runs" / "WF-016-close.md").read_text()
+    assert "pull/48" in close
+    assert "grants landed" in close.lower()
+    assert "reopen" in close.lower()
+    home = (REPO / "docs" / "HOME.md").read_text()
+    doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
+    landed = home.split("Landed", 1)[1].split("Ready / Up next", 1)[0]
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    assert "WF-016" not in doing
+    assert "Review is empty" not in doing
+    assert "In review" not in doing
+    assert "WF-016" not in ready
+    assert "WF-016" in landed
+    assert "pull/48" in landed
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
     assert "plans/WF-016" in meta.get("plan", "")
@@ -743,6 +759,9 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     home = (REPO / "docs" / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
     assert "WF-000" in doing
+    assert "Review is empty" not in doing
+    assert "In review" not in doing
+    assert "WF-016" not in doing
     assert "WF-017" not in doing
     assert "WF-018" not in doing
     assert "WF-019" not in doing
@@ -754,6 +773,10 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert "pull/45" in home
     landed = home.split("Landed", 1)[1].split("Ready / Up next", 1)[0]
     assert "PRD-007" in landed
+    assert "WF-016" in landed
+    assert "pull/48" in landed
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    assert "WF-016" not in ready
     planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
     assert "PRD-008" in planning
     assert "PRD-007" not in planning
