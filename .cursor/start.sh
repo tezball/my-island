@@ -12,6 +12,6 @@ for _ in $(seq 1 60); do
 done
 docker info >/dev/null
 
-# Infra only — the Cloud Agent *is* the workspace.
-docker compose up -d postgres loki prometheus alertmanager grafana \
-  --wait --wait-timeout 300
+# Infra + catalog. Cloud Agent *is* the workspace (do not start that service).
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+exec "$REPO/scripts/dev" up

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One entrypoint for clone/run, Dev Containers, Cloud Agents, and CI.
-#   ./scripts/dev up     start Postgres + Grafana stack
+#   ./scripts/dev up     start PostGIS + Grafana stack + catalog API
 #   ./scripts/dev test   unit tests; stack tests if REQUIRE_STACK=1 or stack is up
 #   ./scripts/dev down
 set -euo pipefail
@@ -9,22 +9,26 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO"
 
 COMPOSE=(docker compose -f "$REPO/compose.yml")
-STACK_SERVICES=(postgres loki prometheus alertmanager grafana)
+INFRA_SERVICES=(postgres loki prometheus alertmanager grafana)
 
 usage() {
   cat <<'EOF'
 Usage: ./scripts/dev <command>
 
-  up        Start the Compose stack (Postgres, Grafana, Loki, Prometheus, Alertmanager)
+  up        Start the Compose stack (PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API)
   down      Stop the stack
   ps        Compose status
   test      Run pytest (same path as CI)
   wait      Wait until Grafana answers /api/health
-  config    Validate compose.yml
+  config    Validate compose.yml (and chaos overlay)
 
 Environment:
   REQUIRE_STACK=1          Fail if Grafana/Postgres are not reachable (CI sets this)
   DEV_TEST_IN_WORKSPACE=1  Run pytest inside the workspace image (CI stack job)
+
+Catalog API (after up): http://127.0.0.1:8081
+If Postgres was created before PostGIS, recreate volumes: docker compose down -v && ./scripts/dev up
+Chaos Monkey (not default): docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 EOF
 }
 
@@ -37,8 +41,24 @@ compose_ok() {
 }
 
 cmd_up() {
-  "${COMPOSE[@]}" up -d "${STACK_SERVICES[@]}" --wait --wait-timeout 300
+  "${COMPOSE[@]}" up -d "${INFRA_SERVICES[@]}" --wait --wait-timeout 300
+  ensure_catalog_db
+  if ! "${COMPOSE[@]}" up -d catalog --wait --wait-timeout 300; then
+    echo "catalog did not become healthy. If this laptop had postgres:17-alpine data, run:" >&2
+    echo "  docker compose down -v && ./scripts/dev up" >&2
+    return 1
+  fi
   cmd_wait
+}
+
+ensure_catalog_db() {
+  local exists
+  exists="$("${COMPOSE[@]}" exec -T postgres \
+    psql -U ops -d ops -Atqc "SELECT 1 FROM pg_database WHERE datname='catalog'" | tr -d '[:space:]')"
+  if [ "$exists" != "1" ]; then
+    echo "creating database catalog"
+    "${COMPOSE[@]}" exec -T postgres psql -U ops -d ops -c "CREATE DATABASE catalog"
+  fi
 }
 
 cmd_down() {
@@ -51,6 +71,7 @@ cmd_ps() {
 
 cmd_config() {
   "${COMPOSE[@]}" config -q
+  docker compose -f "$REPO/compose.yml" -f "$REPO/compose.chaos.yml" config -q
   echo "compose.yml ok"
 }
 

@@ -5,7 +5,14 @@ type: workflow
 
 # Local setup
 
-Environment zero. No product API. Observability + Postgres exist so MCP and agents have something to talk to. **One Compose file** (`compose.yml` at the repo root) is used by git-clone, Dev Containers, Cloud Agents, and CI.
+Environment zero plus the **PRD-001 catalog stub**. **One Compose file** (`compose.yml` at the repo root) is used by git-clone, Dev Containers, Cloud Agents, and CI.
+
+Postgres is **PostGIS** (`postgis/postgis:17-3.5-alpine`). If this machine already had a `postgres:17-alpine` volume, recreate it:
+
+```bash
+docker compose down -v
+./scripts/dev up
+```
 
 ## Git clone, run
 
@@ -26,9 +33,34 @@ cd my-island
 | Prometheus | http://localhost:9091 |
 | Loki | http://localhost:3101 |
 | Alertmanager | http://localhost:9094 |
-| Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (offset ports so a laptop Postgres/Grafana can keep 5432/3000) |
+| Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (MCP). Catalog Flyway owns db `catalog` (user `ops` / `ops`) |
+| Catalog API | http://localhost:8081 (create / list / get places) |
 
-Cursor project MCP (`.cursor/mcp.json`) points at these URLs. After compose is up, reload MCP.
+Cursor project MCP (`.cursor/mcp.json`) points at Grafana/Postgres. After compose is up, reload MCP.
+
+### Catalog stub (curl)
+
+```bash
+curl -s http://127.0.0.1:8081/actuator/health
+curl -s http://127.0.0.1:8081/api/v1/categories
+curl -s -X POST http://127.0.0.1:8081/api/v1/places \
+  -H 'content-type: application/json' \
+  -d '{"name":"Skellig Michael","slug":"skellig-michael","categoryId":"poi","countyId":"kerry","town":"Portmagee","latitude":51.7708,"longitude":-10.5406,"published":true}'
+curl -s http://127.0.0.1:8081/api/v1/places
+curl -s http://127.0.0.1:8081/api/v1/places/skellig-michael
+```
+
+Package / repo remain `island.catalog` / my-island. Brand is open — no public product name on the API. No consumer UI here ([[tickets/PRD-003]]).
+
+### Chaos Monkey (workshop only)
+
+Default `./scripts/dev up` does **not** enable assaults. Overlay + compose profile:
+
+```bash
+docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
+```
+
+That sets Spring profile `chaos` (and library profile `chaos-monkey`; latency + exceptions; kill stays off). Health + prometheus stay on the default path.
 
 ## Dev Container
 
@@ -36,7 +68,7 @@ Open the repo in Cursor or VS Code and **Reopen in Container**. `.devcontainer/d
 
 ## Cloud Agents
 
-`.cursor/environment.json` + `.cursor/Dockerfile` install Docker-in-Docker. The `start` command runs `sudo service docker start` then `docker compose up` for the same stack. See `AGENTS.md` (Cursor Cloud specific instructions).
+`.cursor/environment.json` + `.cursor/Dockerfile` install Docker-in-Docker. The `start` command runs `sudo service docker start` then `./scripts/dev up` for the same stack (including catalog). See `AGENTS.md` (Cursor Cloud specific instructions).
 
 ## Once (laptop MCP extras)
 
@@ -57,4 +89,4 @@ If Grafana MCP cannot connect, compose is down or Cursor has not reloaded MCP. F
 
 ## CI
 
-`.github/workflows/ci.yml` validates `compose.yml`, builds the workspace image, starts the stack, and runs the same pytest suite (`REQUIRE_STACK=1`).
+`.github/workflows/ci.yml` has a `catalog` Maven job (Testcontainers PostGIS) plus a `stack` job that validates compose, starts the stack (including catalog), and runs pytest (`REQUIRE_STACK=1`).

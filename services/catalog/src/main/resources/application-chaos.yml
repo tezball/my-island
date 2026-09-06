@@ -1,0 +1,18 @@
+# Loaded only when Spring profile `chaos` is active (compose.chaos.yml).
+# Default ./scripts/dev up does not activate this file.
+# Library auto-config also needs profile `chaos-monkey` (set beside `chaos` in compose).
+chaos:
+  monkey:
+    enabled: true
+    watcher:
+      rest-controller: true
+      service: true
+      controller: false
+      repository: false
+      component: false
+    assaults:
+      latency-active: true
+      latency-range-start: 1000
+      latency-range-end: 3000
+      exceptions-active: true
+      kill-application-active: false

@@ -1,0 +1,41 @@
+-- Ireland geography as data: 32 counties including NI. Country IE, not ROI-only.
+CREATE TABLE county (
+  id text PRIMARY KEY,
+  name text NOT NULL,
+  country_code text NOT NULL DEFAULT 'IE',
+  ni boolean NOT NULL DEFAULT false
+);
+
+INSERT INTO county (id, name, country_code, ni) VALUES
+  ('carlow', 'Carlow', 'IE', false),
+  ('cavan', 'Cavan', 'IE', false),
+  ('clare', 'Clare', 'IE', false),
+  ('cork', 'Cork', 'IE', false),
+  ('donegal', 'Donegal', 'IE', false),
+  ('dublin', 'Dublin', 'IE', false),
+  ('galway', 'Galway', 'IE', false),
+  ('kerry', 'Kerry', 'IE', false),
+  ('kildare', 'Kildare', 'IE', false),
+  ('kilkenny', 'Kilkenny', 'IE', false),
+  ('laois', 'Laois', 'IE', false),
+  ('leitrim', 'Leitrim', 'IE', false),
+  ('limerick', 'Limerick', 'IE', false),
+  ('longford', 'Longford', 'IE', false),
+  ('louth', 'Louth', 'IE', false),
+  ('mayo', 'Mayo', 'IE', false),
+  ('meath', 'Meath', 'IE', false),
+  ('monaghan', 'Monaghan', 'IE', false),
+  ('offaly', 'Offaly', 'IE', false),
+  ('roscommon', 'Roscommon', 'IE', false),
+  ('sligo', 'Sligo', 'IE', false),
+  ('tipperary', 'Tipperary', 'IE', false),
+  ('waterford', 'Waterford', 'IE', false),
+  ('westmeath', 'Westmeath', 'IE', false),
+  ('wexford', 'Wexford', 'IE', false),
+  ('wicklow', 'Wicklow', 'IE', false),
+  ('antrim', 'Antrim', 'IE', true),
+  ('armagh', 'Armagh', 'IE', true),
+  ('down', 'Down', 'IE', true),
+  ('fermanagh', 'Fermanagh', 'IE', true),
+  ('derry', 'Derry', 'IE', true),
+  ('tyrone', 'Tyrone', 'IE', true);

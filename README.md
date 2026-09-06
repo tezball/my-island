@@ -25,11 +25,12 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 | [`product/`](product/README.md) | Product canon, **signed** 2026-09-05 ([`SIGNED.md`](product/SIGNED.md)). Implement only on `PRD-*` + `implement` |
 | [`data/leads/`](data/leads/README.md) | Research place leads (not the published catalog) |
 | [`docs/`](docs/README.md) | Historical booking platform — not requirements, not a migration source |
-| [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres + Grafana **ops** stack for agents |
+| [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres/PostGIS + Grafana + catalog API for agents |
+| [`services/catalog/`](services/catalog) | Spring Boot place catalog stub ([[ops/tickets/PRD-001.md](ops/tickets/PRD-001.md)]) |
 | `.github/` + `.cursor/skills/` | CI and agent skills (Automation Expert) |
 | git tag `legacy-platform` | Old app dump. Disposable. |
 
-Keep app stubs **minimal or absent**. Empty tree beats a fake marketplace.
+Keep consumer UI and marketplace stubs **absent**. The first API stub is [`services/catalog/`](services/catalog) on [[ops/tickets/PRD-001.md](ops/tickets/PRD-001.md)].
 
 ## What we automate
 
@@ -48,13 +49,13 @@ Product direction (Ireland stays: campsites, B&Bs, experiences) is **signed** 20
 ```bash
 git clone https://github.com/tezball/my-island.git
 cd my-island
-./scripts/dev up      # Postgres + Grafana/Loki/Prometheus/Alertmanager
-./scripts/dev test    # same pytest CI runs (ops stack, not a consumer app)
+./scripts/dev up      # PostGIS + Grafana/Loki/Prometheus/Alertmanager + catalog API
+./scripts/dev test    # same pytest CI runs
 ```
 
 Open in Cursor / VS Code and **Reopen in Container**. Details: [`ops/workflow/LOCAL.md`](ops/workflow/LOCAL.md).
 
-Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`.
+Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`. Catalog: http://127.0.0.1:8081.
 
 ## Status
 

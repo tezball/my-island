@@ -21,14 +21,15 @@ Local MCP: `./scripts/dev up` then reload MCP. Details: `ops/workflow/LOCAL.md`.
 ./scripts/dev test
 ```
 
-“The app” today is the **ops stack**. Keep consumer stubs minimal. Do not add a marketplace skeleton on a `WF-*` ticket.
+“The app” today is the **ops stack** plus the PRD-001 catalog stub. Do not add a marketplace skeleton on a `WF-*` ticket.
 
 ## Cursor Cloud specific instructions
 
-`.cursor/environment.json` builds a VM with Docker-in-Docker. `start` runs `docker compose up` for Postgres and Grafana. After boot:
+`.cursor/environment.json` builds a VM with Docker-in-Docker. `start` runs `./scripts/dev up` (PostGIS, Grafana stack, catalog API). After boot:
 
 - Grafana: http://127.0.0.1:3030 (`admin` / `admin`)
 - Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`
-- Tests: `./scripts/dev test`
+- Catalog: http://127.0.0.1:8081
+- Tests: `./scripts/dev test` (ops pytest) and `services/catalog/mvnw test`
 
 Do not merge PRs. Do not deploy production.

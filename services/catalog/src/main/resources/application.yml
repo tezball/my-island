@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: catalog
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://127.0.0.1:5433/catalog}
+    username: ${SPRING_DATASOURCE_USERNAME:ops}
+    password: ${SPRING_DATASOURCE_PASSWORD:ops}
+  flyway:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+info:
+  app:
+    service: catalog
+    version: ${APP_VERSION:0.0.1-SNAPSHOT}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+    access:
+      default: unrestricted
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+chaos:
+  monkey:
+    enabled: false
+    assaults:
+      kill-application-active: false
+
+logging:
+  structured:
+    format:
+      console: logstash

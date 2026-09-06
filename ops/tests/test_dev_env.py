@@ -21,9 +21,11 @@ def test_compose_lists_required_services() -> None:
         "alertmanager:",
         "grafana:",
         "workspace:",
+        "catalog:",
     ):
         assert name in text
     assert "dockerfile: .devcontainer/Dockerfile" in text
+    assert "postgis/postgis:17-3.5" in text
 
 
 def test_devcontainer_uses_compose_workspace() -> None:
@@ -104,3 +106,23 @@ def test_grafana_health() -> None:
 def test_postgres_accepts_tcp() -> None:
     if not postgres_reachable():
         _require_or_skip("Postgres is not reachable")
+
+
+def catalog_base() -> str | None:
+    candidates = ["http://catalog:8080", "http://127.0.0.1:8081"]
+    for base in candidates:
+        if _try_http(f"{base}/actuator/health"):
+            return base
+    return None
+
+
+@pytest.mark.stack
+def test_catalog_health() -> None:
+    base = catalog_base()
+    if not base:
+        _require_or_skip("Catalog is not reachable")
+        return
+    with urllib.request.urlopen(f"{base}/actuator/health", timeout=5) as response:
+        body = response.read().decode()
+    assert "UP" in body
+    assert "postgis" in body.lower() or "db" in body.lower()
