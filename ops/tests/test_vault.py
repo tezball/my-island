@@ -283,6 +283,38 @@ def test_leads_pipeline_tickets_exist() -> None:
     assert (OPS / "plans" / "PRD-008.md").is_file()
 
 
+def test_prd_002_curator_seed_plan() -> None:
+    """Planner-only: spreadsheet / create / proximity / coverage. No second lead schema."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-002"]["status"] == "plan"
+    assert by_id["PRD-002"]["status"] != "implement"
+    assert "plans/PRD-002" in by_id["PRD-002"].get("plan", "")
+    plan = (OPS / "plans" / "PRD-002.md").read_text()
+    assert plan.startswith("---")
+    assert "status: draft" in plan
+    assert "schema.json" in plan
+    assert "PRD-008" in plan
+    assert "PRD-009" in plan
+    assert "CreatePlaceRequest" in plan
+    assert "spreadsheet" in plan.lower() or "CSV" in plan
+    assert "proximity" in plan.lower()
+    assert "coverage" in plan.lower()
+    assert "250" in plan
+    assert "published" in plan.lower()
+    assert "listing-types" in plan
+    assert "country table" in plan.lower() or "country enum" in plan.lower()
+    assert "import_leads.py" in plan
+    ticket = (OPS / "tickets" / "PRD-002.md").read_text()
+    assert "data/leads" in ticket
+    assert "schema.json" in ticket
+    home = (REPO / "docs" / "HOME.md").read_text()
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
+    assert "PRD-002" not in ready
+    assert "PRD-002" in planning
+    assert "plans/PRD-002" in planning or "ops/plans/PRD-002" in planning
+
+
 def test_leads_pipeline_tickets_cite_landed_schema() -> None:
     schema = json.loads((REPO / "data" / "leads" / "schema.json").read_text())
     required = schema["required"]
