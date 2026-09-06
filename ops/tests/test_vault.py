@@ -577,7 +577,7 @@ def test_wf_019_place_listing_sim() -> None:
 
 
 def test_wf_016_cloud_mcp_attach_docs() -> None:
-    """WF-016 docs slice: Cloud Agent MCP attach + HTTP fallback. Grants are Engineering."""
+    """WF-016 docs slice (#46): Cloud Agent MCP attach + HTTP fallback."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     meta = by_id["WF-016"]
     assert meta["status"] == "review"
@@ -589,17 +589,26 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     assert "status: approved" in plan
     assert "Engineering" in plan
     ticket = (OPS / "tickets" / "WF-016.md").read_text()
-    assert "TODO Engineering" in ticket
-    assert "no PR yet" in ticket.lower() or "No Engineering PR yet" in ticket or "no PR yet" in ticket
+    assert "pull/46" in ticket
+    assert "postgres-grant-catalog-reader.sql" in ticket
+    assert "postgres-catalog" in ticket
+    assert "Catalog SELECT verify" in ticket
+    assert "no PR yet" not in ticket.lower()
 
-    assert not (OPS / "observability" / "postgres-grant-catalog-reader.sql").exists()
+    sql = (OPS / "observability" / "postgres-grant-catalog-reader.sql").read_text()
+    assert "GRANT CONNECT ON DATABASE catalog TO ops_reader" in sql
+    assert "GRANT USAGE ON SCHEMA public TO ops_reader" in sql
+    assert "GRANT SELECT ON ALL TABLES IN SCHEMA public TO ops_reader" in sql
+    assert "ALTER DEFAULT PRIVILEGES FOR ROLE ops IN SCHEMA public GRANT SELECT ON TABLES TO ops_reader" in sql
+    assert "REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA public FROM ops_reader" in sql
     compose = (REPO / "compose.yml").read_text()
-    assert "postgres-grant-catalog-reader.sql" not in compose
-    assert "02-catalog-reader.sql" not in compose
+    assert "postgres-grant-catalog-reader.sql" in compose
+    assert "02-catalog-reader.sql" in compose
     dev = (REPO / "scripts" / "dev").read_text()
-    assert "ensure_catalog_reader_grants" not in dev
+    assert "ensure_catalog_reader_grants" in dev
     up_block = dev.split("cmd_up()")[1].split("cmd_down()")[0]
     assert "compose.chaos.yml" not in up_block
+    assert "ensure_catalog_reader_grants" in up_block
     migrations = list((REPO / "services" / "catalog" / "src" / "main" / "resources" / "db" / "migration").glob("V*.sql"))
     assert not any(path.name.startswith("V6__") for path in migrations)
 
@@ -609,8 +618,10 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     assert grafana["env"]["GRAFANA_URL"] == "http://127.0.0.1:3030"
     postgres_args = " ".join(mcp["mcpServers"]["postgres"]["args"])
     assert "ops_reader" in postgres_args
-    assert "/ops" in postgres_args
-    assert "postgres-catalog" not in mcp["mcpServers"]
+    assert "127.0.0.1:5433/ops" in postgres_args
+    catalog_args = " ".join(mcp["mcpServers"]["postgres-catalog"]["args"])
+    assert "ops_reader" in catalog_args
+    assert "127.0.0.1:5433/catalog" in catalog_args
     for name in mcp["mcpServers"]:
         blob = json.dumps(mcp["mcpServers"][name])
         assert "ops:ops@" not in blob
