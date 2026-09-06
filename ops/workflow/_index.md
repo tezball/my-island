@@ -11,3 +11,5 @@ Policy. Procedures: [[runbooks/_index]].
 | [[MCP]] | Server pack and prod observe rules |
 | [[AUTOMATIONS]] | Cursor cloud jobs |
 | [[SAFETY]] | Non-negotiables |
+
+Living canvases: `workflow/<kebab>.canvas` ([[NAMING]]).
