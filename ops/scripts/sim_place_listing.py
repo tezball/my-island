@@ -92,6 +92,10 @@ def discover_base(candidates: list[str], timeout: float) -> str:
 
 
 def payload_for(iteration: int) -> dict[str, Any]:
+    """POST body matching live CreatePlaceRequest (WF-018: stub contract wins).
+
+    JSON names: categoryId, countyId, latitude, longitude.
+    """
     token = uuid.uuid4().hex[:12]
     slug = f"sim-{iteration}-{token}"
     return {

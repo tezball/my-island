@@ -162,8 +162,8 @@ def test_payload_uses_stub_field_names() -> None:
     assert payload["countyId"] == "kerry"
     assert payload["latitude"] == 51.7708
     assert payload["longitude"] == -10.5406
-    assert "categorySlug" not in payload
-    assert "countySlug" not in payload
+    for forbidden in ("categorySlug", "countySlug", "lat", "lon"):
+        assert forbidden not in payload
     assert payload["slug"].startswith("sim-1-")
 
 

@@ -39,7 +39,7 @@ Exit `0` = all loops ok. `2` = catalog unreachable. `1` = assertion fail (wrong 
 2. Optional: `GET /actuator/prometheus` → 200 (skip with `--no-prometheus` or `SIM_CHECK_PROMETHEUS=0`)
 3. N times: `POST /api/v1/places` (unique slug) → 201; `GET /api/v1/places` contains `id`; `GET /api/v1/places/{id}` → 200
 
-Stub fields: `categoryId` / `countyId` (not the ticket’s `categorySlug` names). **No auth** (workshop exception).
+Create **MUST** use the live stub contract (WF-018): `categoryId`, `countyId`, `latitude`, `longitude`. Do **not** send `categorySlug` / `countySlug` / `lat` / `lon` (those 400). **No auth** (workshop exception).
 
 ## Chaos (not this runbook)
 
