@@ -10,6 +10,7 @@ python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…" --owne
 |---|---|
 | `WF-` | Company OS / agent loop |
 | `PRD-` | Product |
+| `E2E-` | Workshop / e2e slices (thin stubs for agent demo). P0 now: [[tickets/E2E-001]] |
 | `INC-` | Incidents |
 
 Statuses: `inbox` | `ready` | `plan` | `implement` | `review` | `done` | `blocked`

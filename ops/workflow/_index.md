@@ -11,5 +11,6 @@ Policy. Procedures: [[runbooks/_index]].
 | [[MCP]] | Server pack and prod observe rules |
 | [[AUTOMATIONS]] | Cursor cloud jobs |
 | [[SAFETY]] | Non-negotiables |
+| [[e2e-place-stub]] | Place listing stub e2e workshop (living canvas) |
 
 Living canvases: `workflow/<kebab>.canvas` ([[NAMING]]).

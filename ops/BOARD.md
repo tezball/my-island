@@ -13,6 +13,7 @@ kanban-plugin: basic
 
 ## Ready
 
+- [ ] [[tickets/E2E-001|E2E-001]] P0 Place listing stub API (create/list/get) — e2e workshop
 - [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
 - [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
 - [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off

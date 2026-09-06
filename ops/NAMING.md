@@ -18,6 +18,7 @@ Many agents write in this vault. These rules keep it searchable.
 | Runbook | `runbooks/<SLUG>.md` | `runbooks/WEEKLY_DIGEST.md` |
 | Daily | `daily/YYYY-MM-DD.md` | `daily/2026-09-05.md` |
 | Folder index | `<folder>/_index.md` | `agents/_index.md` |
+| Workshop brief | `workshops/<kebab>.md` | `workshops/e2e-place-stub.md` |
 | Canvas | `workflow/<kebab>.canvas` | `workflow/e2e-place-listing.canvas` |
 
 - **kebab-case** for role slugs. **SCREAMING_SNAKE** for runbooks and durable company notes. **YYYY-MM-DD** for dailies.
@@ -33,6 +34,7 @@ Many agents write in this vault. These rules keep it searchable.
 |---|---|
 | `WF-` | Company OS, agent loop, infra-for-agents |
 | `PRD-` | Product (directory, later marketplace) |
+| `E2E-` | Workshop / e2e slices (thin HTTP stubs for agent demo). Hand-filed; not `new_ticket.py` |
 | `INC-` | Incidents (prod/staging. Local glue bugs are `WF-` or `PRD-` bugs) |
 
 Next id: `python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"`.

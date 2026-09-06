@@ -1,0 +1,369 @@
+{
+	"nodes": [
+		{
+			"id": "group_product",
+			"type": "group",
+			"x": -40,
+			"y": -80,
+			"width": 520,
+			"height": 920,
+			"label": "Product ACs",
+			"color": "4"
+		},
+		{
+			"id": "group_arch",
+			"type": "group",
+			"x": 560,
+			"y": -80,
+			"width": 480,
+			"height": 920,
+			"label": "Architecture",
+			"color": "3"
+		},
+		{
+			"id": "group_ship",
+			"type": "group",
+			"x": 1120,
+			"y": -80,
+			"width": 1120,
+			"height": 420,
+			"label": "Engineering \u2192 CI \u2192 Demo \u2192 Done",
+			"color": "5"
+		},
+		{
+			"id": "n_goal",
+			"type": "text",
+			"text": "# Goal\n\nDemo **create \u2192 list \u2192 get** on Spring catalog.\nPlumbing + tests, not polish.",
+			"x": -40,
+			"y": -280,
+			"width": 400,
+			"height": 140,
+			"color": "6"
+		},
+		{
+			"id": "file_e2e",
+			"type": "file",
+			"file": "tickets/E2E-001.md",
+			"x": 0,
+			"y": -40,
+			"width": 440,
+			"height": 200
+		},
+		{
+			"id": "file_ws",
+			"type": "file",
+			"file": "workshops/e2e-place-stub.md",
+			"x": 0,
+			"y": 180,
+			"width": 440,
+			"height": 80
+		},
+		{
+			"id": "n_create",
+			"type": "text",
+			"text": "**POST** `/api/v1/places`\n`name` + `categorySlug` required\noptional town, countySlug, lon+lat",
+			"x": 0,
+			"y": 280,
+			"width": 440,
+			"height": 100,
+			"color": "4"
+		},
+		{
+			"id": "n_list",
+			"type": "text",
+			"text": "**GET** `/api/v1/places` \u2014 list includes created `id`",
+			"x": 0,
+			"y": 400,
+			"width": 440,
+			"height": 70,
+			"color": "4"
+		},
+		{
+			"id": "n_get",
+			"type": "text",
+			"text": "**GET** `/api/v1/places/{id}` \u2014 one or **404**",
+			"x": 0,
+			"y": 490,
+			"width": 440,
+			"height": 70,
+			"color": "4"
+		},
+		{
+			"id": "n_400",
+			"type": "text",
+			"text": "Missing name / unknown category \u2192 **400** not 500",
+			"x": 0,
+			"y": 580,
+			"width": 440,
+			"height": 60,
+			"color": "2"
+		},
+		{
+			"id": "n_out",
+			"type": "text",
+			"text": "**Out:** UI, images, visits API, partner portal, search/pagination polish, bulk import",
+			"x": 0,
+			"y": 660,
+			"width": 440,
+			"height": 80,
+			"color": "1"
+		},
+		{
+			"id": "n_stack",
+			"type": "text",
+			"text": "# STACK constraints\n\nJava / Spring Boot. Postgres 17 + PostGIS. Flyway.\n**Not** Next.js, FastAPI, or a second API language.\nRead `product/STACK.md` \u2014 do not rewrite it.",
+			"x": 600,
+			"y": -40,
+			"width": 400,
+			"height": 180,
+			"color": "3"
+		},
+		{
+			"id": "file_prd",
+			"type": "file",
+			"file": "tickets/PRD-001.md",
+			"x": 600,
+			"y": 160,
+			"width": 400,
+			"height": 120
+		},
+		{
+			"id": "n_geo",
+			"type": "text",
+			"text": "Place shape = PRD-001.\n`categorySlug` seed: poi | experience | campsite | bnb.\n`countySlug` = 32 counties incl NI.\nlon+lat together \u2192 PostGIS point.",
+			"x": 600,
+			"y": 300,
+			"width": 400,
+			"height": 140,
+			"color": "3"
+		},
+		{
+			"id": "n_nobook",
+			"type": "text",
+			"text": "No booking / Stripe / inventory columns",
+			"x": 600,
+			"y": 460,
+			"width": 400,
+			"height": 60,
+			"color": "1"
+		},
+		{
+			"id": "n_noauth",
+			"type": "text",
+			"text": "**Workshop exception:** no auth on this stub.\nDo not copy into later product APIs.",
+			"x": 600,
+			"y": 540,
+			"width": 400,
+			"height": 80,
+			"color": "2"
+		},
+		{
+			"id": "n_brand",
+			"type": "text",
+			"text": "Public brand naming **OPEN**.\nNo Halfdoor / Inis / Ireland Stays as product name in user-facing strings.\nRepo stays `tezball/my-island`.",
+			"x": 600,
+			"y": 640,
+			"width": 400,
+			"height": 120,
+			"color": "6"
+		},
+		{
+			"id": "n_impl",
+			"type": "text",
+			"text": "# Engineering\n\nImplement create / list / get on catalog.\nSequence **with or right after** PRD-001 skeleton.\nOwner: **eng-backend**.",
+			"x": 1160,
+			"y": -40,
+			"width": 320,
+			"height": 180,
+			"color": "5"
+		},
+		{
+			"id": "n_tests",
+			"type": "text",
+			"text": "# Tests\n\ncreate \u2192 list contains `id` \u2192 get by id",
+			"x": 1520,
+			"y": -40,
+			"width": 280,
+			"height": 140,
+			"color": "2"
+		},
+		{
+			"id": "n_ci",
+			"type": "text",
+			"text": "# CI green\n\nCatalog job + vault tests pass.",
+			"x": 1840,
+			"y": -40,
+			"width": 260,
+			"height": 140,
+			"color": "2"
+		},
+		{
+			"id": "n_demo",
+			"type": "text",
+			"text": "# Demo\n\ncreate \u2192 list \u2192 get",
+			"x": 1160,
+			"y": 180,
+			"width": 320,
+			"height": 120,
+			"color": "4"
+		},
+		{
+			"id": "n_done",
+			"type": "text",
+			"text": "# Done\n\nPlumbing proven. Polish later. Humans merge.",
+			"x": 1520,
+			"y": 180,
+			"width": 400,
+			"height": 120,
+			"color": "4"
+		}
+	],
+	"edges": [
+		{
+			"id": "e_goal_acs",
+			"fromNode": "n_goal",
+			"fromSide": "bottom",
+			"toNode": "file_e2e",
+			"toSide": "top",
+			"label": "Product ACs"
+		},
+		{
+			"id": "e_e2e_ws",
+			"fromNode": "file_e2e",
+			"fromSide": "bottom",
+			"toNode": "file_ws",
+			"toSide": "top"
+		},
+		{
+			"id": "e_ws_create",
+			"fromNode": "file_ws",
+			"fromSide": "bottom",
+			"toNode": "n_create",
+			"toSide": "top"
+		},
+		{
+			"id": "e_create_list",
+			"fromNode": "n_create",
+			"fromSide": "bottom",
+			"toNode": "n_list",
+			"toSide": "top"
+		},
+		{
+			"id": "e_list_get",
+			"fromNode": "n_list",
+			"fromSide": "bottom",
+			"toNode": "n_get",
+			"toSide": "top"
+		},
+		{
+			"id": "e_get_400",
+			"fromNode": "n_get",
+			"fromSide": "bottom",
+			"toNode": "n_400",
+			"toSide": "top"
+		},
+		{
+			"id": "e_400_out",
+			"fromNode": "n_400",
+			"fromSide": "bottom",
+			"toNode": "n_out",
+			"toSide": "top"
+		},
+		{
+			"id": "e_acs_stack",
+			"fromNode": "file_e2e",
+			"fromSide": "right",
+			"toNode": "n_stack",
+			"toSide": "left",
+			"label": "STACK"
+		},
+		{
+			"id": "e_stack_prd",
+			"fromNode": "n_stack",
+			"fromSide": "bottom",
+			"toNode": "file_prd",
+			"toSide": "top"
+		},
+		{
+			"id": "e_prd_geo",
+			"fromNode": "file_prd",
+			"fromSide": "bottom",
+			"toNode": "n_geo",
+			"toSide": "top"
+		},
+		{
+			"id": "e_geo_nobook",
+			"fromNode": "n_geo",
+			"fromSide": "bottom",
+			"toNode": "n_nobook",
+			"toSide": "top"
+		},
+		{
+			"id": "e_nobook_noauth",
+			"fromNode": "n_nobook",
+			"fromSide": "bottom",
+			"toNode": "n_noauth",
+			"toSide": "top"
+		},
+		{
+			"id": "e_noauth_brand",
+			"fromNode": "n_noauth",
+			"fromSide": "bottom",
+			"toNode": "n_brand",
+			"toSide": "top"
+		},
+		{
+			"id": "e_stack_impl",
+			"fromNode": "n_stack",
+			"fromSide": "right",
+			"toNode": "n_impl",
+			"toSide": "left",
+			"label": "implement"
+		},
+		{
+			"id": "e_prd_impl",
+			"fromNode": "file_prd",
+			"fromSide": "right",
+			"toNode": "n_impl",
+			"toSide": "left",
+			"label": "with or after skeleton"
+		},
+		{
+			"id": "e_impl_tests",
+			"fromNode": "n_impl",
+			"fromSide": "right",
+			"toNode": "n_tests",
+			"toSide": "left"
+		},
+		{
+			"id": "e_tests_ci",
+			"fromNode": "n_tests",
+			"fromSide": "right",
+			"toNode": "n_ci",
+			"toSide": "left",
+			"label": "CI green"
+		},
+		{
+			"id": "e_impl_demo",
+			"fromNode": "n_impl",
+			"fromSide": "bottom",
+			"toNode": "n_demo",
+			"toSide": "top",
+			"label": "demo"
+		},
+		{
+			"id": "e_ci_demo",
+			"fromNode": "n_ci",
+			"fromSide": "bottom",
+			"toNode": "n_done",
+			"toSide": "right"
+		},
+		{
+			"id": "e_demo_done",
+			"fromNode": "n_demo",
+			"fromSide": "right",
+			"toNode": "n_done",
+			"toSide": "left"
+		}
+	]
+}
