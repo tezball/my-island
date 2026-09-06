@@ -4,7 +4,7 @@ ticket: "[[tickets/E2E-001]]"
 role: automation-expert
 started: 2026-09-06
 finished: 2026-09-06
-pr:
+pr: https://github.com/tezball/my-island/pull/30
 ---
 
 # Run e2e-place-stub MCP/chaos 2026-09-06
