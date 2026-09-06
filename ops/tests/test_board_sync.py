@@ -5,6 +5,27 @@ from pathlib import Path
 import board_sync
 
 
+def test_column_titles_are_human_labels() -> None:
+    assert [k for k, _ in board_sync.COLUMNS] == [
+        "inbox",
+        "ready",
+        "plan",
+        "implement",
+        "review",
+        "blocked",
+        "done",
+    ]
+    assert [t for _, t in board_sync.COLUMNS] == [
+        "Upcoming",
+        "Ready",
+        "Planning",
+        "Doing",
+        "In review",
+        "Blocked",
+        "Done",
+    ]
+
+
 def test_parse_frontmatter_skips_bad_input() -> None:
     assert board_sync.parse_frontmatter("") == {}
     assert board_sync.parse_frontmatter("---\nno-end") == {}
@@ -35,8 +56,15 @@ def test_render_board_groups_and_sorts(tmp_path: Path) -> None:
     (tickets / "no-id.md").write_text("---\ntitle: nope\n---\n")
 
     rendered = board_sync.render_board(board_sync.load_tickets(tickets))
-    ready = rendered.split("## Ready", 1)[1].split("## Plan", 1)[0]
+    ready = rendered.split("## Ready", 1)[1].split("## Planning", 1)[0]
     done = rendered.split("## Done", 1)[1]
+    assert "## Upcoming" in rendered
+    assert "## Doing" in rendered
+    assert "## In review" in rendered
+    assert "## Plan\n" not in rendered
+    assert "## Inbox" not in rendered
+    assert "## Implement" not in rendered
+    assert "## Review\n" not in rendered
     assert "WF-001" in ready
     assert "WF-002" in ready
     assert ready.index("WF-001") < ready.index("WF-002")

@@ -87,5 +87,5 @@ To product or history (outside the vault) use markdown links: `[MVP](../product/
 ## What not to create
 
 - Duplicate product specs in the vault. Link to `product/`.
-- Parallel kanban in `docs/`.
+- Parallel kanban in `docs/`. Product roadmap kanban is [[MILESTONES]] (hand-maintained). Live tickets stay on [[BOARD]].
 - Date-stamped copies of living notes (`CHARTER-v2.md`). Edit in place; git is history.

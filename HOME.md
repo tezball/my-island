@@ -9,22 +9,18 @@ created: 2026-09-06
 
 Phone-first **Ireland directory** MVP (list, map, one-tap check-off) plus a **company OS** of agent workflows in this repo (`my-island`). Public product name is **OPEN** — do not lock StayÉire, Éirelist, or any other ship name here.
 
-Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product/README.md) · [[product/SIGNED]] · [[product/README]]. OS hub: [`ops/HOME.md`](ops/HOME.md) · [[ops/HOME]].
+Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product/README.md) · [`product/MILESTONES.md`](product/MILESTONES.md) · [[product/SIGNED]] · [[product/README]] · [[product/MILESTONES]]. OS hub: [`ops/HOME.md`](ops/HOME.md) · [[ops/HOME]].
 
 > [!info] Snapshot
-> **As of 2026-09-06.** Edit this section when the board moves. Ticket frontmatter + [`ops/BOARD.md`](ops/BOARD.md) remain source of truth (`python3 ops/scripts/board_sync.py`). Kanban plugin is optional on [[ops/BOARD]].
+> **As of 2026-09-06.** Edit this section when the board moves. Ticket frontmatter + [`ops/BOARD.md`](ops/BOARD.md) remain source of truth (`python3 ops/scripts/board_sync.py`). Kanban plugin is optional on [[ops/BOARD]] (engineering) and [[ops/MILESTONES]] (product map, hand-maintained).
 
 ## Right now
 
 > [!todo] Doing / Review
-> P0/P1 tickets in `implement` or `review` (skip the WF-000 epic). Open PRs that are still `ready` on the board: [WF-017 #36](https://github.com/tezball/my-island/pull/36) (draft), [WF-018 #37](https://github.com/tezball/my-island/pull/37).
+> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). [`WF-017`](ops/tickets/WF-017.md) · [[ops/tickets/WF-017]] is `review` ([#36](https://github.com/tezball/my-island/pull/36) merged). Open PR still `ready` on the board: [WF-018 #37](https://github.com/tezball/my-island/pull/37).
 
-| Id | Pri | Status | What |
-|---|---|---|---|
-| [`WF-019`](ops/tickets/WF-019.md) · [[ops/tickets/WF-019]] | P0 | review | Repeatable place listing create/list/get sim (PR [#31](https://github.com/tezball/my-island/pull/31) merged; ticket still `review`) |
-| [`WF-021`](ops/tickets/WF-021.md) · [[ops/tickets/WF-021]] | P1 | review | Simple local CLI `./scripts/app` (PR [#35](https://github.com/tezball/my-island/pull/35) merged; ticket still `review`) |
-| [`WF-001`](ops/tickets/WF-001.md) · [[ops/tickets/WF-001]] | P0 | implement | Local compose and MCP pack (spine) |
-| [`WF-002`](ops/tickets/WF-002.md) · [[ops/tickets/WF-002]] | P0 | implement | Agent rules, skills, and session hook (spine) |
+> [!success] Landed
+> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook — all `done`.
 
 > [!info] Ready / Up next
 > From [[ops/BOARD]] `ready`. `PRD-000` is an epic — children do the work.
@@ -35,13 +31,14 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 | [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] | P0 | Ireland directory MVP (epic) |
 | [`PRD-002`](ops/tickets/PRD-002.md) · [[ops/tickets/PRD-002]] | P0 | Curator seed content pipeline |
 | [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA |
-| [`PRD-007`](ops/tickets/PRD-007.md) · [[ops/tickets/PRD-007]] | P0 | Research→leads pipeline acceptance |
 | [`PRD-008`](ops/tickets/PRD-008.md) · [[ops/tickets/PRD-008]] | P0 | Curator promote-from-lead in admin |
 | [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 | [`WF-016`](ops/tickets/WF-016.md) · [[ops/tickets/WF-016]] | P1 | Cloud Agent mcp-grafana + Postgres-RO vs local compose |
-| [`WF-017`](ops/tickets/WF-017.md) · [[ops/tickets/WF-017]] | P1 | STACK-E2E MCP vs compose chaos drill |
 | [`WF-018`](ops/tickets/WF-018.md) · [[ops/tickets/WF-018]] | P1 | Align E2E-001 place JSON fields with catalog stub |
+
+> [!info] Planning
+> [`PRD-007`](ops/tickets/PRD-007.md) · [[ops/tickets/PRD-007]] Research→leads pipeline acceptance (`status: plan`, [#40](https://github.com/tezball/my-island/pull/40)).
 
 > [!success] Workshop — E2E place-listing stub
 > Field source of truth on the running stub: `categoryId` / `countyId` / `latitude` / `longitude` (not `categorySlug` / `countySlug` / `lon`+`lat`).
@@ -71,8 +68,8 @@ Wikilinks (`[[ops/BOARD]]`, `[[product/SIGNED]]`) resolve when the Obsidian vaul
 
 | Area | Links |
 |---|---|
-| Product canon | [`product/README.md`](product/README.md) · [`SIGNED`](product/SIGNED.md) · [`MVP`](product/MVP.md) · [`STACK`](product/STACK.md) · [`NAMING`](product/NAMING.md) · [[product/SIGNED]] · [[product/MVP]] · [[product/STACK]] · [[product/NAMING]] |
-| Company OS | [`ops/HOME.md`](ops/HOME.md) · [`BOARD.md`](ops/BOARD.md) · [`CHARTER`](ops/CHARTER.md) · [[ops/HOME]] · [[ops/BOARD]] · [[ops/CHARTER]] |
+| Product canon | [`product/README.md`](product/README.md) · [`SIGNED`](product/SIGNED.md) · [`MILESTONES`](product/MILESTONES.md) · [`MVP`](product/MVP.md) · [`STACK`](product/STACK.md) · [`NAMING`](product/NAMING.md) · [[product/SIGNED]] · [[product/MILESTONES]] · [[product/MVP]] · [[product/STACK]] · [[product/NAMING]] |
+| Company OS | [`ops/HOME.md`](ops/HOME.md) · [`BOARD.md`](ops/BOARD.md) · [`ops/MILESTONES.md`](ops/MILESTONES.md) · [`CHARTER`](ops/CHARTER.md) · [[ops/HOME]] · [[ops/BOARD]] · [[ops/MILESTONES]] · [[ops/CHARTER]] |
 | Tickets | [`ops/tickets/_index.md`](ops/tickets/_index.md) · [[ops/tickets/_index]] |
 | Workflow | [`LOOP`](ops/workflow/LOOP.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [[ops/workflow/LOOP]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] |
 | E2E workshop | [`ops/workshops/e2e-place-stub.md`](ops/workshops/e2e-place-stub.md) · [canvas](ops/workflow/e2e-place-stub.canvas) · [[ops/workshops/e2e-place-stub]] · [[ops/workflow/e2e-place-stub]] |

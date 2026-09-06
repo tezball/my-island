@@ -15,7 +15,9 @@ Charter: [[CHARTER]]. Product canon (read-only until `PRD-*` + `implement`): [`p
 
 ## Right now
 
-→ **[[BOARD]]** — kanban. Agents pick the top non-epic ticket (`python3 ops/scripts/next_ticket.py --role auto`).
+→ **[[BOARD]]** — live engineering kanban. Agents pick the top non-epic ticket (`python3 ops/scripts/next_ticket.py --role auto`).
+
+→ **[[MILESTONES]]** — product roadmap (M0–M7 + gated chunks). Hand-maintained. Canon: [`product/MILESTONES.md`](../product/MILESTONES.md).
 
 → **[[workflow/LOOP]]** · **[[workflow/CI]]** · **[[workflow/SKILLS]]** — loop, CI, skills/routines.
 

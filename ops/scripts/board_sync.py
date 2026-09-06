@@ -6,11 +6,11 @@ import os
 import pathlib
 
 COLUMNS = [
-    ("inbox", "Inbox"),
+    ("inbox", "Upcoming"),
     ("ready", "Ready"),
-    ("plan", "Plan"),
-    ("implement", "Implement"),
-    ("review", "Review"),
+    ("plan", "Planning"),
+    ("implement", "Doing"),
+    ("review", "In review"),
     ("blocked", "Blocked"),
     ("done", "Done"),
 ]
