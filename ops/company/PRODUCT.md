@@ -13,6 +13,7 @@ Living spec is **outside** this vault. Do not fork it.
 | CEO briefing | [`product/BRIEFING.md`](../../product/BRIEFING.md) |
 | Vision | [`product/VISION.md`](../../product/VISION.md) |
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |
+| Milestones (M0–M7 + chunks) | [`product/MILESTONES.md`](../../product/MILESTONES.md) · vault [[MILESTONES]] |
 | Expansion / marketplace | [`product/EXPANSION.md`](../../product/EXPANSION.md) |
 | Stack (signed) | [`product/STACK.md`](../../product/STACK.md) — Spring, Vite+React PWA, PostGIS, Grafana MCP |
 

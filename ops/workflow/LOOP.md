@@ -33,6 +33,8 @@ The same human may wear all three hats. **The same agent session must not.** If 
 
 `blocked` from any state. Reason in the ticket body.
 
+[[BOARD]] column titles are human labels for the same keys: Upcoming, Ready, Planning, Doing, In review, Blocked, Done. Frontmatter still uses the keys.
+
 `type: epic` appears on the board but is not picked by `next_ticket.py`. Implement children.
 
 ## Commands

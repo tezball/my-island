@@ -12,6 +12,7 @@ REPO = OPS.parent
 REQUIRED_VAULT = [
     "HOME.md",
     "BOARD.md",
+    "MILESTONES.md",
     "CHARTER.md",
     "NAMING.md",
     "PLUGINS.md",
@@ -98,6 +99,7 @@ def test_repo_root_company_dashboard() -> None:
     assert "owner: Product" in text
     assert "](ops/HOME.md)" in text
     assert "](product/SIGNED.md)" in text
+    assert "](product/MILESTONES.md)" in text
     assert "[[ops/BOARD]]" in text
     assert "[[product/SIGNED]]" in text
     assert 'FROM "ops/tickets"' in text
@@ -219,6 +221,8 @@ def test_merged_pr_tickets_are_done() -> None:
         "WF-006": "https://github.com/tezball/my-island/pull/8",
         "WF-007": "https://github.com/tezball/my-island/pull/11",
         "PRD-006": "https://github.com/tezball/my-island/pull/14",
+        "WF-001": "https://github.com/tezball/my-island/pull/6",
+        "WF-002": "https://github.com/tezball/my-island/pull/8",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
@@ -550,3 +554,51 @@ def test_wf_021_human_cli_ticket() -> None:
     plan = (OPS / "plans" / "WF-021.md").read_text()
     assert "status: approved" in plan
     assert "./scripts/app" in plan
+
+
+def test_product_milestones_freeze() -> None:
+    path = REPO / "product" / "MILESTONES.md"
+    assert path.is_file()
+    text = path.read_text()
+    for needle in (
+        "Release 1",
+        "**M0**",
+        "**M1**",
+        "**M7**",
+        "return rate",
+        "Chunk 1",
+        "6a",
+        "6b",
+        "MVP.md",
+        "EXPANSION.md",
+        "SIGNED.md",
+        "WF-018",
+        "PRD-003",
+    ):
+        assert needle in text, needle
+    readme = (REPO / "product" / "README.md").read_text()
+    assert "MILESTONES.md" in readme
+    signed = (REPO / "product" / "SIGNED.md").read_text()
+    assert "MILESTONES.md" in signed
+    dash = (REPO / "HOME.md").read_text()
+    assert "product/MILESTONES.md" in dash
+    root_readme = (REPO / "README.md").read_text()
+    assert "MILESTONES.md" in root_readme
+    kanban = (OPS / "MILESTONES.md").read_text()
+    assert "kanban-plugin: basic" in kanban
+    assert "board_sync" in kanban
+    assert "[[BOARD]]" in kanban
+    assert "**M0**" in kanban
+    assert "Chunk 1" in kanban
+    home = (OPS / "HOME.md").read_text()
+    assert "[[MILESTONES]]" in home
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["WF-000"]["status"] == "implement"
+    assert by_id["E2E-001"]["status"] == "ready"
+    assert by_id["WF-018"]["status"] == "ready"
+    board = (OPS / "BOARD.md").read_text()
+    assert "## Upcoming" in board
+    assert "## Doing" in board
+    assert "## In review" in board
+    assert "## Planning" in board
+    assert "## Inbox" not in board

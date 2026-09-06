@@ -9,22 +9,18 @@ created: 2026-09-06
 
 Phone-first **Ireland directory** MVP (list, map, one-tap check-off) plus a **company OS** of agent workflows in this repo (`my-island`). Public product name is **OPEN** — do not lock StayÉire, Éirelist, or any other ship name here.
 
-Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product/README.md) · [[product/SIGNED]] · [[product/README]]. OS hub: [`ops/HOME.md`](ops/HOME.md) · [[ops/HOME]].
+Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product/README.md) · [`product/MILESTONES.md`](product/MILESTONES.md) · [[product/SIGNED]] · [[product/README]] · [[product/MILESTONES]]. OS hub: [`ops/HOME.md`](ops/HOME.md) · [[ops/HOME]].
 
 > [!info] Snapshot
-> **As of 2026-09-06.** Edit this section when the board moves. Ticket frontmatter + [`ops/BOARD.md`](ops/BOARD.md) remain source of truth (`python3 ops/scripts/board_sync.py`). Kanban plugin is optional on [[ops/BOARD]].
+> **As of 2026-09-06.** Edit this section when the board moves. Ticket frontmatter + [`ops/BOARD.md`](ops/BOARD.md) remain source of truth (`python3 ops/scripts/board_sync.py`). Kanban plugin is optional on [[ops/BOARD]] (engineering) and [[ops/MILESTONES]] (product map, hand-maintained).
 
 ## Right now
 
 > [!todo] Doing / Review
-> P0/P1 tickets in `implement` or `review` (skip the WF-000 epic). Open PRs that are still `ready` on the board: [WF-017 #36](https://github.com/tezball/my-island/pull/36) (draft), [WF-018 #37](https://github.com/tezball/my-island/pull/37).
+> No non-epic tickets in `implement` or `review`. Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). Open PRs that are still `ready` on the board: [WF-017 #36](https://github.com/tezball/my-island/pull/36) (draft), [WF-018 #37](https://github.com/tezball/my-island/pull/37).
 
-| Id | Pri | Status | What |
-|---|---|---|---|
-| [`WF-019`](ops/tickets/WF-019.md) · [[ops/tickets/WF-019]] | P0 | review | Repeatable place listing create/list/get sim (PR [#31](https://github.com/tezball/my-island/pull/31) merged; ticket still `review`) |
-| [`WF-021`](ops/tickets/WF-021.md) · [[ops/tickets/WF-021]] | P1 | review | Simple local CLI `./scripts/app` (PR [#35](https://github.com/tezball/my-island/pull/35) merged; ticket still `review`) |
-| [`WF-001`](ops/tickets/WF-001.md) · [[ops/tickets/WF-001]] | P0 | implement | Local compose and MCP pack (spine) |
-| [`WF-002`](ops/tickets/WF-002.md) · [[ops/tickets/WF-002]] | P0 | implement | Agent rules, skills, and session hook (spine) |
+> [!success] Landed
+> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook — all `done`.
 
 > [!info] Ready / Up next
 > From [[ops/BOARD]] `ready`. `PRD-000` is an epic — children do the work.
@@ -71,8 +67,8 @@ Wikilinks (`[[ops/BOARD]]`, `[[product/SIGNED]]`) resolve when the Obsidian vaul
 
 | Area | Links |
 |---|---|
-| Product canon | [`product/README.md`](product/README.md) · [`SIGNED`](product/SIGNED.md) · [`MVP`](product/MVP.md) · [`STACK`](product/STACK.md) · [`NAMING`](product/NAMING.md) · [[product/SIGNED]] · [[product/MVP]] · [[product/STACK]] · [[product/NAMING]] |
-| Company OS | [`ops/HOME.md`](ops/HOME.md) · [`BOARD.md`](ops/BOARD.md) · [`CHARTER`](ops/CHARTER.md) · [[ops/HOME]] · [[ops/BOARD]] · [[ops/CHARTER]] |
+| Product canon | [`product/README.md`](product/README.md) · [`SIGNED`](product/SIGNED.md) · [`MILESTONES`](product/MILESTONES.md) · [`MVP`](product/MVP.md) · [`STACK`](product/STACK.md) · [`NAMING`](product/NAMING.md) · [[product/SIGNED]] · [[product/MILESTONES]] · [[product/MVP]] · [[product/STACK]] · [[product/NAMING]] |
+| Company OS | [`ops/HOME.md`](ops/HOME.md) · [`BOARD.md`](ops/BOARD.md) · [`ops/MILESTONES.md`](ops/MILESTONES.md) · [`CHARTER`](ops/CHARTER.md) · [[ops/HOME]] · [[ops/BOARD]] · [[ops/MILESTONES]] · [[ops/CHARTER]] |
 | Tickets | [`ops/tickets/_index.md`](ops/tickets/_index.md) · [[ops/tickets/_index]] |
 | Workflow | [`LOOP`](ops/workflow/LOOP.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [[ops/workflow/LOOP]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] |
 | E2E workshop | [`ops/workshops/e2e-place-stub.md`](ops/workshops/e2e-place-stub.md) · [canvas](ops/workflow/e2e-place-stub.canvas) · [[ops/workshops/e2e-place-stub]] · [[ops/workflow/e2e-place-stub]] |

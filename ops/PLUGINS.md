@@ -33,7 +33,7 @@ Install via Settings → Community plugins → Browse. Restricted mode off.
 
 | Plugin id | Name | Use |
 |---|---|---|
-| `obsidian-kanban` | Kanban | Optional view of [[BOARD]]. **Source of truth is ticket frontmatter + `board_sync.py`.** If the board and a ticket disagree, the ticket wins — regenerate. |
+| `obsidian-kanban` | Kanban | Optional view of [[BOARD]] (tickets) and [[MILESTONES]] (product roadmap). **Ticket source of truth is frontmatter + `board_sync.py`.** If the board and a ticket disagree, the ticket wins — regenerate. Do not run `board_sync` on [[MILESTONES]]. |
 | `dataview` | Dataview | Query tickets and company data (examples in [[data/_index]]). Paths depend on vault root — see below. |
 | `templater-obsidian` | Templater | Optional; core Templates is enough for agents |
 | `obsidian-tasks-plugin` | Tasks | Checklists in runbooks and dailies |
