@@ -608,7 +608,7 @@ def test_product_milestones_freeze() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["WF-000"]["status"] == "implement"
     assert by_id["E2E-001"]["status"] == "ready"
-    assert by_id["WF-018"]["status"] == "ready"
+    assert by_id["WF-018"]["status"] == "review"
     board = (OPS / "BOARD.md").read_text()
     assert "## Upcoming" in board
     assert "## Doing" in board
