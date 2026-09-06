@@ -23,8 +23,8 @@ Thin harness:
 
 ## Result
 
-success — PR https://github.com/tezball/my-island/pull/31
+success — PR https://github.com/tezball/my-island/pull/31 merged. Run closed.
 
 ## Follow-up
 
-Human merges. Agents do not merge.
+None. Ticket is `done`.

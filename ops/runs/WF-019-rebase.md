@@ -24,8 +24,8 @@ Replayed WF-019 onto repo-root `ops/` (ticket, plan, board, harness). Did not le
 
 ## Result
 
-success — PR https://github.com/tezball/my-island/pull/31 rebased; agents do not merge.
+success — PR https://github.com/tezball/my-island/pull/31 merged. Run closed.
 
 ## Follow-up
 
-Human merges when CI is green.
+None. Ticket is `done`.
