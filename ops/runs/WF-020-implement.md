@@ -3,8 +3,8 @@ id: WF-020
 ticket: "[[tickets/WF-020]]"
 role: implementer
 started: 2026-09-06
-finished:
-pr:
+finished: 2026-09-06
+pr: https://github.com/tezball/my-island/pull/33
 ---
 
 # Run WF-020
@@ -20,7 +20,7 @@ Implementer hat (automation-expert). P0 hotfix: `main` CI red after `be8562e` mo
 
 ## Result
 
-in progress
+success — PR #33 open. Local unit (42), stack pytest (45), catalog (12), and workspace image build green. Do not merge.
 
 ## Follow-up
 
