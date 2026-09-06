@@ -590,6 +590,7 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     assert "Engineering" in plan
     ticket = (OPS / "tickets" / "WF-016.md").read_text()
     assert "pull/46" in ticket
+    assert "pull/48" in ticket
     assert "postgres-grant-catalog-reader.sql" in ticket
     assert "postgres-catalog" in ticket
     assert "Catalog SELECT verify" in ticket
