@@ -318,6 +318,12 @@ def test_e2e_001_place_stub_workshop() -> None:
     assert "POST /api/v1/places" in ticket
     assert "GET /api/v1/places" in ticket
     assert "GET /api/v1/places/{id}" in ticket
+    assert "`categoryId`" in ticket
+    assert "`countyId`" in ticket
+    assert "`latitude`" in ticket
+    assert "`longitude`" in ticket
+    assert "categorySlug" not in ticket
+    assert "countySlug" not in ticket
     assert "workshop exception" in ticket.lower()
     assert "tezball/my-island" in ticket
     assert "Public brand naming is OPEN" in ticket
@@ -348,6 +354,12 @@ def test_e2e_001_place_stub_workshop() -> None:
     blob = json.dumps(canvas)
     assert "create" in blob.lower()
     assert "STACK" in blob or "stack" in blob.lower()
+    assert "categoryId" in blob
+    assert "countyId" in blob
+    assert "latitude" in blob
+    assert "longitude" in blob
+    assert "categorySlug" not in blob
+    assert "countySlug" not in blob
 
 
 def test_inherited_app_trees_stripped_for_workshop_spine() -> None:
