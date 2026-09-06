@@ -43,4 +43,4 @@ There is **no consumer UI CI**. Playwright waits on [[tickets/WF-011]]. Do not k
 3. Document the job in this note.
 4. If the check is product-app, it belongs on a `PRD-*` ticket — and the app is still [[company/SCAFFOLDING|scaffolding]].
 
-Jenkins research in `docs/automation/` is **not** the path. [[AUTOMATIONS]] are.
+Jenkins is **not** the path. [[AUTOMATIONS]] are. Archaeology: git tag `legacy-platform`.

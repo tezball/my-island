@@ -260,6 +260,24 @@ def test_e2e_001_place_stub_workshop() -> None:
     assert "STACK" in blob or "stack" in blob.lower()
 
 
+def test_inherited_app_trees_stripped_for_workshop_spine() -> None:
+    """Architecture KEEP/DROP: workshop spine only. Tag legacy-platform is archaeology."""
+    assert (REPO / "services" / "catalog" / "pom.xml").is_file()
+    assert (REPO / "compose.yml").is_file()
+    assert (REPO / "compose.chaos.yml").is_file()
+    assert (REPO / "ops" / "observability" / "prometheus.yml").is_file()
+    assert (REPO / "docs" / "automation" / "OBSERVABILITY_MCP_OPTIONS.md").is_file()
+    for rel in (
+        "docs/domain",
+        "docs/Designs",
+        "docs/MVP.md",
+        "docs/USER_STORIES.md",
+        "docs/ROADMAP.md",
+        "docs/automation/JENKINS.md",
+    ):
+        assert not (REPO / rel).exists(), rel
+
+
 def test_stack_e2e_place_stub_architecture_handoff() -> None:
     path = OPS / "workflow" / "STACK-E2E-place-stub.md"
     assert path.is_file()

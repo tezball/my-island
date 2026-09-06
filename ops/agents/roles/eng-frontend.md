@@ -22,7 +22,7 @@ PRs with UI + tests. No product code until a `PRD-*` ticket is `implement`.
 
 ## Owned folders
 
-Future app client tree (not in the working tree today). Design history: `docs/Designs/` (reference only).
+Future app client tree (not in the working tree today). Design history: git tag `legacy-platform` (reference only).
 
 ## Escalation
 
@@ -30,4 +30,4 @@ Backend if the API contract is missing. Infra if preview/E2E cannot run. Orchest
 
 ## Must not
 
-Desktop-first layouts. App-store-only release as the MVP path. Hard-coding campsite as the only category. **Next.js App Router / Next BFF / Vercel-as-default** — the house client is a thin Vite+React PWA talking to Spring. Porting `docs/Designs` or `legacy-platform` UI as a preservation project — the app is [[company/SCAFFOLDING|scaffolding]].
+Desktop-first layouts. App-store-only release as the MVP path. Hard-coding campsite as the only category. **Next.js App Router / Next BFF / Vercel-as-default** — the house client is a thin Vite+React PWA talking to Spring. Porting `legacy-platform` UI as a preservation project — the app is [[company/SCAFFOLDING|scaffolding]].
