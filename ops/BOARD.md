@@ -17,7 +17,6 @@ kanban-plugin: basic
 - [ ] [[tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
 - [ ] [[tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
 - [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
-- [ ] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [ ] [[tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 - [ ] [[tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
@@ -27,6 +26,7 @@ kanban-plugin: basic
 
 ## Plan
 
+- [ ] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 
 ## Implement
 

@@ -14,6 +14,7 @@ Product definition for the rebuild. Start here.
 | Document | What it is |
 |---|---|
 | [`SIGNED.md`](SIGNED.md) | CEO sign-off 2026-09-05 — directory MVP, kill list, house bar |
+| [`WAVE-1.md`](WAVE-1.md) | Research Wave 1 acceptance — leads in `data/leads/` (not publish; counsel still PRD-009) |
 | [`BRIEFING.md`](BRIEFING.md) | CEO briefing — what the repo is, what we are building, what was built before, open decisions |
 | [`VISION.md`](VISION.md) | What we are building and why. Principles, roles, decisions made, open questions for the business |
 | [`MVP.md`](MVP.md) | Release 1 — the checkable directory. 92 stories, data model, success criteria, definition of done |
