@@ -35,7 +35,7 @@ Canon: [`product/STACK.md`](../../product/STACK.md). Log: [[DECISIONS]].
 3. **Plan before code.** Implementers need `ops/plans/<id>.md` and ticket `status: implement`.
 4. **Reviewers never merge.** [[workflow/SAFETY]]
 5. **No prod deploy, no prod SQL writes, Grafana read-only.**
-6. **Do not rebuild Jenkins** from `docs/automation/`.
+6. **Do not rebuild Jenkins** from `docs/old/automation/`.
 7. **Do not implement product** unless `id` is `PRD-*` and `status` is `implement`.
 8. **App code is disposable scaffolding.** Do not polish or preserve it. [[SCAFFOLDING]]
 9. **CI and skills are first-class.** [[workflow/CI]] · [[workflow/SKILLS]]

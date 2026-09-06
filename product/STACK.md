@@ -77,7 +77,7 @@ this default is proven insufficient.
 
 One MCP covers the three core signals: official
 [`mcp-grafana`](https://github.com/grafana/mcp-grafana). Analysis:
-[`docs/automation/OBSERVABILITY_MCP_OPTIONS.md`](../docs/automation/OBSERVABILITY_MCP_OPTIONS.md).
+[`docs/old/automation/OBSERVABILITY_MCP_OPTIONS.md`](../docs/old/automation/OBSERVABILITY_MCP_OPTIONS.md).
 
 **Must be true before the first production deploy:**
 

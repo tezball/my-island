@@ -1,5 +1,7 @@
 # My Island — Product Roadmap
 
+> **History only (CEO 2026-09-05).** Past booking-platform roadmap. **Do not implement from this file.** Canonical: [`product/MVP.md`](../../product/MVP.md). This file lives under `docs/old/`.
+
 > Last updated: 2026-02-12
 
 ## Platform Summary

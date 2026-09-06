@@ -14,7 +14,7 @@ Get campsite, B&B, and experience operators onto the platform **when Chunk 1 is 
 
 ## Inputs
 
-Inbound host mail, [`docs/leads/CAMPSITE_LEADS.md`](../../../docs/leads/CAMPSITE_LEADS.md) (history), [[runbooks/LISTING_ROLLOUT]], `product/EXPANSION.md` Chunk 1.
+Inbound host mail, [`docs/old/leads/CAMPSITE_LEADS.md`](../../../docs/old/leads/CAMPSITE_LEADS.md) (history), [[runbooks/LISTING_ROLLOUT]], `product/EXPANSION.md` Chunk 1.
 
 ## Outputs
 
@@ -30,4 +30,4 @@ Product if someone wants booking before the claim-entry gate. Trust-safety if a 
 
 ## Must not
 
-Rebuild the old owner portal from `docs/`. Guarantee placement or traffic.
+Rebuild the old owner portal from `docs/old/`. Guarantee placement or traffic.

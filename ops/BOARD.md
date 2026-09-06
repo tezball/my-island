@@ -20,7 +20,6 @@ kanban-plugin: basic
 - [ ] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [ ] [[tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 - [ ] [[tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
-- [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
 ## Plan
@@ -39,6 +38,7 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 - [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
 - [ ] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
+- [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 
 ## Blocked
 

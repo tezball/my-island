@@ -30,4 +30,4 @@ Owner: [[agents/roles/automation-expert]]. Catalog: [[workflow/SKILLS]].
 ## Must not
 
 - Skills that teach agents to preserve or refactor disposable app code.
-- Copying Jenkins playbooks from `docs/automation/` into GitHub Actions “just in case”.
+- Copying Jenkins playbooks from `docs/old/automation/` into GitHub Actions “just in case”.

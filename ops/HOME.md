@@ -9,7 +9,7 @@ This vault (`ops/`) is the company operating system. **Markdown in git is the sy
 
 The mandate is **fully automated agent workflows** (tickets, CI, skills, routines). Application code is [[company/SCAFFOLDING|disposable scaffolding]] — do not preserve or refactor it for its own sake.
 
-Charter: [[CHARTER]]. Product canon (read-only until `PRD-*` + `implement`): [`product/`](../product/README.md). Old booking app: [`docs/`](../docs/README.md) and git tag `legacy-platform` — history, not a migration source.
+Charter: [[CHARTER]]. Product canon (read-only until `PRD-*` + `implement`): [`product/`](../product/README.md). Old booking app: [`docs/old/`](../docs/old/README.md) and git tag `legacy-platform` — history, not a migration source.
 
 ## Right now
 

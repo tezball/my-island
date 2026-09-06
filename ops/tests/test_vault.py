@@ -280,3 +280,22 @@ def test_stack_e2e_place_stub_architecture_handoff() -> None:
     assert "STACK-E2E-place-stub" in index
     brief = (OPS / "workshops" / "e2e-place-stub.md").read_text()
     assert "STACK-E2E-place-stub" in brief
+
+
+def test_docs_old_new_split() -> None:
+    assert not (REPO / "docs" / "MVP.md").exists()
+    assert (REPO / "docs" / "old" / "MVP.md").is_file()
+    assert (REPO / "docs" / "old" / ".obsidian" / "app.json").is_file()
+    index = (REPO / "docs" / "README.md").read_text()
+    assert "docs/old/" in index or "`old/`" in index
+    assert "docs/new/" in index or "`new/`" in index
+    assert "product/SIGNED.md" in index
+    assert "ops/HOME.md" in index
+    new = (REPO / "docs" / "new" / "README.md").read_text()
+    assert "product/" in new
+    assert "ops/" in new
+    assert "Do not invent" in new or "does **not** hold product specs" in new
+    signed = (REPO / "product" / "SIGNED.md").read_text()
+    assert "docs/old/" in signed
+    home = (OPS / "HOME.md").read_text()
+    assert "docs/old/" in home

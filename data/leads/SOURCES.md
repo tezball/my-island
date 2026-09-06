@@ -10,6 +10,6 @@ Research may collect **leads** from public aggregator and open lists. This is no
 | Glamping directories (e.g. [glampinginireland.com](https://glampinginireland.com)) | Glamping / pod sites missing from caravan lists | Leads-only |
 | County / local tourism pages | Coverage gaps by county | Prefer operator contact pages over scraped HTML |
 
-Starter archaeology (already migrated): [`docs/leads/CAMPSITE_LEADS.md`](../../docs/leads/CAMPSITE_LEADS.md).
+Starter archaeology (already migrated): [`docs/old/leads/CAMPSITE_LEADS.md`](../../docs/old/leads/CAMPSITE_LEADS.md).
 
 Do not add a source that requires login, paywall bypass, or CAPTCHA solving. Record the public URL and stop.

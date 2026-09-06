@@ -4,11 +4,11 @@ This repository is the **operating system for an AI-operated company**: Obsidian
 
 **Owner:** Terry ([tezball](https://github.com/tezball)).
 
-**Application code is disposable scaffolding.** Do not polish, preserve, or refactor the current/legacy app for its own sake. It will be replaced as workflows develop. History: [`docs/`](docs/README.md), git tag `legacy-platform`. Details: [`ops/company/SCAFFOLDING.md`](ops/company/SCAFFOLDING.md).
+**Application code is disposable scaffolding.** Do not polish, preserve, or refactor the current/legacy app for its own sake. It will be replaced as workflows develop. History: [`docs/old/`](docs/old/README.md), git tag `legacy-platform`. Details: [`ops/company/SCAFFOLDING.md`](ops/company/SCAFFOLDING.md).
 
 ## Open the company vault (Obsidian)
 
-The vault is **`ops/`**, not the repo root and not `docs/`.
+The vault is **`ops/`**, not the repo root and not `docs/` (including `docs/old/`).
 
 1. Install [Obsidian](https://obsidian.md).
 2. Open vault → Open folder as vault → select `ops/`.
@@ -24,7 +24,7 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 | [`ops/`](ops/HOME.md) | **Company OS** (Obsidian): charter, agents, runbooks, tickets, CI/skills docs |
 | [`product/`](product/README.md) | Product canon, **signed** 2026-09-05 ([`SIGNED.md`](product/SIGNED.md)). Implement only on `PRD-*` + `implement` |
 | [`data/leads/`](data/leads/README.md) | Research place leads (not the published catalog) |
-| [`docs/`](docs/README.md) | Historical booking platform — not requirements, not a migration source |
+| [`docs/`](docs/README.md) | [`old/`](docs/old/README.md) = past booking platform (do not implement); [`new/`](docs/new/README.md) = pointers to living canon |
 | [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres/PostGIS + Grafana + catalog API for agents |
 | [`services/catalog/`](services/catalog) | Spring Boot place catalog stub ([[ops/tickets/PRD-001.md](ops/tickets/PRD-001.md)]) |
 | `.github/` + `.cursor/skills/` | CI and agent skills (Automation Expert) |

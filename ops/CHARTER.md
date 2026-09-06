@@ -26,7 +26,8 @@ Everything the **company OS** needs to function. Not a museum of the last app.
 |---|---|
 | [[HOME]] (`ops/`) | Operating system — tickets, agents, runbooks, skills catalog |
 | `product/` | Product canon (read; do not implement until `PRD-*` + `implement`). House: [`product/STACK.md`](../product/STACK.md) |
-| `docs/` | Historical booking platform. Ignore for workflow work. Do not implement from it |
+| `docs/old/` | Historical booking platform. Ignore for workflow work. Do not implement from it |
+| `docs/new/` | Pointers only. Living canon is `product/` + `ops/` |
 | `scripts/`, `compose.yml` | Local ops runtime (Postgres + Grafana) for agents |
 | git tag `legacy-platform` | Old app. Do not port or protect it |
 

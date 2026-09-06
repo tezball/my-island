@@ -42,7 +42,7 @@ Grafana OSS MCP. Host, OIDC provider, and curator-admin depth remain open. Do
 not start the skeleton until a `PRD-*` ticket is `implement`.
 
 The previous camping-platform build has had its code removed from the working tree; its
-documentation is retained in `../docs/` for reference. That material describes a booking platform
+documentation is retained in `../docs/old/` for reference. That material describes a booking platform
 and is superseded by this directory — read it as history, not as requirements. The full previous
-codebase remains in git history at tag `legacy-platform`. Draft PRs that implement from `docs/`
+codebase remains in git history at tag `legacy-platform`. Draft PRs that implement from `docs/old/`
 (#2, #4, #5) are to be closed or ignored.

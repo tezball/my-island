@@ -5,7 +5,7 @@ type: workflow
 
 # Recommended Obsidian plugins
 
-Open **`ops/`** as the vault (not the repo root, not `docs/`). Core settings in `.obsidian/` are committed. **Do not commit plugin binaries** (`main.js`). Install community plugins on your machine.
+Open **`ops/`** as the vault (not the repo root, not `docs/` or `docs/old/`). Core settings in `.obsidian/` are committed. **Do not commit plugin binaries** (`main.js`). Install community plugins on your machine.
 
 ## Core (enabled in `.obsidian/core-plugins.json`)
 
@@ -32,7 +32,7 @@ Install via Settings → Community plugins → Browse. Restricted mode off.
 | `obsidian-tasks-plugin` | Tasks | Checklists in runbooks and dailies |
 | `calendar` | Calendar | Jump to daily notes |
 
-The historical `docs/` vault used Tasks + Advanced Tables + themes. Do not copy those plugin folders here.
+The historical `docs/old/` vault used Tasks + Advanced Tables + themes. Do not copy those plugin folders here.
 
 ## Dataview snippets
 

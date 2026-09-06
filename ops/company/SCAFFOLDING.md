@@ -12,11 +12,11 @@ type: company
 | Invest here | Do not invest here |
 |---|---|
 | `ops/` vault, tickets, runbooks | Protecting old booking-platform code |
-| Agent roster, skills, hooks | “Cleaning up” `docs/Designs` or domain READMEs for their own sake |
+| Agent roster, skills, hooks | “Cleaning up” `docs/old/Designs` or domain READMEs for their own sake |
 | CI that any agent can run | Compatibility shims for a soon-to-be-replaced app |
 | Cursor Automations + Grok routines | Rebuilding the marketplace in this PR |
 
-`docs/` is **history**. `legacy-platform` is **history**. Future `src/` / client trees, when they appear, are **scaffolding** until a `PRD-*` ticket in `implement` says otherwise — and even then, replace rather than museum-preserve.
+`docs/old/` is **history**. `legacy-platform` is **history**. Future `src/` / client trees, when they appear, are **scaffolding** until a `PRD-*` ticket in `implement` says otherwise — and even then, replace rather than museum-preserve.
 
 ## Rules for agents
 
@@ -24,7 +24,7 @@ type: company
 2. Do not spend a session “saving” legacy modules. Link the git tag if someone needs to read it.
 3. Keep app stubs **minimal** or absent. Empty folders and TODOs are better than a fake marketplace. The first real skeleton is **Spring Boot + Vite/React PWA** on [[tickets/PRD-001]] / [[tickets/PRD-003]] only when those tickets are `implement` — see [`product/STACK.md`](../../product/STACK.md).
 4. If a workflow needs a stub (health endpoint, fixture), make it throwaway and say so in the ticket. Still Spring + light PWA, not Next/FastAPI/Neon.
-5. Product *canon* (`product/`) is not app code. You may **read** it. You do not rewrite it to match old `docs/`.
+5. Product *canon* (`product/`) is not app code. You may **read** it. You do not rewrite it to match old `docs/old/`.
 
 ## What we automate instead
 

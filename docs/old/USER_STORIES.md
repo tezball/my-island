@@ -11,6 +11,8 @@ tags:
 
 # User Stories — Full Backlog
 
+> **History only (CEO 2026-09-05).** Not a living backlog. **Do not implement from this file.** Canonical Release 1: [`product/MVP.md`](../../product/MVP.md). This file lives under `docs/old/`.
+
 > A ground-up story catalogue for the rebooted platform. Supersedes the campsite-only framing of
 > `docs/ROADMAP.md`. Read alongside `docs/domain/DOMAIN_MODEL.md`.
 

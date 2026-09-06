@@ -33,6 +33,6 @@ Booking, payments, partner portals, reviews, guest–host messaging, native apps
 - Directory epic: [[tickets/PRD-000]]
 - Marketplace epic (gated): [[tickets/PRD-004]]
 
-History of the camping booking build: [`docs/README.md`](../../docs/README.md). Do not implement from `docs/`.
+History of the camping booking build: [`docs/old/README.md`](../../docs/old/README.md). Do not implement from `docs/old/`.
 
 House (CEO 2026-09-05): Java / Spring Boot, light Vite+React PWA (**not** Next), PostgreSQL 17 + PostGIS, Flyway, Grafana OSS MCP. [[DECISIONS]]

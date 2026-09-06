@@ -10,7 +10,7 @@ signed: 2026-09-05
 # CEO Briefing
 
 What this repository contains, what the company is building, and what remains
-open for the business. Source: this folder and `docs/` as of 1 September 2026.
+open for the business. Source: this folder and `docs/old/` as of 1 September 2026.
 Sign-off: [`SIGNED.md`](SIGNED.md) (CEO, 2026-09-05).
 
 > **This is not a running platform.** The working tree is a **signed** product
@@ -19,7 +19,7 @@ Sign-off: [`SIGNED.md`](SIGNED.md) (CEO, 2026-09-05).
 > (not Next.js), **PostgreSQL 17 + PostGIS**, Flyway, and Grafana OSS MCP — see
 > [`STACK.md`](STACK.md). The previous camping booking product was deleted on
 > purpose. Its full codebase is still in git at tag `legacy-platform`. The
-> `docs/` folder is history, not the build spec.
+> `docs/old/` folder is history, not the build spec.
 
 | | |
 |---|---|
@@ -48,7 +48,7 @@ PostGIS. Host and OIDC provider are still open.
 platform: guests, campsite owners, local suppliers, admin, Stripe payments,
 subscriptions, reviews, messaging. Feature docs from February 2026 called it
 launch-ready. Code was removed in a clean-slate commit. Full tree still at tag
-`legacy-platform`. Documentation retained in [`../docs/`](../docs/).
+`legacy-platform`. Documentation retained in [`../docs/old/`](../docs/old/).
 
 ### Why the reboot
 
@@ -192,7 +192,7 @@ audience. Do not rebuild them into Release 1.
 From January–February 2026 the company built a camping and glamping booking
 product for Ireland with an integrated local-supplier marketplace. Roadmap
 docs from 12 February 2026 called it launch-ready on features. That is the
-product in `docs/` and in git tag `legacy-platform`. It is not what you are
+product in `docs/old/` and in git tag `legacy-platform`. It is not what you are
 building now.
 
 ### Who it served
@@ -279,5 +279,5 @@ Thresholds must be written down before launch day, not after the data arrives.
 
 ---
 
-Read this folder first. Treat `docs/` as the previous company. Restore the old
+Read this folder first. Treat `docs/old/` as the previous company. Restore the old
 app only from git tag `legacy-platform`.

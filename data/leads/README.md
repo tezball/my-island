@@ -66,7 +66,7 @@ Required: `id`, `name`, `place_type`, `country`, `source_url`, `source_name`, `f
 4. Do not implement scrapers in this ticket/folder. Collection may be manual or a later dedicated ticket.
 5. Curators review → `reviewed` or `rejected`. Engineering import and curator publish → `promoted`.
 
-Starter seed (2026-09-05): converted from [`docs/leads/CAMPSITE_LEADS.md`](../../docs/leads/CAMPSITE_LEADS.md). `fetched_at` on those rows is the conversion timestamp, not the original web fetch. That markdown file is archaeology; do not add new rows there.
+Starter seed (2026-09-05): converted from [`docs/old/leads/CAMPSITE_LEADS.md`](../../docs/old/leads/CAMPSITE_LEADS.md). `fetched_at` on those rows is the conversion timestamp, not the original web fetch. That markdown file is archaeology; do not add new rows there.
 
 ## Ticket
 

@@ -22,7 +22,7 @@ Directory quality. Seed content is the critical path, not code. Structured data 
 
 ## Owned folders
 
-`ops/data/` (taxonomy). Place leads: [`data/leads/`](../../../data/leads/README.md). Historical table: `docs/leads/` (pointer only).
+`ops/data/` (taxonomy). Place leads: [`data/leads/`](../../../data/leads/README.md). Historical table: `docs/old/leads/` (pointer only).
 
 ## Escalation
 

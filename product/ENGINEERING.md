@@ -16,7 +16,7 @@ engineer**, through MCP, from the first service skeleton.
 
 House constraints already signed: [`STACK.md`](STACK.md) (CEO lock 2026-09-05). Product: [`VISION.md`](VISION.md),
 [`MVP.md`](MVP.md). Legacy automation research (do not treat as current system):
-[`docs/automation/`](../docs/automation/).
+[`docs/old/automation/`](../docs/old/automation/).
 
 **Status:** House, client, database, migrations, observability, and CI/CD policy
 are **signed** in [`STACK.md`](STACK.md). This document is the AI-engineer loop,
@@ -48,7 +48,7 @@ Three problems with the state of play:
    has **no MCP**. Cloud agents could not drive it. Rebuilding it would lock
    us into a human-only CD path on day one of a greenfield.
 
-`docs/automation/` is useful research (Grafana OSS + `mcp-grafana` is still
+`docs/old/automation/` is useful research (Grafana OSS + `mcp-grafana` is still
 the observability pick). It is not a system we are running.
 
 ---
@@ -203,7 +203,7 @@ greenfield:
 | No image registry | Cannot roll back an agent’s bad deploy | GHCR (free for public; cheap for private) |
 | Alert → agent unwired | On-call is still a human staring at Grafana | Alertmanager webhook → Cursor automation / Cloud Agent |
 | Browser loop informal | Agents cannot complete “tap ✓ on a phone viewport” | Browser MCP + Playwright as the two layers (explore vs gate) |
-| Docs/automation describe dead machinery | Incoming engineers will rebuild Jenkins | This document supersedes it for the rebuild; leave `docs/` labelled history |
+| Docs/automation describe dead machinery | Incoming engineers will rebuild Jenkins | This document supersedes it for the rebuild; leave `docs/old/` labelled history |
 
 ---
 

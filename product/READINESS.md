@@ -13,13 +13,13 @@ the MVP, the docs, and the CTO review to **define features and implement**?
 
 **Short answer:** enough to freeze a backlog and start the **platform** (skeleton,
 CI, MCP, curator API). Not enough to implement the **product** to MVP done
-without a spec freeze. Do not treat `docs/` as requirements.
+without a spec freeze. Do not treat `docs/old/` as requirements.
 
 Canonical product: [`MVP.md`](MVP.md), [`VISION.md`](VISION.md).
 Canonical house: [`STACK.md`](STACK.md) (CEO lock 2026-09-05).
 CTO loop/safety (does not compete with STACK): [`ENGINEERING.md`](ENGINEERING.md).
-`docs/` is the previous company plus a parallel reboot backlog that **conflicts**
-with `product/MVP.md`. CEO: do not implement from `docs/`. Close/ignore draft
+`docs/old/` is the previous company plus a parallel reboot backlog that **conflicts**
+with `product/MVP.md`. CEO: do not implement from `docs/old/`. Close/ignore draft
 PRs #2, #4, #5. Tag `legacy-platform` is archaeology.
 
 ---
@@ -30,7 +30,7 @@ PRs #2, #4, #5. Tag `legacy-platform` is archaeology.
 |---|---|---|
 | Define the feature backlog | **Yes, with a freeze** | `product/MVP.md` has 92 Must stories, a journey, a data sketch, explicit out-of-scope, and a build order. That is enough to slice epics. |
 | Implement DX / platform | **Yes, start now** | Java/Spring, Vite+React PWA, PostGIS, Grafana MCP, NFR-09..14, and `STACK.md` are enough to stand up compose, Dev Container, Actions, Playwright harness, and a Place/Visit schema — **when a `PRD-*` ticket is `implement`**. |
-| Implement user-facing MVP | **Not yet, ~1 week of freeze** | No canonical UI, no facility list, no map/auth/sync contracts, two conflicting MVPs, unsigned host/OIDC, no content. A strong team will invent these; they will invent them twice if `docs/MVP.md` is in the mix. |
+| Implement user-facing MVP | **Not yet, ~1 week of freeze** | No canonical UI, no facility list, no map/auth/sync contracts, two conflicting MVPs, unsigned host/OIDC, no content. A strong team will invent these; they will invent them twice if `docs/old/MVP.md` is in the mix. |
 | Hit MVP definition of done | **No** | 500 places, success thresholds, content owner, brand, legal pages, Google/Apple apps, staging, backups — none are in the repo. |
 
 ---
@@ -57,7 +57,7 @@ These are not “nice to have in grooming”. Two engineers will ship two produc
 
 | Hole | Stories it hits | What to freeze |
 |---|---|---|
-| **Two MVPs** | All of them | `product/MVP.md` is canonical. `docs/MVP.md` + `docs/USER_STORIES.md` use different IDs, different categories (STAY/SUPPLIER vs POI/CAMPSITE/BNB), put **claims** and **hike difficulty** and **visit photos / bulk check-off / drop-a-pin** in or next to MVP. Stamp `docs/` as history or the team will implement the wrong app. |
+| **Two MVPs** | All of them | `product/MVP.md` is canonical. `docs/old/MVP.md` + `docs/old/USER_STORIES.md` use different IDs, different categories (STAY/SUPPLIER vs POI/CAMPSITE/BNB), put **claims** and **hike difficulty** and **visit photos / bulk check-off / drop-a-pin** in or next to MVP. Stamp `docs/old/` as history or the team will implement the wrong app. |
 | **Facilities set** | DIR-13, PLC-02, CUR-01 | DIR-13 names parking, toilets, dog-friendly, accessible. That is a hint, not a closed list. Write 8–12 keys as seed data. |
 | **Map provider + tiles** | MAP-*, CUR-02, NFR-04 | OSM/Leaflet vs Mapbox vs Google. Cost, ToS, clustering, screen-reader alternative, Ireland default bbox. Offline tiles are explicitly **out**. |
 | **Offline sync protocol** | CHK-08, DIR-11, NFR-02/03 | “Idempotent queue” is not a spec. Need: client ids, conflict rule (server wins vs last-write), retry, what “queued” looks like, cache invalidation for directory. |
@@ -74,7 +74,7 @@ These are not “nice to have in grooming”. Two engineers will ship two produc
 | **Legal copy** | NFR-05 | Privacy, terms, cookie categories, retention periods. Not drafted for this product. |
 | **Seed data for NFR-14** | All E2E | Anonymised places across 32 counties. No fixture exists. |
 | **Instrumentation** | MVP §7, ADM-07 | Event names for activation/depth/return/coverage. Thresholds explicitly **not** set. |
-| **UI** | DIR/MAP/PLC/ME | Constraints exist (one thumb, bottom bar). No wireframes for *this* product. `docs/Designs/` is the old campsite booking UI — do not reuse as IA. |
+| **UI** | DIR/MAP/PLC/ME | Constraints exist (one thumb, bottom bar). No wireframes for *this* product. `docs/old/Designs/` is the old campsite booking UI — do not reuse as IA. |
 | **a11y for maps** | NFR-04 | “Screen-reader map alternative” has no proposed UX (list fallback is the obvious one; write it). |
 | **County set** | ME-04, DIR-03 | “32 counties” includes NI. Confirm ROI vs Ireland+NI. Model as data. |
 | **Curator vs admin IA** | CUR-*, ADM-* | Same SPA with roles, or separate host? CTO says same SPA. Unsigned. |
@@ -114,7 +114,7 @@ Still **blocked on the business**, not assumable by DX:
 
 Not “build Explore”. Not “port the old API”.
 
-1. **Spec freeze leftovers.** Canonical = `product/`. History banners are on `docs/README.md` and `docs/MVP.md`. Close the facilities list, URL scheme, nearby rule, verification N, import columns.
+1. **Spec freeze leftovers.** Canonical = `product/`. History banners are on `docs/old/README.md` and `docs/old/MVP.md`. Close the facilities list, URL scheme, nearby rule, verification N, import columns.
 2. **Do not start the consumer skeleton until `PRD-*` is `implement`.** Shape is Spring Boot + Vite/React PWA + PostGIS per `STACK.md`. Not Next, not FastAPI, not Neon.
 3. **Stand up the skeleton (when that ticket is implement):** Dev Container, compose (API, web, Postgres+PostGIS, Grafana, Mailpit, MinIO), `AGENTS.md`, MCP pack (grafana + postgres-RO + GitHub), GitHub Actions with a trivial Playwright health test.
 4. **Implement Place + Curator CRUD + CSV import** against the frozen facility list, with 20 fake places in all four categories. That unblocks both content work and Explore.
@@ -128,10 +128,10 @@ Code can move in parallel with content. **Launch cannot.**
 
 | Question | Answer |
 |---|---|
-| Can they define features? | **Yes.** Slice `product/MVP.md` into epics DIR, MAP, PLC, CHK, ME, ACC, CUR, ADM, NFR. Ignore `docs/USER_STORIES.md` for Release 1. |
+| Can they define features? | **Yes.** Slice `product/MVP.md` into epics DIR, MAP, PLC, CHK, ME, ACC, CUR, ADM, NFR. Ignore `docs/old/USER_STORIES.md` for Release 1. |
 | Can they implement the platform / DX loop? | **Yes, immediately**, using CTO calls as defaults. |
-| Can they implement the product end-to-end without further product work? | **No.** They would be forced to invent facilities, map, sync, import, URLs, and UI — and they would collide with the second MVP in `docs/`. |
+| Can they implement the product end-to-end without further product work? | **No.** They would be forced to invent facilities, map, sync, import, URLs, and UI — and they would collide with the second MVP in `docs/old/`. |
 | Is the CTO review sufficient as an engineering spec? | **Sufficient for how we work.** Not sufficient as an API, schema, or UX spec. |
-| Biggest risk if they start tomorrow with no freeze | Building the `docs/USER_STORIES.md` marketplace-shaped directory (claims, suppliers, hike filters) instead of the 92-story checkable directory. |
+| Biggest risk if they start tomorrow with no freeze | Building the `docs/old/USER_STORIES.md` marketplace-shaped directory (claims, suppliers, hike filters) instead of the 92-story checkable directory. |
 
 Hire value: this team is correctly aimed at the skeleton and the agent loop, which `MVP.md` §8 week 0–2 already said was first. They are **not** unblocked to “implement the MVP” as a black box.

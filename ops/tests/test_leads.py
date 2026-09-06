@@ -8,8 +8,8 @@ REPO = Path(__file__).resolve().parents[2]
 LEADS = REPO / "data" / "leads"
 SCHEMA = json.loads((LEADS / "schema.json").read_text())
 JSONL = LEADS / "places.jsonl"
-STARTER = REPO / "docs" / "leads" / "CAMPSITE_LEADS.md"
-STARTER_PATH = "docs/leads/CAMPSITE_LEADS.md"
+STARTER = REPO / "docs" / "old" / "leads" / "CAMPSITE_LEADS.md"
+STARTER_PATH = "docs/old/leads/CAMPSITE_LEADS.md"
 
 
 def _check(instance, schema: dict, path: str = "$") -> None:

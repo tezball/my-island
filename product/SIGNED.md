@@ -54,7 +54,7 @@ Activation, depth, coverage, and unsolicited claims stay as drafted in
 
 | What | Rule |
 |---|---|
-| [`docs/`](../docs/) | Past company. Banner as history. **Do not implement.** |
+| [`docs/old/`](../docs/old/) | Past company. Banner as history. **Do not implement.** Fence: [`PRD-005`](../ops/tickets/PRD-005.md). |
 | Draft PRs [#2](https://github.com/tezball/my-island/pull/2), [#4](https://github.com/tezball/my-island/pull/4), [#5](https://github.com/tezball/my-island/pull/5) | Past-company. Closed by Orchestrator 2026-09-05 (`WF-008`). |
 | Git tag `legacy-platform` | Archaeology only. Restore from there; do not port the old domain into the working tree. |
 | Consumer app code | **None** until the ops base is in place and a ticket says so (`PRD-*`, status `implement`). |
