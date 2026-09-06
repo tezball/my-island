@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-008-rebase]] — rebase #47 onto `2d8617f` (#52); draft-only import gates
 - [[PRD-008-implement]] — Eng import draft Places; PR #47
 - [[WF-023-rebase]] — rebase #52 onto `ca90665` (#51); Product AC links
 - [[WF-023-implement]] — living markdown under docs/; PR #52

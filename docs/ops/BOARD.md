@@ -22,7 +22,6 @@ kanban-plugin: basic
 
 ## Planning
 
-- [ ] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 
 ## Doing
 
@@ -30,6 +29,7 @@ kanban-plugin: basic
 
 ## In review
 
+- [ ] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 - [ ] [[ops/tickets/WF-023|WF-023]] P0 Re-home living markdown under docs/ (Obsidian vault)
 
 ## Blocked
