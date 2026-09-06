@@ -237,7 +237,8 @@ def test_leads_pipeline_tickets_exist() -> None:
         assert by_id[ident]["status"] != "implement"
     assert by_id["PRD-007"]["status"] == "plan"
     assert "plans/PRD-007" in by_id["PRD-007"].get("plan", "")
-    assert by_id["PRD-008"]["status"] == "ready"
+    assert by_id["PRD-008"]["status"] == "plan"
+    assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
     assert by_id["PRD-009"]["status"] == "ready"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
@@ -246,6 +247,7 @@ def test_leads_pipeline_tickets_exist() -> None:
     assert "prd-001" in reason
     assert "prd-006" in reason or "schema.json" in reason
     assert (OPS / "plans" / "PRD-007.md").is_file()
+    assert (OPS / "plans" / "PRD-008.md").is_file()
 
 
 def test_leads_pipeline_tickets_cite_landed_schema() -> None:
@@ -302,6 +304,14 @@ def test_wave1_acceptance_note() -> None:
     assert "WAVE-1.md" in signed
     product_index = (REPO / "product" / "README.md").read_text()
     assert "WAVE-1.md" in product_index
+    plan008 = (OPS / "plans" / "PRD-008.md").read_text()
+    assert "WAVE-1.md" in plan008
+    assert "schema.json" in plan008
+    assert "CreatePlaceRequest" in plan008
+    assert "dedupe_key" in plan008
+    assert "published" in plan008
+    assert "PRD-009" in plan008
+    assert "country table" in plan008.lower() or "country enum" in plan008.lower()
 
 
 def test_e2e_001_place_stub_workshop() -> None:

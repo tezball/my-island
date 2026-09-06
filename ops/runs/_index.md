@@ -2,6 +2,7 @@
 
 Copy [[templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-008-plan]] — Eng import draft Places from data/leads
 - [[WF-018-rebase]] — rebase #37 onto main; docs-only stub field names
 - [[PRD-007-plan]] — Wave 1 vault acceptance; Research→leads plan
 - [[WF-021-implement]] — human `./scripts/app` start/stop/test; PR #35 merged
