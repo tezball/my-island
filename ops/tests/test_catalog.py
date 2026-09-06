@@ -51,8 +51,31 @@ def test_flyway_seeds_listing_types_and_ni() -> None:
     county = (CATALOG / "src/main/resources/db/migration/V4__county.sql").read_text()
     for ident in ("antrim", "armagh", "down", "fermanagh", "derry", "tyrone"):
         assert ident in county
-    migrations = list((CATALOG / "src/main/resources/db/migration").glob("V*.sql"))
-    assert not any(path.name.startswith("V6__") for path in migrations)
+    v6 = (CATALOG / "src/main/resources/db/migration/V6__place_provenance.sql").read_text()
+    for col in ("source_url", "source_name", "licence", "lead_dedupe_key"):
+        assert col in v6, col
+    assert "UNIQUE" in v6.upper()
+    assert "create table country" not in v6.lower()
+    assert "stripe" not in v6.lower()
+    assert "live_rate" not in v6.lower()
+    assert "availability" not in v6.lower()
+    migrations = {path.name for path in (CATALOG / "src/main/resources/db/migration").glob("V*.sql")}
+    assert "V6__place_provenance.sql" in migrations
+    assert not any(name.startswith("V7__") for name in migrations)
+
+
+def test_no_lead_java_dto_or_from_lead_endpoint() -> None:
+    blob = "\n".join(path.read_text() for path in JAVA.rglob("*.java"))
+    assert "from-lead" not in blob
+    assert "fromLead" not in blob
+    assert "class Lead " not in blob
+    assert "record Lead(" not in blob
+    importer = REPO / "ops" / "scripts" / "import_leads.py"
+    assert importer.is_file()
+    text = importer.read_text()
+    assert "urllib" in text
+    assert "published" in text
+    assert "leadDedupeKey" in text
 
 
 def test_chaos_monkey_is_off_on_default_compose() -> None:

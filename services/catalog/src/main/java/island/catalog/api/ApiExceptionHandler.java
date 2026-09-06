@@ -3,6 +3,7 @@ package island.catalog.api;
 import island.catalog.api.dto.ErrorBody;
 import island.catalog.place.BadRequestException;
 import island.catalog.place.DuplicateSlugException;
+import island.catalog.place.PlaceAlreadyPublishedException;
 import island.catalog.place.PlaceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,11 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(DuplicateSlugException.class)
   ResponseEntity<ErrorBody> conflict(DuplicateSlugException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorBody(ex.getMessage()));
+  }
+
+  @ExceptionHandler(PlaceAlreadyPublishedException.class)
+  ResponseEntity<ErrorBody> publishedConflict(PlaceAlreadyPublishedException ex) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorBody(ex.getMessage()));
   }
 

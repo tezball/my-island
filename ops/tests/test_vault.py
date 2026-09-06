@@ -261,15 +261,15 @@ def test_leads_pipeline_tickets_exist() -> None:
     for ident in ("PRD-007", "PRD-008", "PRD-009"):
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
-        assert by_id[ident]["status"] != "implement"
     assert by_id["PRD-007"]["status"] == "done"
     assert by_id["PRD-007"].get("pr", "") == "https://github.com/tezball/my-island/pull/45"
     assert "pull/40" not in by_id["PRD-007"].get("pr", "")
     assert not by_id["PRD-007"].get("blocked_reason")
     assert "plans/PRD-007" in by_id["PRD-007"].get("plan", "")
-    assert by_id["PRD-008"]["status"] == "plan"
+    assert by_id["PRD-008"]["status"] in {"implement", "review"}
     assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
     assert by_id["PRD-009"]["status"] == "ready"
+    assert by_id["PRD-009"]["status"] != "implement"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
     assert by_id["PRD-009"]["owner"] == "product"
@@ -648,8 +648,26 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     up_block = dev.split("cmd_up()")[1].split("cmd_down()")[0]
     assert "compose.chaos.yml" not in up_block
     assert "ensure_catalog_reader_grants" in up_block
-    migrations = list((REPO / "services" / "catalog" / "src" / "main" / "resources" / "db" / "migration").glob("V*.sql"))
-    assert not any(path.name.startswith("V6__") for path in migrations)
+    migrations = {
+        path.name
+        for path in (
+            REPO / "services" / "catalog" / "src" / "main" / "resources" / "db" / "migration"
+        ).glob("V*.sql")
+    }
+    assert "V6__place_provenance.sql" in migrations
+    v6 = (
+        REPO
+        / "services"
+        / "catalog"
+        / "src"
+        / "main"
+        / "resources"
+        / "db"
+        / "migration"
+        / "V6__place_provenance.sql"
+    ).read_text().lower()
+    assert "grant" not in v6
+    assert "ops_reader" not in v6
 
     mcp = json.loads((REPO / ".cursor" / "mcp.json").read_text())
     grafana = mcp["mcpServers"]["grafana"]
@@ -781,6 +799,8 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     home = (REPO / "docs" / "HOME.md").read_text()
     doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
     assert "WF-000" in doing
+    assert "PRD-008" in doing
+    assert "pull/47" in doing
     assert "Review is empty" not in doing
     assert "In review" not in doing
     assert "WF-016" not in doing
@@ -800,7 +820,7 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
     assert "WF-016" not in ready
     planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
-    assert "PRD-008" in planning
+    assert "PRD-008" not in planning
     assert "PRD-007" not in planning
     assert "| P0 | review | Repeatable place listing" not in home
     assert "| P1 | review | Simple local CLI" not in home

@@ -18,6 +18,10 @@ public record PlaceResponse(
     String priceBand,
     String website,
     String phone,
+    String sourceUrl,
+    String sourceName,
+    String licence,
+    String leadDedupeKey,
     List<String> facilities) {
 
   public record CategoryRef(String id, String label) {}

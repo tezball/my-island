@@ -45,15 +45,21 @@ public class PlaceJdbc {
       boolean published,
       String priceBand,
       String website,
-      String phone) {
+      String phone,
+      String sourceUrl,
+      String sourceName,
+      String licence,
+      String leadDedupeKey) {
     jdbc.sql(
             """
             insert into place (
               id, slug, name, description, category_id, county_id, town,
-              latitude, longitude, published, partner_id, price_band, website, phone
+              latitude, longitude, published, partner_id, price_band, website, phone,
+              source_url, source_name, licence, lead_dedupe_key
             ) values (
               :id, :slug, :name, :description, :categoryId, :countyId, :town,
-              :latitude, :longitude, :published, null, :priceBand, :website, :phone
+              :latitude, :longitude, :published, null, :priceBand, :website, :phone,
+              :sourceUrl, :sourceName, :licence, :leadDedupeKey
             )
             """)
         .param("id", id)
@@ -69,6 +75,62 @@ public class PlaceJdbc {
         .param("priceBand", priceBand)
         .param("website", website)
         .param("phone", phone)
+        .param("sourceUrl", sourceUrl)
+        .param("sourceName", sourceName)
+        .param("licence", licence)
+        .param("leadDedupeKey", leadDedupeKey)
+        .update();
+  }
+
+  public int updateUnpublishedByLeadKey(
+      String leadDedupeKey,
+      String name,
+      String description,
+      String categoryId,
+      String countyId,
+      String town,
+      Double latitude,
+      Double longitude,
+      String priceBand,
+      String website,
+      String phone,
+      String sourceUrl,
+      String sourceName,
+      String licence) {
+    return jdbc.sql(
+            """
+            update place set
+              name = :name,
+              description = :description,
+              category_id = :categoryId,
+              county_id = :countyId,
+              town = :town,
+              latitude = :latitude,
+              longitude = :longitude,
+              published = false,
+              price_band = :priceBand,
+              website = :website,
+              phone = :phone,
+              source_url = :sourceUrl,
+              source_name = :sourceName,
+              licence = :licence
+            where lead_dedupe_key = :leadDedupeKey
+              and published = false
+            """)
+        .param("leadDedupeKey", leadDedupeKey)
+        .param("name", name)
+        .param("description", description)
+        .param("categoryId", categoryId)
+        .param("countyId", countyId)
+        .param("town", town)
+        .param("latitude", latitude)
+        .param("longitude", longitude)
+        .param("priceBand", priceBand)
+        .param("website", website)
+        .param("phone", phone)
+        .param("sourceUrl", sourceUrl)
+        .param("sourceName", sourceName)
+        .param("licence", licence)
         .update();
   }
 
@@ -99,6 +161,14 @@ public class PlaceJdbc {
   public Optional<PlaceResponse> findBySlug(String slug) {
     return jdbc.sql(PLACE_SELECT + " where p.slug = :slug")
         .param("slug", slug)
+        .query(PlaceJdbc::mapPlace)
+        .optional()
+        .map(this::withFacilities);
+  }
+
+  public Optional<PlaceResponse> findByLeadDedupeKey(String leadDedupeKey) {
+    return jdbc.sql(PLACE_SELECT + " where p.lead_dedupe_key = :leadDedupeKey")
+        .param("leadDedupeKey", leadDedupeKey)
         .query(PlaceJdbc::mapPlace)
         .optional()
         .map(this::withFacilities);
@@ -193,6 +263,10 @@ public class PlaceJdbc {
         place.priceBand(),
         place.website(),
         place.phone(),
+        place.sourceUrl(),
+        place.sourceName(),
+        place.licence(),
+        place.leadDedupeKey(),
         List.copyOf(facilities));
   }
 
@@ -200,6 +274,7 @@ public class PlaceJdbc {
       """
       select p.id, p.slug, p.name, p.description, p.town, p.latitude, p.longitude,
              p.published, p.partner_id, p.price_band, p.website, p.phone,
+             p.source_url, p.source_name, p.licence, p.lead_dedupe_key,
              c.id as category_id, c.label as category_label,
              y.id as county_id, y.name as county_name
       from place p
@@ -225,6 +300,10 @@ public class PlaceJdbc {
         rs.getString("price_band"),
         rs.getString("website"),
         rs.getString("phone"),
+        rs.getString("source_url"),
+        rs.getString("source_name"),
+        rs.getString("licence"),
+        rs.getString("lead_dedupe_key"),
         List.of());
   }
 }
