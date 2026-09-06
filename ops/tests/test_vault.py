@@ -157,9 +157,9 @@ def test_agent_roles_do_not_prefer_next_or_fastapi() -> None:
     assert "Not FastAPI" in backend or "not a TypeScript API" in backend
 
 
-def test_prd_001_is_review_with_plan() -> None:
+def test_prd_001_is_done_with_plan() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
-    assert by_id["PRD-001"]["status"] == "review"
+    assert by_id["PRD-001"]["status"] == "done"
     assert "plans/PRD-001" in by_id["PRD-001"].get("plan", "")
     assert "github.com/tezball/my-island/pull/21" in by_id["PRD-001"].get("pr", "")
     plan = (OPS / "plans/PRD-001.md").read_text()

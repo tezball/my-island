@@ -34,7 +34,6 @@ kanban-plugin: basic
 
 ## Review
 
-- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [ ] [[tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 - [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
@@ -49,4 +48,5 @@ kanban-plugin: basic
 
 ## Done
 
+- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [ ] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
