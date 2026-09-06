@@ -28,6 +28,7 @@ There is **no consumer UI CI**. Playwright waits on [[tickets/WF-011]]. Do not k
 5. **One ticket’s diff.** Do not “while I’m here” rewrite workflows to support an app that will be replaced.
 6. **Pytest is the contract for the OS.** If you add a vault file the loop depends on, add it to `ops/tests/test_vault.py`.
 7. **Markers.** `stack` = needs compose. Default tests must not need it.
+8. **No chaos in required CI.** Do not set Spring profile `chaos`, compose `--profile chaos`, or `compose.chaos.yml` on `unit` / `catalog` / `stack`. Overlay is workshop-only ([[runbooks/STACK_E2E_PLACE_STUB]]).
 
 ## Branch and PR
 

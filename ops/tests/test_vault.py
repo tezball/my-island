@@ -37,6 +37,7 @@ REQUIRED_VAULT = [
     "agents/roles/ops-incidents.md",
     "runbooks/_index.md",
     "runbooks/ADD_SKILL.md",
+    "runbooks/STACK_E2E_PLACE_STUB.md",
     "runbooks/TICKET_LOOP.md",
     "runbooks/GUEST_SUPPORT.md",
     "runbooks/LISTING_ROLLOUT.md",
@@ -370,7 +371,7 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["E2E-001"]["status"] == "ready"
     assert by_id["WF-015"]["status"] == "done"
     assert "spine strip" in by_id["WF-015"]["title"].lower()
-    for ident in ("WF-016", "WF-017", "WF-018"):
+    for ident in ("WF-016", "WF-018"):
         assert ident in by_id, ident
         assert by_id[ident]["status"] == "ready"
         assert by_id[ident]["owner"] == "automation-expert"
@@ -379,6 +380,51 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
         body = (OPS / "tickets" / f"{ident}.md").read_text()
         assert "[[tickets/E2E-001]]" in body
         assert "[[workflow/STACK-E2E-place-stub]]" in body
+    wf017 = (OPS / "tickets" / "WF-017.md").read_text()
+    assert "[[tickets/E2E-001]]" in wf017
+    assert "[[workflow/STACK-E2E-place-stub]]" in wf017
+    assert "[[runbooks/STACK_E2E_PLACE_STUB]]" in wf017
+    assert by_id["WF-017"]["owner"] == "automation-expert"
+    assert by_id["WF-017"]["type"] == "workflow"
+    assert "tickets/E2E-001" in by_id["WF-017"].get("parent", "")
+    assert by_id["WF-017"]["status"] in {"implement", "review"}
+    assert "plans/WF-017" in by_id["WF-017"].get("plan", "")
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "compose.chaos.yml" not in ci
+    assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
+    assert "--profile chaos" not in ci
+
+
+def test_wf_017_stack_e2e_skill_and_runbook() -> None:
+    skill = REPO / ".cursor/skills/stack-e2e-place-stub/SKILL.md"
+    assert skill.is_file()
+    skill_text = skill.read_text()
+    desc = skill_text.split("---", 2)[1]
+    for needle in (
+        "E2E-001",
+        "STACK-E2E",
+        "chaos overlay",
+        "mcp-grafana catalog scrape",
+    ):
+        assert needle in desc, needle
+    assert "required CI" in skill_text.lower() or "required CI" in skill_text
+    assert "Spring profile" in skill_text or "Spring profile `chaos`" in skill_text
+    runbook = (OPS / "runbooks" / "STACK_E2E_PLACE_STUB.md").read_text()
+    assert "./scripts/dev up" in runbook
+    assert "docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait" in runbook
+    assert "POST" in runbook and "/api/v1/places" in runbook
+    assert "/actuator/health" in runbook
+    assert "/actuator/prometheus" in runbook
+    assert "127.0.0.1:9091/api/v1/query" in runbook
+    assert "up{job=\"catalog\"}" in runbook or 'up{job="catalog"}' in runbook
+    assert "api/ds/query" in runbook
+    assert "docker compose -f compose.yml up -d catalog" in runbook
+    assert "Required CI must not" in runbook or "required CI must not" in runbook.lower()
+    skills = (OPS / "workflow" / "SKILLS.md").read_text()
+    assert "[[runbooks/STACK_E2E_PLACE_STUB]]" in (OPS / "workflow" / "STACK-E2E-place-stub.md").read_text()
+    assert "stack-e2e-place-stub" in skills
+    index = (OPS / "runbooks" / "_index.md").read_text()
+    assert "STACK_E2E_PLACE_STUB" in index
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "compose.chaos.yml" not in ci
     assert "SPRING_PROFILES_ACTIVE: chaos" not in ci

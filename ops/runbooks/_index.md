@@ -11,6 +11,7 @@ Reusable procedures. Workflow *policy* stays in [[workflow/_index]]. These are t
 |---|---|
 | [[TICKET_LOOP]] | Any ticket: intake → implement → PR → verify → close |
 | [[ADD_SKILL]] | New Cursor skill, hook, or routine |
+| [[STACK_E2E_PLACE_STUB]] | Place-stub STACK-E2E drill: happy-path compose, HTTP, MCP-or-HTTP observe, chaos overlay |
 | [[WEEKLY_DIGEST]] | Company health, typically Monday |
 | [[GUEST_SUPPORT]] | Inbound guest/explorer message |
 | [[LISTING_ROLLOUT]] | New listing type or region |

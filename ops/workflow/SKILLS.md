@@ -15,6 +15,8 @@ How agents learn the loop without a wiki outside git. Owner: [[agents/roles/auto
 |---|---|---|---|
 | Skill | Ops loop | `.cursor/skills/ops-loop/SKILL.md` | Any ticket / plan / PR / review |
 | Skill | Automation | `.cursor/skills/automation/SKILL.md` | CI, skills, hooks, Automations, DX |
+| Skill | Place-stub STACK-E2E | `.cursor/skills/stack-e2e-place-stub/SKILL.md` | E2E-001 / STACK-E2E / chaos overlay / mcp-grafana catalog scrape |
+| Routine | Place-stub STACK-E2E drill | [[runbooks/STACK_E2E_PLACE_STUB]] | E2E workshop: HTTP + observe + opt-in overlay; chaos **out** of required CI |
 | Rule | Ops loop (always) | `.cursor/rules/ops-loop.mdc` | Every session |
 | Rule | Vault notes | `.cursor/rules/obsidian-ops.mdc` | `ops/**/*.md` |
 | Hook | Session start | `.cursor/hooks/session-ops.py` | New agent session → read HOME/BOARD |

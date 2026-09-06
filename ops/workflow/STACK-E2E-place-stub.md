@@ -67,7 +67,7 @@ After local/compose up:
 2. Optional: Postgres-RO MCP (`SELECT` only). `.cursor/mcp.json` targets db `ops`; catalog rows need grants (see [[tickets/WF-016]]).
 3. Optional: `mcp-grafana` PromQL against the catalog `/actuator/prometheus` scrape. Laptop Cursor loads stdio MCP; Cloud Agent toolbox today does **not** — HTTP Grafana/Prometheus is the fallback until [[tickets/WF-016]] / [[tickets/WF-004]].
 
-Drill procedure: [[tickets/WF-017]].
+Drill procedure: [[runbooks/STACK_E2E_PLACE_STUB]] (skill `.cursor/skills/stack-e2e-place-stub/SKILL.md`; ticket [[tickets/WF-017]]).
 
 ## 8. Definition of done
 
