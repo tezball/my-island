@@ -13,13 +13,13 @@ Hat: [[agents/roles/eng-backend]]. Rebase PR #31 onto latest `main` after hotfix
 
 ## What happened
 
-`cursor/sim-place-listing-0d9f` was based on `be8562e` (vault under `docs/ops/`, `ops` symlink). That conflicted with #33 (`3193973`) and #32 (`b1aebb7`).
+`cursor/sim-place-listing-0d9f` was based on `be8562e` (pre-hotfix layout). That conflicted with #33 (`3193973`) and #32 (`b1aebb7`).
 
-Replayed WF-019 onto repo-root `ops/`:
+Replayed WF-019 onto repo-root `ops/` (ticket, plan, board, harness). Did not leave live notes under the old docs-folder tree:
 
 - Kept `./scripts/sim-place-listing.sh` → `ops/scripts/sim_place_listing.py`
 - Stub fields stay `categoryId` / `countyId` / `latitude` / `longitude`
-- Dropped `ops` → `docs/ops` symlink and Dockerfile `docs/ops` COPY
+- No `ops` symlink; Dockerfile still `COPY ops/tests/requirements.txt`
 - WF-016 remains Automation mcp-grafana (ready). WF-020 stays the CI hotfix ticket.
 
 ## Result

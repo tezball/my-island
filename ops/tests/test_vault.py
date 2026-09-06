@@ -365,6 +365,16 @@ def test_wf_019_place_listing_sim() -> None:
     assert meta["priority"] == "P0"
     assert "tickets/E2E-001" in meta.get("parent", "")
     ticket = (OPS / "tickets" / "WF-019.md").read_text()
+    plan = (OPS / "plans" / "WF-019.md").read_text()
+    board = (OPS / "BOARD.md").read_text()
+    for rel, text in (
+        ("tickets/WF-019.md", ticket),
+        ("plans/WF-019.md", plan),
+        ("BOARD.md", board),
+    ):
+        assert "docs/ops" not in text, rel
+    assert (OPS / "tickets" / "WF-019.md").is_file()
+    assert not (REPO / "docs" / "ops" / "tickets" / "WF-019.md").exists()
     assert "./scripts/sim-place-listing.sh" in ticket
     assert "categoryId" in ticket
     assert "countyId" in ticket
