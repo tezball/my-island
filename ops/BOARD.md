@@ -57,3 +57,4 @@ kanban-plugin: basic
 - [x] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [x] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
 - [x] [[tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
+- [x] [[tickets/WF-022|WF-022]] P1 Root HOME.md company dashboard

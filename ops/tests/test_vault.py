@@ -701,3 +701,25 @@ def test_product_milestones_freeze() -> None:
     assert "## In review" in board
     assert "## Planning" in board
     assert "## Inbox" not in board
+
+
+def test_wf_022_home_dashboard_retrospective() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-022" in by_id
+    meta = by_id["WF-022"]
+    assert meta["status"] == "done"
+    assert "pull/39" in meta.get("pr", "")
+    assert meta["type"] == "workflow"
+    board = (OPS / "BOARD.md").read_text()
+    assert "- [x] [[tickets/WF-022|WF-022]]" in board
+    home = (REPO / "HOME.md").read_text()
+    doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
+    assert "WF-017" in doing
+    assert "WF-019" not in doing
+    assert "WF-021" not in doing
+    assert "| P0 | review | Repeatable place listing" not in home
+    assert "| P1 | review | Simple local CLI" not in home
+    assert "Public product name is **OPEN**" in home
+    ticket = (OPS / "tickets" / "WF-022.md").read_text()
+    assert "retrospective" in ticket.lower()
+    assert not (OPS / "plans" / "WF-022.md").exists()
