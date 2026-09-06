@@ -226,6 +226,7 @@ def test_merged_pr_tickets_are_done() -> None:
         "WF-017": "https://github.com/tezball/my-island/pull/36",
         "WF-018": "https://github.com/tezball/my-island/pull/37",
         "WF-022": "https://github.com/tezball/my-island/pull/39",
+        "PRD-007": "https://github.com/tezball/my-island/pull/45",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
@@ -238,7 +239,10 @@ def test_leads_pipeline_tickets_exist() -> None:
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
         assert by_id[ident]["status"] != "implement"
-    assert by_id["PRD-007"]["status"] == "plan"
+    assert by_id["PRD-007"]["status"] == "done"
+    assert by_id["PRD-007"].get("pr", "") == "https://github.com/tezball/my-island/pull/45"
+    assert "pull/40" not in by_id["PRD-007"].get("pr", "")
+    assert not by_id["PRD-007"].get("blocked_reason")
     assert "plans/PRD-007" in by_id["PRD-007"].get("plan", "")
     assert by_id["PRD-008"]["status"] == "plan"
     assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
@@ -276,6 +280,10 @@ def test_leads_pipeline_tickets_cite_landed_schema() -> None:
     assert "32-county" in prd007
     assert "WAVE-1.md" in prd007
     assert "WAVE-1.md" in prd008
+    assert "114 campsite leads" in prd007
+    assert "status=lead" in prd007
+    assert "pull/45" in prd007
+    assert "pull/40" not in prd007
     assert "does **not** waive counsel" in prd009 or "does **not** waive counsel for publish" in prd009
     assert "draft" in prd008.lower()
     assert "categoryId" in prd008
@@ -731,6 +739,12 @@ def test_wf_022_home_dashboard_retrospective() -> None:
     assert "WF-018" in home
     assert "pull/36" in home
     assert "pull/37" in home
+    assert "pull/45" in home
+    landed = home.split("Landed", 1)[1].split("Ready / Up next", 1)[0]
+    assert "PRD-007" in landed
+    planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
+    assert "PRD-008" in planning
+    assert "PRD-007" not in planning
     assert "| P0 | review | Repeatable place listing" not in home
     assert "| P1 | review | Simple local CLI" not in home
     assert "Public product name is **OPEN**" in home

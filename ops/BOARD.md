@@ -22,7 +22,6 @@ kanban-plugin: basic
 
 ## Planning
 
-- [ ] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [ ] [[tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 
 ## Doing
@@ -44,6 +43,7 @@ kanban-plugin: basic
 
 - [x] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [x] [[tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
+- [x] [[tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [x] [[tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [x] [[tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
 - [x] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test

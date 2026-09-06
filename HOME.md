@@ -20,7 +20,7 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 > Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). Review is empty.
 
 > [!success] Landed
-> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)) — all `done`.
+> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)), [`PRD-007`](ops/tickets/PRD-007.md) Wave 1 leads ([#45](https://github.com/tezball/my-island/pull/45)) — all `done`.
 
 > [!info] Ready / Up next
 > From [[ops/BOARD]] `ready`. `PRD-000` is an epic — children do the work.
@@ -31,13 +31,12 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 | [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] | P0 | Ireland directory MVP (epic) |
 | [`PRD-002`](ops/tickets/PRD-002.md) · [[ops/tickets/PRD-002]] | P0 | Curator seed content pipeline |
 | [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA |
-| [`PRD-008`](ops/tickets/PRD-008.md) · [[ops/tickets/PRD-008]] | P0 | Curator promote-from-lead in admin |
 | [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 | [`WF-016`](ops/tickets/WF-016.md) · [[ops/tickets/WF-016]] | P1 | Cloud Agent mcp-grafana + Postgres-RO vs local compose |
 
 > [!info] Planning
-> [`PRD-007`](ops/tickets/PRD-007.md) · [[ops/tickets/PRD-007]] Research→leads pipeline acceptance (`status: plan`, [#40](https://github.com/tezball/my-island/pull/40)).
+> [`PRD-008`](ops/tickets/PRD-008.md) · [[ops/tickets/PRD-008]] Curator promote-from-lead in admin (`status: plan`, [#43](https://github.com/tezball/my-island/pull/43)).
 
 > [!success] Workshop — E2E place-listing stub
 > Field source of truth on the running stub: `categoryId` / `countyId` / `latitude` / `longitude` (not `categorySlug` / `countySlug` / `lon`+`lat`).
