@@ -12,4 +12,6 @@ Research may collect **leads** from public aggregator and open lists. This is no
 
 Starter archaeology (already migrated): [`docs/leads/CAMPSITE_LEADS.md`](../../docs/leads/CAMPSITE_LEADS.md).
 
+Wave 1 landed 2026-09-06 from [Camping Ireland](https://www.campingireland.ie/parks/) (county and park pages) plus the Fáilte Ireland Q3 2026 registered caravan & camping list linked from [accommodation registers](https://www.failteireland.ie/en/quality-assured-accommodation/accommodation-registers). `places.jsonl` is 114 campsite leads: 29 starter rows kept, 20 of those enriched, 85 new. Facts and provenance only — not a scrape how-to and not a publish licence.
+
 Do not add a source that requires login, paywall bypass, or CAPTCHA solving. Record the public URL and stop.
