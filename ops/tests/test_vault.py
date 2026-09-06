@@ -459,7 +459,7 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "tickets/E2E-001" in by_id["WF-016"].get("parent", "")
     assert by_id["WF-016"]["status"] == "review"
     assert "plans/WF-016" in by_id["WF-016"].get("plan", "")
-    assert by_id["WF-016"].get("pr", "") == "https://github.com/tezball/my-island/pull/46"
+    assert by_id["WF-016"].get("pr", "") == "https://github.com/tezball/my-island/pull/48"
     assert by_id["WF-017"]["status"] == "done"
     assert by_id["WF-017"].get("pr", "") == "https://github.com/tezball/my-island/pull/36"
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
@@ -581,7 +581,7 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     meta = by_id["WF-016"]
     assert meta["status"] == "review"
-    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/46"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/48"
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
     assert "plans/WF-016" in meta.get("plan", "")
