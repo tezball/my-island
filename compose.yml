@@ -17,6 +17,7 @@ services:
       - ops_pg:/var/lib/postgresql/data
       - ./ops/observability/postgres-init-catalog.sql:/docker-entrypoint-initdb.d/00-catalog.sql:ro
       - ./ops/observability/postgres-init.sql:/docker-entrypoint-initdb.d/01-reader.sql:ro
+      - ./ops/observability/postgres-grant-catalog-reader.sql:/docker-entrypoint-initdb.d/02-catalog-reader.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ops -d ops"]
       interval: 5s
