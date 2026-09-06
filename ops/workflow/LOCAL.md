@@ -44,10 +44,10 @@ cd my-island
 | Prometheus | http://localhost:9091 |
 | Loki | http://localhost:3101 |
 | Alertmanager | http://localhost:9094 |
-| Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (`postgres` MCP) and db `catalog` (`postgres-catalog` MCP, SELECT on `place`). Catalog Flyway DDL still uses user `ops` / `ops` |
+| Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (MCP). Catalog Flyway owns db `catalog` (user `ops` / `ops`). Catalog `place` SELECT for `ops_reader` is Engineering (TODO on [[tickets/WF-016]]) |
 | Catalog API | http://localhost:8081 (create / list / get places) |
 
-Cursor project MCP (`.cursor/mcp.json`) points at Grafana plus Postgres `ops` and `catalog`. After compose is up, reload MCP. Cloud Agents: see [[MCP]] — laptop mcp.json does not follow; use dashboard **stdio** or HTTP PromQL.
+Cursor project MCP (`.cursor/mcp.json`) points at Grafana and Postgres db `ops`. After compose is up, reload MCP. Cloud Agents: see [[MCP]] — laptop mcp.json does not follow; use dashboard **stdio** or HTTP PromQL.
 
 ### Catalog stub (create → list → get)
 
@@ -92,7 +92,7 @@ Open the repo in Cursor or VS Code and **Reopen in Container**. `.devcontainer/d
 
 `.cursor/environment.json` + `.cursor/Dockerfile` install Docker-in-Docker. The `start` command runs `sudo service docker start` then `./scripts/dev up` for the same stack (including catalog). See `AGENTS.md` (Cursor Cloud specific instructions).
 
-HTTP to Grafana `:3030`, Prometheus `:9091`, Postgres `:5433`, and catalog `:8081` works from the VM. **MCP toolbox** (`grafana`, `postgres`, `postgres-catalog`) does **not** load from `.cursor/mcp.json`. A human adds matching **stdio** servers on cursor.com (MCP dropdown / team Integrations) so they run in the VM against loopback. HTTP MCP must not target `127.0.0.1` (proxied off-VM). Until attach exists, use the PromQL HTTP fallback on [[runbooks/STACK_E2E_PLACE_STUB]]. Full policy: [[MCP]].
+HTTP to Grafana `:3030`, Prometheus `:9091`, Postgres `:5433`, and catalog `:8081` works from the VM. **MCP toolbox** (`grafana`, `postgres`) does **not** load from `.cursor/mcp.json`. A human adds matching **stdio** servers on cursor.com (MCP dropdown / team Integrations) so they run in the VM against loopback. HTTP MCP must not target `127.0.0.1` (proxied off-VM). Until attach exists, use the PromQL HTTP fallback on [[runbooks/STACK_E2E_PLACE_STUB]]. Full policy: [[MCP]].
 
 ## Once (laptop MCP extras)
 

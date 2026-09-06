@@ -13,26 +13,22 @@ Hat: [[agents/roles/automation-expert]] implementer. Did not merge. Did not expa
 
 ## What happened
 
-Sole implementer for grants **and** Cloud Agent MCP docs (prior docs-only / split instructions cancelled).
+Scope split: this PR is **docs / Cloud Agent MCP attach** only. Catalog SELECT grants are Engineering on a separate agent. Grants SQL drafted earlier was **dropped**.
 
-- Plan [[plans/WF-016]] (`approved`).
-- `ops_reader` SELECT-only on db `catalog` via `ops/observability/postgres-grant-catalog-reader.sql` (compose init `02` + `./scripts/dev up`). Not Flyway.
-- `.cursor/mcp.json` adds `postgres-catalog` → db `catalog`. Grafana `--disable-write`.
+- Plan [[plans/WF-016]] (`approved`) — grants out of scope.
 - [[workflow/MCP]] documents dashboard **stdio** attach (cursor.com MCP dropdown / team Integrations). `.cursor/environment.json` cannot register MCP. HTTP PromQL is the equivalent until a human attaches stdio. Same in [[workflow/LOCAL]], [[workflow/STACK-E2E-place-stub]], `AGENTS.md`, [[runbooks/STACK_E2E_PLACE_STUB]].
+- **TODO Engineering grants:** no PR yet. Pointer on the ticket and in MCP.md.
 
 This Cloud Agent toolbox still has no `grafana` / `postgres` namespaces (GitHub, Gmail, Calendar, Drive, cursor-cloud). Repo cannot attach them.
 
-Cloud VM prove (compose already up; grants applied via SQL then `./scripts/dev up`):
-
-- PromQL HTTP `up{job="catalog"}` → **1** (`127.0.0.1:9091/api/v1/query`). Grafana `/api/ds/query` status 200, value 1.
-- `ops_reader` `SELECT` on `catalog.place` returned slug `skellig-michael`. `INSERT`/`UPDATE`/`DELETE` → permission denied. `mcp_ping` on db `ops` still works.
-- `python3 -m pytest ops/tests -q -m "not stack"` → 63 passed.
+Cloud VM: PromQL HTTP `up{job="catalog"}` → **1**. Catalog `place` SELECT is not claimed here.
 
 ## Result
 
-success — PR #46. Ticket `review`. Human may merge.
+success — PR #46 (docs/MCP attach). Ticket `review`. Human may merge this slice. Grants wait on Engineering.
 
 ## Follow-up
 
 - Reviewer comments only; do not merge
-- Human: add stdio `grafana` / `postgres` / `postgres-catalog` on cursor.com if Cloud Agents should get MCP tools, not only HTTP
+- Human: add stdio `grafana` / `postgres` on cursor.com if Cloud Agents should get MCP tools, not only HTTP
+- Engineering: catalog `ops_reader` SELECT grants PR — cross-link on [[tickets/WF-016]]

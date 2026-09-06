@@ -45,9 +45,9 @@ Expect: create **201**, list/get **200**, health **200** (`UP`, PostGIS), promet
 
 ## 3. Observe (MCP or HTTP)
 
-Prefer `mcp-grafana` PromQL `up{job="catalog"}` → **1** while catalog is healthy. `--disable-write`. Postgres MCP: `SELECT` only. `postgres` → db `ops` (`mcp_ping`). `postgres-catalog` → db `catalog` (`place`). Grants are compose SQL + `./scripts/dev up` ([[tickets/WF-016]], [[workflow/MCP]]).
+Prefer `mcp-grafana` PromQL `up{job="catalog"}` → **1** while catalog is healthy. `--disable-write`. Postgres MCP: `SELECT` only on db `ops` (`mcp_ping`). Catalog `place` SELECT waits on **Engineering grants** (TODO on [[tickets/WF-016]] / [[workflow/MCP]]).
 
-If those MCP tools are **missing** (Cloud Agent until a human adds dashboard **stdio** matching `.cursor/mcp.json`), HTTP:
+If grafana/postgres MCP tools are **missing** (Cloud Agent until a human adds dashboard **stdio** matching `.cursor/mcp.json`), HTTP:
 
 ```bash
 curl -sS -G 'http://127.0.0.1:9091/api/v1/query' --data-urlencode 'query=up{job="catalog"}'
@@ -57,8 +57,6 @@ curl -sS -u admin:admin -H 'content-type: application/json' \
   -d '{"queries":[{"refId":"A","datasource":{"type":"prometheus","uid":"prometheus"},"expr":"up{job=\"catalog\"}","instant":true}],"from":"now-5m","to":"now"}' \
   http://127.0.0.1:3030/api/ds/query
 # expect results.A.status 200; local Grafana is admin/admin ([[workflow/LOCAL]])
-
-PGPASSWORD=ops_reader psql -h 127.0.0.1 -p 5433 -U ops_reader -d catalog -c 'SELECT id, slug, name FROM place LIMIT 20'
 ```
 
 Missing MCP is **not** a failed drill. Use HTTP. Do not put tokens in notes. Do not register HTTP MCP against `127.0.0.1` for Cloud Agents (Cursor proxies HTTP off-VM).

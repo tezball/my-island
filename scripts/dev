@@ -65,7 +65,6 @@ cmd_up() {
     echo "  docker compose down -v && ./scripts/dev up" >&2
     return 1
   fi
-  ensure_catalog_reader_grants
   cmd_wait
 }
 
@@ -77,13 +76,6 @@ ensure_catalog_db() {
     echo "creating database catalog"
     "${COMPOSE[@]}" exec -T postgres psql -U ops -d ops -c "CREATE DATABASE catalog"
   fi
-}
-
-ensure_catalog_reader_grants() {
-  echo "granting SELECT on catalog to ops_reader"
-  "${COMPOSE[@]}" exec -T postgres \
-    psql -U ops -d ops -v ON_ERROR_STOP=1 \
-    -f /docker-entrypoint-initdb.d/02-catalog-reader.sql
 }
 
 cmd_down() {

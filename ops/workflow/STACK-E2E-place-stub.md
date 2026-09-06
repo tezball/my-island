@@ -63,8 +63,13 @@ Catalog module tests on PR (happy-path create/list/get + actuators). **Never** e
 
 After local/compose up:
 
+<<<<<<< HEAD
 1. HTTP against catalog (`POST`/`GET` places, actuators). Repeatable: `./scripts/sim-place-listing.sh` ([[runbooks/PLACE_LISTING_SIM]], [[tickets/WF-019]]). Cloud Agents can curl `127.0.0.1:8081` when compose is up. Stub JSON uses `categoryId`/`countyId`/`latitude`/`longitude` (same names as [[tickets/E2E-001]]).
 2. Optional: Postgres-RO MCP (`SELECT` only). `.cursor/mcp.json` has `postgres` → db `ops` and `postgres-catalog` → db `catalog` (`ops_reader`). Grants: `ops/observability/postgres-grant-catalog-reader.sql` via compose init + `./scripts/dev up`.
+=======
+1. HTTP against catalog (`POST`/`GET` places, actuators). Repeatable: `./scripts/sim-place-listing.sh` ([[runbooks/PLACE_LISTING_SIM]], [[tickets/WF-019]]). Cloud Agents can curl `127.0.0.1:8081` when compose is up. Stub JSON uses `categoryId`/`countyId`/`latitude`/`longitude` ([[tickets/WF-018]]).
+2. Optional: Postgres-RO MCP (`SELECT` only). `.cursor/mcp.json` targets db `ops`. Catalog `place` SELECT for `ops_reader` is **TODO Engineering** (grants + optional second DSN) — see [[tickets/WF-016]] / [[workflow/MCP]].
+>>>>>>> 848d2eb (WF-016: Drop catalog grants from this PR; keep MCP attach docs)
 3. Optional: `mcp-grafana` PromQL against the catalog `/actuator/prometheus` scrape. Laptop Cursor loads `.cursor/mcp.json` stdio. Cloud Agents must have matching **stdio** servers on cursor.com (they do not inherit mcp.json; `environment.json` cannot attach MCP). Until then, HTTP Grafana/Prometheus is the fallback ([[runbooks/STACK_E2E_PLACE_STUB]], [[workflow/MCP]]). Staging/prod remote MCP stays [[tickets/WF-004]] / [[tickets/WF-010]].
 
 Drill procedure: [[runbooks/STACK_E2E_PLACE_STUB]] (skill `.cursor/skills/stack-e2e-place-stub/SKILL.md`; ticket [[tickets/WF-017]]).
