@@ -19,7 +19,6 @@ kanban-plugin: basic
 - [ ] [[tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
 - [ ] [[tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
 - [ ] [[tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
-- [ ] [[tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
 
 ## Planning
 
@@ -29,6 +28,7 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose
 
 ## In review
 

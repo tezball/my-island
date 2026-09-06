@@ -30,8 +30,11 @@ Local MCP: `./scripts/dev up` then reload MCP. Details: `ops/workflow/LOCAL.md`.
 `.cursor/environment.json` builds a VM with Docker-in-Docker. `start` runs `./scripts/dev up` (PostGIS, Grafana stack, catalog API). After boot:
 
 - Grafana: http://127.0.0.1:3030 (`admin` / `admin`)
-- Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`
+- Prometheus: http://127.0.0.1:9091 (PromQL fallback: `up{job="catalog"}`)
+- Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops` (`mcp_ping`) and db `catalog` (`place`, SELECT only)
 - Catalog: http://127.0.0.1:8081
 - Tests: `./scripts/dev test` (ops pytest) and `services/catalog/mvnw test`
+
+**MCP:** laptop `.cursor/mcp.json` (grafana `--disable-write`, `postgres`, `postgres-catalog`) does **not** attach to Cloud Agent runs. `environment.json` cannot register MCP. A human adds the same servers as **stdio** on cursor.com/agents (MCP dropdown) or Dashboard → Integrations & MCP so they run in this VM against loopback. Do not use HTTP MCP pointed at `127.0.0.1` (proxied off-VM). Until then, curl Prometheus/Grafana and `psql` as `ops_reader` — `ops/workflow/MCP.md` and `ops/runbooks/STACK_E2E_PLACE_STUB.md`.
 
 Do not merge PRs. Do not deploy production.

@@ -17,6 +17,14 @@
         "postgresql://ops_reader:ops_reader@127.0.0.1:5433/ops"
       ]
     },
+    "postgres-catalog": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://ops_reader:ops_reader@127.0.0.1:5433/catalog"
+      ]
+    },
     "github": {
       "command": "docker",
       "args": [

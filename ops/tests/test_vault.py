@@ -434,16 +434,19 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["E2E-001"]["status"] == "ready"
     assert by_id["WF-015"]["status"] == "done"
     assert "spine strip" in by_id["WF-015"]["title"].lower()
-    for ident in ("WF-016", "WF-018"):
-        assert ident in by_id, ident
-        assert by_id[ident]["owner"] == "automation-expert"
-        assert by_id[ident]["type"] == "workflow"
-        assert "tickets/E2E-001" in by_id[ident].get("parent", "")
-        body = (OPS / "tickets" / f"{ident}.md").read_text()
-        assert "[[tickets/E2E-001]]" in body
-        assert "[[workflow/STACK-E2E-place-stub]]" in body
-    assert by_id["WF-016"]["status"] == "ready"
+    assert "WF-018" in by_id
     assert by_id["WF-018"]["status"] == "review"
+    assert by_id["WF-018"]["owner"] == "automation-expert"
+    assert by_id["WF-018"]["type"] == "workflow"
+    assert "tickets/E2E-001" in by_id["WF-018"].get("parent", "")
+    wf018 = (OPS / "tickets" / "WF-018.md").read_text()
+    assert "[[tickets/E2E-001]]" in wf018
+    assert "[[workflow/STACK-E2E-place-stub]]" in wf018
+    assert by_id["WF-016"]["owner"] == "automation-expert"
+    assert by_id["WF-016"]["type"] == "workflow"
+    assert "tickets/E2E-001" in by_id["WF-016"].get("parent", "")
+    assert by_id["WF-016"]["status"] in {"implement", "review"}
+    assert "plans/WF-016" in by_id["WF-016"].get("plan", "")
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
     assert "[[tickets/E2E-001]]" in wf017
     assert "[[workflow/STACK-E2E-place-stub]]" in wf017
@@ -554,7 +557,88 @@ def test_wf_019_place_listing_sim() -> None:
     local = (OPS / "workflow" / "LOCAL.md").read_text()
     assert "sim-place-listing.sh" in local
     assert (OPS / "plans" / "WF-019.md").is_file()
-    assert not (OPS / "plans" / "WF-016.md").exists()
+    assert (OPS / "plans" / "WF-016.md").is_file()
+
+
+def test_wf_016_cloud_mcp_and_catalog_grants() -> None:
+    """WF-016: catalog SELECT grants + Cloud Agent MCP attach docs (HTTP fallback)."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    meta = by_id["WF-016"]
+    assert meta["status"] in {"implement", "review"}
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert "plans/WF-016" in meta.get("plan", "")
+    plan = (OPS / "plans" / "WF-016.md").read_text()
+    assert "status: approved" in plan
+    assert "postgres-catalog" in plan
+    assert "SELECT" in plan
+    assert "Flyway `V6`" in plan or "Not Flyway" in plan or "not Flyway" in plan.lower()
+
+    grant = (OPS / "observability" / "postgres-grant-catalog-reader.sql").read_text()
+    assert "GRANT CONNECT ON DATABASE catalog TO ops_reader" in grant
+    assert "GRANT USAGE ON SCHEMA public TO ops_reader" in grant
+    assert "GRANT SELECT ON ALL TABLES IN SCHEMA public TO ops_reader" in grant
+    assert "REVOKE INSERT, UPDATE, DELETE, TRUNCATE" in grant
+    assert "ALTER DEFAULT PRIVILEGES FOR ROLE ops" in grant
+    assert "INSERT ON" not in grant.split("REVOKE")[0]
+
+    compose = (REPO / "compose.yml").read_text()
+    assert "postgres-grant-catalog-reader.sql" in compose
+    assert "02-catalog-reader.sql" in compose
+    dev = (REPO / "scripts" / "dev").read_text()
+    assert "ensure_catalog_reader_grants" in dev
+    up_block = dev.split("cmd_up()")[1].split("cmd_down()")[0]
+    assert "compose.chaos.yml" not in up_block
+    assert "ensure_catalog_reader_grants" in up_block
+    migrations = list((REPO / "services" / "catalog" / "src" / "main" / "resources" / "db" / "migration").glob("V*.sql"))
+    assert not any(path.name.startswith("V6__") for path in migrations)
+
+    mcp = json.loads((REPO / ".cursor" / "mcp.json").read_text())
+    grafana = mcp["mcpServers"]["grafana"]
+    assert "--disable-write" in grafana["args"]
+    assert grafana["env"]["GRAFANA_URL"] == "http://127.0.0.1:3030"
+    postgres_args = " ".join(mcp["mcpServers"]["postgres"]["args"])
+    assert "ops_reader" in postgres_args
+    assert "/ops" in postgres_args
+    catalog_args = " ".join(mcp["mcpServers"]["postgres-catalog"]["args"])
+    assert "ops_reader" in catalog_args
+    assert "/catalog" in catalog_args
+    assert ":5433" in catalog_args
+    for name in mcp["mcpServers"]:
+        blob = json.dumps(mcp["mcpServers"][name])
+        assert "ops:ops@" not in blob
+
+    env = json.loads((REPO / ".cursor" / "environment.json").read_text())
+    assert "mcpServers" not in env
+
+    mcp_md = (OPS / "workflow" / "MCP.md").read_text()
+    assert "postgres-catalog" in mcp_md
+    assert "stdio" in mcp_md.lower()
+    assert "cursor.com/agents" in mcp_md
+    assert "Integrations" in mcp_md
+    assert "environment.json" in mcp_md
+    assert "does **not** follow" in mcp_md or "does not follow" in mcp_md
+    assert "127.0.0.1:9091/api/v1/query" in mcp_md
+    assert "WF-004" in mcp_md
+    local = (OPS / "workflow" / "LOCAL.md").read_text()
+    assert "postgres-catalog" in local
+    assert "stdio" in local.lower()
+    stack = (OPS / "workflow" / "STACK-E2E-place-stub.md").read_text()
+    assert "postgres-catalog" in stack
+    assert "stdio" in stack.lower()
+    runbook = (OPS / "runbooks" / "STACK_E2E_PLACE_STUB.md").read_text()
+    assert "postgres-catalog" in runbook
+    assert "PGPASSWORD=ops_reader" in runbook
+    agents = (REPO / "AGENTS.md").read_text()
+    assert "postgres-catalog" in agents
+    assert "stdio" in agents.lower()
+    assert "does **not** attach" in agents or "does not attach" in agents
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "compose.chaos.yml" not in ci
+    assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
+    assert "--profile chaos" not in ci
+    assert by_id["WF-004"]["status"] == "blocked"
+    assert by_id["WF-010"]["status"] == "blocked"
 
 
 def test_wf_021_human_cli_ticket() -> None:

@@ -33,4 +33,4 @@ Handoff: `ops/workflow/STACK-E2E-place-stub.md`. Workshop: [[tickets/E2E-001]]. 
 
 JSON create body uses the **stub contract**: `categoryId` / `countyId` / `latitude` / `longitude` (WF-018 decision: stub wins). Do not invent `categorySlug` / `countySlug` / `lon` / `lat`.
 
-Cloud Agents often have **no** grafana MCP today — use the runbook HTTP fallback ([[tickets/WF-016]]).
+Cloud Agents often have **no** grafana MCP until a human adds dashboard stdio ([[workflow/MCP]]) — use the runbook HTTP fallback.
