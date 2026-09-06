@@ -870,3 +870,36 @@ def test_prd_008_and_wf_023_closed() -> None:
     assert "open `ops/` in Obsidian" not in skills
     assert (OPS / "runs" / "PRD-008-close.md").is_file()
     assert (OPS / "runs" / "WF-023-close.md").is_file()
+
+
+def test_wf_003_automations_plan() -> None:
+    """Planner: enablement plan + ticket plan status. Human still clicks Save in the UI."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    meta = by_id["WF-003"]
+    assert meta["status"] == "plan"
+    assert meta["type"] == "workflow"
+    assert meta["owner"] == "automation-expert"
+    assert "plans/WF-003" in meta.get("plan", "")
+    plan = (OPS / "plans" / "WF-003.md").read_text()
+    assert plan.startswith("---")
+    assert "PR reviewer" in plan
+    assert "board runner" in plan.lower()
+    assert "re-review" in plan.lower()
+    assert "auto-merge" in plan.lower() or "Auto-merge" in plan
+    assert "type: epic" in plan
+    assert "PRD-*" in plan and "implement" in plan
+    assert "cursor.com/automations" in plan
+    assert "Save" in plan and "Activate" in plan
+    assert "Jenkins" in plan
+    automations = (OPS / "workflow" / "AUTOMATIONS.md").read_text()
+    assert "ops/plans/WF-003" in automations
+    board = (OPS / "BOARD.md").read_text()
+    planning = board.split("## Planning", 1)[1].split("## Doing", 1)[0]
+    ready = board.split("## Ready", 1)[1].split("## Planning", 1)[0]
+    assert "WF-003" in planning
+    assert "WF-003" not in ready
+    home = (REPO / "docs" / "HOME.md").read_text()
+    ready_home = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    planning_home = home.split("Planning", 1)[1].split("Workshop", 1)[0]
+    assert "WF-003" not in ready_home
+    assert "WF-003" in planning_home

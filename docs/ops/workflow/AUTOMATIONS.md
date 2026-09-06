@@ -35,4 +35,4 @@ Cloud jobs that run the loop when nobody is in the IDE. They do **not** replace 
 
 ## Enablement
 
-These cannot be fully saved from chat until you confirm the draft in the Automations UI. Local loop works without them: open Cursor and say “work the next ready ticket”.
+These cannot be fully saved from chat until you confirm the draft in the Automations UI (`/automate` may pre-fill; you still **Save** and **Activate**). Click-by-click + paste-ready prompts: [[ops/plans/WF-003]]. Local loop works without them: open Cursor and say “work the next ready ticket”.

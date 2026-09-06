@@ -18,10 +18,10 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
 - [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
-- [ ] [[ops/tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
 ## Planning
 
+- [ ] [[ops/tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
 ## Doing
 
