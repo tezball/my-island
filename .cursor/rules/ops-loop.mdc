@@ -5,13 +5,13 @@ alwaysApply: true
 
 # Ops loop
 
-You are working in a git-tracked Obsidian vault at `ops/` — the company OS.
+You are working in a git-tracked Obsidian vault at `docs/` — the company OS lives in `docs/ops/`.
 
-- Start from `ops/HOME.md` and `ops/BOARD.md` (regenerate with `python3 ops/scripts/board_sync.py`).
-- Roles: planner writes `ops/plans/`. Implementer opens a PR. Reviewer comments only — never merge.
+- Start from `docs/ops/HOME.md` and `docs/ops/BOARD.md` (regenerate with `python3 ops/scripts/board_sync.py`).
+- Roles: planner writes `docs/ops/plans/`. Implementer opens a PR. Reviewer comments only — never merge.
 - One ticket per session. Skip `type: epic`. Prefix `WF-` = workflow. `PRD-` = product. `INC-` = incident.
-- New tickets: `python3 ops/scripts/new_ticket.py`. Naming: `ops/NAMING.md`. Roster: `ops/agents/_index.md`.
-- App code is disposable scaffolding (`ops/company/SCAFFOLDING.md`). Do not polish it.
+- New tickets: `python3 ops/scripts/new_ticket.py`. Naming: `docs/ops/NAMING.md`. Roster: `docs/ops/agents/_index.md`.
+- App code is disposable scaffolding (`docs/ops/company/SCAFFOLDING.md`). Do not polish it.
 - No Jenkins. No prod writes. No secrets in notes.
-- Full loop: `ops/workflow/LOOP.md`. CI: `ops/workflow/CI.md`. Safety: `ops/workflow/SAFETY.md`.
+- Full loop: `docs/ops/workflow/LOOP.md`. CI: `docs/ops/workflow/CI.md`. Safety: `docs/ops/workflow/SAFETY.md`.
 - Do not implement product unless `PRD-*` and `status: implement`.

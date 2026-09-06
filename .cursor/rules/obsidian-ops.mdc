@@ -1,16 +1,16 @@
 ---
-description: How to edit ops/ tickets, plans, board, and workflow notes
-globs: ops/**/*.md
+description: How to edit docs/ops tickets, plans, board, and workflow notes
+globs: docs/ops/**/*.md
 alwaysApply: false
 ---
 
 # Obsidian ops notes
 
-- Tickets live in `ops/tickets/<id>.md`. Filename stem equals YAML `id`.
+- Tickets live in `docs/ops/tickets/<id>.md`. Filename stem equals YAML `id`.
 - Required frontmatter: `id`, `title`, `status`, `priority`, `type`.
 - Statuses: `inbox` | `ready` | `plan` | `implement` | `review` | `done` | `blocked`.
 - Types: `epic` | `story` | `bug` | `incident` | `workflow`.
-- After changing a ticket, run `python3 ops/scripts/board_sync.py`. Do not hand-edit `ops/BOARD.md`.
+- After changing a ticket, run `python3 ops/scripts/board_sync.py`. Do not hand-edit `docs/ops/BOARD.md`.
 - New tickets: `python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"`.
-- Wikilinks are vault-relative (`ops/` is the vault): `[[tickets/WF-001]]`, `[[workflow/LOOP]]`.
-- Keep notes short. Put design in `ops/plans/`, logs in `ops/runs/`. Naming: `ops/NAMING.md`.
+- Wikilinks are vault-relative (`docs/` is the vault): `[[ops/tickets/WF-001]]`, `[[ops/workflow/LOOP]]`.
+- Keep notes short. Put design in `docs/ops/plans/`, logs in `docs/ops/runs/`. Naming: `docs/ops/NAMING.md`.

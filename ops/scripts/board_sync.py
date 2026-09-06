@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Regenerate ops/BOARD.md from ticket frontmatter. Vault-relative links."""
+"""Regenerate docs/ops/BOARD.md from ticket frontmatter. Vault-relative links."""
 from __future__ import annotations
 
 import os
 import pathlib
+
+# Wikilinks are relative to the Obsidian vault root (`docs/`).
+TICKET_WIKI = "ops/tickets"
 
 COLUMNS = [
     ("inbox", "Upcoming"),
@@ -18,11 +21,16 @@ COLUMNS = [
 PRIORITY_RANK = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
 
 
+def repo() -> pathlib.Path:
+    """Repository root (ops/scripts/ → repo)."""
+    return pathlib.Path(__file__).resolve().parents[2]
+
+
 def root() -> pathlib.Path:
     env = os.environ.get("OPS_ROOT")
     if env:
         return pathlib.Path(env)
-    return pathlib.Path(__file__).resolve().parents[1]
+    return repo() / "docs" / "ops"
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:
@@ -86,7 +94,7 @@ def render_board(tickets: list[dict[str, str]]) -> str:
             pri = t.get("priority", "")
             mark = "x" if key == "done" else " "
             lines.append(
-                f"- [{mark}] [[tickets/{ident}|{ident}]] {pri} {title_text}".rstrip()
+                f"- [{mark}] [[{TICKET_WIKI}/{ident}|{ident}]] {pri} {title_text}".rstrip()
             )
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
@@ -104,7 +112,7 @@ def main() -> None:
     ops_root = root()
     board = write_board(ops_root)
     tickets = load_tickets(ops_root / "tickets")
-    print(f"wrote {board.relative_to(ops_root.parent)} ({len(tickets)} tickets)")
+    print(f"wrote {board.relative_to(repo())} ({len(tickets)} tickets)")
 
 
 if __name__ == "__main__":

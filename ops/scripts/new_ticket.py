@@ -66,7 +66,7 @@ def render(
     text = _set_key(text, "area", area)
     text = _set_key(text, "priority", priority)
     if parent:
-        text = _set_key(text, "parent", f'"[[tickets/{parent}]]"')
+        text = _set_key(text, "parent", f'"[[ops/tickets/{parent}]]"')
     text = text.replace("{{title}}", title)
     # First markdown H1
     text = re.sub(r"^# .*$", f"# {ident} — {title}", text, count=1, flags=re.M)

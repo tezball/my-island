@@ -68,8 +68,8 @@ def test_render_board_groups_and_sorts(tmp_path: Path) -> None:
     assert "WF-001" in ready
     assert "WF-002" in ready
     assert ready.index("WF-001") < ready.index("WF-002")
-    assert "- [ ] [[tickets/WF-001|WF-001]]" in ready
-    assert "- [x] [[tickets/WF-003|WF-003]]" in done
+    assert "- [ ] [[ops/tickets/WF-001|WF-001]]" in ready
+    assert "- [x] [[ops/tickets/WF-003|WF-003]]" in done
     assert "WF-999" not in rendered
 
 
@@ -87,6 +87,6 @@ def test_write_board_roundtrip(tmp_path: Path) -> None:
 
 
 def test_committed_board_matches_tickets() -> None:
-    ops = Path(__file__).resolve().parents[1]
+    ops = Path(__file__).resolve().parents[2] / "docs" / "ops"
     expected = board_sync.render_board(board_sync.load_tickets(ops / "tickets"))
     assert (ops / "BOARD.md").read_text() == expected
