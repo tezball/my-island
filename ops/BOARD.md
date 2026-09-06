@@ -35,7 +35,6 @@ kanban-plugin: basic
 
 ## Review
 
-- [ ] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
 
 ## Blocked
 
@@ -56,4 +55,5 @@ kanban-plugin: basic
 - [x] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 - [x] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [x] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
+- [x] [[tickets/WF-017|WF-017]] P1 STACK-E2E MCP vs compose chaos drill skill and runbook
 - [x] [[tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test

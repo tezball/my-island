@@ -424,8 +424,9 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert by_id["WF-017"]["owner"] == "automation-expert"
     assert by_id["WF-017"]["type"] == "workflow"
     assert "tickets/E2E-001" in by_id["WF-017"].get("parent", "")
-    assert by_id["WF-017"]["status"] in {"implement", "review"}
+    assert by_id["WF-017"]["status"] == "done"
     assert "plans/WF-017" in by_id["WF-017"].get("plan", "")
+    assert "github.com/tezball/my-island/pull/36" in by_id["WF-017"].get("pr", "")
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "compose.chaos.yml" not in ci
     assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
