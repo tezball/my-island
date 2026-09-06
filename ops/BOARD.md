@@ -38,7 +38,7 @@ kanban-plugin: basic
 - [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
 - [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
 - [ ] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
-- [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
+- [ ] [[tickets/PRD-005|PRD-005]] P1 docs old/new split / agent fence
 
 ## Blocked
 

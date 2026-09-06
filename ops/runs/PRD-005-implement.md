@@ -11,9 +11,9 @@ pr: https://github.com/tezball/my-island/pull/27
 
 ## What happened
 
-Implemented the docs old/new split on `cursor/docs-old-new-split-1f2d`. Moved the former `docs/` tree to `docs/old/` (including `.obsidian`). Added `docs/new/README.md` pointers to `product/` + `ops/`. Rewrote `docs/README.md`. Retargeted history pointers in repo README, `product/`, and `ops/`. Updated leads provenance paths so unit tests still pass. Removed committed `.idea/` IDE noise (already gitignored).
+Retargeted this ticket from banners-only to **split + fence**. Implemented on `cursor/docs-old-new-split-1f2d` / PR #27: `docs/` → `docs/old/` (keep tree); `docs/new/README.md` indexes `product/` + `ops/`; root `docs/README.md` is the split index; history pointers retargeted; **do not implement from `docs/old/`**. Deleted committed `.idea/` IDE noise.
 
-Did not touch `services/`, E2E-001, e2e canvas, or workshops.
+Did not wipe `docs/`. Did not touch `services/`, E2E-001, e2e canvas, workshops, or brand PRs.
 
 ## Result
 
