@@ -1,6 +1,7 @@
 # Chaos overlay — not used by ./scripts/dev up.
 # No extra sidecars. Sets Spring profiles chaos,chaos-monkey on catalog.
 #
+#   docker compose -f compose.yml -f compose.chaos.yml --profile chaos up
 #   docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 #
 name: my-island
