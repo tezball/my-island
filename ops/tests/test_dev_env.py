@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import os
 import socket
+import stat
+import subprocess
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -126,3 +128,49 @@ def test_catalog_health() -> None:
         body = response.read().decode()
     assert "UP" in body
     assert "postgis" in body.lower() or "db" in body.lower()
+
+
+def test_app_cli_help_and_no_chaos() -> None:
+    app = REPO / "scripts" / "app"
+    assert app.is_file()
+    assert app.stat().st_mode & stat.S_IXUSR
+    help_out = subprocess.check_output([str(app), "help"], text=True)
+    for word in ("start", "stop", "test"):
+        assert word in help_out
+    text = app.read_text()
+    start_arm = text.split("start)")[1].split("stop)")[0]
+    assert "compose.chaos.yml" not in start_arm
+    assert 'exec "$DEV" start' in start_arm
+    assert "categoryId" in text
+    assert "countyId" in text
+    assert "latitude" in text
+    assert "longitude" in text
+    unknown = subprocess.run(
+        [str(app), "not-a-command"], capture_output=True, text=True, check=False
+    )
+    assert unknown.returncode != 0
+
+
+def test_dev_start_stop_skip_gui_and_no_chaos() -> None:
+    dev = (REPO / "scripts" / "dev").read_text()
+    assert "cmd_start()" in dev
+    assert "cmd_stop()" in dev
+    assert "xdg-open" in dev
+    assert "No display" in dev
+    up_block = dev.split("cmd_up()")[1].split("ensure_catalog_db")[0]
+    assert "compose.chaos.yml" not in up_block
+    start_block = dev.split("cmd_start()")[1].split("cmd_stop()")[0]
+    assert "cmd_up" in start_block
+    assert "compose.chaos.yml" not in start_block
+    help_out = subprocess.check_output([str(REPO / "scripts" / "dev"), "help"], text=True)
+    assert "start" in help_out
+    assert "stop" in help_out
+
+
+def test_local_md_documents_app_cli() -> None:
+    text = (REPO / "ops" / "workflow" / "LOCAL.md").read_text()
+    assert "./scripts/app start" in text
+    assert "./scripts/app stop" in text
+    assert "./scripts/app test" in text
+    assert "WF-021" in text
+    assert "Chaos stays" in text or "chaos" in text.lower()

@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+# Human CLI for the local Halfdoor (tezball/my-island) stack.
+# Thin wrapper around ./scripts/dev — does not rewrite compose.
+# Chaos is not enabled on start.
+set -euo pipefail
+
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO"
+DEV="$REPO/scripts/dev"
+CATALOG_BASE="${CATALOG_URL:-http://127.0.0.1:8081}"
+GRAFANA_HEALTH="${GRAFANA_URL:-http://127.0.0.1:3030}/api/health"
+
+usage() {
+  cat <<'EOF'
+Usage: ./scripts/app <command>
+
+  start   Start PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API
+          Open local URLs if a display exists; print a ready summary
+  stop    Stop the stack
+  test    Start the stack if needed, then run ops pytest, catalog mvn test,
+          and catalog health + create/list/get smoke. One-screen PASS/FAIL.
+  help    This message
+
+Same stack as ./scripts/dev up. Chaos stays off unless you pass compose.chaos.yml yourself.
+No consumer UI yet (PRD-003).
+EOF
+}
+
+stack_up() {
+  curl -sf "$GRAFANA_HEALTH" >/dev/null 2>&1 \
+    && curl -sf "${CATALOG_BASE}/actuator/health" >/dev/null 2>&1
+}
+
+# Record one check. Continues after failures so the report is complete.
+FAILED=0
+RESULTS=()
+
+record() {
+  local label="$1" status="$2"
+  RESULTS+=("$status"$'\t'"$label")
+  if [ "$status" != "PASS" ]; then
+    FAILED=1
+  fi
+}
+
+print_report() {
+  echo
+  echo "=== Halfdoor local test ==="
+  echo
+  local line status label
+  for line in "${RESULTS[@]}"; do
+    status="${line%%$'\t'*}"
+    label="${line#*$'\t'}"
+    printf "  %-32s %s\n" "$label" "$status"
+  done
+  echo
+  if [ "$FAILED" -eq 0 ]; then
+    printf "  %-32s %s\n" "OVERALL" "PASS"
+    echo
+    return 0
+  fi
+  printf "  %-32s %s\n" "OVERALL" "FAIL"
+  echo
+  return 1
+}
+
+run_logged() {
+  local label="$1"
+  local log="$2"
+  shift 2
+  if "$@" >"$log" 2>&1; then
+    record "$label" "PASS"
+    return 0
+  fi
+  record "$label" "FAIL"
+  echo "---- $label (tail) ----"
+  tail -n 40 "$log" || true
+  echo "---- end $label ----"
+  return 0
+}
+
+ensure_stack() {
+  if stack_up; then
+    record "stack up" "PASS"
+    return 0
+  fi
+  echo "Stack not up — starting (./scripts/dev up)…"
+  local log
+  log="$(mktemp)"
+  if "$DEV" up >"$log" 2>&1; then
+    cat "$log"
+    if stack_up; then
+      record "stack up" "PASS"
+    else
+      record "stack up" "FAIL"
+      echo "Stack start finished but health checks failed." >&2
+    fi
+  else
+    cat "$log"
+    record "stack up" "FAIL"
+  fi
+  rm -f "$log"
+}
+
+cmd_test() {
+  local work logs
+  work="$(mktemp -d)"
+  logs="$work"
+
+  ensure_stack
+
+  echo "Running ops pytest (REQUIRE_STACK=1 ./scripts/dev test)…"
+  run_logged "ops pytest" "$logs/pytest.log" \
+    env REQUIRE_STACK=1 "$DEV" test
+
+  echo "Running catalog mvn test…"
+  run_logged "catalog mvn test" "$logs/mvn.log" \
+    bash -c 'cd "$1" && ./mvnw -B test' bash "$REPO/services/catalog"
+
+  smoke_health "$logs"
+  smoke_places "$logs"
+
+  if print_report; then
+    rm -rf "$work"
+    return 0
+  fi
+  rm -rf "$work"
+  return 1
+}
+
+smoke_health() {
+  local logs="$1"
+  if curl -sf "${CATALOG_BASE}/actuator/health" >"$logs/health.json" 2>"$logs/health.err"; then
+    if grep -q UP "$logs/health.json"; then
+      record "GET /actuator/health" "PASS"
+      return 0
+    fi
+  fi
+  record "GET /actuator/health" "FAIL"
+  cat "$logs/health.err" "$logs/health.json" 2>/dev/null | tail -n 20 || true
+}
+
+smoke_places() {
+  local logs="$1"
+  local slug="cli-smoke-$(date +%s)-$$"
+  local body code
+
+  body=$(printf '%s' "{\"name\":\"CLI smoke\",\"slug\":\"${slug}\",\"categoryId\":\"poi\",\"countyId\":\"kerry\",\"town\":\"Portmagee\",\"latitude\":51.7708,\"longitude\":-10.5406,\"published\":true}")
+
+  code="$(curl -sS -o "$logs/create.json" -w '%{http_code}' \
+    -X POST "${CATALOG_BASE}/api/v1/places" \
+    -H 'content-type: application/json' \
+    -d "$body" || true)"
+  if [ "$code" = "201" ]; then
+    record "POST /api/v1/places" "PASS"
+  else
+    record "POST /api/v1/places" "FAIL"
+    echo "POST /api/v1/places HTTP ${code:-curl-error}" >&2
+    cat "$logs/create.json" 2>/dev/null | tail -n 20 || true
+  fi
+
+  if curl -sf "${CATALOG_BASE}/api/v1/places" >"$logs/list.json" 2>"$logs/list.err" \
+    && python3 - "$slug" "$logs/list.json" <<'PY'
+import json, sys
+slug, path = sys.argv[1], sys.argv[2]
+data = json.load(open(path, encoding="utf-8"))
+if not isinstance(data, list):
+    raise SystemExit("list is not a JSON array")
+if not any(isinstance(p, dict) and p.get("slug") == slug for p in data):
+    raise SystemExit(f"slug {slug} missing from list")
+PY
+  then
+    record "GET /api/v1/places" "PASS"
+  else
+    record "GET /api/v1/places" "FAIL"
+    cat "$logs/list.err" "$logs/list.json" 2>/dev/null | tail -n 20 || true
+  fi
+
+  if curl -sf "${CATALOG_BASE}/api/v1/places/${slug}" >"$logs/get.json" 2>"$logs/get.err" \
+    && python3 - "$slug" "$logs/get.json" <<'PY'
+import json, sys
+slug, path = sys.argv[1], sys.argv[2]
+data = json.load(open(path, encoding="utf-8"))
+if data.get("slug") != slug:
+    raise SystemExit(f"expected slug {slug}, got {data.get('slug')}")
+if data.get("category", {}).get("id") != "poi":
+    raise SystemExit("categoryId/category.id mismatch")
+if data.get("county", {}).get("id") != "kerry":
+    raise SystemExit("countyId/county.id mismatch")
+if data.get("latitude") is None or data.get("longitude") is None:
+    raise SystemExit("latitude/longitude missing")
+PY
+  then
+    record "GET /api/v1/places/{slug}" "PASS"
+  else
+    record "GET /api/v1/places/{slug}" "FAIL"
+    cat "$logs/get.err" "$logs/get.json" 2>/dev/null | tail -n 20 || true
+  fi
+}
+
+cmd="${1:-}"
+if [ $# -gt 0 ]; then
+  shift
+fi
+
+case "$cmd" in
+  start) exec "$DEV" start ;;
+  stop) exec "$DEV" stop ;;
+  test) cmd_test ;;
+  -h|--help|help|"") usage; [ -n "$cmd" ] || exit 1 ;;
+  up|down|ps|wait|config)
+    echo "Use ./scripts/dev $cmd (or ./scripts/app start|stop|test)." >&2
+    usage
+    exit 1
+    ;;
+  *) usage; echo "unknown command: $cmd" >&2; exit 1 ;;
+esac

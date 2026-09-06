@@ -7,11 +7,22 @@ type: workflow
 
 Environment zero plus the **PRD-001 catalog stub**. **One Compose file** (`compose.yml` at the repo root) is used by git-clone, Dev Containers, Cloud Agents, and CI.
 
+**One command** (Terry / laptop): [[tickets/WF-021]]
+
+```bash
+./scripts/app start   # stack up, open local URLs if a display exists, print ready summary
+./scripts/app stop    # stack down
+./scripts/app test    # start if needed; pytest + catalog mvn + HTTP smoke; PASS/FAIL
+./scripts/app help
+```
+
+`./scripts/app` wraps `./scripts/dev`. CI, Cloud Agent `start.sh`, and `./ops/scripts/start-local.sh` still call `./scripts/dev up` / `test` / `down`. Chaos stays **off** on start.
+
 Postgres is **PostGIS** (`postgis/postgis:17-3.5-alpine`). If this machine already had a `postgres:17-alpine` volume, recreate it:
 
 ```bash
 docker compose down -v
-./scripts/dev up
+./scripts/app start
 ```
 
 ## Git clone, run
@@ -21,11 +32,11 @@ Docker required (Docker Desktop, or Engine + Compose v2).
 ```bash
 git clone https://github.com/tezball/my-island.git
 cd my-island
-./scripts/dev up
-./scripts/dev test
+./scripts/app start
+./scripts/app test
 ```
 
-`./ops/scripts/start-local.sh` is the same as `./scripts/dev up`. Stop: `./scripts/dev down`.
+`./ops/scripts/start-local.sh` is the same as `./scripts/dev up`. Stop: `./scripts/app stop` (or `./scripts/dev down`).
 
 | Thing | URL |
 |---|---|
@@ -91,7 +102,7 @@ Open the repo in Cursor or VS Code and **Reopen in Container**. `.devcontainer/d
 ```bash
 curl -sf http://localhost:3030/api/health
 docker compose ps
-./scripts/dev test
+./scripts/app test
 ```
 
 If Grafana MCP cannot connect, compose is down or Cursor has not reloaded MCP. Fix that before product code.
