@@ -15,9 +15,8 @@ Implemented a single `compose.yml` used by git-clone, Dev Containers, Cloud Agen
 
 ## Result
 
-success — PR opened, waiting on CI stack job and human merge.
+success — PR #6 merged. Run closed.
 
 ## Follow-up
 
-- Human: merge after CI is green. After merge, new Cloud Agents pick up `.cursor/environment.json` (repo-managed).
-- Do not merge from an agent.
+None. Ticket is `done`. New Cloud Agents pick up `.cursor/environment.json` (repo-managed).

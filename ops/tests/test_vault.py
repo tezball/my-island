@@ -178,6 +178,21 @@ def test_prd_001_is_done_with_plan() -> None:
     assert "github.com/tezball/my-island/pull/29" in by_id["PRD-005"].get("pr", "")
 
 
+def test_merged_pr_tickets_are_done() -> None:
+    """Merged PRs must not stay in review. Keep the existing pr: URLs."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    expected = {
+        "WF-020": "https://github.com/tezball/my-island/pull/33",
+        "WF-005": "https://github.com/tezball/my-island/pull/6",
+        "WF-006": "https://github.com/tezball/my-island/pull/8",
+        "WF-007": "https://github.com/tezball/my-island/pull/11",
+        "PRD-006": "https://github.com/tezball/my-island/pull/14",
+    }
+    for ident, pr in expected.items():
+        assert by_id[ident]["status"] == "done", ident
+        assert by_id[ident].get("pr", "") == pr, ident
+
+
 def test_leads_pipeline_tickets_exist() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     for ident in ("PRD-007", "PRD-008", "PRD-009"):

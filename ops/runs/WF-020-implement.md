@@ -20,8 +20,8 @@ Implementer hat (automation-expert). P0 hotfix: `main` CI red after `be8562e` mo
 
 ## Result
 
-success — PR #33 open. Local unit (42), stack pytest (45), catalog (12), and workspace image build green. Do not merge.
+success — PR #33 merged. Run closed. Local unit (42), stack pytest (45), catalog (12), and workspace image build green.
 
 ## Follow-up
 
-Human merges when CI is green. Do not merge from this session.
+None. Ticket is `done`.

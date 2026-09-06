@@ -15,8 +15,8 @@ Expanded `ops/` into the company OS. Follow-up (Terry): automation-first, not ap
 
 ## Result
 
-success
+success — PR #8 merged. Run closed.
 
 ## Follow-up
 
-Human merge. Activate: ticket loop (`WF-003` or remaining `WF-001`/`WF-002`), weekly digest, Automation Expert routines (`ADD_SKILL`, CI). Do not start PRD children to “save” an app.
+None. Ticket is `done`. Activate remaining loop work via `WF-003` / `WF-001` / `WF-002`; weekly digest; Automation Expert routines (`ADD_SKILL`, CI). Do not start PRD children to “save” an app.

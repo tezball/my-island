@@ -36,11 +36,6 @@ kanban-plugin: basic
 
 ## Review
 
-- [ ] [[tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
-- [ ] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
-- [ ] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
-- [ ] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
-- [ ] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 
 ## Blocked
 
@@ -51,7 +46,12 @@ kanban-plugin: basic
 
 ## Done
 
-- [ ] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
-- [ ] [[tickets/WF-015|WF-015]] P0 Workshop-only spine strip (KEEP catalog compose chaos)
-- [ ] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
-- [ ] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
+- [x] [[tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
+- [x] [[tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
+- [x] [[tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
+- [x] [[tickets/WF-006|WF-006]] P0 Company OS vault, agent org, and runbooks
+- [x] [[tickets/WF-007|WF-007]] P0 Lock CEO stack and product decisions (2026-09-05)
+- [x] [[tickets/WF-015|WF-015]] P0 Workshop-only spine strip (KEEP catalog compose chaos)
+- [x] [[tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
+- [x] [[tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
+- [x] [[tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
