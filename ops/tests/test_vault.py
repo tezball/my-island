@@ -160,7 +160,17 @@ def test_tickets_have_required_frontmatter() -> None:
 
 def test_prd_app_code_tickets_are_not_implement() -> None:
     """Spring/PWA/import/marketplace stay gated except an approved implement ticket."""
-    app_code = {"PRD-001", "PRD-002", "PRD-003", "PRD-004"}
+    app_code = {
+        "PRD-001",
+        "PRD-002",
+        "PRD-003",
+        "PRD-004",
+        "PRD-010",
+        "PRD-011",
+        "PRD-012",
+        "PRD-013",
+        "PRD-014",
+    }
     hot = [
         meta["id"]
         for _, meta in next_ticket.tickets(OPS / "tickets")
@@ -177,6 +187,48 @@ def test_starter_prd_tickets_exist() -> None:
     assert by_id["PRD-000"]["type"] == "epic"
     assert by_id["PRD-004"]["type"] == "epic"
     assert by_id["PRD-001"]["type"] == "story"
+
+
+def test_prd_000_e2e_program_plan_and_mvp_children() -> None:
+    """Release 1 program plan + split children. No app code; children stay gated."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-000"]["status"] == "plan"
+    assert "plans/PRD-000" in by_id["PRD-000"].get("plan", "")
+    plan = (OPS / "plans" / "PRD-000.md").read_text()
+    assert plan.startswith("---")
+    assert "E2e journey" in plan or "e2e journey" in plan.lower()
+    assert "PRD-010" in plan and "PRD-014" in plan
+    assert "Next.js" in plan
+    assert "booking" in plan.lower()
+    team = (OPS / "agents" / "mvp-team.md").read_text()
+    assert "mvp-explore" in team and "PRD-009" in team
+    for ident, owner, area in (
+        ("PRD-010", "eng-backend", "identity"),
+        ("PRD-011", "eng-backend", "catalog"),
+        ("PRD-012", "eng-backend", "catalog"),
+        ("PRD-013", "eng-frontend", "explore"),
+        ("PRD-014", "eng-backend", "launch"),
+    ):
+        assert ident in by_id, ident
+        assert by_id[ident]["type"] == "story"
+        assert by_id[ident]["status"] == "ready"
+        assert by_id[ident]["status"] != "implement"
+        assert by_id[ident]["priority"] == "P0"
+        assert by_id[ident]["owner"] == owner
+        assert by_id[ident].get("area") == area
+        assert "tickets/PRD-000" in by_id[ident].get("parent", "")
+    prd003 = (OPS / "tickets" / "PRD-003.md").read_text()
+    assert "Explore only" in prd003 or "Explore list" in prd003
+    assert "PRD-011" in prd003 and "PRD-012" in prd003 and "PRD-013" in prd003
+    home = (REPO / "docs" / "HOME.md").read_text()
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    planning = home.split("Planning", 1)[1].split("Workshop", 1)[0]
+    assert "PRD-010" in ready and "PRD-014" in ready
+    assert "PRD-000" in planning
+    miles = (PRODUCT / "MILESTONES.md").read_text()
+    assert "PRD-010" in miles and "PRD-011" in miles and "PRD-014" in miles
+    roster = (OPS / "agents" / "_index.md").read_text()
+    assert "mvp-team" in roster
 
 
 def test_obsidian_lists_kanban_and_dataview() -> None:

@@ -17,25 +17,29 @@ Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product
 ## Right now
 
 > [!todo] Doing / Review
-> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)).
+> Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). Epic [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] is `plan` — program [[ops/plans/PRD-000]] · team [[ops/agents/mvp-team]].
 
 > [!success] Landed
 > [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)), [`PRD-007`](ops/tickets/PRD-007.md) Wave 1 leads ([#45](https://github.com/tezball/my-island/pull/45)), [`WF-016`](ops/tickets/WF-016.md) Cloud Agent mcp-grafana + Postgres-RO ([#48](https://github.com/tezball/my-island/pull/48)), [`WF-023`](ops/tickets/WF-023.md) living markdown under `docs/` ([#52](https://github.com/tezball/my-island/pull/52)), [`PRD-008`](ops/tickets/PRD-008.md) Eng import of **draft** Places ([#47](https://github.com/tezball/my-island/pull/47)) — all `done`.
 
 > [!info] Ready / Up next
-> From [[ops/BOARD]] `ready`. `PRD-000` is an epic — children do the work.
+> From [[ops/BOARD]] `ready`. Epic [`PRD-000`](ops/tickets/PRD-000.md) is on the program plan — children do the work.
 
 | Id | Pri | What |
 |---|---|---|
-| [`E2E-001`](ops/tickets/E2E-001.md) · [[ops/tickets/E2E-001]] | P0 | Place listing stub API — e2e workshop |
-| [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] | P0 | Ireland directory MVP (epic) |
+| [`E2E-001`](ops/tickets/E2E-001.md) · [[ops/tickets/E2E-001]] | P0 | Place listing stub — close-out (create/list/get already on catalog) |
 | [`PRD-002`](ops/tickets/PRD-002.md) · [[ops/tickets/PRD-002]] | P0 | Curator seed content pipeline |
-| [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA |
+| [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA — Explore list+map |
 | [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
+| [`PRD-010`](ops/tickets/PRD-010.md) · [[ops/tickets/PRD-010]] | P0 | Visitor auth |
+| [`PRD-011`](ops/tickets/PRD-011.md) · [[ops/tickets/PRD-011]] | P0 | Place detail |
+| [`PRD-012`](ops/tickets/PRD-012.md) · [[ops/tickets/PRD-012]] | P0 | Check-off / visits API |
+| [`PRD-013`](ops/tickets/PRD-013.md) · [[ops/tickets/PRD-013]] | P0 | My Places |
+| [`PRD-014`](ops/tickets/PRD-014.md) · [[ops/tickets/PRD-014]] | P0 | Launch quality |
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 
 > [!info] Planning
-> Empty. Next product plan is [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] (still `ready`).
+> [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] program e2e plan [[ops/plans/PRD-000]]. Wave 1 child tickets still `ready` (human sets `implement` after each child plan).
 
 > [!success] Workshop — E2E place-listing stub
 > Field source of truth on the running stub: `categoryId` / `countyId` / `latitude` / `longitude` (not `categorySlug` / `countySlug` / `lon`+`lat`).

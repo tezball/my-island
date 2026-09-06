@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-000-plan]] — program e2e plan + MVP child tickets; Wave 1 planners dispatched
 - [[PRD-008-close]] — human merged PR #47; ticket `done`
 - [[WF-023-close]] — human merged PR #52; ticket `done`; vault = `docs/`
 - [[PRD-008-rebase]] — rebase #47 onto `2d8617f` (#52); draft-only import gates

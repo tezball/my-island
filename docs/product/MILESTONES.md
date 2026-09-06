@@ -35,13 +35,13 @@ Ordering matches [`MVP.md`](MVP.md) §8. Content is the critical path, not code.
 | | Focus | Why here | Tickets (when filed) |
 |---|---|---|---|
 | **M0** | House spine | Spring catalog, compose, CI, agent loop. Foundations before product UI. | [`PRD-001`](../ops/tickets/PRD-001.md) catalog stub **done**. Compose/CI [`WF-005`](../ops/tickets/WF-005.md) **done**. Sim [`WF-019`](../ops/tickets/WF-019.md) **done** (#31). Restore [`WF-020`](../ops/tickets/WF-020.md) **done** (#33). Local CLI [`WF-021`](../ops/tickets/WF-021.md) **done** (#35). Remaining: [`WF-018`](../ops/tickets/WF-018.md) field-align; [`WF-016`](../ops/tickets/WF-016.md) / [`WF-017`](../ops/tickets/WF-017.md) Automation MCP drills. Epic [`WF-000`](../ops/tickets/WF-000.md) still open (automations [`WF-003`](../ops/tickets/WF-003.md)). |
-| **M1** | Auth + environments | Accounts (`ACC-*`) and shared envs before there is code to retrofit. | Staging [`WF-010`](../ops/tickets/WF-010.md) and remote Grafana MCP [`WF-004`](../ops/tickets/WF-004.md) **blocked**. OIDC console [`WF-014`](../ops/tickets/WF-014.md) inbox. No consumer-auth `PRD-*` yet. |
-| **M2** | Content critical path | Empty directory tests nothing. Longest lead time. | [`PRD-006`](../ops/tickets/PRD-006.md) leads store **done** (#14). [`PRD-002`](../ops/tickets/PRD-002.md) / [`PRD-007`](../ops/tickets/PRD-007.md) / [`PRD-008`](../ops/tickets/PRD-008.md) / [`PRD-009`](../ops/tickets/PRD-009.md) **ready**. |
-| **M3** | Explore | List, filters, map (`DIR-*`, `MAP-*`). | [`PRD-003`](../ops/tickets/PRD-003.md) **ready** (not `implement`). |
-| **M4** | Place detail | `PLC-*`. | Child of Release 1 epic [`PRD-000`](../ops/tickets/PRD-000.md). No separate ticket yet. |
-| **M5** | Core loop + My Places | Check-off (`CHK-*`) and My Places (`ME-*`). Built last, designed first. | Same as M3/M4 — [`PRD-003`](../ops/tickets/PRD-003.md) / [`PRD-000`](../ops/tickets/PRD-000.md). |
-| **M6** | Launch quality | NFR, GDPR, MCP metrics (`NFR-*`, `ADM-*`). Instrument §7 **before** launch. | Not filed as `PRD-*` yet. Observe path: Grafana OSS MCP ([`STACK.md`](STACK.md)). |
-| **M7** | Launch DoD | 500+ published places across 32 counties; every §7 metric on a dashboard; success thresholds written down **before** launch day. Full list: [`MVP.md`](MVP.md) §9. | Epic [`PRD-000`](../ops/tickets/PRD-000.md). |
+| **M1** | Auth + environments | Accounts (`ACC-*`) and shared envs before there is code to retrofit. | Consumer auth [`PRD-010`](../ops/tickets/PRD-010.md) **ready**. Staging [`WF-010`](../ops/tickets/WF-010.md) and remote Grafana MCP [`WF-004`](../ops/tickets/WF-004.md) **blocked**. OIDC console [`WF-014`](../ops/tickets/WF-014.md) inbox. |
+| **M2** | Content critical path | Empty directory tests nothing. Longest lead time. | [`PRD-006`](../ops/tickets/PRD-006.md) / [`PRD-007`](../ops/tickets/PRD-007.md) / [`PRD-008`](../ops/tickets/PRD-008.md) **done**. [`PRD-002`](../ops/tickets/PRD-002.md) / [`PRD-009`](../ops/tickets/PRD-009.md) **ready**. |
+| **M3** | Explore | List, filters, map (`DIR-*`, `MAP-*`). | [`PRD-003`](../ops/tickets/PRD-003.md) **ready** (Explore only; not `implement`). |
+| **M4** | Place detail | `PLC-*`. | [`PRD-011`](../ops/tickets/PRD-011.md) **ready**. |
+| **M5** | Core loop + My Places | Check-off (`CHK-*`) and My Places (`ME-*`). Built last, designed first. | [`PRD-012`](../ops/tickets/PRD-012.md) / [`PRD-013`](../ops/tickets/PRD-013.md) **ready**. |
+| **M6** | Launch quality | NFR, GDPR, MCP metrics (`NFR-*`, `ADM-*`). Instrument §7 **before** launch. | [`PRD-014`](../ops/tickets/PRD-014.md) **ready**. Observe path: Grafana OSS MCP ([`STACK.md`](STACK.md)). |
+| **M7** | Launch DoD | 500+ published places across 32 counties; every §7 metric on a dashboard; success thresholds written down **before** launch day. Full list: [`MVP.md`](MVP.md) §9. | Epic [`PRD-000`](../ops/tickets/PRD-000.md) (`plan` [[ops/plans/PRD-000]](../ops/plans/PRD-000.md)). |
 
 ## After MVP — chunks (gated)
 

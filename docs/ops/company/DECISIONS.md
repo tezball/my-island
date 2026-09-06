@@ -30,11 +30,13 @@ Architecture’s draft is canon. Do not invent a competing stack.
 | Layer | Lock | Ticket |
 |---|---|---|
 | Backend | Java / Spring Boot (permanent) | [[ops/tickets/PRD-001]] (plan [[ops/plans/PRD-001]] approved; `implement`) |
-| Client | Vite + React light PWA, **not** Next | [[ops/tickets/PRD-003]] (gated on `implement`) |
+| Client | Vite + React light PWA, **not** Next | [[ops/tickets/PRD-003]] (Explore; gated on `implement`) |
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[ops/tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[ops/tickets/WF-004]] |
 | CI | GitHub Actions; Playwright against job-started compose when the PWA exists | [[ops/tickets/WF-011]] |
 | CD | Staging auto on `main`; prod = GitHub Environment + human | [[ops/tickets/WF-010]] |
+
+MVP program e2e plan (2026-09-06): [[ops/plans/PRD-000]] · team [[ops/agents/mvp-team]]. Children [[ops/tickets/PRD-010]]–[[ops/tickets/PRD-014]] filed `ready`. **Do not build** consumer app code until a child `PRD-*` is `implement`.
 
 ### MCP gaps (must close for idea→prod)
 

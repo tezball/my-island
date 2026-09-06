@@ -22,7 +22,7 @@ Two runtimes, one git repo. Do not pretend they are interchangeable.
 | orchestrator | Grok for intake and digest; Cursor for vault PRs | Split coordination from git |
 | automation-expert | Cursor | CI, skills, hooks, Automations YAML/docs; Grok only to describe a routine |
 | product | Grok | Specs and ticket shaping; Cursor only if `product/` files must change on a branch |
-| eng-frontend / eng-backend | Cursor | Future app (scaffolding). Dormant |
+| eng-frontend / eng-backend | Cursor | MVP planning ([[ops/plans/PRD-000]]); no app code until `PRD-*` is `implement` |
 | eng-infra | Cursor | Compose + MCP runtime |
 | guest-support / host-onboarding / content-seo / trust-safety | Grok | Language and policy; they **file** `PRD-*` / `INC-*` for Cursor to implement |
 | ops-incidents | Grok declares; Cursor patches if the fix is in this repo | Follow [[ops/runbooks/GUEST_SUPPORT]] and [[ops/workflow/SAFETY]] |

@@ -1,7 +1,7 @@
 ---
 title: Engineering — backend
 type: role
-status: dormant
+status: active
 runtime: cursor
 escalates_to: eng-infra
 ---
@@ -22,7 +22,7 @@ PRs with services, Flyway/migrations when they exist, API tests. Micrometer + st
 
 ## Owned folders
 
-Future `src/` / service modules (not present today). **Do not resurrect `legacy-platform`.** New services are scaffolding until a `PRD-*` ticket says otherwise.
+`services/catalog` (stub). Auth/visits/launch tickets [[ops/tickets/PRD-010]]–[[ops/tickets/PRD-012]], [[ops/tickets/PRD-014]]. **Do not resurrect `legacy-platform`.** App code stays scaffolding until a `PRD-*` ticket is `implement`.
 
 ## Escalation
 

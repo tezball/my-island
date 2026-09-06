@@ -14,14 +14,19 @@ kanban-plugin: basic
 ## Ready
 
 - [ ] [[ops/tickets/E2E-001|E2E-001]] P0 Place listing stub API (create/list/get) — e2e workshop
-- [ ] [[ops/tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
 - [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
-- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
+- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — Explore list and map
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
+- [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email, Google/Apple, session)
+- [ ] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
+- [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
+- [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
+- [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
 ## Planning
 
+- [ ] [[ops/tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
 
 ## Doing
 

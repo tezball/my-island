@@ -1,7 +1,7 @@
 ---
 title: Engineering — frontend
 type: role
-status: dormant
+status: active
 runtime: cursor
 escalates_to: eng-backend
 ---
@@ -18,7 +18,7 @@ Guest and curator UI: **light Vite + React + TypeScript PWA** (phone-first direc
 
 ## Outputs
 
-PRs with UI + tests. No product code until a `PRD-*` ticket is `implement`.
+Plans while tickets are `ready`. PRs with UI + tests only when a `PRD-*` ticket is `implement`. Explore is [[ops/tickets/PRD-003]]; My Places is [[ops/tickets/PRD-013]].
 
 ## Owned folders
 

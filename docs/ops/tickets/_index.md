@@ -20,3 +20,5 @@ Statuses: `inbox` | `ready` | `plan` | `implement` | `review` | `done` | `blocke
 Types: `epic` | `story` | `bug` | `incident` | `workflow`
 
 Epics stay on [[ops/BOARD]] but `next_ticket.py` skips them. After any status change: `python3 ops/scripts/board_sync.py`. Naming: [[ops/NAMING]].
+
+Release 1 program: [[ops/tickets/PRD-000]] · [[ops/plans/PRD-000]]. New children: [[ops/tickets/PRD-010]] auth, [[ops/tickets/PRD-011]] place detail, [[ops/tickets/PRD-012]] check-off, [[ops/tickets/PRD-013]] My Places, [[ops/tickets/PRD-014]] launch quality.
