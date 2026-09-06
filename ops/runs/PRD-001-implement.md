@@ -11,7 +11,7 @@ pr: https://github.com/tezball/my-island/pull/21
 
 ## What happened
 
-Implementer (e2e workshop / CEO): landed `services/catalog` as a stub-sized first slice of [[plans/PRD-001]]. Spring Boot 3.5.16 / Java 21, Flyway + PostGIS, create/list/get Place API, category/facilities/counties as data (32 incl NI), unused `partner_id`, visit schema stub with no Visit HTTP. Compose + Prometheus scrape + CI `catalog` job. Tests: Testcontainers PostGIS (`./mvnw test` 12 passed locally). Ticket set to `review`.
+Implementer (e2e workshop / CEO, then Workshop Lead tighten): stub-sized `services/catalog` — create/list/get + Actuator. Chaos Monkey (`de.codecentric:chaos-monkey-spring-boot` 3.3.0) only on Spring profile `chaos` via `compose.chaos.yml`. Default `./scripts/dev up` stays clean. Visit HTTP/schema stub and OTel polish dropped. Ticket `review`, PR #21.
 
 ## Result
 

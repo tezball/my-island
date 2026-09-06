@@ -51,7 +51,22 @@ def test_flyway_seeds_listing_types_and_ni() -> None:
     county = (CATALOG / "src/main/resources/db/migration/V4__county.sql").read_text()
     for ident in ("antrim", "armagh", "down", "fermanagh", "derry", "tyrone"):
         assert ident in county
-    visit = (CATALOG / "src/main/resources/db/migration/V6__visit.sql").read_text()
-    assert "VISITED" in visit
-    assert "STAYED" in visit
-    assert "date_precision" in visit
+    migrations = list((CATALOG / "src/main/resources/db/migration").glob("V*.sql"))
+    assert not any(path.name.startswith("V6__") for path in migrations)
+
+
+def test_chaos_monkey_is_off_on_default_compose() -> None:
+    pom = (CATALOG / "pom.xml").read_text()
+    assert "chaos-monkey-spring-boot" in pom
+    default_compose = (REPO / "compose.yml").read_text()
+    assert "SPRING_PROFILES_ACTIVE: chaos" not in default_compose
+    overlay = (REPO / "compose.chaos.yml").read_text()
+    assert "SPRING_PROFILES_ACTIVE: chaos" in overlay
+    app = (CATALOG / "src/main/resources/application.yml").read_text()
+    assert "enabled: false" in app
+    chaos = (CATALOG / "src/main/resources/application-chaos.yml").read_text()
+    assert "enabled: true" in chaos
+    assert "kill-application-active: false" in chaos
+    dev = (REPO / "scripts/dev").read_text()
+    up_block = dev.split("cmd_up()")[1].split("ensure_catalog_db")[0]
+    assert "compose.chaos.yml" not in up_block

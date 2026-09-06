@@ -20,7 +20,7 @@ Usage: ./scripts/dev <command>
   ps        Compose status
   test      Run pytest (same path as CI)
   wait      Wait until Grafana answers /api/health
-  config    Validate compose.yml
+  config    Validate compose.yml (and chaos overlay)
 
 Environment:
   REQUIRE_STACK=1          Fail if Grafana/Postgres are not reachable (CI sets this)
@@ -28,6 +28,7 @@ Environment:
 
 Catalog API (after up): http://127.0.0.1:8081
 If Postgres was created before PostGIS, recreate volumes: docker compose down -v && ./scripts/dev up
+Chaos Monkey (not default): docker compose -f compose.yml -f compose.chaos.yml up -d catalog --wait
 EOF
 }
 
@@ -70,6 +71,7 @@ cmd_ps() {
 
 cmd_config() {
   "${COMPOSE[@]}" config -q
+  docker compose -f "$REPO/compose.yml" -f "$REPO/compose.chaos.yml" config -q
   echo "compose.yml ok"
 }
 

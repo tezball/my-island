@@ -1,0 +1,26 @@
+# Loaded only when Spring profile `chaos` is active (compose.chaos.yml).
+# Includes library profile `chaos-monkey` so CM4SB auto-config runs.
+# Default ./scripts/dev up does not activate this file.
+spring:
+  config:
+    activate:
+      on-profile: chaos
+  profiles:
+    include:
+      - chaos-monkey
+
+chaos:
+  monkey:
+    enabled: true
+    watcher:
+      rest-controller: true
+      service: true
+      controller: false
+      repository: false
+      component: false
+    assaults:
+      latency-active: true
+      latency-range-start: 1000
+      latency-range-end: 3000
+      exceptions-active: true
+      kill-application-active: false

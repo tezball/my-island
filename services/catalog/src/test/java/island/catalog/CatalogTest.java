@@ -6,7 +6,6 @@ import island.catalog.api.dto.CreatePlaceRequest;
 import island.catalog.api.dto.PlaceResponse;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,27 +107,9 @@ class CatalogTest {
   }
 
   @Test
-  void visitSchemaStubAcceptsVisitedAndStayed() {
-    PlaceResponse place = createSample("visit-stub-place");
-    jdbc.update(
-        """
-        insert into visit (id, user_id, place_id, visit_type, occurred_on, date_precision, note)
-        values (?, ?, ?, 'VISITED', null, 'UNKNOWN', null)
-        """,
-        UUID.randomUUID(),
-        UUID.randomUUID(),
-        place.id());
-    jdbc.update(
-        """
-        insert into visit (id, user_id, place_id, visit_type, occurred_on, date_precision, note)
-        values (?, ?, ?, 'STAYED', date '2024-06-01', 'MONTH', 'private')
-        """,
-        UUID.randomUUID(),
-        UUID.randomUUID(),
-        place.id());
-    Integer visits =
-        jdbc.queryForObject("select count(*) from visit where place_id = ?", Integer.class, place.id());
-    assertThat(visits).isEqualTo(2);
+  void chaosMonkeyIsOffByDefault() {
+    assertThat(env.getProperty("chaos.monkey.enabled")).isEqualTo("false");
+    assertThat(env.getActiveProfiles()).doesNotContain("chaos", "chaos-monkey");
   }
 
   @Test

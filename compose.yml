@@ -145,6 +145,7 @@ services:
       retries: 24
       start_period: 50s
     restart: unless-stopped
+    # Chaos Monkey: not in this default service. See compose.chaos.yml.
 
 volumes:
   ops_pg:

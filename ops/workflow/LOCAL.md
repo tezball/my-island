@@ -52,6 +52,16 @@ curl -s http://127.0.0.1:8081/api/v1/places/skellig-michael
 
 Public display name is **Halfdoor**. Package / repo remain `island.catalog` / my-island. No consumer UI here ([[tickets/PRD-003]]).
 
+### Chaos Monkey (workshop only)
+
+Default `./scripts/dev up` does **not** enable assaults. Overlay:
+
+```bash
+docker compose -f compose.yml -f compose.chaos.yml up -d catalog --wait
+```
+
+That sets Spring profile `chaos` (latency + exceptions; kill stays off). Health + prometheus stay on the default path.
+
 ## Dev Container
 
 Open the repo in Cursor or VS Code and **Reopen in Container**. `.devcontainer/devcontainer.json` starts `compose.yml` and attaches to the `workspace` service (Java 21, Python 3, Node, Docker CLI). A post-start script maps Grafana/Postgres onto `127.0.0.1:3030` / `5433` so `.cursor/mcp.json` still works.
