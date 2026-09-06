@@ -318,6 +318,12 @@ def test_e2e_001_place_stub_workshop() -> None:
     assert "POST /api/v1/places" in ticket
     assert "GET /api/v1/places" in ticket
     assert "GET /api/v1/places/{id}" in ticket
+    assert "`categoryId`" in ticket
+    assert "`countyId`" in ticket
+    assert "`latitude`" in ticket
+    assert "`longitude`" in ticket
+    assert "categorySlug" not in ticket
+    assert "countySlug" not in ticket
     assert "workshop exception" in ticket.lower()
     assert "tezball/my-island" in ticket
     assert "Public brand naming is OPEN" in ticket
@@ -348,6 +354,12 @@ def test_e2e_001_place_stub_workshop() -> None:
     blob = json.dumps(canvas)
     assert "create" in blob.lower()
     assert "STACK" in blob or "stack" in blob.lower()
+    assert "categoryId" in blob
+    assert "countyId" in blob
+    assert "latitude" in blob
+    assert "longitude" in blob
+    assert "categorySlug" not in blob
+    assert "countySlug" not in blob
 
 
 def test_inherited_app_trees_stripped_for_workshop_spine() -> None:
@@ -414,13 +426,14 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "spine strip" in by_id["WF-015"]["title"].lower()
     for ident in ("WF-016", "WF-018"):
         assert ident in by_id, ident
-        assert by_id[ident]["status"] == "ready"
         assert by_id[ident]["owner"] == "automation-expert"
         assert by_id[ident]["type"] == "workflow"
         assert "tickets/E2E-001" in by_id[ident].get("parent", "")
         body = (OPS / "tickets" / f"{ident}.md").read_text()
         assert "[[tickets/E2E-001]]" in body
         assert "[[workflow/STACK-E2E-place-stub]]" in body
+    assert by_id["WF-016"]["status"] == "ready"
+    assert by_id["WF-018"]["status"] == "review"
     wf017 = (OPS / "tickets" / "WF-017.md").read_text()
     assert "[[tickets/E2E-001]]" in wf017
     assert "[[workflow/STACK-E2E-place-stub]]" in wf017
@@ -595,7 +608,7 @@ def test_product_milestones_freeze() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["WF-000"]["status"] == "implement"
     assert by_id["E2E-001"]["status"] == "ready"
-    assert by_id["WF-018"]["status"] == "ready"
+    assert by_id["WF-018"]["status"] == "review"
     board = (OPS / "BOARD.md").read_text()
     assert "## Upcoming" in board
     assert "## Doing" in board

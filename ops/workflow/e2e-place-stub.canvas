@@ -61,7 +61,7 @@
 		{
 			"id": "n_create",
 			"type": "text",
-			"text": "**POST** `/api/v1/places`\n`name` + `categorySlug` required\noptional town, countySlug, lon+lat",
+			"text": "**POST** `/api/v1/places`\n`name` + `categoryId` required\noptional town, countyId, latitude+longitude",
 			"x": 0,
 			"y": 280,
 			"width": 440,
@@ -91,7 +91,7 @@
 		{
 			"id": "n_400",
 			"type": "text",
-			"text": "Missing name / unknown category \u2192 **400** not 500",
+			"text": "Missing name / unknown categoryId \u2192 **400** not 500",
 			"x": 0,
 			"y": 580,
 			"width": 440,
@@ -130,7 +130,7 @@
 		{
 			"id": "n_geo",
 			"type": "text",
-			"text": "Place shape = PRD-001.\n`categorySlug` seed: poi | experience | campsite | bnb.\n`countySlug` = 32 counties incl NI.\nlon+lat together \u2192 PostGIS point.",
+			"text": "Place shape = PRD-001.\n`categoryId` seed: poi | experience | campsite | bnb.\n`countyId` = 32 counties incl NI.\nlatitude+longitude together \u2192 PostGIS point.",
 			"x": 600,
 			"y": 300,
 			"width": 400,
