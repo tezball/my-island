@@ -38,13 +38,13 @@ Default `./scripts/dev up`. Chaos is **not** active. Catalog (when present) boot
 
 ## 4. Compose chaos
 
-Opt-in only:
+Opt-in only. `--profile chaos` on `compose.yml` alone is **not** enough (catalog env stays unset). Documented equivalent ([[LOCAL]]):
 
 ```bash
-docker compose --profile chaos up
+docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 ```
 
-(or documented equivalent). Catalog gets `SPRING_PROFILES_ACTIVE=chaos`. Default `./scripts/dev up` stays clean — do not attach the chaos profile to the default service.
+Catalog gets `SPRING_PROFILES_ACTIVE=chaos,chaos-monkey`. Default `./scripts/dev up` stays clean — do not attach the chaos profile to the default service.
 
 ## 5. Chaos Monkey
 
@@ -63,9 +63,11 @@ Catalog module tests on PR (happy-path create/list/get + actuators). **Never** e
 
 After local/compose up:
 
-1. HTTP against catalog (`POST`/`GET` places, actuators).
-2. Optional: Postgres-RO MCP (`SELECT` only).
-3. Optional: `mcp-grafana` PromQL against the catalog `/actuator/prometheus` scrape.
+1. HTTP against catalog (`POST`/`GET` places, actuators). Cloud Agents can curl `127.0.0.1:8081` when compose is up. Stub JSON today uses `categoryId`/`countyId` (ticket ACs say `categorySlug`/`countySlug` — [[tickets/WF-018]]).
+2. Optional: Postgres-RO MCP (`SELECT` only). `.cursor/mcp.json` targets db `ops`; catalog rows need grants (see [[tickets/WF-016]]).
+3. Optional: `mcp-grafana` PromQL against the catalog `/actuator/prometheus` scrape. Laptop Cursor loads stdio MCP; Cloud Agent toolbox today does **not** — HTTP Grafana/Prometheus is the fallback until [[tickets/WF-016]] / [[tickets/WF-004]].
+
+Drill procedure: [[tickets/WF-017]].
 
 ## 8. Definition of done
 
