@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Stdio shim to IntelliJ IDEA's built-in MCP Server (2025.2+).
+# Laptop only. Enable Settings → Tools → MCP Server and open this repo in IDEA.
+# Do not enable "brave mode" (run without confirmation). Cloud Agents skip this server.
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: ./scripts/mcp-intellij
+
+stdio MCP client for Cursor → IntelliJ IDEA (2025.2+ built-in MCP Server).
+
+Once (laptop):
+  1. Open this repository in IntelliJ IDEA.
+  2. Settings → Tools → MCP Server → Enable.
+  3. Reload MCP in Cursor.
+
+Optional env (passed through to the stdio shim):
+  IDE_PORT   Connect to a specific IDE port
+  HOST       Default 127.0.0.1
+
+This script must not be required for ./scripts/app start or CI.
+EOF
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+# Portable stdio to the running IDE. The npm package is a discovery shim, not
+# a second server; the tools come from IDEA. Do not commit SSE URLs with
+# ephemeral ports.
+exec npx -y @jetbrains/mcp-proxy "$@"

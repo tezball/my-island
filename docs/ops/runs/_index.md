@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[WF-034-implement]] — Goal 2 MUST+SHOULD skills, IntelliJ MCP, AGENT_DX examples
 - [[WF-034-plan]] — Agent DX pack Goal 1 list; IntelliJ MCP MUST; gate human for Goal 2
 - [[WF-003-close]] — Automations not MVP; ticket done; plan kept
 - [[mvp-docs-seed-auth-agents]] — PRD-002 research DB seed; PRD-010 password-only; MVP agent roster

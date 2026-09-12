@@ -104,7 +104,8 @@ writes, or secret values.
 | **Postgres MCP** | Read-only SQL | Staging first. `SELECT` only, timeout, row limit. No prod until replica + policy. |
 | **Docker MCP** | Compose status / sidecar logs | Local + staging. Not prod. |
 | **Browser / Playwright MCP** | Drive the running UI | Local + staging URLs only. |
-| **Mailpit** (HTTP or thin MCP) | Assert outbound mail | Local + staging. No prod mail read. |
+| **IntelliJ MCP** | Inspections, build, symbols via IDEA 2025.2+ | **Laptop.** IDE open. Not Cloud Agents. [[ops/tickets/WF-034]] |
+| **Mailpit** (HTTP or thin MCP) | Assert outbound mail | Local + staging. No prod mail read. **Not packed yet.** |
 
 Not in the pack: Stripe (no payments in MVP), Notion (vault is `ops/`
 in git), filesystem MCP (workspace is the files). Local Jenkins is compose

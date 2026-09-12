@@ -48,7 +48,7 @@ One ticket per session (skip `type: epic`). Ready PRs auto-merge when CI is gree
 1. Read [`docs/ops/HOME.md`](docs/ops/HOME.md), [`docs/ops/workflow/SAFETY.md`](docs/ops/workflow/SAFETY.md), [`docs/ops/agents/_index.md`](docs/ops/agents/_index.md).
 2. `python3 ops/scripts/next_ticket.py --role auto` — one role, one ticket. Epics skipped.
 3. Planner → plan. Implementer → PR. Reviewer → comment. **CI squash-merges ready PRs.**
-4. Skills/routines: [`docs/ops/workflow/SKILLS.md`](docs/ops/workflow/SKILLS.md). CI: [`docs/ops/workflow/CI.md`](docs/ops/workflow/CI.md).
+4. Skills/routines: [`docs/ops/workflow/SKILLS.md`](docs/ops/workflow/SKILLS.md). **Engineer toolbox (slash skills, MCP, IntelliJ examples):** [`docs/ops/workflow/AGENT_DX.md`](docs/ops/workflow/AGENT_DX.md). CI: [`docs/ops/workflow/CI.md`](docs/ops/workflow/CI.md).
 5. Grok vs Cursor: [`docs/ops/agents/GROK_VS_CURSOR.md`](docs/ops/agents/GROK_VS_CURSOR.md). **Automation Expert:** [`docs/ops/agents/roles/automation-expert.md`](docs/ops/agents/roles/automation-expert.md).
 
 New ticket: `python3 ops/scripts/new_ticket.py --prefix WF --type workflow --title "…"`.
@@ -64,7 +64,7 @@ cd my-island
 ./scripts/app test    # PASS/FAIL: pytest + catalog mvn + HTTP smoke
 ```
 
-Same stack: `./scripts/dev up` / `test` / `down` (CI and agents). Open in Cursor / VS Code and **Reopen in Container**. Details: [`docs/ops/workflow/LOCAL.md`](docs/ops/workflow/LOCAL.md).
+Same stack: `./scripts/dev up` / `test` / `down` (CI and agents). Open in Cursor (repo root) and IntelliJ IDEA (same repo; Settings → Tools → MCP Server). Details: [`docs/ops/workflow/LOCAL.md`](docs/ops/workflow/LOCAL.md). Tools + examples: [`docs/ops/workflow/AGENT_DX.md`](docs/ops/workflow/AGENT_DX.md).
 
 Grafana: http://127.0.0.1:3030 (`admin` / `admin`). Postgres: `127.0.0.1:5433` · `ops_reader` / `ops_reader` · db `ops`. Catalog: http://127.0.0.1:8081. Repeatable create→list→get: `./scripts/sim-place-listing.sh` after `./scripts/dev up`.
 

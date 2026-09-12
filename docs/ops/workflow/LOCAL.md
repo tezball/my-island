@@ -48,7 +48,9 @@ cd my-island
 | Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (MCP). Catalog Flyway owns db `catalog` (user `ops` / `ops`). Catalog `place` SELECT for `ops_reader` is Engineering (TODO on [[ops/tickets/WF-016]]) |
 | Catalog API | http://localhost:8081 (create / list / get places) |
 
-Cursor project MCP (`.cursor/mcp.json`) points at Grafana and Postgres db `ops`. After compose is up, reload MCP. Cloud Agents: see [[MCP]] — laptop mcp.json does not follow; use dashboard **stdio** or HTTP PromQL.
+Cursor project MCP (`.cursor/mcp.json`) points at Grafana, Postgres (`ops` + `catalog`), GitHub, Docker, Playwright, and **IntelliJ**. After compose is up, reload MCP. IntelliJ: Settings → Tools → MCP Server → Enable, this repo open; `./scripts/mcp-intellij --help`. Cloud Agents: see [[MCP]] — laptop mcp.json does not follow; use dashboard **stdio** or HTTP PromQL. Do not add IntelliJ to Cloud Agents.
+
+Engineer map (skills, slash, MCP examples): [[AGENT_DX]].
 
 ### Catalog stub (create → list → get)
 

@@ -15,13 +15,15 @@ Same server names locally. **Read-only on data planes.** GitHub MCP may open PRs
 |---|---|---|
 | `grafana` | `uvx mcp-grafana --disable-write` → http://127.0.0.1:3030 | No |
 | `postgres` | Postgres MCP → db `ops` (`mcp_ping`) | **No** — role is `ops_reader` (SELECT only) |
+| `postgres-catalog` | Postgres MCP → db `catalog` | **No** — `ops_reader` (grants: [[ops/tickets/WF-016]]) |
 | `github` | Official image `ghcr.io/github/github-mcp-server` · token from gitignored `.env.ops` | PRs and comments. Merge is CI `automerge`, not this MCP. Toolsets: context, repos, pull_requests, actions, users |
 | `docker` | Docker MCP Toolkit gateway, `--servers docker` (local CLI) | Local compose only. Not a remote docker.sock |
 | `playwright` | `npx -y @playwright/mcp@latest` | Local URLs |
+| `intellij` | `./scripts/mcp-intellij` → IDEA 2025.2+ built-in MCP Server | Laptop. IDE tools. **Not** Cloud Agents. Brave mode off. |
 
 Do not put a PAT in this file or in chat. Put `GITHUB_PERSONAL_ACCESS_TOKEN=` in gitignored `.env.ops`. The github server is stdio so Cursor can load that file (`envFile` does not apply to remote HTTP). Reload MCP after `.env.ops` exists and Docker Desktop is up.
 
-**Proposed (not in `mcp.json` yet):** `intellij` — IntelliJ IDEA 2025.2+ built-in MCP Server, stdio, laptop only (IDE open on this repo). Selected as house MUST on [[ops/workshops/agent-dx-pack]]. Land in Goal 2 of [[ops/tickets/WF-034]] after review. Do not commit SSE URLs with ephemeral ports. Do not enable brave mode by default. Cloud Agents skip this server.
+**IntelliJ:** Enable Settings → Tools → MCP Server, open this repo, reload Cursor MCP. Script `--help` for once-steps. Do not commit SSE URLs with ephemeral ports. Clone/`./scripts/app start` must work with IDEA **closed**. Engineer examples: [[AGENT_DX]]. Ticket: [[ops/tickets/WF-034]].
 
 **TODO (Engineering, not this PR):** `ops_reader` `SELECT` on db `catalog` (`place`) — Flyway/SQL grants + optional second MCP DSN `postgres-catalog`. No Engineering PR yet. Do not duplicate grants SQL here. Ticket: [[ops/tickets/WF-016]].
 
