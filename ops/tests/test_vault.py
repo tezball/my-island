@@ -166,11 +166,11 @@ def test_tickets_have_required_frontmatter() -> None:
 
 
 def test_prd_app_code_tickets_are_not_implement() -> None:
-    """Marketplace stays gated; directory MVP children may be implement with approved plans."""
+    """Marketplace stays gated; directory MVP children may be implement or review with approved plans."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["PRD-004"]["status"] != "implement"
     for ident in ("PRD-002", "PRD-003"):
-        assert by_id[ident]["status"] == "implement"
+        assert by_id[ident]["status"] in ("implement", "review")
         assert f"plans/{ident}" in by_id[ident].get("plan", "")
 
 
