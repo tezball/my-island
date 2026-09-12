@@ -46,6 +46,9 @@
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "intellij": {
+      "command": "${workspaceFolder}/scripts/mcp-intellij"
     }
   }
 }

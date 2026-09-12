@@ -188,14 +188,15 @@ Goal 2 `mcp.json` sketch (stdio; command may become the wrapper):
 
 ## Review checklist (Terry)
 
-Mark keep/drop on Goal 2. Already locked: **`intellij` MCP**.
+Goal 2 landed MUST + SHOULD. LATER (vite-pwa, mailpit, plugin wrap) stays out.
 
-- [ ] MUST skills (clone-run, reviewer, mcp-observe, intellij-ide)
-- [ ] MUST slash skills (`/next-ticket` … `/mcp-health`) as skills, not `.cursor/commands/`
-- [ ] SHOULD spring-catalog now vs later
-- [ ] SHOULD Cursor-in-IntelliJ ACP (not git)
-- [ ] LATER vite-pwa, mailpit, plugin wrapper
-- [ ] NO column stands
+- [x] MUST skills (clone-run, reviewer, mcp-observe, intellij-ide)
+- [x] MUST slash skills (`/next-ticket` … `/mcp-health`) as skills, not `.cursor/commands/`
+- [x] SHOULD spring-catalog
+- [x] SHOULD Cursor-in-IntelliJ ACP documented (not git)
+- [x] Engineer toolbox: [[ops/workflow/AGENT_DX]]
+- [ ] LATER vite-pwa, mailpit, plugin wrapper (out of this ticket)
+- [x] NO column stands
 
 After review: set [[ops/tickets/WF-034]] `status: implement`, clear `gate` (or leave gate if only laptop IDEA enable remains). Implementer lands files; does not merge.
 

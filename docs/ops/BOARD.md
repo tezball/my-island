@@ -17,7 +17,6 @@ kanban-plugin: basic
 ## Planning
 
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
-- [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 
 ## Doing
 
@@ -29,6 +28,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 
 ## In review
 

@@ -11,6 +11,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |
 | [[LOCAL]] | Compose, Dev Container, clone/run |
 | [[MCP]] | Server pack and prod observe rules |
+| [[AGENT_DX]] | Engineer toolbox: skills, slash, MCP, IntelliJ — with examples |
 | [[AUTOMATIONS]] | Cursor cloud jobs |
 | [[SAFETY]] | Non-negotiables |
 | [[agent-pipeline]] | Living canvas: automated vs not |

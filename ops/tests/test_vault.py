@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import stat
+import subprocess
 from pathlib import Path
 
 import board_sync
@@ -58,6 +60,7 @@ REQUIRED_VAULT = [
     "templates/daily.md",
     "workflow/CI.md",
     "workflow/SKILLS.md",
+    "workflow/AGENT_DX.md",
     "tickets/E2E-001.md",
     "workshops/e2e-place-stub.md",
     "workflow/e2e-place-stub.canvas",
@@ -990,12 +993,13 @@ def test_wf_034_agent_dx_pack_workshop() -> None:
     meta = by_id["WF-034"]
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
-    assert meta["status"] == "plan"
-    assert meta.get("gate") == "human"
+    assert meta["status"] in {"implement", "review"}
+    assert meta.get("gate") in ("", None) or not meta.get("gate")
     assert "plans/WF-034" in meta.get("plan", "")
     assert (OPS / "plans" / "WF-034.md").is_file()
     assert (OPS / "workshops" / "agent-dx-pack.md").is_file()
     assert (OPS / "workflow" / "agent-dx-pack.canvas").is_file()
+    assert (OPS / "workflow" / "AGENT_DX.md").is_file()
     brief = (OPS / "workshops" / "agent-dx-pack.md").read_text()
     assert "intellij" in brief.lower()
     assert "/next-ticket" in brief
@@ -1014,3 +1018,57 @@ def test_wf_034_agent_dx_pack_workshop() -> None:
     files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
     assert "ops/tickets/WF-034.md" in files
     assert "ops/workshops/agent-dx-pack.md" in files
+
+    auto = (
+        "clone-run",
+        "reviewer",
+        "mcp-observe",
+        "intellij-ide",
+        "spring-catalog",
+    )
+    slash = (
+        "next-ticket",
+        "plan",
+        "implement",
+        "review",
+        "app-start",
+        "app-test",
+        "board-sync",
+        "mcp-health",
+        "new-ticket",
+        "stack-e2e",
+        "dod",
+    )
+    for name in auto + slash:
+        path = REPO / ".cursor" / "skills" / name / "SKILL.md"
+        assert path.is_file(), name
+        text = path.read_text()
+        assert f"name: {name}" in text
+    for name in slash:
+        text = (REPO / ".cursor" / "skills" / name / "SKILL.md").read_text()
+        assert "disable-model-invocation: true" in text
+    assert not (REPO / ".cursor" / "commands").exists()
+    mcp_json = json.loads((REPO / ".cursor" / "mcp.json").read_text())
+    idea = mcp_json["mcpServers"]["intellij"]
+    assert "mcp-intellij" in idea["command"]
+    assert "http://" not in json.dumps(idea)
+    script = REPO / "scripts" / "mcp-intellij"
+    assert script.is_file()
+    assert script.stat().st_mode & stat.S_IXUSR
+    help_out = subprocess.run(
+        [str(script), "--help"],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+    assert "MCP Server" in help_out.stdout
+    dx = (OPS / "workflow" / "AGENT_DX.md").read_text()
+    assert "/next-ticket" in dx
+    assert "/app-test" in dx
+    assert "intellij" in dx.lower()
+    skills_md = (OPS / "workflow" / "SKILLS.md").read_text()
+    assert "clone-run" in skills_md
+    assert "AGENT_DX" in skills_md
+    stack = (REPO / "docs" / "product" / "STACK.md").read_text()
+    assert "IntelliJ MCP" in stack
