@@ -20,10 +20,7 @@ kanban-plugin: basic
 
 ## Doing
 
-- [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Seed catalog DB from research leads
-- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — Explore list + map
 - [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
-- [ ] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
 - [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
 - [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
@@ -31,6 +28,9 @@ kanban-plugin: basic
 
 ## In review
 
+- [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Seed catalog DB from research leads
+- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — Explore list + map
+- [ ] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
 - [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 - [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 
