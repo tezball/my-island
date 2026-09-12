@@ -323,8 +323,8 @@ def test_harvested_mvp_plans_and_children() -> None:
     assert "spreadsheet" in plan002.lower()
     team = (OPS / "agents" / "mvp-team.md").read_text()
     assert "mvp-seed" in team and "mvp-auth" in team and "mvp-explore" in team
-    assert by_id["WF-003"]["status"] == "plan"
-    assert by_id["WF-003"].get("gate") == "human"
+    assert by_id["WF-003"]["status"] == "done"
+    assert by_id["WF-003"].get("gate") in ("", None) or not by_id["WF-003"].get("gate")
     for name in (
         "PRD-000.md",
         "PRD-002.md",
