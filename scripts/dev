@@ -186,7 +186,9 @@ cmd_ps() {
 
 cmd_config() {
   "${COMPOSE[@]}" config -q
-  docker compose -f "$REPO/compose.yml" -f "$REPO/compose.chaos.yml" config -q
+  # Overlay gates catalog behind profile chaos. Without the profile, web's
+  # depends_on catalog is invalid. Workshop up already uses --profile chaos.
+  docker compose -f "$REPO/compose.yml" -f "$REPO/compose.chaos.yml" --profile chaos config -q
   echo "compose.yml ok"
 }
 

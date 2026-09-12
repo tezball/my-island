@@ -101,6 +101,9 @@ def test_chaos_monkey_is_off_on_default_compose() -> None:
     assert "compose.chaos.yml" not in up_block
     sim_block = dev.split("cmd_sim()")[1].split("cmd_wait()")[0]
     assert "compose.chaos.yml" not in sim_block
+    config_block = dev.split("cmd_config()")[1].split("cmd_sim()")[0]
+    assert "compose.chaos.yml" in config_block
+    assert "--profile chaos" in config_block
 
 
 def test_catalog_contract_is_gherkin_on_testcontainers() -> None:
