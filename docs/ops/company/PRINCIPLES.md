@@ -37,7 +37,7 @@ Canon: [`product/STACK.md`](../../product/STACK.md). Log: [[DECISIONS]].
 3. **Plan before code.** Implementers need `ops/plans/<id>.md` and ticket `status: implement`.
 4. **Chat reviewers never merge.** CI squash-merges ready PRs. [[ops/workflow/SAFETY]]
 5. **No prod** (CEO 2026-09-12 — probably never). No prod SQL writes. Grafana read-only.
-6. **Do not rebuild Jenkins** from `docs/automation/`.
+6. **Do not restore legacy Jenkins** from `docs/automation/`. Greenfield JCasC in compose is OK ([[ops/tickets/WF-031]]).
 7. **Do not implement product** unless `id` is `PRD-*` and `status` is `implement`.
 8. **App code is disposable scaffolding.** Do not polish or preserve it. [[SCAFFOLDING]]
 9. **CI and skills are first-class.** [[ops/workflow/CI]] · [[ops/workflow/SKILLS]]

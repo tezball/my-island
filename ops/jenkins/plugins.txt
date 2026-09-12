@@ -1,0 +1,13 @@
+# Preinstall plugins for local Jenkins (WF-031). jenkins-plugin-cli resolves deps.
+configuration-as-code
+job-dsl
+workflow-aggregator
+git
+github
+github-branch-source
+credentials
+credentials-binding
+plain-credentials
+timestamper
+ws-cleanup
+pipeline-stage-view

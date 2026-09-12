@@ -899,3 +899,30 @@ def test_wf_025_no_prod_and_automerge() -> None:
     automerge = ci.split("automerge:")[1]
     assert "compose.chaos.yml" not in automerge
     assert (OPS / "plans" / "WF-025.md").is_file()
+
+
+def test_wf_031_jenkins_local_house_ci() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-031" in by_id
+    meta = by_id["WF-031"]
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert "plans/WF-031" in meta.get("plan", "")
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "Jenkins local house CI" in decisions
+    safety = (OPS / "workflow" / "SAFETY.md").read_text()
+    assert "Do not restore legacy Jenkins" in safety
+    ci_yml = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "SKIP_JENKINS" in ci_yml
+    compose = (REPO / "compose.yml").read_text()
+    assert "jenkins:" in compose
+    assert "ops_jenkins" in compose
+    assert (REPO / "ops" / "jenkins" / "casc" / "jenkins.yaml").is_file()
+    assert (REPO / "ops" / "jenkins" / "plugins.txt").is_file()
+    assert (REPO / "Jenkinsfile").is_file()
+    assert (OPS / "runbooks" / "JENKINS_LOCAL.md").is_file()
+    assert (OPS / "plans" / "WF-031.md").is_file()
+    assert (OPS / "workshops" / "jenkins-local-ci.md").is_file()
+    stack = (REPO / "docs" / "product" / "STACK.md").read_text()
+    assert "Jenkins" in stack
+    assert "SKIP_JENKINS" in (REPO / "scripts" / "dev").read_text()

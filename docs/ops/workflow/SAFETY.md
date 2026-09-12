@@ -13,7 +13,7 @@ Copied from the CTO review, then relaxed by CEO 2026-09-12 ([[ops/company/DECISI
 4. **Grafana `--disable-write`.** Silences and datasource edits stay off the agent path.
 5. **One ticket per agent session.**
 6. **Secrets stay in env / Cursor MCP settings.** Not in `ops/` notes.
-7. **Do not rebuild Jenkins** from `docs/automation/`. GitHub PRs + Cursor Automations are the path.
+7. **Do not restore legacy Jenkins** from `docs/automation/` or tag `legacy-platform`. Greenfield Jenkins-as-code in compose is house CI ([[ops/tickets/WF-031]], [[ops/runbooks/JENKINS_LOCAL]]). GitHub Actions remains the remote dual-run / automerge path until a shared runner exists.
 8. **Do not implement product MVP** unless the ticket id starts with `PRD-` and status is `implement`.
 9. **Do not polish application code** on `WF-*` tickets. App trees are disposable scaffolding ([[ops/company/SCAFFOLDING]]).
-10. **House stack is [`product/STACK.md`](../../product/STACK.md).** Java / Spring Boot; light Vite+React PWA (not Next); Postgres+PostGIS; Grafana MCP. Do not recommend FastAPI, Neon, or Vercel as defaults.
+10. **House stack is [`product/STACK.md`](../../product/STACK.md).** Java / Spring Boot; light Vite+React PWA (not Next); Postgres+PostGIS; Grafana MCP; Jenkins local CI. Do not recommend FastAPI, Neon, or Vercel as defaults.

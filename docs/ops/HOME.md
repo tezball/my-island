@@ -23,7 +23,7 @@ Charter: [[ops/CHARTER]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (r
 
 → **[[ops/MILESTONES]]** — product roadmap (M0–M7 + gated chunks). Hand-maintained. Canon: [`product/MILESTONES.md`](../product/MILESTONES.md).
 
-→ **[[ops/workshops/_index|Workshops]]** · **[[ops/workshops/vault-os-ux]]** · **[[ops/workflow/vault-os-ux|vault OS canvas]]**.
+→ **[[ops/workshops/_index|Workshops]]** · **[[ops/workshops/jenkins-local-ci]]** · **[[ops/workshops/vault-os-ux]]** · **[[ops/runbooks/JENKINS_LOCAL|Jenkins local]]**.
 
 → **[[ops/workflow/LOOP]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** — loop, CI, skills/routines.
 

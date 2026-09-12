@@ -35,8 +35,8 @@ Architecture’s draft is canon. Do not invent a competing stack.
 | Client | Vite + React light PWA, **not** Next | [[ops/tickets/PRD-003]] (gated on `implement`) |
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[ops/tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[ops/tickets/WF-004]] |
-| CI | GitHub Actions; Playwright against job-started compose when the PWA exists | [[ops/tickets/WF-011]] |
-| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. | [[ops/tickets/WF-025]] |
+| CI | **Jenkins** local compose + JCasC; GHA dual-run for remote PRs/automerge. No legacy Jenkins restore. | [[ops/tickets/WF-031]] |
+| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. Mock-prod deploy: [[ops/tickets/WF-032]]. | [[ops/tickets/WF-025]] |
 
 ### MCP gaps (must close for idea→prod)
 
@@ -59,3 +59,11 @@ Host, OIDC provider, and curator-admin depth remain open in STACK.
 | 8 | **Ready PRs auto-review, approve, and squash-merge** when CI `unit` + `catalog` + `stack` are green. Drafts and forks never auto-merge. Chat reviewer hat still does not merge. | [[ops/tickets/WF-025]], [[ops/workflow/CI]] |
 
 CD line in [`product/STACK.md`](../../product/STACK.md): `main` is git; there is no prod Environment. Staging tickets ([[ops/tickets/WF-010]]) are separate and not a prod stand-in.
+
+## 2026-09-12 — Jenkins local house CI (CTO)
+
+**CTO + Terry unlock.** Greenfield Jenkins-as-code in compose is allowed for clone→up engineer CI. Still **no** wholesale restore from `docs/automation/` / `legacy-platform`. Still **no** GitHub Environment `production`. Deploy target = mock-prod VPS when it exists ([[ops/tickets/WF-032]]).
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 9 | **Jenkins local house CI** via JCasC + `ops_jenkins` volume. GHA remains dual-run for remote PR automerge until a shared runner exists. | [[ops/tickets/WF-031]], [[ops/runbooks/JENKINS_LOCAL]], [`product/STACK.md`](../../product/STACK.md) |
