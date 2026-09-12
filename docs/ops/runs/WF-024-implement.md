@@ -29,4 +29,4 @@ success — PR #63. Vault unit 79 passed (`not stack`); stack pytest 83 passed; 
 
 ## Follow-up
 
-Human may merge. Reviewer comments only. If a laptop already ran Hub alpine PostGIS: `docker compose down -v && ./scripts/app start`.
+Human merged [#63](https://github.com/tezball/my-island/pull/63); ticket closed (`status: done`). If a laptop already ran Hub alpine PostGIS: `docker compose down -v && ./scripts/app start`.

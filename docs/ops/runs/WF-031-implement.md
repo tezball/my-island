@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/WF-031]]"
 role: implementer
 started: 2026-09-12
 finished: 2026-09-12
-pr:
+pr: https://github.com/tezball/my-island/pull/66
 cssclasses:
   - run
 ---
@@ -17,7 +17,7 @@ Greenfield Jenkins in compose: JCasC, `ops_jenkins` volume, `local-ci` / `my-isl
 
 ## Result
 
-success
+success — human merged [#66](https://github.com/tezball/my-island/pull/66); ticket closed (`status: done`).
 
 ## Follow-up
 
