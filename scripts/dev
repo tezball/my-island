@@ -72,7 +72,7 @@ cmd_up() {
   # First Jenkins boot builds the image (plugins) — can take several minutes.
   "${COMPOSE[@]}" up -d "${INFRA_SERVICES[@]}" --wait --wait-timeout 600
   ensure_catalog_db
-  if ! "${COMPOSE[@]}" up -d catalog --wait --wait-timeout 300; then
+  if ! "${COMPOSE[@]}" up -d catalog --build --wait --wait-timeout 300; then
     echo "catalog did not become healthy. If this laptop had postgres:17-alpine or Hub postgis/postgis alpine data, run:" >&2
     echo "  docker compose down -v && ./scripts/dev up" >&2
     return 1
