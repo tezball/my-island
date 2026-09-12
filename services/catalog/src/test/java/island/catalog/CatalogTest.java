@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import island.catalog.api.dto.CreatePlaceRequest;
 import island.catalog.api.dto.PlaceResponse;
+import island.catalog.support.CatalogPostgis;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -16,31 +17,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Testcontainers
 class CatalogTest {
-
-  private static final DockerImageName POSTGIS =
-      DockerImageName.parse("ghcr.io/baosystems/postgis:17-3.5")
-          .asCompatibleSubstituteFor("postgres");
-
-  @Container
-  static final PostgreSQLContainer<?> POSTGRES =
-      new PostgreSQLContainer<>(POSTGIS)
-          .withDatabaseName("catalog")
-          .withUsername("ops")
-          .withPassword("ops");
 
   @DynamicPropertySource
   static void datasource(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-    registry.add("spring.datasource.username", POSTGRES::getUsername);
-    registry.add("spring.datasource.password", POSTGRES::getPassword);
+    CatalogPostgis.datasource(registry);
   }
 
   @Autowired TestRestTemplate http;
@@ -134,80 +117,6 @@ class CatalogTest {
   void chaosMonkeyIsOffByDefault() {
     assertThat(env.getProperty("chaos.monkey.enabled")).isEqualTo("false");
     assertThat(env.getActiveProfiles()).doesNotContain("chaos", "chaos-monkey");
-  }
-
-  @Test
-  void createListGetPlace() {
-    CreatePlaceRequest request =
-        new CreatePlaceRequest(
-            "Skellig Michael",
-            "skellig-michael",
-            "Monastic island off the Kerry coast.",
-            "poi",
-            "kerry",
-            "Portmagee",
-            51.7708,
-            -10.5406,
-            true,
-            "FREE",
-            "https://example.test/skellig",
-            null,
-            null,
-            null,
-            null,
-            null,
-            List.of("parking"));
-    ResponseEntity<PlaceResponse> created = http.postForEntity("/api/v1/places", request, PlaceResponse.class);
-    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-    PlaceResponse body = created.getBody();
-    assertThat(body).isNotNull();
-    assertThat(body.partnerId()).isNull();
-    assertThat(body.category().id()).isEqualTo("poi");
-    assertThat(body.county().id()).isEqualTo("kerry");
-    assertThat(body.facilities()).containsExactly("parking");
-    assertThat(created.getHeaders().getLocation()).isNotNull();
-
-    ResponseEntity<PlaceResponse> byId =
-        http.getForEntity("/api/v1/places/" + body.id(), PlaceResponse.class);
-    assertThat(byId.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(byId.getBody().slug()).isEqualTo("skellig-michael");
-
-    ResponseEntity<PlaceResponse> bySlug =
-        http.getForEntity("/api/v1/places/skellig-michael", PlaceResponse.class);
-    assertThat(bySlug.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(bySlug.getBody().id()).isEqualTo(body.id());
-
-    PlaceResponse[] listed = http.getForObject("/api/v1/places?countyId=kerry", PlaceResponse[].class);
-    assertThat(listed).extracting(PlaceResponse::slug).contains("skellig-michael");
-  }
-
-  @Test
-  void unknownPlaceIs404AndUnknownCategoryIs400() {
-    ResponseEntity<String> missing =
-        http.getForEntity("/api/v1/places/does-not-exist", String.class);
-    assertThat(missing.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
-    CreatePlaceRequest bad =
-        new CreatePlaceRequest(
-            "Nope",
-            "nope-place",
-            null,
-            "campsite-only",
-            "kerry",
-            null,
-            null,
-            null,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            List.of());
-    ResponseEntity<String> created = http.postForEntity("/api/v1/places", bad, String.class);
-    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
   }
 
   @Test

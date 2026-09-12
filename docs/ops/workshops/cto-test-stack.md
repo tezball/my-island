@@ -15,17 +15,17 @@ Open first: [[ops/workflow/cto-test-stack]] · tables: [[ops/workflow/TEST_STACK
 
 ## 5-minute walkthrough
 
-1. **What vs how** — Gherkin = the promise. Testcontainers = how we execute it. `CatalogTest` today *is* that lane with a JUnit skin; we want the Gherkin skin, not a second suite.
+1. **What vs how** — Gherkin = the promise. Testcontainers = how we execute it. Plumbing is in: `features/place_catalog.feature` in the `catalog` job. `CatalogTest` keeps schema/seed. Not a second suite.
 2. **Five lanes** — how (unit) · what (contract) · wiring (compose) · browser (Playwright only) · operate (sim / Gatling / chaos).
 3. **Operate is not proof** — `./scripts/dev sim` seeds; Gatling is the same idea at steady load; chaos is a workshop. None of them replace a `.feature`.
-4. **Red** — two what-suites · Cucumber clicking the PWA · chaos or Gatling soak on automerge.
+4. **Red** — Cucumber clicking the PWA · chaos or Gatling soak on automerge · Playwright CI before `web/`.
 
 ## Verdict
 
 | Lane | Have | Want |
 |---|---|---|
 | How | vault pytest + thin JUnit **gate** | Vitest when `web/` exists |
-| What | `catalog` Testcontainers **gate** | Gherkin in **that same job** (authz, mail, OpenAPI examples inside scenarios) |
+| What | Gherkin `place_catalog.feature` on Testcontainers **gate** | More scenarios (authz when it exists) |
 | Wiring | compose `stack` **gate** | stay thin |
 | Browser | Playwright MCP **tool** | Playwright **gate** ([[ops/tickets/WF-011]]) |
 | Operate | sim + chaos workshop | Gatling `./scripts/dev traffic` (not a PR soak) |

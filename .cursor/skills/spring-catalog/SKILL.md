@@ -8,7 +8,7 @@ description: >-
 
 # Spring catalog (thin)
 
-House: Java / Spring Boot 3 in `services/catalog/`. Package `island.catalog`. Flyway under `src/main/resources/db/migration`. Tests: `./mvnw test` (Testcontainers PostGIS). HTTP: `/api/v1/places`, `/actuator/health`, `/actuator/prometheus`.
+House: Java / Spring Boot 3 in `services/catalog/`. Package `island.catalog`. Flyway under `src/main/resources/db/migration`. Tests: `./mvnw test` (Testcontainers PostGIS + Gherkin `features/place_catalog.feature`). HTTP: `/api/v1/places`, `/actuator/health`, `/actuator/prometheus`.
 
 Canon: `docs/product/STACK.md`. Do not recommend FastAPI, a second API language, or Next.js BFF.
 
