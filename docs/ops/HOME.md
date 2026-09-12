@@ -9,7 +9,7 @@ Company dashboard: [`../HOME.md`](../HOME.md) · [[HOME]]
 
 # Company OS
 
-This folder (`docs/ops/`) is the company operating system. **Markdown in git is the system of record.** Open **`docs/`** as the Obsidian vault (not this folder, not the repo root).
+This folder (`docs/ops/`) is the company operating system. **Markdown on `main` is the system of record** (Jira + Confluence). Docs-only updates land on `main` (short PR + delete branch); code work uses feature branches. Open **`docs/`** as the Obsidian vault (not this folder, not the repo root).
 
 The mandate is **fully automated agent workflows** (tickets, CI, skills, routines). Application code is [[ops/company/SCAFFOLDING|disposable scaffolding]] — do not preserve or refactor it for its own sake.
 

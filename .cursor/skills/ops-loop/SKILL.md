@@ -15,35 +15,35 @@ Read `docs/ops/HOME.md`, `docs/ops/CHARTER.md`, `docs/ops/workflow/LOOP.md`, `do
 python3 ops/scripts/next_ticket.py --role auto
 ```
 
-Pick **one** role. Skip `type: epic` (work a child). Do not plan and implement and review in the same session.
+Pick **one** role. Skip `type: epic`. Do not plan and implement and review in the same session.
 
-Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`. New tickets: `python3 ops/scripts/new_ticket.py`. App code is disposable (`docs/ops/company/SCAFFOLDING.md`). House stack: `docs/product/STACK.md` (Spring, Vite+React PWA not Next, PostGIS, Grafana MCP).
+**Docs on `main`.** If the session is docs-only (tickets, plans, runs, BOARD, workflow notes, `.cursor` skills/rules), `git checkout main && git pull`, make changes, open a **short-lived docs PR**, let CI merge, **delete the branch**. Do not leave orphan docs branches. **Exception:** already on `wf/…` / `prd/…` for code — fold related docs into that PR.
+
+**`main` docs = company state.** Prefer no human gate; use `gate: human` / `blocked` only when required.
+
+Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`. House stack: `docs/product/STACK.md`.
 
 ## Planner (`--role planner`)
 
-1. Open the ticket path printed by `next_ticket.py`.
-2. Write `docs/ops/plans/<id>.md` from `docs/ops/templates/plan.md`.
-3. Set ticket `status: plan` and `plan: "[[ops/plans/<id>]]"`.
-4. `python3 ops/scripts/board_sync.py`.
-5. Commit on `wf/<id>-plan` and open a PR **only if** the plan is large. Small plans may live on the ticket’s implement PR. Default: commit plan with the implementation unless the user asked for a plan-only PR.
-6. Write `docs/ops/runs/<id>-plan.md`. Stop. Ask a human to set `status: implement` on the ticket (or `status: approved` on the plan).
+1. Ensure ticket is on `main` (or land intake on `main` first).
+2. Write `docs/ops/plans/<id>.md` (`status: approved` by default).
+3. Set ticket `plan:` and usually `status: implement` (unless `gate: human`).
+4. `board_sync.py`. Land via docs PR on `main`. Delete branch after merge.
+5. Run note. Stop — do not implement code in this session.
 
 ## Implementer (`--role implementer`)
 
-1. Require a plan (`docs/ops/plans/<id>.md`) and ticket `status: implement`.
-2. Branch `wf/<id>-short-slug` from latest `main`.
-3. Implement only that ticket. Run the ticket’s verify steps.
-4. Open a PR with `gh pr create`. Body links ticket + plan.
-5. Set ticket `pr: <url>` and `status: review`. Sync the board.
-6. Write a run note. Stop. Do not merge from chat (CI squash-merges ready PRs).
+1. Plan + `status: implement` already on `main`.
+2. Branch `wf/<id>-short-slug` from latest `main` (primary checkout; no worktree by default).
+3. Boot stack if needed: `./scripts/app start`.
+4. Implement only that ticket; verify; `gh pr create`.
+5. Set `pr:` + `status: review`; board_sync; run note. Do not merge from chat.
 
 ## Reviewer (`--role reviewer`)
 
-1. `gh pr view` / `gh pr diff` for the ticket’s `pr`.
-2. Check SAFETY (no merge in the diff’s CI tricks, no secrets, no prod deploy, no MVP product scope on `WF-` tickets).
-3. `gh pr comment` with findings. Request changes or “looks good; CI may merge”.
-4. Do not `gh pr merge` from chat. Do not push.
+1. `gh pr view` / `gh pr diff`.
+2. SAFETY check. Comment. Do not merge or push.
 
 ## Board hygiene
 
-If you change any ticket frontmatter, run `board_sync.py`. If local MCP is needed, `./ops/scripts/start-local.sh`.
+Ticket frontmatter change → `board_sync.py`. After any docs or feature PR merges → delete the remote/local branch.

@@ -7,8 +7,9 @@ import sys
 
 CONTEXT = """This repo’s current mandate is the ops agent loop, not the product MVP.
 Obsidian vault is docs/. Read docs/ops/HOME.md and docs/ops/BOARD.md. Follow docs/ops/workflow/LOOP.md.
+Docs-only changes: work from main (short PR, delete branch). If already on a feature branch for code, fold docs into that PR.
 One ticket per session. Do not merge PRs from chat (CI auto-merges ready PRs). There is no production environment.
-Grafana/Postgres MCP is read-only. Ticket prefix WF- = workflow; PRD- = product (none until assigned).
+Grafana/Postgres MCP is read-only. Ticket prefix WF- = workflow; PRD- = product.
 python3 ops/scripts/next_ticket.py --role auto
 """
 
