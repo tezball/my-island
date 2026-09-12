@@ -32,13 +32,13 @@ Dispatch for Release 1. Program: [[ops/plans/PRD-000]]. One ticket per agent ses
 
 **Suggested order:** mvp-seed ∥ mvp-auth ∥ mvp-explore → mvp-place → mvp-checkoff → mvp-me → mvp-launch.
 
-## Agents — human-gated (do not start code)
+## Agents — human-gated / deferred
 
-| Callsign | Ticket | Wait for |
+| Callsign | Ticket | Status |
 |---|---|---|
-| mvp-trust | [[ops/tickets/PRD-009]] | Terry + counsel name/date in git |
-| mvp-factory | [[ops/tickets/WF-003]] | Terry Save/Activate in Automations UI |
-| mvp-google | [[ops/tickets/WF-014]] | Terry Google client id + secret (then wire OAuth; still no stub) |
+| mvp-trust | [[ops/tickets/PRD-009]] | Data approved for current use; counsel revisit before customer prod |
+| mvp-factory | [[ops/tickets/WF-003]] | **done** — Automations not MVP; plan kept for later |
+| mvp-google | [[ops/tickets/WF-014]] | Waiting on Terry Google client id + secret |
 
 ## Docs agent (this PR / vault)
 
