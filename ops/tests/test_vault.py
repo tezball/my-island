@@ -312,16 +312,19 @@ def test_harvested_mvp_plans_and_children() -> None:
     assert by_id["PRD-010"]["status"] == "implement"
     assert "plans/PRD-010" in by_id["PRD-010"].get("plan", "")
     assert "password" in by_id["PRD-010"]["title"].lower()
-    assert by_id["PRD-003"]["status"] == "implement"
+    assert by_id["PRD-003"]["status"] in ("implement", "review")
     assert "plans/PRD-003" in by_id["PRD-003"].get("plan", "")
-    assert by_id["PRD-002"]["status"] == "implement"
+    assert by_id["PRD-002"]["status"] in ("implement", "review")
     assert "plans/PRD-002" in by_id["PRD-002"].get("plan", "")
     assert "seed" in by_id["PRD-002"]["title"].lower()
     assert "plans/PRD-000" in by_id["PRD-000"].get("plan", "")
     assert "plans/E2E-001" in by_id["E2E-001"].get("plan", "")
     assert by_id["E2E-001"]["status"] == "done"
     for ident in ("PRD-011", "PRD-012", "PRD-013", "PRD-014"):
-        assert by_id[ident]["status"] == "implement"
+        if ident == "PRD-011":
+            assert by_id[ident]["status"] in ("implement", "review")
+        else:
+            assert by_id[ident]["status"] == "implement"
         assert f"plans/{ident}" in by_id[ident].get("plan", "")
     plan010 = (OPS / "plans" / "PRD-010.md").read_text()
     assert "No OIDC stub" in plan010 or "no OIDC stub" in plan010.lower()
@@ -955,7 +958,7 @@ def test_wf_025_no_prod_and_automerge() -> None:
     assert "There is no production" in safety
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "name: auto-review approve merge" in ci
-    assert "needs: [unit, catalog, stack]" in ci
+    assert "needs: [unit, catalog, web, stack]" in ci
     assert "github.event.pull_request.draft == false" in ci
     assert "head.repo.full_name == github.repository" in ci
     assert "merge_method: 'squash'" in ci

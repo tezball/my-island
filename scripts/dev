@@ -18,10 +18,11 @@ if [ "${SKIP_JENKINS:-0}" != "1" ]; then
   INFRA_SERVICES+=(jenkins)
 fi
 
-# Human tabs after start. No consumer UI yet (PRD-003).
+# Human tabs after start.
 READY_URLS=(
   http://127.0.0.1:8081/actuator/health
   http://127.0.0.1:8081/api/v1/places
+  http://127.0.0.1:5173
   http://127.0.0.1:3030
   http://127.0.0.1:9091
   http://127.0.0.1:9094
@@ -77,7 +78,26 @@ cmd_up() {
     return 1
   fi
   ensure_catalog_reader_grants
+  seed_local_pois
+  if [ "${SKIP_WEB:-0}" != "1" ]; then
+    "${COMPOSE[@]}" up -d web --wait --wait-timeout 240 || {
+      echo "web did not become healthy (PWA). Catalog is still up." >&2
+    }
+  fi
   cmd_wait
+}
+
+seed_local_pois() {
+  if [ "${SKIP_SEED:-0}" = "1" ]; then
+    echo "SKIP_SEED=1 — not importing POIs"
+    return 0
+  fi
+  echo "seeding published POIs from data/leads (local demo; not PRD-009 counsel)"
+  python3 "$REPO/ops/scripts/import_leads.py" \
+    --place-type poi \
+    --require-coords \
+    --publish-local \
+    --base-url "${CATALOG_URL:-http://127.0.0.1:8081}"
 }
 
 ensure_catalog_db() {
@@ -131,17 +151,18 @@ cmd_open_tabs() {
 cmd_ready() {
   cat <<'EOF'
 
-Halfdoor stack is ready.
+Local stack is ready.
 
   Catalog health     http://127.0.0.1:8081/actuator/health
   Catalog places     http://127.0.0.1:8081/api/v1/places
+  Explore PWA        http://127.0.0.1:5173
   Grafana            http://127.0.0.1:3030  (admin / admin)
   Prometheus         http://127.0.0.1:9091
   Alertmanager       http://127.0.0.1:9094
   Jenkins            http://127.0.0.1:8085  (admin / admin; JCasC from ops/jenkins/)
 
-No consumer UI yet (PRD-003). Chaos is off on this start.
-GitHub PR builds: set JENKINS_GITHUB_TOKEN in .env, then recreate jenkins.
+POI seed is local demo publish (PRD-002). Chaos is off on this start.
+Mock host CSP: docs/ops/runbooks/MOCK_HOST_CSP.md
 Stop:  ./scripts/app stop
 Test:  ./scripts/app test
 EOF

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Human CLI for the local Halfdoor (tezball/my-island) stack.
+# Human CLI for the local stack (tezball/my-island).
 # Thin wrapper around ./scripts/dev — does not rewrite compose.
 # Chaos is not enabled on start.
 set -euo pipefail
@@ -14,7 +14,7 @@ usage() {
   cat <<'EOF'
 Usage: ./scripts/app <command>
 
-  start   Start PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API
+  start   Start PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API, Explore PWA
           Open local URLs if a display exists; print a ready summary
   stop    Stop the stack
   test    Start the stack if needed, then run ops pytest, catalog mvn test,
@@ -22,7 +22,7 @@ Usage: ./scripts/app <command>
   help    This message
 
 Same stack as ./scripts/dev up. Chaos stays off unless you pass compose.chaos.yml yourself.
-No consumer UI yet (PRD-003).
+Explore PWA: http://127.0.0.1:5173 (PRD-003).
 EOF
 }
 
@@ -45,7 +45,7 @@ record() {
 
 print_report() {
   echo
-  echo "=== Halfdoor local test ==="
+  echo "=== Local stack test ==="
   echo
   local line status label
   for line in "${RESULTS[@]}"; do
