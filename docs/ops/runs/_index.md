@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[WF-034-plan]] — Agent DX pack Goal 1 list; IntelliJ MCP MUST; gate human for Goal 2
 - [[WF-003-close]] — Automations not MVP; ticket done; plan kept
 - [[mvp-docs-seed-auth-agents]] — PRD-002 research DB seed; PRD-010 password-only; MVP agent roster
 - [[branch-docs-harvest]] — fold unique plans/tickets from stale branches into main; delete branches

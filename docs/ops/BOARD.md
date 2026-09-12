@@ -17,6 +17,7 @@ kanban-plugin: basic
 ## Planning
 
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
+- [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 
 ## Doing
 

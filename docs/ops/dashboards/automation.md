@@ -14,7 +14,7 @@ Role: [[ops/agents/roles/automation-expert]]. CI: [[ops/workflow/CI]] · Skills:
 > Auto vs not: [[ops/workflow/PIPELINE]] · canvas [[ops/workflow/agent-pipeline]] · brief [[ops/workshops/cto-pipeline-brief]].
 
 > [!info] Focus
-> CI/CD, skills, hooks, Automations, clone/test DX.
+> CI/CD, skills, hooks, Automations, clone/test DX. Workshop: [[ops/workshops/agent-dx-pack]] ([[ops/tickets/WF-034]]).
 
 ![[ops/dashboards/automation.base]]
 

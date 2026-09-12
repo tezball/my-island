@@ -27,3 +27,4 @@ One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `st
 | [[WF-025]] | No prod / auto-merge |
 | [[WF-030]] | Vault OS UX |
 | [[WF-031]] | Jenkins local house CI |
+| [[WF-034]] | Agent DX pack (Goal 1 list; Goal 2 after review) |
