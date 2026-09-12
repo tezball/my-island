@@ -17,45 +17,43 @@ One role per session. If you planned it, stop. Do not review your own implement 
 
 Skip `type: epic`. Work a child.
 
+## Docs vs code
+
+- **Docs-only:** checkout `main`, change vault/skill/rule files, short docs PR, CI merges, **delete branch**.
+- **Already on a feature branch for code:** put related docs in that PR.
+- Do not park company-state tickets only on a private branch.
+
 ## 1. Intake (Grok or orchestrator)
 
-1. Is this already a ticket? Search `docs/ops/tickets/` by title before creating.
-2. Create with `python3 ops/scripts/new_ticket.py --prefix WF|PRD|INC --type story|bug|incident --title "…" --owner <role>`.
-3. `status: inbox`. Promote to `ready` only when outcome and verify steps are written.
-4. `python3 ops/scripts/board_sync.py`.
+1. Search `docs/ops/tickets/` before creating.
+2. `python3 ops/scripts/new_ticket.py --prefix WF|PRD|INC --type … --title "…" --owner <role>`.
+3. `status: inbox` → `ready` when outcome + verify exist.
+4. `board_sync.py`.
+5. **Land on `main` now** (docs PR).
 
-Product ideas → `PRD-*`. Agent-loop glue → `WF-*`. Live breakage → `INC-*` first, then a bug if needed.
+Product → `PRD-*`. Loop glue → `WF-*`. Live breakage → `INC-*`.
 
 ## 2. Plan (planner)
 
-1. Ticket must be `ready`.
-2. Copy [[ops/templates/plan]] to `docs/ops/plans/<id>.md`.
-3. Set ticket `plan: "[[ops/plans/<id>]]"` and `status: plan`.
-4. Sync the board. Commit on the implement branch unless the plan is huge (then a plan-only PR).
-5. Write `docs/ops/runs/<id>-plan.md`. Stop. Human (or later: approved label) sets `status: implement`.
+1. Ticket on `main` at `ready`.
+2. Plan file `status: approved` unless `gate: human`.
+3. Ticket → `implement` in the same docs land when possible.
+4. Docs PR to `main`; run note; stop.
 
 ## 3. Implement (Cursor)
 
-1. Require plan + `status: implement`.
-2. Branch from latest `main` (`wf/<id>-slug` or Cloud Agent `cursor/…`).
-3. House stack is [`product/STACK.md`](../../product/STACK.md): Spring Boot, Vite+React PWA (**not** Next), Postgres+PostGIS. Do not implement from `docs/leads/` or `docs/automation/`.
-4. Do only that ticket. Run its verify steps.
-5. Open a PR. Body links ticket + plan.
-6. Set `pr: <url>`, `status: review`. Sync board. Run note. Do not merge from chat (CI will).
+1. Plan + `implement` on `main`.
+2. Branch from `main`. Boot `./scripts/app start` if verify needs it.
+3. One ticket. Verify. PR. `status: review`. Do not merge from chat.
 
 ## 4. Verify
 
-Ticket-specific checkboxes. Default bar:
+Ticket checkboxes. Default: `pytest -m "not stack"`; `./scripts/dev test` if compose/CI changed; no secrets; no product scope on pure `WF-*` unless intended.
 
-- `python3 -m pytest ops/tests -q -m "not stack"` for vault/script changes
-- `./scripts/dev test` if compose/CI changed
-- No secrets in the diff
-- No product scope on `WF-*`
+## 5. Review
 
-## 5. Review (separate session)
+Comment only. Never `gh pr merge` from chat.
 
-Comment on the PR. Request changes or “looks good; CI may merge”. Never `gh pr merge` from chat. Never push.
+## 6. Close
 
-## 6. Close (after CI squash-merge)
-
-Set `status: done`. Sync board. Run note. If follow-up work appeared, **new ticket**, do not reopen scope.
+After CI squash-merge: `status: done` on `main`, board_sync, run note, **delete feature branch**.

@@ -7,53 +7,62 @@ type: workflow
 
 Fully automated path, local-first. Cloud automations are the same loop with a git trigger.
 
+**`main` docs are company state** (Jira + Confluence). Tickets, plans, board, and handbook live on `main` so every agent sees what is in flight.
+
+**Prefer no human in the loop.** Keep status keys; agents / Automations / CI advance them. Humans only for `gate: human`, `blocked`, counsel before customer prod, or IdP console credentials.
+
 ```
-ticket ready
-  → PLANNER writes plans/<id>.md, status = plan
-  → human (or later: label approved) sets status = implement
-  → IMPLEMENTER branches, codes, opens PR, status = review
-  → REVIEWER comments on the PR (never merge, never push the branch)
-  → CI auto-approves and squash-merges when unit + catalog + stack are green (drafts/forks skipped)
-  → IMPLEMENTER or hook sets status = done, writes runs/<id>-<n>.md
+docs-only (tickets, plans, runs, BOARD, LOOP, skills, rules)
+  → checkout latest main; land via short-lived docs PR (CI auto-merges)
+  → delete the branch after merge
+code / mixed implement
+  → ticket+plan already on main at implement
+  → branch wf/<id>-… from main; PR includes any docs that belong to that ticket
 ```
+
+## Docs on `main` (house rule)
+
+| Situation | Do this |
+|---|---|
+| Session is docs-only (ticket status, plans, run notes, workflow notes, skills/rules under `.cursor/`, vault tests for those) | **Start from `main`.** Do not keep a long-lived docs feature branch. Open a tiny docs PR if branch protection requires it; squash-merge via CI; **delete the branch**. |
+| Already on `wf/…` or `prd/…` implementing code | Fold related docs into **that** PR. Do not switch to a second docs branch mid-flight. |
+| Intake / plan / status flip with no app code | Land on `main` first (docs PR). Then branch for code if needed. |
+
+Do **not** use Cursor “memory” for this — it belongs in git ([[ops/workflow/SKILLS]]).
 
 ## Roles (separate sessions)
 
 | Role | May | Must not |
 |---|---|---|
-| **Planner** | Create/update `plans/`, set ticket `status: plan` | Touch application code, open a feature PR |
-| **Implementer** | Code, tests, `gh pr create`, set `status: review`, `pr:` URL | Merge from chat, review its own PR as the required review |
-| **Reviewer** | Read diff, `gh pr comment`, request changes | `gh pr merge` from chat, push commits, change ticket to `done` |
+| **Planner** | Write plans, set ticket toward `implement`, land docs on `main` | App code; wait on a human unless `gate: human` |
+| **Implementer** | Branch after `implement` on `main`, code, `gh pr create`, `status: review` | Merge from chat; review own PR as required review |
+| **Reviewer** | Comment on PR | `gh pr merge` from chat; push |
 
-The same human may wear all three hats. **The same agent session must not.** If you planned it, stop. A new chat (or the PR-opened automation) reviews it.
+Same person may wear all three hats. **Same agent session must not.**
 
 ## Ticket states
 
 `inbox` → `ready` → `plan` → `implement` → `review` → `done`
 
-`blocked` from any state. Reason in the ticket body.
+Statuses stay. `plan` may be brief (same docs PR can move to `implement`). Use `blocked` / `gate: human` when a person must act.
 
-[[ops/BOARD]] column titles are human labels for the same keys: Upcoming, Ready, Planning, Doing, In review, Blocked, Done. Frontmatter still uses the keys.
-
-`type: epic` appears on the board but is not picked by `next_ticket.py`. Implement children.
+[[ops/BOARD]] columns map to those keys. `type: epic` is not picked by `next_ticket.py`.
 
 ## Commands
 
 ```bash
-python3 ops/scripts/next_ticket.py          # next ready or implement (skips epics)
-python3 ops/scripts/board_sync.py           # regenerate BOARD.md from tickets
+python3 ops/scripts/next_ticket.py
+python3 ops/scripts/board_sync.py
 python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"
-./scripts/app start                         # local stack + ready URLs (wraps ./scripts/dev up)
-./scripts/app stop
-./scripts/app test                           # PASS/FAIL: pytest + catalog mvn + HTTP smoke
-./ops/scripts/start-local.sh                # Grafana / Loki / Prometheus / Postgres (same as ./scripts/dev up)
-./scripts/dev test                           # pytest only (CI uses this)
-# Fast OS tests (no Docker): python3 -m pytest ops/tests -q -m "not stack"
+./scripts/app start|stop|test
+./scripts/dev test
+# Fast OS tests: python3 -m pytest ops/tests -q -m "not stack"
 ```
 
-## PR convention
+## Git convention
 
-- Branch: `wf/<id>-short-slug` (workflow) or `prd/<id>-short-slug` (later)
-- Title: `<id>: <ticket title>`
-- Body: link `docs/ops/tickets/<id>.md` and `docs/ops/plans/<id>.md`
-- Never `--no-verify`. Never force-push `main`.
+1. Company-state docs → `main` (short docs PR + delete branch).
+2. Feature branch only for code (or docs already in-flight on that branch).
+3. PR title `<id>: <title>`; body links ticket + plan.
+4. Never `--no-verify`. Never force-push `main`.
+5. After merge: delete local and remote feature branches.
