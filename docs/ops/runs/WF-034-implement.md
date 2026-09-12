@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/WF-034]]"
 role: implementer
 started: 2026-09-12
 finished: 2026-09-12
-pr:
+pr: https://github.com/tezball/my-island/pull/78
 cssclasses:
   - run
 ---
