@@ -1,0 +1,94 @@
+{
+	"nodes": [
+		{
+			"id": "n_goal",
+			"type": "text",
+			"text": "# Jenkins local CI\n\nclone → ./scripts/dev up → :8085\nJCasC in git · volume ops_jenkins",
+			"x": 0,
+			"y": -200,
+			"width": 400,
+			"height": 120,
+			"color": "6"
+		},
+		{
+			"id": "file_031",
+			"type": "file",
+			"file": "ops/tickets/WF-031.md",
+			"x": 440,
+			"y": -200,
+			"width": 320,
+			"height": 100
+		},
+		{
+			"id": "file_plan",
+			"type": "file",
+			"file": "ops/plans/WF-031.md",
+			"x": 800,
+			"y": -200,
+			"width": 300,
+			"height": 100
+		},
+		{
+			"id": "n_local",
+			"type": "text",
+			"text": "local-ci\nunit → catalog → stack\nvia compose workspace",
+			"x": 0,
+			"y": 0,
+			"width": 280,
+			"height": 120,
+			"color": "4"
+		},
+		{
+			"id": "n_gh",
+			"type": "text",
+			"text": "my-island multibranch\nJENKINS_GITHUB_TOKEN\npoll 5m",
+			"x": 320,
+			"y": 0,
+			"width": 280,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "n_deploy",
+			"type": "text",
+			"text": "deploy-mock-prod\nblocked → WF-028 / WF-032",
+			"x": 640,
+			"y": 0,
+			"width": 280,
+			"height": 120,
+			"color": "1"
+		},
+		{
+			"id": "file_rb",
+			"type": "file",
+			"file": "ops/runbooks/JENKINS_LOCAL.md",
+			"x": 0,
+			"y": 200,
+			"width": 320,
+			"height": 100
+		}
+	],
+	"edges": [
+		{
+			"id": "e1",
+			"fromNode": "n_goal",
+			"toNode": "n_local",
+			"fromSide": "bottom",
+			"toSide": "top"
+		},
+		{
+			"id": "e2",
+			"fromNode": "n_local",
+			"toNode": "n_gh",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e3",
+			"fromNode": "n_gh",
+			"toNode": "n_deploy",
+			"fromSide": "right",
+			"toSide": "left"
+		}
+	]
+}

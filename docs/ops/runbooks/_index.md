@@ -15,6 +15,7 @@ Reusable procedures. Workflow *policy* stays in [[ops/workflow/_index]]. These a
 | [[WEEKLY_DIGEST]] | Company health, typically Monday |
 | [[GUEST_SUPPORT]] | Inbound guest/explorer message |
 | [[LISTING_ROLLOUT]] | New listing type or region |
+| [[JENKINS_LOCAL]] | Clone→up Jenkins house CI (JCasC, token, jobs) |
 | [[PLACE_LISTING_SIM]] | Repeatable catalog create→list→get against compose (no chaos) |
 
 If a runbook and [[ops/workflow/SAFETY]] disagree, safety wins.

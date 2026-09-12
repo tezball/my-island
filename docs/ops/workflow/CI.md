@@ -5,43 +5,49 @@ type: workflow
 
 # CI-friendly conventions
 
-Owner: [[ops/agents/roles/automation-expert]]. Runtime today: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). Policy: [[SAFETY]].
+Owner: [[ops/agents/roles/automation-expert]]. Runtime: **local Jenkins** ([[ops/runbooks/JENKINS_LOCAL]], [[ops/tickets/WF-031]]) + **GitHub Actions** dual-run ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)). Policy: [[SAFETY]].
 
-Agents must be able to **clone → test → PR** without a human laptop ritual.
+Agents must be able to **clone → test → PR** without a human laptop ritual. Engineers get Jenkins on `./scripts/dev up`.
 
 ## What CI proves (now)
 
-| Job | Command | Why |
+| Job | Command | Where |
 |---|---|---|
-| `unit` | `python3 -m pytest ops/tests -q -m "not stack"` | Vault, tickets, board_sync, next_ticket — no Docker |
-| `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS) | Place catalog stub ([[ops/tickets/PRD-001]]) |
-| `stack` | `./scripts/dev test` with compose | Ops runtime (Postgres/Grafana) + catalog compose boot. Live `./scripts/sim-place-listing.sh` path is covered by `@pytest.mark.stack` |
+| `unit` | `python3 -m pytest ops/tests -q -m "not stack"` | Jenkins `local-ci` / GHA `unit` |
+| `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS) | Jenkins / GHA `catalog` |
+| `stack` | `./scripts/dev test` with compose | Jenkins / GHA `stack` (`SKIP_JENKINS=1` in Actions) |
 
-There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. Do not keep red app jobs “for later”. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
+There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
+
+## Local Jenkins
+
+- Config: `ops/jenkins/casc/` (JCasC) + root `Jenkinsfile` — all in git.
+- State: Docker volume `ops_jenkins` (survives restart; wipe with `down -v`).
+- UI: http://127.0.0.1:8085 (`admin` / `admin` unless `.env` overrides).
+- GitHub PR builds: set `JENKINS_GITHUB_TOKEN` in `.env`, recreate jenkins, scan `my-island` multibranch (polls; no public webhook).
+- Automerge for remote PRs still waits on **GHA** greens ([[ops/tickets/WF-025]]) during dual-run.
 
 ## Agent rules
 
-1. **Same commands locally and in Actions.** `./scripts/dev test` is CI. Do not invent a third runner.
-2. **Fast path first.** Vault/docs/script PRs must pass `not stack` without compose. Put slow jobs behind `stack` / `catalog`.
+1. **Same commands locally, in Jenkins, and in Actions.** `./scripts/dev test` is the contract.
+2. **Fast path first.** Vault/docs/script PRs must pass `not stack` without compose.
 3. **Never `--no-verify`.** Never force-push `main`.
-4. **No secrets in logs or notes.** CI has `contents: read` only. Do not add deploy keys on a `WF-*` ticket.
-5. **One ticket’s diff.** Do not “while I’m here” rewrite workflows to support an app that will be replaced.
-6. **Pytest is the contract for the OS.** If you add a vault file the loop depends on, add it to `ops/tests/test_vault.py`.
+4. **No secrets in logs or notes.** Tokens only in `.env` / credential store.
+5. **One ticket’s diff.**
+6. **Pytest is the contract for the OS.** Vault files the loop depends on → `ops/tests/test_vault.py`.
 7. **Markers.** `stack` = needs compose. Default tests must not need it.
-8. **No chaos in required CI.** Do not set Spring profile `chaos`, compose `--profile chaos`, or `compose.chaos.yml` on `unit` / `catalog` / `stack`. Overlay is workshop-only ([[ops/runbooks/STACK_E2E_PLACE_STUB]]).
+8. **No chaos in required CI.**
+9. **Do not restore legacy Jenkins** from `docs/automation/`.
 
 ## Branch and PR
 
 - Branch: `wf/<id>-slug` or Cloud Agent `cursor/…`.
 - Title: `<id>: <ticket title>`.
 - Body: links `docs/ops/tickets/<id>.md` and `docs/ops/plans/<id>.md`.
-- CI must be green before merge. Ready same-repo PRs are auto-approved and squash-merged by the `automerge` job ([[ops/tickets/WF-025]]). Drafts and forks are skipped. Chat agents do not merge.
+- CI must be green before merge. Ready same-repo PRs are auto-approved and squash-merged by the GHA `automerge` job ([[ops/tickets/WF-025]]). Drafts and forks are skipped. Chat agents do not merge.
 
 ## Adding a check
 
 1. File a `WF-*` ticket owned by **automation-expert**.
-2. Implement in `.github/workflows/ci.yml` + `./scripts/dev` if humans/agents must run it too.
+2. Implement in `Jenkinsfile` + `.github/workflows/ci.yml` + `./scripts/dev` if humans/agents must run it too.
 3. Document the job in this note.
-4. If the check is product-app, it belongs on a `PRD-*` ticket — and the app is still [[ops/company/SCAFFOLDING|scaffolding]].
-
-Jenkins is **not** the path. [[AUTOMATIONS]] are. Archaeology: git tag `legacy-platform`.

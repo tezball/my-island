@@ -29,7 +29,7 @@ These are constraints on the first service and UI commits.
 | Database | **PostgreSQL 17 + PostGIS** | Map/geo is a first-class MVP surface. One engine for relational + distance queries. |
 | Migrations | **Flyway** in the API | Expand/contract only. Agents never ad-hoc DDL against shared envs. |
 | Observability | **MCP, OSS first** | Logs, metrics, alerts via Grafana stack + `mcp-grafana`. Prefer $0 self-hosted. |
-| CI | **GitHub Actions** | Required checks; Playwright against job-started compose. No Jenkins rebuild. |
+| CI | **Jenkins** (local compose + JCasC); GHA dual-run for remote PRs | Clone→`./scripts/dev up` → :8085. Same `unit`/`catalog`/`stack` contract. No legacy Jenkins restore. [[ops/tickets/WF-031]] |
 | CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green. | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. |
 
 Hosting (EU VPS / Fly / Railway / etc.) remains an open pick as long as it can
@@ -106,8 +106,9 @@ writes, or secret values.
 | **Browser / Playwright MCP** | Drive the running UI | Local + staging URLs only. |
 | **Mailpit** (HTTP or thin MCP) | Assert outbound mail | Local + staging. No prod mail read. |
 
-Not in the pack: Stripe (no payments in MVP), Jenkins, Notion (vault is `ops/`
-in git), filesystem MCP (workspace is the files).
+Not in the pack: Stripe (no payments in MVP), Notion (vault is `ops/`
+in git), filesystem MCP (workspace is the files). Local Jenkins is compose
+house CI ([[ops/tickets/WF-031]]), not an MCP server.
 
 Tickets and company OS stay in the Obsidian vault at `ops/` (git). Agents edit
 markdown via the repo, not a desktop-only vault MCP.

@@ -44,6 +44,7 @@ cd my-island
 | Prometheus | http://localhost:9091 |
 | Loki | http://localhost:3101 |
 | Alertmanager | http://localhost:9094 |
+| Jenkins | http://localhost:8085 (`admin` / `admin`; JCasC — [[ops/runbooks/JENKINS_LOCAL]]) |
 | Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (MCP). Catalog Flyway owns db `catalog` (user `ops` / `ops`). Catalog `place` SELECT for `ops_reader` is Engineering (TODO on [[ops/tickets/WF-016]]) |
 | Catalog API | http://localhost:8081 (create / list / get places) |
 

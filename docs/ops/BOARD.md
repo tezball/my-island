@@ -31,6 +31,7 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/WF-024|WF-024]] P0 PostGIS image has no ARM64 (app start fails on Apple Silicon)
 - [ ] [[ops/tickets/WF-030|WF-030]] P0 Vault OS UX — colour, dashboards, role homes
+- [ ] [[ops/tickets/WF-031|WF-031]] P0 Jenkins house CI (local compose + JCasC)
 
 ## Blocked
 
@@ -38,6 +39,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-010|WF-010]] P1 Always-on EU staging for API + Grafana sidecars
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
+- [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 
 ## Done
 

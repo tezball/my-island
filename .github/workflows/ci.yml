@@ -51,11 +51,14 @@ jobs:
       - name: Build workspace image
         run: docker compose build workspace
       - name: Start stack
+        env:
+          SKIP_JENKINS: "1"
         run: ./scripts/dev up
       - name: Pytest in workspace (including stack)
         env:
           REQUIRE_STACK: "1"
           DEV_TEST_IN_WORKSPACE: "1"
+          SKIP_JENKINS: "1"
         run: ./scripts/dev test
       - name: Compose diagnostics
         if: failure()

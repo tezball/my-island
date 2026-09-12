@@ -152,6 +152,44 @@ services:
     restart: unless-stopped
     # Chaos Monkey: not in this default service. See compose.chaos.yml.
 
+  # Local house CI (WF-031). JCasC from ops/jenkins/casc; state on ops_jenkins.
+  # Repo is bind-mounted at the host path so `docker compose` from Jenkins resolves
+  # relative volumes (Docker Desktop File Sharing). GitHub PAT: JENKINS_GITHUB_TOKEN in .env.
+  jenkins:
+    build:
+      context: ./ops/jenkins
+      dockerfile: Dockerfile
+    working_dir: ${PWD}
+    environment:
+      CASC_JENKINS_CONFIG: /var/jenkins_home/casc_configs
+      JENKINS_URL: ${JENKINS_URL:-http://127.0.0.1:8085/}
+      JENKINS_ADMIN_ID: ${JENKINS_ADMIN_ID:-admin}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-admin}
+      JENKINS_GITHUB_TOKEN: ${JENKINS_GITHUB_TOKEN:-changeme}
+      HOST_REPO: ${PWD}
+      JAVA_OPTS: >-
+        -Djenkins.install.runSetupWizard=false
+        -Dcasc.jenkins.config=/var/jenkins_home/casc_configs
+    ports:
+      - "8085:8080"
+    volumes:
+      - ops_jenkins:/var/jenkins_home
+      - ./ops/jenkins/casc:/var/jenkins_home/casc_configs:ro
+      - ./ops/jenkins/casc/jobs:/var/jenkins_casc_jobs:ro
+      - ${PWD}:${PWD}
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Local-only: docker.sock access. Do not expose this pattern on a shared host.
+    group_add:
+      - "${DOCKER_GID:-0}"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8080/login >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+    restart: unless-stopped
+
 volumes:
   ops_pg:
   ops_grafana:
+  ops_jenkins:

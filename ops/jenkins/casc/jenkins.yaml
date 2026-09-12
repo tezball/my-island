@@ -1,0 +1,38 @@
+# JCasC — durable config for local Jenkins (WF-031). All of this is in git.
+# Secrets via compose env / .env: JENKINS_ADMIN_PASSWORD, JENKINS_GITHUB_TOKEN (never commit).
+jenkins:
+  systemMessage: |
+    my-island local house CI (WF-031). Config from ops/jenkins/casc (git).
+    State volume: ops_jenkins. Wipe: docker compose down -v.
+  numExecutors: 2
+  mode: NORMAL
+  scmCheckoutRetryCount: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID:-admin}"
+          password: "${JENKINS_ADMIN_PASSWORD:-admin}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: true
+
+unclassified:
+  location:
+    url: "${JENKINS_URL:-http://127.0.0.1:8085/}"
+    adminAddress: "ops@localhost"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "github-token"
+              description: "GitHub PAT for PR polling / status (set JENKINS_GITHUB_TOKEN)"
+              secret: "${JENKINS_GITHUB_TOKEN:-changeme}"
+
+jobs:
+  - file: /var/jenkins_casc_jobs/local-ci.groovy
+  - file: /var/jenkins_casc_jobs/github-multibranch.groovy
+  - file: /var/jenkins_casc_jobs/deploy-mock-prod.groovy

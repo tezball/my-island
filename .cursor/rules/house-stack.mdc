@@ -11,6 +11,6 @@ Canon: `docs/product/STACK.md` (CEO lock 2026-09-05). Decisions: `docs/ops/compa
 - **Client:** Vite + React TypeScript PWA (light, phone-first). Do not default to Next.js App Router, a Next BFF, or a heavy full-stack JS framework. Spring owns the API.
 - **Data:** PostgreSQL 17 + PostGIS. Migrations: Flyway. Not Neon as the house database.
 - **Observe:** Grafana OSS (Prometheus, Loki, Alertmanager) via `mcp-grafana`. Not Datadog/New Relic as the system of record.
-- **CI/CD:** GitHub Actions. Playwright against job-started compose once a `PRD-*` UI exists. **No production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. Do not rebuild Jenkins. Do not treat Vercel as the default host.
+- **CI/CD:** **Jenkins** local compose + JCasC ([[ops/tickets/WF-031]]); GitHub Actions dual-run for remote PRs/automerge. Playwright against job-started compose once a `PRD-*` UI exists. **No production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. Do not restore legacy Jenkins from `docs/automation/`. Do not treat Vercel as the default host.
 - Do not implement the consumer app unless the ticket is `PRD-*` and `status: implement`.
 - Do not implement from `docs/leads/` or `docs/automation/`. History only. Tag `legacy-platform` is archaeology.

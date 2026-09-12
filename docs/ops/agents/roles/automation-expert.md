@@ -33,6 +33,6 @@ PRs to `.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/environment.jso
 ## Must not
 
 - Polish or preserve consumer app code. App trees are [[ops/company/SCAFFOLDING|disposable scaffolding]].
-- Rebuild Jenkins from `docs/automation/`.
+- Restore legacy Jenkins from `docs/automation/`. Greenfield JCasC is [[ops/tickets/WF-031]].
 - Put secrets in notes. Invent a production deploy.
 - Invent a product test suite to look busy.

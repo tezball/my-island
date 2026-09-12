@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One entrypoint for clone/run, Dev Containers, Cloud Agents, and CI.
 # Humans: prefer ./scripts/app (start / stop / test).
-#   ./scripts/dev up     start PostGIS + Grafana stack + catalog API
+#   ./scripts/dev up     start PostGIS + Grafana stack + catalog API + Jenkins
 #   ./scripts/dev start  same as up, then open local URLs if a display exists
 #   ./scripts/dev test   unit tests; stack tests if REQUIRE_STACK=1 or stack is up
 #   ./scripts/dev sim    happy-path place create/list/get (see scripts/sim-place-listing.sh)
@@ -12,7 +12,11 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO"
 
 COMPOSE=(docker compose -f "$REPO/compose.yml")
+# Jenkins is local house CI (WF-031). Skip in GitHub Actions stack job (SKIP_JENKINS=1).
 INFRA_SERVICES=(postgres loki prometheus alertmanager grafana)
+if [ "${SKIP_JENKINS:-0}" != "1" ]; then
+  INFRA_SERVICES+=(jenkins)
+fi
 
 # Human tabs after start. No consumer UI yet (PRD-003).
 READY_URLS=(
@@ -22,6 +26,9 @@ READY_URLS=(
   http://127.0.0.1:9091
   http://127.0.0.1:9094
 )
+if [ "${SKIP_JENKINS:-0}" != "1" ]; then
+  READY_URLS+=(http://127.0.0.1:8085)
+fi
 
 usage() {
   cat <<'EOF'
@@ -29,7 +36,7 @@ Usage: ./scripts/dev <command>
 
   start     Start the stack, open local URLs if a display exists, print a ready summary
   stop      Stop the stack
-  up        Start the Compose stack (PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API)
+  up        Start the Compose stack (PostGIS, Grafana, Loki, Prometheus, Alertmanager, catalog API, Jenkins)
   down      Stop the stack (no extra message)
   ps        Compose status
   test      Run pytest (same path as CI)
@@ -42,8 +49,11 @@ Humans: ./scripts/app start | stop | test | help
 Environment:
   REQUIRE_STACK=1          Fail if Grafana/Postgres are not reachable (CI sets this)
   DEV_TEST_IN_WORKSPACE=1  Run pytest inside the workspace image (CI stack job)
+  SKIP_JENKINS=1           Do not start Jenkins (GHA stack job sets this)
+  JENKINS_GITHUB_TOKEN     GitHub PAT for local Jenkins PR polling (optional; see .env.example)
 
 Catalog API (after up): http://127.0.0.1:8081
+Jenkins (after up):      http://127.0.0.1:8085  (admin / admin unless .env overrides)
 If Postgres was created before PostGIS (or with Hub postgis/postgis alpine), recreate volumes: docker compose down -v && ./scripts/dev up
 Chaos Monkey (not default): docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 EOF
@@ -58,7 +68,8 @@ compose_ok() {
 }
 
 cmd_up() {
-  "${COMPOSE[@]}" up -d "${INFRA_SERVICES[@]}" --wait --wait-timeout 300
+  # First Jenkins boot builds the image (plugins) — can take several minutes.
+  "${COMPOSE[@]}" up -d "${INFRA_SERVICES[@]}" --wait --wait-timeout 600
   ensure_catalog_db
   if ! "${COMPOSE[@]}" up -d catalog --wait --wait-timeout 300; then
     echo "catalog did not become healthy. If this laptop had postgres:17-alpine or Hub postgis/postgis alpine data, run:" >&2
@@ -127,8 +138,10 @@ Halfdoor stack is ready.
   Grafana            http://127.0.0.1:3030  (admin / admin)
   Prometheus         http://127.0.0.1:9091
   Alertmanager       http://127.0.0.1:9094
+  Jenkins            http://127.0.0.1:8085  (admin / admin; JCasC from ops/jenkins/)
 
 No consumer UI yet (PRD-003). Chaos is off on this start.
+GitHub PR builds: set JENKINS_GITHUB_TOKEN in .env, then recreate jenkins.
 Stop:  ./scripts/app stop
 Test:  ./scripts/app test
 EOF

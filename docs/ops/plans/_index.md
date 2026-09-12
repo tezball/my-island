@@ -4,4 +4,4 @@ One plan per ticket, same id. Copy [[ops/templates/plan]]. Implementers do not s
 
 Epics do not need implementation plans; children do. First product plan: [[PRD-001]]. Wave 1 leads acceptance: [[PRD-007]]. Draft Place import: [[PRD-008]]. Place-listing sim: [[WF-019]]. Cloud Agent local MCP: [[WF-016]]. Living markdown under `docs/`: [[ops/plans/WF-023]]. Apple Silicon PostGIS image: [[ops/plans/WF-024]]. No prod / auto-merge: [[ops/plans/WF-025]].
 
-Vault OS UX: [[ops/plans/WF-030]].
+Vault OS UX: [[ops/plans/WF-030]]. Jenkins local house CI: [[ops/plans/WF-031]].
