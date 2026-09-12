@@ -14,7 +14,7 @@ Agents must be able to **clone → test → PR** without a human laptop ritual. 
 | Job | Command | Where |
 |---|---|---|
 | `unit` | `python3 -m pytest ops/tests -q -m "not stack"` | Jenkins `local-ci` / GHA `unit` |
-| `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS) | Jenkins / GHA `catalog` |
+| `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS — **contract** / what) | Jenkins / GHA `catalog` |
 | `stack` | `./scripts/dev test` with compose | Jenkins / GHA `stack` (`SKIP_JENKINS=1` in Actions) |
 
 There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js. Full mix (gates vs tools vs want): [[TEST_STACK]].

@@ -3,11 +3,11 @@
 		{
 			"id": "n_goal",
 			"type": "text",
-			"text": "# Test stack — shift left\n\nGreen = CI gate today · Yellow = tool today · Cyan = want · Red = never a merge gate\nDetail: TEST_STACK.md",
+			"text": "# Test stack — what vs how\n\nFive lanes. Shift left. BDD = integration (Gherkin on Testcontainers).\nGreen = gate · Yellow = operate/tool · Cyan = want skin · Red = never",
 			"x": -40,
-			"y": -380,
+			"y": -360,
 			"width": 560,
-			"height": 140,
+			"height": 150,
 			"color": "6"
 		},
 		{
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "ops/workflow/TEST_STACK.md",
 			"x": 560,
-			"y": -380,
+			"y": -360,
 			"width": 300,
 			"height": 100
 		},
@@ -24,7 +24,7 @@
 			"type": "file",
 			"file": "ops/workshops/cto-test-stack.md",
 			"x": 900,
-			"y": -380,
+			"y": -360,
 			"width": 300,
 			"height": 100
 		},
@@ -33,7 +33,7 @@
 			"type": "file",
 			"file": "ops/workflow/DOD.md",
 			"x": 1240,
-			"y": -380,
+			"y": -360,
 			"width": 260,
 			"height": 100
 		},
@@ -42,328 +42,187 @@
 			"type": "file",
 			"file": "ops/tickets/WF-035.md",
 			"x": 1540,
-			"y": -380,
+			"y": -360,
 			"width": 260,
 			"height": 100
 		},
 		{
-			"id": "group_left",
+			"id": "group_how",
 			"type": "group",
 			"x": -40,
-			"y": -180,
-			"width": 1840,
-			"height": 280,
-			"label": "LEFT — required CI today",
+			"y": -160,
+			"width": 500,
+			"height": 240,
+			"label": "1 HOW — unit",
 			"color": "4"
 		},
 		{
-			"id": "n_vault",
+			"id": "n_how",
 			"type": "text",
-			"text": "Vault pytest\nnot stack\n**gate**",
+			"text": "Vault pytest + JUnit\n(+ Vitest when web/)\n**implementation, not the promise**",
 			"x": 0,
-			"y": -120,
-			"width": 220,
-			"height": 110,
+			"y": -100,
+			"width": 400,
+			"height": 140,
 			"color": "4"
 		},
 		{
-			"id": "n_junit",
-			"type": "text",
-			"text": "JUnit unit\nPlaceServiceTest\n**gate** (thin)",
-			"x": 260,
-			"y": -120,
-			"width": 220,
-			"height": 110,
+			"id": "group_what",
+			"type": "group",
+			"x": 500,
+			"y": -160,
+			"width": 640,
+			"height": 240,
+			"label": "2 WHAT — contract (BDD = integration)",
 			"color": "4"
 		},
 		{
-			"id": "n_tc",
+			"id": "n_contract",
 			"type": "text",
-			"text": "Testcontainers\nPostGIS + Flyway + HTTP\n**gate** (API home)",
-			"x": 520,
-			"y": -120,
-			"width": 280,
-			"height": 110,
+			"text": "Gherkin on Testcontainers\nToday: CatalogTest (JUnit skin)\nWant: same job, Gherkin skin\n**one suite — authz/mail live here**",
+			"x": 540,
+			"y": -100,
+			"width": 560,
+			"height": 140,
+			"color": "4"
+		},
+		{
+			"id": "group_wire",
+			"type": "group",
+			"x": 1180,
+			"y": -160,
+			"width": 620,
+			"height": 240,
+			"label": "3 WIRING — stack",
 			"color": "4"
 		},
 		{
 			"id": "n_stack",
 			"type": "text",
-			"text": "Compose stack\npytest mark stack\n**gate**",
-			"x": 840,
-			"y": -120,
-			"width": 240,
-			"height": 110,
+			"text": "Compose pytest mark stack\nBoxes talk. Do not re-assert HTTP contract.\nCI: unit · catalog · stack",
+			"x": 1220,
+			"y": -100,
+			"width": 540,
+			"height": 140,
 			"color": "4"
 		},
 		{
-			"id": "n_ci_jobs",
-			"type": "text",
-			"text": "GHA + Jenkins\nunit · catalog · stack\n**auto**",
-			"x": 1120,
-			"y": -120,
-			"width": 240,
-			"height": 110,
-			"color": "4"
-		},
-		{
-			"id": "n_shift",
-			"type": "text",
-			"text": "Shift left: new API behaviour lives here,\nnot in Playwright or chat curl.",
-			"x": 1400,
-			"y": -120,
-			"width": 360,
-			"height": 110,
-			"color": "4"
-		},
-		{
-			"id": "group_tools",
+			"id": "group_browser",
 			"type": "group",
 			"x": -40,
 			"y": 140,
-			"width": 1840,
-			"height": 260,
-			"label": "TOOLS today — human + agent entrypoints",
+			"width": 860,
+			"height": 220,
+			"label": "4 BROWSER — user’s what",
+			"color": "5"
+		},
+		{
+			"id": "n_pw",
+			"type": "text",
+			"text": "Playwright only UI runner\nToday: MCP tool\nWant: CI gate (WF-011) + axe\nGherkin does not click the PWA",
+			"x": 0,
+			"y": 200,
+			"width": 780,
+			"height": 120,
+			"color": "5"
+		},
+		{
+			"id": "group_op",
+			"type": "group",
+			"x": 860,
+			"y": 140,
+			"width": 940,
+			"height": 220,
+			"label": "5 OPERATE — not a second contract",
 			"color": "3"
 		},
 		{
-			"id": "n_sim",
+			"id": "n_traffic",
 			"type": "text",
-			"text": "./scripts/dev sim\ncreate→list→get\n**seed + smoke**",
-			"x": 0,
+			"text": "Traffic: sim today, Gatling want\n./scripts/dev sim · traffic\n**seed + steady flow + Grafana**",
+			"x": 900,
 			"y": 200,
-			"width": 260,
+			"width": 420,
 			"height": 120,
 			"color": "3"
 		},
 		{
 			"id": "n_chaos",
 			"type": "text",
-			"text": "Chaos overlay\nMonkey latency/exceptions\n**workshop /stack-e2e**",
-			"x": 300,
+			"text": "Chaos overlay /stack-e2e\n**workshop, never merge**",
+			"x": 1360,
 			"y": 200,
-			"width": 280,
+			"width": 400,
 			"height": 120,
 			"color": "3"
-		},
-		{
-			"id": "n_mcp_pw",
-			"type": "text",
-			"text": "Playwright MCP\ndrive local URLs\n**explore, not gate**",
-			"x": 620,
-			"y": 200,
-			"width": 260,
-			"height": 120,
-			"color": "3"
-		},
-		{
-			"id": "n_app_test",
-			"type": "text",
-			"text": "/app-test\n./scripts/app test\n**same as CI**",
-			"x": 920,
-			"y": 200,
-			"width": 240,
-			"height": 120,
-			"color": "3"
-		},
-		{
-			"id": "n_grafana",
-			"type": "text",
-			"text": "mcp-grafana / PromQL\nup{job=\"catalog\"}\n**observe while tools run**",
-			"x": 1200,
-			"y": 200,
-			"width": 300,
-			"height": 120,
-			"color": "3"
-		},
-		{
-			"id": "n_idea",
-			"type": "text",
-			"text": "IntelliJ MCP\nmvnw test\n**laptop**",
-			"x": 1540,
-			"y": 200,
-			"width": 220,
-			"height": 120,
-			"color": "3"
-		},
-		{
-			"id": "group_want",
-			"type": "group",
-			"x": -40,
-			"y": 440,
-			"width": 1840,
-			"height": 260,
-			"label": "WANT — wide mix, still shift-left",
-			"color": "5"
-		},
-		{
-			"id": "n_bdd",
-			"type": "text",
-			"text": "API BDD\nCucumber vs Testcontainers\n**living spec / run one scenario**",
-			"x": 0,
-			"y": 500,
-			"width": 320,
-			"height": 130,
-			"color": "5"
-		},
-		{
-			"id": "n_gatling",
-			"type": "text",
-			"text": "Gatling\n./scripts/dev traffic\n**steady local data + metrics**",
-			"x": 360,
-			"y": 500,
-			"width": 320,
-			"height": 130,
-			"color": "5"
-		},
-		{
-			"id": "n_vitest",
-			"type": "text",
-			"text": "Vitest\nPWA units (PRD-003)\n**gate when web/ exists**",
-			"x": 720,
-			"y": 500,
-			"width": 280,
-			"height": 130,
-			"color": "5"
-		},
-		{
-			"id": "n_pw_ci",
-			"type": "text",
-			"text": "Playwright CI\njob starts compose (WF-011)\n**only browser E2E gate**",
-			"x": 1040,
-			"y": 500,
-			"width": 320,
-			"height": 130,
-			"color": "5"
-		},
-		{
-			"id": "n_neg",
-			"type": "text",
-			"text": "Negative authz\nMailpit · axe\n**NFR-13 / 04 / 10**",
-			"x": 1400,
-			"y": 500,
-			"width": 360,
-			"height": 130,
-			"color": "5"
 		},
 		{
 			"id": "group_never",
 			"type": "group",
 			"x": -40,
-			"y": 740,
+			"y": 420,
 			"width": 1840,
-			"height": 200,
-			"label": "NEVER a merge gate",
+			"height": 180,
+			"label": "NEVER — overlapping value or merge-gate tax",
 			"color": "1"
 		},
 		{
-			"id": "n_never_chaos",
+			"id": "n_never",
 			"type": "text",
-			"text": "Chaos in required CI\nkill-application assault",
+			"text": "Two what-suites (JUnit HTTP + Gherkin for the same scenario)\nCucumber clicking the PWA · chaos/Gatling soak on every PR · k6/JMeter · red jobs for later",
 			"x": 0,
-			"y": 800,
-			"width": 280,
-			"height": 90,
-			"color": "1"
-		},
-		{
-			"id": "n_never_dual",
-			"type": "text",
-			"text": "Dual UI E2E\nPlaywright + Cucumber both clicking",
-			"x": 320,
-			"y": 800,
-			"width": 320,
-			"height": 90,
-			"color": "1"
-		},
-		{
-			"id": "n_never_soak",
-			"type": "text",
-			"text": "Gatling soak on every PR\nk6/JMeter second house",
-			"x": 680,
-			"y": 800,
-			"width": 300,
-			"height": 90,
-			"color": "1"
-		},
-		{
-			"id": "n_never_red",
-			"type": "text",
-			"text": "Red jobs for later\nmutation as automerge",
-			"x": 1020,
-			"y": 800,
-			"width": 280,
-			"height": 90,
+			"y": 480,
+			"width": 1280,
+			"height": 80,
 			"color": "1"
 		},
 		{
 			"id": "file_ci",
 			"type": "file",
 			"file": "ops/workflow/CI.md",
-			"x": 1340,
-			"y": 800,
-			"width": 240,
+			"x": 1320,
+			"y": 470,
+			"width": 220,
 			"height": 90
 		},
 		{
 			"id": "file_011",
 			"type": "file",
 			"file": "ops/tickets/WF-011.md",
-			"x": 1600,
-			"y": 800,
-			"width": 160,
+			"x": 1580,
+			"y": 470,
+			"width": 180,
 			"height": 90
 		}
 	],
 	"edges": [
 		{
 			"id": "e1",
-			"fromNode": "n_vault",
-			"toNode": "n_junit",
+			"fromNode": "n_how",
+			"toNode": "n_contract",
 			"fromSide": "right",
 			"toSide": "left"
 		},
 		{
 			"id": "e2",
-			"fromNode": "n_junit",
-			"toNode": "n_tc",
-			"fromSide": "right",
-			"toSide": "left"
-		},
-		{
-			"id": "e3",
-			"fromNode": "n_tc",
+			"fromNode": "n_contract",
 			"toNode": "n_stack",
 			"fromSide": "right",
 			"toSide": "left"
 		},
 		{
+			"id": "e3",
+			"fromNode": "n_contract",
+			"toNode": "n_pw",
+			"fromSide": "bottom",
+			"toSide": "top"
+		},
+		{
 			"id": "e4",
-			"fromNode": "n_stack",
-			"toNode": "n_ci_jobs",
+			"fromNode": "n_traffic",
+			"toNode": "n_chaos",
 			"fromSide": "right",
 			"toSide": "left"
-		},
-		{
-			"id": "e5",
-			"fromNode": "n_sim",
-			"toNode": "n_gatling",
-			"fromSide": "bottom",
-			"toSide": "top"
-		},
-		{
-			"id": "e6",
-			"fromNode": "n_tc",
-			"toNode": "n_bdd",
-			"fromSide": "bottom",
-			"toSide": "top"
-		},
-		{
-			"id": "e7",
-			"fromNode": "n_mcp_pw",
-			"toNode": "n_pw_ci",
-			"fromSide": "bottom",
-			"toSide": "top"
 		}
 	]
 }

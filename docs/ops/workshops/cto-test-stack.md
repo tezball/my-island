@@ -9,49 +9,47 @@ cssclasses:
 
 # CTO test-stack brief — today vs want
 
-**Meeting goal:** leave knowing the mix (unit → chaos → perf), what is a **merge gate** vs an **agent tool**, and what we add next. Shift left. Wide mix. Same artifacts for humans and agents.
+**Meeting goal:** five lanes, no overlapping value. **Shift left.** **What** (contract) is Gherkin on Testcontainers — BDD and integration are the **same** thing. **How** is unit. Tools (sim / Gatling / chaos) do not re-prove the contract.
 
-Open first: [[ops/workflow/cto-test-stack]] (canvas) · tables: [[ops/workflow/TEST_STACK]]. Slice bar: [[ops/workflow/DOD]].
+Open first: [[ops/workflow/cto-test-stack]] · tables: [[ops/workflow/TEST_STACK]]. Slice bar: [[ops/workflow/DOD]].
 
 ## 5-minute walkthrough
 
-1. **Legend** — green = required CI today · yellow = tool we already have · cyan = want (tool or later gate) · red = never a merge gate.
-2. **Left row (today)** — vault pytest · thin JUnit · **Testcontainers PostGIS** (the real API contract) · compose `stack` job.
-3. **Yellow tools (today)** — `./scripts/dev sim` seeds create/list/get; `/stack-e2e` chaos overlay is **workshop only**.
-4. **Cyan want** — API **BDD** (Gherkin vs Testcontainers, not a second UI) · **Gatling** as local **traffic pump** (agent leaves it running; Grafana has signal) · Vitest + **Playwright** when Explore exists ([[ops/tickets/WF-011]]).
-5. **Red** — chaos in automerge · dual Playwright+Cucumber UI · Gatling soak on every PR · red jobs “for later”.
+1. **What vs how** — Gherkin = the promise. Testcontainers = how we execute it. `CatalogTest` today *is* that lane with a JUnit skin; we want the Gherkin skin, not a second suite.
+2. **Five lanes** — how (unit) · what (contract) · wiring (compose) · browser (Playwright only) · operate (sim / Gatling / chaos).
+3. **Operate is not proof** — `./scripts/dev sim` seeds; Gatling is the same idea at steady load; chaos is a workshop. None of them replace a `.feature`.
+4. **Red** — two what-suites · Cucumber clicking the PWA · chaos or Gatling soak on automerge.
 
-## Verdict for the room
+## Verdict
 
-| Have (gate) | Have (tool) | Want next | Never |
-|---|---|---|---|
-| `unit` vault pytest | HTTP sim (`./scripts/dev sim`) | Gatling `./scripts/dev traffic` | Chaos in required CI |
-| `catalog` Testcontainers | Chaos Monkey overlay | API Cucumber vs Testcontainers | Two browser E2E frameworks |
-| `stack` compose pytest | Playwright **MCP** (drive UI) | Vitest + Playwright **job** | k6/JMeter second house |
-
-**Tests are tools.** An agent that needs a dirty catalog + live metrics should start **Gatling traffic** (want) or **sim `--iterations`** (today), then query Prometheus — not invent curl in chat.
+| Lane | Have | Want |
+|---|---|---|
+| How | vault pytest + thin JUnit **gate** | Vitest when `web/` exists |
+| What | `catalog` Testcontainers **gate** | Gherkin in **that same job** (authz, mail, OpenAPI examples inside scenarios) |
+| Wiring | compose `stack` **gate** | stay thin |
+| Browser | Playwright MCP **tool** | Playwright **gate** ([[ops/tickets/WF-011]]) |
+| Operate | sim + chaos workshop | Gatling `./scripts/dev traffic` (not a PR soak) |
 
 ## Talking points (eng-qa)
 
-- Shift-left: new API behaviour is a Testcontainers HTTP test, not “I curled it once” ([[ops/workflow/DOD]]).
-- [`product/ENGINEERING.md`](../../product/ENGINEERING.md) still holds: **Playwright is the only browser E2E**. BDD here is **API living spec**.
-- Gatling is house-native (Java). First job is **steady local flow** for agents; soak assertions are optional and not automerge.
-- NFR-10 (unit + integration + E2E on PRs) is the **product** bar once a UI exists — not a reason to put chaos on `main`.
+- New API behaviour → one contract scenario, not curl and not Playwright ([[ops/workflow/DOD]]).
+- Dual Playwright+Cucumber **UI** stays a tax. Gherkin is API **what** only.
+- NFR-10 = how + contract + browser. Chaos/Gatling never buy that bar.
 
 ## Do not digress into
 
-- Consumer UI polish or adding a red Playwright job before [[ops/tickets/PRD-003]]
-- Restoring legacy Jenkins test farms from `docs/automation/`
-- Mutation testing as a merge gate
+- A red Playwright job before [[ops/tickets/PRD-003]]
+- Karate vs Cucumber as a second house (Cucumber-JVM on Testcontainers)
+- Mutation as a merge gate
 
 ## Roles
 
 | Hat | Does |
 |---|---|
-| **CTO** | Reads the map; picks the next slice (Gatling vs BDD vs Playwright) |
-| **eng-qa** | Owns TEST_STACK; verify lists stay honest |
-| **automation-expert** | Wires new runners into `./scripts/dev` + Jenkins/GHA only when they are gates |
-| **eng-backend** | Testcontainers + future Cucumber/Gatling in `services/catalog` |
+| **CTO** | Confirms five lanes; next slice is Gherkin-on-existing-catalog-job vs Gatling traffic |
+| **eng-qa** | Owns TEST_STACK; no duplicate what-suites |
+| **automation-expert** | New **gate** only if a lane earns it; tools stay on `./scripts/dev` |
+| **eng-backend** | Contract scenarios in `services/catalog` |
 
 ## Links
 
@@ -59,4 +57,3 @@ Open first: [[ops/workflow/cto-test-stack]] (canvas) · tables: [[ops/workflow/T
 - Tables: [[ops/workflow/TEST_STACK]]
 - Ticket: [[ops/tickets/WF-035]]
 - DoD: [[ops/workflow/DOD]] · CI: [[ops/workflow/CI]]
-- Sim: [[ops/runbooks/PLACE_LISTING_SIM]] · Chaos: [[ops/runbooks/STACK_E2E_PLACE_STUB]]

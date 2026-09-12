@@ -44,7 +44,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 | Local Jenkins UI / `local-ci` | **auto** (laptop) | `./scripts/dev up` → :8085 |
 | Jenkins multibranch PR poll | agent+secret | Needs `JENKINS_GITHUB_TOKEN` in `.env` |
 | Playwright / consumer UI CI | **human** backlog | Waits [[ops/tickets/WF-011]] |
-| Test mix (unit → chaos → Gatling) | map | [[ops/workflow/TEST_STACK]] — gates vs agent tools |
+| Test mix (how / what / wiring / operate) | map | [[ops/workflow/TEST_STACK]] — contract is Gherkin on Testcontainers |
 | Deploy to mock-prod VPS | **human** / blocked | Stub [[ops/tickets/WF-032]]; host [[ops/tickets/WF-010]] |
 | Production deploy | **never** | No prod Environment ([[ops/company/DECISIONS]]) |
 

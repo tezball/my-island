@@ -1091,7 +1091,10 @@ def test_wf_035_test_stack_today_vs_want() -> None:
     assert (OPS / "plans" / "WF-035.md").is_file()
     stack = (OPS / "workflow" / "TEST_STACK.md").read_text()
     for needle in (
-        "shift-left",
+        "Shift-left",
+        "Five lanes",
+        "BDD = integration",
+        "Gherkin",
         "Testcontainers",
         "Gatling",
         "Cucumber",
@@ -1117,6 +1120,7 @@ def test_wf_035_test_stack_today_vs_want() -> None:
     assert "ops/workshops/cto-test-stack.md" in files
     blob = json.dumps(canvas)
     assert "Gatling" in blob
+    assert "Gherkin" in blob
     assert "Testcontainers" in blob
     assert "shift" in blob.lower()
     index = (OPS / "workflow" / "_index.md").read_text()
@@ -1124,6 +1128,7 @@ def test_wf_035_test_stack_today_vs_want() -> None:
     assert "cto-test-stack" in (OPS / "workshops" / "_index.md").read_text()
     dod = (OPS / "workflow" / "DOD.md").read_text()
     assert "[[TEST_STACK]]" in dod
+    assert "BDD = integration" in dod or "Gherkin vs Testcontainers" in dod
     ci = (OPS / "workflow" / "CI.md").read_text()
     assert "TEST_STACK" in ci
     qa = (OPS / "dashboards" / "qa.md").read_text()

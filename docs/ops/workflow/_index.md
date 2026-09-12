@@ -6,7 +6,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 |---|---|
 | [[LOOP]] | Plan → implement PR → review → CI auto-merge |
 | [[DOD]] | Implement Definition of Done (**draft**) |
-| [[TEST_STACK]] | Test styles today vs want (shift-left, human+agent tools) |
+| [[TEST_STACK]] | Five lanes: how / what (Gherkin=IT) / wiring / browser / operate |
 | [[PIPELINE]] | Auto vs agent vs human (CTO map + tables) |
 | [[CI]] | GitHub Actions + agent test commands |
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |

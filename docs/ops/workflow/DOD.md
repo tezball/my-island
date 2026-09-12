@@ -37,19 +37,18 @@ Pick the **smallest set** that proves the slice. Prefer fast tests. Do not inven
 
 | Type | When required | House command / home |
 |---|---|---|
-| **Vault / OS unit** | Any change under `docs/ops/`, `ops/scripts/`, loop contracts | `python3 -m pytest ops/tests -q -m "not stack"` |
-| **Service unit** | New/changed Spring domain logic, mappers, pure functions | `services/catalog/mvnw test` (or the service under change) |
-| **Integration (Testcontainers)** | Persistence, Flyway, HTTP API contract, security filters | Same Maven suite — tests that boot context + PostGIS |
-| **Compose stack** | Wiring across containers, scripts, Jenkins/GHA stack job, MCP glue | `./scripts/dev test` (marker `stack`) |
-| **HTTP / sim smoke** | Stub or workshop demos (e.g. create→list→get) | Ticket verify curls / sim runbook; keep thin |
-| **UI E2E (Playwright)** | Only when a `PRD-*` UI exists and CI ticket says so | Blocked until [[ops/tickets/WF-011]] / Explore ships |
+| **How (unit)** | Vault/OS, Spring/UI pure functions | `pytest ops/tests -q -m "not stack"`; `mvnw test`; later `npm test` |
+| **What (contract)** | API behaviour. **BDD = integration:** Gherkin vs Testcontainers (today: `CatalogTest` JUnit skin) | Same Maven suite — PostGIS + Flyway + HTTP |
+| **Wiring (stack)** | Compose/scripts/MCP glue. Do not re-assert the HTTP contract. | `./scripts/dev test` (marker `stack`) |
+| **Browser (Playwright)** | Only when a `PRD-*` UI exists and CI says so | Blocked until [[ops/tickets/WF-011]] / Explore ships |
 
 **Rules of thumb**
 
-- New API behavior → at least one automated HTTP or slice test (unit or Testcontainers), not “I curled it once.”
-- New Flyway migration → integration test or stack path that applies migrations and asserts schema/behavior.
+- New API behavior → one **contract** scenario (Gherkin / Testcontainers), not “I curled it once.”
+- New Flyway migration → contract path that applies migrations and asserts behaviour.
 - Docs-only / skill / rule → vault pytest if the loop depends on the file; otherwise verify is the checklist + CI `unit`.
-- Do **not** require all layers for a one-line fix. Match risk.
+- Sim / Gatling / chaos **operate** the stack; they do not replace the contract.
+- Do **not** require all lanes for a one-line fix. Match risk.
 
 ## Clean code (when possible)
 
