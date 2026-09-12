@@ -17,5 +17,8 @@ Multi-role briefs. Living canvases live under `ops/workflow/` (same kebab name).
 | [[ops/workshops/vault-os-ux]] | [[ops/workflow/vault-os-ux]] | [[ops/tickets/WF-030]] |
 | [[ops/workshops/e2e-place-stub]] | [[ops/workflow/e2e-place-stub]] | [[ops/tickets/E2E-001]] |
 | [[ops/workshops/agent-dx-pack]] | [[ops/workflow/agent-dx-pack]] | [[ops/tickets/WF-034]] |
+| [[ops/workshops/poi-directory-mvp]] | — | [[ops/tickets/PRD-002]] · [[ops/tickets/PRD-003]] · [[ops/tickets/PRD-011]] |
+| [[ops/workshops/poi-directory-content]] | — | [[ops/tickets/PRD-002]] |
+| [[ops/workshops/poi-directory-qa]] | — | [[ops/tickets/PRD-003]] |
 
 Naming: [[ops/NAMING]].

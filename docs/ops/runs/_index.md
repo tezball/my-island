@@ -1,8 +1,6 @@
 # Runs
 
-Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
-
-- [[WF-035-tighten]] — Five lanes; BDD = integration (Gherkin on Testcontainers)
+- [[PRD-002-003-011-implement]] — POI directory MVP: seed, Explore PWA, map, Place detail
 - [[WF-035-plan]] — Test stack today vs want; tests as tools; shift-left
 - [[WF-034-implement]] — Goal 2 MUST+SHOULD skills, IntelliJ MCP, AGENT_DX examples
 - [[WF-034-plan]] — Agent DX pack Goal 1 list; IntelliJ MCP MUST; gate human for Goal 2

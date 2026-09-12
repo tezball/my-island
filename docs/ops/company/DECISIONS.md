@@ -56,9 +56,22 @@ Host, OIDC provider, and curator-admin depth remain open in STACK.
 | # | Decision | Where it lives |
 |---|---|---|
 | 7 | **No prod.** No GitHub Environment prod gate, no `compose.prod`, no prod SSH. Local compose is the runtime. Do not block agent work on a hypothetical prod. | this note, [[ops/workflow/SAFETY]], `.cursor/rules/no-prod.mdc` |
-| 8 | **Ready PRs auto-review, approve, and squash-merge** when CI `unit` + `catalog` + `stack` are green. Drafts and forks never auto-merge. Chat reviewer hat still does not merge. | [[ops/tickets/WF-025]], [[ops/workflow/CI]] |
+| 8 | **Ready PRs auto-review, approve, and squash-merge** when CI `unit` + `catalog` + `web` + `stack` are green. Drafts and forks never auto-merge. Chat reviewer hat still does not merge. | [[ops/tickets/WF-025]], [[ops/workflow/CI]] |
 
 CD line in [`product/STACK.md`](../../product/STACK.md): `main` is git; there is no prod Environment. Staging tickets ([[ops/tickets/WF-010]]) are separate and not a prod stand-in.
+
+## 2026-09-12 — POI directory slice (CEO workshop)
+
+**Terry.** POC at fishing-journals.com/explore/ is done. Next public surface is a **finished-looking directory of Irish POIs** — not campsites, not check-off, not My Places. Local compose is the demo.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 10 | **POI-only published catalog** for this slice. Wave 1 campsites stay Research (`status=lead`). | [[ops/workshops/poi-directory-mvp]], [[ops/tickets/PRD-002]] |
+| 11 | **Reuse** [[ops/tickets/PRD-002]] + [[ops/tickets/PRD-003]] + [[ops/tickets/PRD-011]]. Do not file a new PRD for the directory demo. | this note |
+| 12 | **Photos** from Wikimedia Commons (attribution on Place). Do not scrape aggregator or operator galleries. Local `published=true` ≠ [[ops/tickets/PRD-009]] counsel. | [[ops/workshops/poi-directory-content]], [`data/leads/`](../../data/leads/) |
+| 13 | **Map** is MapLibre + Carto/OSM, no Mapbox token. fishing-journals.com CSP is a **host** change ([[ops/runbooks/MOCK_HOST_CSP]]); this git tree cannot apply it. | [[ops/workshops/poi-directory-qa]] |
+
+CHK / ME / ACC stay off this public slice until a later ticket. 500-place launch DoD is not this slice (~100 POIs).
 
 ## 2026-09-12 — Jenkins local house CI (CTO)
 
