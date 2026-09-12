@@ -1,0 +1,204 @@
+{
+	"nodes": [
+		{
+			"id": "n_goal",
+			"type": "text",
+			"text": "# Agent DX pack\n\nclone → ./scripts/app start\nCursor + IntelliJ MCP\nGoal 1 list · Goal 2 land selected",
+			"x": -80,
+			"y": -360,
+			"width": 420,
+			"height": 160,
+			"color": "6"
+		},
+		{
+			"id": "file_ticket",
+			"type": "file",
+			"file": "ops/tickets/WF-034.md",
+			"x": 400,
+			"y": -360,
+			"width": 320,
+			"height": 100
+		},
+		{
+			"id": "file_ws",
+			"type": "file",
+			"file": "ops/workshops/agent-dx-pack.md",
+			"x": 760,
+			"y": -360,
+			"width": 340,
+			"height": 100
+		},
+		{
+			"id": "file_plan",
+			"type": "file",
+			"file": "ops/plans/WF-034.md",
+			"x": 1140,
+			"y": -360,
+			"width": 300,
+			"height": 100
+		},
+		{
+			"id": "group_clone",
+			"type": "group",
+			"x": -80,
+			"y": -140,
+			"width": 400,
+			"height": 380,
+			"label": "Clone path",
+			"color": "4"
+		},
+		{
+			"id": "n_clone",
+			"type": "text",
+			"text": "./scripts/app start|test\nopen docs/ in Obsidian\nCursor repo root\nIntelliJ same repo",
+			"x": -40,
+			"y": -80,
+			"width": 320,
+			"height": 140,
+			"color": "4"
+		},
+		{
+			"id": "file_local",
+			"type": "file",
+			"file": "ops/workflow/LOCAL.md",
+			"x": -40,
+			"y": 90,
+			"width": 320,
+			"height": 90
+		},
+		{
+			"id": "group_skills",
+			"type": "group",
+			"x": 360,
+			"y": -140,
+			"width": 400,
+			"height": 380,
+			"label": "Skills + commands",
+			"color": "3"
+		},
+		{
+			"id": "n_skills",
+			"type": "text",
+			"text": "KEEP ops-loop automation e2e\nMUST clone-run reviewer mcp-observe intellij-ide\nMUST /next-ticket /plan /implement /review /app-*",
+			"x": 400,
+			"y": -80,
+			"width": 320,
+			"height": 160,
+			"color": "3"
+		},
+		{
+			"id": "file_skills",
+			"type": "file",
+			"file": "ops/workflow/SKILLS.md",
+			"x": 400,
+			"y": 110,
+			"width": 320,
+			"height": 80
+		},
+		{
+			"id": "group_mcp",
+			"type": "group",
+			"x": 800,
+			"y": -140,
+			"width": 420,
+			"height": 380,
+			"label": "MCP",
+			"color": "5"
+		},
+		{
+			"id": "n_mcp",
+			"type": "text",
+			"text": "KEEP grafana postgres github docker playwright\nMUST intellij (IDEA 2025.2+ stdio)\nLaptop only · not Cloud VM",
+			"x": 840,
+			"y": -80,
+			"width": 340,
+			"height": 140,
+			"color": "5"
+		},
+		{
+			"id": "file_mcp",
+			"type": "file",
+			"file": "ops/workflow/MCP.md",
+			"x": 840,
+			"y": 90,
+			"width": 340,
+			"height": 90
+		},
+		{
+			"id": "group_no",
+			"type": "group",
+			"x": 1260,
+			"y": -140,
+			"width": 380,
+			"height": 380,
+			"label": "NO / LATER",
+			"color": "1"
+		},
+		{
+			"id": "n_no",
+			"type": "text",
+			"text": "NO Stripe Linear Notion Datadog Next FastAPI\nLATER vite-pwa mailpit plugin wrap\n.idea/ stays gitignored",
+			"x": 1300,
+			"y": -80,
+			"width": 300,
+			"height": 140,
+			"color": "1"
+		},
+		{
+			"id": "file_stack",
+			"type": "file",
+			"file": "product/STACK.md",
+			"x": 1300,
+			"y": 90,
+			"width": 300,
+			"height": 90
+		},
+		{
+			"id": "n_gate",
+			"type": "text",
+			"text": "gate: human — review this list\nthen Goal 2 implement on main",
+			"x": 400,
+			"y": 280,
+			"width": 420,
+			"height": 100,
+			"color": "2"
+		}
+	],
+	"edges": [
+		{
+			"id": "e_goal_clone",
+			"fromNode": "n_goal",
+			"toNode": "n_clone",
+			"fromSide": "bottom",
+			"toSide": "top"
+		},
+		{
+			"id": "e_clone_skills",
+			"fromNode": "n_clone",
+			"toNode": "n_skills",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e_skills_mcp",
+			"fromNode": "n_skills",
+			"toNode": "n_mcp",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e_mcp_no",
+			"fromNode": "n_mcp",
+			"toNode": "n_no",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e_mcp_gate",
+			"fromNode": "n_mcp",
+			"toNode": "n_gate",
+			"fromSide": "bottom",
+			"toSide": "top"
+		}
+	]
+}

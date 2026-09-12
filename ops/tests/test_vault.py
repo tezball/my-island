@@ -982,3 +982,32 @@ def test_wf_031_jenkins_local_house_ci() -> None:
     stack = (REPO / "docs" / "product" / "STACK.md").read_text()
     assert "Jenkins" in stack
     assert "SKIP_JENKINS" in (REPO / "scripts" / "dev").read_text()
+
+
+def test_wf_034_agent_dx_pack_workshop() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-034" in by_id
+    meta = by_id["WF-034"]
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert meta["status"] == "plan"
+    assert meta.get("gate") == "human"
+    assert "plans/WF-034" in meta.get("plan", "")
+    assert (OPS / "plans" / "WF-034.md").is_file()
+    assert (OPS / "workshops" / "agent-dx-pack.md").is_file()
+    assert (OPS / "workflow" / "agent-dx-pack.canvas").is_file()
+    brief = (OPS / "workshops" / "agent-dx-pack.md").read_text()
+    assert "intellij" in brief.lower()
+    assert "/next-ticket" in brief
+    assert "MUST" in brief
+    assert "NO" in brief
+    index = (OPS / "workshops" / "_index.md").read_text()
+    assert "agent-dx-pack" in index
+    mcp = (OPS / "workflow" / "MCP.md").read_text()
+    assert "intellij" in mcp.lower()
+    assert "WF-034" in mcp
+    canvas = json.loads((OPS / "workflow" / "agent-dx-pack.canvas").read_text())
+    assert "nodes" in canvas and "edges" in canvas
+    files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
+    assert "ops/tickets/WF-034.md" in files
+    assert "ops/workshops/agent-dx-pack.md" in files
