@@ -38,8 +38,9 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-010|WF-010]] P1 Always-on EU staging for API + Grafana sidecars
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
-- [ ] [[ops/tickets/WF-014|WF-014]] P2 Document human one-time OIDC console setup (Google / Apple)
+- [ ] [[ops/tickets/WF-014|WF-014]] P2 Google Sign-In (OIDC console + Spring)
 - [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
+- [ ] [[ops/tickets/WF-033|WF-033]] P2 Apple Sign-In (OIDC console + Spring)
 
 ## Done
 

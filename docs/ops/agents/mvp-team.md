@@ -38,7 +38,8 @@ Dispatch for Release 1. Program: [[ops/plans/PRD-000]]. One ticket per agent ses
 |---|---|---|
 | mvp-trust | [[ops/tickets/PRD-009]] | Data approved for current use; counsel revisit before customer prod |
 | mvp-factory | [[ops/tickets/WF-003]] | **done** — Automations not MVP; plan kept for later |
-| mvp-google | [[ops/tickets/WF-014]] | **Post-MVP** — Google (+ optional Apple) when credentials exist; password-only for MVP |
+| mvp-google | [[ops/tickets/WF-014]] | **Post-MVP** — Google Sign-In when client id/secret exist |
+| mvp-apple | [[ops/tickets/WF-033]] | **Post-MVP** — Apple Sign-In when Apple Developer creds exist |
 
 ## Docs agent (this PR / vault)
 
