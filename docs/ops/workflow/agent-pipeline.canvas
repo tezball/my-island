@@ -1,0 +1,299 @@
+{
+	"nodes": [
+		{
+			"id": "n_goal",
+			"type": "text",
+			"text": "# Agent pipeline — auto vs not\n\nCTO meeting map. Detail: PIPELINE.md\nGreen = auto · Yellow = agent session · Red = human / never",
+			"x": -40,
+			"y": -360,
+			"width": 520,
+			"height": 140,
+			"color": "6"
+		},
+		{
+			"id": "file_pipeline",
+			"type": "file",
+			"file": "ops/workflow/PIPELINE.md",
+			"x": 520,
+			"y": -360,
+			"width": 320,
+			"height": 100
+		},
+		{
+			"id": "file_brief",
+			"type": "file",
+			"file": "ops/workshops/cto-pipeline-brief.md",
+			"x": 880,
+			"y": -360,
+			"width": 320,
+			"height": 100
+		},
+		{
+			"id": "file_loop",
+			"type": "file",
+			"file": "ops/workflow/LOOP.md",
+			"x": 1240,
+			"y": -360,
+			"width": 280,
+			"height": 100
+		},
+		{
+			"id": "group_happy",
+			"type": "group",
+			"x": -40,
+			"y": -160,
+			"width": 1560,
+			"height": 320,
+			"label": "Happy path → main",
+			"color": "4"
+		},
+		{
+			"id": "n_pick",
+			"type": "text",
+			"text": "1. Pick ticket\nnext_ticket.py\n**agent**",
+			"x": 0,
+			"y": -100,
+			"width": 200,
+			"height": 100,
+			"color": "3"
+		},
+		{
+			"id": "n_plan",
+			"type": "text",
+			"text": "2. Plan + docs on main\nshort docs PR\n**agent**",
+			"x": 240,
+			"y": -100,
+			"width": 220,
+			"height": 100,
+			"color": "3"
+		},
+		{
+			"id": "n_impl",
+			"type": "text",
+			"text": "3. Implement + PR\nwf/… or prd/…\n**agent**",
+			"x": 500,
+			"y": -100,
+			"width": 200,
+			"height": 100,
+			"color": "3"
+		},
+		{
+			"id": "n_review",
+			"type": "text",
+			"text": "4. Review comment\nno merge from chat\n**agent**",
+			"x": 740,
+			"y": -100,
+			"width": 200,
+			"height": 100,
+			"color": "3"
+		},
+		{
+			"id": "n_ci",
+			"type": "text",
+			"text": "5. CI\nunit · catalog · stack\nGHA + Jenkins\n**auto**",
+			"x": 980,
+			"y": -100,
+			"width": 220,
+			"height": 120,
+			"color": "4"
+		},
+		{
+			"id": "n_merge",
+			"type": "text",
+			"text": "6. Automerge\nready PR → squash\n**auto** (WF-025)",
+			"x": 1240,
+			"y": -100,
+			"width": 240,
+			"height": 120,
+			"color": "4"
+		},
+		{
+			"id": "n_cleanup",
+			"type": "text",
+			"text": "7. Delete branch + board_sync\n**agent** (house rule)",
+			"x": 980,
+			"y": 60,
+			"width": 280,
+			"height": 80,
+			"color": "3"
+		},
+		{
+			"id": "n_cloud",
+			"type": "text",
+			"text": "Cursor Automations (cron board runner / PR review)\nSPECIFIED — not enabled for MVP (WF-003 closed)\nSomeone must **start** each agent session today",
+			"x": 0,
+			"y": 60,
+			"width": 700,
+			"height": 80,
+			"color": "2"
+		},
+		{
+			"id": "group_not",
+			"type": "group",
+			"x": -40,
+			"y": 220,
+			"width": 1560,
+			"height": 360,
+			"label": "Not automated today",
+			"color": "1"
+		},
+		{
+			"id": "n_automations",
+			"type": "text",
+			"text": "Automations UI\nSave + Activate\n**human** deferred",
+			"x": 0,
+			"y": 280,
+			"width": 220,
+			"height": 100,
+			"color": "1"
+		},
+		{
+			"id": "n_idp",
+			"type": "text",
+			"text": "Google / Apple IdP\nconsole secrets\n**human** post-MVP",
+			"x": 260,
+			"y": 280,
+			"width": 240,
+			"height": 100,
+			"color": "1"
+		},
+		{
+			"id": "n_counsel",
+			"type": "text",
+			"text": "Counsel for customer prod\nOK for current use\n**human** later (PRD-009)",
+			"x": 540,
+			"y": 280,
+			"width": 260,
+			"height": 100,
+			"color": "1"
+		},
+		{
+			"id": "n_host",
+			"type": "text",
+			"text": "Staging host pick\nmock-prod deploy\n**human** (WF-010/032)",
+			"x": 840,
+			"y": 280,
+			"width": 240,
+			"height": 100,
+			"color": "1"
+		},
+		{
+			"id": "n_never",
+			"type": "text",
+			"text": "Production deploy\nChat `gh pr merge`\nSecrets in vault\n**never**",
+			"x": 1120,
+			"y": 280,
+			"width": 240,
+			"height": 120,
+			"color": "1"
+		},
+		{
+			"id": "n_playwright",
+			"type": "text",
+			"text": "Playwright / consumer UI CI — backlog (WF-011)",
+			"x": 0,
+			"y": 420,
+			"width": 400,
+			"height": 60,
+			"color": "1"
+		},
+		{
+			"id": "file_ci",
+			"type": "file",
+			"file": "ops/workflow/CI.md",
+			"x": 440,
+			"y": 420,
+			"width": 280,
+			"height": 80
+		},
+		{
+			"id": "file_025",
+			"type": "file",
+			"file": "ops/tickets/WF-025.md",
+			"x": 760,
+			"y": 420,
+			"width": 280,
+			"height": 80
+		},
+		{
+			"id": "file_003",
+			"type": "file",
+			"file": "ops/tickets/WF-003.md",
+			"x": 1080,
+			"y": 420,
+			"width": 280,
+			"height": 80
+		},
+		{
+			"id": "file_jenkins",
+			"type": "file",
+			"file": "ops/workflow/jenkins-local-ci.canvas",
+			"x": -40,
+			"y": 640,
+			"width": 360,
+			"height": 80
+		},
+		{
+			"id": "file_mvp",
+			"type": "file",
+			"file": "ops/agents/mvp-team.md",
+			"x": 360,
+			"y": 640,
+			"width": 320,
+			"height": 80
+		},
+		{
+			"id": "file_auto_role",
+			"type": "file",
+			"file": "ops/agents/roles/automation-expert.md",
+			"x": 720,
+			"y": 640,
+			"width": 360,
+			"height": 80
+		}
+	],
+	"edges": [
+		{
+			"id": "e1",
+			"fromNode": "n_pick",
+			"toNode": "n_plan",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e2",
+			"fromNode": "n_plan",
+			"toNode": "n_impl",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e3",
+			"fromNode": "n_impl",
+			"toNode": "n_review",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e4",
+			"fromNode": "n_review",
+			"toNode": "n_ci",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e5",
+			"fromNode": "n_ci",
+			"toNode": "n_merge",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e6",
+			"fromNode": "n_merge",
+			"toNode": "n_cleanup",
+			"fromSide": "bottom",
+			"toSide": "right"
+		}
+	]
+}

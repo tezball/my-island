@@ -16,15 +16,15 @@ This is a **current** hat. Product UI/API work is not.
 
 ## Inputs
 
-Failing GitHub Actions, agent sessions that miss the vault, [[ops/workflow/CI]], [[ops/workflow/SKILLS]], [[ops/workflow/AUTOMATIONS]], [[ops/tickets/WF-003]].
+Failing GitHub Actions, agent sessions that miss the vault, [[ops/workflow/CI]], [[ops/workflow/SKILLS]], [[ops/workflow/AUTOMATIONS]], [[ops/workflow/PIPELINE]], [[ops/tickets/WF-003]].
 
 ## Outputs
 
-PRs to `.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/environment.json`, `AGENTS.md` (loop only), CI/skill docs in `ops/workflow/`. Green `./scripts/dev test` on the ops stack.
+PRs to `.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/environment.json`, `AGENTS.md` (loop only), CI/skill docs in `ops/workflow/`. Green `./scripts/dev test` on the ops stack. Keep [[ops/workflow/PIPELINE]] + [[ops/workflow/agent-pipeline]] truthful for CTO.
 
 ## Owned folders
 
-`.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/hooks.json`, `ops/workflow/CI.md`, `ops/workflow/SKILLS.md`, `ops/workflow/AUTOMATIONS.md`, `ops/runbooks/ADD_SKILL.md`. Cloud Agent image/DX: `.cursor/Dockerfile`, `.cursor/environment.json`, `.cursor/install.sh`, `.cursor/start.sh` (shared with [[eng-infra]] for compose runtime).
+`.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/hooks.json`, `ops/workflow/CI.md`, `ops/workflow/SKILLS.md`, `ops/workflow/AUTOMATIONS.md`, `ops/workflow/PIPELINE.md`, `ops/workflow/agent-pipeline.canvas`, `ops/runbooks/ADD_SKILL.md`. Cloud Agent image/DX: `.cursor/Dockerfile`, `.cursor/environment.json`, `.cursor/install.sh`, `.cursor/start.sh` (shared with [[eng-infra]] for compose runtime).
 
 ## Escalation
 
