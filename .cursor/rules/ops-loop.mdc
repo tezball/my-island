@@ -8,7 +8,7 @@ alwaysApply: true
 You are working in a git-tracked Obsidian vault at `docs/` — the company OS lives in `docs/ops/`.
 
 - Start from `docs/ops/HOME.md` and `docs/ops/BOARD.md` (regenerate with `python3 ops/scripts/board_sync.py`).
-- **`main` docs = company state.** Docs-only updates: work from latest `main`, short-lived docs PR, delete branch after merge. If already on a feature branch for code, fold docs into that PR instead.
+- **`main` docs = company state.** Docs-only updates: work from latest `main`, short-lived docs PR, delete branch after merge, confirm `main` CI green (else fix). If already on a feature branch for code, fold docs into that PR instead.
 - Prefer no human in the loop; `gate: human` / `blocked` are the exception.
 - Roles: planner lands plans on `main`. Implementer branches after `implement` on `main`. Reviewer comments only — never merge from chat. Ready PRs auto-merge when CI is green.
 - One ticket per session. Skip `type: epic`. Prefix `WF-` = workflow. `PRD-` = product. `INC-` = incident.

@@ -45,6 +45,7 @@ There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. Hous
 - Title: `<id>: <ticket title>`.
 - Body: links `docs/ops/tickets/<id>.md` and `docs/ops/plans/<id>.md`.
 - CI must be green before merge. Ready same-repo PRs are auto-approved and squash-merged by the GHA `automerge` job ([[ops/tickets/WF-025]]). Drafts and forks are skipped. Chat agents do not merge.
+- After merge: confirm Actions on **`main`** are green. PR green is not the finish line — if `main` goes red, open a fix PR and re-run the loop ([[ops/workflow/PIPELINE]]).
 
 ## Adding a check
 
