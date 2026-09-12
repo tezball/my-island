@@ -51,7 +51,7 @@ cd my-island
 Then:
 
 1. Open **`docs/`** in Obsidian ([[ops/PLUGINS]]).
-2. Open the **repo root** in Cursor (skills, rules, `mcp.json`, future commands).
+2. Open the **repo root** in Cursor (skills, rules, `mcp.json`).
 3. Open the **same repo** in IntelliJ IDEA 2025.2+ → Settings → Tools → **MCP Server** → Enable. Cursor uses the committed `intellij` MCP (Goal 2).
 4. `python3 ops/scripts/next_ticket.py --role auto`
 
@@ -61,11 +61,12 @@ If Grafana MCP is red, compose is down or MCP not reloaded — not a frontend ti
 
 | Mechanism | Clone applies? | Use |
 |---|---|---|
-| `.cursor/skills`, `rules`, `hooks`, `mcp.json`, `commands/` | **Yes** | **Default pack.** Goal 2 lands here. |
+| `.cursor/skills`, `rules`, `hooks`, `mcp.json` | **Yes** | **Default pack.** Cloud Agents load **repo** skills; `~/.cursor/skills` only if Sync Skills is on. |
+| `.cursor/commands/` | Yes if committed | **Do not add.** Cursor is folding commands into skills (`/migrate-to-skills`). |
 | `docs/.obsidian/` + [[ops/PLUGINS]] | Core yes; community plugins install once | Humans, not agents |
 | `ops/jenkins/plugins.txt` | Via compose | House CI, not Cursor |
-| Cursor Marketplace plugin | **No** (Customize click) | LATER only if team marketplace **Required** |
-| Cloud Agent MCP dropdown | **No** (dashboard human) | grafana/postgres stdio; **not** IntelliJ |
+| Cursor Marketplace / team marketplace plugin | **No** on clone | Install is Customize or admin **Required**. LATER only if Required is wanted. |
+| Cloud Agent MCP dropdown | **No** (dashboard human) | grafana/postgres stdio; **not** IntelliJ. Repo `mcp.json` does not attach to Cloud Agents. |
 
 Do not replace `.cursor/` with a plugin people must install.
 
@@ -87,13 +88,15 @@ Existing keep. Add only one-job skills ([[ops/workflow/SKILLS]]).
 | Next.js / FastAPI / Nest | — | **NO** | STACK lock |
 | “Preserve the app” | — | **NO** | Scaffolding |
 
-Always-on **rules** (already): `ops-loop`, `house-stack`, `no-prod`, `obsidian-ops`. Do not add more always-on rules in Goal 2 unless a session actually misses them.
+Always-on **rules** (already): `ops-loop`, `house-stack`, `no-prod`, `obsidian-ops`. Do not add more always-on rules in Goal 2 unless a session actually misses them. Skill `name` in YAML **must match** the folder.
 
-## List — slash commands
+## List — slash-invocable skills (not `.cursor/commands/`)
 
-None exist today (`.cursor/commands/` empty). Commands are markdown in that folder; `/name` from the file stem. They apply on clone.
+Cursor invokes skills with `/skill-name`. Official path: commands are markdown `/` prompts being **migrated into skills** (`disable-model-invocation: true` = slash-only, like old commands). Goal 2 does **not** add a parallel `.cursor/commands/` tree.
 
-| Command | Verdict | Does |
+`ops-loop` already covers plan/implement/review. New skills below are for explicit `/` (set `disable-model-invocation: true` so they do not auto-fire every session).
+
+| Skill / `/name` | Verdict | Does |
 |---|---|---|
 | `/next-ticket` | **MUST** | `next_ticket.py --role auto`; one hat |
 | `/plan` | **MUST** | Planner loop; docs PR; stop |
@@ -104,8 +107,9 @@ None exist today (`.cursor/commands/` empty). Commands are markdown in that fold
 | `/board-sync` | **MUST** | `board_sync.py` after ticket frontmatter |
 | `/mcp-health` | **MUST** | curl Grafana/Prometheus/catalog; IntelliJ optional |
 | `/new-ticket` | **SHOULD** | wrap `new_ticket.py` |
-| `/stack-e2e` | **SHOULD** | E2E-001 drill skill |
+| `/stack-e2e` | **SHOULD** | already covered by KEEP skill; slash alias optional |
 | `/dod` | **SHOULD** | [[ops/workflow/DOD]] checklist |
+| Parallel `.cursor/commands/*.md` | **NO** | Duplicate of skills; migration target is skills |
 | Generic `/commit` / `/explain` packs | **NO** | Fight the loop; noise |
 
 ## List — plugins
@@ -116,8 +120,9 @@ Three plugin planes. Only git-tracked ones are clone DX.
 
 | Plugin | Verdict | Why |
 |---|---|---|
-| In-repo `.cursor/` pack | **MUST** | Skills/commands/MCP without Customize |
-| Wrap as Cursor Plugin (`.cursor-plugin/`) | **LATER** | Only if team marketplace Required is wanted |
+| In-repo `.cursor/` pack | **MUST** | Skills + MCP without Customize |
+| Wrap as Cursor Plugin (`.cursor-plugin/` or Agent Plugin) | **LATER** | Clone does not auto-install plugins. Only if team marketplace **Required**. |
+| Grafana Cloud (Cursor Marketplace) | **NO** | Hosted Grafana Cloud product, not our OSS `mcp-grafana` |
 | Cursor Team Kit / CI-review marketplace | **NO** (now) | Duplicates `/review` + GHA automerge |
 | Stripe, Linear, Notion, Atlassian, Figma, Datadog | **NO** | No payments; vault is Jira; OSS Grafana |
 | Cursor plugin **inside** IntelliJ (ACP) | **SHOULD** (laptop) | Humans stay in IDEA; not a git MCP; optional |
@@ -176,7 +181,7 @@ Goal 2 `mcp.json` sketch (stdio; command may become the wrapper):
 
 | Kind | What |
 |---|---|
-| Hook | `.cursor/hooks/session-ops.py` — keep tiny |
+| Hook | `.cursor/hooks/session-ops.py` — keep tiny. Cloud Agents do **not** run `sessionStart` (laptop only). |
 | Rules | house-stack, no-prod, ops-loop, obsidian-ops |
 | Automations | Specified; not MVP to re-enable UI ([[ops/tickets/WF-003]]) |
 | Cloud image | `.cursor/environment.json` + Dockerfile |
@@ -186,7 +191,7 @@ Goal 2 `mcp.json` sketch (stdio; command may become the wrapper):
 Mark keep/drop on Goal 2. Already locked: **`intellij` MCP**.
 
 - [ ] MUST skills (clone-run, reviewer, mcp-observe, intellij-ide)
-- [ ] MUST commands (`/next-ticket` … `/mcp-health`)
+- [ ] MUST slash skills (`/next-ticket` … `/mcp-health`) as skills, not `.cursor/commands/`
 - [ ] SHOULD spring-catalog now vs later
 - [ ] SHOULD Cursor-in-IntelliJ ACP (not git)
 - [ ] LATER vite-pwa, mailpit, plugin wrapper

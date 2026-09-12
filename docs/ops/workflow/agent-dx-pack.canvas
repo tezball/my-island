@@ -79,7 +79,7 @@
 		{
 			"id": "n_skills",
 			"type": "text",
-			"text": "KEEP ops-loop automation e2e\nMUST clone-run reviewer mcp-observe intellij-ide\nMUST /next-ticket /plan /implement /review /app-*",
+			"text": "KEEP ops-loop automation e2e\nMUST clone-run reviewer mcp-observe intellij-ide\nSlash skills not commands/ : /next-ticket /plan /review /app-*",
 			"x": 400,
 			"y": -80,
 			"width": 320,

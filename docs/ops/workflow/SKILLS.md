@@ -43,4 +43,4 @@ How agents learn the loop without a wiki outside git. Owner: [[ops/agents/roles/
 
 Grok follows **routines** (digest, support, intake). Cursor follows **skills + hooks + CI**. Same markdown. [[ops/agents/GROK_VS_CURSOR]]
 
-Proposed pack (slash commands, IntelliJ MCP, extra skills) is the Goal 1 list on [[ops/workshops/agent-dx-pack]] — [[ops/tickets/WF-034]]. Do not install until Goal 2.
+Proposed pack (slash-invocable skills, IntelliJ MCP) is the Goal 1 list on [[ops/workshops/agent-dx-pack]] — [[ops/tickets/WF-034]]. Do not install until Goal 2. Do not add `.cursor/commands/` (commands fold into skills).

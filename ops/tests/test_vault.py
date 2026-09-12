@@ -999,6 +999,9 @@ def test_wf_034_agent_dx_pack_workshop() -> None:
     brief = (OPS / "workshops" / "agent-dx-pack.md").read_text()
     assert "intellij" in brief.lower()
     assert "/next-ticket" in brief
+    assert "disable-model-invocation" in brief
+    assert "Grafana Cloud" in brief
+    assert ".cursor/commands/" in brief
     assert "MUST" in brief
     assert "NO" in brief
     index = (OPS / "workshops" / "_index.md").read_text()
