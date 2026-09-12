@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[PRD-002-003-011-close]] — POI directory MVP tickets done after #82
 - [[PRD-002-003-011-implement]] — POI directory MVP: seed, Explore PWA, map, Place detail
 - [[WF-035-gherkin]] — Contract plumbing: Gherkin on Testcontainers (3 scenarios)
 - [[WF-035-tighten]] — Five lanes; BDD = integration (Gherkin on Testcontainers)

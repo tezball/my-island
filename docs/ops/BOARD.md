@@ -28,9 +28,6 @@ kanban-plugin: basic
 
 ## In review
 
-- [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Seed catalog DB from research leads
-- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — Explore list + map
-- [ ] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
 - [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 - [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 
@@ -48,9 +45,12 @@ kanban-plugin: basic
 
 - [x] [[ops/tickets/E2E-001|E2E-001]] P0 Place listing stub API (create/list/get) — e2e workshop
 - [x] [[ops/tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
+- [x] [[ops/tickets/PRD-002|PRD-002]] P0 Seed catalog DB from research leads
+- [x] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — Explore list + map
 - [x] [[ops/tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
 - [x] [[ops/tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [x] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
+- [x] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
 - [x] [[ops/tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [x] [[ops/tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
 - [x] [[ops/tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
