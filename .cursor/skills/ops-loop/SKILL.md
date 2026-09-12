@@ -36,13 +36,13 @@ Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`
 1. Plan + `status: implement` already on `main`.
 2. Branch `wf/<id>-short-slug` from latest `main` (primary checkout; no worktree by default).
 3. Boot stack if needed: `./scripts/app start`.
-4. Implement only that ticket; verify; `gh pr create`.
+4. Implement only that ticket; meet [[ops/workflow/DOD]] (draft) + verify; `gh pr create`.
 5. Set `pr:` + `status: review`; board_sync; run note. Do not merge from chat.
 
 ## Reviewer (`--role reviewer`)
 
 1. `gh pr view` / `gh pr diff`.
-2. SAFETY check. Comment. Do not merge or push.
+2. SAFETY + DoD (blockers only, no nits). Comment. Do not merge or push.
 
 ## Board hygiene
 

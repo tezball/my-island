@@ -24,6 +24,8 @@ One paragraph. Done when…
 - [ ]
 - [ ]
 
+Implement bar (company draft): [[ops/workflow/DOD]] — outcome, automated proof for the risk, CI-runnable, no nits-as-blockers.
+
 ## MCP / env
 
 Local compose required? Prod Grafana? Neither?

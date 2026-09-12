@@ -14,7 +14,7 @@ Dispatch for Release 1. Program: [[ops/plans/PRD-000]]. One ticket per agent ses
 ## Standing rules
 
 1. Checkout latest `main`. Land company-state docs on `main` first; then branch for code.
-2. Wear **one** hat. Skip epics.
+2. Wear **one** hat. Skip epics. Implement bar: [[ops/workflow/DOD]] (draft).
 3. House: Spring + Vite/React PWA (not Next) + PostGIS + Grafana MCP + Jenkins local CI.
 4. Do not merge from chat. Do not invent OIDC stubs. Do not publish scraped batches without [[ops/tickets/PRD-009]].
 

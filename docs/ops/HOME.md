@@ -27,7 +27,7 @@ Charter: [[ops/CHARTER]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (r
 
 → **[[ops/workflow/PIPELINE]]** · **[[ops/workflow/agent-pipeline]]** — automated vs not (CTO).
 
-→ **[[ops/workflow/LOOP]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** — loop, CI, skills/routines.
+→ **[[ops/workflow/LOOP]]** · **[[ops/workflow/DOD|DoD (draft)]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** — loop, implement bar, CI, skills/routines.
 
 → **[[ops/runbooks/_index|Runbooks]]** — ticket loop, digest, support, listing, add-skill.
 
