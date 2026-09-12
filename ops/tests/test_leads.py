@@ -113,7 +113,8 @@ def test_seed_has_all_starter_campsites() -> None:
     for rec in starter_records:
         blob = json.dumps(rec)
         assert STARTER_PATH in rec["source_url"] or STARTER_PATH in blob
-    for rec in records:
+    campsites = [r for r in records if r["place_type"] == "campsite"]
+    for rec in campsites:
         assert rec["status"] == "lead"
         assert rec["country"] in {"IE", "NI"}
         email = rec.get("email_public", "")
@@ -123,10 +124,32 @@ def test_seed_has_all_starter_campsites() -> None:
 
 def test_wave1_campsite_growth() -> None:
     records = _records()
-    assert len(records) >= 105
-    for rec in records:
-        assert rec["place_type"] == "campsite"
+    campsites = [r for r in records if r["place_type"] == "campsite"]
+    assert len(campsites) >= 105
+    for rec in campsites:
         assert rec["licence"] == "internal-research"
+
+
+def test_poi_seed_has_coords_and_coverage() -> None:
+    records = _records()
+    pois = [r for r in records if r["place_type"] == "poi"]
+    assert len(pois) >= 80
+    counties = {r["county"] for r in pois}
+    assert len(counties) >= 26
+    with_image = 0
+    for rec in pois:
+        assert rec["status"] == "reviewed"
+        assert rec["licence"] == "CC0"
+        assert "lat" in rec and "lng" in rec
+        assert 51.2 <= rec["lat"] <= 55.6
+        assert -11.0 <= rec["lng"] <= -5.2
+        assert rec.get("description")
+        if rec.get("image_url"):
+            with_image += 1
+            assert rec["image_url"].startswith("https://")
+            assert "image_credit" in rec
+            assert "image_licence" in rec
+    assert with_image >= 60
 
 
 def test_starter_doc_points_at_data_leads() -> None:

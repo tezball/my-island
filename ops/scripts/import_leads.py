@@ -57,20 +57,35 @@ def match_county(raw: str | None, counties: list[dict[str, Any]]) -> str | None:
     return None
 
 
-def skip_reason(lead: dict[str, Any], counties: list[dict[str, Any]]) -> str | None:
+def skip_reason(
+    lead: dict[str, Any],
+    counties: list[dict[str, Any]],
+    *,
+    place_type: str | None = None,
+    require_coords: bool = False,
+) -> str | None:
     status = lead.get("status")
     if status != IMPORTABLE_STATUS:
         return f"status={status}"
-    place_type = lead.get("place_type")
-    if place_type not in CATEGORIES:
-        return f"place_type={place_type}"
+    lead_type = lead.get("place_type")
+    if lead_type not in CATEGORIES:
+        return f"place_type={lead_type}"
+    if place_type and lead_type != place_type:
+        return f"place_type={lead_type}"
     county_id = match_county(lead.get("county"), counties)
     if county_id is None:
         return "county"
+    if require_coords and ("lat" not in lead or "lng" not in lead):
+        return "coords"
     return None
 
 
-def map_lead(lead: dict[str, Any], counties: list[dict[str, Any]]) -> dict[str, Any]:
+def map_lead(
+    lead: dict[str, Any],
+    counties: list[dict[str, Any]],
+    *,
+    publish_local: bool = False,
+) -> dict[str, Any]:
     county_id = match_county(lead.get("county"), counties)
     if county_id is None:
         raise LeadImportError("cannot map lead without a county match")
@@ -79,7 +94,7 @@ def map_lead(lead: dict[str, Any], counties: list[dict[str, Any]]) -> dict[str, 
         "slug": lead["id"],
         "categoryId": lead["place_type"],
         "countyId": county_id,
-        "published": False,
+        "published": bool(publish_local),
         "sourceUrl": lead["source_url"],
         "sourceName": lead["source_name"],
         "licence": lead["licence"],
@@ -93,6 +108,22 @@ def map_lead(lead: dict[str, Any], counties: list[dict[str, Any]]) -> dict[str, 
         payload["website"] = lead["website"]
     if "phone_public" in lead:
         payload["phone"] = lead["phone_public"]
+    if "town" in lead:
+        payload["town"] = lead["town"]
+    if "description" in lead:
+        payload["description"] = lead["description"]
+    elif "notes_original" in lead:
+        payload["description"] = lead["notes_original"]
+    if "price_band" in lead:
+        payload["priceBand"] = lead["price_band"]
+    if "facility_ids" in lead:
+        payload["facilityIds"] = lead["facility_ids"]
+    if "image_url" in lead:
+        payload["imageUrl"] = lead["image_url"]
+    if "image_credit" in lead:
+        payload["imageCredit"] = lead["image_credit"]
+    if "image_licence" in lead:
+        payload["imageLicence"] = lead["image_licence"]
     return payload
 
 
@@ -180,16 +211,25 @@ def post_place(base_url: str, payload: dict[str, Any], timeout: float = 10.0) ->
 
 
 def plan_import(
-    records: list[dict[str, Any]], counties: list[dict[str, Any]]
+    records: list[dict[str, Any]],
+    counties: list[dict[str, Any]],
+    *,
+    place_type: str | None = None,
+    require_coords: bool = False,
+    publish_local: bool = False,
 ) -> list[tuple[dict[str, Any], dict[str, Any] | None, str | None]]:
     """(lead, payload or None, skip reason or None) for each record."""
     out: list[tuple[dict[str, Any], dict[str, Any] | None, str | None]] = []
     for lead in records:
-        reason = skip_reason(lead, counties)
+        reason = skip_reason(
+            lead, counties, place_type=place_type, require_coords=require_coords
+        )
         if reason:
             out.append((lead, None, reason))
         else:
-            out.append((lead, map_lead(lead, counties), None))
+            out.append(
+                (lead, map_lead(lead, counties, publish_local=publish_local), None)
+            )
     return out
 
 
@@ -202,6 +242,9 @@ def run(
     counties: list[dict[str, Any]] | None = None,
     post=post_place,
     out=None,
+    place_type: str | None = None,
+    require_coords: bool = False,
+    publish_local: bool = False,
 ) -> int:
     if out is None:
         out = sys.stdout
@@ -212,7 +255,13 @@ def run(
     records = load_jsonl(file)
     if counties is None:
         counties = fetch_counties(base_url)
-    planned = plan_import(records, counties)
+    planned = plan_import(
+        records,
+        counties,
+        place_type=place_type,
+        require_coords=require_coords,
+        publish_local=publish_local,
+    )
     imported = 0
     skipped = 0
     failed = 0
@@ -228,13 +277,17 @@ def run(
             print(f"dry-run: {ident} {json.dumps(payload, ensure_ascii=False)}", file=out)
             continue
         status, body = post(base_url, payload)
+        if status == 409:
+            skipped += 1
+            print(f"skip: {ident} (already-published)", file=out)
+            continue
         if status not in {200, 201}:
             failed += 1
             print(f"fail: {ident} HTTP {status} {body!r}"[:400], file=out)
             continue
         imported += 1
         place_id = body.get("id") if isinstance(body, dict) else None
-        print(f"import: {ident} HTTP {status} place={place_id} published=false", file=out)
+        print(f"import: {ident} HTTP {status} place={place_id} published={payload.get('published')}", file=out)
     print(
         f"ok: import={imported} skip={skipped} fail={failed} dry_run={dry_run}",
         file=out,
@@ -267,6 +320,21 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="LEAD_ID",
         help="Set that lead status=rejected and do not POST",
     )
+    parser.add_argument(
+        "--place-type",
+        choices=sorted(CATEGORIES),
+        help="Import only this place_type (e.g. poi)",
+    )
+    parser.add_argument(
+        "--require-coords",
+        action="store_true",
+        help="Skip leads without both lat and lng",
+    )
+    parser.add_argument(
+        "--publish-local",
+        action="store_true",
+        help="Ask catalog to publish (honoured only when APP_SEED_PUBLISH=true)",
+    )
     return parser
 
 
@@ -278,6 +346,9 @@ def main(argv: list[str] | None = None) -> int:
             base_url=args.base_url,
             dry_run=args.dry_run,
             reject_id=args.reject,
+            place_type=args.place_type,
+            require_coords=args.require_coords,
+            publish_local=args.publish_local,
         )
     except LeadImportError as exc:
         print(f"error: {exc}", file=sys.stderr)

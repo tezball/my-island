@@ -92,6 +92,7 @@ def test_map_lead_uses_landed_keys_only() -> None:
     assert payload["licence"] == "internal-research"
     assert payload["leadDedupeKey"] == "campsite:galway:fixture-campsite"
     assert payload["published"] is False
+    assert payload["description"] == "do not map notes"
     for forbidden in (
         "address",
         "eircode",
@@ -147,13 +148,24 @@ def test_londonderry_alias_and_ni_antrim() -> None:
     assert imp.map_lead(ie_lead, COUNTIES)["countyId"] == "kerry"
 
 
-def test_seed_jsonl_imports_zero_places() -> None:
+def test_seed_jsonl_imports_reviewed_pois_only() -> None:
     records = imp.load_jsonl(SEED)
     assert records
-    planned = imp.plan_import(records, COUNTIES)
+    planned = imp.plan_import(
+        records, COUNTIES, place_type="poi", require_coords=True, publish_local=True
+    )
     payloads = [p for _lead_row, p, reason in planned if p is not None]
-    assert payloads == []
-    assert all(reason and reason.startswith("status=") for _l, _p, reason in planned)
+    assert payloads
+    assert all(p["categoryId"] == "poi" for p in payloads)
+    assert all(p["published"] is True for p in payloads)
+    assert all("latitude" in p and "longitude" in p for p in payloads)
+    campsite_reasons = [
+        reason
+        for lead, _p, reason in planned
+        if lead.get("place_type") == "campsite"
+    ]
+    assert campsite_reasons
+    assert all(reason and reason.startswith("status=") for reason in campsite_reasons)
 
 
 def test_reject_writes_jsonl_and_does_not_post(tmp_path: Path) -> None:
