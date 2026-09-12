@@ -31,8 +31,6 @@ kanban-plugin: basic
 
 ## In review
 
-- [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
-- [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 
 ## Blocked
 
@@ -45,6 +43,8 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-033|WF-033]] P2 Apple Sign-In (OIDC console + Spring)
 
 ## Done
+- [x] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
+- [x] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 
 - [x] [[ops/tickets/E2E-001|E2E-001]] P0 Place listing stub API (create/list/get) — e2e workshop
 - [x] [[ops/tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
