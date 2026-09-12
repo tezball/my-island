@@ -35,7 +35,7 @@ There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. Do n
 - Branch: `wf/<id>-slug` or Cloud Agent `cursor/…`.
 - Title: `<id>: <ticket title>`.
 - Body: links `docs/ops/tickets/<id>.md` and `docs/ops/plans/<id>.md`.
-- CI must be green before a human merges. Agents do not merge.
+- CI must be green before merge. Ready same-repo PRs are auto-approved and squash-merged by the `automerge` job ([[ops/tickets/WF-025]]). Drafts and forks are skipped. Chat agents do not merge.
 
 ## Adding a check
 

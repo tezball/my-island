@@ -34,5 +34,5 @@ PRs to `.github/`, `.cursor/skills/`, `.cursor/hooks/`, `.cursor/environment.jso
 
 - Polish or preserve consumer app code. App trees are [[ops/company/SCAFFOLDING|disposable scaffolding]].
 - Rebuild Jenkins from `docs/automation/`.
-- Auto-merge, prod deploy, or put secrets in notes.
+- Put secrets in notes. Invent a production deploy.
 - Invent a product test suite to look busy.

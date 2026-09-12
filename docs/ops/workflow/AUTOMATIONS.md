@@ -5,7 +5,7 @@ type: workflow
 
 # Cursor Automations
 
-Cloud jobs that run the loop when nobody is in the IDE. They do **not** replace local agents. Enable them in the Cursor Automations editor after this vault is on `main` (prompts may `@` files only once those files are committed).
+Cloud jobs that run the loop when nobody is in the IDE. They do **not** replace local agents. Merge of ready PRs is GitHub Actions ([[ops/tickets/WF-025]]), not these jobs. Enable them in the Cursor Automations editor after this vault is on `main` (prompts may `@` files only once those files are committed).
 
 ## 1. PR reviewer
 

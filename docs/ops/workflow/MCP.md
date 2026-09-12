@@ -5,7 +5,7 @@ type: workflow
 
 # MCP pack
 
-Same server names locally and (later) against prod. **Read-only on data planes.** GitHub may open PRs and comment; it may not merge.
+Same server names locally. **Read-only on data planes.** GitHub MCP may open PRs and comment; merge of ready PRs is GitHub Actions ([[ops/tickets/WF-025]]), not the chat MCP.
 
 ## Local (committed)
 
@@ -15,9 +15,9 @@ Same server names locally and (later) against prod. **Read-only on data planes.*
 |---|---|---|
 | `grafana` | `uvx mcp-grafana --disable-write` → http://127.0.0.1:3030 | No |
 | `postgres` | Postgres MCP → db `ops` (`mcp_ping`) | **No** — role is `ops_reader` (SELECT only) |
-| `github` | Official image `ghcr.io/github/github-mcp-server` · token from gitignored `.env.ops` | PRs and comments only. No merge, no admin. Toolsets: context, repos, pull_requests, actions, users |
-| `docker` | Docker MCP Toolkit gateway, `--servers docker` (local CLI) | Local compose only. Not prod, not a remote docker.sock |
-| `playwright` | `npx -y @playwright/mcp@latest` | Local and staging URLs. Not prod |
+| `github` | Official image `ghcr.io/github/github-mcp-server` · token from gitignored `.env.ops` | PRs and comments. Merge is CI `automerge`, not this MCP. Toolsets: context, repos, pull_requests, actions, users |
+| `docker` | Docker MCP Toolkit gateway, `--servers docker` (local CLI) | Local compose only. Not a remote docker.sock |
+| `playwright` | `npx -y @playwright/mcp@latest` | Local URLs |
 
 Do not put a PAT in this file or in chat. Put `GITHUB_PERSONAL_ACCESS_TOKEN=` in gitignored `.env.ops`. The github server is stdio so Cursor can load that file (`envFile` does not apply to remote HTTP). Reload MCP after `.env.ops` exists and Docker Desktop is up.
 

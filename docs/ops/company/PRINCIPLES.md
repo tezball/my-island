@@ -33,8 +33,8 @@ Canon: [`product/STACK.md`](../../product/STACK.md). Log: [[DECISIONS]].
 1. **Git is the company.** Tickets, plans, run logs, and the handbook live here.
 2. **One ticket, one session, one PR.**
 3. **Plan before code.** Implementers need `ops/plans/<id>.md` and ticket `status: implement`.
-4. **Reviewers never merge.** [[ops/workflow/SAFETY]]
-5. **No prod deploy, no prod SQL writes, Grafana read-only.**
+4. **Chat reviewers never merge.** CI squash-merges ready PRs. [[ops/workflow/SAFETY]]
+5. **No prod** (CEO 2026-09-12 — probably never). No prod SQL writes. Grafana read-only.
 6. **Do not rebuild Jenkins** from `docs/automation/`.
 7. **Do not implement product** unless `id` is `PRD-*` and `status` is `implement`.
 8. **App code is disposable scaffolding.** Do not polish or preserve it. [[SCAFFOLDING]]
