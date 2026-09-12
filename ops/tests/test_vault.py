@@ -284,13 +284,50 @@ def test_leads_pipeline_tickets_exist() -> None:
     assert by_id["PRD-008"].get("pr", "") == "https://github.com/tezball/my-island/pull/47"
     assert not by_id["PRD-008"].get("blocked_reason")
     assert "plans/PRD-008" in by_id["PRD-008"].get("plan", "")
-    assert by_id["PRD-009"]["status"] == "ready"
+    assert by_id["PRD-009"]["status"] == "plan"
     assert by_id["PRD-009"]["status"] != "implement"
+    assert "plans/PRD-009" in by_id["PRD-009"].get("plan", "")
+    assert by_id["PRD-009"].get("gate") == "human"
     assert by_id["PRD-007"]["owner"] == "product"
     assert by_id["PRD-008"]["owner"] == "eng-backend"
     assert by_id["PRD-009"]["owner"] == "product"
     assert (OPS / "plans" / "PRD-007.md").is_file()
     assert (OPS / "plans" / "PRD-008.md").is_file()
+    assert (OPS / "plans" / "PRD-009.md").is_file()
+
+
+def test_harvested_mvp_plans_and_children() -> None:
+    """Unique notes folded from stale branches into main company state."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    for ident in ("PRD-010", "PRD-011", "PRD-012", "PRD-013", "PRD-014"):
+        assert ident in by_id, ident
+        assert by_id[ident]["type"] == "story"
+        assert by_id[ident]["status"] != "implement"
+        assert "tickets/PRD-000" in by_id[ident].get("parent", "")
+    assert by_id["PRD-010"]["status"] == "plan"
+    assert "plans/PRD-010" in by_id["PRD-010"].get("plan", "")
+    assert by_id["PRD-003"]["status"] == "ready"
+    assert "plans/PRD-003" in by_id["PRD-003"].get("plan", "")
+    assert by_id["PRD-002"]["status"] == "plan"
+    assert "plans/PRD-002" in by_id["PRD-002"].get("plan", "")
+    assert "plans/PRD-000" in by_id["PRD-000"].get("plan", "")
+    assert "plans/E2E-001" in by_id["E2E-001"].get("plan", "")
+    assert by_id["E2E-001"]["status"] == "ready"
+    assert by_id["WF-003"]["status"] == "plan"
+    assert by_id["WF-003"].get("gate") == "human"
+    for name in (
+        "PRD-000.md",
+        "PRD-002.md",
+        "PRD-003.md",
+        "PRD-009.md",
+        "PRD-010.md",
+        "E2E-001.md",
+        "WF-003.md",
+    ):
+        plan = (OPS / "plans" / name).read_text()
+        assert "status: approved" in plan
+    assert (OPS / "agents" / "mvp-team.md").is_file()
+    assert (OPS / "runs" / "branch-docs-harvest.md").is_file()
 
 
 def test_leads_pipeline_tickets_cite_landed_schema() -> None:

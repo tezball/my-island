@@ -1,7 +1,27 @@
 # Plans
 
-One plan per ticket, same id. Copy [[ops/templates/plan]]. Implementers do not start without `status: approved` on the plan (or a human comment in the ticket).
+One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `status: approved` and advances the ticket on `main` by default (no human approval gate). Use ticket `gate: human` or `blocked` when a person must act first.
 
-Epics do not need implementation plans; children do. First product plan: [[PRD-001]]. Wave 1 leads acceptance: [[PRD-007]]. Draft Place import: [[PRD-008]]. Place-listing sim: [[WF-019]]. Cloud Agent local MCP: [[WF-016]]. Living markdown under `docs/`: [[ops/plans/WF-023]]. Apple Silicon PostGIS image: [[ops/plans/WF-024]]. No prod / auto-merge: [[ops/plans/WF-025]].
+Epics may have a **program** plan ([[PRD-000]]); children still need their own plans before implement.
 
-Vault OS UX: [[ops/plans/WF-030]]. Jenkins local house CI: [[ops/plans/WF-031]].
+| Plan | Ticket |
+|---|---|
+| [[PRD-000]] | Program / e2e waves |
+| [[PRD-001]] | Catalog skeleton |
+| [[PRD-002]] | Curator seed spreadsheet |
+| [[PRD-003]] | Explore PWA list+map |
+| [[PRD-006]] | Leads store |
+| [[PRD-007]] | Wave 1 leads acceptance |
+| [[PRD-008]] | Draft Place import |
+| [[PRD-009]] | Counsel gate |
+| [[PRD-010]] | Visitor auth |
+| [[E2E-001]] | Place-stub workshop close-out |
+| [[WF-003]] | Cursor Automations enablement |
+| [[WF-016]] | Cloud Agent local MCP |
+| [[WF-017]] | STACK-E2E drill |
+| [[WF-019]] | Place-listing sim |
+| [[WF-023]] | Living markdown under `docs/` |
+| [[WF-024]] | Apple Silicon PostGIS |
+| [[WF-025]] | No prod / auto-merge |
+| [[WF-030]] | Vault OS UX |
+| [[WF-031]] | Jenkins local house CI |
