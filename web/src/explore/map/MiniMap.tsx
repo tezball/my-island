@@ -1,23 +1,38 @@
 import { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { MAP_STYLE } from "./mapStyle";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+const TILES =
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 
 export function MiniMap({ lat, lng }: { lat: number; lng: number }) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!root.current) return;
-    const map = new maplibregl.Map({
-      container: root.current,
-      style: MAP_STYLE,
-      center: [lng, lat],
-      zoom: 12,
-      interactive: false,
-      attributionControl: { compact: true },
-    });
-    new maplibregl.Marker({ color: "#215C4E" }).setLngLat([lng, lat]).addTo(map);
-    return () => map.remove();
+    const map = L.map(root.current, {
+      zoomControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      attributionControl: true,
+    }).setView([lat, lng], 12);
+    L.tileLayer(TILES, {
+      attribution: "© OpenStreetMap © CARTO",
+      subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(map);
+    L.circleMarker([lat, lng], {
+      radius: 8,
+      color: "#F4F0E6",
+      weight: 2,
+      fillColor: "#215C4E",
+      fillOpacity: 1,
+    }).addTo(map);
+    requestAnimationFrame(() => map.invalidateSize());
+    return () => {
+      map.remove();
+    };
   }, [lat, lng]);
 
   return <div className="mini-map" ref={root} role="img" aria-label="Map of this place" />;

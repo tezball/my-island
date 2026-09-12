@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import type { Place } from "../../api/catalog";
 import { hasCoords, IRELAND, IRELAND_BOUNDS } from "../geo";
-import { MAP_STYLE } from "./mapStyle";
+
+const TILES =
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
 
 export function MapView({
   places,
@@ -21,111 +23,80 @@ export function MapView({
   onSearchArea: (bounds: { west: number; south: number; east: number; north: number }) => void;
 }) {
   const root = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const hereMarker = useRef<maplibregl.Marker | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const layerRef = useRef<L.LayerGroup | null>(null);
+  const hereRef = useRef<L.CircleMarker | null>(null);
   const placesRef = useRef(places);
+  const skipMove = useRef(true);
   placesRef.current = places;
 
   useEffect(() => {
     if (!root.current || mapRef.current) return;
-    const map = new maplibregl.Map({
-      container: root.current,
-      style: MAP_STYLE,
-      center: [IRELAND.lng, IRELAND.lat],
-      zoom: IRELAND.zoom,
-      maxBounds: IRELAND_BOUNDS,
-      attributionControl: { compact: true },
-    });
+    const map = L.map(root.current, {
+      zoomControl: false,
+      attributionControl: true,
+      maxBounds: L.latLngBounds(
+        [IRELAND_BOUNDS[0][1], IRELAND_BOUNDS[0][0]],
+        [IRELAND_BOUNDS[1][1], IRELAND_BOUNDS[1][0]],
+      ),
+      minZoom: 6,
+    }).setView([IRELAND.lat, IRELAND.lng], 6);
+    L.tileLayer(TILES, {
+      attribution: "© OpenStreetMap © CARTO",
+      subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(map);
+    L.control.zoom({ position: "topright" }).addTo(map);
+    layerRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
-    map.on("load", () => {
-      map.addSource("places", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-        cluster: true,
-        clusterRadius: 50,
-        clusterMaxZoom: 12,
-      });
-      map.addLayer({
-        id: "clusters",
-        type: "circle",
-        source: "places",
-        filter: ["has", "point_count"],
-        paint: {
-          "circle-color": "#215C4E",
-          "circle-radius": ["step", ["get", "point_count"], 16, 8, 20, 25, 26],
-          "circle-stroke-width": 2,
-          "circle-stroke-color": "#F4F0E6",
-        },
-      });
-      map.addLayer({
-        id: "points",
-        type: "circle",
-        source: "places",
-        filter: ["!", ["has", "point_count"]],
-        paint: {
-          "circle-color": "#215C4E",
-          "circle-radius": 8,
-          "circle-stroke-width": 2,
-          "circle-stroke-color": "#F4F0E6",
-        },
-      });
-      map.on("click", "clusters", (e) => {
-        const feature = e.features?.[0];
-        if (!feature) return;
-        const source = map.getSource("places") as maplibregl.GeoJSONSource;
-        const clusterId = feature.properties?.cluster_id as number;
-        const geom = feature.geometry;
-        if (!geom || geom.type !== "Point") return;
-        source.getClusterExpansionZoom(clusterId).then((zoom) => {
-          map.easeTo({ center: geom.coordinates as [number, number], zoom });
-        });
-      });
-      map.on("click", "points", (e) => {
-        const slug = e.features?.[0]?.properties?.slug as string | undefined;
-        const hit = placesRef.current.find((p) => p.slug === slug);
-        if (hit) onSelect(hit);
-      });
-      for (const layer of ["points", "clusters"]) {
-        map.on("mouseenter", layer, () => {
-          map.getCanvas().style.cursor = "pointer";
-        });
-        map.on("mouseleave", layer, () => {
-          map.getCanvas().style.cursor = "";
-        });
+    skipMove.current = true;
+    map.on("moveend", () => {
+      if (skipMove.current) {
+        skipMove.current = false;
+        return;
       }
-      syncSource(map, placesRef.current);
+      onBoundsCommitNeeded(true);
     });
-    map.on("moveend", () => onBoundsCommitNeeded(true));
+    const ro = new ResizeObserver(() => map.invalidateSize());
+    ro.observe(root.current);
+    requestAnimationFrame(() => map.invalidateSize());
+    syncPins(layerRef.current, placesRef.current, onSelect);
     return () => {
-      hereMarker.current?.remove();
-      hereMarker.current = null;
+      ro.disconnect();
       map.remove();
       mapRef.current = null;
+      layerRef.current = null;
+      hereRef.current = null;
     };
   }, [onBoundsCommitNeeded, onSelect]);
 
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map?.getSource("places")) return;
-    syncSource(map, places);
-  }, [places]);
+    const layer = layerRef.current;
+    if (!layer) return;
+    syncPins(layer, places, onSelect);
+  }, [places, onSelect]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !here) return;
-    if (!hereMarker.current) {
-      const el = document.createElement("div");
-      el.className = "here-dot";
-      hereMarker.current = new maplibregl.Marker({ element: el }).setLngLat([here.lng, here.lat]).addTo(map);
+    if (!hereRef.current) {
+      hereRef.current = L.circleMarker([here.lat, here.lng], {
+        radius: 7,
+        color: "#fff",
+        weight: 2,
+        fillColor: "#1c7ae0",
+        fillOpacity: 1,
+      }).addTo(map);
     } else {
-      hereMarker.current.setLngLat([here.lng, here.lat]);
+      hereRef.current.setLatLng([here.lat, here.lng]);
     }
-    map.flyTo({ center: [here.lng, here.lat], zoom: Math.max(map.getZoom(), 10) });
+    map.setView([here.lat, here.lng], Math.max(map.getZoom(), 10));
   }, [here]);
 
   useEffect(() => {
-    if (!searchToken || !mapRef.current) return;
-    const b = mapRef.current.getBounds();
+    const map = mapRef.current;
+    if (!searchToken || !map) return;
+    const b = map.getBounds();
     onSearchArea({
       west: b.getWest(),
       south: b.getSouth(),
@@ -137,15 +108,19 @@ export function MapView({
   return <div className="map-el" ref={root} role="presentation" />;
 }
 
-function syncSource(map: maplibregl.Map, places: Place[]) {
-  const source = map.getSource("places") as maplibregl.GeoJSONSource | undefined;
-  if (!source) return;
-  source.setData({
-    type: "FeatureCollection",
-    features: places.filter(hasCoords).map((place) => ({
-      type: "Feature",
-      properties: { slug: place.slug, name: place.name },
-      geometry: { type: "Point", coordinates: [place.longitude, place.latitude] },
-    })),
-  });
+function syncPins(layer: L.LayerGroup, places: Place[], onSelect: (place: Place) => void) {
+  layer.clearLayers();
+  for (const place of places) {
+    if (!hasCoords(place)) continue;
+    const marker = L.circleMarker([place.latitude, place.longitude], {
+      radius: 8,
+      color: "#F4F0E6",
+      weight: 2,
+      fillColor: "#215C4E",
+      fillOpacity: 1,
+    });
+    marker.on("click", () => onSelect(place));
+    marker.bindTooltip(place.name, { direction: "top", opacity: 0.9 });
+    layer.addLayer(marker);
+  }
 }

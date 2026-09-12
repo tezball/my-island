@@ -17,7 +17,7 @@ cssclasses:
 - `img-src 'self' data: https:` (Commons `<img>` URLs already allowed)
 - `Permissions-Policy: geolocation=()`
 
-MapLibre raster tiles use **fetch**, so they need tile origins on `connect-src`. Pins with coordinates still fail to paint tiles. `geolocation=()` disables near-me.
+MapLibre raster tiles use **fetch**, so they need tile origins on `connect-src`. Leaflet uses `<img>` tiles and is covered by `img-src https:`. Pins with coordinates still fail to paint tiles if `img-src` is locked down. `geolocation=()` disables near-me.
 
 Do **not** proxy OSM tiles or Wikimedia bytes through Spring.
 

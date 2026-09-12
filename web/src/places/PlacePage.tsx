@@ -149,9 +149,6 @@ export function PlacePage() {
           </section>
         ) : null}
         <p className="place-tools">
-          <button className="bar-btn ghost" type="button" onClick={share}>
-            Share
-          </button>
           <button className="bar-btn ghost" type="button" onClick={report}>
             Report a problem
           </button>
@@ -164,7 +161,10 @@ export function PlacePage() {
       </div>
       {mapsHref ? (
         <div className="sticky-actions">
-          <a className="primary" style={{ display: "block", textAlign: "center", padding: 12 }} href={mapsHref}>
+          <button className="bar-btn ghost" type="button" onClick={share}>
+            Share
+          </button>
+          <a className="primary" href={mapsHref}>
             Directions
           </a>
         </div>

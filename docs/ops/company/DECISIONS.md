@@ -69,7 +69,7 @@ CD line in [`product/STACK.md`](../../product/STACK.md): `main` is git; there is
 | 10 | **POI-only published catalog** for this slice. Wave 1 campsites stay Research (`status=lead`). | [[ops/workshops/poi-directory-mvp]], [[ops/tickets/PRD-002]] |
 | 11 | **Reuse** [[ops/tickets/PRD-002]] + [[ops/tickets/PRD-003]] + [[ops/tickets/PRD-011]]. Do not file a new PRD for the directory demo. | this note |
 | 12 | **Photos** from Wikimedia Commons (attribution on Place). Do not scrape aggregator or operator galleries. Local `published=true` ≠ [[ops/tickets/PRD-009]] counsel. | [[ops/workshops/poi-directory-content]], [`data/leads/`](../../data/leads/) |
-| 13 | **Map** is MapLibre + Carto/OSM, no Mapbox token. fishing-journals.com CSP is a **host** change ([[ops/runbooks/MOCK_HOST_CSP]]); this git tree cannot apply it. | [[ops/workshops/poi-directory-qa]] |
+| 13 | **Map** is Leaflet + Carto/OSM raster (no Mapbox token; no WebGL). fishing-journals.com CSP is a **host** change ([[ops/runbooks/MOCK_HOST_CSP]]); this git tree cannot apply it. | [[ops/workshops/poi-directory-qa]] |
 
 CHK / ME / ACC stay off this public slice until a later ticket. 500-place launch DoD is not this slice (~100 POIs).
 
