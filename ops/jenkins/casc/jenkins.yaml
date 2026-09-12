@@ -1,5 +1,6 @@
 # JCasC — durable config for local Jenkins (WF-031). All of this is in git.
-# Secrets via compose env / .env: JENKINS_ADMIN_PASSWORD, JENKINS_GITHUB_TOKEN (never commit).
+# Secrets via compose env / .env: JENKINS_ADMIN_PASSWORD, JENKINS_GITHUB_TOKEN,
+# GITHUB_USERNAME (never commit real tokens). GitHub Branch Source needs username/password, not string.
 jenkins:
   systemMessage: |
     my-island local house CI (WF-031). Config from ops/jenkins/casc (git).
