@@ -27,10 +27,11 @@ Jobs seeded by JCasC:
 ## GitHub token
 
 1. Create a classic PAT (or fine-grained) with repo read + commit status / checks write.
-2. Put it in `.env`:
+2. Put it in `.env` (Casc stores it as username/password credential `github-token`):
 
 ```bash
-JENKINS_GITHUB_TOKEN=ghp_...
+JENKINS_GITHUB_TOKEN=ghp_...   # or github_pat_...
+GITHUB_USERNAME=tezball
 ```
 
 3. Recreate Jenkins so Casc reloads the credential:

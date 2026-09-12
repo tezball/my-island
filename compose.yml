@@ -154,7 +154,8 @@ services:
 
   # Local house CI (WF-031). JCasC from ops/jenkins/casc; state on ops_jenkins.
   # Repo is bind-mounted at the host path so `docker compose` from Jenkins resolves
-  # relative volumes (Docker Desktop File Sharing). GitHub PAT: JENKINS_GITHUB_TOKEN in .env.
+  # relative volumes (Docker Desktop File Sharing).
+  # GitHub scan cred: GITHUB_USERNAME + JENKINS_GITHUB_TOKEN in .env (username/password Casc).
   jenkins:
     build:
       context: ./ops/jenkins
@@ -165,6 +166,7 @@ services:
       JENKINS_URL: ${JENKINS_URL:-http://127.0.0.1:8085/}
       JENKINS_ADMIN_ID: ${JENKINS_ADMIN_ID:-admin}
       JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-admin}
+      GITHUB_USERNAME: ${GITHUB_USERNAME:-tezball}
       JENKINS_GITHUB_TOKEN: ${JENKINS_GITHUB_TOKEN:-changeme}
       HOST_REPO: ${PWD}
       JAVA_OPTS: >-
