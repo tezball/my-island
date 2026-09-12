@@ -38,7 +38,7 @@ Pick the **smallest set** that proves the slice. Prefer fast tests. Do not inven
 | Type | When required | House command / home |
 |---|---|---|
 | **How (unit)** | Vault/OS, Spring/UI pure functions | `pytest ops/tests -q -m "not stack"`; `mvnw test`; later `npm test` |
-| **What (contract)** | API behaviour. **BDD = integration:** Gherkin vs Testcontainers (today: `CatalogTest` JUnit skin) | Same Maven suite — PostGIS + Flyway + HTTP |
+| **What (contract)** | API behaviour. **BDD = integration:** Gherkin vs Testcontainers (`features/place_catalog.feature`; schema stays in `CatalogTest`) | Same Maven suite — PostGIS + Flyway + HTTP |
 | **Wiring (stack)** | Compose/scripts/MCP glue. Do not re-assert the HTTP contract. | `./scripts/dev test` (marker `stack`) |
 | **Browser (Playwright)** | Only when a `PRD-*` UI exists and CI says so | Blocked until [[ops/tickets/WF-011]] / Explore ships |
 
