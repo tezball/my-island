@@ -10,7 +10,7 @@ Company dashboard: `docs/HOME.md`. Obsidian vault: **`docs/`** only.
 4. Work **one ticket** (skip `type: epic`). Update `status`. Run `python3 ops/scripts/board_sync.py`.
 5. Do not implement product features unless the ticket id is `PRD-*` and status is `implement`.
 6. Do not polish, preserve, or refactor application code for its own sake. It is disposable scaffolding.
-7. Do not merge PRs. Do not deploy production. Grafana and Postgres MCP are read-only.
+7. Chat agents do not merge PRs (Actions squash-merges ready PRs when CI is green). Do not invent a production deploy. Grafana and Postgres MCP are read-only.
 
 Product canon (read-only until `PRD-*` + `implement`): `docs/product/`. House stack (CEO 2026-09-05): **Java / Spring Boot**, **Vite + React PWA** (not Next.js), **PostgreSQL 17 + PostGIS**, Flyway, Grafana OSS MCP — `docs/product/STACK.md`. Historical app: `docs/leads/`, `docs/automation/`, and tag `legacy-platform` — not a migration source. Open **`docs/`** in Obsidian (not repo root, not `ops/`). Do not recommend FastAPI, Neon, or Vercel as defaults.
 
@@ -39,4 +39,4 @@ Local MCP: `./scripts/dev up` then reload MCP. Details: `docs/ops/workflow/LOCAL
 
 **MCP:** laptop `.cursor/mcp.json` (`grafana --disable-write`, `postgres` → db `ops`) does **not** attach to Cloud Agent runs. `environment.json` cannot register MCP. A human adds the same servers as **stdio** on cursor.com/agents (MCP dropdown) or Dashboard → Integrations & MCP so they run in this VM against loopback. Do not use HTTP MCP pointed at `127.0.0.1` (proxied off-VM). Until then, curl Prometheus/Grafana — `docs/ops/workflow/MCP.md` and `docs/ops/runbooks/STACK_E2E_PLACE_STUB.md`. Catalog `place` SELECT for `ops_reader` is TODO Engineering (no grants PR yet).
 
-Do not merge PRs. Do not deploy production.
+Do not merge PRs from chat. Ready PRs auto-merge when CI is green. There is no production environment.

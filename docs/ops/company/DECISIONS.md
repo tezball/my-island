@@ -34,7 +34,7 @@ Architecture’s draft is canon. Do not invent a competing stack.
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[ops/tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[ops/tickets/WF-004]] |
 | CI | GitHub Actions; Playwright against job-started compose when the PWA exists | [[ops/tickets/WF-011]] |
-| CD | Staging auto on `main`; prod = GitHub Environment + human | [[ops/tickets/WF-010]] |
+| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. | [[ops/tickets/WF-025]] |
 
 ### MCP gaps (must close for idea→prod)
 
@@ -46,3 +46,14 @@ Architecture’s draft is canon. Do not invent a competing stack.
 Host, OIDC provider, and curator-admin depth remain open in STACK.
 
 **Do not build** the consumer app until a `PRD-*` ticket is `implement`.
+
+## 2026-09-12 — No production; ready PRs merge themselves
+
+**Terry.** This project **has no production environment and probably never will.** Relax the old “humans merge / no prod deploy” posture that assumed a fleet.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 7 | **No prod.** No GitHub Environment prod gate, no `compose.prod`, no prod SSH. Local compose is the runtime. Do not block agent work on a hypothetical prod. | this note, [[ops/workflow/SAFETY]], `.cursor/rules/no-prod.mdc` |
+| 8 | **Ready PRs auto-review, approve, and squash-merge** when CI `unit` + `catalog` + `stack` are green. Drafts and forks never auto-merge. Chat reviewer hat still does not merge. | [[ops/tickets/WF-025]], [[ops/workflow/CI]] |
+
+CD line in [`product/STACK.md`](../../product/STACK.md): `main` is git; there is no prod Environment. Staging tickets ([[ops/tickets/WF-010]]) are separate and not a prod stand-in.

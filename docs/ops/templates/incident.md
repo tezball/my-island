@@ -30,7 +30,7 @@ investigating | identified | monitoring | resolved
 
 - [ ] Declare in [[ops/BOARD]] (`status` + `blocked_reason` if others must stop)
 - [ ] Follow-up ticket if a code fix is needed
-- [ ] Do not merge, do not prod-deploy
+- [ ] Do not merge from chat; there is no prod-deploy
 
 ## Links
 

@@ -60,3 +60,54 @@ jobs:
       - name: Compose diagnostics
         if: failure()
         run: docker compose ps && docker compose logs --no-color --tail=120
+
+  # CEO 2026-09-12 (WF-025): no prod; ready PRs merge themselves.
+  automerge:
+    name: auto-review approve merge
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    needs: [unit, catalog, stack]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Approve and squash-merge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pull_number = context.payload.pull_request.number;
+            const { owner, repo } = context.repo;
+            try {
+              await github.rest.pulls.createReview({
+                owner,
+                repo,
+                pull_number,
+                event: 'APPROVE',
+                body: 'CI unit + catalog + stack green. Auto-approved (WF-025 / CEO 2026-09-12: no prod; ready PRs merge themselves).',
+              });
+            } catch (error) {
+              core.warning(`approve skipped: ${error.message}`);
+            }
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
+            if (pr.merged) {
+              core.info('already merged');
+              return;
+            }
+            if (pr.draft) {
+              core.info('draft — skip');
+              return;
+            }
+            if (pr.head.repo.full_name !== `${owner}/${repo}`) {
+              core.info('fork — skip');
+              return;
+            }
+            await github.rest.pulls.merge({
+              owner,
+              repo,
+              pull_number,
+              merge_method: 'squash',
+              sha: pr.head.sha,
+            });

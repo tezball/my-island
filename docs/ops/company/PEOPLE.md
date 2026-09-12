@@ -11,6 +11,6 @@ Humans. Agent roles: [[ops/agents/_index]].
 |---|---|---|
 | Terry | Owner / CEO | [tezball](https://github.com/tezball) |
 
-Humans merge PRs, enable Cursor Automations, hold prod credentials, and sign off `product/VISION.md` / `product/MVP.md`.
+Terry signs `product/VISION.md` / `product/MVP.md` and enables Cursor Automations. There is **no production** and probably never will be (CEO 2026-09-12). Ready PRs merge via CI, not a human merge ritual.
 
 Open business questions (seed content, public name, revenue model) live in [`product/BRIEFING.md`](../../product/BRIEFING.md) §6. Do not invent answers in tickets.

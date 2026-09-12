@@ -41,13 +41,13 @@ Keep consumer UI and marketplace stubs **absent**. The first API stub is [`servi
 
 ## Agent rules (short)
 
-One ticket per session (skip `type: epic`). Humans merge; agents open PRs and comment. Product code only on `PRD-*` with `status: implement`. Full list: [`docs/AGENTS.md`](docs/AGENTS.md).
+One ticket per session (skip `type: epic`). Ready PRs auto-merge when CI is green; chat agents open PRs and comment. Product code only on `PRD-*` with `status: implement`. Full list: [`docs/AGENTS.md`](docs/AGENTS.md).
 
 ## What we automate
 
 1. Read [`docs/ops/HOME.md`](docs/ops/HOME.md), [`docs/ops/workflow/SAFETY.md`](docs/ops/workflow/SAFETY.md), [`docs/ops/agents/_index.md`](docs/ops/agents/_index.md).
 2. `python3 ops/scripts/next_ticket.py --role auto` — one role, one ticket. Epics skipped.
-3. Planner → plan. Implementer → PR. Reviewer → comment. **Humans merge.**
+3. Planner → plan. Implementer → PR. Reviewer → comment. **CI squash-merges ready PRs.**
 4. Skills/routines: [`docs/ops/workflow/SKILLS.md`](docs/ops/workflow/SKILLS.md). CI: [`docs/ops/workflow/CI.md`](docs/ops/workflow/CI.md).
 5. Grok vs Cursor: [`docs/ops/agents/GROK_VS_CURSOR.md`](docs/ops/agents/GROK_VS_CURSOR.md). **Automation Expert:** [`docs/ops/agents/roles/automation-expert.md`](docs/ops/agents/roles/automation-expert.md).
 

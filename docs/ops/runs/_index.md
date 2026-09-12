@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[WF-025-implement]] — no prod lock + CI auto-merge; PR #64
 - [[WF-024-implement]] — Apple Silicon PostGIS image; PR #63
 - [[PRD-008-close]] — human merged PR #47; ticket `done`
 - [[WF-023-close]] — human merged PR #52; ticket `done`; vault = `docs/`

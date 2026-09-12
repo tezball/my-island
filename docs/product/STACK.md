@@ -4,7 +4,7 @@ type: product
 status: active
 owner: Architecture
 created: 2026-09-01
-updated: 2026-09-05
+updated: 2026-09-12
 ---
 
 # Stack
@@ -14,7 +14,8 @@ Technology decisions for the rebuild. Product capabilities live in
 
 **CEO lock (2026-09-05):** Java / Spring backend is permanent. Architecture does
 not re-litigate the house. Client stays **light and fast** (not a Next.js-heavy
-monolith). Agents run idea→prod with logs, metrics and alerts through MCP.
+monolith). Agents run idea→`main` with logs, metrics and alerts through MCP.
+There is **no production environment** and probably never will be (CEO 2026-09-12).
 
 Nothing here is running yet except the local compose observability stack.
 These are constraints on the first service and UI commits.
@@ -29,7 +30,7 @@ These are constraints on the first service and UI commits.
 | Migrations | **Flyway** in the API | Expand/contract only. Agents never ad-hoc DDL against shared envs. |
 | Observability | **MCP, OSS first** | Logs, metrics, alerts via Grafana stack + `mcp-grafana`. Prefer $0 self-hosted. |
 | CI | **GitHub Actions** | Required checks; Playwright against job-started compose. No Jenkins rebuild. |
-| CD | Staging auto on `main`; prod = GitHub Environment + human | Agents open PRs. They do not merge to prod or push prod. |
+| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green. | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. |
 
 Hosting (EU VPS / Fly / Railway / etc.) remains an open pick as long as it can
 run the API + Grafana compose sidecars and meet NFRs. Object storage default:

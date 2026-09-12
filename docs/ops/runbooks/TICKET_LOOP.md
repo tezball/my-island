@@ -41,7 +41,7 @@ Product ideas → `PRD-*`. Agent-loop glue → `WF-*`. Live breakage → `INC-*`
 3. House stack is [`product/STACK.md`](../../product/STACK.md): Spring Boot, Vite+React PWA (**not** Next), Postgres+PostGIS. Do not implement from `docs/leads/` or `docs/automation/`.
 4. Do only that ticket. Run its verify steps.
 5. Open a PR. Body links ticket + plan.
-6. Set `pr: <url>`, `status: review`. Sync board. Run note. **Do not merge.**
+6. Set `pr: <url>`, `status: review`. Sync board. Run note. Do not merge from chat (CI will).
 
 ## 4. Verify
 
@@ -54,8 +54,8 @@ Ticket-specific checkboxes. Default bar:
 
 ## 5. Review (separate session)
 
-Comment on the PR. Request changes or “looks good, human may merge”. Never `gh pr merge`. Never push.
+Comment on the PR. Request changes or “looks good; CI may merge”. Never `gh pr merge` from chat. Never push.
 
-## 6. Close (after human merge)
+## 6. Close (after CI squash-merge)
 
 Set `status: done`. Sync board. Run note. If follow-up work appeared, **new ticket**, do not reopen scope.

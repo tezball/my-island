@@ -1,0 +1,13 @@
+---
+description: There is no production environment and there probably never will be.
+alwaysApply: true
+---
+
+# No production
+
+CEO lock 2026-09-12 (`docs/ops/company/DECISIONS.md`). This company **has no prod** and **probably never will**.
+
+- Do not invent a production GitHub Environment, `compose.prod`, prod SSH, prod deploy gates, or “wait for a human to ship prod”.
+- Local compose (`./scripts/app start`) is the runtime. `main` is git. That is enough.
+- Ready (non-draft, same-repo) PRs auto-approve and squash-merge when CI is green. Drafts and forks do not. Chat agents still do not `gh pr merge` as a reviewer hat — Actions does.
+- Staging tickets may still exist. They are not prod. Do not block ordinary workflow work on a future prod fleet.

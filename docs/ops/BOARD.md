@@ -53,6 +53,7 @@ kanban-plugin: basic
 - [x] [[ops/tickets/WF-019|WF-019]] P0 Repeatable place listing create/list/get sim
 - [x] [[ops/tickets/WF-020|WF-020]] P0 Restore live ops/ and data/leads to repo root (CI hotfix)
 - [x] [[ops/tickets/WF-023|WF-023]] P0 Re-home living markdown under docs/ (Obsidian vault)
+- [x] [[ops/tickets/WF-025|WF-025]] P0 No prod; auto-review approve and merge ready PRs
 - [x] [[ops/tickets/PRD-005|PRD-005]] P1 Past-company docs cleanup / agent fence
 - [x] [[ops/tickets/WF-008|WF-008]] P1 Close stale draft PRs #2, #4, and #5
 - [x] [[ops/tickets/WF-016|WF-016]] P1 Cloud Agent mcp-grafana and Postgres-RO against local compose

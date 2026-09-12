@@ -8,10 +8,10 @@ alwaysApply: true
 You are working in a git-tracked Obsidian vault at `docs/` — the company OS lives in `docs/ops/`.
 
 - Start from `docs/ops/HOME.md` and `docs/ops/BOARD.md` (regenerate with `python3 ops/scripts/board_sync.py`).
-- Roles: planner writes `docs/ops/plans/`. Implementer opens a PR. Reviewer comments only — never merge.
+- Roles: planner writes `docs/ops/plans/`. Implementer opens a PR. Reviewer comments only — never merge from chat. Ready PRs auto-merge when CI is green.
 - One ticket per session. Skip `type: epic`. Prefix `WF-` = workflow. `PRD-` = product. `INC-` = incident.
 - New tickets: `python3 ops/scripts/new_ticket.py`. Naming: `docs/ops/NAMING.md`. Roster: `docs/ops/agents/_index.md`.
 - App code is disposable scaffolding (`docs/ops/company/SCAFFOLDING.md`). Do not polish it.
-- No Jenkins. No prod writes. No secrets in notes.
+- No Jenkins. No production environment (probably never). No secrets in notes.
 - Full loop: `docs/ops/workflow/LOOP.md`. CI: `docs/ops/workflow/CI.md`. Safety: `docs/ops/workflow/SAFETY.md`.
 - Do not implement product unless `PRD-*` and `status: implement`.
