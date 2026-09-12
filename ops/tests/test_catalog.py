@@ -101,3 +101,17 @@ def test_chaos_monkey_is_off_on_default_compose() -> None:
     assert "compose.chaos.yml" not in up_block
     sim_block = dev.split("cmd_sim()")[1].split("cmd_wait()")[0]
     assert "compose.chaos.yml" not in sim_block
+
+
+def test_catalog_contract_is_gherkin_on_testcontainers() -> None:
+    pom = (CATALOG / "pom.xml").read_text()
+    assert "cucumber-spring" in pom
+    assert "cucumber-junit-platform-engine" in pom
+    feature = CATALOG / "src" / "test" / "resources" / "features" / "place_catalog.feature"
+    assert feature.is_file()
+    text = feature.read_text()
+    assert "When I create a published poi" in text
+    assert "the HTTP status is 201" in text
+    assert "the HTTP status is 404" in text
+    assert (CATALOG / "src/test/java/island/catalog/bdd/PlaceContractTest.java").is_file()
+    assert (CATALOG / "src/test/java/island/catalog/support/CatalogPostgis.java").is_file()

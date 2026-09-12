@@ -197,7 +197,16 @@ def test_local_md_documents_app_cli() -> None:
 
 def test_catalog_testcontainers_uses_compose_postgis_image() -> None:
     catalog = (
-        REPO / "services" / "catalog" / "src" / "test" / "java" / "island" / "catalog" / "CatalogTest.java"
+        REPO
+        / "services"
+        / "catalog"
+        / "src"
+        / "test"
+        / "java"
+        / "island"
+        / "catalog"
+        / "support"
+        / "CatalogPostgis.java"
     ).read_text()
     assert POSTGIS_IMAGE in catalog
     assert "postgis/postgis:" not in catalog

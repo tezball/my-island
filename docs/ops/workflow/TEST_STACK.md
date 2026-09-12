@@ -20,7 +20,7 @@ NFR-10 (unit + integration + E2E) maps to **how + contract + browser**. DoD stil
 | Lane | Value | Today | Want | Human / agent |
 |---|---|---|---|---|
 | **1. How (unit)** | Implementation is correct. Not the product promise. | **Gate:** vault pytest `not stack`; thin JUnit (`PlaceServiceTest`). | Vitest with [[ops/tickets/PRD-003]] (haversine, filters). ArchUnit on hot packages. | `./scripts/app test` · `/app-test` · IDEA `mvnw test` |
-| **2. What (contract)** | API behaviour. **BDD = integration.** Gherkin scenarios against Testcontainers PostGIS (Flyway, HTTP, authz, mail). | **Gate:** `CatalogTest` `@SpringBootTest` + PostGIS — same value, JUnit skin. | Same job, **Gherkin skin**: `Given a published campsite in Kerry`. Negative auth, Mailpit, OpenAPI examples live **in these scenarios**, not extra styles. Cucumber-JVM runner. Duplicate JUnit HTTP tests **go away**. | Read/run one feature; `mvnw test` (no compose) |
+| **2. What (contract)** | API behaviour. **BDD = integration.** Gherkin scenarios against Testcontainers PostGIS (Flyway, HTTP, authz, mail). | **Gate:** `features/place_catalog.feature` (create/list/get + 404/400) on Testcontainers. `CatalogTest` keeps schema/seed/how. | More scenarios in **that same job**. Negative auth, Mailpit live here when those APIs exist. Duplicate JUnit HTTP tests go away. | Read/run one feature; `mvnw test` (no compose) |
 | **3. Wiring (stack)** | Boxes talk. Do **not** re-assert create/list/get. | **Gate:** pytest `@pytest.mark.stack` | Keep thin. | `./scripts/app test` after compose up |
 | **4. Browser** | The user’s what. Playwright is the **only browser E2E** ([`product/ENGINEERING.md`](../../product/ENGINEERING.md) §3.4). | **Tool:** Playwright MCP. No tests. [[ops/tickets/WF-011]] blocked. | **Gate** when Explore exists: Playwright vs job-started compose. axe (NFR-04) here. | MCP explore; CI is the gate |
 | **5. Operate** | Seed, load, break, observe — **not** a second contract. | **Tool:** `./scripts/dev sim` (seed). **Workshop:** chaos overlay (`/stack-e2e`). Grafana / PromQL. | Sim + **Gatling** `./scripts/dev traffic` = one traffic idea (gentle local flow + optional soak). Chaos stays workshop. | Leave traffic up; query `up{job="catalog"}` |
@@ -49,7 +49,7 @@ Same files, two jobs: **prove** (lanes 1–4) and **operate** (lane 5).
 | Command | Lane | Agent use |
 |---|---|---|
 | `/app-test` · `./scripts/app test` | 1–3 | Clone→prove |
-| `mvnw test` | 1–2 | Contract without compose; later: run **one** `.feature` |
+| `mvnw test` | 1–2 | Contract without compose; run `features/*.feature` |
 | `./scripts/dev sim` | 5 | Seed unique places (today’s traffic) |
 | `./scripts/dev traffic` (**want**) | 5 | Steady Gatling flow + metrics |
 | `/stack-e2e` | 5 | Chaos drill; restore happy path |
@@ -70,7 +70,7 @@ Do not add a second CLI family. Extend `./scripts/dev`.
 
 ## Next slices
 
-1. Skin `CatalogTest` as Gherkin in the **existing** `catalog` job (replace duplicate HTTP tests).
+1. More Gherkin on the existing `catalog` job (authz when PRD-010 lands).
 2. Gatling traffic — same operate lane as sim.
 3. Vitest with [[ops/tickets/PRD-003]] — **landed** as GHA/Jenkins `web`. Playwright remains [[ops/tickets/WF-011]].
 

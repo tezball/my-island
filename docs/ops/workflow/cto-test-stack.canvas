@@ -79,7 +79,7 @@
 		{
 			"id": "n_contract",
 			"type": "text",
-			"text": "Gherkin on Testcontainers\nToday: CatalogTest (JUnit skin)\nWant: same job, Gherkin skin\n**one suite — authz/mail live here**",
+			"text": "Gherkin on Testcontainers\nPlumbing: place_catalog.feature\nCatalogTest keeps schema/seed\n**one suite — more scenarios when APIs exist**",
 			"x": 540,
 			"y": -100,
 			"width": 560,
