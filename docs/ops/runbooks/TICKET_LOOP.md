@@ -44,7 +44,7 @@ Product → `PRD-*`. Loop glue → `WF-*`. Live breakage → `INC-*`.
 
 1. Plan + `implement` on `main`.
 2. Branch from `main`. Boot `./scripts/app start` if verify needs it.
-3. One ticket. Verify. PR. `status: review`. Do not merge from chat.
+3. One ticket. Meet [[ops/workflow/DOD]] (draft) + plan Verify. PR. `status: review`. Do not merge from chat.
 
 ## 4. Verify
 

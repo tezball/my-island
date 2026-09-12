@@ -39,7 +39,7 @@ Do **not** use Cursor “memory” for this — it belongs in git ([[ops/workflo
 | Role | May | Must not |
 |---|---|---|
 | **Planner** | Write plans, set ticket toward `implement`, land docs on `main` | App code; wait on a human unless `gate: human` |
-| **Implementer** | Branch after `implement` on `main`, code, `gh pr create`, `status: review` | Merge from chat; review own PR as required review |
+| **Implementer** | Branch after `implement` on `main`, code, meet [[ops/workflow/DOD]], `gh pr create`, `status: review` | Merge from chat; review own PR as required review |
 | **Reviewer** | Comment on PR | `gh pr merge` from chat; push |
 
 Same person may wear all three hats. **Same agent session must not.**

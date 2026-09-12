@@ -12,11 +12,11 @@ cssclasses:
 
 ## Purpose
 
-Protect **verify steps**: E2E workshops, sims, acceptance checklists. Make “done” mean exercised, not just merged.
+Protect **verify steps**: E2E workshops, sims, acceptance checklists. Make “done” mean exercised, not just merged. Company implement bar (draft): [[ops/workflow/DOD]].
 
 ## Inputs
 
-[[ops/tickets/E2E-001]], [[ops/workshops/e2e-place-stub]], [[ops/runbooks/PLACE_LISTING_SIM]], [[ops/dashboards/qa]], plan Verify sections.
+[[ops/workflow/DOD]], [[ops/tickets/E2E-001]], [[ops/workshops/e2e-place-stub]], [[ops/runbooks/PLACE_LISTING_SIM]], [[ops/dashboards/qa]], plan Verify sections.
 
 ## Outputs
 

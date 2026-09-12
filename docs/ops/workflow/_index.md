@@ -5,6 +5,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | Note | Purpose |
 |---|---|
 | [[LOOP]] | Plan → implement PR → review → CI auto-merge |
+| [[DOD]] | Implement Definition of Done (**draft**) |
 | [[PIPELINE]] | Auto vs agent vs human (CTO map + tables) |
 | [[CI]] | GitHub Actions + agent test commands |
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |
