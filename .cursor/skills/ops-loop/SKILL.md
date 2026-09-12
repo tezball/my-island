@@ -17,7 +17,7 @@ python3 ops/scripts/next_ticket.py --role auto
 
 Pick **one** role. Skip `type: epic`. Do not plan and implement and review in the same session.
 
-**Docs on `main`.** If the session is docs-only (tickets, plans, runs, BOARD, workflow notes, `.cursor` skills/rules), `git checkout main && git pull`, make changes, open a **short-lived docs PR**, let CI merge, **delete the branch**. Do not leave orphan docs branches. **Exception:** already on `wf/…` / `prd/…` for code — fold related docs into that PR.
+**Docs on `main`.** If the session is docs-only (tickets, plans, runs, BOARD, workflow notes, `.cursor` skills/rules), `git checkout main && git pull`, make changes, open a **short-lived docs PR**, let CI merge, **delete the branch**, then **confirm `main` CI is green** (fix on a new PR if red). Do not leave orphan docs branches. **Exception:** already on `wf/…` / `prd/…` for code — fold related docs into that PR.
 
 **`main` docs = company state.** Prefer no human gate; use `gate: human` / `blocked` only when required.
 
@@ -46,4 +46,4 @@ Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`
 
 ## Board hygiene
 
-Ticket frontmatter change → `board_sync.py`. After any docs or feature PR merges → delete the remote/local branch.
+Ticket frontmatter change → `board_sync.py`. After any docs or feature PR merges → delete the remote/local branch → confirm Actions on `main` are green (else fix).

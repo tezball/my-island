@@ -16,7 +16,7 @@ Open first: [[ops/workflow/agent-pipeline]] (canvas) · tables: [[ops/workflow/P
 ## 5-minute walkthrough
 
 1. **Legend (top of canvas)** — green = machine does it; yellow = someone must start a Cursor/Cloud Agent; red = human click/secret or policy “never”.
-2. **Happy path row** — ticket → plan/docs on `main` → implement PR → review comment → **CI auto** → **automerge auto** → branch cleanup.
+2. **Happy path row** — ticket → plan/docs on `main` → implement PR → review comment → **CI auto** → **automerge auto** → delete branch → **confirm `main` CI green, else fix**.
 3. **Orange callout** — Cursor Automations (board runner / PR review) are written down but **not enabled** for MVP ([[ops/tickets/WF-003]]). Sessions are started by hand; merge is still CI.
 4. **Red row** — Automations UI, IdP secrets, counsel-before-customer-prod, staging/mock-prod host, Playwright backlog, and the three **never**s (prod deploy, chat merge, secrets in vault).
 
@@ -25,8 +25,8 @@ Open first: [[ops/workflow/agent-pipeline]] (canvas) · tables: [[ops/workflow/P
 | Already auto | Needs agent kick | Needs human / deferred |
 |---|---|---|
 | CI `unit` + `catalog` + `stack` | Pick / plan / implement / review | Automations Save+Activate (not MVP) |
-| Ready-PR approve + squash-merge | Board sync + delete branch | Google/Apple credentials (post-MVP) |
-| Local Jenkins `local-ci` on laptop | MVP product tickets ([[ops/agents/mvp-team]]) | Staging host / mock-prod; counsel revisit |
+| Ready-PR approve + squash-merge | Delete branch + confirm `main` CI green (fix if red) | Google/Apple credentials (post-MVP) |
+| Local Jenkins `local-ci` on laptop | Board sync; MVP product tickets ([[ops/agents/mvp-team]]) | Staging host / mock-prod; counsel revisit |
 
 **There is no production environment** — by design ([[ops/company/DECISIONS]]).
 

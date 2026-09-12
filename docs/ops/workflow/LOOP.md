@@ -15,10 +15,14 @@ Fully automated path, local-first. Cloud automations are the same loop with a gi
 docs-only (tickets, plans, runs, BOARD, LOOP, skills, rules)
   → checkout latest main; land via short-lived docs PR (CI auto-merges)
   → delete the branch after merge
+  → confirm main CI green; if red, fix on a new PR
 code / mixed implement
   → ticket+plan already on main at implement
   → branch wf/<id>-… from main; PR includes any docs that belong to that ticket
+  → same close-out: delete branch → confirm main CI green, else fix
 ```
+
+Happy path: pick → plan/docs on `main` → implement + PR → review comment → CI → squash-merge → delete branch → **confirm `main` CI green, else fix**.
 
 ## Docs on `main` (house rule)
 
@@ -65,4 +69,4 @@ python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"
 2. Feature branch only for code (or docs already in-flight on that branch).
 3. PR title `<id>: <title>`; body links ticket + plan.
 4. Never `--no-verify`. Never force-push `main`.
-5. After merge: delete local and remote feature branches.
+5. After merge: delete local and remote feature branches; confirm Actions on `main` are green — if not, fix and open another PR.

@@ -15,6 +15,11 @@ Legend: **auto** = machine/CI does it · **agent** = Cursor/chat or Cloud Agent 
 
 ## Happy path (ticket → `main`)
 
+```
+pick ticket → plan/docs on main → implement + open PR → review comment
+  → CI → squash-merge → delete branch → confirm main CI green, else fix
+```
+
 | Step | Who | Mode | How |
 |---|---|---|---|
 | Pick next ticket | Agent | agent | `next_ticket.py --role auto` |
@@ -24,9 +29,10 @@ Legend: **auto** = machine/CI does it · **agent** = Cursor/chat or Cloud Agent 
 | CI `unit` + `catalog` + `stack` | GHA (+ local Jenkins) | **auto** | [[ops/workflow/CI]] · [[ops/tickets/WF-031]] |
 | Approve + squash-merge ready PR | GitHub Actions | **auto** | [[ops/tickets/WF-025]] — drafts/forks skipped |
 | Delete feature branch | Agent / house rule | agent | After merge; no orphan docs branches |
-| Board sync | Agent | agent | `board_sync.py` after ticket frontmatter |
+| Confirm `main` CI green | Agent | agent | Watch Actions on `main` after merge; if red, open a fix PR and repeat from implement |
+| Board sync (when statuses change) | Agent | agent | `board_sync.py` after ticket frontmatter |
 
-Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specified** but **not enabled** for MVP ([[ops/tickets/WF-003]] `done`). Until then, a human or Cloud Agent **starts** each session; the merge step is still auto.
+Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specified** but **not enabled** for MVP ([[ops/tickets/WF-003]] `done`). Until then, a human or Cloud Agent **starts** each session; the merge step is still auto. PR CI green is not enough — **`main` must stay green** after the squash.
 
 ## CI / CD surface
 

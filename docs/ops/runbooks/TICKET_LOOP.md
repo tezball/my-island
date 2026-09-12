@@ -19,7 +19,7 @@ Skip `type: epic`. Work a child.
 
 ## Docs vs code
 
-- **Docs-only:** checkout `main`, change vault/skill/rule files, short docs PR, CI merges, **delete branch**.
+- **Docs-only:** checkout `main`, change vault/skill/rule files, short docs PR, CI merges, **delete branch**, confirm `main` CI green (else fix).
 - **Already on a feature branch for code:** put related docs in that PR.
 - Do not park company-state tickets only on a private branch.
 
@@ -56,4 +56,4 @@ Comment only. Never `gh pr merge` from chat.
 
 ## 6. Close
 
-After CI squash-merge: `status: done` on `main`, board_sync, run note, **delete feature branch**.
+After CI squash-merge: `status: done` on `main`, board_sync, run note, **delete feature branch**, confirm Actions on `main` are green (else open a fix PR).
