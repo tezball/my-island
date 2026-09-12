@@ -5,6 +5,8 @@ role: planner | implementer | reviewer
 started:
 finished:
 pr:
+cssclasses:
+  - run
 ---
 
 # Run {{id}}

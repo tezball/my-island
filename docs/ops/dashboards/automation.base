@@ -1,0 +1,42 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+views:
+  - type: table
+    name: Automation / DX owner
+    filters:
+      and:
+        - 'status != "done"'
+        - or:
+            - 'owner == "automation-expert"'
+            - 'area == "ops"'
+            - file.name.startsWith("WF-")
+    order:
+      - priority
+      - status
+      - file.name
+      - title
+  - type: table
+    name: CI / skills WF
+    filters:
+      and:
+        - file.name.startsWith("WF-")
+        - 'status != "done"'
+        - 'type != "epic"'
+    order:
+      - status
+      - priority
+      - file.name
+      - title
+  - type: table
+    name: Ready WF
+    filters:
+      and:
+        - file.name.startsWith("WF-")
+        - 'status == "ready"'
+    order:
+      - priority
+      - file.name
+      - title

@@ -1,6 +1,8 @@
 ---
 title: People
 type: company
+cssclasses:
+  - moc
 ---
 
 # People

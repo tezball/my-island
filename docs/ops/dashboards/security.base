@@ -1,0 +1,42 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+views:
+  - type: table
+    name: Incidents
+    filters:
+      or:
+        - 'type == "incident"'
+        - file.name.startsWith("INC-")
+    order:
+      - status
+      - file.name
+      - owner
+      - title
+  - type: table
+    name: Trust / security
+    filters:
+      and:
+        - 'status != "done"'
+        - or:
+            - 'owner == "eng-security"'
+            - 'owner == "trust-safety"'
+            - 'area == "trust"'
+            - file.name == "PRD-009"
+    order:
+      - priority
+      - file.name
+      - status
+      - title
+  - type: table
+    name: Blocked
+    filters:
+      and:
+        - 'status == "blocked"'
+    order:
+      - priority
+      - file.name
+      - blocked_reason
+      - title

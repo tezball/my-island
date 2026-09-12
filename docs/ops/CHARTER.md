@@ -2,6 +2,8 @@
 title: Company charter
 type: moc
 owner: orchestrator
+cssclasses:
+  - moc
 ---
 
 # Company charter

@@ -1,6 +1,8 @@
 ---
 date: {{date}}
 type: daily
+cssclasses:
+  - moc
 ---
 
 # {{date}}

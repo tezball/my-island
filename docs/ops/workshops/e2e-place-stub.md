@@ -1,6 +1,8 @@
 ---
 title: Place listing stub — e2e workshop
 type: workshop
+cssclasses:
+  - workshop
 ---
 
 # Place listing stub — e2e workshop

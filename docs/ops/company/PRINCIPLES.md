@@ -1,6 +1,8 @@
 ---
 title: Principles
 type: company
+cssclasses:
+  - moc
 ---
 
 # Principles

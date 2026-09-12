@@ -1,5 +1,6 @@
 ---
-id: PRD-XXX
+id: WF-XXX
+aliases: [WF-XXX]
 title:
 status: inbox
 priority: P1
@@ -10,22 +11,23 @@ parent:
 plan:
 pr:
 blocked_reason:
+cssclasses:
+  - ticket
 ---
 
 # {{title}}
 
-## Observed
+## Outcome
 
-## Expected
+## Repro
 
 ## Notes
 
 ## Verify
 
-- [ ] Repro no longer happens
 - [ ]
 
 ## Links
 
 - Plan:
-- Parent:
+- PR:

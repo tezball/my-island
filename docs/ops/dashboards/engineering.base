@@ -1,0 +1,51 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+    - 'type != "epic"'
+views:
+  - type: table
+    name: Implement / review
+    filters:
+      or:
+        - 'status == "implement"'
+        - 'status == "review"'
+    order:
+      - status
+      - priority
+      - file.name
+      - owner
+      - pr
+      - title
+  - type: table
+    name: Eng owners
+    filters:
+      and:
+        - 'status != "done"'
+        - or:
+            - 'owner == "eng-backend"'
+            - 'owner == "eng-frontend"'
+            - 'owner == "eng-infra"'
+            - 'owner == "eng-qa"'
+            - 'owner == "eng-security"'
+    order:
+      - owner
+      - priority
+      - file.name
+      - status
+      - title
+  - type: table
+    name: Ready for eng
+    filters:
+      and:
+        - 'status == "ready"'
+        - or:
+            - 'owner == "eng-backend"'
+            - 'owner == "eng-frontend"'
+            - 'area == "catalog"'
+            - 'area == "explore"'
+    order:
+      - priority
+      - file.name
+      - title

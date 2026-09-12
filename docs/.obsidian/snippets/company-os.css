@@ -1,0 +1,109 @@
+/* Company OS — Ireland outdoor tokens (peat / gorse / sea / stone / moss).
+   Enable: Appearance → CSS snippets → company-os */
+
+:root {
+  --os-peat: #2c2416;
+  --os-ink: #1a221c;
+  --os-stone: #8a8578;
+  --os-mist: #e8ebe4;
+  --os-paper: #f4f6f1;
+  --os-gorse: #c4a035;
+  --os-sea: #2a6f7c;
+  --os-moss: #3d6b4f;
+  --os-heather: #6b4c6d;
+  --os-warn: #a65d2e;
+  --os-danger: #8b3a3a;
+  --os-ready: #3d6b4f;
+  --os-doing: #2a6f7c;
+  --os-blocked: #a65d2e;
+  --os-done: #5a7260;
+}
+
+.theme-dark {
+  --os-peat: #e8ebe4;
+  --os-ink: #e8ebe4;
+  --os-paper: #1a221c;
+  --os-mist: #243028;
+}
+
+/* Dashboard / role-home wash */
+.markdown-preview-view.dashboard,
+.markdown-source-view.dashboard,
+.markdown-preview-view.role-home,
+.markdown-source-view.role-home {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-sea) 8%, transparent) 0%, transparent 42%),
+    linear-gradient(15deg, color-mix(in srgb, var(--os-gorse) 6%, transparent) 0%, transparent 38%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.dashboard h1,
+.markdown-preview-view.role-home h1,
+.markdown-preview-view.workshop h1,
+.markdown-preview-view.moc h1 {
+  color: var(--os-ink);
+  border-bottom: 3px solid var(--os-gorse);
+  padding-bottom: 0.35em;
+  letter-spacing: -0.02em;
+}
+
+.markdown-preview-view.workshop,
+.markdown-source-view.workshop {
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--os-moss) 7%, transparent) 0%, transparent 45%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.role-home h1::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  border-radius: 2px;
+  background: var(--os-sea);
+  vertical-align: middle;
+}
+
+/* Callout accents */
+.callout[data-callout="info"] {
+  --callout-color: 42, 111, 124;
+}
+.callout[data-callout="success"],
+.callout[data-callout="check"] {
+  --callout-color: 61, 107, 79;
+}
+.callout[data-callout="warning"],
+.callout[data-callout="todo"] {
+  --callout-color: 166, 93, 46;
+}
+.callout[data-callout="danger"],
+.callout[data-callout="failure"] {
+  --callout-color: 139, 58, 58;
+}
+.callout[data-callout="tip"] {
+  --callout-color: 196, 160, 53;
+}
+
+/* Tables on dashboards */
+.markdown-preview-view.dashboard table thead th,
+.markdown-preview-view.role-home table thead th {
+  background: color-mix(in srgb, var(--os-sea) 14%, var(--background-primary));
+  border-bottom: 2px solid var(--os-sea);
+}
+
+/* Property chips (status-ish) when Properties show in reading */
+.metadata-property[data-property-key="status"] .metadata-property-value {
+  font-weight: 600;
+}
+
+/* Soft link colour toward sea teal */
+.markdown-preview-view.dashboard a.internal-link,
+.markdown-preview-view.role-home a.internal-link {
+  color: var(--os-sea);
+}
+
+.markdown-preview-view.dashboard a.internal-link:hover,
+.markdown-preview-view.role-home a.internal-link:hover {
+  color: var(--os-gorse);
+}

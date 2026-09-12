@@ -1,6 +1,8 @@
 ---
 title: Application code is disposable scaffolding
 type: company
+cssclasses:
+  - moc
 ---
 
 # Application code is disposable scaffolding

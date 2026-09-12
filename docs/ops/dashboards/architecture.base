@@ -1,0 +1,45 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+views:
+  - type: table
+    name: Blocked / infra
+    filters:
+      or:
+        - 'status == "blocked"'
+        - and:
+            - 'area == "ops"'
+            - 'status != "done"'
+            - or:
+                - 'owner == "eng-infra"'
+                - 'owner == "architecture"'
+    order:
+      - file.name
+      - status
+      - priority
+      - owner
+      - title
+  - type: table
+    name: Open plans
+    filters:
+      and:
+        - 'status == "plan"'
+    order:
+      - file.name
+      - priority
+      - owner
+      - title
+  - type: table
+    name: All open
+    filters:
+      and:
+        - 'status != "done"'
+        - 'type != "epic"'
+    order:
+      - priority
+      - file.name
+      - status
+      - owner
+      - title

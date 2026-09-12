@@ -2,7 +2,7 @@
 
 This repository is the **company OS**. Mandate: **fully automated agent workflows**, not the consumer app.
 
-Company dashboard: `docs/HOME.md`. Obsidian vault: **`docs/`** only.
+Company dashboard: `docs/HOME.md`. Obsidian vault: **`docs/`** only. Humans may start at a role home under `docs/ops/dashboards/`; agents still use the board + `next_ticket.py`.
 
 1. Read `docs/ops/HOME.md`, `docs/ops/CHARTER.md`, `docs/ops/company/SCAFFOLDING.md`, and `docs/ops/BOARD.md`.
 2. Follow `docs/ops/workflow/LOOP.md`, `docs/ops/workflow/SAFETY.md`, `docs/ops/workflow/CI.md`, `docs/ops/runbooks/TICKET_LOOP.md`.

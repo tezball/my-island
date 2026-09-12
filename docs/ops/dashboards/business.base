@@ -1,0 +1,39 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+views:
+  - type: table
+    name: Ready queue
+    filters:
+      and:
+        - 'status == "ready"'
+        - 'type != "epic"'
+    order:
+      - priority
+      - file.name
+      - type
+      - owner
+      - title
+  - type: table
+    name: Blocked (host / money adjacent)
+    filters:
+      and:
+        - 'status == "blocked"'
+    order:
+      - priority
+      - file.name
+      - blocked_reason
+      - title
+  - type: table
+    name: P0 open
+    filters:
+      and:
+        - 'priority == "P0"'
+        - 'status != "done"'
+    order:
+      - status
+      - file.name
+      - type
+      - title
