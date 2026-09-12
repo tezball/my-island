@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[mvp-docs-seed-auth-agents]] — PRD-002 research DB seed; PRD-010 password-only; MVP agent roster
 - [[branch-docs-harvest]] — fold unique plans/tickets from stale branches into main; delete branches
 - [[E2E-001-plan]] — workshop close-out plan harvest
 - [[WF-003-plan]] — Automations enablement plan harvest

@@ -159,14 +159,12 @@ def test_tickets_have_required_frontmatter() -> None:
 
 
 def test_prd_app_code_tickets_are_not_implement() -> None:
-    """Spring/PWA/import/marketplace stay gated except an approved implement ticket."""
-    app_code = {"PRD-001", "PRD-002", "PRD-003", "PRD-004"}
-    hot = [
-        meta["id"]
-        for _, meta in next_ticket.tickets(OPS / "tickets")
-        if meta["id"] in app_code and meta.get("status") == "implement"
-    ]
-    assert hot == []
+    """Marketplace stays gated; directory MVP children may be implement with approved plans."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-004"]["status"] != "implement"
+    for ident in ("PRD-002", "PRD-003"):
+        assert by_id[ident]["status"] == "implement"
+        assert f"plans/{ident}" in by_id[ident].get("plan", "")
 
 
 def test_starter_prd_tickets_exist() -> None:
@@ -228,7 +226,8 @@ def test_prd_001_is_done_with_plan() -> None:
     assert "datePrecision" in plan or "date_precision" in plan
     assert "including NI" in plan
     assert "No booking columns" in plan or "no booking columns" in plan
-    assert by_id["PRD-003"]["status"] != "implement"
+    assert by_id["PRD-003"]["status"] in ("ready", "plan", "implement", "review")
+    assert by_id["PRD-003"]["status"] != "done"
     assert by_id["WF-008"]["status"] == "done"
     assert by_id["PRD-005"]["status"] == "done"
     assert "github.com/tezball/my-island/pull/29" in by_id["PRD-005"].get("pr", "")
@@ -297,22 +296,33 @@ def test_leads_pipeline_tickets_exist() -> None:
 
 
 def test_harvested_mvp_plans_and_children() -> None:
-    """Unique notes folded from stale branches into main company state."""
+    """MVP plans/tickets on main; CEO pivots seed + password auth."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     for ident in ("PRD-010", "PRD-011", "PRD-012", "PRD-013", "PRD-014"):
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
-        assert by_id[ident]["status"] != "implement"
         assert "tickets/PRD-000" in by_id[ident].get("parent", "")
-    assert by_id["PRD-010"]["status"] == "plan"
+    assert by_id["PRD-010"]["status"] == "implement"
     assert "plans/PRD-010" in by_id["PRD-010"].get("plan", "")
-    assert by_id["PRD-003"]["status"] == "ready"
+    assert "password" in by_id["PRD-010"]["title"].lower()
+    assert by_id["PRD-003"]["status"] == "implement"
     assert "plans/PRD-003" in by_id["PRD-003"].get("plan", "")
-    assert by_id["PRD-002"]["status"] == "plan"
+    assert by_id["PRD-002"]["status"] == "implement"
     assert "plans/PRD-002" in by_id["PRD-002"].get("plan", "")
+    assert "seed" in by_id["PRD-002"]["title"].lower()
     assert "plans/PRD-000" in by_id["PRD-000"].get("plan", "")
     assert "plans/E2E-001" in by_id["E2E-001"].get("plan", "")
-    assert by_id["E2E-001"]["status"] == "ready"
+    assert by_id["E2E-001"]["status"] == "done"
+    for ident in ("PRD-011", "PRD-012", "PRD-013", "PRD-014"):
+        assert by_id[ident]["status"] == "implement"
+        assert f"plans/{ident}" in by_id[ident].get("plan", "")
+    plan010 = (OPS / "plans" / "PRD-010.md").read_text()
+    assert "No OIDC stub" in plan010 or "no OIDC stub" in plan010.lower()
+    plan002 = (OPS / "plans" / "PRD-002.md").read_text()
+    assert "places.jsonl" in plan002
+    assert "spreadsheet" in plan002.lower()
+    team = (OPS / "agents" / "mvp-team.md").read_text()
+    assert "mvp-seed" in team and "mvp-auth" in team and "mvp-explore" in team
     assert by_id["WF-003"]["status"] == "plan"
     assert by_id["WF-003"].get("gate") == "human"
     for name in (
@@ -402,7 +412,7 @@ def test_e2e_001_place_stub_workshop() -> None:
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert "E2E-001" in by_id
     meta = by_id["E2E-001"]
-    assert meta["status"] == "ready"
+    assert meta["status"] == "done"
     assert meta["priority"] == "P0"
     assert meta["type"] == "story"
     assert meta["owner"] == "eng-backend"
@@ -500,7 +510,7 @@ def test_stack_e2e_place_stub_architecture_handoff() -> None:
 
 
 def test_e2e_place_stub_mcp_chaos_followups() -> None:
-    """Workshop pass files gaps; E2E-001 stays ready (not done)."""
+    """Workshop pass files gaps; E2E-001 closed done after close-out plan."""
     run = OPS / "runs" / "e2e-place-stub-mcp-chaos-2026-09-06.md"
     assert run.is_file()
     text = run.read_text()
@@ -515,7 +525,7 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "[[ops/tickets/WF-017]]" in text
     assert "[[ops/tickets/WF-018]]" in text
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
-    assert by_id["E2E-001"]["status"] == "ready"
+    assert by_id["E2E-001"]["status"] == "done"
     assert by_id["WF-015"]["status"] == "done"
     assert "spine strip" in by_id["WF-015"]["title"].lower()
     assert "WF-018" in by_id
@@ -829,8 +839,7 @@ def test_product_milestones_freeze() -> None:
     assert "[[ops/MILESTONES]]" in home
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["WF-000"]["status"] == "implement"
-    assert by_id["E2E-001"]["status"] == "ready"
-    assert by_id["WF-018"]["status"] == "done"
+    assert by_id["E2E-001"]["status"] == "done"
     assert by_id["WF-018"].get("pr", "") == "https://github.com/tezball/my-island/pull/37"
     board = (OPS / "BOARD.md").read_text()
     assert "## Upcoming" in board

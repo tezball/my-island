@@ -1,20 +1,22 @@
 # Plans
 
-One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `status: approved` and advances the ticket on `main` by default (no human approval gate). Use ticket `gate: human` or `blocked` when a person must act first.
+One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `status: approved` and advances the ticket on `main` by default. Use ticket `gate: human` when a person must act.
 
-Epics may have a **program** plan ([[PRD-000]]); children still need their own plans before implement.
-
-| Plan | Ticket |
+| Plan | Notes |
 |---|---|
 | [[PRD-000]] | Program / e2e waves |
 | [[PRD-001]] | Catalog skeleton |
-| [[PRD-002]] | Curator seed spreadsheet |
+| [[PRD-002]] | **Seed DB from research leads** (not spreadsheet) |
 | [[PRD-003]] | Explore PWA list+map |
 | [[PRD-006]] | Leads store |
 | [[PRD-007]] | Wave 1 leads acceptance |
 | [[PRD-008]] | Draft Place import |
 | [[PRD-009]] | Counsel gate |
-| [[PRD-010]] | Visitor auth |
+| [[PRD-010]] | **Email+password auth** (no OIDC stub; Google later) |
+| [[PRD-011]] | Place detail |
+| [[PRD-012]] | Check-off / visits |
+| [[PRD-013]] | My Places |
+| [[PRD-014]] | Launch quality |
 | [[E2E-001]] | Place-stub workshop close-out |
 | [[WF-003]] | Cursor Automations enablement |
 | [[WF-016]] | Cloud Agent local MCP |

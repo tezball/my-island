@@ -9,27 +9,25 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
 - [ ] [[ops/tickets/WF-009|WF-009]] P2 Alertmanager webhook to spawn an agent
 - [ ] [[ops/tickets/WF-012|WF-012]] P2 GHCR image registry and digest deploys
-- [ ] [[ops/tickets/WF-014|WF-014]] P2 Document human one-time OIDC console setup
 
 ## Ready
 
-- [ ] [[ops/tickets/E2E-001|E2E-001]] P0 Place listing stub API (create/list/get) — e2e workshop
 - [ ] [[ops/tickets/PRD-000|PRD-000]] P0 Ireland directory MVP (Release 1)
-- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — explore, map, one-tap check-off
-- [ ] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
-- [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
-- [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
-- [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 
 ## Planning
 
-- [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Curator seed content pipeline
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
-- [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email, Google/Apple, session)
 - [ ] [[ops/tickets/WF-003|WF-003]] P1 Enable Cursor Automations for plan / implement / review
 
 ## Doing
 
+- [ ] [[ops/tickets/PRD-002|PRD-002]] P0 Seed catalog DB from research leads
+- [ ] [[ops/tickets/PRD-003|PRD-003]] P0 Light Vite+React PWA — Explore list + map
+- [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
+- [ ] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
+- [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
+- [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
+- [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 
 ## In review
@@ -41,10 +39,12 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-010|WF-010]] P1 Always-on EU staging for API + Grafana sidecars
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
+- [ ] [[ops/tickets/WF-014|WF-014]] P2 Document human one-time OIDC console setup
 - [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 
 ## Done
 
+- [x] [[ops/tickets/E2E-001|E2E-001]] P0 Place listing stub API (create/list/get) — e2e workshop
 - [x] [[ops/tickets/PRD-001|PRD-001]] P0 Place catalog service skeleton (Spring + PostGIS + Flyway)
 - [x] [[ops/tickets/PRD-006|PRD-006]] P0 Research leads store (data/leads)
 - [x] [[ops/tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
