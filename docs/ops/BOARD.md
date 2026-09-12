@@ -26,10 +26,10 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
-- [ ] [[ops/tickets/WF-025|WF-025]] P0 No prod; auto-review approve and merge ready PRs
 
 ## In review
 
+- [ ] [[ops/tickets/WF-025|WF-025]] P0 No prod; auto-review approve and merge ready PRs
 
 ## Blocked
 
