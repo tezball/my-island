@@ -97,6 +97,7 @@ class CatalogTest {
             String.class);
     assertThat(columns).contains("partner_id");
     assertThat(columns).contains("source_url", "source_name", "licence", "lead_dedupe_key");
+    assertThat(columns).contains("image_url", "image_credit", "image_licence");
     assertThat(columns)
         .doesNotContain(
             "availability",
@@ -156,7 +157,10 @@ class CatalogTest {
             null,
             null,
             null,
-            List.of("parking"));
+            List.of("parking"),
+            null,
+            null,
+            null);
     ResponseEntity<PlaceResponse> created = http.postForEntity("/api/v1/places", request, PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     PlaceResponse body = created.getBody();
@@ -165,6 +169,7 @@ class CatalogTest {
     assertThat(body.category().id()).isEqualTo("poi");
     assertThat(body.county().id()).isEqualTo("kerry");
     assertThat(body.facilities()).containsExactly("parking");
+    assertThat(body.imageUrl()).isNull();
     assertThat(created.getHeaders().getLocation()).isNotNull();
 
     ResponseEntity<PlaceResponse> byId =
@@ -205,7 +210,10 @@ class CatalogTest {
             null,
             null,
             null,
-            List.of());
+            List.of(),
+            null,
+            null,
+            null);
     ResponseEntity<String> created = http.postForEntity("/api/v1/places", bad, String.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
   }
@@ -252,7 +260,10 @@ class CatalogTest {
             null,
             null,
             null,
-            List.of());
+            List.of(),
+            null,
+            null,
+            null);
     ResponseEntity<PlaceResponse> created =
         http.postForEntity("/api/v1/places", request, PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -279,7 +290,10 @@ class CatalogTest {
             "example.test",
             "internal-research",
             null,
-            List.of());
+            List.of(),
+            null,
+            null,
+            null);
     ResponseEntity<PlaceResponse> created =
         http.postForEntity("/api/v1/places", request, PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -364,7 +378,10 @@ class CatalogTest {
             "example.test",
             "internal-research",
             "campsite:down:forced-draft",
-            List.of());
+            List.of(),
+            null,
+            null,
+            null);
     ResponseEntity<PlaceResponse> created =
         http.postForEntity("/api/v1/places", request, PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -404,6 +421,44 @@ class CatalogTest {
     assertThat(got.published()).isTrue();
   }
 
+  @Test
+  void imageFieldsRoundTripOnCreate() {
+    CreatePlaceRequest request =
+        new CreatePlaceRequest(
+            "Hook Lighthouse",
+            "hook-lighthouse-test",
+            "Working medieval light on the Hook.",
+            "poi",
+            "wexford",
+            "Hook Head",
+            52.1236,
+            -6.9294,
+            true,
+            "1",
+            "https://example.test/hook",
+            null,
+            "https://www.wikidata.org/wiki/Q1627900",
+            "Wikidata",
+            "CC0",
+            null,
+            List.of("parking"),
+            "https://example.test/hook.jpg",
+            "Example Photographer",
+            "CC BY-SA 4.0");
+    ResponseEntity<PlaceResponse> created =
+        http.postForEntity("/api/v1/places", request, PlaceResponse.class);
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    PlaceResponse body = created.getBody();
+    assertThat(body).isNotNull();
+    assertThat(body.imageUrl()).isEqualTo("https://example.test/hook.jpg");
+    assertThat(body.imageCredit()).isEqualTo("Example Photographer");
+    assertThat(body.imageLicence()).isEqualTo("CC BY-SA 4.0");
+    PlaceResponse got = http.getForObject("/api/v1/places/hook-lighthouse-test", PlaceResponse.class);
+    assertThat(got.imageUrl()).isEqualTo("https://example.test/hook.jpg");
+    assertThat(got.imageCredit()).isEqualTo("Example Photographer");
+    assertThat(got.imageLicence()).isEqualTo("CC BY-SA 4.0");
+  }
+
   private static CreatePlaceRequest leadDraft(
       String name, String slug, String leadDedupeKey, String sourceUrl) {
     return new CreatePlaceRequest(
@@ -423,6 +478,9 @@ class CatalogTest {
         "example.test",
         "internal-research",
         leadDedupeKey,
-        List.of());
+        List.of(),
+        null,
+        null,
+        null);
   }
 }

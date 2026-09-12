@@ -49,17 +49,22 @@ public class PlaceJdbc {
       String sourceUrl,
       String sourceName,
       String licence,
-      String leadDedupeKey) {
+      String leadDedupeKey,
+      String imageUrl,
+      String imageCredit,
+      String imageLicence) {
     jdbc.sql(
             """
             insert into place (
               id, slug, name, description, category_id, county_id, town,
               latitude, longitude, published, partner_id, price_band, website, phone,
-              source_url, source_name, licence, lead_dedupe_key
+              source_url, source_name, licence, lead_dedupe_key,
+              image_url, image_credit, image_licence
             ) values (
               :id, :slug, :name, :description, :categoryId, :countyId, :town,
               :latitude, :longitude, :published, null, :priceBand, :website, :phone,
-              :sourceUrl, :sourceName, :licence, :leadDedupeKey
+              :sourceUrl, :sourceName, :licence, :leadDedupeKey,
+              :imageUrl, :imageCredit, :imageLicence
             )
             """)
         .param("id", id)
@@ -79,6 +84,9 @@ public class PlaceJdbc {
         .param("sourceName", sourceName)
         .param("licence", licence)
         .param("leadDedupeKey", leadDedupeKey)
+        .param("imageUrl", imageUrl)
+        .param("imageCredit", imageCredit)
+        .param("imageLicence", imageLicence)
         .update();
   }
 
@@ -96,7 +104,11 @@ public class PlaceJdbc {
       String phone,
       String sourceUrl,
       String sourceName,
-      String licence) {
+      String licence,
+      String imageUrl,
+      String imageCredit,
+      String imageLicence,
+      Boolean published) {
     return jdbc.sql(
             """
             update place set
@@ -107,15 +119,18 @@ public class PlaceJdbc {
               town = :town,
               latitude = :latitude,
               longitude = :longitude,
-              published = false,
+              published = coalesce(:published, published),
               price_band = :priceBand,
               website = :website,
               phone = :phone,
               source_url = :sourceUrl,
               source_name = :sourceName,
-              licence = :licence
+              licence = :licence,
+              image_url = :imageUrl,
+              image_credit = :imageCredit,
+              image_licence = :imageLicence
             where lead_dedupe_key = :leadDedupeKey
-              and published = false
+              and (:allowPublished = true or published = false)
             """)
         .param("leadDedupeKey", leadDedupeKey)
         .param("name", name)
@@ -125,12 +140,17 @@ public class PlaceJdbc {
         .param("town", town)
         .param("latitude", latitude)
         .param("longitude", longitude)
+        .param("published", published)
+        .param("allowPublished", Boolean.TRUE.equals(published))
         .param("priceBand", priceBand)
         .param("website", website)
         .param("phone", phone)
         .param("sourceUrl", sourceUrl)
         .param("sourceName", sourceName)
         .param("licence", licence)
+        .param("imageUrl", imageUrl)
+        .param("imageCredit", imageCredit)
+        .param("imageLicence", imageLicence)
         .update();
   }
 
@@ -267,7 +287,10 @@ public class PlaceJdbc {
         place.sourceName(),
         place.licence(),
         place.leadDedupeKey(),
-        List.copyOf(facilities));
+        List.copyOf(facilities),
+        place.imageUrl(),
+        place.imageCredit(),
+        place.imageLicence());
   }
 
   private static final String PLACE_SELECT =
@@ -275,6 +298,7 @@ public class PlaceJdbc {
       select p.id, p.slug, p.name, p.description, p.town, p.latitude, p.longitude,
              p.published, p.partner_id, p.price_band, p.website, p.phone,
              p.source_url, p.source_name, p.licence, p.lead_dedupe_key,
+             p.image_url, p.image_credit, p.image_licence,
              c.id as category_id, c.label as category_label,
              y.id as county_id, y.name as county_name
       from place p
@@ -304,6 +328,9 @@ public class PlaceJdbc {
         rs.getString("source_name"),
         rs.getString("licence"),
         rs.getString("lead_dedupe_key"),
-        List.of());
+        List.of(),
+        rs.getString("image_url"),
+        rs.getString("image_credit"),
+        rs.getString("image_licence"));
   }
 }

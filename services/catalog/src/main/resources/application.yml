@@ -1,3 +1,7 @@
+app:
+  env: ${APP_ENV:local}
+  seed-publish: ${APP_SEED_PUBLISH:false}
+
 spring:
   application:
     name: catalog
