@@ -2,6 +2,7 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[WF-035-plan]] — Test stack today vs want; tests as tools; shift-left
 - [[WF-034-implement]] — Goal 2 MUST+SHOULD skills, IntelliJ MCP, AGENT_DX examples
 - [[WF-034-plan]] — Agent DX pack Goal 1 list; IntelliJ MCP MUST; gate human for Goal 2
 - [[WF-003-close]] — Automations not MVP; ticket done; plan kept

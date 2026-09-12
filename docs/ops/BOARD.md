@@ -28,6 +28,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 
 ## In review
 

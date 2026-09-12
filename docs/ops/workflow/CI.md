@@ -17,7 +17,7 @@ Agents must be able to **clone → test → PR** without a human laptop ritual. 
 | `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS) | Jenkins / GHA `catalog` |
 | `stack` | `./scripts/dev test` with compose | Jenkins / GHA `stack` (`SKIP_JENKINS=1` in Actions) |
 
-There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js.
+There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js. Full mix (gates vs tools vs want): [[TEST_STACK]].
 
 ## Local Jenkins
 
@@ -49,6 +49,6 @@ There is **no consumer UI CI**. Playwright waits on [[ops/tickets/WF-011]]. Hous
 
 ## Adding a check
 
-1. File a `WF-*` ticket owned by **automation-expert**.
+1. File a `WF-*` ticket owned by **automation-expert**. Decide **gate vs tool** on [[TEST_STACK]] first (chaos and Gatling soak are tools, not automerge).
 2. Implement in `Jenkinsfile` + `.github/workflows/ci.yml` + `./scripts/dev` if humans/agents must run it too.
-3. Document the job in this note.
+3. Document the job in this note and the TEST_STACK row.

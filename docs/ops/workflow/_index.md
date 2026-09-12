@@ -6,6 +6,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 |---|---|
 | [[LOOP]] | Plan → implement PR → review → CI auto-merge |
 | [[DOD]] | Implement Definition of Done (**draft**) |
+| [[TEST_STACK]] | Test styles today vs want (shift-left, human+agent tools) |
 | [[PIPELINE]] | Auto vs agent vs human (CTO map + tables) |
 | [[CI]] | GitHub Actions + agent test commands |
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |
@@ -19,6 +20,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[vault-os-ux]] | Vault OS UX workshop (living canvas) |
 | [[jenkins-local-ci]] | Jenkins local CI canvas |
 | [[agent-dx-pack]] | Agent DX pack (skills, commands, plugins, MCP incl. IntelliJ) |
+| [[cto-test-stack]] | CTO test mix: gates vs tools vs want |
 | [[STACK-E2E-place-stub]] | Architecture draft: compose + chaos + MCP for E2E-001 stub |
 
 Living canvases: `workflow/<kebab>.canvas` ([[ops/NAMING]]). Workshops: [[ops/workshops/_index]].

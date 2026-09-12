@@ -8,11 +8,12 @@ cssclasses:
 
 # QA / test
 
-Role: [[ops/agents/roles/eng-qa]]. E2E workshop: [[ops/workshops/e2e-place-stub]] · [[ops/tickets/E2E-001]].
+Role: [[ops/agents/roles/eng-qa]]. Mix: [[ops/workflow/TEST_STACK]] · [[ops/workshops/cto-test-stack]]. E2E workshop: [[ops/workshops/e2e-place-stub]] · [[ops/tickets/E2E-001]].
 
 > [!check] Focus
-> Verify steps, sims, E2E. Playwright waits for a consumer UI.
+> Verify steps, sims, E2E. Tests are gates **and** agent tools. Playwright waits for a consumer UI.
 
+- Today vs want: [[ops/workflow/TEST_STACK]]
 - Sim: [[ops/runbooks/PLACE_LISTING_SIM]]
 - STACK-E2E: [[ops/runbooks/STACK_E2E_PLACE_STUB]]
 

@@ -23,9 +23,11 @@ Charter: [[ops/CHARTER]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (r
 
 → **[[ops/MILESTONES]]** — product roadmap (M0–M7 + gated chunks). Hand-maintained. Canon: [`product/MILESTONES.md`](../product/MILESTONES.md).
 
-→ **[[ops/workshops/_index|Workshops]]** · **[[ops/workshops/cto-pipeline-brief|CTO pipeline]]** · **[[ops/workshops/jenkins-local-ci]]** · **[[ops/workshops/vault-os-ux]]** · **[[ops/workshops/agent-dx-pack|Agent DX pack]]** · **[[ops/runbooks/JENKINS_LOCAL|Jenkins local]]**.
+→ **[[ops/workshops/_index|Workshops]]** · **[[ops/workshops/cto-pipeline-brief|CTO pipeline]]** · **[[ops/workshops/cto-test-stack|CTO test stack]]** · **[[ops/workshops/jenkins-local-ci]]** · **[[ops/workshops/vault-os-ux]]** · **[[ops/workshops/agent-dx-pack|Agent DX pack]]** · **[[ops/runbooks/JENKINS_LOCAL|Jenkins local]]**.
 
 → **[[ops/workflow/PIPELINE]]** · **[[ops/workflow/agent-pipeline]]** — automated vs not (CTO).
+
+→ **[[ops/workflow/TEST_STACK]]** — test mix today vs want (shift-left; gates vs agent tools).
 
 → **[[ops/workflow/LOOP]]** · **[[ops/workflow/DOD|DoD (draft)]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** · **[[ops/workflow/AGENT_DX|Agent DX toolbox]]** — loop, implement bar, CI, skills, engineer tools.
 

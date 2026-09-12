@@ -1,0 +1,369 @@
+{
+	"nodes": [
+		{
+			"id": "n_goal",
+			"type": "text",
+			"text": "# Test stack — shift left\n\nGreen = CI gate today · Yellow = tool today · Cyan = want · Red = never a merge gate\nDetail: TEST_STACK.md",
+			"x": -40,
+			"y": -380,
+			"width": 560,
+			"height": 140,
+			"color": "6"
+		},
+		{
+			"id": "file_stack",
+			"type": "file",
+			"file": "ops/workflow/TEST_STACK.md",
+			"x": 560,
+			"y": -380,
+			"width": 300,
+			"height": 100
+		},
+		{
+			"id": "file_brief",
+			"type": "file",
+			"file": "ops/workshops/cto-test-stack.md",
+			"x": 900,
+			"y": -380,
+			"width": 300,
+			"height": 100
+		},
+		{
+			"id": "file_dod",
+			"type": "file",
+			"file": "ops/workflow/DOD.md",
+			"x": 1240,
+			"y": -380,
+			"width": 260,
+			"height": 100
+		},
+		{
+			"id": "file_ticket",
+			"type": "file",
+			"file": "ops/tickets/WF-035.md",
+			"x": 1540,
+			"y": -380,
+			"width": 260,
+			"height": 100
+		},
+		{
+			"id": "group_left",
+			"type": "group",
+			"x": -40,
+			"y": -180,
+			"width": 1840,
+			"height": 280,
+			"label": "LEFT — required CI today",
+			"color": "4"
+		},
+		{
+			"id": "n_vault",
+			"type": "text",
+			"text": "Vault pytest\nnot stack\n**gate**",
+			"x": 0,
+			"y": -120,
+			"width": 220,
+			"height": 110,
+			"color": "4"
+		},
+		{
+			"id": "n_junit",
+			"type": "text",
+			"text": "JUnit unit\nPlaceServiceTest\n**gate** (thin)",
+			"x": 260,
+			"y": -120,
+			"width": 220,
+			"height": 110,
+			"color": "4"
+		},
+		{
+			"id": "n_tc",
+			"type": "text",
+			"text": "Testcontainers\nPostGIS + Flyway + HTTP\n**gate** (API home)",
+			"x": 520,
+			"y": -120,
+			"width": 280,
+			"height": 110,
+			"color": "4"
+		},
+		{
+			"id": "n_stack",
+			"type": "text",
+			"text": "Compose stack\npytest mark stack\n**gate**",
+			"x": 840,
+			"y": -120,
+			"width": 240,
+			"height": 110,
+			"color": "4"
+		},
+		{
+			"id": "n_ci_jobs",
+			"type": "text",
+			"text": "GHA + Jenkins\nunit · catalog · stack\n**auto**",
+			"x": 1120,
+			"y": -120,
+			"width": 240,
+			"height": 110,
+			"color": "4"
+		},
+		{
+			"id": "n_shift",
+			"type": "text",
+			"text": "Shift left: new API behaviour lives here,\nnot in Playwright or chat curl.",
+			"x": 1400,
+			"y": -120,
+			"width": 360,
+			"height": 110,
+			"color": "4"
+		},
+		{
+			"id": "group_tools",
+			"type": "group",
+			"x": -40,
+			"y": 140,
+			"width": 1840,
+			"height": 260,
+			"label": "TOOLS today — human + agent entrypoints",
+			"color": "3"
+		},
+		{
+			"id": "n_sim",
+			"type": "text",
+			"text": "./scripts/dev sim\ncreate→list→get\n**seed + smoke**",
+			"x": 0,
+			"y": 200,
+			"width": 260,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "n_chaos",
+			"type": "text",
+			"text": "Chaos overlay\nMonkey latency/exceptions\n**workshop /stack-e2e**",
+			"x": 300,
+			"y": 200,
+			"width": 280,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "n_mcp_pw",
+			"type": "text",
+			"text": "Playwright MCP\ndrive local URLs\n**explore, not gate**",
+			"x": 620,
+			"y": 200,
+			"width": 260,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "n_app_test",
+			"type": "text",
+			"text": "/app-test\n./scripts/app test\n**same as CI**",
+			"x": 920,
+			"y": 200,
+			"width": 240,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "n_grafana",
+			"type": "text",
+			"text": "mcp-grafana / PromQL\nup{job=\"catalog\"}\n**observe while tools run**",
+			"x": 1200,
+			"y": 200,
+			"width": 300,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "n_idea",
+			"type": "text",
+			"text": "IntelliJ MCP\nmvnw test\n**laptop**",
+			"x": 1540,
+			"y": 200,
+			"width": 220,
+			"height": 120,
+			"color": "3"
+		},
+		{
+			"id": "group_want",
+			"type": "group",
+			"x": -40,
+			"y": 440,
+			"width": 1840,
+			"height": 260,
+			"label": "WANT — wide mix, still shift-left",
+			"color": "5"
+		},
+		{
+			"id": "n_bdd",
+			"type": "text",
+			"text": "API BDD\nCucumber vs Testcontainers\n**living spec / run one scenario**",
+			"x": 0,
+			"y": 500,
+			"width": 320,
+			"height": 130,
+			"color": "5"
+		},
+		{
+			"id": "n_gatling",
+			"type": "text",
+			"text": "Gatling\n./scripts/dev traffic\n**steady local data + metrics**",
+			"x": 360,
+			"y": 500,
+			"width": 320,
+			"height": 130,
+			"color": "5"
+		},
+		{
+			"id": "n_vitest",
+			"type": "text",
+			"text": "Vitest\nPWA units (PRD-003)\n**gate when web/ exists**",
+			"x": 720,
+			"y": 500,
+			"width": 280,
+			"height": 130,
+			"color": "5"
+		},
+		{
+			"id": "n_pw_ci",
+			"type": "text",
+			"text": "Playwright CI\njob starts compose (WF-011)\n**only browser E2E gate**",
+			"x": 1040,
+			"y": 500,
+			"width": 320,
+			"height": 130,
+			"color": "5"
+		},
+		{
+			"id": "n_neg",
+			"type": "text",
+			"text": "Negative authz\nMailpit · axe\n**NFR-13 / 04 / 10**",
+			"x": 1400,
+			"y": 500,
+			"width": 360,
+			"height": 130,
+			"color": "5"
+		},
+		{
+			"id": "group_never",
+			"type": "group",
+			"x": -40,
+			"y": 740,
+			"width": 1840,
+			"height": 200,
+			"label": "NEVER a merge gate",
+			"color": "1"
+		},
+		{
+			"id": "n_never_chaos",
+			"type": "text",
+			"text": "Chaos in required CI\nkill-application assault",
+			"x": 0,
+			"y": 800,
+			"width": 280,
+			"height": 90,
+			"color": "1"
+		},
+		{
+			"id": "n_never_dual",
+			"type": "text",
+			"text": "Dual UI E2E\nPlaywright + Cucumber both clicking",
+			"x": 320,
+			"y": 800,
+			"width": 320,
+			"height": 90,
+			"color": "1"
+		},
+		{
+			"id": "n_never_soak",
+			"type": "text",
+			"text": "Gatling soak on every PR\nk6/JMeter second house",
+			"x": 680,
+			"y": 800,
+			"width": 300,
+			"height": 90,
+			"color": "1"
+		},
+		{
+			"id": "n_never_red",
+			"type": "text",
+			"text": "Red jobs for later\nmutation as automerge",
+			"x": 1020,
+			"y": 800,
+			"width": 280,
+			"height": 90,
+			"color": "1"
+		},
+		{
+			"id": "file_ci",
+			"type": "file",
+			"file": "ops/workflow/CI.md",
+			"x": 1340,
+			"y": 800,
+			"width": 240,
+			"height": 90
+		},
+		{
+			"id": "file_011",
+			"type": "file",
+			"file": "ops/tickets/WF-011.md",
+			"x": 1600,
+			"y": 800,
+			"width": 160,
+			"height": 90
+		}
+	],
+	"edges": [
+		{
+			"id": "e1",
+			"fromNode": "n_vault",
+			"toNode": "n_junit",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e2",
+			"fromNode": "n_junit",
+			"toNode": "n_tc",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e3",
+			"fromNode": "n_tc",
+			"toNode": "n_stack",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e4",
+			"fromNode": "n_stack",
+			"toNode": "n_ci_jobs",
+			"fromSide": "right",
+			"toSide": "left"
+		},
+		{
+			"id": "e5",
+			"fromNode": "n_sim",
+			"toNode": "n_gatling",
+			"fromSide": "bottom",
+			"toSide": "top"
+		},
+		{
+			"id": "e6",
+			"fromNode": "n_tc",
+			"toNode": "n_bdd",
+			"fromSide": "bottom",
+			"toSide": "top"
+		},
+		{
+			"id": "e7",
+			"fromNode": "n_mcp_pw",
+			"toNode": "n_pw_ci",
+			"fromSide": "bottom",
+			"toSide": "top"
+		}
+	]
+}

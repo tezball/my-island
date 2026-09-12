@@ -28,3 +28,4 @@ One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `st
 | [[WF-030]] | Vault OS UX |
 | [[WF-031]] | Jenkins local house CI |
 | [[WF-034]] | Agent DX pack (Goal 1 list; Goal 2 after review) |
+| [[WF-035]] | Test stack today vs want (shift-left, human+agent) |

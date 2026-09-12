@@ -48,6 +48,7 @@ How agents learn the loop without a wiki outside git. Owner: [[ops/agents/roles/
 | Script | New ticket | `ops/scripts/new_ticket.py` | Intake |
 | Script | IntelliJ MCP | `scripts/mcp-intellij` | Laptop stdio → IDEA |
 | CI | Unit + stack | [[CI]] | Every PR and `main` |
+| Map | Test stack | [[TEST_STACK]] | Gates vs tools vs want (shift-left) |
 
 Slash skills use `disable-model-invocation: true` so they do not auto-fire. Do **not** add `.cursor/commands/`.
 

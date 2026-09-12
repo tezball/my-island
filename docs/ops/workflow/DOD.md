@@ -33,7 +33,7 @@ Ticket outcome met · plan verify checkable · automated tests for the risk of t
 
 ## Automated tests — what “enough” means
 
-Pick the **smallest set** that proves the slice. Prefer fast tests. Do not invent Playwright for a WF ticket with no UI.
+Pick the **smallest set** that proves the slice. Prefer fast tests. Do not invent Playwright for a WF ticket with no UI. Full menu (today vs want, tests-as-tools): [[TEST_STACK]].
 
 | Type | When required | House command / home |
 |---|---|---|
@@ -109,5 +109,5 @@ Block **only** on: wrong outcome, broken/missing verify, SAFETY, house-stack vio
 ## Related
 
 - Loop: [[ops/workflow/LOOP]] · Runbook: [[ops/runbooks/TICKET_LOOP]]
-- CI: [[ops/workflow/CI]] · Safety: [[ops/workflow/SAFETY]]
+- CI: [[ops/workflow/CI]] · Safety: [[ops/workflow/SAFETY]] · Mix: [[ops/workflow/TEST_STACK]]
 - Scaffolding: [[ops/company/SCAFFOLDING]] · QA role: [[ops/agents/roles/eng-qa]]
