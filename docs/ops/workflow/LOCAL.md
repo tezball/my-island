@@ -18,7 +18,7 @@ Environment zero plus the **PRD-001 catalog stub**. **One Compose file** (`compo
 
 `./scripts/app` wraps `./scripts/dev`. CI, Cloud Agent `start.sh`, and `./ops/scripts/start-local.sh` still call `./scripts/dev up` / `test` / `down`. Chaos stays **off** on start.
 
-Postgres is **PostGIS** (`postgis/postgis:17-3.5-alpine`). If this machine already had a `postgres:17-alpine` volume, recreate it:
+Postgres is **PostGIS 3.5 on PostgreSQL 17** (`ghcr.io/baosystems/postgis:17-3.5`, linux/amd64 + linux/arm64). Official Hub `postgis/postgis:17-3.5-alpine` is amd64-only, so Apple Silicon cannot pull it ([[ops/tickets/WF-024]]). If this machine already had a `postgres:17-alpine` or Hub `postgis/postgis` volume, recreate it:
 
 ```bash
 docker compose down -v

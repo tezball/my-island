@@ -44,7 +44,7 @@ Environment:
   DEV_TEST_IN_WORKSPACE=1  Run pytest inside the workspace image (CI stack job)
 
 Catalog API (after up): http://127.0.0.1:8081
-If Postgres was created before PostGIS, recreate volumes: docker compose down -v && ./scripts/dev up
+If Postgres was created before PostGIS (or with Hub postgis/postgis alpine), recreate volumes: docker compose down -v && ./scripts/dev up
 Chaos Monkey (not default): docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog --wait
 EOF
 }
@@ -61,7 +61,7 @@ cmd_up() {
   "${COMPOSE[@]}" up -d "${INFRA_SERVICES[@]}" --wait --wait-timeout 300
   ensure_catalog_db
   if ! "${COMPOSE[@]}" up -d catalog --wait --wait-timeout 300; then
-    echo "catalog did not become healthy. If this laptop had postgres:17-alpine data, run:" >&2
+    echo "catalog did not become healthy. If this laptop had postgres:17-alpine or Hub postgis/postgis alpine data, run:" >&2
     echo "  docker compose down -v && ./scripts/dev up" >&2
     return 1
   fi
