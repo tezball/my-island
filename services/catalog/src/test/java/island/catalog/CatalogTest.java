@@ -26,7 +26,8 @@ import org.testcontainers.utility.DockerImageName;
 class CatalogTest {
 
   private static final DockerImageName POSTGIS =
-      DockerImageName.parse("postgis/postgis:17-3.5-alpine").asCompatibleSubstituteFor("postgres");
+      DockerImageName.parse("ghcr.io/baosystems/postgis:17-3.5")
+          .asCompatibleSubstituteFor("postgres");
 
   @Container
   static final PostgreSQLContainer<?> POSTGRES =

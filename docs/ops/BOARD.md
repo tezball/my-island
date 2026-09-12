@@ -26,6 +26,7 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[ops/tickets/WF-024|WF-024]] P0 PostGIS image has no ARM64 (app start fails on Apple Silicon)
 
 ## In review
 

@@ -12,6 +12,19 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
+POSTGIS_IMAGE = "ghcr.io/baosystems/postgis:17-3.5"
+
+
+def _compose_postgres_image_line() -> str:
+    for line in (REPO / "compose.yml").read_text().splitlines():
+        stripped = line.strip()
+        if stripped.startswith("image:") and "postgis" in stripped:
+            return stripped
+    raise AssertionError("compose.yml postgres PostGIS image line not found")
+
+
+def _postgres_image() -> str:
+    return _compose_postgres_image_line().split("image:", 1)[1].strip()
 
 
 def test_compose_lists_required_services() -> None:
@@ -27,7 +40,8 @@ def test_compose_lists_required_services() -> None:
     ):
         assert name in text
     assert "dockerfile: .devcontainer/Dockerfile" in text
-    assert "postgis/postgis:17-3.5" in text
+    assert _postgres_image() == POSTGIS_IMAGE
+    assert "postgis/postgis:" not in _compose_postgres_image_line()
 
 
 def test_devcontainer_uses_compose_workspace() -> None:
@@ -175,3 +189,14 @@ def test_local_md_documents_app_cli() -> None:
     assert "./scripts/app test" in text
     assert "WF-021" in text
     assert "Chaos stays" in text or "chaos" in text.lower()
+    assert POSTGIS_IMAGE in text
+    assert "WF-024" in text
+    assert "linux/arm64" in text
+
+
+def test_catalog_testcontainers_uses_compose_postgis_image() -> None:
+    catalog = (
+        REPO / "services" / "catalog" / "src" / "test" / "java" / "island" / "catalog" / "CatalogTest.java"
+    ).read_text()
+    assert POSTGIS_IMAGE in catalog
+    assert "postgis/postgis:" not in catalog

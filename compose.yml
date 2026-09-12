@@ -4,9 +4,13 @@ name: my-island
 
 services:
   postgres:
-    # PostGIS image (PRD-001). Existing volumes from postgres:17-alpine need:
+    # PostgreSQL 17 + PostGIS 3.5 (PRD-001 / STACK.md).
+    # Official Hub postgis/postgis:17-3.5* is linux/amd64 only — Apple Silicon
+    # fails with "no matching manifest for linux/arm64/v8" (WF-024).
+    # Bao Systems publishes the same major/minor for amd64 + arm64.
+    # Recreate volumes if this machine already ran the Hub alpine image:
     #   docker compose down -v && ./scripts/dev up
-    image: postgis/postgis:17-3.5-alpine
+    image: ghcr.io/baosystems/postgis:17-3.5
     environment:
       POSTGRES_USER: ops
       POSTGRES_PASSWORD: ops
