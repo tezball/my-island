@@ -73,7 +73,7 @@ curl -s http://127.0.0.1:8081/api/v1/places
 curl -s http://127.0.0.1:8081/api/v1/places/skellig-michael
 ```
 
-Package / repo remain `island.catalog` / my-island. Brand is open — no public product name on the API. No consumer UI here ([[ops/tickets/PRD-003]]).
+Package / repo remain `island.catalog` / my-island. Brand is **OPEN** on the PWA. Explore: http://127.0.0.1:5173 after `./scripts/app start` ([[ops/tickets/PRD-003]]).
 
 ### Chaos Monkey (workshop only)
 

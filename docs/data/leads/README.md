@@ -72,6 +72,12 @@ Required: `id`, `name`, `place_type`, `country`, `source_url`, `source_name`, `f
 
 Starter seed (2026-09-05): converted from [`docs/leads/CAMPSITE_LEADS.md`](../../leads/CAMPSITE_LEADS.md). `fetched_at` on those rows is the conversion timestamp, not the original web fetch. That markdown file is archaeology; do not add new rows there.
 
+## POI directory slice (2026-09-12)
+
+Curated Irish **points of interest** (Wikidata CC0 facts + Wikimedia Commons File: stills) are `status=reviewed` in the same JSONL. Local compose imports **only** those POIs with `--place-type poi --require-coords --publish-local`. That is a **demo publish**, not curator `promoted` and not [[ops/tickets/PRD-009]] counsel. Wave 1 campsites stay `lead`. Do not invent coordinates. Do not copy aggregator blurbs into `description`.
+
+Builder: [`ops/scripts/build_poi_leads.py`](../../../ops/scripts/build_poi_leads.py) + [`ops/scripts/poi_seed_rows.json`](../../../ops/scripts/poi_seed_rows.json).
+
 ## Ticket
 
 Vault: [`ops/tickets/PRD-006.md`](../../ops/tickets/PRD-006.md) (store). Pipeline acceptance: [`ops/tickets/PRD-007.md`](../../ops/tickets/PRD-007.md). Promote-from-lead: [`ops/tickets/PRD-008.md`](../../ops/tickets/PRD-008.md). Counsel before publish: [`ops/tickets/PRD-009.md`](../../ops/tickets/PRD-009.md). Bulk import / coverage: [`ops/tickets/PRD-002.md`](../../ops/tickets/PRD-002.md).

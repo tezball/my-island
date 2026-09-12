@@ -73,7 +73,7 @@ Humans start by hat. Agents use the board + `next_ticket.py`. Index: [[ops/dashb
 |---|---|---|
 | [`WF-004`](ops/tickets/WF-004.md) · [[ops/tickets/WF-004]] | P1 | Remote Grafana MCP — needs always-on staging (WF-010) |
 | [`WF-010`](ops/tickets/WF-010.md) · [[ops/tickets/WF-010]] | P1 | Always-on EU staging — host still open |
-| [`WF-011`](ops/tickets/WF-011.md) · [[ops/tickets/WF-011]] | P1 | Required Playwright — no consumer UI yet |
+| [`WF-011`](ops/tickets/WF-011.md) · [[ops/tickets/WF-011]] | P1 | Required Playwright — PWA exists; job not written |
 | [`WF-013`](ops/tickets/WF-013.md) · [[ops/tickets/WF-013]] | P2 | Scriptable deploy path — host still open |
 
 **Open decisions:** public brand **OPEN** (StayÉire vs Éirelist vs others — do not re-lock). Host and OIDC remain open per [`product/SIGNED.md`](product/SIGNED.md).

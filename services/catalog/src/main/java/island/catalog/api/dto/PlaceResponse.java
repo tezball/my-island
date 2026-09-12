@@ -22,7 +22,10 @@ public record PlaceResponse(
     String sourceName,
     String licence,
     String leadDedupeKey,
-    List<String> facilities) {
+    List<String> facilities,
+    String imageUrl,
+    String imageCredit,
+    String imageLicence) {
 
   public record CategoryRef(String id, String label) {}
 

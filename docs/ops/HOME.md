@@ -23,7 +23,7 @@ Charter: [[ops/CHARTER]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (r
 
 → **[[ops/MILESTONES]]** — product roadmap (M0–M7 + gated chunks). Hand-maintained. Canon: [`product/MILESTONES.md`](../product/MILESTONES.md).
 
-→ **[[ops/workshops/_index|Workshops]]** · **[[ops/workshops/cto-pipeline-brief|CTO pipeline]]** · **[[ops/workshops/cto-test-stack|CTO test stack]]** · **[[ops/workshops/jenkins-local-ci]]** · **[[ops/workshops/vault-os-ux]]** · **[[ops/workshops/agent-dx-pack|Agent DX pack]]** · **[[ops/runbooks/JENKINS_LOCAL|Jenkins local]]**.
+→ **[[ops/workshops/_index|Workshops]]** · **[[ops/workshops/cto-pipeline-brief|CTO pipeline]]** · **[[ops/workshops/cto-test-stack|CTO test stack]]** · **[[ops/workshops/jenkins-local-ci]]** · **[[ops/workshops/vault-os-ux]]** · **[[ops/workshops/agent-dx-pack|Agent DX pack]]** · **[[ops/workshops/poi-directory-mvp|POI directory MVP]]** · **[[ops/runbooks/JENKINS_LOCAL|Jenkins local]]**.
 
 → **[[ops/workflow/PIPELINE]]** · **[[ops/workflow/agent-pipeline]]** — automated vs not (CTO).
 

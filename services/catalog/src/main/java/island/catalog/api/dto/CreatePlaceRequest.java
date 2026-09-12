@@ -20,7 +20,10 @@ public record CreatePlaceRequest(
     String sourceName,
     String licence,
     String leadDedupeKey,
-    List<String> facilityIds) {
+    List<String> facilityIds,
+    String imageUrl,
+    String imageCredit,
+    String imageLicence) {
 
   public CreatePlaceRequest {
     facilityIds = facilityIds == null ? List.of() : List.copyOf(facilityIds);

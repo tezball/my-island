@@ -32,12 +32,12 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 | [`docs/leads/`](docs/leads/CAMPSITE_LEADS.md) · [`docs/automation/`](docs/automation/OBSERVABILITY_MCP_OPTIONS.md) | Historical booking platform — not requirements, not a migration source |
 | [`ops/scripts/`](ops/scripts) · [`ops/tests/`](ops/tests) · [`ops/observability/`](ops/observability) | CI/runtime (Python, SQL, compose sidecars) — not the vault |
 | [`data/leads/`](data/leads) | Leads `schema.json` / `places.jsonl` |
-| [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local Postgres/PostGIS + Grafana + catalog API for agents |
+| [`compose.yml`](compose.yml) + [`scripts/`](scripts/) | Local PostGIS + Grafana + catalog API + Explore PWA (`:5173`) |
 | [`services/catalog/`](services/catalog) | Spring Boot place catalog stub ([`PRD-001`](docs/ops/tickets/PRD-001.md)) |
 | `.github/` + `.cursor/skills/` | CI and agent skills (Automation Expert) |
 | git tag `legacy-platform` | Old app dump. Disposable. |
 
-Keep consumer UI and marketplace stubs **absent**. The first API stub is [`services/catalog/`](services/catalog) on [`PRD-001`](docs/ops/tickets/PRD-001.md).
+Keep marketplace stubs **absent**. Consumer Explore is [`web/`](web) (Vite + React PWA, [PRD-003](docs/ops/tickets/PRD-003.md)). Catalog is [`services/catalog/`](services/catalog).
 
 ## Agent rules (short)
 

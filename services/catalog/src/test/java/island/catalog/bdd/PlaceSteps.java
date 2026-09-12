@@ -43,7 +43,10 @@ public class PlaceSteps {
             null,
             null,
             null,
-            List.of(facility)));
+            List.of(facility),
+            null,
+            null,
+            null));
   }
 
   @When("I create a draft place named {string} in {word} with category {string}")
@@ -66,7 +69,10 @@ public class PlaceSteps {
             null,
             null,
             null,
-            List.of()));
+            List.of(),
+            null,
+            null,
+            null));
   }
 
   @When("I GET {string}")

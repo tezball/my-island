@@ -59,9 +59,9 @@ Do not add a second CLI family. Extend `./scripts/dev`.
 
 ## Required CI
 
-**Now:** `unit` (how / vault) · `catalog` (what / Testcontainers; Gherkin joins this job) · `stack` (wiring).
+**Now:** `unit` (how / vault) · `catalog` (what / Testcontainers; Gherkin joins this job) · `web` (Vitest + Vite build) · `stack` (wiring).
 
-**When Explore ships:** Vitest on `web/` PRs (how) · Playwright job (browser). Still **out:** chaos, Gatling soak, kill-application.
+**When Explore is on main:** Playwright job (browser) via [[ops/tickets/WF-011]]. Still **out:** chaos, Gatling soak, kill-application.
 
 ## Out
 
@@ -72,7 +72,7 @@ Do not add a second CLI family. Extend `./scripts/dev`.
 
 1. More Gherkin on the existing `catalog` job (authz when PRD-010 lands).
 2. Gatling traffic — same operate lane as sim.
-3. Vitest with [[ops/tickets/PRD-003]]; Playwright [[ops/tickets/WF-011]] — **no browser** until `web/` exists.
+3. Vitest with [[ops/tickets/PRD-003]] — **landed** as GHA/Jenkins `web`. Playwright remains [[ops/tickets/WF-011]].
 
 ## Related
 

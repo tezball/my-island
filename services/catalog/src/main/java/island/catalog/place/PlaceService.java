@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,15 @@ public class PlaceService {
 
   private final PlaceJdbc places;
   private final LookupJdbc lookups;
+  private final boolean seedPublish;
 
-  public PlaceService(PlaceJdbc places, LookupJdbc lookups) {
+  public PlaceService(
+      PlaceJdbc places,
+      LookupJdbc lookups,
+      @Value("${app.seed-publish:false}") boolean seedPublish) {
     this.places = places;
     this.lookups = lookups;
+    this.seedPublish = seedPublish;
   }
 
   public record PlaceWrite(PlaceResponse place, boolean created) {}
@@ -39,9 +45,10 @@ public class PlaceService {
   private PlaceWrite upsertLeadDraft(
       CreatePlaceRequest request, String leadKey, String priceBand) {
     Optional<PlaceResponse> existing = places.findByLeadDedupeKey(leadKey);
+    boolean publishNow = seedPublish && Boolean.TRUE.equals(request.published());
     if (existing.isPresent()) {
       PlaceResponse row = existing.get();
-      if (row.published()) {
+      if (row.published() && !publishNow) {
         throw new PlaceAlreadyPublishedException(leadKey);
       }
       int updated =
@@ -59,7 +66,11 @@ public class PlaceService {
               blankToNull(request.phone()),
               blankToNull(request.sourceUrl()),
               blankToNull(request.sourceName()),
-              blankToNull(request.licence()));
+              blankToNull(request.licence()),
+              blankToNull(request.imageUrl()),
+              blankToNull(request.imageCredit()),
+              blankToNull(request.imageLicence()),
+              publishNow ? Boolean.TRUE : Boolean.FALSE);
       if (updated == 0) {
         throw new PlaceAlreadyPublishedException(leadKey);
       }
@@ -70,7 +81,7 @@ public class PlaceService {
               .orElseThrow(() -> new IllegalStateException("Place update did not persist"));
       return new PlaceWrite(body, false);
     }
-    return insertNew(request, false, priceBand, leadKey);
+    return insertNew(request, publishNow, priceBand, leadKey);
   }
 
   private PlaceWrite insertNew(
@@ -103,7 +114,10 @@ public class PlaceService {
         blankToNull(request.sourceUrl()),
         blankToNull(request.sourceName()),
         blankToNull(request.licence()),
-        leadKey);
+        leadKey,
+        blankToNull(request.imageUrl()),
+        blankToNull(request.imageCredit()),
+        blankToNull(request.imageLicence()));
     places.replaceFacilities(id, request.facilityIds());
     PlaceResponse body =
         places

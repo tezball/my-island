@@ -1,6 +1,6 @@
 // Seeded by JCasC (WF-031). Builds via docker compose using HOST_REPO (same path as host).
 pipelineJob('local-ci') {
-  description('Local clone→up CI: unit + catalog + stack (same commands as GHA).')
+  description('Local clone→up CI: unit + catalog + web + stack (same commands as GHA).')
   definition {
     cps {
       sandbox(true)
@@ -41,13 +41,23 @@ pipeline {
         '''
       }
     }
+    stage('web') {
+      steps {
+        sh '''#!/usr/bin/env bash
+          set -euo pipefail
+          cd "\$HOST_REPO"
+          docker run --rm -v "\$HOST_REPO/web:/src" -w /src node:22-bookworm \\
+            bash -lc 'npm ci && npm test && npm run build'
+        '''
+      }
+    }
     stage('stack') {
       steps {
         sh '''#!/usr/bin/env bash
           set -euo pipefail
           cd "\$HOST_REPO"
-          SKIP_JENKINS=1 ./scripts/dev up
-          REQUIRE_STACK=1 DEV_TEST_IN_WORKSPACE=1 SKIP_JENKINS=1 ./scripts/dev test
+          SKIP_JENKINS=1 SKIP_WEB=1 ./scripts/dev up
+          REQUIRE_STACK=1 DEV_TEST_IN_WORKSPACE=1 SKIP_JENKINS=1 SKIP_WEB=1 ./scripts/dev test
         '''
       }
     }

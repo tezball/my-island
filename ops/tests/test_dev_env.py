@@ -37,6 +37,7 @@ def test_compose_lists_required_services() -> None:
         "grafana:",
         "workspace:",
         "catalog:",
+        "web:",
     ):
         assert name in text
     assert "dockerfile: .devcontainer/Dockerfile" in text

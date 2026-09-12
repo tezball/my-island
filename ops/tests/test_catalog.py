@@ -40,6 +40,7 @@ def test_catalog_has_no_stripe_or_booking_surface() -> None:
 def test_ci_has_catalog_job() -> None:
     text = (REPO / ".github/workflows/ci.yml").read_text()
     assert "name: catalog tests" in text
+    assert "name: web tests" in text
     assert "services/catalog" in text
     assert "./mvnw -B test" in text
 
@@ -61,7 +62,10 @@ def test_flyway_seeds_listing_types_and_ni() -> None:
     assert "availability" not in v6.lower()
     migrations = {path.name for path in (CATALOG / "src/main/resources/db/migration").glob("V*.sql")}
     assert "V6__place_provenance.sql" in migrations
-    assert not any(name.startswith("V7__") for name in migrations)
+    v7 = (CATALOG / "src/main/resources/db/migration/V7__place_image.sql").read_text()
+    for col in ("image_url", "image_credit", "image_licence"):
+        assert col in v7, col
+    assert "V7__place_image.sql" in migrations
 
 
 def test_no_lead_java_dto_or_from_lead_endpoint() -> None:
@@ -97,6 +101,9 @@ def test_chaos_monkey_is_off_on_default_compose() -> None:
     assert "compose.chaos.yml" not in up_block
     sim_block = dev.split("cmd_sim()")[1].split("cmd_wait()")[0]
     assert "compose.chaos.yml" not in sim_block
+    config_block = dev.split("cmd_config()")[1].split("cmd_sim()")[0]
+    assert "compose.chaos.yml" in config_block
+    assert "--profile chaos" in config_block
 
 
 def test_catalog_contract_is_gherkin_on_testcontainers() -> None:

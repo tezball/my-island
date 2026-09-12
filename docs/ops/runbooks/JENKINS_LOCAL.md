@@ -60,4 +60,4 @@ Jenkins bind-mounts the repo at the **host path** (`HOST_REPO=$PWD`) so `docker 
 
 ## GHA dual-run
 
-Actions still runs `unit` / `catalog` / `stack` and automerge ([[ops/tickets/WF-025]]). Stack job sets `SKIP_JENKINS=1` so CI does not build the Jenkins image.
+Actions still runs `unit` / `catalog` / `web` / `stack` and automerge ([[ops/tickets/WF-025]]). Stack job sets `SKIP_JENKINS=1` and `SKIP_WEB=1` so CI does not wait on the Vite container (the `web` job covers `npm test` / `npm run build`).

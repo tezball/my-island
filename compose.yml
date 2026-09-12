@@ -138,6 +138,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ops
       SPRING_DATASOURCE_PASSWORD: ops
       APP_ENV: local
+      APP_SEED_PUBLISH: "true"
     ports:
       - "8081:8080"
     depends_on:
@@ -151,6 +152,32 @@ services:
       start_period: 50s
     restart: unless-stopped
     # Chaos Monkey: not in this default service. See compose.chaos.yml.
+
+  web:
+    image: node:22-bookworm
+    working_dir: /src
+    volumes:
+      - ./web:/src
+      - web_nm:/src/node_modules
+    command: ["bash", "-lc", "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"]
+    environment:
+      CATALOG_PROXY: http://catalog:8080
+    ports:
+      - "5173:5173"
+    depends_on:
+      catalog:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://127.0.0.1:5173/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\"",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 36
+      start_period: 90s
+    restart: unless-stopped
 
   # Local house CI (WF-031). JCasC from ops/jenkins/casc; state on ops_jenkins.
   # Repo is bind-mounted at the host path so `docker compose` from Jenkins resolves
@@ -195,3 +222,4 @@ volumes:
   ops_pg:
   ops_grafana:
   ops_jenkins:
+  web_nm:

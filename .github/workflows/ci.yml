@@ -41,6 +41,20 @@ jobs:
         working-directory: services/catalog
         run: ./mvnw -B test
 
+  web:
+    name: web tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Web test and build
+        working-directory: web
+        run: npm ci && npm test && npm run build
+
   stack:
     name: compose stack
     runs-on: ubuntu-latest
@@ -53,12 +67,14 @@ jobs:
       - name: Start stack
         env:
           SKIP_JENKINS: "1"
+          SKIP_WEB: "1"
         run: ./scripts/dev up
       - name: Pytest in workspace (including stack)
         env:
           REQUIRE_STACK: "1"
           DEV_TEST_IN_WORKSPACE: "1"
           SKIP_JENKINS: "1"
+          SKIP_WEB: "1"
         run: ./scripts/dev test
       - name: Compose diagnostics
         if: failure()
@@ -71,7 +87,7 @@ jobs:
       github.event_name == 'pull_request' &&
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
-    needs: [unit, catalog, stack]
+    needs: [unit, catalog, web, stack]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -89,7 +105,7 @@ jobs:
                 repo,
                 pull_number,
                 event: 'APPROVE',
-                body: 'CI unit + catalog + stack green. Auto-approved (WF-025 / CEO 2026-09-12: no prod; ready PRs merge themselves).',
+                body: 'CI unit + catalog + web + stack green. Auto-approved (WF-025 / CEO 2026-09-12: no prod; ready PRs merge themselves).',
               });
             } catch (error) {
               core.warning(`approve skipped: ${error.message}`);
