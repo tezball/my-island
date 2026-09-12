@@ -1,4 +1,7 @@
 {
   "cssTheme": "",
-  "baseFontSize": 16
+  "baseFontSize": 16,
+  "enabledCssSnippets": [
+    "company-os"
+  ]
 }

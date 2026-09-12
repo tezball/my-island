@@ -12,6 +12,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[AUTOMATIONS]] | Cursor cloud jobs |
 | [[SAFETY]] | Non-negotiables |
 | [[e2e-place-stub]] | Place listing stub e2e workshop (living canvas) |
+| [[vault-os-ux]] | Vault OS UX workshop (living canvas) |
 | [[STACK-E2E-place-stub]] | Architecture draft: compose + chaos + MCP for E2E-001 stub |
 
-Living canvases: `workflow/<kebab>.canvas` ([[ops/NAMING]]).
+Living canvases: `workflow/<kebab>.canvas` ([[ops/NAMING]]). Workshops: [[ops/workshops/_index]].

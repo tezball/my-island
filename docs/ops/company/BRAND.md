@@ -1,6 +1,8 @@
 ---
 title: Brand
 type: company
+cssclasses:
+  - moc
 ---
 
 # Brand
@@ -20,3 +22,7 @@ Shortlist and trademark landmines: [`product/NAMING.md`](../../product/NAMING.md
 - Fáilte, Wild Atlantic Way, Discover Ireland, or other state tourism marks as product names.
 - Camping-coded public names (`Camp*`, `Pitch*`, `*-bnb`).
 - Inventing a ship name in tickets or UI copy. Use “the directory” / “the app” until `product/NAMING.md` is decided.
+
+## Vault OS look
+
+Obsidian colour / dashboards: [[ops/company/VAULT_DESIGN]].

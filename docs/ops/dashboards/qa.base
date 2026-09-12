@@ -1,0 +1,42 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+views:
+  - type: table
+    name: E2E
+    filters:
+      or:
+        - file.name.startsWith("E2E-")
+        - 'owner == "eng-qa"'
+    order:
+      - status
+      - file.name
+      - priority
+      - title
+  - type: table
+    name: Ready / implement
+    filters:
+      and:
+        - 'type != "epic"'
+        - or:
+            - 'status == "ready"'
+            - 'status == "implement"'
+            - 'status == "review"'
+    order:
+      - status
+      - priority
+      - file.name
+      - title
+  - type: table
+    name: Open non-epic
+    filters:
+      and:
+        - 'status != "done"'
+        - 'type != "epic"'
+    order:
+      - priority
+      - file.name
+      - status
+      - title

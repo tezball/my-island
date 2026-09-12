@@ -1,38 +1,30 @@
 ---
 id: INC-XXX
+aliases: [INC-XXX]
 title:
 status: inbox
 priority: P0
 type: incident
 owner: ops-incidents
-area: ops
+area:
 parent:
 plan:
 pr:
 blocked_reason:
+cssclasses:
+  - ticket
 ---
 
 # {{title}}
 
 ## Impact
 
-Who is hurt, since when.
+## Notes
 
-## Status
+## Verify
 
-investigating | identified | monitoring | resolved
-
-## Timeline
-
-- HH:MM UTC — detected
-
-## Actions
-
-- [ ] Declare in [[ops/BOARD]] (`status` + `blocked_reason` if others must stop)
-- [ ] Follow-up ticket if a code fix is needed
-- [ ] Do not merge from chat; there is no prod-deploy
+- [ ]
 
 ## Links
 
-- Follow-up:
-- Grafana:
+- Run:

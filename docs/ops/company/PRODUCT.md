@@ -1,6 +1,8 @@
 ---
 title: Product scope (vault pointer)
 type: company
+cssclasses:
+  - moc
 ---
 
 # Product scope

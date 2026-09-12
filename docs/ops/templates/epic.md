@@ -1,29 +1,28 @@
 ---
-id: PRD-XXX
+id: WF-XXX
+aliases: [WF-XXX]
 title:
 status: inbox
-priority: P2
+priority: P1
 type: epic
-owner: product
+owner:
 area:
 parent:
 plan:
 pr:
 blocked_reason:
+cssclasses:
+  - ticket
 ---
 
 # {{title}}
-
-Epic. **Do not implement this ticket.** Child stories/bugs carry `parent: "[[ops/tickets/<this-id>]]"`. `next_ticket.py` skips epics.
 
 ## Outcome
 
 ## Children
 
-- [ ] [[ops/tickets/PRD-XXX]]
+-
 
 ## Notes
 
 ## Links
-
-- Canon:

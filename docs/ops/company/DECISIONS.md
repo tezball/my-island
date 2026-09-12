@@ -4,6 +4,8 @@ type: company
 status: active
 owner: orchestrator
 created: 2026-09-05
+cssclasses:
+  - moc
 ---
 
 # CEO decisions

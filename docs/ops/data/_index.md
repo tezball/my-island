@@ -1,6 +1,8 @@
 ---
 title: Company data
 type: moc
+cssclasses:
+  - moc
 ---
 
 # Company data
@@ -12,12 +14,14 @@ Small reference tables for Dataview and agents. **Not a CMS.** Place copy does n
 | [[listing-types]] | Place categories |
 | [[regions]] | Launch geography |
 
+Role dashboards: [[ops/dashboards/_index]].
+
 ## Dataview — tickets by owner
 
 ````markdown
 ```dataview
 TABLE status, priority, type, area
-FROM "tickets"
+FROM "ops/tickets"
 WHERE owner = "eng-infra" AND status != "done"
 SORT priority ASC
 ```
@@ -28,7 +32,7 @@ SORT priority ASC
 ````markdown
 ```dataview
 TABLE priority, type, owner, title
-FROM "tickets"
+FROM "ops/tickets"
 WHERE status = "ready" AND type != "epic"
 SORT priority ASC, id ASC
 ```

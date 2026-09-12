@@ -1,5 +1,6 @@
 ---
-id: PRD-XXX
+id: WF-XXX
+aliases: [WF-XXX]
 title:
 status: inbox
 priority: P2
@@ -10,6 +11,8 @@ parent:
 plan:
 pr:
 blocked_reason:
+cssclasses:
+  - ticket
 ---
 
 # {{title}}
@@ -25,5 +28,5 @@ blocked_reason:
 ## Links
 
 - Plan:
-- Parent:
-- Canon:
+- PR:
+- Run:

@@ -2,6 +2,8 @@
 id: WF-XXX
 ticket: "[[ops/tickets/WF-XXX]]"
 status: draft
+cssclasses:
+  - plan
 ---
 
 # Plan: {{title}}

@@ -1,5 +1,6 @@
 ---
 id: WF-XXX
+aliases: [WF-XXX]
 title:
 status: inbox
 priority: P2
@@ -10,6 +11,8 @@ parent:
 plan:
 pr:
 blocked_reason:
+cssclasses:
+  - ticket
 ---
 
 # {{title}}

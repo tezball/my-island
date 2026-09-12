@@ -1,0 +1,41 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+views:
+  - type: table
+    name: Infra owner
+    filters:
+      and:
+        - 'status != "done"'
+        - or:
+            - 'owner == "eng-infra"'
+            - 'area == "ops"'
+    order:
+      - status
+      - priority
+      - file.name
+      - title
+  - type: table
+    name: Blocked
+    filters:
+      and:
+        - 'status == "blocked"'
+    order:
+      - priority
+      - file.name
+      - blocked_reason
+      - title
+  - type: table
+    name: Ready infra-ish
+    filters:
+      and:
+        - 'status == "ready"'
+        - or:
+            - 'owner == "eng-infra"'
+            - file.name.startsWith("WF-")
+    order:
+      - priority
+      - file.name
+      - title

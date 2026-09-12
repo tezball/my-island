@@ -1,0 +1,41 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+    - or:
+        - file.name.startsWith("PRD-")
+        - file.name.startsWith("E2E-")
+views:
+  - type: table
+    name: PRD by status
+    filters:
+      and:
+        - file.name.startsWith("PRD-")
+        - 'status != "done"'
+    order:
+      - status
+      - priority
+      - file.name
+      - owner
+      - title
+  - type: table
+    name: E2E / workshops
+    filters:
+      and:
+        - file.name.startsWith("E2E-")
+    order:
+      - status
+      - file.name
+      - title
+  - type: table
+    name: Ready product
+    filters:
+      and:
+        - file.name.startsWith("PRD-")
+        - 'status == "ready"'
+        - 'type != "epic"'
+    order:
+      - priority
+      - file.name
+      - title

@@ -1,6 +1,8 @@
 ---
 title: Vault naming
 type: workflow
+cssclasses:
+  - moc
 ---
 
 # Naming conventions
@@ -15,18 +17,21 @@ Many agents write in this vault. These rules keep it searchable.
 | Plan | `ops/plans/<ID>.md` | `ops/plans/PRD-001.md` |
 | Run log | `ops/runs/<ID>-<role>.md` or `ops/runs/<ID>-<n>.md` | `ops/runs/WF-006-implement.md` |
 | Role | `ops/agents/roles/<slug>.md` | `ops/agents/roles/guest-support.md` |
+| Role dashboard | `ops/dashboards/<slug>.md` + `.base` | `ops/dashboards/infra.md` |
 | Runbook | `ops/runbooks/<SLUG>.md` | `ops/runbooks/WEEKLY_DIGEST.md` |
 | Daily | `ops/daily/YYYY-MM-DD.md` | `ops/daily/2026-09-05.md` |
 | Folder index | `<folder>/_index.md` | `ops/agents/_index.md` |
 | Workshop brief | `ops/workshops/<kebab>.md` | `ops/workshops/e2e-place-stub.md` |
 | Canvas | `ops/workflow/<kebab>.canvas` | `ops/workflow/e2e-place-stub.canvas` |
+| CSS snippet | `.obsidian/snippets/<name>.css` | `company-os.css` |
 
-- **kebab-case** for role slugs. **SCREAMING_SNAKE** for runbooks and durable company notes. **YYYY-MM-DD** for dailies.
+- **kebab-case** for role slugs and dashboard stems. **SCREAMING_SNAKE** for runbooks and durable company notes. **YYYY-MM-DD** for dailies.
 - Living canvases only; do not put date stamps in the filename; do not drop canvases at vault root.
 - Ticket **filename stem = `id`**. Never `tickets/prd-1-explore.md`.
 - Do not nest tickets in subfolders. Status is frontmatter, not a directory.
 - Do not put spaces in filenames.
 - Indexes are `_index.md`, never `README.md`, inside OS folders. Vault root `docs/README.md` explains the vault; git repo `README.md` is outside the vault.
+- Bases: one `.base` per role dashboard (same stem). Embed with `![[ops/dashboards/<stem>.base]]`. Bases do **not** replace `board_sync.py`.
 
 ## Ticket ids
 
@@ -55,6 +60,8 @@ parent:
 plan:
 pr:
 blocked_reason:
+cssclasses:
+  - ticket
 ```
 
 - `status`: `inbox` \| `ready` \| `plan` \| `implement` \| `review` \| `done` \| `blocked`
@@ -64,7 +71,7 @@ blocked_reason:
 - `area`: short noun (`ops`, `catalog`, `explore`, `trust`, …)
 - Wikilinks in YAML are quoted: `plan: "[[ops/plans/PRD-001]]"`
 
-Optional: `aliases: [PRD-001]` so Obsidian resolves the id.
+Optional: `aliases: [PRD-001]` so Obsidian resolves the id. Optional: `cssclasses` — see [[ops/company/VAULT_DESIGN]].
 
 ## Wikilinks
 
@@ -73,6 +80,7 @@ Vault root is `docs/`. Links are vault-relative:
 - `[[ops/tickets/PRD-001]]`
 - `[[ops/workflow/LOOP]]`
 - `[[ops/agents/roles/orchestrator]]`
+- `[[ops/dashboards/infra]]`
 - `[[product/STACK]]`
 
 ## Body
