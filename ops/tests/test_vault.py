@@ -254,10 +254,20 @@ def test_merged_pr_tickets_are_done() -> None:
         "WF-016": "https://github.com/tezball/my-island/pull/48",
         "PRD-008": "https://github.com/tezball/my-island/pull/47",
         "WF-023": "https://github.com/tezball/my-island/pull/52",
+        "WF-024": "https://github.com/tezball/my-island/pull/63",
+        "WF-025": "https://github.com/tezball/my-island/pull/64",
+        "WF-030": "https://github.com/tezball/my-island/pull/65",
+        "WF-031": "https://github.com/tezball/my-island/pull/66",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
         assert by_id[ident].get("pr", "") == pr, ident
+    board = (OPS / "BOARD.md").read_text()
+    review = board.split("## In review", 1)[1].split("## Blocked", 1)[0]
+    done = board.split("## Done", 1)[1]
+    for ident in ("WF-024", "WF-030", "WF-031"):
+        assert ident not in review, ident
+        assert f"[[ops/tickets/{ident}|{ident}]]" in done, ident
 
 
 def test_leads_pipeline_tickets_exist() -> None:

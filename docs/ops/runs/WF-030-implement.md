@@ -17,7 +17,7 @@ Implemented full vault OS UX redesign on `wf/WF-030-vault-os-ux`: company-os CSS
 
 ## Result
 
-success
+success — human merged [#65](https://github.com/tezball/my-island/pull/65); ticket closed (`status: done`).
 
 ## Follow-up
 
