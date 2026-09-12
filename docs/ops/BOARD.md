@@ -32,6 +32,7 @@ kanban-plugin: basic
 ## In review
 
 - [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
+- [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 
 ## Blocked
 

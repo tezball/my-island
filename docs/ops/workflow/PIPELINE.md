@@ -44,6 +44,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 | Local Jenkins UI / `local-ci` | **auto** (laptop) | `./scripts/dev up` → :8085 |
 | Jenkins multibranch PR poll | agent+secret | Needs `JENKINS_GITHUB_TOKEN` in `.env` |
 | Playwright / consumer UI CI | **human** backlog | Waits [[ops/tickets/WF-011]] |
+| Test mix (how / what / wiring / operate) | map | [[ops/workflow/TEST_STACK]] — contract is Gherkin on Testcontainers |
 | Deploy to mock-prod VPS | **human** / blocked | Stub [[ops/tickets/WF-032]]; host [[ops/tickets/WF-010]] |
 | Production deploy | **never** | No prod Environment ([[ops/company/DECISIONS]]) |
 
@@ -67,4 +68,5 @@ Implement work is **agent**, not cron: [[ops/agents/mvp-team]]. Suggested parall
 
 - Loop policy: [[ops/workflow/LOOP]]
 - Safety: [[ops/workflow/SAFETY]]
+- Test mix: [[ops/workflow/TEST_STACK]] · [[ops/workshops/cto-test-stack]]
 - Jenkins canvas (CI only): [[ops/workflow/jenkins-local-ci]]

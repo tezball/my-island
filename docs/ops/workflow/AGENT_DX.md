@@ -24,6 +24,7 @@ Open **`docs/`** in Obsidian, the **repo root** in Cursor, and the **same repo**
 | Kind | What | How you use it |
 |---|---|---|
 | **CLI** | `./scripts/app` | start / stop / test the compose stack |
+| **Tests** | gates + tools | [[TEST_STACK]] — how / what / wiring; `/app-test`, `./scripts/dev sim`, later Gatling traffic |
 | **Always-on rules** | house-stack, no-prod, ops-loop, vault notes | Cursor applies them; you do not toggle them |
 | **Skills (auto)** | ops-loop, automation, clone-run, reviewer, mcp-observe, intellij-ide, spring-catalog, STACK-E2E | Agent picks them from the prompt |
 | **Slash skills** | `/next-ticket`, `/plan`, `/implement`, `/review`, `/app-start`, `/app-test`, `/board-sync`, `/mcp-health`, `/new-ticket`, `/stack-e2e`, `/dod` | Type `/name` in Agent chat |

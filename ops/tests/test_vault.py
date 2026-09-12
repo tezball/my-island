@@ -61,9 +61,13 @@ REQUIRED_VAULT = [
     "workflow/CI.md",
     "workflow/SKILLS.md",
     "workflow/AGENT_DX.md",
+    "workflow/TEST_STACK.md",
     "tickets/E2E-001.md",
+    "tickets/WF-035.md",
     "workshops/e2e-place-stub.md",
+    "workshops/cto-test-stack.md",
     "workflow/e2e-place-stub.canvas",
+    "workflow/cto-test-stack.canvas",
 ]
 
 REQUIRED_TICKET_KEYS = ("id", "title", "status", "priority", "type")
@@ -1072,3 +1076,64 @@ def test_wf_034_agent_dx_pack_workshop() -> None:
     assert "AGENT_DX" in skills_md
     stack = (REPO / "docs" / "product" / "STACK.md").read_text()
     assert "IntelliJ MCP" in stack
+
+
+def test_wf_035_test_stack_today_vs_want() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-035" in by_id
+    meta = by_id["WF-035"]
+    assert meta["owner"] == "eng-qa"
+    assert meta["type"] == "workflow"
+    assert meta["priority"] == "P1"
+    assert meta["status"] in {"implement", "review"}
+    assert "tickets/WF-000" in meta.get("parent", "")
+    assert "plans/WF-035" in meta.get("plan", "")
+    assert (OPS / "plans" / "WF-035.md").is_file()
+    stack = (OPS / "workflow" / "TEST_STACK.md").read_text()
+    for needle in (
+        "Shift-left",
+        "Five lanes",
+        "BDD = integration",
+        "Gherkin",
+        "Testcontainers",
+        "Gatling",
+        "Cucumber",
+        "Playwright",
+        "./scripts/dev sim",
+        "./scripts/dev traffic",
+        "No chaos in merge",
+        "Tests as tools",
+        "only browser E2E",
+    ):
+        assert needle in stack, needle
+    assert "compose.chaos.yml" not in (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    brief = (OPS / "workshops" / "cto-test-stack.md").read_text()
+    assert "[[ops/tickets/WF-035]]" in brief
+    assert "Gatling" in brief
+    assert "shift left" in brief.lower() or "Shift left" in brief
+    canvas = json.loads((OPS / "workflow" / "cto-test-stack.canvas").read_text())
+    assert "nodes" in canvas and "edges" in canvas
+    assert 15 <= len(canvas["nodes"]) <= 40
+    files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
+    assert "ops/tickets/WF-035.md" in files
+    assert "ops/workflow/TEST_STACK.md" in files
+    assert "ops/workshops/cto-test-stack.md" in files
+    blob = json.dumps(canvas)
+    assert "Gatling" in blob
+    assert "Gherkin" in blob
+    assert "Testcontainers" in blob
+    assert "shift" in blob.lower()
+    index = (OPS / "workflow" / "_index.md").read_text()
+    assert "TEST_STACK" in index
+    assert "cto-test-stack" in (OPS / "workshops" / "_index.md").read_text()
+    dod = (OPS / "workflow" / "DOD.md").read_text()
+    assert "[[TEST_STACK]]" in dod
+    assert "BDD = integration" in dod or "Gherkin vs Testcontainers" in dod
+    ci = (OPS / "workflow" / "CI.md").read_text()
+    assert "TEST_STACK" in ci
+    qa = (OPS / "dashboards" / "qa.md").read_text()
+    assert "TEST_STACK" in qa
+    dx = (OPS / "workflow" / "AGENT_DX.md").read_text()
+    assert "TEST_STACK" in dx
+    app_test = (REPO / ".cursor" / "skills" / "app-test" / "SKILL.md").read_text()
+    assert "TEST_STACK" in app_test

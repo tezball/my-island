@@ -39,7 +39,7 @@ Open first: [[ops/workflow/agent-pipeline]] (canvas) · tables: [[ops/workflow/P
 
 ## Do not digress into
 
-- Consumer UI polish or Playwright until [[ops/tickets/WF-011]]
+- Consumer UI polish or Playwright until [[ops/tickets/WF-011]] (test mix: [[ops/workshops/cto-test-stack]])
 - Restoring legacy Jenkins from `docs/automation/`
 - Inventing a prod Environment
 

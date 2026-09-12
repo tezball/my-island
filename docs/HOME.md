@@ -90,8 +90,9 @@ Wikilinks (`[[ops/BOARD]]`, `[[product/SIGNED]]`) resolve when the Obsidian vaul
 | Company OS | [`ops/HOME.md`](ops/HOME.md) · [`BOARD.md`](ops/BOARD.md) · [`ops/MILESTONES.md`](ops/MILESTONES.md) · [`CHARTER`](ops/CHARTER.md) · [[ops/HOME]] · [[ops/BOARD]] · [[ops/MILESTONES]] · [[ops/CHARTER]] |
 | Dashboards | [[ops/dashboards/_index]] |
 | Tickets | [`ops/tickets/_index.md`](ops/tickets/_index.md) · [[ops/tickets/_index]] |
-| Workflow | [`LOOP`](ops/workflow/LOOP.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [[ops/workflow/LOOP]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] |
-| Workshops | [[ops/workshops/_index]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/e2e-place-stub]] |
+| Workflow | [`LOOP`](ops/workflow/LOOP.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/LOOP]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] · [[ops/workflow/TEST_STACK]] |
+| Workshops | [[ops/workshops/_index]] · [[ops/workshops/cto-pipeline-brief]] · [[ops/workshops/cto-test-stack]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/e2e-place-stub]] |
+| Test mix | [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/TEST_STACK]] — gates vs agent tools |
 | Leads | [`data/leads/README.md`](data/leads/README.md) |
 | History | [`leads/`](leads/CAMPSITE_LEADS.md) · [`automation/`](automation/OBSERVABILITY_MCP_OPTIONS.md) — **fence: do not implement** |
 | Agents | [`ops/agents/_index.md`](ops/agents/_index.md) · [[ops/agents/_index]] |

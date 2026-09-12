@@ -14,4 +14,4 @@ Read `.cursor/skills/clone-run/SKILL.md`. Then:
 ./scripts/app test
 ```
 
-Same contract as CI `unit` + `catalog` + `stack` locally. Fast vault-only: `python3 -m pytest ops/tests -q -m "not stack"`.
+Same contract as CI `unit` + `catalog` + `stack` locally. Fast vault-only: `python3 -m pytest ops/tests -q -m "not stack"`. Mix (gates vs tools): `docs/ops/workflow/TEST_STACK.md`. Smoke/seed: `./scripts/dev sim`.
