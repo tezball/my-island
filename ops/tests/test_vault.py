@@ -166,12 +166,25 @@ def test_tickets_have_required_frontmatter() -> None:
 
 
 def test_prd_app_code_tickets_are_not_implement() -> None:
-    """Marketplace stays gated; directory MVP children may be implement or review with approved plans."""
+    """Marketplace stays gated; directory MVP children landed on #82."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     assert by_id["PRD-004"]["status"] != "implement"
     for ident in ("PRD-002", "PRD-003"):
-        assert by_id[ident]["status"] in ("implement", "review")
+        assert by_id[ident]["status"] == "done"
         assert f"plans/{ident}" in by_id[ident].get("plan", "")
+        assert by_id[ident].get("pr", "") == "https://github.com/tezball/my-island/pull/82"
+    assert (OPS / "runs" / "PRD-002-003-011-close.md").is_file()
+    home = (REPO / "docs" / "HOME.md").read_text()
+    doing = home.split("Doing / Review", 1)[1].split("Landed", 1)[0]
+    landed = home.split("Landed", 1)[1].split("Ready / Up next", 1)[0]
+    ready = home.split("Ready / Up next", 1)[1].split("Planning", 1)[0]
+    assert "PRD-002" not in doing
+    assert "PRD-003" not in doing
+    assert "PRD-011" not in doing
+    assert "PRD-002" in landed and "PRD-003" in landed and "PRD-011" in landed
+    assert "pull/82" in landed
+    assert "ops/tickets/PRD-002.md" not in ready
+    assert "ops/tickets/PRD-003.md" not in ready
 
 
 def test_starter_prd_tickets_exist() -> None:
@@ -233,8 +246,8 @@ def test_prd_001_is_done_with_plan() -> None:
     assert "datePrecision" in plan or "date_precision" in plan
     assert "including NI" in plan
     assert "No booking columns" in plan or "no booking columns" in plan
-    assert by_id["PRD-003"]["status"] in ("ready", "plan", "implement", "review")
-    assert by_id["PRD-003"]["status"] != "done"
+    assert by_id["PRD-003"]["status"] == "done"
+    assert by_id["PRD-003"].get("pr", "") == "https://github.com/tezball/my-island/pull/82"
     assert by_id["WF-008"]["status"] == "done"
     assert by_id["PRD-005"]["status"] == "done"
     assert "github.com/tezball/my-island/pull/29" in by_id["PRD-005"].get("pr", "")
@@ -264,6 +277,9 @@ def test_merged_pr_tickets_are_done() -> None:
         "WF-025": "https://github.com/tezball/my-island/pull/64",
         "WF-030": "https://github.com/tezball/my-island/pull/65",
         "WF-031": "https://github.com/tezball/my-island/pull/66",
+        "PRD-002": "https://github.com/tezball/my-island/pull/82",
+        "PRD-003": "https://github.com/tezball/my-island/pull/82",
+        "PRD-011": "https://github.com/tezball/my-island/pull/82",
     }
     for ident, pr in expected.items():
         assert by_id[ident]["status"] == "done", ident
@@ -271,7 +287,7 @@ def test_merged_pr_tickets_are_done() -> None:
     board = (OPS / "BOARD.md").read_text()
     review = board.split("## In review", 1)[1].split("## Blocked", 1)[0]
     done = board.split("## Done", 1)[1]
-    for ident in ("WF-024", "WF-030", "WF-031"):
+    for ident in ("WF-024", "WF-030", "WF-031", "PRD-002", "PRD-003", "PRD-011"):
         assert ident not in review, ident
         assert f"[[ops/tickets/{ident}|{ident}]]" in done, ident
 
@@ -312,9 +328,9 @@ def test_harvested_mvp_plans_and_children() -> None:
     assert by_id["PRD-010"]["status"] == "implement"
     assert "plans/PRD-010" in by_id["PRD-010"].get("plan", "")
     assert "password" in by_id["PRD-010"]["title"].lower()
-    assert by_id["PRD-003"]["status"] in ("implement", "review")
+    assert by_id["PRD-003"]["status"] == "done"
     assert "plans/PRD-003" in by_id["PRD-003"].get("plan", "")
-    assert by_id["PRD-002"]["status"] in ("implement", "review")
+    assert by_id["PRD-002"]["status"] == "done"
     assert "plans/PRD-002" in by_id["PRD-002"].get("plan", "")
     assert "seed" in by_id["PRD-002"]["title"].lower()
     assert "plans/PRD-000" in by_id["PRD-000"].get("plan", "")
@@ -322,7 +338,8 @@ def test_harvested_mvp_plans_and_children() -> None:
     assert by_id["E2E-001"]["status"] == "done"
     for ident in ("PRD-011", "PRD-012", "PRD-013", "PRD-014"):
         if ident == "PRD-011":
-            assert by_id[ident]["status"] in ("implement", "review")
+            assert by_id[ident]["status"] == "done"
+            assert by_id[ident].get("pr", "") == "https://github.com/tezball/my-island/pull/82"
         else:
             assert by_id[ident]["status"] == "implement"
         assert f"plans/{ident}" in by_id[ident].get("plan", "")

@@ -38,7 +38,7 @@ Humans start by hat. Agents use the board + `next_ticket.py`. Index: [[ops/dashb
 > Epic [`WF-000`](ops/tickets/WF-000.md) · [[ops/tickets/WF-000]] stays `implement` (automations still [`WF-003`](ops/tickets/WF-003.md)). Vault UX in review: [`WF-030`](ops/tickets/WF-030.md) · [[ops/tickets/WF-030]].
 
 > [!success] Landed
-> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)), [`PRD-007`](ops/tickets/PRD-007.md) Wave 1 leads ([#45](https://github.com/tezball/my-island/pull/45)), [`WF-016`](ops/tickets/WF-016.md) Cloud Agent mcp-grafana + Postgres-RO ([#48](https://github.com/tezball/my-island/pull/48)), [`WF-023`](ops/tickets/WF-023.md) living markdown under `docs/` ([#52](https://github.com/tezball/my-island/pull/52)), [`PRD-008`](ops/tickets/PRD-008.md) Eng import of **draft** Places ([#47](https://github.com/tezball/my-island/pull/47)) — all `done`.
+> [`WF-019`](ops/tickets/WF-019.md) sim (#31), [`WF-021`](ops/tickets/WF-021.md) `./scripts/app` (#35), [`WF-001`](ops/tickets/WF-001.md) compose+MCP, [`WF-002`](ops/tickets/WF-002.md) rules/hook, [`WF-017`](ops/tickets/WF-017.md) STACK-E2E drill ([#36](https://github.com/tezball/my-island/pull/36)), [`WF-018`](ops/tickets/WF-018.md) stub fields ([#37](https://github.com/tezball/my-island/pull/37)), [`WF-022`](ops/tickets/WF-022.md) root `HOME.md` ([#39](https://github.com/tezball/my-island/pull/39)), [`PRD-007`](ops/tickets/PRD-007.md) Wave 1 leads ([#45](https://github.com/tezball/my-island/pull/45)), [`WF-016`](ops/tickets/WF-016.md) Cloud Agent mcp-grafana + Postgres-RO ([#48](https://github.com/tezball/my-island/pull/48)), [`WF-023`](ops/tickets/WF-023.md) living markdown under `docs/` ([#52](https://github.com/tezball/my-island/pull/52)), [`PRD-008`](ops/tickets/PRD-008.md) Eng import of **draft** Places ([#47](https://github.com/tezball/my-island/pull/47)), [`PRD-002`](ops/tickets/PRD-002.md) POI seed + [`PRD-003`](ops/tickets/PRD-003.md) Explore PWA + [`PRD-011`](ops/tickets/PRD-011.md) Place detail ([#82](https://github.com/tezball/my-island/pull/82)) — all `done`.
 
 > [!info] Ready / Up next
 > From [[ops/BOARD]] `ready`. `PRD-000` is an epic — children do the work.
@@ -47,8 +47,6 @@ Humans start by hat. Agents use the board + `next_ticket.py`. Index: [[ops/dashb
 |---|---|---|
 | [`E2E-001`](ops/tickets/E2E-001.md) · [[ops/tickets/E2E-001]] | P0 | Place listing stub API — e2e workshop |
 | [`PRD-000`](ops/tickets/PRD-000.md) · [[ops/tickets/PRD-000]] | P0 | Ireland directory MVP (epic) |
-| [`PRD-002`](ops/tickets/PRD-002.md) · [[ops/tickets/PRD-002]] | P0 | Curator seed content pipeline |
-| [`PRD-003`](ops/tickets/PRD-003.md) · [[ops/tickets/PRD-003]] | P0 | Light Vite+React PWA |
 | [`PRD-009`](ops/tickets/PRD-009.md) · [[ops/tickets/PRD-009]] | P0 | Trust / counsel gate before publish |
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 
