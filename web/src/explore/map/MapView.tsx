@@ -4,8 +4,7 @@ import "leaflet/dist/leaflet.css";
 import type { Place } from "../../api/catalog";
 import { hasCoords, IRELAND, IRELAND_BOUNDS } from "../geo";
 
-const TILES =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 export function MapView({
   places,
@@ -42,8 +41,7 @@ export function MapView({
       minZoom: 6,
     }).setView([IRELAND.lat, IRELAND.lng], 6);
     L.tileLayer(TILES, {
-      attribution: "© OpenStreetMap © CARTO",
-      subdomains: "abcd",
+      attribution: "© OpenStreetMap",
       maxZoom: 19,
     }).addTo(map);
     L.control.zoom({ position: "topright" }).addTo(map);

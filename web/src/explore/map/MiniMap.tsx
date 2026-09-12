@@ -2,8 +2,7 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const TILES =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 export function MiniMap({ lat, lng }: { lat: number; lng: number }) {
   const root = useRef<HTMLDivElement>(null);
@@ -18,8 +17,7 @@ export function MiniMap({ lat, lng }: { lat: number; lng: number }) {
       attributionControl: true,
     }).setView([lat, lng], 12);
     L.tileLayer(TILES, {
-      attribution: "© OpenStreetMap © CARTO",
-      subdomains: "abcd",
+      attribution: "© OpenStreetMap",
       maxZoom: 19,
     }).addTo(map);
     L.circleMarker([lat, lng], {

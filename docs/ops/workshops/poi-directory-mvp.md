@@ -19,7 +19,7 @@ A visitor on a phone can browse a curated **point-of-interest** directory as a l
 ## Success bar (this slice)
 
 - Every **published** Place is `category=poi`, has WGS84 coords, original description, and a Commons hero (or a category placeholder if Commons has no free file).
-- Map plots those pins (Leaflet + Carto/OSM raster — no WebGL, no Mapbox token). Ireland fallback when location is off.
+- Map plots those pins (Leaflet + OpenStreetMap raster — no WebGL, no Mapbox token). Ireland fallback when location is off.
 - Place detail: photo, copy, mini-map, directions, nearby, website when known.
 - Campsite JSONL remains Research (`status=lead`). Not published.
 - Local compose (`./scripts/app start`) is the demo. fishing-journals.com needs host CSP (runbook).
@@ -31,7 +31,7 @@ A visitor on a phone can browse a curated **point-of-interest** directory as a l
 | Hat | Lock |
 |---|---|
 | **product** | Cut CHK / ME / ACC from this slice. No greyed-out tick. POI-only public catalog. Reuse [[ops/tickets/PRD-002]] + [[ops/tickets/PRD-003]] + [[ops/tickets/PRD-011]]. |
-| **eng-frontend** | Phone-first Explore + Place. Leaflet + OSM/Carto raster (MapLibre WebGL does not paint on software-GL). Cards with photo. Routes `/` and `/places/:slug`. |
+| **eng-frontend** | Phone-first Explore + Place. Leaflet + OSM raster (no Mapbox; Carto public tiles watermark). Cards with photo. Routes `/` and `/places/:slug`. |
 | **content-seo** | Wikidata CC0 facts + Commons File: images. Original notes. ~80–120 POIs, 32-county mix. |
 | **architecture** | Flyway V7 image trio. Extend `import_leads.py`, do not Flyway-dump JSONL. `APP_SEED_PUBLISH` local only. |
 | **eng-qa** | Map fails because coords are null **and** live CSP blocks tiles. Tests: Vitest + catalog Testcontainers + JSONL schema. |

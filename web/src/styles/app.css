@@ -198,16 +198,12 @@ h2,
   margin-bottom: var(--bar-h);
 }
 
-.map-el,
-.mini-map.leaflet-container {
-  width: 100%;
-  height: 100%;
-  background: var(--mist);
-}
-
 .map-el {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--mist);
 }
 
 .fab-locate,
@@ -363,10 +359,13 @@ h2,
   font-size: 0.8rem;
 }
 
-.mini-map {
+.mini-map,
+.mini-map.leaflet-container {
   height: 180px;
+  width: 100%;
   border-radius: var(--radius);
   overflow: hidden;
+  background: var(--mist);
 }
 
 .sticky-actions {
