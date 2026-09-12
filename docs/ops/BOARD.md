@@ -29,6 +29,7 @@ kanban-plugin: basic
 
 ## In review
 
+- [ ] [[ops/tickets/WF-025|WF-025]] P0 No prod; auto-review approve and merge ready PRs
 
 ## Blocked
 

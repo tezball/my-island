@@ -870,3 +870,32 @@ def test_prd_008_and_wf_023_closed() -> None:
     assert "open `ops/` in Obsidian" not in skills
     assert (OPS / "runs" / "PRD-008-close.md").is_file()
     assert (OPS / "runs" / "WF-023-close.md").is_file()
+
+
+def test_wf_025_no_prod_and_automerge() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-025" in by_id
+    meta = by_id["WF-025"]
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert meta["priority"] == "P0"
+    assert "tickets/WF-000" in meta.get("parent", "")
+    assert "plans/WF-025" in meta.get("plan", "")
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "has no production environment and probably never will" in decisions
+    assert "Ready PRs auto-review, approve, and squash-merge" in decisions
+    rule = (REPO / ".cursor" / "rules" / "no-prod.mdc").read_text()
+    assert "alwaysApply: true" in rule
+    assert "no prod" in rule.lower()
+    safety = (OPS / "workflow" / "SAFETY.md").read_text()
+    assert "Ready PRs merge themselves" in safety
+    assert "There is no production" in safety
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "name: auto-review approve merge" in ci
+    assert "needs: [unit, catalog, stack]" in ci
+    assert "github.event.pull_request.draft == false" in ci
+    assert "head.repo.full_name == github.repository" in ci
+    assert "merge_method: 'squash'" in ci
+    automerge = ci.split("automerge:")[1]
+    assert "compose.chaos.yml" not in automerge
+    assert (OPS / "plans" / "WF-025.md").is_file()

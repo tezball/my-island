@@ -13,7 +13,7 @@ ticket ready
   → human (or later: label approved) sets status = implement
   → IMPLEMENTER branches, codes, opens PR, status = review
   → REVIEWER comments on the PR (never merge, never push the branch)
-  → human merges
+  → CI auto-approves and squash-merges when unit + catalog + stack are green (drafts/forks skipped)
   → IMPLEMENTER or hook sets status = done, writes runs/<id>-<n>.md
 ```
 
@@ -22,8 +22,8 @@ ticket ready
 | Role | May | Must not |
 |---|---|---|
 | **Planner** | Create/update `plans/`, set ticket `status: plan` | Touch application code, open a feature PR |
-| **Implementer** | Code, tests, `gh pr create`, set `status: review`, `pr:` URL | Merge, review its own PR as the required review, prod credentials |
-| **Reviewer** | Read diff, `gh pr comment`, request changes | `gh pr merge`, push commits, change ticket to `done` |
+| **Implementer** | Code, tests, `gh pr create`, set `status: review`, `pr:` URL | Merge from chat, review its own PR as the required review |
+| **Reviewer** | Read diff, `gh pr comment`, request changes | `gh pr merge` from chat, push commits, change ticket to `done` |
 
 The same human may wear all three hats. **The same agent session must not.** If you planned it, stop. A new chat (or the PR-opened automation) reviews it.
 

@@ -14,13 +14,13 @@ Owner: [[ops/agents/roles/automation-expert]]. Catalog: [[ops/workflow/SKILLS]].
 3. Description must say **when** to read it. Keep the body under ~80 lines; link vault notes for detail.
 4. Add a row to [[ops/workflow/SKILLS]].
 5. If every session needs it, add a line to `AGENTS.md` and/or `.cursor/rules/` — otherwise leave it discoverable.
-6. Verify: `python3 -m pytest ops/tests -q -m "not stack"` (vault test lists required notes, not the skill file). Open a PR. Do not merge.
+6. Verify: `python3 -m pytest ops/tests -q -m "not stack"` (vault test lists required notes, not the skill file). Open a PR. Do not merge from chat.
 
 ## Routine (runbook or Automation)
 
 1. New runbook: `ops/runbooks/SCREAMING_SNAKE.md` + row on [[ops/runbooks/_index]].
 2. New cloud job: edit [[ops/workflow/AUTOMATIONS]] only; enabling in the Cursor UI is [[ops/tickets/WF-003]] (human).
-3. Do not encode prod deploy or auto-merge.
+3. Do not encode a production deploy. Ready-PR auto-merge lives in CI ([[ops/tickets/WF-025]]).
 
 ## Hook
 

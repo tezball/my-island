@@ -35,14 +35,14 @@ Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`
 3. Implement only that ticket. Run the ticket’s verify steps.
 4. Open a PR with `gh pr create`. Body links ticket + plan.
 5. Set ticket `pr: <url>` and `status: review`. Sync the board.
-6. Write a run note. Stop. Do not merge.
+6. Write a run note. Stop. Do not merge from chat (CI squash-merges ready PRs).
 
 ## Reviewer (`--role reviewer`)
 
 1. `gh pr view` / `gh pr diff` for the ticket’s `pr`.
 2. Check SAFETY (no merge in the diff’s CI tricks, no secrets, no prod deploy, no MVP product scope on `WF-` tickets).
-3. `gh pr comment` with findings. Request changes or “looks good, human may merge”.
-4. Do not `gh pr merge`. Do not push.
+3. `gh pr comment` with findings. Request changes or “looks good; CI may merge”.
+4. Do not `gh pr merge` from chat. Do not push.
 
 ## Board hygiene
 

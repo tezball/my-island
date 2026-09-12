@@ -4,7 +4,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 
 | Note | Purpose |
 |---|---|
-| [[LOOP]] | Plan → implement PR → review. Humans merge |
+| [[LOOP]] | Plan → implement PR → review → CI auto-merge |
 | [[CI]] | GitHub Actions + agent test commands |
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |
 | [[LOCAL]] | Compose, Dev Container, clone/run |
