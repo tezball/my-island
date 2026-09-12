@@ -9,7 +9,7 @@ cssclasses:
 
 Concrete org for this company. Each role is a **session hat**, not a login. One ticket per session. Skip epics.
 
-Role homes (Obsidian): [[ops/dashboards/_index]]. Grok vs Cursor: [[GROK_VS_CURSOR]].
+Role homes (Obsidian): [[ops/dashboards/_index]]. Grok vs Cursor: [[GROK_VS_CURSOR]]. MVP dispatch callsigns: [[mvp-team]].
 
 | Role | Runtime | Status | Owns |
 |---|---|---|---|

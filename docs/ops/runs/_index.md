@@ -2,6 +2,14 @@
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+- [[branch-docs-harvest]] — fold unique plans/tickets from stale branches into main; delete branches
+- [[E2E-001-plan]] — workshop close-out plan harvest
+- [[WF-003-plan]] — Automations enablement plan harvest
+- [[PRD-000-plan]] — MVP program plan harvest
+- [[PRD-002-plan]] — curator seed plan harvest
+- [[PRD-003-plan]] — Explore PWA plan harvest
+- [[PRD-009-plan]] — counsel gate plan harvest
+- [[PRD-010-plan]] — visitor auth plan harvest
 - [[WF-025-implement]] — no prod lock + CI auto-merge; PR #64
 - [[WF-024-implement]] — Apple Silicon PostGIS image; PR #63
 - [[PRD-008-close]] — human merged PR #47; ticket `done`
