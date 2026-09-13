@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-032-close]] — #85 merged to main; apex deploy; ticket `done`
 - [[WF-036-close]] — #84 merged to main; ticket `done`
 - [[WF-036-implement]] — second brain: atlas, folder colour, engineer notes
 - [[PRD-002-003-011-close]] — POI directory MVP tickets done after #82

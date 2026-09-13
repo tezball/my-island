@@ -28,9 +28,6 @@ kanban-plugin: basic
 
 ## In review
 
-- [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
-- [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
-- [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 
 ## Blocked
 
@@ -72,4 +69,7 @@ kanban-plugin: basic
 - [x] [[ops/tickets/WF-018|WF-018]] P1 Align E2E-001 place JSON fields with catalog stub
 - [x] [[ops/tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
 - [x] [[ops/tickets/WF-022|WF-022]] P1 Root HOME.md company dashboard
+- [x] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
+- [x] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 - [x] [[ops/tickets/WF-036|WF-036]] P1 Second brain — atlas MOCs, folder colour, engineer notes
+- [x] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
