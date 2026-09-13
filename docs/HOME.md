@@ -12,10 +12,23 @@ cssclasses:
 
 Phone-first **Ireland directory** MVP (list, map, one-tap check-off) plus a **company OS** of agent workflows in this repo (`my-island`). Public product name is **OPEN** — do not lock StayÉire, Éirelist, or any other ship name here.
 
-Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product/README.md) · [`product/MILESTONES.md`](product/MILESTONES.md) · [[product/SIGNED]] · [[product/README]] · [[product/MILESTONES]]. OS hub: [`ops/HOME.md`](ops/HOME.md) · [[ops/HOME]]. Design: [[ops/company/VAULT_DESIGN]].
+Canon: [`product/SIGNED.md`](product/SIGNED.md) · [`product/README.md`](product/README.md) · [`product/MILESTONES.md`](product/MILESTONES.md) · [[product/SIGNED]] · [[product/README]] · [[product/MILESTONES]]. OS hub: [`ops/HOME.md`](ops/HOME.md) · [[ops/HOME]]. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN]].
 
 > [!info] Snapshot
 > **As of 2026-09-12.** Edit this section when the board moves. Ticket frontmatter + [`ops/BOARD.md`](ops/BOARD.md) remain source of truth (`python3 ops/scripts/board_sync.py`). Kanban plugin is optional on [[ops/BOARD]] (engineering) and [[ops/MILESTONES]] (product map, hand-maintained).
+
+## Site map
+
+Second brain: [[ATLAS]] — Maps of Content per group (work / product / engineering / company / knowledge / archive). Engineer notes: [[notes/_index]]. Colour: [[ops/company/VAULT_DESIGN]].
+
+| Lane | MOC |
+|---|---|
+| Work (Jira) | [[atlas/work]] |
+| Product (Confluence) | [[atlas/product]] |
+| Engineering notes | [[atlas/engineering]] |
+| Company | [[atlas/company]] |
+| Knowledge | [[atlas/knowledge]] |
+| Archive | [[atlas/archive]] |
 
 ## Role homes
 
@@ -64,6 +77,9 @@ Humans start by hat. Agents use the board + `next_ticket.py`. Index: [[ops/dashb
 > [!success] Workshop — Vault OS UX
 > Colour, role dashboards (Bases + Dataview), templates. Ticket: [[ops/tickets/WF-030]] · brief [[ops/workshops/vault-os-ux]] · canvas [[ops/workflow/vault-os-ux]].
 
+> [!tip] Workshop — Second brain
+> Atlas MOCs, folder colour, engineer notes. Ticket: [[ops/tickets/WF-036]] · brief [[ops/workshops/second-brain]] · canvas [[ops/workflow/second-brain]].
+
 > [!warning] Blocked
 > Host / staging still open. Do not treat these as pickable.
 
@@ -84,12 +100,14 @@ Wikilinks (`[[ops/BOARD]]`, `[[product/SIGNED]]`) resolve when the Obsidian vaul
 
 | Area | Links |
 |---|---|
+| Atlas | [[ATLAS]] · [[atlas/work]] · [[atlas/product]] · [[atlas/engineering]] |
 | Product canon | [`product/README.md`](product/README.md) · [`SIGNED`](product/SIGNED.md) · [`MILESTONES`](product/MILESTONES.md) · [`MVP`](product/MVP.md) · [`STACK`](product/STACK.md) · [`NAMING`](product/NAMING.md) · [[product/SIGNED]] · [[product/MILESTONES]] · [[product/MVP]] · [[product/STACK]] · [[product/NAMING]] |
 | Company OS | [`ops/HOME.md`](ops/HOME.md) · [`BOARD.md`](ops/BOARD.md) · [`ops/MILESTONES.md`](ops/MILESTONES.md) · [`CHARTER`](ops/CHARTER.md) · [[ops/HOME]] · [[ops/BOARD]] · [[ops/MILESTONES]] · [[ops/CHARTER]] |
+| Engineer notes | [[notes/_index]] · [[notes/adr/_index]] |
 | Dashboards | [[ops/dashboards/_index]] |
 | Tickets | [`ops/tickets/_index.md`](ops/tickets/_index.md) · [[ops/tickets/_index]] |
 | Workflow | [`LOOP`](ops/workflow/LOOP.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/LOOP]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] · [[ops/workflow/TEST_STACK]] |
-| Workshops | [[ops/workshops/_index]] · [[ops/workshops/cto-pipeline-brief]] · [[ops/workshops/cto-test-stack]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/e2e-place-stub]] |
+| Workshops | [[ops/workshops/_index]] · [[ops/workshops/cto-pipeline-brief]] · [[ops/workshops/cto-test-stack]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/second-brain]] · [[ops/workshops/e2e-place-stub]] |
 | Test mix | [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/TEST_STACK]] — gates vs agent tools |
 | Leads | [`data/leads/README.md`](data/leads/README.md) |
 | History | [`leads/`](leads/CAMPSITE_LEADS.md) · [`automation/`](automation/OBSERVABILITY_MCP_OPTIONS.md) — **fence: do not implement** |

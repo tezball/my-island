@@ -3,5 +3,6 @@
   "baseFontSize": 16,
   "enabledCssSnippets": [
     "company-os"
-  ]
+  ],
+  "accentColor": "#2a6f7c"
 }

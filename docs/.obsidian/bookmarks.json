@@ -1,0 +1,11 @@
+{
+  "items": [
+    { "type": "file", "ctime": 1789290000000, "path": "HOME.md", "title": "Home" },
+    { "type": "file", "ctime": 1789290000001, "path": "ATLAS.md", "title": "Atlas" },
+    { "type": "file", "ctime": 1789290000002, "path": "ops/BOARD.md", "title": "Board" },
+    { "type": "file", "ctime": 1789290000003, "path": "ops/HOME.md", "title": "Ops" },
+    { "type": "file", "ctime": 1789290000004, "path": "notes/_index.md", "title": "Engineer notes" },
+    { "type": "file", "ctime": 1789290000005, "path": "product/README.md", "title": "Product" },
+    { "type": "file", "ctime": 1789290000006, "path": "ops/dashboards/_index.md", "title": "Role homes" }
+  ]
+}

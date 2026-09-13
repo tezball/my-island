@@ -72,3 +72,4 @@ kanban-plugin: basic
 - [x] [[ops/tickets/WF-018|WF-018]] P1 Align E2E-001 place JSON fields with catalog stub
 - [x] [[ops/tickets/WF-021|WF-021]] P1 Simple local CLI for start/stop/test
 - [x] [[ops/tickets/WF-022|WF-022]] P1 Root HOME.md company dashboard
+- [x] [[ops/tickets/WF-036|WF-036]] P1 Second brain — atlas MOCs, folder colour, engineer notes

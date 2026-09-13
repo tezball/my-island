@@ -7,7 +7,7 @@ cssclasses:
 
 # Role dashboards
 
-Human entry by **hat**. Agents still pick tickets via [[ops/BOARD]] + `next_ticket.py`. Design: [[ops/company/VAULT_DESIGN]]. Workshop: [[ops/workshops/vault-os-ux]].
+Human entry by **hat**. Agents still pick tickets via [[ops/BOARD]] + `next_ticket.py`. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN]]. Workshop: [[ops/workshops/vault-os-ux]].
 
 | Dashboard | Hat | Bases |
 |---|---|---|

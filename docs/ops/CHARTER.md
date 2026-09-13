@@ -27,6 +27,7 @@ Everything the **company OS** needs to function. Not a museum of the last app.
 | Path | Role |
 |---|---|
 | [`docs/`](../README.md) | **Obsidian vault** — open this folder only |
+| [[ATLAS]] | Maps of Content — website sitemap |
 | [[ops/HOME]] (`docs/ops/`) | Company OS — tickets, agents, runbooks, skills catalog |
 | `docs/product/` | Product canon (read; do not implement until `PRD-*` + `implement`). House: [`product/STACK.md`](../product/STACK.md) |
 | `docs/leads/`, `docs/automation/` | Historical booking platform. Do not implement from it |

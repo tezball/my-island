@@ -14,6 +14,7 @@ Multi-role briefs. Living canvases live under `ops/workflow/` (same kebab name).
 | [[ops/workshops/cto-pipeline-brief]] | [[ops/workflow/agent-pipeline]] | — (PIPELINE map) |
 | [[ops/workshops/cto-test-stack]] | [[ops/workflow/cto-test-stack]] | [[ops/tickets/WF-035]] |
 | [[ops/workshops/jenkins-local-ci]] | [[ops/workflow/jenkins-local-ci]] | [[ops/tickets/WF-031]] |
+| [[ops/workshops/second-brain]] | [[ops/workflow/second-brain]] | [[ops/tickets/WF-036]] |
 | [[ops/workshops/vault-os-ux]] | [[ops/workflow/vault-os-ux]] | [[ops/tickets/WF-030]] |
 | [[ops/workshops/e2e-place-stub]] | [[ops/workflow/e2e-place-stub]] | [[ops/tickets/E2E-001]] |
 | [[ops/workshops/agent-dx-pack]] | [[ops/workflow/agent-dx-pack]] | [[ops/tickets/WF-034]] |

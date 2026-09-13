@@ -1,6 +1,8 @@
 ---
 title: Runbooks
 type: moc
+cssclasses:
+  - moc
 ---
 
 # Runbooks

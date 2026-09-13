@@ -5,9 +5,14 @@ status: signed
 owner: Product
 created: 2026-09-01
 signed: 2026-09-05
+cssclasses:
+  - product
+  - moc
 ---
 
 # Product
+
+[[ATLAS]] · [[atlas/product]] · [[HOME]]
 
 Product definition for the rebuild. Start here.
 

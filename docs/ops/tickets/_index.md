@@ -1,4 +1,13 @@
+---
+title: Tickets
+type: moc
+cssclasses:
+  - moc
+---
+
 # Tickets
+
+[[ATLAS]] · [[atlas/work]] · [[ops/BOARD]]
 
 One file per ticket. Filename stem **is** the id. Copy a template or run:
 
@@ -20,3 +29,12 @@ Statuses: `inbox` | `ready` | `plan` | `implement` | `review` | `done` | `blocke
 Types: `epic` | `story` | `bug` | `incident` | `workflow`
 
 Epics stay on [[ops/BOARD]] but `next_ticket.py` skips them. After any status change: `python3 ops/scripts/board_sync.py`. Naming: [[ops/NAMING]].
+
+## Live — in flight
+
+```dataview
+TABLE status, priority, owner, type, area
+FROM "ops/tickets"
+WHERE id AND status != "done" AND type != "epic"
+SORT priority ASC, id ASC
+```
