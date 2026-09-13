@@ -19,7 +19,7 @@ Live: https://fishing-journals.com/ — Explore OPEN, GIS button, 101 places. He
 
 ## Result
 
-success — awaiting PR review
+success — [#85](https://github.com/tezball/my-island/pull/85) squash-merged to `main` (`aa8a072`); mock-prod deployed from that SHA.
 
 ## Follow-up
 

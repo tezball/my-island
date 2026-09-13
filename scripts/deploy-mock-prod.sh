@@ -12,7 +12,16 @@ MOCK_PROD_SSH_KEY_PATH="${MOCK_PROD_SSH_KEY_PATH:-}"
 MOCK_PROD_REMOTE_DIR="${MOCK_PROD_REMOTE_DIR:-/opt/my-island}"
 HEALTH_PORT="${MOCK_PROD_CATALOG_HEALTH_PORT:-18081}"
 HEALTH_WAIT_SECS="${MOCK_PROD_HEALTH_WAIT_SECS:-600}"
-PUBLIC_ORIGIN="${MOCK_PROD_URL:-https://fishing-journals.com}"
+# Public checks must be HTTPS apex. MOCK_PROD_URL is sometimes http://<ssh host>,
+# which Caddy 308s; curl -f treats that as failure.
+if [[ -n "${MOCK_PROD_PUBLIC_ORIGIN:-}" ]]; then
+  PUBLIC_ORIGIN="${MOCK_PROD_PUBLIC_ORIGIN}"
+elif [[ "${MOCK_PROD_URL:-}" == https://* ]]; then
+  PUBLIC_ORIGIN="${MOCK_PROD_URL}"
+else
+  PUBLIC_ORIGIN="https://fishing-journals.com"
+fi
+PUBLIC_ORIGIN="${PUBLIC_ORIGIN%/}"
 PUBLIC_HEALTH_URL="${MOCK_PROD_PUBLIC_HEALTH_URL:-${PUBLIC_ORIGIN}/actuator/health}"
 CADDYFILE_HOST="${MOCK_PROD_CADDYFILE:-/home/ubuntu/app/server/Caddyfile}"
 FJ_COMPOSE_DIR="${MOCK_PROD_FJ_COMPOSE_DIR:-/home/ubuntu/app/server}"
@@ -143,7 +152,7 @@ REMOTE
 json_up() {
   local url="$1"
   local body
-  body="$(curl -sfS --max-time 15 -H 'Accept: application/json' "$url")" || return 1
+  body="$(curl -sfSL --max-time 15 -H 'Accept: application/json' "$url")" || return 1
   echo "$body" | grep -q '"status"[[:space:]]*:[[:space:]]*"UP"'
 }
 

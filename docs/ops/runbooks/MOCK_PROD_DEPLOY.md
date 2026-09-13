@@ -13,6 +13,7 @@ cssclasses:
 
 ```bash
 # from a machine with MOCK_PROD_* and GOOGLE_* in .env
+# MOCK_PROD_URL must be https://fishing-journals.com (not http://<vps-ip> — Caddy 308s HTTP).
 ./scripts/deploy-mock-prod.sh
 ```
 
