@@ -11,9 +11,33 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:ops}
   flyway:
     enabled: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    timeout: 30d
 
 server:
   port: ${SERVER_PORT:8080}
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: ${SERVER_SERVLET_SESSION_COOKIE_SECURE:false}
+
+google:
+  client-id: ${GOOGLE_CLIENT_ID:}
+  client-secret: ${GOOGLE_CLIENT_SECRET:}
+
+catalog:
+  auth:
+    google:
+      stub-enabled: false
 
 info:
   app:

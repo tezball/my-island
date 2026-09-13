@@ -1,6 +1,7 @@
 package island.catalog.api;
 
 import island.catalog.api.dto.ErrorBody;
+import island.catalog.auth.InvalidGoogleIdTokenException;
 import island.catalog.place.BadRequestException;
 import island.catalog.place.DuplicateSlugException;
 import island.catalog.place.PlaceAlreadyPublishedException;
@@ -32,6 +33,11 @@ public class ApiExceptionHandler {
   @ExceptionHandler(BadRequestException.class)
   ResponseEntity<ErrorBody> badRequest(BadRequestException ex) {
     return ResponseEntity.badRequest().body(new ErrorBody(ex.getMessage()));
+  }
+
+  @ExceptionHandler(InvalidGoogleIdTokenException.class)
+  ResponseEntity<ErrorBody> invalidGoogle(InvalidGoogleIdTokenException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorBody(ex.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

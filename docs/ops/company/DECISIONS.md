@@ -80,3 +80,13 @@ CHK / ME / ACC stay off this public slice until a later ticket. 500-place launch
 | # | Decision | Where it lives |
 |---|---|---|
 | 9 | **Jenkins local house CI** via JCasC + `ops_jenkins` volume. GHA remains dual-run for remote PR automerge until a shared runner exists. | [[ops/tickets/WF-031]], [[ops/runbooks/JENKINS_LOCAL]], [`product/STACK.md`](../../product/STACK.md) |
+
+## 2026-09-13 — Mock-prod is fishing-journals.com apex
+
+**Terry.** Remove the fishing-journals test app from the VPS. my-island owns `https://fishing-journals.com/`. Reuse the existing Google OAuth Web client (GIS ID token, `POST /api/auth/google`). This is mock-prod, not a GitHub `production` Environment.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 14 | **Mock-prod host** is fishing-journals.com (apex). Fishing-journals app stack is retired. | [[ops/tickets/WF-032]], [[ops/runbooks/MOCK_PROD_DEPLOY]] |
+| 15 | **Google Sign-In** on that host reuses the fishing-journals GIS client and path `/api/auth/google`. | [[ops/tickets/WF-014]] |
+

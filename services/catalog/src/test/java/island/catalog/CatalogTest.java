@@ -12,7 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -24,6 +28,9 @@ class CatalogTest {
   @DynamicPropertySource
   static void datasource(DynamicPropertyRegistry registry) {
     CatalogPostgis.datasource(registry);
+    registry.add("catalog.auth.google.stub-enabled", () -> "true");
+    registry.add("google.client-id", () -> "test.apps.googleusercontent.com");
+    registry.add("google.client-secret", () -> "test-secret");
   }
 
   @Autowired TestRestTemplate http;
@@ -141,6 +148,71 @@ class CatalogTest {
         jdbc.queryForObject(
             "select ST_X(location::geometry) from place where id = ?", Double.class, place.id());
     assertThat(lon).isEqualTo(place.longitude());
+  }
+
+  @Test
+  void meUnauthorizedWithoutSession() {
+    ResponseEntity<String> me = http.getForEntity("/api/v1/me", String.class);
+    assertThat(me.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  void googleLoginSessionAndLogout() {
+    String token = "stub:google-user-99:visitor@example.com:Visitor Name";
+    HttpHeaders json = new HttpHeaders();
+    json.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity<Void> login =
+        http.exchange(
+            "/api/auth/google",
+            HttpMethod.POST,
+            new HttpEntity<>("{\"idToken\":\"" + token + "\"}", json),
+            Void.class);
+    assertThat(login.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+    HttpHeaders withCookie = new HttpHeaders();
+    String setCookie = login.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+    assertThat(setCookie).isNotBlank();
+    withCookie.add(HttpHeaders.COOKIE, setCookie.split(";", 2)[0]);
+
+    ResponseEntity<Map> me =
+        http.exchange("/api/v1/me", HttpMethod.GET, new HttpEntity<>(withCookie), Map.class);
+    assertThat(me.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(me.getBody()).isNotNull();
+    assertThat(me.getBody().get("email")).isEqualTo("visitor@example.com");
+    assertThat(me.getBody().get("displayName")).isEqualTo("Visitor Name");
+    assertThat(me.getBody().get("id")).isNotNull();
+
+    Integer users =
+        jdbc.queryForObject(
+            "select count(*) from app_user where email = ?", Integer.class, "visitor@example.com");
+    assertThat(users).isEqualTo(1);
+    Integer identities =
+        jdbc.queryForObject(
+            "select count(*) from user_identity where issuer = 'google' and subject = ?",
+            Integer.class,
+            "google-user-99");
+    assertThat(identities).isEqualTo(1);
+
+    ResponseEntity<Void> logout =
+        http.exchange(
+            "/api/auth/logout", HttpMethod.POST, new HttpEntity<>(withCookie), Void.class);
+    assertThat(logout.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    ResponseEntity<String> meAfterLogout =
+        http.exchange("/api/v1/me", HttpMethod.GET, new HttpEntity<>(withCookie), String.class);
+    assertThat(meAfterLogout.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  void googleLoginRejectsNonStubWhenStubEnabled() {
+    HttpHeaders json = new HttpHeaders();
+    json.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity<String> login =
+        http.exchange(
+            "/api/auth/google",
+            HttpMethod.POST,
+            new HttpEntity<>("{\"idToken\":\"not-a-google-jwt\"}", json),
+            String.class);
+    assertThat(login.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
   private PlaceResponse createSample(String slug) {

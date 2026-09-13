@@ -1,19 +1,38 @@
-// Seeded by JCasC (WF-031 / WF-032). Stub until mock-prod VPS exists.
+// Seeded by JCasC (WF-031 / WF-032). SSH deploy to mock-prod VPS via scripts/deploy-mock-prod.sh
 pipelineJob('deploy-mock-prod') {
-  description('Deploy main → AWS mock-prod VPS. Blocked until WF-010 host exists. Not a GitHub production Environment.')
+  description('Deploy main → mock-prod VPS at domain root (my-island). Secrets from repo .env — never git. Not a GitHub production Environment.')
   definition {
     cps {
       sandbox(true)
       script("""
 pipeline {
   agent any
-  options { timestamps() }
+  options {
+    timestamps()
+    timeout(time: 90, unit: 'MINUTES')
+    disableConcurrentBuilds()
+  }
   stages {
-    stage('gate') {
+    stage('deploy') {
       steps {
-        echo 'WF-032: mock-prod VPS not provisioned yet (see docs/ops/tickets/WF-010.md).'
-        echo 'When host exists: wire SSH deploy from main here; secrets via credentials, never git.'
-        error('deploy-mock-prod blocked: no mock-prod host (WF-010)')
+        sh '''#!/usr/bin/env bash
+          set -euo pipefail
+          cd "\$HOST_REPO"
+          if [[ -f "\$HOST_REPO/.env" ]]; then
+            set -a
+            # shellcheck disable=SC1091
+            source "\$HOST_REPO/.env"
+            set +a
+          fi
+          export MOCK_PROD_SSH_PORT="\${MOCK_PROD_SSH_PORT:-22}"
+          export VITE_GOOGLE_CLIENT_ID="\${VITE_GOOGLE_CLIENT_ID:-\${GOOGLE_CLIENT_ID:-}}"
+          if [[ -z "\${MOCK_PROD_HOST:-}" || "\${MOCK_PROD_HOST}" == changeme* ]]; then
+            echo "Set MOCK_PROD_* in \$HOST_REPO/.env (see .env.example) and ensure the SSH key path is visible inside Jenkins." >&2
+            exit 1
+          fi
+          chmod +x ./scripts/deploy-mock-prod.sh
+          ./scripts/deploy-mock-prod.sh
+        '''
       }
     }
   }

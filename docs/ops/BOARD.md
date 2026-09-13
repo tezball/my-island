@@ -25,6 +25,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 
 ## In review
 
@@ -38,7 +39,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
 - [ ] [[ops/tickets/WF-014|WF-014]] P2 Google Sign-In (OIDC console + Spring)
-- [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 - [ ] [[ops/tickets/WF-033|WF-033]] P2 Apple Sign-In (OIDC console + Spring)
 
 ## Done
