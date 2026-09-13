@@ -21,6 +21,7 @@ fi
 # Human tabs after start.
 READY_URLS=(
   http://127.0.0.1:8081/actuator/health
+  http://127.0.0.1:8081/actuator/info
   http://127.0.0.1:8081/api/v1/places
   http://127.0.0.1:5173
   http://127.0.0.1:3030
@@ -68,7 +69,19 @@ compose_ok() {
   command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1
 }
 
+stamp_catalog_build() {
+  export APP_VERSION="${APP_VERSION:-0.0.1-SNAPSHOT}"
+  export APP_BUILD_TIME="${APP_BUILD_TIME:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+  if git -C "$REPO" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    export GIT_COMMIT="${GIT_COMMIT:-$(git -C "$REPO" rev-parse HEAD)}"
+    export GIT_COMMIT_SHORT="${GIT_COMMIT_SHORT:-$(git -C "$REPO" rev-parse --short=12 HEAD)}"
+    export GIT_BRANCH="${GIT_BRANCH:-$(git -C "$REPO" rev-parse --abbrev-ref HEAD)}"
+  fi
+}
+
 cmd_up() {
+  stamp_catalog_build
+  # First Jenkins boot builds the image (plugins) — can take several minutes.
   # First Jenkins boot builds the image (plugins) — can take several minutes.
   "${COMPOSE[@]}" up -d "${INFRA_SERVICES[@]}" --wait --wait-timeout 600
   ensure_catalog_db

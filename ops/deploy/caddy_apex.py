@@ -32,6 +32,10 @@ APEX_SITE = """{$DOMAIN} {
         reverse_proxy island-catalog:8080
     }
 
+    handle /actuator/info {
+        reverse_proxy island-catalog:8080
+    }
+
     @explore path /explore /explore/*
     redir @explore / 308
 
@@ -55,6 +59,9 @@ APP_SITE = """app.{$DOMAIN} {
         reverse_proxy island-catalog:8080
     }
     handle /actuator/health {
+        reverse_proxy island-catalog:8080
+    }
+    handle /actuator/info {
         reverse_proxy island-catalog:8080
     }
     handle {

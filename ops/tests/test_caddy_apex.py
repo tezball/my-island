@@ -65,6 +65,9 @@ def test_apex_cutover_routes_and_keeps_grafana() -> None:
     assert "admin.{$DOMAIN} {\n    redir https://{$DOMAIN}{uri} permanent" in out
     assert "app.{$DOMAIN}" in out
     assert "reverse_proxy island-catalog:8080" in out
+    assert "handle /actuator/health" in out
+    assert "handle /actuator/info" in out
+    assert "handle /actuator/prometheus" not in out
     assert "grafana.{$DOMAIN}" in out
     assert "geolocation=(self)" in out
     assert "basemaps.cartocdn.com" in out

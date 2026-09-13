@@ -31,6 +31,11 @@ class CatalogTest {
     registry.add("catalog.auth.google.stub-enabled", () -> "true");
     registry.add("google.client-id", () -> "test.apps.googleusercontent.com");
     registry.add("google.client-secret", () -> "test-secret");
+    registry.add("GIT_COMMIT", () -> "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    registry.add("GIT_COMMIT_SHORT", () -> "aaaaaaaaaaaa");
+    registry.add("GIT_BRANCH", () -> "main");
+    registry.add("APP_VERSION", () -> "0.0.1-SNAPSHOT");
+    registry.add("APP_BUILD_TIME", () -> "2026-09-13T00:00:00Z");
   }
 
   @Autowired TestRestTemplate http;
@@ -48,6 +53,20 @@ class CatalogTest {
   void prometheusIsScrapable() {
     String body = http.getForObject("/actuator/prometheus", String.class);
     assertThat(body).contains("jvm_memory_used_bytes");
+  }
+
+  @Test
+  void infoReportsVersionAndGitCommit() {
+    Map<?, ?> body = http.getForObject("/actuator/info", Map.class);
+    assertThat(body).isNotNull();
+    assertThat(body.get("app")).isInstanceOf(Map.class);
+    Map<?, ?> app = (Map<?, ?>) body.get("app");
+    assertThat(app.get("service")).isEqualTo("catalog");
+    assertThat(app.get("version")).isEqualTo("0.0.1-SNAPSHOT");
+    assertThat(app.get("gitCommit")).isEqualTo("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    assertThat(app.get("gitCommitShort")).isEqualTo("aaaaaaaaaaaa");
+    assertThat(app.get("gitBranch")).isEqualTo("main");
+    assertThat(app.get("buildTime")).isEqualTo("2026-09-13T00:00:00Z");
   }
 
   @Test

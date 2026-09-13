@@ -1216,3 +1216,30 @@ def test_wf_036_second_brain_atlas() -> None:
     assert "heather" in design.lower()
     assert not (DOCS / ".obsidian" / "plugins" / "homepage" / "main.js").exists()
 
+
+def test_wf_037_mock_prod_info_probe() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-037" in by_id
+    meta = by_id["WF-037"]
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert "tickets/WF-032" in meta.get("parent", "")
+    assert "plans/WF-037" in meta.get("plan", "")
+    assert (OPS / "plans" / "WF-037.md").is_file()
+    caddy = (RUNTIME / "deploy" / "caddy_apex.py").read_text()
+    assert "handle /actuator/health" in caddy
+    assert "handle /actuator/info" in caddy
+    deploy = (REPO / "scripts" / "deploy-mock-prod.sh").read_text()
+    assert "check_deploy_info.py" in deploy
+    assert "GIT_COMMIT" in deploy
+    assert "--force-recreate catalog web" in deploy
+    verifier = (RUNTIME / "scripts" / "check_deploy_info.py").read_text()
+    assert "gitCommit" in verifier
+    runbook = (OPS / "runbooks" / "MOCK_PROD_DEPLOY.md").read_text()
+    assert "/actuator/info" in runbook
+    compose = (REPO / "compose.yml").read_text()
+    assert "GIT_COMMIT: ${GIT_COMMIT:-unknown}" in compose
+    app = (REPO / "services" / "catalog" / "src" / "main" / "resources" / "application.yml").read_text()
+    assert "gitCommit: ${GIT_COMMIT:unknown}" in app
+    assert "env:\n      enabled: true" in app
+

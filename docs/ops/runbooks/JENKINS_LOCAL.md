@@ -22,7 +22,7 @@ Jobs seeded by JCasC:
 |---|---|---|
 | `local-ci` | No | Build bind-mounted `/workspace` (`unit` → `catalog` → `stack`) |
 | `my-island` | Yes | GitHub multibranch; polls every 5m; builds `Jenkinsfile` |
-| `deploy-mock-prod` | No | `scripts/deploy-mock-prod.sh` → fishing-journals.com apex ([[ops/tickets/WF-032]]) |
+| `deploy-mock-prod` | No | `scripts/deploy-mock-prod.sh` → fishing-journals.com; fails unless public `/actuator/info` git SHA matches ([[ops/tickets/WF-037]]) |
 
 ## GitHub token
 
