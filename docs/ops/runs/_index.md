@@ -1,7 +1,26 @@
+---
+title: Runs
+type: moc
+cssclasses:
+  - moc
+---
+
 # Runs
+
+[[atlas/work]] · [[ops/templates/run]]
 
 Copy [[ops/templates/run]] at the end of a planner / implementer / reviewer session.
 
+```dataview
+TABLE role, pr
+FROM "ops/runs"
+WHERE file.name != "_index"
+SORT file.mtime DESC
+LIMIT 25
+```
+
+
+- [[WF-036-implement]] — second brain: atlas, folder colour, engineer notes
 - [[PRD-002-003-011-close]] — POI directory MVP tickets done after #82
 - [[PRD-002-003-011-implement]] — POI directory MVP: seed, Explore PWA, map, Place detail
 - [[WF-035-gherkin]] — Contract plumbing: Gherkin on Testcontainers (3 scenarios)

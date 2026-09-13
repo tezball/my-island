@@ -1,6 +1,8 @@
 ---
 title: Daily notes
 type: moc
+cssclasses:
+  - moc
 ---
 
 # Daily notes

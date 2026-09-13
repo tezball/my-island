@@ -1,3 +1,10 @@
+---
+title: Workflow
+type: moc
+cssclasses:
+  - moc
+---
+
 # Workflow
 
 Policy. Procedures: [[ops/runbooks/_index]].
@@ -18,6 +25,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[agent-pipeline]] | Living canvas: automated vs not |
 | [[e2e-place-stub]] | Place listing stub e2e workshop (living canvas) |
 | [[vault-os-ux]] | Vault OS UX workshop (living canvas) |
+| [[second-brain]] | Second brain / atlas (living canvas) |
 | [[jenkins-local-ci]] | Jenkins local CI canvas |
 | [[agent-dx-pack]] | Agent DX pack (skills, commands, plugins, MCP incl. IntelliJ) |
 | [[cto-test-stack]] | CTO test mix: gates vs tools vs want |

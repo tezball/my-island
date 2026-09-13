@@ -1,5 +1,6 @@
-/* Company OS — Ireland outdoor tokens (peat / gorse / sea / stone / moss).
-   Enable: Appearance → CSS snippets → company-os */
+/* Company OS — Ireland outdoor tokens (peat / gorse / sea / stone / moss / heather).
+   Enable: Appearance → CSS snippets → company-os
+   Folder colour is CSS-only (git-friendly). Do not require Iconize. */
 
 :root {
   --os-peat: #2c2416;
@@ -26,7 +27,138 @@
   --os-mist: #243028;
 }
 
-/* Dashboard / role-home wash */
+/* ── File explorer: folder colour (Maps of Content groups) ── */
+
+.nav-folder-title[data-path="ops"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/tickets"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/dashboards"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/agents"] > .nav-folder-title-content,
+.tree-item-self[data-path="ops"] .tree-item-inner,
+.tree-item-self[data-path="ops/tickets"] .tree-item-inner {
+  color: var(--os-sea) !important;
+  font-weight: 600;
+}
+
+.nav-folder-title[data-path="product"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/plans"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/templates"] > .nav-folder-title-content,
+.tree-item-self[data-path="product"] .tree-item-inner {
+  color: var(--os-gorse) !important;
+  font-weight: 600;
+}
+
+.nav-folder-title[data-path="ops/runbooks"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/workflow"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/workshops"] > .nav-folder-title-content,
+.nav-folder-title[data-path="atlas"] > .nav-folder-title-content,
+.tree-item-self[data-path="atlas"] .tree-item-inner {
+  color: var(--os-moss) !important;
+  font-weight: 600;
+}
+
+.nav-folder-title[data-path="notes"] > .nav-folder-title-content,
+.nav-folder-title[data-path="notes/adr"] > .nav-folder-title-content,
+.nav-folder-title[data-path="notes/meetings"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/company"] > .nav-folder-title-content,
+.tree-item-self[data-path="notes"] .tree-item-inner {
+  color: var(--os-heather) !important;
+  font-weight: 600;
+}
+
+.nav-folder-title[data-path="ops/runs"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/daily"] > .nav-folder-title-content,
+.nav-folder-title[data-path="ops/data"] > .nav-folder-title-content,
+.nav-folder-title[data-path="data"] > .nav-folder-title-content {
+  color: var(--os-stone) !important;
+}
+
+.nav-folder-title[data-path="leads"] > .nav-folder-title-content,
+.nav-folder-title[data-path="automation"] > .nav-folder-title-content,
+.tree-item-self[data-path="leads"] .tree-item-inner,
+.tree-item-self[data-path="automation"] .tree-item-inner {
+  color: var(--os-stone) !important;
+  opacity: 0.72;
+}
+
+.nav-folder-title[data-path="ops"]::before,
+.nav-folder-title[data-path="ops/tickets"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.4em;
+  border-radius: 2px;
+  background: var(--os-sea);
+  flex-shrink: 0;
+}
+
+.nav-folder-title[data-path="product"]::before,
+.nav-folder-title[data-path="ops/plans"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.4em;
+  border-radius: 2px;
+  background: var(--os-gorse);
+  flex-shrink: 0;
+}
+
+.nav-folder-title[data-path="atlas"]::before,
+.nav-folder-title[data-path="ops/runbooks"]::before,
+.nav-folder-title[data-path="ops/workflow"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.4em;
+  border-radius: 2px;
+  background: var(--os-moss);
+  flex-shrink: 0;
+}
+
+.nav-folder-title[data-path="notes"]::before,
+.nav-folder-title[data-path="ops/company"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.4em;
+  border-radius: 2px;
+  background: var(--os-heather);
+  flex-shrink: 0;
+}
+
+.nav-folder-title[data-path="leads"]::before,
+.nav-folder-title[data-path="automation"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.4em;
+  border-radius: 2px;
+  background: var(--os-stone);
+  flex-shrink: 0;
+}
+
+/* Explorer files by lane */
+.nav-file-title[data-path^="ops/tickets/"] .nav-file-title-content {
+  color: var(--os-sea);
+}
+.nav-file-title[data-path^="ops/plans/"] .nav-file-title-content {
+  color: var(--os-gorse);
+}
+.nav-file-title[data-path^="notes/"] .nav-file-title-content {
+  color: var(--os-heather);
+}
+.nav-file-title[data-path="ATLAS.md"] .nav-file-title-content,
+.nav-file-title[data-path="HOME.md"] .nav-file-title-content {
+  color: var(--os-moss);
+  font-weight: 600;
+}
+
+/* ── Note-type washes (cssclasses) ── */
+
 .markdown-preview-view.dashboard,
 .markdown-source-view.dashboard,
 .markdown-preview-view.role-home,
@@ -35,6 +167,60 @@
     linear-gradient(165deg, color-mix(in srgb, var(--os-sea) 8%, transparent) 0%, transparent 42%),
     linear-gradient(15deg, color-mix(in srgb, var(--os-gorse) 6%, transparent) 0%, transparent 38%),
     var(--background-primary);
+}
+
+.markdown-preview-view.workshop,
+.markdown-source-view.workshop {
+  background:
+    linear-gradient(120deg, color-mix(in srgb, var(--os-moss) 7%, transparent) 0%, transparent 45%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.ticket,
+.markdown-source-view.ticket {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-sea) 10%, transparent) 0%, transparent 40%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.plan,
+.markdown-source-view.plan {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-gorse) 9%, transparent) 0%, transparent 40%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.run,
+.markdown-source-view.run {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-stone) 12%, transparent) 0%, transparent 42%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.note,
+.markdown-source-view.note,
+.markdown-preview-view.adr,
+.markdown-source-view.adr {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-heather) 10%, transparent) 0%, transparent 42%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.wiki,
+.markdown-source-view.wiki,
+.markdown-preview-view.product,
+.markdown-source-view.product {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-gorse) 7%, transparent) 0%, transparent 44%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.archive,
+.markdown-source-view.archive {
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--os-stone) 16%, transparent) 0%, transparent 50%),
+    var(--background-primary);
+  opacity: 0.96;
 }
 
 .markdown-preview-view.dashboard h1,
@@ -47,11 +233,32 @@
   letter-spacing: -0.02em;
 }
 
-.markdown-preview-view.workshop,
-.markdown-source-view.workshop {
-  background:
-    linear-gradient(120deg, color-mix(in srgb, var(--os-moss) 7%, transparent) 0%, transparent 45%),
-    var(--background-primary);
+.markdown-preview-view.ticket h1 {
+  color: var(--os-ink);
+  border-bottom: 3px solid var(--os-sea);
+  padding-bottom: 0.35em;
+}
+
+.markdown-preview-view.plan h1,
+.markdown-preview-view.product h1,
+.markdown-preview-view.wiki h1 {
+  color: var(--os-ink);
+  border-bottom: 3px solid var(--os-gorse);
+  padding-bottom: 0.35em;
+}
+
+.markdown-preview-view.note h1,
+.markdown-preview-view.adr h1 {
+  color: var(--os-ink);
+  border-bottom: 3px solid var(--os-heather);
+  padding-bottom: 0.35em;
+}
+
+.markdown-preview-view.run h1,
+.markdown-preview-view.archive h1 {
+  color: var(--os-ink);
+  border-bottom: 3px solid var(--os-stone);
+  padding-bottom: 0.35em;
 }
 
 .markdown-preview-view.role-home h1::before {
@@ -62,6 +269,29 @@
   margin-right: 0.45em;
   border-radius: 2px;
   background: var(--os-sea);
+  vertical-align: middle;
+}
+
+.markdown-preview-view.ticket h1::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  border-radius: 2px;
+  background: var(--os-sea);
+  vertical-align: middle;
+}
+
+.markdown-preview-view.note h1::before,
+.markdown-preview-view.adr h1::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  border-radius: 2px;
+  background: var(--os-heather);
   vertical-align: middle;
 }
 
@@ -84,10 +314,26 @@
 .callout[data-callout="tip"] {
   --callout-color: 196, 160, 53;
 }
+.callout[data-callout="work"] {
+  --callout-color: 42, 111, 124;
+}
+.callout[data-callout="product"] {
+  --callout-color: 196, 160, 53;
+}
+.callout[data-callout="knowledge"] {
+  --callout-color: 61, 107, 79;
+}
+.callout[data-callout="note"] {
+  --callout-color: 107, 76, 109;
+}
+.callout[data-callout="archive"] {
+  --callout-color: 138, 133, 120;
+}
 
-/* Tables on dashboards */
+/* Tables on dashboards and MOCs */
 .markdown-preview-view.dashboard table thead th,
-.markdown-preview-view.role-home table thead th {
+.markdown-preview-view.role-home table thead th,
+.markdown-preview-view.moc table thead th {
   background: color-mix(in srgb, var(--os-sea) 14%, var(--background-primary));
   border-bottom: 2px solid var(--os-sea);
 }
@@ -99,11 +345,13 @@
 
 /* Soft link colour toward sea teal */
 .markdown-preview-view.dashboard a.internal-link,
-.markdown-preview-view.role-home a.internal-link {
+.markdown-preview-view.role-home a.internal-link,
+.markdown-preview-view.moc a.internal-link {
   color: var(--os-sea);
 }
 
 .markdown-preview-view.dashboard a.internal-link:hover,
-.markdown-preview-view.role-home a.internal-link:hover {
+.markdown-preview-view.role-home a.internal-link:hover,
+.markdown-preview-view.moc a.internal-link:hover {
   color: var(--os-gorse);
 }

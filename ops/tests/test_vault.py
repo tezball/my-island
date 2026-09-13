@@ -1157,3 +1157,62 @@ def test_wf_035_test_stack_today_vs_want() -> None:
     assert "TEST_STACK" in dx
     app_test = (REPO / ".cursor" / "skills" / "app-test" / "SKILL.md").read_text()
     assert "TEST_STACK" in app_test
+
+
+def test_wf_036_second_brain_atlas() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-036" in by_id
+    meta = by_id["WF-036"]
+    assert meta["owner"] == "architecture"
+    assert meta["type"] == "workflow"
+    assert meta["priority"] == "P1"
+    assert "tickets/WF-000" in meta.get("parent", "")
+    assert "plans/WF-036" in meta.get("plan", "")
+    assert (OPS / "plans" / "WF-036.md").is_file()
+    assert (DOCS / "ATLAS.md").is_file()
+    for stem in ("work", "product", "engineering", "company", "knowledge", "archive"):
+        assert (DOCS / "atlas" / f"{stem}.md").is_file(), stem
+    assert (DOCS / "notes" / "_index.md").is_file()
+    assert (DOCS / "notes" / "adr" / "_index.md").is_file()
+    assert (DOCS / "notes" / "meetings" / "_index.md").is_file()
+    for tmpl in ("moc.md", "wiki.md", "note.md", "adr.md", "meeting.md"):
+        assert (OPS / "templates" / tmpl).is_file(), tmpl
+    css = (DOCS / ".obsidian" / "snippets" / "company-os.css").read_text()
+    assert "nav-folder-title[data-path=" in css
+    assert "data-path=\"ops/tickets\"]" in css or 'data-path="ops/tickets"' in css
+    assert ".markdown-preview-view.ticket" in css
+    assert ".markdown-preview-view.note" in css
+    appearance = json.loads((DOCS / ".obsidian" / "appearance.json").read_text())
+    assert "company-os" in appearance.get("enabledCssSnippets", [])
+    plugins = json.loads((DOCS / ".obsidian" / "community-plugins.json").read_text())
+    for pid in ("dataview", "homepage", "templater-obsidian", "calendar"):
+        assert pid in plugins, pid
+    app = json.loads((DOCS / ".obsidian" / "app.json").read_text())
+    assert app.get("newFileFolderPath") == "notes"
+    graph = json.loads((DOCS / ".obsidian" / "graph.json").read_text())
+    queries = {g["query"] for g in graph["colorGroups"]}
+    assert "path:ops/tickets" in queries
+    assert "path:notes" in queries
+    atlas = (DOCS / "ATLAS.md").read_text()
+    assert 'FROM "ops/tickets"' in atlas
+    assert "[[atlas/work]]" in atlas
+    home = (DOCS / "HOME.md").read_text()
+    assert "[[ATLAS]]" in home
+    naming = (OPS / "NAMING.md").read_text()
+    assert "notes/" in naming
+    assert "ATLAS.md" in naming
+    plugins_md = (OPS / "PLUGINS.md").read_text()
+    assert "nav-folder-title" in plugins_md
+    brief = (OPS / "workshops" / "second-brain.md").read_text()
+    assert "[[ops/tickets/WF-036]]" in brief
+    canvas = json.loads((OPS / "workflow" / "second-brain.canvas").read_text())
+    files = {n.get("file") for n in canvas["nodes"] if n.get("type") == "file"}
+    assert "ATLAS.md" in files
+    assert "atlas/work.md" in files
+    assert "ops/tickets/WF-036.md" in files
+    assert "second-brain" in (OPS / "workshops" / "_index.md").read_text()
+    design = (OPS / "company" / "VAULT_DESIGN.md").read_text()
+    assert "Folder groups" in design
+    assert "heather" in design.lower()
+    assert not (DOCS / ".obsidian" / "plugins" / "homepage" / "main.js").exists()
+

@@ -25,4 +25,4 @@ Shortlist and trademark landmines: [`product/NAMING.md`](../../product/NAMING.md
 
 ## Vault OS look
 
-Obsidian colour / dashboards: [[ops/company/VAULT_DESIGN]].
+Obsidian colour / dashboards / atlas: [[ops/company/VAULT_DESIGN]]. Sitemap: [[ATLAS]].

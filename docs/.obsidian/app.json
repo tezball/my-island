@@ -4,6 +4,6 @@
   "showUnsupportedFiles": true,
   "readableLineLength": false,
   "newFileLocation": "folder",
-  "newFileFolderPath": "ops/tickets",
+  "newFileFolderPath": "notes",
   "attachmentFolderPath": "ops/assets"
 }
