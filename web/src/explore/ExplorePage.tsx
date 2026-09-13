@@ -1,6 +1,8 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { listCounties, listPublishedPlaces, type County, type Place } from "../api/catalog";
+import type { Me } from "../api/auth";
+import { GoogleLogin } from "../auth/GoogleLogin";
 import { applyFilters, inBounds, parseCsv } from "./filters";
 import { FilterSheet } from "./FilterSheet";
 import { formatKm, haversineKm, hasCoords } from "./geo";
@@ -21,6 +23,7 @@ export function ExplorePage() {
   const [geoOff, setGeoOff] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [pin, setPin] = useState<Place | null>(null);
+  const [me, setMe] = useState<Me | null>(null);
   const [areaNeeded, setAreaNeeded] = useState(false);
   const [searchToken, setSearchToken] = useState(0);
   const [area, setArea] = useState<{
@@ -142,8 +145,11 @@ export function ExplorePage() {
             Explore
             <span>Ireland · OPEN</span>
           </h1>
-          <div className="count" aria-live="polite">
-            {visible.length} places
+          <div className="header-meta">
+            <GoogleLogin me={me} onMe={setMe} />
+            <div className="count" aria-live="polite">
+              {visible.length} places
+            </div>
           </div>
         </header>
         <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>

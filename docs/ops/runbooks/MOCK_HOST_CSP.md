@@ -9,9 +9,9 @@ cssclasses:
 
 # Mock host CSP (fishing-journals.com)
 
-**This repo cannot apply these headers.** `fishing-journals.com` is a mock/public Caddy host outside `tezball/my-island`. Deploy remains blocked ([[ops/tickets/WF-013]], [[ops/tickets/WF-032]]). Local Vite (`:5173`) has no Caddy CSP — that is the demo.
+**Caddy on fishing-journals.com is patched by `ops/deploy/caddy_apex.py` (WF-032).** Local Vite (`:5173`) has no Caddy CSP.
 
-## What is broken on the live host
+## What was broken on the live host
 
 - `Content-Security-Policy`: `connect-src 'self' https://accounts.google.com`
 - `img-src 'self' data: https:` (Commons `<img>` URLs already allowed)
@@ -38,4 +38,4 @@ Merge with the host’s existing `script-src` / `style-src`. Do not paste a full
 
 ## In-repo check
 
-Loopback PWA + seeded POIs with both `latitude` and `longitude` → tiles + pins. That does **not** certify fishing-journals.com.
+Loopback PWA + seeded POIs with both `latitude` and `longitude` → tiles + pins. Mock-prod apex: [[MOCK_PROD_DEPLOY]].

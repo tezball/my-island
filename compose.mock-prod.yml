@@ -1,0 +1,65 @@
+# Mock-prod VPS overlay (WF-032). Apex cutover: fishing-journals.com → my-island.
+#   docker compose -f compose.yml -f compose.mock-prod.yml --env-file .env.mock-prod up -d --build
+# Reuses host Caddy on external network server_default. Catalog health: host :18081.
+name: my-island
+
+services:
+  jenkins:
+    profiles: ["local-jenkins-only"]
+  workspace:
+    profiles: ["local-jenkins-only"]
+  alertmanager:
+    profiles: ["local-jenkins-only"]
+  loki:
+    profiles: ["local-jenkins-only"]
+  prometheus:
+    profiles: ["local-jenkins-only"]
+  grafana:
+    profiles: ["local-jenkins-only"]
+
+  postgres:
+    ports: !override []
+
+  catalog:
+    ports: !override
+      - "18081:8080"
+    environment:
+      APP_ENV: mock-prod
+      APP_SEED_PUBLISH: "true"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      SERVER_SERVLET_SESSION_COOKIE_SECURE: "true"
+    networks:
+      default:
+      server_default:
+        aliases:
+          - island-catalog
+
+  web:
+    image: my-island-web
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-${GOOGLE_CLIENT_ID:-}}
+    working_dir: /usr/share/nginx/html
+    command: ["nginx", "-g", "daemon off;"]
+    environment: !override []
+    ports: !override []
+    volumes: !override []
+    networks:
+      default:
+      server_default:
+        aliases:
+          - island-web
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+networks:
+  server_default:
+    external: true

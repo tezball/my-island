@@ -30,6 +30,7 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 - [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
+- [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 
 ## Blocked
 
@@ -38,7 +39,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
 - [ ] [[ops/tickets/WF-014|WF-014]] P2 Google Sign-In (OIDC console + Spring)
-- [ ] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
 - [ ] [[ops/tickets/WF-033|WF-033]] P2 Apple Sign-In (OIDC console + Spring)
 
 ## Done
