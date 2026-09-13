@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-036-close]] — #84 merged to main; ticket `done`
 - [[WF-036-implement]] — second brain: atlas, folder colour, engineer notes
 - [[PRD-002-003-011-close]] — POI directory MVP tickets done after #82
 - [[PRD-002-003-011-implement]] — POI directory MVP: seed, Explore PWA, map, Place detail
