@@ -19,6 +19,7 @@ Reusable procedures. Workflow *policy* stays in [[ops/workflow/_index]]. These a
 | [[LISTING_ROLLOUT]] | New listing type or region |
 | [[JENKINS_LOCAL]] | Clone→up Jenkins house CI (JCasC, token, jobs) |
 | [[PLACE_LISTING_SIM]] | Repeatable catalog create→list→get against compose (no chaos) |
-| [[MOCK_HOST_CSP]] | fishing-journals.com (or any mock Caddy): MapLibre `connect-src` + geolocation |
+| [[MOCK_HOST_CSP]] | fishing-journals.com Caddy CSP + geolocation (applied by apex cutover) |
+| [[MOCK_PROD_DEPLOY]] | Apex deploy + Google GIS paths + FJ teardown |
 
 If a runbook and [[ops/workflow/SAFETY]] disagree, safety wins.
