@@ -30,6 +30,7 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 - [ ] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
+- [ ] [[ops/tickets/WF-036|WF-036]] P1 Second brain — atlas MOCs, folder colour, engineer notes
 
 ## Blocked
 

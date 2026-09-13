@@ -4,7 +4,10 @@ Open **this folder** as the Obsidian vault. Living company notes and product can
 
 | Path | What |
 |---|---|
-| [`HOME.md`](HOME.md) | Company dashboard |
+| [`HOME.md`](HOME.md) | Company dashboard (website home) |
+| [`ATLAS.md`](ATLAS.md) | Maps of Content — sitemap for every group |
+| [`atlas/`](atlas/_index.md) | Group MOCs (work, product, engineering, company, knowledge, archive) |
+| [`notes/`](notes/_index.md) | Engineer notes, ADRs, meetings |
 | [`AGENTS.md`](AGENTS.md) | Agent instructions |
 | [`ops/`](ops/HOME.md) | Company OS — tickets, board, runbooks, agents |
 | [`product/`](product/README.md) | Product canon (signed 2026-09-05) |
@@ -15,4 +18,4 @@ Open **this folder** as the Obsidian vault. Living company notes and product can
 
 Workshop spine lives in `services/catalog`, root `compose.yml`, and `ops/` runtime (scripts/tests/observability). Implementable marketplace / booking / UI / domain trees were removed.
 
-Dataview: `FROM "ops/tickets"`. Wikilinks: `[[ops/BOARD]]`, `[[product/STACK]]`.
+Dataview: `FROM "ops/tickets"`. Wikilinks: `[[ops/BOARD]]`, `[[product/STACK]]`, `[[ATLAS]]`. Folder colour: snippet `company-os`.

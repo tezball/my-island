@@ -14,8 +14,8 @@ The vault is **`docs/`** only. Do not open `ops/` or the repo root as the vault.
 
 1. Install [Obsidian](https://obsidian.md).
 2. Open vault → Open folder as vault → select **`docs/`**.
-3. Community plugins: turn off Restricted mode, install [`docs/ops/PLUGINS.md`](docs/ops/PLUGINS.md) (Kanban, Dataview, Tasks, Calendar, Templater; Homepage optional → `HOME.md`). Plugin binaries are not committed.
-4. Start at [`docs/HOME.md`](docs/HOME.md) (dashboard) then [`docs/ops/HOME.md`](docs/ops/HOME.md) and [`docs/ops/BOARD.md`](docs/ops/BOARD.md).
+3. Community plugins: turn off Restricted mode, install [`docs/ops/PLUGINS.md`](docs/ops/PLUGINS.md) (Kanban, Dataview, Tasks, Calendar, Templater; Homepage optional → `HOME.md`). Plugin binaries are not committed. Folder colour is the committed CSS snippet (`company-os`).
+4. Start at [`docs/HOME.md`](docs/HOME.md) (dashboard) then [`docs/ATLAS.md`](docs/ATLAS.md) (sitemap), [`docs/ops/HOME.md`](docs/ops/HOME.md), and [`docs/ops/BOARD.md`](docs/ops/BOARD.md).
 
 Wikilinks are vault-relative (`docs/`): `[[ops/tickets/WF-001]]`, `[[product/STACK]]`. Dataview: `FROM "ops/tickets"`.
 
@@ -26,6 +26,8 @@ Tickets use YAML `status`. After a change: `python3 ops/scripts/board_sync.py`. 
 | Path | What |
 |---|---|
 | [`docs/HOME.md`](docs/HOME.md) | **Company dashboard** — snapshot + links |
+| [`docs/ATLAS.md`](docs/ATLAS.md) | **Maps of Content** — website sitemap |
+| [`docs/notes/`](docs/notes/_index.md) | Engineer notes (not tickets) |
 | [`docs/ops/`](docs/ops/HOME.md) | **Company OS** notes: charter, agents, runbooks, tickets |
 | [`docs/product/`](docs/product/README.md) | Product canon, **signed** 2026-09-05 ([`SIGNED.md`](docs/product/SIGNED.md), [`MILESTONES.md`](docs/product/MILESTONES.md)). Implement only on `PRD-*` + `implement` |
 | [`docs/data/leads/`](docs/data/leads/README.md) | Research leads notes (JSON store stays in `data/leads/`) |

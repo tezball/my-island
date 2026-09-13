@@ -1,6 +1,23 @@
+---
+title: Plans
+type: moc
+cssclasses:
+  - moc
+---
+
 # Plans
 
+[[atlas/work]] · [[ops/tickets/_index]]
+
 One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `status: approved` and advances the ticket on `main` by default. Use ticket `gate: human` when a person must act.
+
+```dataview
+TABLE ticket, status
+FROM "ops/plans"
+WHERE file.name != "_index"
+SORT file.name DESC
+```
+
 
 | Plan | Notes |
 |---|---|
@@ -26,6 +43,7 @@ One plan per ticket, same id. Copy [[ops/templates/plan]]. Planner sets plan `st
 | [[WF-024]] | Apple Silicon PostGIS |
 | [[WF-025]] | No prod / auto-merge |
 | [[WF-030]] | Vault OS UX |
+| [[WF-036]] | Second brain — atlas, folder colour, engineer notes |
 | [[WF-031]] | Jenkins local house CI |
 | [[WF-034]] | Agent DX pack (Goal 1 list; Goal 2 after review) |
 | [[WF-035]] | Test stack today vs want (shift-left, human+agent) |

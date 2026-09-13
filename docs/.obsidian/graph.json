@@ -1,0 +1,59 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": false,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:ops/tickets",
+      "color": { "a": 1, "rgb": 2776924 }
+    },
+    {
+      "query": "path:ops/plans",
+      "color": { "a": 1, "rgb": 12881973 }
+    },
+    {
+      "query": "path:product",
+      "color": { "a": 1, "rgb": 12881973 }
+    },
+    {
+      "query": "path:notes",
+      "color": { "a": 1, "rgb": 7031917 }
+    },
+    {
+      "query": "path:atlas",
+      "color": { "a": 1, "rgb": 4033359 }
+    },
+    {
+      "query": "path:ops/runbooks",
+      "color": { "a": 1, "rgb": 4033359 }
+    },
+    {
+      "query": "path:ops/workflow",
+      "color": { "a": 1, "rgb": 4033359 }
+    },
+    {
+      "query": "path:leads",
+      "color": { "a": 1, "rgb": 9078136 }
+    },
+    {
+      "query": "path:automation",
+      "color": { "a": 1, "rgb": 9078136 }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1.1,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.4,
+  "repelStrength": 12,
+  "linkStrength": 1,
+  "linkDistance": 220,
+  "scale": 1,
+  "close": true
+}

@@ -24,6 +24,10 @@ Many agents write in this vault. These rules keep it searchable.
 | Workshop brief | `ops/workshops/<kebab>.md` | `ops/workshops/e2e-place-stub.md` |
 | Canvas | `ops/workflow/<kebab>.canvas` | `ops/workflow/e2e-place-stub.canvas` |
 | CSS snippet | `.obsidian/snippets/<name>.css` | `company-os.css` |
+| Atlas (MOC) | `ATLAS.md` + `atlas/<group>.md` | `atlas/work.md` |
+| Engineer note | `notes/<kebab>.md` | `notes/clone-run-gotchas.md` |
+| ADR | `notes/adr/<SLUG>.md` | `notes/adr/ADR-001-postgis-image.md` |
+| Meeting | `notes/meetings/YYYY-MM-DD-<kebab>.md` | `notes/meetings/2026-09-13-stack.md` |
 
 - **kebab-case** for role slugs and dashboard stems. **SCREAMING_SNAKE** for runbooks and durable company notes. **YYYY-MM-DD** for dailies.
 - Living canvases only; do not put date stamps in the filename; do not drop canvases at vault root.
@@ -32,6 +36,8 @@ Many agents write in this vault. These rules keep it searchable.
 - Do not put spaces in filenames.
 - Indexes are `_index.md`, never `README.md`, inside OS folders. Vault root `docs/README.md` explains the vault; git repo `README.md` is outside the vault.
 - Bases: one `.base` per role dashboard (same stem). Embed with `![[ops/dashboards/<stem>.base]]`. Bases do **not** replace `board_sync.py`.
+- **Atlas** is the website sitemap. Group MOCs: work, product, engineering, company, knowledge, archive. Do not move tickets into those folders.
+- Engineer notes are not tickets. New untitled notes go to `notes/` (Obsidian default). Tickets still come from `new_ticket.py`.
 
 ## Ticket ids
 
@@ -82,6 +88,7 @@ Vault root is `docs/`. Links are vault-relative:
 - `[[ops/agents/roles/orchestrator]]`
 - `[[ops/dashboards/infra]]`
 - `[[product/STACK]]`
+- `[[ATLAS]]` · `[[atlas/work]]` · `[[notes/_index]]`
 
 ## Body
 
@@ -94,5 +101,6 @@ Vault root is `docs/`. Links are vault-relative:
 ## What not to create
 
 - Duplicate product specs in the OS notes. Link to `product/`.
+- Tickets inside `notes/`. If it needs `status`, it is a ticket.
 - Parallel kanban besides [[ops/MILESTONES]] (hand-maintained). Live tickets stay on [[ops/BOARD]].
 - Date-stamped copies of living notes (`CHARTER-v2.md`). Edit in place; git is history.

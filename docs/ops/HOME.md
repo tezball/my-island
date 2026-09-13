@@ -13,9 +13,11 @@ This folder (`docs/ops/`) is the company operating system. **Markdown on `main` 
 
 The mandate is **fully automated agent workflows** (tickets, CI, skills, routines). Application code is [[ops/company/SCAFFOLDING|disposable scaffolding]] — do not preserve or refactor it for its own sake.
 
-Charter: [[ops/CHARTER]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (read-only until `PRD-*` + `implement`): [`product/`](../product/README.md). Old booking app: [`leads/`](../leads/CAMPSITE_LEADS.md), [`automation/`](../automation/OBSERVABILITY_MCP_OPTIONS.md), and git tag `legacy-platform` — history, not a migration source.
+Charter: [[ops/CHARTER]]. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (read-only until `PRD-*` + `implement`): [`product/`](../product/README.md). Old booking app: [`leads/`](../leads/CAMPSITE_LEADS.md), [`automation/`](../automation/OBSERVABILITY_MCP_OPTIONS.md), and git tag `legacy-platform` — history, not a migration source.
 
 ## Right now
+
+→ **[[ATLAS]]** — Maps of Content (work / product / engineering / company / knowledge / archive). Engineer notes: [[notes/_index]].
 
 → **[[ops/dashboards/_index|Role dashboards]]** — human entry by hat (Bases + Dataview).
 
@@ -54,7 +56,7 @@ Charter: [[ops/CHARTER]]. Design: [[ops/company/VAULT_DESIGN]]. Product canon (r
 | [[ops/company/_index\|company/]] | Charter, [[ops/company/DECISIONS\|CEO decisions]], scaffolding, [[ops/company/VAULT_DESIGN\|vault design]] |
 | [[ops/data/_index\|data/]] | Dataview-friendly reference (taxonomy) |
 | [[ops/daily/_index\|daily/]] | Daily notes (YYYY-MM-DD) |
-| [[ops/templates/_index\|templates/]] | Ticket / plan / run / daily / dashboard / workshop / role |
+| [[ops/templates/_index\|templates/]] | Ticket / plan / run / daily / dashboard / workshop / role / moc / wiki / note / adr / meeting |
 
 ## Rules for agents
 
