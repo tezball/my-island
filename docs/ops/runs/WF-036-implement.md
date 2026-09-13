@@ -3,8 +3,8 @@ id: WF-036
 ticket: "[[ops/tickets/WF-036]]"
 role: implementer
 started: 2026-09-13
-finished:
-pr:
+finished: 2026-09-13
+pr: https://github.com/tezball/my-island/pull/84
 cssclasses:
   - run
 ---
@@ -17,7 +17,7 @@ Implementer session: overlay a company second brain on `docs/` without moving ti
 
 ## Result
 
-success | waiting PR
+success — PR #84
 
 ## Follow-up
 
