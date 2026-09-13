@@ -1017,7 +1017,7 @@ def test_wf_034_agent_dx_pack_workshop() -> None:
     meta = by_id["WF-034"]
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
-    assert meta["status"] in {"implement", "review"}
+    assert meta["status"] == "done"
     assert meta.get("gate") in ("", None) or not meta.get("gate")
     assert "plans/WF-034" in meta.get("plan", "")
     assert (OPS / "plans" / "WF-034.md").is_file()
@@ -1105,7 +1105,7 @@ def test_wf_035_test_stack_today_vs_want() -> None:
     assert meta["owner"] == "eng-qa"
     assert meta["type"] == "workflow"
     assert meta["priority"] == "P1"
-    assert meta["status"] in {"implement", "review"}
+    assert meta["status"] == "done"
     assert "tickets/WF-000" in meta.get("parent", "")
     assert "plans/WF-035" in meta.get("plan", "")
     assert (OPS / "plans" / "WF-035.md").is_file()
