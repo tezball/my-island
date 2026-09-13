@@ -34,7 +34,7 @@ Open first: [[ops/workflow/agent-pipeline]] (canvas) · tables: [[ops/workflow/P
 
 - Merge is GitHub Actions, not chat and not Cursor Automations ([[ops/tickets/WF-025]]).
 - House CI: GHA dual-run + local Jenkins ([[ops/workflow/CI]], [[ops/runbooks/JENKINS_LOCAL]]).
-- Docs-only work lands on `main` via short PRs; code uses feature branches ([[ops/workflow/LOOP]]).
+- Docs-only work lands on `main` via short PRs from a worktree; code uses sibling worktrees ([[ops/workflow/LOOP]], [[ops/workflow/WORKTREES]]).
 - Enabling cloud Automations later is a human UI click list in [[ops/plans/WF-003]] — plan kept, ticket closed for MVP.
 
 ## Do not digress into

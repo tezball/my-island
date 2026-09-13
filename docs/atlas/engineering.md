@@ -23,6 +23,7 @@ Heather. This is the engineer second brain: lasting notes, ADRs, meetings. Ticke
 | [[ops/dashboards/engineering]] | Dev queue |
 | [[ops/workflow/AGENT_DX]] | Skills, slash, MCP, IntelliJ |
 | [[ops/workflow/LOCAL]] | Compose + Dev Container |
+| [[ops/workflow/WORKTREES]] | Multi-session git: primary on `main`, sibling worktree per ticket |
 | [[ops/workflow/TEST_STACK]] | Test mix |
 
 ## Templates

@@ -11,7 +11,8 @@ Policy. Procedures: [[ops/runbooks/_index]].
 
 | Note | Purpose |
 |---|---|
-| [[LOOP]] | Plan → implement PR → review → CI auto-merge |
+| [[LOOP]] | Plan → worktree PR → review → CI auto-merge |
+| [[WORKTREES]] | Primary on `main`; sibling worktree per session; VPS tracks `main` |
 | [[DOD]] | Implement Definition of Done (**draft**) |
 | [[TEST_STACK]] | Five lanes: how / what (Gherkin=IT) / wiring / browser / operate |
 | [[PIPELINE]] | Auto vs agent vs human (CTO map + tables) |

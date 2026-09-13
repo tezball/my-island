@@ -16,19 +16,19 @@ Legend: **auto** = machine/CI does it · **agent** = Cursor/chat or Cloud Agent 
 ## Happy path (ticket → `main`)
 
 ```
-pick ticket → plan/docs on main → implement + open PR → review comment
-  → CI → squash-merge → delete branch → confirm main CI green, else fix
+pick ticket → plan/docs on main → implement in worktree + open PR → review comment
+  → CI → squash-merge → delete branch + remove worktree → confirm main CI green, else fix
 ```
 
 | Step | Who | Mode | How |
 |---|---|---|---|
 | Pick next ticket | Agent | agent | `next_ticket.py --role auto` |
 | Plan + land docs on `main` | Planner | agent | Short docs PR; statuses on `main` |
-| Implement + open PR | Implementer | agent | Branch `wf/…` or `prd/…`; `gh pr create` |
+| Implement + open PR | Implementer | agent | Sibling worktree `wf/…` or `prd/…`; `gh pr create` ([[ops/workflow/WORKTREES]]) |
 | Safety review comment | Reviewer | agent | Comment only; no merge from chat |
 | CI `unit` + `catalog` + `stack` | GHA (+ local Jenkins) | **auto** | [[ops/workflow/CI]] · [[ops/tickets/WF-031]] |
 | Approve + squash-merge ready PR | GitHub Actions | **auto** | [[ops/tickets/WF-025]] — drafts/forks skipped |
-| Delete feature branch | Agent / house rule | agent | After merge; no orphan docs branches |
+| Delete feature branch + worktree | Agent / house rule | agent | After merge; primary stays on `main` |
 | Confirm `main` CI green | Agent | agent | Watch Actions on `main` after merge; if red, open a fix PR and repeat from implement |
 | Board sync (when statuses change) | Agent | agent | `board_sync.py` after ticket frontmatter |
 
@@ -45,7 +45,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 | Jenkins multibranch PR poll | agent+secret | Needs `JENKINS_GITHUB_TOKEN` in `.env` |
 | Playwright / consumer UI CI | **human** backlog | Waits [[ops/tickets/WF-011]] |
 | Test mix (how / what / wiring / operate) | map | [[ops/workflow/TEST_STACK]] — contract is Gherkin on Testcontainers |
-| Deploy to mock-prod VPS | **human** / blocked | Stub [[ops/tickets/WF-032]]; host [[ops/tickets/WF-010]] |
+| Deploy to mock-prod VPS | **human** / blocked | From **`main` only** ([[ops/tickets/WF-032]]); host [[ops/tickets/WF-010]] |
 | Production deploy | **never** | No prod Environment ([[ops/company/DECISIONS]]) |
 
 ## Explicitly not automated (today)

@@ -12,6 +12,7 @@ Reusable procedures. Workflow *policy* stays in [[ops/workflow/_index]]. These a
 | Runbook | When |
 |---|---|
 | [[TICKET_LOOP]] | Any ticket: intake → implement → PR → verify → close |
+| [[WORKTREE]] | Add / test / remove a sibling git worktree for one Cursor session |
 | [[ADD_SKILL]] | New Cursor skill, hook, or routine |
 | [[STACK_E2E_PLACE_STUB]] | Place-stub STACK-E2E drill: happy-path compose, HTTP, MCP-or-HTTP observe, chaos overlay |
 | [[WEEKLY_DIGEST]] | Company health, typically Monday |

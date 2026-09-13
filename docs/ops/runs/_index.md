@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-038-implement]] — sibling worktrees; primary on `main`; VPS tracks `main`
 - [[WF-037-close]] — #89 merged to main; ticket `done`; redeploy mock-prod so live info SHA matches tip
 - [[WF-037-implement]] — mock-prod info probe; Caddy health+info; deploy SHA gate
 - [[WF-032-close]] — #85 merged to main; apex deploy; ticket `done`

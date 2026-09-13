@@ -9,7 +9,7 @@ Company dashboard: [`../HOME.md`](../HOME.md) · [[HOME]]
 
 # Company OS
 
-This folder (`docs/ops/`) is the company operating system. **Markdown on `main` is the system of record** (Jira + Confluence). Docs-only updates land on `main` (short PR + delete branch); code work uses feature branches. Open **`docs/`** as the Obsidian vault (not this folder, not the repo root).
+This folder (`docs/ops/`) is the company operating system. **Markdown on `main` is the system of record** (Jira + Confluence). Docs-only updates land on `main` (short PR from a worktree + delete tree); code work uses sibling worktrees ([[ops/workflow/WORKTREES]]). Open **`docs/`** as the Obsidian vault (not this folder, not the repo root). The vault is the **primary** clone, which stays on `main`.
 
 The mandate is **fully automated agent workflows** (tickets, CI, skills, routines). Application code is [[ops/company/SCAFFOLDING|disposable scaffolding]] — do not preserve or refactor it for its own sake.
 
@@ -31,7 +31,7 @@ Charter: [[ops/CHARTER]]. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN
 
 → **[[ops/workflow/TEST_STACK]]** — test mix today vs want (shift-left; gates vs agent tools).
 
-→ **[[ops/workflow/LOOP]]** · **[[ops/workflow/DOD|DoD (draft)]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** · **[[ops/workflow/AGENT_DX|Agent DX toolbox]]** — loop, implement bar, CI, skills, engineer tools.
+→ **[[ops/workflow/LOOP]]** · [[ops/workflow/WORKTREES]] · **[[ops/workflow/DOD|DoD (draft)]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** · **[[ops/workflow/AGENT_DX|Agent DX toolbox]]** — loop, worktrees, implement bar, CI, skills, engineer tools.
 
 → **[[ops/runbooks/_index|Runbooks]]** — ticket loop, digest, support, listing, add-skill.
 

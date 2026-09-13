@@ -59,7 +59,7 @@ Slash skills use `disable-model-invocation: true` so they do not auto-fire. Do *
 3. **Hooks stay tiny.** Point at `ops/HOME.md`. Do not encode product behaviour.
 4. **Thin Spring only.** `spring-catalog` is a pointer at STACK + `services/catalog`. Do not write a framework encyclopedia. No Vite/PWA skill until Explore UI exists.
 5. **Enterprise DX** = clone, `./scripts/app start`, `./scripts/app test`, open **`docs/`** in Obsidian, `next_ticket.py`. If that path breaks, it is an automation-expert ticket, not a frontend ticket.
-6. **Docs on `main`.** Company-state vault updates land on `main` (short PR + delete branch). Do not encode house process in Cursor memory — use skills/rules/LOOP in git. Exception: already on a code feature branch → fold docs into that PR.
+6. **Docs on `main`.** Company-state vault updates land on `main` (short PR from a worktree + delete tree). Do not encode house process in Cursor memory — use skills/rules/LOOP in git. Exception: already in a code worktree → fold docs into that PR. [[WORKTREES]]
 
 ## Grok vs Cursor
 

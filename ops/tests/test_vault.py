@@ -45,6 +45,8 @@ REQUIRED_VAULT = [
     "runbooks/ADD_SKILL.md",
     "runbooks/STACK_E2E_PLACE_STUB.md",
     "runbooks/TICKET_LOOP.md",
+    "runbooks/WORKTREE.md",
+    "workflow/WORKTREES.md",
     "runbooks/GUEST_SUPPORT.md",
     "runbooks/LISTING_ROLLOUT.md",
     "runbooks/PLACE_LISTING_SIM.md",
@@ -92,6 +94,21 @@ def test_required_vault_files_exist() -> None:
         ".obsidian/core-plugins.json",
     ):
         assert (DOCS / rel).is_file(), rel
+
+
+def test_worktrees_primary_stays_on_main() -> None:
+    policy = (OPS / "workflow" / "WORKTREES.md").read_text()
+    assert "Primary stays on `main`" in policy
+    assert "Deploy from `main` only" in policy
+    loop = (OPS / "workflow" / "LOOP.md").read_text()
+    assert "sibling worktree" in loop
+    skill = (REPO / ".cursor" / "skills" / "ops-loop" / "SKILL.md").read_text()
+    assert "no worktree by default" not in skill
+    assert "Sibling worktree" in skill
+    runbook = (OPS / "runbooks" / "WORKTREE.md").read_text()
+    assert "git worktree add" in runbook
+    index = (OPS / "workflow" / "_index.md").read_text()
+    assert "WORKTREES" in index
 
 
 def test_living_markdown_is_under_docs() -> None:

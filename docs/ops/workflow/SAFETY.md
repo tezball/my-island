@@ -11,7 +11,7 @@ Copied from the CTO review, then relaxed by CEO 2026-09-12 ([[ops/company/DECISI
 2. **There is no production.** CEO lock: this company has no prod and probably never will. Do not invent `compose.prod`, prod SSH, or a GitHub Environment prod gate. Local compose is the runtime.
 3. **No prod SQL writes** (vacuous). Local `ops_reader` is SELECT-only. There is no prod SQL MCP to turn on.
 4. **Grafana `--disable-write`.** Silences and datasource edits stay off the agent path.
-5. **One ticket per agent session.**
+5. **One ticket per agent session.** One sibling git worktree per session; primary clone stays on `main` ([[WORKTREES]]).
 6. **Secrets stay in env / Cursor MCP settings.** Not in `ops/` notes.
 7. **Do not restore legacy Jenkins** from `docs/automation/` or tag `legacy-platform`. Greenfield Jenkins-as-code in compose is house CI ([[ops/tickets/WF-031]], [[ops/runbooks/JENKINS_LOCAL]]). GitHub Actions remains the remote dual-run / automerge path until a shared runner exists.
 8. **Do not implement product MVP** unless the ticket id starts with `PRD-` and status is `implement`.

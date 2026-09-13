@@ -42,7 +42,7 @@ Vitest is a merge gate. Playwright still waits on [[ops/tickets/WF-011]]. House:
 
 ## Branch and PR
 
-- Branch: `wf/<id>-slug` or Cloud Agent `cursor/…`.
+- Branch: `wf/<id>-slug` or `prd/<id>-slug` from a sibling worktree ([[ops/workflow/WORKTREES]]); Cloud Agent `cursor/…`.
 - Title: `<id>: <ticket title>`.
 - Body: links `docs/ops/tickets/<id>.md` and `docs/ops/plans/<id>.md`.
 - CI must be green before merge. Ready same-repo PRs are auto-approved and squash-merged by the GHA `automerge` job ([[ops/tickets/WF-025]]). Drafts and forks are skipped. Chat agents do not merge.
