@@ -19,9 +19,9 @@ Skip `type: epic`. Work a child.
 
 ## Docs vs code
 
-- **Docs-only:** checkout `main`, change vault/skill/rule files, short docs PR, CI merges, **delete branch**, confirm `main` CI green (else fix).
-- **Already on a feature branch for code:** put related docs in that PR.
-- Do not park company-state tickets only on a private branch.
+- **Docs-only:** worktree from `origin/main`, change vault/skill/rule files, short docs PR, CI merges, **delete branch + remove worktree**, confirm `main` CI green (else fix). Primary clone stays on `main`.
+- **Already in a feature worktree for code:** put related docs in that PR.
+- Do not park company-state tickets only on a private branch. Layout: [[ops/workflow/WORKTREES]].
 
 ## 1. Intake (Grok or orchestrator)
 
@@ -43,7 +43,7 @@ Product → `PRD-*`. Loop glue → `WF-*`. Live breakage → `INC-*`.
 ## 3. Implement (Cursor)
 
 1. Plan + `implement` on `main`.
-2. Branch from `main`. Boot `./scripts/app start` if verify needs it.
+2. Sibling worktree from `main` ([[ops/runbooks/WORKTREE]]). Boot `./scripts/app start` if verify needs it (one stack on the laptop).
 3. One ticket. Meet [[ops/workflow/DOD]] (draft) + plan Verify. PR. `status: review`. Do not merge from chat.
 
 ## 4. Verify
@@ -56,4 +56,4 @@ Comment only. Never `gh pr merge` from chat.
 
 ## 6. Close
 
-After CI squash-merge: `status: done` on `main`, board_sync, run note, **delete feature branch**, confirm Actions on `main` are green (else open a fix PR).
+After CI squash-merge: `status: done` on `main`, board_sync, run note, **delete feature branch + remove worktree**, `git pull --ff-only` on the primary, confirm Actions on `main` are green (else open a fix PR).

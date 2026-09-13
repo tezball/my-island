@@ -50,7 +50,7 @@ cd my-island
 
 Cursor project MCP (`.cursor/mcp.json`) points at Grafana, Postgres (`ops` + `catalog`), GitHub, Docker, Playwright, and **IntelliJ**. After compose is up, reload MCP. IntelliJ: Settings → Tools → MCP Server → Enable, this repo open; `./scripts/mcp-intellij --help`. Cloud Agents: see [[MCP]] — laptop mcp.json does not follow; use dashboard **stdio** or HTTP PromQL. Do not add IntelliJ to Cloud Agents.
 
-Engineer map (skills, slash, MCP examples): [[AGENT_DX]].
+Engineer map (skills, slash, MCP examples): [[AGENT_DX]]. Multi-session Cursor: [[WORKTREES]] (one Compose; primary stays on `main`).
 
 ### Catalog stub (create → list → get)
 

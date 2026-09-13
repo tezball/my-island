@@ -23,7 +23,7 @@ Open **`docs/`** in Obsidian, the **repo root** in Cursor, and the **same repo**
 
 | Kind | What | How you use it |
 |---|---|---|
-| **CLI** | `./scripts/app` | start / stop / test the compose stack |
+| **CLI** | `./scripts/app` | start / stop / test the compose stack (one stack; [[WORKTREES]]) |
 | **Tests** | gates + tools | [[TEST_STACK]] — how / what / wiring; `/app-test`, `./scripts/dev sim`, later Gatling traffic |
 | **Always-on rules** | house-stack, no-prod, ops-loop, vault notes | Cursor applies them; you do not toggle them |
 | **Skills (auto)** | ops-loop, automation, clone-run, reviewer, mcp-observe, intellij-ide, spring-catalog, STACK-E2E | Agent picks them from the prompt |
@@ -38,7 +38,7 @@ Not in the pack: Stripe, Linear, Notion, Datadog, Grafana Cloud marketplace, Nex
 
 ### Pick the next piece of work
 
-In Cursor: **`/next-ticket`**. The agent runs `python3 ops/scripts/next_ticket.py --role auto`, wears **one** hat, skips epics. Then `/plan` or `/implement` — not both in the same session.
+In Cursor: **`/next-ticket`**. The agent runs `python3 ops/scripts/next_ticket.py --role auto`, wears **one** hat, skips epics. Then `/plan` or `/implement` — not both in the same session. Implement in a **new Cursor window** on a sibling worktree ([[WORKTREES]]); keep `~/Projects/my-island` on `main`.
 
 ### Bring the stack up and prove it
 

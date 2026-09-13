@@ -31,3 +31,4 @@ If Grafana MCP is red: compose down or MCP not reloaded — not a frontend ticke
 - Enable chaos on required CI or default start.
 - Invent Next.js / FastAPI / `compose.prod`.
 - Require IntelliJ for start/test.
+- Start Compose from a second worktree while the laptop stack is already up (ports are shared).
