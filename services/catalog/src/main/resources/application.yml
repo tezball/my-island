@@ -43,6 +43,11 @@ info:
   app:
     service: catalog
     version: ${APP_VERSION:0.0.1-SNAPSHOT}
+    env: ${APP_ENV:local}
+    gitCommit: ${GIT_COMMIT:unknown}
+    gitCommitShort: ${GIT_COMMIT_SHORT:unknown}
+    gitBranch: ${GIT_BRANCH:unknown}
+    buildTime: ${APP_BUILD_TIME:unknown}
 
 management:
   endpoints:
@@ -51,6 +56,9 @@ management:
         include: health,info,prometheus
     access:
       default: unrestricted
+  info:
+    env:
+      enabled: true
   endpoint:
     health:
       probes:

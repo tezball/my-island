@@ -19,6 +19,10 @@ cssclasses:
 
 Jenkins job `deploy-mock-prod` runs the same script when those env vars are present.
 
+Health 200 is not enough. The script stamps `GIT_COMMIT` into the catalog image and then requires public JSON at `/actuator/info` to match that SHA (`ops/scripts/check_deploy_info.py`). HTML (PWA), `unknown`, or a different hash fails the job.
+
+## Google OAuth (reuse fishing-journals client)
+
 ## Google OAuth (reuse fishing-journals client)
 
 Fishing-journals used **Google Identity Services** (not a Spring OAuth2 redirect). Keep these exact:
@@ -37,6 +41,7 @@ Fishing-journals used **Google Identity Services** (not a Spring OAuth2 redirect
 
 - Explore: https://fishing-journals.com/
 - Health: https://fishing-journals.com/actuator/health
+- Info (CI deploy stamp): https://fishing-journals.com/actuator/info
 - Old `/explore/` 308s to `/`
 - `app.` still serves my-island (GIS origin)
 - `admin.` / `venues.` redirect to apex

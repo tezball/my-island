@@ -133,12 +133,23 @@ services:
     build:
       context: ./services/catalog
       dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
+        GIT_COMMIT_SHORT: ${GIT_COMMIT_SHORT:-unknown}
+        GIT_BRANCH: ${GIT_BRANCH:-unknown}
+        APP_VERSION: ${APP_VERSION:-0.0.1-SNAPSHOT}
+        APP_BUILD_TIME: ${APP_BUILD_TIME:-unknown}
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/catalog
       SPRING_DATASOURCE_USERNAME: ops
       SPRING_DATASOURCE_PASSWORD: ops
       APP_ENV: local
       APP_SEED_PUBLISH: "true"
+      GIT_COMMIT: ${GIT_COMMIT:-unknown}
+      GIT_COMMIT_SHORT: ${GIT_COMMIT_SHORT:-unknown}
+      GIT_BRANCH: ${GIT_BRANCH:-unknown}
+      APP_VERSION: ${APP_VERSION:-0.0.1-SNAPSHOT}
+      APP_BUILD_TIME: ${APP_BUILD_TIME:-unknown}
     ports:
       - "8081:8080"
     depends_on:

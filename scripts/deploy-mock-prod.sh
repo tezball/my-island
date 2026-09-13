@@ -23,6 +23,7 @@ else
 fi
 PUBLIC_ORIGIN="${PUBLIC_ORIGIN%/}"
 PUBLIC_HEALTH_URL="${MOCK_PROD_PUBLIC_HEALTH_URL:-${PUBLIC_ORIGIN}/actuator/health}"
+PUBLIC_INFO_URL="${MOCK_PROD_PUBLIC_INFO_URL:-${PUBLIC_ORIGIN}/actuator/info}"
 CADDYFILE_HOST="${MOCK_PROD_CADDYFILE:-/home/ubuntu/app/server/Caddyfile}"
 FJ_COMPOSE_DIR="${MOCK_PROD_FJ_COMPOSE_DIR:-/home/ubuntu/app/server}"
 
@@ -38,6 +39,17 @@ if [[ ! -f "$MOCK_PROD_SSH_KEY_PATH" ]]; then
   echo "MOCK_PROD_SSH_KEY_PATH must point to a readable private key (got: ${MOCK_PROD_SSH_KEY_PATH:-empty})." >&2
   exit 1
 fi
+
+EXPECTED_COMMIT="$(git -C "$REPO" rev-parse HEAD)"
+EXPECTED_SHORT="$(git -C "$REPO" rev-parse --short=12 HEAD)"
+EXPECTED_BRANCH="$(git -C "$REPO" rev-parse --abbrev-ref HEAD)"
+APP_VERSION="${APP_VERSION:-0.0.1-SNAPSHOT}"
+APP_BUILD_TIME="${APP_BUILD_TIME:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+if [[ -z "$EXPECTED_COMMIT" ]]; then
+  echo "Could not resolve git HEAD for deploy stamp." >&2
+  exit 1
+fi
+echo "==> Stamping catalog image GIT_COMMIT=${EXPECTED_COMMIT} version=${APP_VERSION} branch=${EXPECTED_BRANCH}"
 
 SSH_BASE=(
   ssh
@@ -74,6 +86,11 @@ cat >"$REMOTE_ENV" <<EOF
 GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
 GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
 VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID:-${GOOGLE_CLIENT_ID:-}}
+GIT_COMMIT=${EXPECTED_COMMIT}
+GIT_COMMIT_SHORT=${EXPECTED_SHORT}
+GIT_BRANCH=${EXPECTED_BRANCH}
+APP_VERSION=${APP_VERSION}
+APP_BUILD_TIME=${APP_BUILD_TIME}
 EOF
 
 echo "==> Upload deploy env (Google OAuth names only; values not printed)"
@@ -99,9 +116,10 @@ if need and fj.exists():
             k, v = line.split("=", 1)
             vals[k] = v
     vals.setdefault("VITE_GOOGLE_CLIENT_ID", vals.get("GOOGLE_CLIENT_ID", ""))
-    dest.write_text("".join(f"{k}={vals[k]}\n" for k in ("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "VITE_GOOGLE_CLIENT_ID") if k in vals))
+    dest.write_text("".join(f"{k}={vals[k]}\n" for k, v in vals.items() if v is not None))
 print("google_client_id_set", bool(vals.get("GOOGLE_CLIENT_ID")))
 print("google_secret_set", bool(vals.get("GOOGLE_CLIENT_SECRET")))
+print("git_commit_set", bool(vals.get("GIT_COMMIT")))
 PY
 REMOTE
 
@@ -123,7 +141,7 @@ if docker exec my-island-postgres-1 psql -U ops -d catalog -tAc "select descript
   docker volume rm my-island_ops_pg 2>/dev/null || true
 fi
 docker compose -f compose.yml -f compose.mock-prod.yml --env-file .env.mock-prod build
-docker compose -f compose.yml -f compose.mock-prod.yml --env-file .env.mock-prod up -d --wait --wait-timeout 900
+docker compose -f compose.yml -f compose.mock-prod.yml --env-file .env.mock-prod up -d --wait --wait-timeout 900 --force-recreate catalog web
 REMOTE
 
 echo "==> Dump then stop fishing-journals app services (keep Caddy + Grafana)"
@@ -183,6 +201,23 @@ until json_up "$PUBLIC_HEALTH_URL"; do
 done
 echo "Public catalog health 200 UP at ${PUBLIC_HEALTH_URL}"
 
+echo "==> Public info must match GIT_COMMIT=${EXPECTED_COMMIT}: ${PUBLIC_INFO_URL}"
+info_deadline=$((SECONDS + 120))
+until python3 "$REPO/ops/scripts/check_deploy_info.py" \
+  --url "$PUBLIC_INFO_URL" \
+  --expect-commit "$EXPECTED_COMMIT" \
+  --expect-version "$APP_VERSION" \
+  --expect-env mock-prod; do
+  if (( SECONDS >= info_deadline )); then
+    echo "Timed out waiting for stamped catalog info at ${PUBLIC_INFO_URL}" >&2
+    curl -sS -D - -o /tmp/island-info.body --max-time 15 -H 'Accept: application/json' "$PUBLIC_INFO_URL" | head -20 >&2 || true
+    head -c 400 /tmp/island-info.body >&2 || true
+    echo >&2
+    exit 1
+  fi
+  sleep 5
+done
+
 echo "==> Seed published POIs (idempotent)"
 "${SSH_BASE[@]}" "${MOCK_PROD_USER}@${MOCK_PROD_HOST}" bash -s <<REMOTE
 set -euo pipefail
@@ -192,5 +227,7 @@ python3 ops/scripts/import_leads.py --place-type poi --require-coords --publish-
 REMOTE
 
 echo "Apex Explore: ${PUBLIC_ORIGIN}/"
+echo "Health: ${PUBLIC_HEALTH_URL}"
+echo "Info:   ${PUBLIC_INFO_URL}  (version + git SHA — CI gate)"
 echo "Google GIS: POST ${PUBLIC_ORIGIN}/api/auth/google  (idToken) — same path as fishing-journals"
 echo "Deploy OK"

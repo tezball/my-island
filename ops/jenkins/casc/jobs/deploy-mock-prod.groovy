@@ -1,6 +1,6 @@
 // Seeded by JCasC (WF-031 / WF-032). SSH deploy to mock-prod VPS via scripts/deploy-mock-prod.sh
 pipelineJob('deploy-mock-prod') {
-  description('Deploy main → mock-prod VPS at domain root (my-island). Secrets from repo .env — never git. Not a GitHub production Environment.')
+  description('Deploy main → mock-prod VPS. Fails unless public /actuator/info gitCommit matches HEAD (WF-037). Secrets from repo .env — never git. Not a GitHub production Environment.')
   definition {
     cps {
       sandbox(true)
