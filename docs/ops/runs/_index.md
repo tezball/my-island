@@ -20,6 +20,8 @@ LIMIT 25
 ```
 
 
+- [[WF-037-close]] — #89 merged to main; ticket `done`; redeploy mock-prod so live info SHA matches tip
+- [[WF-037-implement]] — mock-prod info probe; Caddy health+info; deploy SHA gate
 - [[WF-032-close]] — #85 merged to main; apex deploy; ticket `done`
 - [[WF-036-close]] — #84 merged to main; ticket `done`
 - [[WF-036-implement]] — second brain: atlas, folder colour, engineer notes
