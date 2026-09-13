@@ -3,8 +3,8 @@ id: WF-037
 ticket: "[[ops/tickets/WF-037]]"
 role: implementer
 started: 2026-09-13
-finished:
-pr:
+finished: 2026-09-13
+pr: https://github.com/tezball/my-island/pull/89
 cssclasses:
   - run
 ---
@@ -17,8 +17,8 @@ CEO: health 200 on mock-prod was a silent success while `/actuator/info` served 
 
 ## Result
 
-in progress — PR next.
+success — [#89](https://github.com/tezball/my-island/pull/89) squash-merged to `main` (`fe90716`).
 
 ## Follow-up
 
-Redeploy after merge so live Caddy picks up the info handle; then Jenkins `deploy-mock-prod` is the gate.
+Redeploy mock-prod / Jenkins `deploy-mock-prod` so live Caddy picks up the info handle and public `/actuator/info` SHA matches tip.

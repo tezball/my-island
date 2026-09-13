@@ -25,7 +25,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
-- [ ] [[ops/tickets/WF-037|WF-037]] P1 Mock-prod info probe (version + git hash)
 
 ## In review
 
@@ -73,4 +72,5 @@ kanban-plugin: basic
 - [x] [[ops/tickets/WF-034|WF-034]] P1 Agent DX pack — skills, commands, plugins, MCP
 - [x] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 - [x] [[ops/tickets/WF-036|WF-036]] P1 Second brain — atlas MOCs, folder colour, engineer notes
+- [x] [[ops/tickets/WF-037|WF-037]] P1 Mock-prod info probe (version + git hash)
 - [x] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
