@@ -1260,3 +1260,23 @@ def test_wf_037_mock_prod_info_probe() -> None:
     assert "gitCommit: ${GIT_COMMIT:unknown}" in app
     assert "env:\n      enabled: true" in app
 
+
+def test_inc_001_mutes_legacy_fj_alerts() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "INC-001" in by_id
+    meta = by_id["INC-001"]
+    assert meta["type"] == "incident"
+    assert meta["owner"] == "ops-incidents"
+    assert "tickets/WF-032" in meta.get("parent", "")
+    assert "plans/INC-001" in meta.get("plan", "")
+    assert (OPS / "plans" / "INC-001.md").is_file()
+    mute = (RUNTIME / "deploy" / "disable_legacy_alerts.py").read_text()
+    assert "receiver: keep" in mute
+    assert "groups: []" in mute
+    assert "email_configs" not in mute
+    deploy = (REPO / "scripts" / "deploy-mock-prod.sh").read_text()
+    assert "disable_legacy_alerts.py" in deploy
+    runbook = (OPS / "runbooks" / "MOCK_PROD_DEPLOY.md").read_text()
+    assert "INC-001" in runbook
+    assert (OPS / "runs" / "INC-001-implement.md").is_file()
+

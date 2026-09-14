@@ -47,6 +47,7 @@ Fishing-journals used **Google Identity Services** (not a Spring OAuth2 redirect
 - `admin.` / `venues.` redirect to apex
 - FJ dump: `/opt/backups/fishing-journals-*.sql.gz`
 - Grafana stays at `grafana.fishing-journals.com`
+- Leftover fishing-journals Prometheus/Alertmanager **must not email**. `deploy-mock-prod.sh` runs `ops/deploy/disable_legacy_alerts.py` (Alertmanager `keep` receiver, empty Prometheus rules). Pre-release: we are not on-call for this host ([[ops/tickets/INC-001]]).
 
 ## CSP / geolocation
 

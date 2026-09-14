@@ -130,6 +130,19 @@ python3 '${MOCK_PROD_REMOTE_DIR}/ops/deploy/caddy_apex.py' '${CADDYFILE_HOST}'
 docker exec server-caddy-1 caddy reload --config /etc/caddy/Caddyfile
 REMOTE
 
+echo "==> Mute leftover fishing-journals down-alert email (mock-prod is not prod)"
+"${SSH_BASE[@]}" "${MOCK_PROD_USER}@${MOCK_PROD_HOST}" bash -s <<REMOTE
+set -euo pipefail
+python3 '${MOCK_PROD_REMOTE_DIR}/ops/deploy/disable_legacy_alerts.py'
+# Restart so bind-mounted files are re-read (in-place write + reload can miss an inode).
+if docker ps --format '{{.Names}}' | grep -qx server-alertmanager-1; then
+  docker restart server-alertmanager-1
+fi
+if docker ps --format '{{.Names}}' | grep -qx server-prometheus-1; then
+  docker restart server-prometheus-1
+fi
+REMOTE
+
 echo "==> docker compose build + up (project my-island)"
 "${SSH_BASE[@]}" "${MOCK_PROD_USER}@${MOCK_PROD_HOST}" bash -s <<REMOTE
 set -euo pipefail

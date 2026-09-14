@@ -29,6 +29,7 @@ kanban-plugin: basic
 
 ## In review
 
+- [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
 
 ## Blocked
 
