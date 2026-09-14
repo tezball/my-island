@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/INC-001]]"
 role: implementer
 started: 2026-09-14
 finished: 2026-09-14
-pr:
+pr: https://github.com/tezball/my-island/pull/92
 cssclasses:
   - run
 ---
