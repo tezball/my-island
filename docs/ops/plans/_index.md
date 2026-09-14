@@ -45,6 +45,7 @@ SORT file.name DESC
 | [[WF-030]] | Vault OS UX |
 | [[WF-036]] | Second brain — atlas, folder colour, engineer notes |
 | [[WF-037]] | Mock-prod info probe (version + git hash) |
+| [[INC-001]] | Mute leftover fishing-journals down-alert email |
 | [[WF-038]] | Git worktrees for multi-session Cursor |
 | [[WF-031]] | Jenkins local house CI |
 | [[WF-034]] | Agent DX pack (Goal 1 list; Goal 2 after review) |
