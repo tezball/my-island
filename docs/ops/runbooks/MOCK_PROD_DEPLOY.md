@@ -23,14 +23,12 @@ Health 200 is not enough. The script stamps `GIT_COMMIT` into the catalog image 
 
 ## Google OAuth (reuse fishing-journals client)
 
-## Google OAuth (reuse fishing-journals client)
-
-Fishing-journals used **Google Identity Services** (not a Spring OAuth2 redirect). Keep these exact:
+Fishing-journals used **Google Identity Services** (not a Spring OAuth2 redirect). Exact Console origins + click path: [[GOOGLE_GIS]]. Keep these:
 
 | What | Value |
 |---|---|
 | Web client | Same `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` as `server/.env` on the VPS |
-| Authorized JavaScript origins | `https://fishing-journals.com` and `https://app.fishing-journals.com` |
+| Authorized JavaScript origins | `https://fishing-journals.com` and `https://app.fishing-journals.com` (plus local `http://localhost` + `http://localhost:5173` — [[GOOGLE_GIS]]) |
 | Token exchange | `POST /api/auth/google` JSON `{"idToken":"<GIS credential>"}` |
 | Session | `GET /api/v1/me` (cookie); `POST /api/auth/logout` |
 | Do **not** register | `/login/oauth2/code/google` unless you later switch to Spring OIDC |

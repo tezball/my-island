@@ -22,5 +22,6 @@ Reusable procedures. Workflow *policy* stays in [[ops/workflow/_index]]. These a
 | [[PLACE_LISTING_SIM]] | Repeatable catalog create→list→get against compose (no chaos) |
 | [[MOCK_HOST_CSP]] | fishing-journals.com Caddy CSP + geolocation (applied by apex cutover) |
 | [[MOCK_PROD_DEPLOY]] | Apex deploy + Google GIS paths + FJ teardown |
+| [[GOOGLE_GIS]] | Google Sign-In JS origins (Console + localhost vs 127.0.0.1) |
 
 If a runbook and [[ops/workflow/SAFETY]] disagree, safety wins.
