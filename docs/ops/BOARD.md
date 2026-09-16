@@ -26,11 +26,11 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
-- [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 
 ## In review
 
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
+- [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 
 ## Blocked
 
