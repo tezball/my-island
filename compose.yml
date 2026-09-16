@@ -173,6 +173,8 @@ services:
     command: ["bash", "-lc", "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"]
     environment:
       CATALOG_PROXY: http://catalog:8080
+      # Same Web client as mock-prod. GIS origin is localhost:5173, not 127.0.0.1.
+      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-${GOOGLE_CLIENT_ID:-}}
     ports:
       - "5173:5173"
     depends_on:

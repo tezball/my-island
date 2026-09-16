@@ -1280,3 +1280,38 @@ def test_inc_001_mutes_legacy_fj_alerts() -> None:
     assert "INC-001" in runbook
     assert (OPS / "runs" / "INC-001-implement.md").is_file()
 
+
+def test_wf_039_gis_origin_mismatch() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-039" in by_id
+    meta = by_id["WF-039"]
+    assert meta["type"] == "bug"
+    assert meta["owner"] == "eng-backend"
+    assert "tickets/WF-032" in meta.get("parent", "")
+    assert "plans/WF-039" in meta.get("plan", "")
+    assert (OPS / "plans" / "WF-039.md").is_file()
+    runbook = (OPS / "runbooks" / "GOOGLE_GIS.md").read_text()
+    for origin in (
+        "https://fishing-journals.com",
+        "https://app.fishing-journals.com",
+        "http://localhost",
+        "http://localhost:5173",
+    ):
+        assert origin in runbook
+    assert "Authorized JavaScript origins" in runbook
+    assert "console.cloud.google.com/auth/clients" in runbook
+    assert "127.0.0.1:5173" in runbook
+    assert "/login/oauth2/code/google" in runbook
+    assert "production host" in runbook.lower() or "no prod" in runbook.lower() or "Not production" in runbook
+    index = (OPS / "runbooks" / "_index.md").read_text()
+    assert "GOOGLE_GIS" in index
+    compose = (REPO / "compose.yml").read_text()
+    assert "VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-${GOOGLE_CLIENT_ID:-}}" in compose
+    login = (REPO / "web" / "src" / "auth" / "GoogleLogin.tsx").read_text()
+    assert "gisCanonicalUrl" in login
+    assert "login_uri" not in login
+    vite = (REPO / "web" / "vite.config.ts").read_text()
+    assert "no-referrer-when-downgrade" in vite
+    mock = (OPS / "runbooks" / "MOCK_PROD_DEPLOY.md").read_text()
+    assert "GOOGLE_GIS" in mock
+

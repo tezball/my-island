@@ -30,6 +30,7 @@ kanban-plugin: basic
 ## In review
 
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
+- [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 
 ## Blocked
 

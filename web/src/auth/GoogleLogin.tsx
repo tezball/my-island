@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { fetchMe, loginWithGoogleIdToken, logout, type Me } from "../api/auth"
+import { gisCanonicalUrl, gisInitializeConfig, gisOriginMismatchMessage } from "./gisOrigin"
 
 const GIS_SRC = "https://accounts.google.com/gsi/client"
 
@@ -51,19 +52,31 @@ export function GoogleLogin({ me, onMe }: Props) {
     [onMe],
   )
 
+  const onGisError = useCallback((err: { type?: string; message?: string }) => {
+    const detail = `${err.type ?? ""} ${err.message ?? ""}`
+    if (/origin/i.test(detail)) {
+      setError(gisOriginMismatchMessage(window.location.origin))
+      return
+    }
+    setError(err.message || err.type || "Google Sign-In failed")
+  }, [])
+
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       if (!clientId || clientId.includes("changeme")) return
       if (me) return
+      const canonical = gisCanonicalUrl(window.location.href)
+      if (canonical) {
+        window.location.replace(canonical)
+        return
+      }
       try {
         await loadGisScript()
         if (cancelled || !btnRef.current) return
-        window.google?.accounts.id.initialize({
-          client_id: clientId,
-          callback: handleCredential,
-          ux_mode: "popup",
-        })
+        window.google?.accounts.id.initialize(
+          gisInitializeConfig(clientId, handleCredential, onGisError),
+        )
         window.google?.accounts.id.renderButton(btnRef.current, {
           type: "standard",
           theme: "outline",
@@ -81,7 +94,7 @@ export function GoogleLogin({ me, onMe }: Props) {
     return () => {
       cancelled = true
     }
-  }, [clientId, handleCredential, me])
+  }, [clientId, handleCredential, me, onGisError])
 
   useEffect(() => {
     let cancelled = false

@@ -38,6 +38,10 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+    // GIS on http://localhost: Google docs want no-referrer-when-downgrade (not no-referrer).
+    headers: {
+      "Referrer-Policy": "no-referrer-when-downgrade",
+    },
     proxy: {
       "/api": { target: catalog, changeOrigin: true },
     },
