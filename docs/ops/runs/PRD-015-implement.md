@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/PRD-015]]"
 role: implementer
 started: 2026-09-19
 finished: 2026-09-19
-pr:
+pr: https://github.com/tezball/my-island/pull/97
 cssclasses:
   - run
 ---
