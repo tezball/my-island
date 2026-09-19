@@ -106,6 +106,7 @@ seed_local_pois() {
     return 0
   fi
   echo "seeding published POIs from data/leads (local demo; not PRD-009 counsel)"
+  export CATALOG_IMPORT_KEY="${CATALOG_IMPORT_KEY:-local-import}"
   python3 "$REPO/ops/scripts/import_leads.py" \
     --place-type poi \
     --require-coords \

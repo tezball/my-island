@@ -52,6 +52,8 @@ def request(
     if json_body is not None:
         data = json.dumps(json_body).encode()
         headers["Content-Type"] = "application/json"
+        key = os.environ.get("CATALOG_IMPORT_KEY", "").strip() or "local-import"
+        headers["X-Catalog-Import-Key"] = key
     req = urllib.request.Request(url, data=data, method=method, headers=headers)
     started = time.perf_counter()
     try:

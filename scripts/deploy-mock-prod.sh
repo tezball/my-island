@@ -239,6 +239,7 @@ echo "==> Seed published POIs (idempotent)"
 "${SSH_BASE[@]}" "${MOCK_PROD_USER}@${MOCK_PROD_HOST}" bash -s <<REMOTE
 set -euo pipefail
 cd '${MOCK_PROD_REMOTE_DIR}'
+export CATALOG_IMPORT_KEY="\${CATALOG_IMPORT_KEY:-local-import}"
 python3 ops/scripts/import_leads.py --place-type poi --require-coords --publish-local \
   --base-url 'http://127.0.0.1:${HEALTH_PORT}'
 REMOTE

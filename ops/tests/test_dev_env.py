@@ -167,6 +167,68 @@ def test_app_cli_help_and_no_chaos() -> None:
     assert unknown.returncode != 0
 
 
+def test_seed_and_compose_share_catalog_import_key() -> None:
+    compose = (REPO / "compose.yml").read_text()
+    assert "CATALOG_IMPORT_KEY: ${CATALOG_IMPORT_KEY:-local-import}" in compose
+    dev = (REPO / "scripts" / "dev").read_text()
+    seed = dev.split("seed_local_pois()")[1].split("ensure_catalog_db()")[0]
+    assert "CATALOG_IMPORT_KEY" in seed
+    assert "local-import" in seed
+    assert "import_leads.py" in seed
+    importer = (REPO / "ops" / "scripts" / "import_leads.py").read_text()
+    assert 'DEFAULT_IMPORT_KEY = "local-import"' in importer
+    assert "X-Catalog-Import-Key" in importer
+
+
+@pytest.mark.stack
+def test_seeded_pois_and_place_post_requires_import_key() -> None:
+    """GHA compose stack: seed must write Places; anonymous POST stays 401."""
+    base = catalog_base()
+    if not base:
+        _require_or_skip("Catalog is not reachable")
+        return
+    with urllib.request.urlopen(f"{base}/api/v1/places?published=true", timeout=15) as response:
+        published = json.loads(response.read().decode())
+    assert isinstance(published, list)
+    assert len(published) >= 90, f"seed expected ~101 POIs, got {len(published)}"
+
+    payload = json.dumps(
+        {
+            "name": "Anon write blocked",
+            "slug": "anon-write-blocked-stack",
+            "categoryId": "poi",
+            "countyId": "kerry",
+            "published": True,
+            "latitude": 51.77,
+            "longitude": -10.54,
+        }
+    ).encode()
+    anon = urllib.request.Request(
+        f"{base}/api/v1/places",
+        data=payload,
+        method="POST",
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+    )
+    try:
+        urllib.request.urlopen(anon, timeout=10)
+        pytest.fail("anonymous Place POST must not succeed")
+    except urllib.error.HTTPError as exc:
+        assert exc.code in {401, 403}
+
+    keyed = urllib.request.Request(
+        f"{base}/api/v1/places",
+        data=payload.replace(b"anon-write-blocked-stack", b"import-key-stack-ok"),
+        method="POST",
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-Catalog-Import-Key": os.environ.get("CATALOG_IMPORT_KEY", "local-import"),
+        },
+    )
+    with urllib.request.urlopen(keyed, timeout=10) as response:
+        assert response.status in {200, 201}
+
+
 def test_dev_start_stop_skip_gui_and_no_chaos() -> None:
     dev = (REPO / "scripts" / "dev").read_text()
     assert "cmd_start()" in dev
