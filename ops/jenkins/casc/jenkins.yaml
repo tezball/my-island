@@ -38,3 +38,4 @@ jobs:
   - file: /var/jenkins_casc_jobs/local-ci.groovy
   - file: /var/jenkins_casc_jobs/github-multibranch.groovy
   - file: /var/jenkins_casc_jobs/deploy-mock-prod.groovy
+  - file: /var/jenkins_casc_jobs/gatling-trickle.groovy

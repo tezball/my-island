@@ -51,7 +51,7 @@ Same files, two jobs: **prove** (lanes 1–4) and **operate** (lane 5).
 | `/app-test` · `./scripts/app test` | 1–3 | Clone→prove |
 | `mvnw test` | 1–2 | Contract without compose; run `features/*.feature` |
 | `./scripts/dev sim` | 5 | Seed unique places (today’s traffic) |
-| `./scripts/dev traffic` (**want**) | 5 | Steady Gatling flow + metrics |
+| `./scripts/dev traffic` | 5 | Light Gatling trickle (Guest login / places / VisitIntent); not weekly soak |
 | `/stack-e2e` | 5 | Chaos drill; restore happy path |
 | Playwright MCP | 4 | Tap the running PWA |
 
