@@ -51,6 +51,7 @@ SORT file.name DESC
 | [[WF-034]] | Agent DX pack (Goal 1 list; Goal 2 after review) |
 | [[WF-035]] | Test stack today vs want (shift-left, human+agent) |
 | [[WF-040]] | Unattended mock-prod from green `main` |
+| [[WF-048]] | Main CI after GITHUB_TOKEN squash-merge (dispatch + PR-head gate) |
 | [[WF-041]] | Test-server Prom/Loki + Grafana MCP HTTP/SSE (not compose-only) |
 | [[WF-042]] | Agent MCP pack (no secrets in docs) |
 | [[WF-043]] | Chaos Monkey in CI (retries/fallbacks; not public host every deploy) |

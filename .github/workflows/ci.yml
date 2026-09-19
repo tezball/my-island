@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [main]
+  # GITHUB_TOKEN squash-merge does not fire `push`. Automerge dispatches this
+  # so origin/main gets check-runs Jenkins deploy-mock-prod can see (WF-048).
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -92,6 +95,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: write
     steps:
       - name: Approve and squash-merge
         uses: actions/github-script@v7
@@ -111,10 +115,6 @@ jobs:
               core.warning(`approve skipped: ${error.message}`);
             }
             const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
-            if (pr.merged) {
-              core.info('already merged');
-              return;
-            }
             if (pr.draft) {
               core.info('draft — skip');
               return;
@@ -123,19 +123,35 @@ jobs:
               core.info('fork — skip');
               return;
             }
-            await github.rest.pulls.merge({
-              owner,
-              repo,
-              pull_number,
-              merge_method: 'squash',
-              sha: pr.head.sha,
-            });
+            if (!pr.merged) {
+              await github.rest.pulls.merge({
+                owner,
+                repo,
+                pull_number,
+                merge_method: 'squash',
+                sha: pr.head.sha,
+              });
+            } else {
+              core.info('already merged');
+            }
+            try {
+              await github.rest.actions.createWorkflowDispatch({
+                owner,
+                repo,
+                workflow_id: 'ci.yml',
+                ref: 'main',
+              });
+            } catch (error) {
+              core.warning(`main CI dispatch skipped: ${error.message}`);
+            }
 
   # WF-040: laptop Jenkins polls GitHub checks (cron H/5). This job is the
   # "main is green" signal — not a GitHub production Environment, not SSH.
   mock-prod-signal:
     name: mock-prod signal
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref == 'refs/heads/main'
     needs: [unit, catalog, web, stack]
     runs-on: ubuntu-latest
     steps:

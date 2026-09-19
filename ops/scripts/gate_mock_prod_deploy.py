@@ -44,7 +44,7 @@ def current_branch(repo: str) -> str:
     return git("rev-parse", "--abbrev-ref", "HEAD", cwd=repo)
 
 
-def fetch_json(url: str, token: str, timeout: float) -> dict[str, Any]:
+def fetch_json(url: str, token: str, timeout: float) -> Any:
     headers = {
         "Accept": "application/vnd.github+json",
         "User-Agent": "my-island-wf-040",
@@ -68,6 +68,8 @@ def check_runs(owner: str, repo: str, sha: str, token: str, timeout: float) -> l
         "?per_page=100"
     )
     payload = fetch_json(url, token, timeout)
+    if not isinstance(payload, dict):
+        raise GateError("GitHub check-runs payload missing list")
     runs = payload.get("check_runs")
     if not isinstance(runs, list):
         raise GateError("GitHub check-runs payload missing list")
@@ -103,6 +105,32 @@ def required_conclusions(runs: list[dict[str, Any]]) -> dict[str, str]:
         else:
             out[label] = "failure"
     return out
+
+
+def pick_merged_pr_head(payload: Any) -> str | None:
+    """Squash-merge SHA → merged PR head SHA (GITHUB_TOKEN push CI never ran)."""
+    if not isinstance(payload, list):
+        return None
+    merged = [p for p in payload if isinstance(p, dict) and p.get("merged_at")]
+    if not merged:
+        return None
+    merged.sort(key=lambda p: str(p.get("merged_at") or ""), reverse=True)
+    head = merged[0].get("head")
+    if not isinstance(head, dict):
+        return None
+    sha = str(head.get("sha") or "").strip().lower()
+    return sha or None
+
+
+def associated_pr_head_sha(
+    owner: str, repo: str, sha: str, token: str, timeout: float
+) -> str | None:
+    url = f"https://api.github.com/repos/{owner}/{repo}/commits/{sha}/pulls"
+    return pick_merged_pr_head(fetch_json(url, token, timeout))
+
+
+def not_green(states: dict[str, str]) -> list[str]:
+    return [f"{name}={state}" for name, state in states.items() if state != "success"]
 
 
 def live_git_commit(info_url: str, timeout: float) -> str | None:
@@ -155,9 +183,21 @@ def decide(
     sha = origin_main_sha(repo)
     runs = check_runs(owner, gh_repo, sha, token, timeout)
     states = required_conclusions(runs)
-    not_green = [f"{name}={state}" for name, state in states.items() if state != "success"]
-    if not_green:
-        return f"SKIP origin/main {sha} GHA not green: {', '.join(not_green)}"
+    missing = not_green(states)
+    if missing:
+        if any("=failure" in item for item in missing):
+            return f"SKIP origin/main {sha} GHA not green: {', '.join(missing)}"
+        pr_head = associated_pr_head_sha(owner, gh_repo, sha, token, timeout)
+        if not pr_head or pr_head == sha:
+            return f"SKIP origin/main {sha} GHA not green: {', '.join(missing)}"
+        pr_states = required_conclusions(check_runs(owner, gh_repo, pr_head, token, timeout))
+        pr_missing = not_green(pr_states)
+        if pr_missing:
+            return (
+                f"SKIP origin/main {sha} GHA not green: {', '.join(missing)} "
+                f"(merged PR head {pr_head}: {', '.join(pr_missing)})"
+            )
+        # Squash SHA has no push checks; the PR that produced it was green (WF-048).
     live = live_git_commit(info_url, timeout)
     if live == sha:
         return f"SKIP origin/main {sha} already live on mock-prod"
