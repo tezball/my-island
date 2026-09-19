@@ -5,7 +5,7 @@ type: workflow
 
 # Skills and routines
 
-How agents learn the loop without a wiki outside git. Owner: [[ops/agents/roles/automation-expert]]. Add or change with [[ops/runbooks/ADD_SKILL]]. Engineer map + examples: [[AGENT_DX]].
+How agents learn the loop without a wiki outside git. Owner: [[ops/agents/roles/automation-expert]]. Add or change with [[ops/runbooks/ADD_SKILL]]. Engineer map + examples: [[AGENT_DX]]. Run/observe/test handbook: [[DX]] (do not dump that into a new SKILL.md).
 
 **Skill** = Cursor `SKILL.md` the agent is told to read (or `/name` in chat). **Routine** = a runbook or cloud job that runs without a human in the IDE. **Hook** = fires on session start (laptop; Cloud Agents skip `sessionStart`).
 

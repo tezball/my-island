@@ -37,9 +37,9 @@ Exit `0` = all loops ok. `2` = catalog unreachable. `1` = assertion fail (wrong 
 
 1. `GET /actuator/health` → 200, `status=UP`
 2. Optional: `GET /actuator/prometheus` → 200 (skip with `--no-prometheus` or `SIM_CHECK_PROMETHEUS=0`)
-3. N times: `POST /api/v1/places` (unique slug) → 201; `GET /api/v1/places` contains `id`; `GET /api/v1/places/{id}` → 200
+3. N times: `POST /api/v1/places` (unique slug, header `X-Catalog-Import-Key`) → 201; `GET /api/v1/places` contains `id`; `GET /api/v1/places/{id}` → 200
 
-Create **MUST** use the live stub contract (WF-018): `categoryId`, `countyId`, `latitude`, `longitude`. Do **not** send `categorySlug` / `countySlug` / `lat` / `lon` (those 400). **No auth** (workshop exception).
+Create **MUST** use the live stub contract (WF-018): `categoryId`, `countyId`, `latitude`, `longitude`. Do **not** send `categorySlug` / `countySlug` / `lat` / `lon` (those 400). Sim sends `X-Catalog-Import-Key` from `CATALOG_IMPORT_KEY` (compose default `local-import`). Anonymous POST is 401.
 
 ## Chaos (not this runbook)
 

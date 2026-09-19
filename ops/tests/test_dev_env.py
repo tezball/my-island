@@ -161,6 +161,8 @@ def test_app_cli_help_and_no_chaos() -> None:
     assert "countyId" in text
     assert "latitude" in text
     assert "longitude" in text
+    assert "X-Catalog-Import-Key" in text
+    assert "CATALOG_IMPORT_KEY" in text
     unknown = subprocess.run(
         [str(app), "not-a-command"], capture_output=True, text=True, check=False
     )

@@ -6,7 +6,7 @@ Company dashboard: `docs/HOME.md`. Sitemap: `docs/ATLAS.md`. Obsidian vault: **`
 
 1. Read `docs/ops/HOME.md`, `docs/ops/CHARTER.md`, `docs/ops/company/SCAFFOLDING.md`, and `docs/ops/BOARD.md`.
 2. Follow `docs/ops/workflow/LOOP.md`, `docs/ops/workflow/WORKTREES.md`, `docs/ops/workflow/SAFETY.md`, `docs/ops/workflow/CI.md`, `docs/ops/runbooks/TICKET_LOOP.md`.
-3. Use the `ops-loop` skill. For CI/skills/DX use the `automation` skill. Wear one hat from `docs/ops/agents/_index.md`. Engineer toolbox: `docs/ops/workflow/AGENT_DX.md` (`/next-ticket`, `/app-test`, IntelliJ MCP).
+3. Use the `ops-loop` skill. For CI/skills/DX use the `automation` skill. Wear one hat from `docs/ops/agents/_index.md`. Run/observe/test: `docs/ops/workflow/DX.md`. Engineer toolbox: `docs/ops/workflow/AGENT_DX.md` (`/next-ticket`, `/app-test`, IntelliJ MCP).
 4. Work **one ticket** (skip `type: epic`) in a sibling git worktree; keep the primary clone on `main`. Update `status`. Run `python3 ops/scripts/board_sync.py`.
 5. Do not implement product features unless the ticket id is `PRD-*` and status is `implement`.
 6. Do not polish, preserve, or refactor application code for its own sake. It is disposable scaffolding.

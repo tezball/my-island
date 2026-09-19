@@ -64,6 +64,8 @@ REQUIRED_VAULT = [
     "workflow/CI.md",
     "workflow/SKILLS.md",
     "workflow/AGENT_DX.md",
+    "workflow/DX.md",
+    "runbooks/CONFIRM_DEPLOY.md",
     "workflow/TEST_STACK.md",
     "tickets/E2E-001.md",
     "tickets/WF-035.md",
@@ -1538,4 +1540,67 @@ def test_wf_040_unattended_mock_prod() -> None:
     jenkins = (OPS / "runbooks" / "JENKINS_LOCAL.md").read_text()
     assert "H/5" in jenkins or "cron" in jenkins.lower()
     assert "Agents never SSH" in jenkins
+
+
+def test_wf_047_dx_handbook() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert "WF-047" in by_id
+    meta = by_id["WF-047"]
+    assert meta["owner"] == "automation-expert"
+    assert meta["type"] == "workflow"
+    assert meta["priority"] == "P1"
+    assert meta["status"] == "review"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/99"
+    assert "tickets/WF-000" in meta.get("parent", "")
+    assert "plans/WF-047" in meta.get("plan", "")
+    assert (OPS / "plans" / "WF-047.md").is_file()
+    dx = (OPS / "workflow" / "DX.md").read_text()
+    for needle in (
+        "./scripts/app start",
+        "./scripts/dev",
+        "fishing-journals.com",
+        "production",
+        "grafana",
+        "postgres-catalog",
+        "playwright",
+        "PromQL",
+        "X-Catalog-Import-Key",
+        "POST /api/auth/login",
+        "POST /api/auth/google",
+        "beenCount",
+        "visit-intents",
+        "automerge",
+        "deploy-mock-prod",
+        "Chaos Monkey",
+        "ZAP",
+        "Gatling",
+        "clone-run",
+        "mcp-observe",
+        "Agents never SSH",
+    ):
+        assert needle in dx, needle
+    confirm = (OPS / "runbooks" / "CONFIRM_DEPLOY.md").read_text()
+    assert "/actuator/health" in confirm
+    assert "/actuator/info" in confirm
+    assert "/api/v1/places?published=true" in confirm
+    assert "127.0.0.1:9091/api/v1/query" in confirm
+    assert "Agents never SSH" in confirm or "never SSH" in confirm
+    home = (OPS / "HOME.md").read_text()
+    assert "[[ops/workflow/DX" in home
+    company = (DOCS / "HOME.md").read_text()
+    assert "ops/workflow/DX.md" in company
+    assert "DX" in (OPS / "workflow" / "_index.md").read_text()
+    assert "CONFIRM_DEPLOY" in (OPS / "runbooks" / "_index.md").read_text()
+    assert "[[DX]]" in (OPS / "workflow" / "AGENT_DX.md").read_text()
+    local = (OPS / "workflow" / "LOCAL.md").read_text()
+    assert "X-Catalog-Import-Key" in local
+    app = (REPO / "scripts" / "app").read_text()
+    assert "X-Catalog-Import-Key" in app
+    assert "CATALOG_IMPORT_KEY" in app
+    skills = REPO / ".cursor" / "skills"
+    assert not (skills / "dx" / "SKILL.md").is_file()
+    blob = dx + confirm + (OPS / "tickets" / "WF-047.md").read_text()
+    for needle in ("BEGIN OPENSSH", "ghp_", "github_pat_", "-----BEGIN"):
+        assert needle not in blob
+    assert "MOCK_PROD_SSH_KEY" not in blob
 

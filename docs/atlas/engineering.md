@@ -21,6 +21,7 @@ Heather. This is the engineer second brain: lasting notes, ADRs, meetings. Ticke
 | [[notes/adr/_index]] | Architecture Decision Records |
 | [[notes/meetings/_index]] | Meeting notes |
 | [[ops/dashboards/engineering]] | Dev queue |
+| [[ops/workflow/DX]] | Run, observe, test (human + agent) |
 | [[ops/workflow/AGENT_DX]] | Skills, slash, MCP, IntelliJ |
 | [[ops/workflow/LOCAL]] | Compose + Dev Container |
 | [[ops/workflow/WORKTREES]] | Multi-session git: primary on `main`, sibling worktree per ticket |

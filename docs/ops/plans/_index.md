@@ -57,5 +57,6 @@ SORT file.name DESC
 | [[WF-044]] | ZAP-style DAST in CI vs local compose/Testcontainers every merge |
 | [[WF-045]] | Trickle/weekly Gatling fail → Jenkins red + Grafana/AM; leftover FJ email stays muted |
 | [[WF-046]] | Close public Place writes; seed/import in CI/deploy; Guests write VisitIntent only |
+| [[WF-047]] | Human + agent DX handbook (clone/run, MCP, ticket → test box) |
 | [[WF-011]] | Playwright cron vs fishing-journals.com (not a merge gate) |
 | [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |

@@ -19,6 +19,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[CI]] | GitHub Actions + agent test commands |
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |
 | [[LOCAL]] | Compose, Dev Container, clone/run |
+| [[DX]] | Human + agent: run, observe, test (clone → mock-prod) |
 | [[MCP]] | Server pack and prod observe rules |
 | [[AGENT_DX]] | Engineer toolbox: skills, slash, MCP, IntelliJ — with examples |
 | [[AUTOMATIONS]] | Cursor cloud jobs |
