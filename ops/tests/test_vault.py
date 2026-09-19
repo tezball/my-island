@@ -379,6 +379,8 @@ def test_harvested_mvp_plans_and_children() -> None:
         if ident == "PRD-011":
             assert by_id[ident]["status"] == "done"
             assert by_id[ident].get("pr", "") == "https://github.com/tezball/my-island/pull/82"
+        elif ident in ("PRD-012", "PRD-013"):
+            assert by_id[ident]["status"] == "blocked"
         else:
             assert by_id[ident]["status"] == "implement"
         assert f"plans/{ident}" in by_id[ident].get("plan", "")
@@ -1357,8 +1359,8 @@ def test_poi_visitintent_planner_land() -> None:
         plan = (OPS / "plans" / f"{ident}.md").read_text()
         assert "status: approved" in plan, ident
         assert "gh pr merge" not in plan.lower() or "do not" in plan.lower()
-    assert by_id["PRD-012"]["status"] == "implement"
-    assert by_id["PRD-013"]["status"] == "implement"
+    assert by_id["PRD-012"]["status"] == "blocked"
+    assert by_id["PRD-013"]["status"] == "blocked"
     assert "tickets/PRD-000" in by_id["PRD-012"].get("parent", "")
     assert "plans/PRD-012" in by_id["PRD-012"].get("plan", "")
     prd012 = (OPS / "tickets" / "PRD-012.md").read_text()

@@ -21,8 +21,6 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
-- [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
-- [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
@@ -43,6 +41,8 @@ kanban-plugin: basic
 
 ## Blocked
 
+- [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
+- [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/WF-004|WF-004]] P1 Remote Grafana MCP for staging/prod observe
 - [ ] [[ops/tickets/WF-010|WF-010]] P1 Always-on EU staging for API + Grafana sidecars
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
