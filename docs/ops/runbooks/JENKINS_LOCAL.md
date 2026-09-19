@@ -22,7 +22,7 @@ Jobs seeded by JCasC:
 |---|---|---|
 | `local-ci` | No | Build bind-mounted `/workspace` (`unit` → `catalog` → `stack`) |
 | `my-island` | Yes | GitHub multibranch; polls every 5m; builds `Jenkinsfile` |
-| `deploy-mock-prod` | No | `scripts/deploy-mock-prod.sh` → fishing-journals.com; fails unless public `/actuator/info` git SHA matches ([[ops/tickets/WF-037]]). Unattended from green `main`: [[ops/tickets/WF-040]] |
+| `deploy-mock-prod` | No (SSH key in `.env` / Jenkins) | Cron `H/5` + `gate_mock_prod_deploy.py`. Green GHA on `origin/main` → `scripts/deploy-mock-prod.sh` → `smoke_mock_prod.py`. Info SHA gate ([[ops/tickets/WF-037]]). Unattended [[ops/tickets/WF-040]]. **Agents never SSH.** Feature branches never deploy. |
 
 ## GitHub token
 

@@ -130,3 +130,17 @@ jobs:
               merge_method: 'squash',
               sha: pr.head.sha,
             });
+
+  # WF-040: laptop Jenkins polls GitHub checks (cron H/5). This job is the
+  # "main is green" signal — not a GitHub production Environment, not SSH.
+  mock-prod-signal:
+    name: mock-prod signal
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [unit, catalog, web, stack]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record SHA for Jenkins deploy-mock-prod
+        run: |
+          echo "origin/main ${{ github.sha }} is green (unit+catalog+web+stack)."
+          echo "Jenkins job deploy-mock-prod (cron + gate_mock_prod_deploy.py) deploys this SHA."
+          echo "Agents never SSH. No GitHub Environment named production."

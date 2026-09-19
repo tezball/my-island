@@ -49,7 +49,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 | ZAP-style DAST | **auto** (merge) | Every merge vs local compose/Testcontainers [[ops/tickets/WF-044]]. Not cron. Not the primary scan of the public test server. |
 | Gatling trickle | **auto** (ongoing) | Light trickle on fishing-journals.com as feature smoke — not merge load [[ops/tickets/WF-042]]. Failures mark Jenkins red and fire Grafana/AM [[ops/tickets/WF-045]]. |
 | Gatling full perf | **auto** (weekly) | Weekly Jenkins cron and/or MCP/manual. Not every merge. Failures mark Jenkins red and fire Grafana/AM [[ops/tickets/WF-045]]. |
-| Deploy to mock-prod VPS | **auto** (Jenkins) | Green `main` → Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). From **`main` only**. SSH key stays in Jenkins. Agents never SSH. Job already exists ([[ops/tickets/WF-032]]); this ticket wires the unattended trigger. Not a GitHub `production` Environment. Host-pick ticket [[ops/tickets/WF-010]] stays blocked. Do **not** run Chaos Monkey or primary ZAP against the public host on every deploy. |
+| Deploy to mock-prod VPS | **auto** (Jenkins) | Green `origin/main` (GHA `unit` + `catalog` + `web` + `stack`) → Jenkins `deploy-mock-prod` cron `H/5` + `gate_mock_prod_deploy.py` ([[ops/tickets/WF-040]]). No human click. From **`main` only**. SSH key stays in Jenkins. Agents never SSH — they watch the job + public HTTPS. Not a GitHub `production` Environment. Host-pick ticket [[ops/tickets/WF-010]] stays blocked. Do **not** run Chaos Monkey or primary ZAP against the public host on every deploy. |
 | Production deploy | **never** | No prod Environment ([[ops/company/DECISIONS]]) |
 
 ## Explicitly not automated (today)

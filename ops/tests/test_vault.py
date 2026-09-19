@@ -1340,7 +1340,6 @@ def test_poi_visitintent_planner_land() -> None:
     """CEO 2026-09-19 VisitIntent slice + unattended mock-prod tickets on main."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     for ident, typ, owner, parent in (
-        ("WF-040", "workflow", "automation-expert", "WF-032"),
         ("WF-041", "workflow", "eng-infra", "WF-032"),
         ("WF-042", "workflow", "automation-expert", "WF-000"),
         ("WF-043", "workflow", "automation-expert", "WF-000"),
@@ -1507,4 +1506,35 @@ def test_poi_visitintent_planner_land() -> None:
         for needle in forbidden:
             assert needle not in blob, ident
         assert "MOCK_PROD_SSH_KEY" not in blob
+
+
+def test_wf_040_unattended_mock_prod() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    meta = by_id["WF-040"]
+    assert meta["type"] == "workflow"
+    assert meta["owner"] == "automation-expert"
+    assert meta["status"] == "review"
+    assert "tickets/WF-032" in meta.get("parent", "")
+    groovy = (REPO / "ops" / "jenkins" / "casc" / "jobs" / "deploy-mock-prod.groovy").read_text()
+    assert "cron('H/5 * * * *')" in groovy
+    assert "gate_mock_prod_deploy.py" in groovy
+    assert "smoke_mock_prod.py" in groovy
+    assert "production" in groovy.lower()
+    deploy = (REPO / "scripts" / "deploy-mock-prod.sh").read_text()
+    assert "WF-040" in deploy
+    assert 'EXPECTED_BRANCH" != "main"' in deploy
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "mock-prod-signal" in ci
+    assert "environment: production" not in ci
+    pipeline = (OPS / "workflow" / "PIPELINE.md").read_text()
+    assert "human click" not in pipeline.lower() or "no human" in pipeline.lower()
+    assert "gate_mock_prod_deploy" in pipeline or "cron" in pipeline.lower()
+    runbook = (OPS / "runbooks" / "MOCK_PROD_DEPLOY.md").read_text()
+    assert "Agents never SSH" in runbook
+    assert "human click" in runbook.lower() or "do not run this script" in runbook.lower()
+    assert (RUNTIME / "scripts" / "gate_mock_prod_deploy.py").is_file()
+    assert (RUNTIME / "scripts" / "smoke_mock_prod.py").is_file()
+    jenkins = (OPS / "runbooks" / "JENKINS_LOCAL.md").read_text()
+    assert "H/5" in jenkins or "cron" in jenkins.lower()
+    assert "Agents never SSH" in jenkins
 
