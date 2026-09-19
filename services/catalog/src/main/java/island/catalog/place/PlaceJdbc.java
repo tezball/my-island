@@ -290,7 +290,8 @@ public class PlaceJdbc {
         List.copyOf(facilities),
         place.imageUrl(),
         place.imageCredit(),
-        place.imageLicence());
+        place.imageLicence(),
+        place.beenCount());
   }
 
   private static final String PLACE_SELECT =
@@ -300,7 +301,9 @@ public class PlaceJdbc {
              p.source_url, p.source_name, p.licence, p.lead_dedupe_key,
              p.image_url, p.image_credit, p.image_licence,
              c.id as category_id, c.label as category_label,
-             y.id as county_id, y.name as county_name
+             y.id as county_id, y.name as county_name,
+             (select count(*) from visit_intent vi
+               where vi.place_id = p.id and vi.mark = 'been') as been_count
       from place p
       join category c on c.id = p.category_id
       join county y on y.id = p.county_id
@@ -331,6 +334,7 @@ public class PlaceJdbc {
         List.of(),
         rs.getString("image_url"),
         rs.getString("image_credit"),
-        rs.getString("image_licence"));
+        rs.getString("image_licence"),
+        rs.getInt("been_count"));
   }
 }

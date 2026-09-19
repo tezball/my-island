@@ -25,7 +25,8 @@ public record PlaceResponse(
     List<String> facilities,
     String imageUrl,
     String imageCredit,
-    String imageLicence) {
+    String imageLicence,
+    int beenCount) {
 
   public record CategoryRef(String id, String label) {}
 

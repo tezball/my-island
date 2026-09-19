@@ -26,5 +26,12 @@ public final class CatalogPostgis {
     registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
     registry.add("spring.datasource.username", POSTGRES::getUsername);
     registry.add("spring.datasource.password", POSTGRES::getPassword);
+    registry.add("catalog.import.key", () -> "test-import-key");
+    registry.add("catalog.auth.google.stub-enabled", () -> "true");
+    registry.add("catalog.seed.guest.username", () -> "guest");
+    registry.add("catalog.seed.guest.password", () -> "guest");
+    registry.add("catalog.seed.guest.email", () -> "guest@local.test");
+    registry.add("google.client-id", () -> "test.apps.googleusercontent.com");
+    registry.add("google.client-secret", () -> "test-secret");
   }
 }

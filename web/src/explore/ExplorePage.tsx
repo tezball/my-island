@@ -1,8 +1,8 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { listCounties, listPublishedPlaces, type County, type Place } from "../api/catalog";
-import type { Me } from "../api/auth";
-import { GoogleLogin } from "../auth/GoogleLogin";
+import { GuestAuth } from "../auth/GoogleLogin";
+import { useGuestSession } from "../auth/guestSession";
 import { applyFilters, inBounds, parseCsv } from "./filters";
 import { FilterSheet } from "./FilterSheet";
 import { formatKm, haversineKm, hasCoords } from "./geo";
@@ -23,7 +23,7 @@ export function ExplorePage() {
   const [geoOff, setGeoOff] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [pin, setPin] = useState<Place | null>(null);
-  const [me, setMe] = useState<Me | null>(null);
+  const { me, setMe } = useGuestSession();
   const [areaNeeded, setAreaNeeded] = useState(false);
   const [searchToken, setSearchToken] = useState(0);
   const [area, setArea] = useState<{
@@ -146,7 +146,7 @@ export function ExplorePage() {
             <span>Ireland · OPEN</span>
           </h1>
           <div className="header-meta">
-            <GoogleLogin me={me} onMe={setMe} />
+            <GuestAuth me={me} onMe={setMe} />
             <div className="count" aria-live="polite">
               {visible.length} places
             </div>
@@ -228,6 +228,9 @@ export function ExplorePage() {
         <button className="bar-btn" type="button" aria-pressed={view === "list"} onClick={() => setView("list")}>
           List
         </button>
+        <Link className="bar-btn" to="/lists">
+          Lists
+        </Link>
         <button className="bar-btn ghost" type="button" onClick={() => setFiltersOpen(true)}>
           Filters
         </button>

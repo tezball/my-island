@@ -4,6 +4,8 @@ import io
 import json
 from pathlib import Path
 
+import pytest
+
 import import_leads as imp
 
 REPO = Path(__file__).resolve().parents[2]
@@ -259,3 +261,35 @@ def test_cli_defaults() -> None:
     assert args.file == imp.DEFAULT_FILE
     assert args.dry_run is False
     assert args.reject is None
+
+
+def test_post_place_sends_default_import_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("CATALOG_IMPORT_KEY", raising=False)
+    captured: dict[str, str] = {}
+
+    def fake_request_json(method, url, *, json_body=None, timeout=10.0, extra_headers=None):
+        captured["method"] = method
+        captured["url"] = url
+        captured["headers"] = extra_headers or {}
+        return 201, {"id": "ok"}
+
+    monkeypatch.setattr(imp, "request_json", fake_request_json)
+    status, body = imp.post_place("http://127.0.0.1:8081", {"name": "x"})
+    assert status == 201
+    assert body == {"id": "ok"}
+    assert captured["method"] == "POST"
+    assert captured["url"].endswith("/api/v1/places")
+    assert captured["headers"][imp.IMPORT_HEADER] == "local-import"
+
+
+def test_post_place_sends_env_import_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CATALOG_IMPORT_KEY", "ci-secret")
+    captured: dict[str, str] = {}
+
+    def fake_request_json(method, url, *, json_body=None, timeout=10.0, extra_headers=None):
+        captured["headers"] = extra_headers or {}
+        return 201, {}
+
+    monkeypatch.setattr(imp, "request_json", fake_request_json)
+    imp.post_place("http://127.0.0.1:8081", {"name": "x"})
+    assert captured["headers"][imp.IMPORT_HEADER] == "ci-secret"

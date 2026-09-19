@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 import urllib.error
@@ -22,6 +23,8 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[2]
 DEFAULT_FILE = REPO / "data" / "leads" / "places.jsonl"
 DEFAULT_BASE_URL = "http://127.0.0.1:8081"
+DEFAULT_IMPORT_KEY = "local-import"
+IMPORT_HEADER = "X-Catalog-Import-Key"
 COUNTIES_PATH = "/api/v1/counties"
 PLACES_PATH = "/api/v1/places"
 IMPORTABLE_STATUS = "reviewed"
@@ -163,14 +166,24 @@ def reject_lead(path: Path, lead_id: str) -> dict[str, Any]:
     return found
 
 
+def catalog_import_key() -> str:
+    raw = os.environ.get("CATALOG_IMPORT_KEY")
+    if raw and raw.strip():
+        return raw.strip()
+    return DEFAULT_IMPORT_KEY
+
+
 def request_json(
     method: str,
     url: str,
     *,
     json_body: dict[str, Any] | None = None,
     timeout: float = 10.0,
+    extra_headers: dict[str, str] | None = None,
 ) -> tuple[int, Any]:
     headers = {"Accept": "application/json"}
+    if extra_headers:
+        headers.update(extra_headers)
     data = None
     if json_body is not None:
         data = json.dumps(json_body).encode()
@@ -207,6 +220,7 @@ def post_place(base_url: str, payload: dict[str, Any], timeout: float = 10.0) ->
         base_url.rstrip("/") + PLACES_PATH,
         json_body=payload,
         timeout=timeout,
+        extra_headers={IMPORT_HEADER: catalog_import_key()},
     )
 
 
