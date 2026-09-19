@@ -25,7 +25,9 @@ pipeline {
             source "\$HOST_REPO/.env"
             set +a
           fi
-          decision="\$(python3 ops/scripts/gate_mock_prod_deploy.py)"
+          git fetch origin main
+          git show origin/main:ops/scripts/gate_mock_prod_deploy.py > "\$WORKSPACE/gate_mock_prod_deploy.py"
+          decision="\$(python3 "\$WORKSPACE/gate_mock_prod_deploy.py" --repo "\$HOST_REPO")"
           echo "\$decision"
           echo "\$decision" > "\$WORKSPACE/wf040-gate.txt"
           if [[ "\$decision" == SKIP* ]]; then

@@ -36,6 +36,7 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
+- [ ] [[ops/tickets/WF-048|WF-048]] P0 Main CI after GITHUB_TOKEN squash-merge
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
 - [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 - [ ] [[ops/tickets/WF-047|WF-047]] P1 Human and agent DX handbook

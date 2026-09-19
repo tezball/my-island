@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-048-implement]] — automerge dispatch + PR-head gate so Jenkins can deploy squash SHAs
 - [[PRD-015-implement]] — VisitIntent been/want/never on catalog + Explore PWA
 - [[WF-047-implement]] — human+agent DX handbook; confirm-deploy runbook; import-header examples
 - [[WF-040-implement]] — unattended green main → Jenkins deploy-mock-prod → HTTP/API smoke

@@ -1604,3 +1604,25 @@ def test_wf_047_dx_handbook() -> None:
         assert needle not in blob
     assert "MOCK_PROD_SSH_KEY" not in blob
 
+
+def test_wf_048_main_ci_after_squash() -> None:
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    meta = by_id["WF-048"]
+    assert meta["type"] == "workflow"
+    assert meta["owner"] == "automation-expert"
+    assert meta["priority"] == "P0"
+    assert "tickets/WF-040" in meta.get("parent", "")
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "workflow_dispatch:" in ci
+    assert "createWorkflowDispatch" in ci
+    automerge = gha_job_body(ci, "automerge")
+    assert "actions: write" in automerge
+    assert "createWorkflowDispatch" in automerge
+    groovy = (REPO / "ops" / "jenkins" / "casc" / "jobs" / "deploy-mock-prod.groovy").read_text()
+    assert "git show origin/main:ops/scripts/gate_mock_prod_deploy.py" in groovy
+    gate = (RUNTIME / "scripts" / "gate_mock_prod_deploy.py").read_text()
+    assert "pick_merged_pr_head" in gate
+    assert "associated_pr_head_sha" in gate
+    assert (OPS / "plans" / "WF-048.md").is_file()
+    assert by_id["WF-047"]["title"] == "Human and agent DX handbook"
+
