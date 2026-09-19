@@ -1351,7 +1351,7 @@ def test_poi_visitintent_planner_land() -> None:
         ("PRD-015", "story", "eng-backend", "PRD-000"),
     ):
         meta = by_id[ident]
-        expected_status = "review" if ident == "PRD-015" else "implement"
+        expected_status = "review" if ident in {"PRD-015", "WF-045"} else "implement"
         assert meta["status"] == expected_status, ident
         assert meta["type"] == typ, ident
         assert meta["priority"] == "P0", ident
