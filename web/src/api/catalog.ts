@@ -19,6 +19,7 @@ export type Place = {
   imageUrl: string | null;
   imageCredit: string | null;
   imageLicence: string | null;
+  beenCount: number;
 };
 
 export type County = { id: string; name: string; ni?: boolean };

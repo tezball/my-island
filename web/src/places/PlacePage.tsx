@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getPlace, listPublishedPlaces, type Place } from "../api/catalog";
 import { PlaceCard } from "../explore/PlaceCard";
+import { VisitTicks } from "../explore/VisitTicks";
+import { useGuestSession } from "../auth/guestSession";
 import { haversineKm, hasCoords } from "../explore/geo";
 import { facilityLabel, priceLabel } from "../explore/labels";
 
@@ -13,6 +15,7 @@ export function PlacePage() {
   const [nearby, setNearby] = useState<Place[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [shareNote, setShareNote] = useState<string | null>(null);
+  const { me, marks, setMark } = useGuestSession();
 
   useEffect(() => {
     if (!slug) return;
@@ -95,7 +98,9 @@ export function PlacePage() {
         <p className="muted">
           {place.county.name}
           {place.town ? ` · ${place.town}` : ""}
+          {` · ${place.beenCount} been`}
         </p>
+        <VisitTicks placeId={place.id} me={me} mark={marks[place.id]} onMark={setMark} />
         {place.description ? <p>{place.description}</p> : null}
         {place.imageCredit ? (
           <p className="attr">

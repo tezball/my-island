@@ -95,6 +95,38 @@ h2,
   max-width: 16rem;
 }
 
+.password-login {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.password-login input {
+  width: 7rem;
+  font-size: 0.8rem;
+  padding: 4px 6px;
+}
+
+.visit-ticks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 4px 8px;
+}
+
+.tick-hint {
+  margin: 0;
+  padding: 0 4px 8px;
+  font-size: 0.8rem;
+  color: var(--muted, #5c6570);
+}
+
+.place-card-wrap {
+  display: grid;
+  gap: 4px;
+}
+
 .gis-btn {
   min-height: 32px;
 }
@@ -224,6 +256,14 @@ h2,
   background: var(--bog);
   color: #fff;
   font-weight: 600;
+}
+
+a.bar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0 16px;
 }
 
 .bar-btn[aria-pressed="false"],

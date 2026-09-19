@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import { fetchMe, loginWithGoogleIdToken, logout, type Me } from "../api/auth"
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react"
+import {
+  fetchMe,
+  loginWithGoogleIdToken,
+  loginWithPassword,
+  logout,
+  type Me,
+} from "../api/auth"
 import { gisCanonicalUrl, gisInitializeConfig, gisOriginMismatchMessage } from "./gisOrigin"
 
 const GIS_SRC = "https://accounts.google.com/gsi/client"
@@ -28,10 +34,12 @@ type Props = {
   onMe: (me: Me | null) => void
 }
 
-export function GoogleLogin({ me, onMe }: Props) {
+export function GuestAuth({ me, onMe }: Props) {
   const btnRef = useRef<HTMLDivElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [username, setUsername] = useState("guest")
+  const [password, setPassword] = useState("")
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
   const handleCredential = useCallback(
@@ -122,6 +130,20 @@ export function GoogleLogin({ me, onMe }: Props) {
     }
   }
 
+  const onPassword = async (e: FormEvent) => {
+    e.preventDefault()
+    setBusy(true)
+    setError(null)
+    try {
+      await loginWithPassword(username, password)
+      onMe(await fetchMe())
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign-in failed")
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const label = me?.displayName || me?.email
 
   return (
@@ -133,9 +155,32 @@ export function GoogleLogin({ me, onMe }: Props) {
             Sign out
           </button>
         </p>
-      ) : clientId && !clientId.includes("changeme") ? (
-        <div ref={btnRef} className="gis-btn" aria-busy={busy} />
-      ) : null}
+      ) : (
+        <>
+          <form className="password-login" onSubmit={onPassword}>
+            <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              aria-label="Username"
+              autoComplete="username"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-label="Password"
+              autoComplete="current-password"
+              placeholder="Password"
+            />
+            <button className="bar-btn ghost" type="submit" disabled={busy}>
+              Sign in
+            </button>
+          </form>
+          {clientId && !clientId.includes("changeme") ? (
+            <div ref={btnRef} className="gis-btn" aria-busy={busy} />
+          ) : null}
+        </>
+      )}
       {error ? (
         <p className="auth-error" role="alert">
           {error}

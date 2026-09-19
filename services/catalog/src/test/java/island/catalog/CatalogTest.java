@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import island.catalog.api.dto.CreatePlaceRequest;
 import island.catalog.api.dto.PlaceResponse;
+import island.catalog.auth.ImportKeyFilter;
 import island.catalog.support.CatalogPostgis;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,9 +30,6 @@ class CatalogTest {
   @DynamicPropertySource
   static void datasource(DynamicPropertyRegistry registry) {
     CatalogPostgis.datasource(registry);
-    registry.add("catalog.auth.google.stub-enabled", () -> "true");
-    registry.add("google.client-id", () -> "test.apps.googleusercontent.com");
-    registry.add("google.client-secret", () -> "test-secret");
     registry.add("GIT_COMMIT", () -> "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     registry.add("GIT_COMMIT_SHORT", () -> "aaaaaaaaaaaa");
     registry.add("GIT_BRANCH", () -> "main");
@@ -258,7 +257,7 @@ class CatalogTest {
             null,
             null);
     ResponseEntity<PlaceResponse> created =
-        http.postForEntity("/api/v1/places", request, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(request, importHeaders()), PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     return created.getBody();
   }
@@ -288,7 +287,7 @@ class CatalogTest {
             null,
             null);
     ResponseEntity<PlaceResponse> created =
-        http.postForEntity("/api/v1/places", request, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(request, importHeaders()), PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     PlaceResponse body = created.getBody();
     assertThat(body).isNotNull();
@@ -314,7 +313,7 @@ class CatalogTest {
             "campsite:antrim:lead-draft-a",
             "https://example.test/a");
     ResponseEntity<PlaceResponse> created =
-        http.postForEntity("/api/v1/places", first, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(first, importHeaders()), PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     PlaceResponse original = created.getBody();
     assertThat(original).isNotNull();
@@ -333,7 +332,7 @@ class CatalogTest {
             "campsite:antrim:lead-draft-a",
             "https://example.test/b");
     ResponseEntity<PlaceResponse> updated =
-        http.postForEntity("/api/v1/places", second, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(second, importHeaders()), PlaceResponse.class);
     assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
     PlaceResponse body = updated.getBody();
     assertThat(body).isNotNull();
@@ -376,7 +375,7 @@ class CatalogTest {
             null,
             null);
     ResponseEntity<PlaceResponse> created =
-        http.postForEntity("/api/v1/places", request, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(request, importHeaders()), PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     assertThat(created.getBody()).isNotNull();
     assertThat(created.getBody().published()).isFalse();
@@ -391,7 +390,7 @@ class CatalogTest {
             "campsite:tyrone:published-lock",
             "https://example.test/lock");
     ResponseEntity<PlaceResponse> created =
-        http.postForEntity("/api/v1/places", request, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(request, importHeaders()), PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     PlaceResponse body = created.getBody();
     assertThat(body).isNotNull();
@@ -404,7 +403,7 @@ class CatalogTest {
             "campsite:tyrone:published-lock",
             "https://example.test/lock-2");
     ResponseEntity<String> conflict =
-        http.postForEntity("/api/v1/places", again, String.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(again, importHeaders()), String.class);
     assertThat(conflict.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     assertThat(conflict.getBody()).contains("already published");
 
@@ -439,7 +438,7 @@ class CatalogTest {
             "Example Photographer",
             "CC BY-SA 4.0");
     ResponseEntity<PlaceResponse> created =
-        http.postForEntity("/api/v1/places", request, PlaceResponse.class);
+        http.postForEntity("/api/v1/places", new HttpEntity<>(request, importHeaders()), PlaceResponse.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     PlaceResponse body = created.getBody();
     assertThat(body).isNotNull();
@@ -475,5 +474,206 @@ class CatalogTest {
         null,
         null,
         null);
+  }
+
+  @Test
+  void anonymousPlacePostIsRejectedWithoutImportKey() {
+    CreatePlaceRequest request =
+        new CreatePlaceRequest(
+            "Public write blocked",
+            "public-write-blocked",
+            null,
+            "poi",
+            "kerry",
+            null,
+            51.9,
+            -9.5,
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            List.of(),
+            null,
+            null,
+            null);
+    ResponseEntity<String> created = http.postForEntity("/api/v1/places", request, String.class);
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  @Test
+  void guestSessionCannotWritePlaces() {
+    HttpHeaders cookie = passwordLogin("guest", "guest");
+    CreatePlaceRequest request =
+        new CreatePlaceRequest(
+            "Guest write blocked",
+            "guest-write-blocked",
+            null,
+            "poi",
+            "kerry",
+            null,
+            51.9,
+            -9.5,
+            true,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            List.of(),
+            null,
+            null,
+            null);
+    ResponseEntity<String> created =
+        http.exchange(
+            "/api/v1/places",
+            HttpMethod.POST,
+            new HttpEntity<>(request, cookie),
+            String.class);
+    assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+  }
+
+  @Test
+  void passwordGuestVisitIntentUpsertPrivateListAndBeenCount() {
+    PlaceResponse place = createSample("visit-intent-place");
+    assertThat(place.beenCount()).isZero();
+
+    HttpHeaders guest = passwordLogin("guest", "guest");
+    ResponseEntity<Map> put =
+        http.exchange(
+            "/api/v1/me/places/" + place.id() + "/visit-intent",
+            HttpMethod.PUT,
+            new HttpEntity<>("{\"mark\":\"been\"}", jsonPlus(guest)),
+            Map.class);
+    assertThat(put.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(put.getBody()).isNotNull();
+    assertThat(put.getBody().get("mark")).isEqualTo("been");
+
+    ResponseEntity<Map> replace =
+        http.exchange(
+            "/api/v1/me/places/" + place.id() + "/visit-intent",
+            HttpMethod.PUT,
+            new HttpEntity<>("{\"mark\":\"want\"}", jsonPlus(guest)),
+            Map.class);
+    assertThat(replace.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(replace.getBody().get("mark")).isEqualTo("want");
+
+    Integer unique =
+        jdbc.queryForObject(
+            "select count(*) from visit_intent where guest_id = (select id from app_user where username = 'guest') and place_id = ?",
+            Integer.class,
+            place.id());
+    assertThat(unique).isEqualTo(1);
+    Integer audits =
+        jdbc.queryForObject(
+            "select count(*) from visit_intent_audit where place_id = ?",
+            Integer.class,
+            place.id());
+    assertThat(audits).isGreaterThanOrEqualTo(2);
+
+    PlaceResponse afterWant = http.getForObject("/api/v1/places/" + place.id(), PlaceResponse.class);
+    assertThat(afterWant.beenCount()).isZero();
+    assertThat(afterWant.toString()).doesNotContain("want");
+
+    http.exchange(
+        "/api/v1/me/places/" + place.id() + "/visit-intent",
+        HttpMethod.PUT,
+        new HttpEntity<>("{\"mark\":\"been\"}", jsonPlus(guest)),
+        Map.class);
+    PlaceResponse afterBeen = http.getForObject("/api/v1/places/" + place.id(), PlaceResponse.class);
+    assertThat(afterBeen.beenCount()).isEqualTo(1);
+
+    ResponseEntity<List> privateList =
+        http.exchange(
+            "/api/v1/me/visit-intents?mark=been",
+            HttpMethod.GET,
+            new HttpEntity<>(guest),
+            List.class);
+    assertThat(privateList.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(privateList.getBody()).isNotEmpty();
+
+    ResponseEntity<String> anonList =
+        http.getForEntity("/api/v1/me/visit-intents", String.class);
+    assertThat(anonList.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+    String token = "stub:other-guest:other@example.com:Other";
+    HttpHeaders other = googleLogin(token);
+    ResponseEntity<List> otherList =
+        http.exchange(
+            "/api/v1/me/visit-intents?mark=been",
+            HttpMethod.GET,
+            new HttpEntity<>(other),
+            List.class);
+    assertThat(otherList.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(otherList.getBody()).isEmpty();
+  }
+
+  @Test
+  void visitIntentAnonymousWriteIsUnauthorized() {
+    PlaceResponse place = createSample("anon-tick-blocked");
+    ResponseEntity<String> put =
+        http.exchange(
+            "/api/v1/me/places/" + place.id() + "/visit-intent",
+            HttpMethod.PUT,
+            new HttpEntity<>("{\"mark\":\"been\"}", jsonHeaders()),
+            String.class);
+    assertThat(put.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
+
+  private static HttpHeaders importHeaders() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set(ImportKeyFilter.HEADER, "test-import-key");
+    return headers;
+  }
+
+  private static HttpHeaders jsonHeaders() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    return headers;
+  }
+
+  private static HttpHeaders jsonPlus(HttpHeaders cookie) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.putAll(cookie);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    return headers;
+  }
+
+  private HttpHeaders passwordLogin(String username, String password) {
+    ResponseEntity<Void> login =
+        http.exchange(
+            "/api/auth/login",
+            HttpMethod.POST,
+            new HttpEntity<>(
+                "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}",
+                jsonHeaders()),
+            Void.class);
+    assertThat(login.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    return cookieHeaders(login);
+  }
+
+  private HttpHeaders googleLogin(String token) {
+    ResponseEntity<Void> login =
+        http.exchange(
+            "/api/auth/google",
+            HttpMethod.POST,
+            new HttpEntity<>("{\"idToken\":\"" + token + "\"}", jsonHeaders()),
+            Void.class);
+    assertThat(login.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    return cookieHeaders(login);
+  }
+
+  private static HttpHeaders cookieHeaders(ResponseEntity<?> login) {
+    HttpHeaders withCookie = new HttpHeaders();
+    String setCookie = login.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+    assertThat(setCookie).isNotBlank();
+    withCookie.add(HttpHeaders.COOKIE, setCookie.split(";", 2)[0]);
+    return withCookie;
   }
 }

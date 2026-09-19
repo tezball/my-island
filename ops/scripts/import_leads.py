@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 import urllib.error
@@ -171,6 +172,9 @@ def request_json(
     timeout: float = 10.0,
 ) -> tuple[int, Any]:
     headers = {"Accept": "application/json"}
+    import_key = os.environ.get("CATALOG_IMPORT_KEY")
+    if import_key:
+        headers["X-Catalog-Import-Key"] = import_key
     data = None
     if json_body is not None:
         data = json.dumps(json_body).encode()

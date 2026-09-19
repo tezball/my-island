@@ -38,6 +38,13 @@ catalog:
   auth:
     google:
       stub-enabled: false
+  import:
+    key: ${CATALOG_IMPORT_KEY:}
+  seed:
+    guest:
+      username: ${CATALOG_SEED_GUEST_USERNAME:}
+      password: ${CATALOG_SEED_GUEST_PASSWORD:}
+      email: ${CATALOG_SEED_GUEST_EMAIL:guest@local.test}
 
 info:
   app:

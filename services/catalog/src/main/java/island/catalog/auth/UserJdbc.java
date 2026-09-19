@@ -39,6 +39,69 @@ public class UserJdbc {
     }
   }
 
+  public Optional<AppUser> findByUsername(String username) {
+    try {
+      return Optional.of(
+          jdbc.queryForObject(
+              """
+              select id, email, display_name
+              from app_user
+              where lower(username) = lower(?)
+              """,
+              (rs, rowNum) ->
+                  new AppUser(
+                      rs.getObject("id", UUID.class),
+                      rs.getString("email"),
+                      rs.getString("display_name")),
+              username));
+    } catch (EmptyResultDataAccessException ex) {
+      return Optional.empty();
+    }
+  }
+
+  public Optional<String> passwordHashForUsername(String username) {
+    try {
+      return Optional.ofNullable(
+          jdbc.queryForObject(
+              """
+              select password_hash from app_user
+              where lower(username) = lower(?)
+              """,
+              String.class,
+              username));
+    } catch (EmptyResultDataAccessException ex) {
+      return Optional.empty();
+    }
+  }
+
+  public void upsertPasswordGuest(String username, String email, String displayName, String passwordHash) {
+    Optional<AppUser> existing = findByUsername(username);
+    if (existing.isPresent()) {
+      jdbc.update(
+          """
+          update app_user
+          set email = ?, display_name = ?, password_hash = ?, updated_at = now()
+          where id = ?
+          """,
+          email,
+          displayName,
+          passwordHash,
+          existing.get().id());
+      return;
+    }
+    UUID userId = UUID.randomUUID();
+    jdbc.update(
+        """
+        insert into app_user (id, email, display_name, username, password_hash)
+        values (?, ?, ?, ?, ?)
+        """,
+        userId,
+        email,
+        displayName,
+        username,
+        passwordHash);
+  }
+
   public AppUser upsertGoogle(VerifiedGoogleIdentity identity) {
     Optional<AppUser> existing = findByGoogleSubject(identity.subject());
     if (existing.isPresent()) {

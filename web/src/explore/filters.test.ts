@@ -19,6 +19,7 @@ function place(partial: Partial<Place> & { slug: string; name: string }): Place 
     imageUrl: null,
     imageCredit: null,
     imageLicence: null,
+    beenCount: 0,
     ...partial,
   };
 }
