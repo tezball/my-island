@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/PRD-004]]"
 role: planner
 started: 2026-09-19
 finished: 2026-09-19
-pr:
+pr: https://github.com/tezball/my-island/pull/101
 cssclasses:
   - run
 ---
