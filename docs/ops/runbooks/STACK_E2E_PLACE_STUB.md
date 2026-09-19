@@ -9,7 +9,7 @@ Skill: `.cursor/skills/stack-e2e-place-stub/SKILL.md`. Policy: [[ops/workflow/ST
 
 **Required CI must not** set Spring profile `chaos` or compose profile `chaos` on happy-path `unit` / `catalog` / `stack` (`catalog` is `./mvnw -B test`. `stack` is `./scripts/dev up`). Dedicated chaos lane: [[ops/tickets/WF-043]]. Workshop overlay remains this runbook; MCP may trigger a drill later.
 
-Copy these commands. Do not invent curl. No auth on this stub (workshop exception).
+Copy these commands. Do not invent curl. Place POST needs `X-Catalog-Import-Key` (`CATALOG_IMPORT_KEY`, compose default `local-import`). Anonymous POST is 401.
 
 ## 1. Happy path
 
@@ -28,6 +28,7 @@ Stub contract (`categoryId` / `countyId` / `latitude` / `longitude`; WF-018 deci
 ```bash
 curl -sS -D - -o /tmp/place.json -X POST http://127.0.0.1:8081/api/v1/places \
   -H 'content-type: application/json' \
+  -H "X-Catalog-Import-Key: ${CATALOG_IMPORT_KEY:-local-import}" \
   -d '{"name":"Skellig Michael","slug":"skellig-michael","categoryId":"poi","countyId":"kerry","town":"Portmagee","latitude":51.7708,"longitude":-10.5406,"published":true}'
 # expect HTTP 201 (or 409 if that slug already exists — then skip ID extract, GET by slug)
 

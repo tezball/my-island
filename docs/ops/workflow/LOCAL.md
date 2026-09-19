@@ -46,11 +46,11 @@ cd my-island
 | Alertmanager | http://localhost:9094 |
 | Jenkins | http://localhost:8085 (`admin` / `admin`; JCasC — [[ops/runbooks/JENKINS_LOCAL]]) |
 | Postgres | `localhost:5433` · `ops_reader` / `ops_reader` · db `ops` (MCP). Catalog Flyway owns db `catalog` (user `ops` / `ops`). Catalog `place` SELECT for `ops_reader` is Engineering (TODO on [[ops/tickets/WF-016]]) |
-| Catalog API | http://localhost:8081 (create / list / get places) |
+| Catalog API | http://localhost:8081 (public GET list/get; Place POST needs `X-Catalog-Import-Key`) |
 
 Cursor project MCP (`.cursor/mcp.json`) points at Grafana, Postgres (`ops` + `catalog`), GitHub, Docker, Playwright, and **IntelliJ**. After compose is up, reload MCP. IntelliJ: Settings → Tools → MCP Server → Enable, this repo open; `./scripts/mcp-intellij --help`. Cloud Agents: see [[MCP]] — laptop mcp.json does not follow; use dashboard **stdio** or HTTP PromQL. Do not add IntelliJ to Cloud Agents.
 
-Engineer map (skills, slash, MCP examples): [[AGENT_DX]]. Multi-session Cursor: [[WORKTREES]] (one Compose; primary stays on `main`).
+Engineer map (skills, slash, MCP examples): [[AGENT_DX]]. Run/observe/test: [[DX]]. Multi-session Cursor: [[WORKTREES]] (one Compose; primary stays on `main`).
 
 ### Catalog stub (create → list → get)
 
@@ -61,15 +61,16 @@ Repeatable sim (happy path, no chaos): [[ops/runbooks/PLACE_LISTING_SIM]]
 ./scripts/sim-place-listing.sh --iterations 10
 ```
 
-Manual curl:
+Manual curl (public GET). Place POST is **not** anonymous — send the import header (local compose default `local-import` from `CATALOG_IMPORT_KEY`; do not paste mock-prod keys):
 
 ```bash
 curl -s http://127.0.0.1:8081/actuator/health
 curl -s http://127.0.0.1:8081/api/v1/categories
+curl -s 'http://127.0.0.1:8081/api/v1/places?published=true'
 curl -s -X POST http://127.0.0.1:8081/api/v1/places \
   -H 'content-type: application/json' \
+  -H "X-Catalog-Import-Key: ${CATALOG_IMPORT_KEY:-local-import}" \
   -d '{"name":"Skellig Michael","slug":"skellig-michael","categoryId":"poi","countyId":"kerry","town":"Portmagee","latitude":51.7708,"longitude":-10.5406,"published":true}'
-curl -s http://127.0.0.1:8081/api/v1/places
 curl -s http://127.0.0.1:8081/api/v1/places/skellig-michael
 ```
 

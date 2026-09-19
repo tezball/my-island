@@ -31,9 +31,11 @@ Charter: [[ops/CHARTER]]. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN
 
 → **[[ops/workflow/TEST_STACK]]** — test mix today vs want (shift-left; gates vs agent tools).
 
+→ **[[ops/workflow/DX|Run, observe, test]]** — human + agent handbook (clone/run, MCP, ticket → fishing-journals.com). Confirm: [[ops/runbooks/CONFIRM_DEPLOY]]. Toolbox: [[ops/workflow/AGENT_DX]].
+
 → **[[ops/workflow/LOOP]]** · [[ops/workflow/WORKTREES]] · **[[ops/workflow/DOD|DoD (draft)]]** · **[[ops/workflow/CI]]** · **[[ops/workflow/SKILLS]]** · **[[ops/workflow/AGENT_DX|Agent DX toolbox]]** — loop, worktrees, implement bar, CI, skills, engineer tools.
 
-→ **[[ops/runbooks/_index|Runbooks]]** — ticket loop, digest, support, listing, add-skill.
+→ **[[ops/runbooks/_index|Runbooks]]** — ticket loop, confirm deploy, digest, support, listing, add-skill.
 
 → **[[ops/agents/_index|Agent roster]]** — including architecture, business, QA, security, [[ops/agents/roles/automation-expert]].
 

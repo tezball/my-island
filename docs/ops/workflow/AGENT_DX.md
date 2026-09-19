@@ -8,7 +8,7 @@ cssclasses:
 
 # Agent DX toolbox
 
-High-level map of the **in-repo** tools this company gives engineers and agents after `git clone`. Workshop (what we selected): [[ops/workshops/agent-dx-pack]]. Catalog: [[SKILLS]] · [[MCP]] · [[LOCAL]].
+High-level map of the **in-repo** tools this company gives engineers and agents after `git clone`. **Run / observe / test handbook:** [[DX]]. Confirm deploy: [[ops/runbooks/CONFIRM_DEPLOY]]. Workshop (what we selected): [[ops/workshops/agent-dx-pack]]. Catalog: [[SKILLS]] · [[MCP]] · [[LOCAL]].
 
 Clone, then:
 
@@ -109,7 +109,7 @@ Clone and CI must work with IntelliJ **closed**.
 | `.cursor/hooks/` | Laptop `sessionStart` only (not Cloud) |
 | `docs/ops/` | Company OS (tickets, this note) |
 
-Cloud Agents load **repo** skills. They do **not** load `.cursor/mcp.json`. Attach grafana/postgres as dashboard **stdio** if you want the toolbox in the VM.
+Cloud Agents load **repo** skills. They do **not** load `.cursor/mcp.json`. Attach grafana/postgres as dashboard **stdio** if you want the toolbox in the VM. Handbook: [[DX]].
 
 ## Add or change a skill
 

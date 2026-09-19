@@ -150,6 +150,7 @@ smoke_places() {
   code="$(curl -sS -o "$logs/create.json" -w '%{http_code}' \
     -X POST "${CATALOG_BASE}/api/v1/places" \
     -H 'content-type: application/json' \
+    -H "X-Catalog-Import-Key: ${CATALOG_IMPORT_KEY:-local-import}" \
     -d "$body" || true)"
   if [ "$code" = "201" ]; then
     record "POST /api/v1/places" "PASS"

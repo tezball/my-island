@@ -110,7 +110,7 @@ Wikilinks (`[[ops/BOARD]]`, `[[product/SIGNED]]`) resolve when the Obsidian vaul
 | Engineer notes | [[notes/_index]] · [[notes/adr/_index]] |
 | Dashboards | [[ops/dashboards/_index]] |
 | Tickets | [`ops/tickets/_index.md`](ops/tickets/_index.md) · [[ops/tickets/_index]] |
-| Workflow | [`LOOP`](ops/workflow/LOOP.md) · [`WORKTREES`](ops/workflow/WORKTREES.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/LOOP]] · [[ops/workflow/WORKTREES]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] · [[ops/workflow/TEST_STACK]] |
+| Workflow | [`DX`](ops/workflow/DX.md) · [`LOOP`](ops/workflow/LOOP.md) · [`WORKTREES`](ops/workflow/WORKTREES.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/DX]] · [[ops/workflow/LOOP]] · [[ops/workflow/WORKTREES]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] · [[ops/workflow/TEST_STACK]] |
 | Workshops | [[ops/workshops/_index]] · [[ops/workshops/cto-pipeline-brief]] · [[ops/workshops/cto-test-stack]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/second-brain]] · [[ops/workshops/e2e-place-stub]] · [[ops/workshops/poi-visitintent]] |
 | Test mix | [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/TEST_STACK]] — gates vs agent tools |
 | Leads | [`data/leads/README.md`](data/leads/README.md) |
