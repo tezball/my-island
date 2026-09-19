@@ -24,7 +24,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
-- [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/WF-041|WF-041]] P0 House Prometheus and Loki from mock-prod
 - [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
 - [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
@@ -36,6 +35,7 @@ kanban-plugin: basic
 
 ## In review
 
+- [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
 - [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 

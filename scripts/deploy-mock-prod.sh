@@ -49,6 +49,10 @@ if [[ -z "$EXPECTED_COMMIT" ]]; then
   echo "Could not resolve git HEAD for deploy stamp." >&2
   exit 1
 fi
+if [[ "$EXPECTED_BRANCH" != "main" ]]; then
+  echo "Refuse to deploy branch ${EXPECTED_BRANCH} — mock-prod tracks origin/main only (WF-040)." >&2
+  exit 1
+fi
 echo "==> Stamping catalog image GIT_COMMIT=${EXPECTED_COMMIT} version=${APP_VERSION} branch=${EXPECTED_BRANCH}"
 
 SSH_BASE=(

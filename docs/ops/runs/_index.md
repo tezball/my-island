@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-040-implement]] — unattended green main → Jenkins deploy-mock-prod → HTTP/API smoke
 - [[PRD-012-park]] — park PRD-012/013 `blocked` so next_ticket skips CHK/ME
 - [[WF-040-planner]] — POI VisitIntent tickets + plans on main (WF-040–045, WF-011, PRD-015)
 - [[WF-039-implement]] — GIS origin_mismatch: localhost canonical + Console origins
