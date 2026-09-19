@@ -12,6 +12,7 @@ Living spec is **outside** this vault. Do not fork it.
 | Canon | Path |
 |---|---|
 | Signed decisions (CEO 2026-09-05) | [`product/SIGNED.md`](../../product/SIGNED.md) |
+| VisitIntent slice (CEO 2026-09-19) | [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md) · [[ops/tickets/PRD-015]] |
 | CEO briefing | [`product/BRIEFING.md`](../../product/BRIEFING.md) |
 | Vision | [`product/VISION.md`](../../product/VISION.md) |
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |
@@ -34,6 +35,7 @@ Booking, payments, partner portals, reviews, guest–host messaging, native apps
 ## Tickets
 
 - Directory epic: [[ops/tickets/PRD-000]]
+- **This slice:** [[ops/tickets/PRD-015]] VisitIntent (`been` / `want` / `never`). Do not implement [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] as one-tap / My Places.
 - Marketplace epic (gated): [[ops/tickets/PRD-004]]
 
 History of the camping booking build: [`docs/README.md`](../../README.md). Do not implement from `docs/`.

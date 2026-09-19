@@ -42,7 +42,7 @@ Spring `services/catalog`:
 | `/actuator/health` | liveness/readiness |
 | `/actuator/prometheus` | Micrometer scrape |
 
-**Workshop exception:** no auth. Do not copy into later product APIs.
+**Workshop exception:** no auth. Do not copy into later product APIs. **Catalog writes lock C** ([[ops/tickets/WF-046]]): the live catalog must **close** public `POST /api/v1/places`; this workshop table is stub history, not house policy.
 
 **Out:** UI, booking, Stripe, inventory, visits API, images.
 
@@ -71,7 +71,7 @@ Catalog gets `SPRING_PROFILES_ACTIVE=chaos,chaos-monkey`. Default `./scripts/dev
 
 ## 6. CI
 
-Catalog module tests on PR (happy-path create/list/get + actuators). **Never** enable chaos (compose profile or Spring `chaos`) in required green CI.
+Catalog module tests on PR (happy-path create/list/get + actuators). **Never** enable chaos (compose profile or Spring `chaos`) on `unit` / `catalog` / `stack`. Dedicated Chaos Monkey CI job is [[ops/tickets/WF-043]] (retries and default fallbacks). Do not assault public fishing-journals.com on every deploy. ZAP-style DAST every merge vs local compose/Testcontainers is [[ops/tickets/WF-044]] — not a primary public-host scan.
 
 ## 7. MCP review surface
 

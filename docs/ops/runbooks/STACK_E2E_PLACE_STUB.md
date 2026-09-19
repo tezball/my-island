@@ -7,7 +7,7 @@ type: runbook
 
 Skill: `.cursor/skills/stack-e2e-place-stub/SKILL.md`. Policy: [[ops/workflow/STACK-E2E-place-stub]]. Local ports: [[ops/workflow/LOCAL]]. MCP pack: [[ops/workflow/MCP]].
 
-**Required CI must not** set Spring profile `chaos` or compose profile `chaos` (`compose.chaos.yml` is not a CI file). `catalog` is `./mvnw -B test`. `stack` is `./scripts/dev up`. Workshop overlay only.
+**Required CI must not** set Spring profile `chaos` or compose profile `chaos` on happy-path `unit` / `catalog` / `stack` (`catalog` is `./mvnw -B test`. `stack` is `./scripts/dev up`). Dedicated chaos lane: [[ops/tickets/WF-043]]. Workshop overlay remains this runbook; MCP may trigger a drill later.
 
 Copy these commands. Do not invent curl. No auth on this stub (workshop exception).
 

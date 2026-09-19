@@ -75,7 +75,7 @@ curl -s http://127.0.0.1:8081/api/v1/places/skellig-michael
 
 Package / repo remain `island.catalog` / my-island. Brand is **OPEN** on the PWA. Explore: http://127.0.0.1:5173 after `./scripts/app start` ([[ops/tickets/PRD-003]]).
 
-### Chaos Monkey (workshop only)
+### Chaos Monkey
 
 Default `./scripts/dev up` does **not** enable assaults. Overlay + compose profile:
 
@@ -85,7 +85,7 @@ docker compose -f compose.yml -f compose.chaos.yml --profile chaos up -d catalog
 
 That sets Spring profile `chaos` (and library profile `chaos-monkey`; latency + exceptions; kill stays off). Health + prometheus stay on the default path.
 
-Full drill (HTTP + MCP-or-HTTP observe + overlay down): [[ops/runbooks/STACK_E2E_PLACE_STUB]]. Required CI must not enable chaos.
+Full drill (HTTP + MCP-or-HTTP observe + overlay down): [[ops/runbooks/STACK_E2E_PLACE_STUB]]. Happy-path `unit` / `catalog` / `stack` must not enable chaos. Dedicated CI job: [[ops/tickets/WF-043]]. MCP may trigger a drill later; CI is the required chaos lane. Do not assault public fishing-journals.com on every deploy.
 
 ## Dev Container
 

@@ -40,14 +40,14 @@ Pick the **smallest set** that proves the slice. Prefer fast tests. Do not inven
 | **How (unit)** | Vault/OS, Spring/UI pure functions | `pytest ops/tests -q -m "not stack"`; `mvnw test`; later `npm test` |
 | **What (contract)** | API behaviour. **BDD = integration:** Gherkin vs Testcontainers (`features/place_catalog.feature`; schema stays in `CatalogTest`) | Same Maven suite — PostGIS + Flyway + HTTP |
 | **Wiring (stack)** | Compose/scripts/MCP glue. Do not re-assert the HTTP contract. | `./scripts/dev test` (marker `stack`) |
-| **Browser (Playwright)** | Only when a `PRD-*` UI exists and CI says so | Blocked until [[ops/tickets/WF-011]] / Explore ships |
+| **Browser (Playwright)** | Cron + MCP only — not merge, not inside `unit`/`catalog` | [[ops/tickets/WF-011]] |
 
 **Rules of thumb**
 
 - New API behavior → one **contract** scenario (Gherkin / Testcontainers), not “I curled it once.”
 - New Flyway migration → contract path that applies migrations and asserts behaviour.
 - Docs-only / skill / rule → vault pytest if the loop depends on the file; otherwise verify is the checklist + CI `unit`.
-- Sim / Gatling / chaos **operate** the stack; they do not replace the contract.
+- Sim / workshop chaos **operate** the stack; they do not replace the contract. Dedicated Chaos Monkey and ZAP jobs are **merge CI** ([[ops/tickets/WF-043]] · [[ops/tickets/WF-044]]). Gatling is trickle + weekly, not merge load ([[ops/tickets/WF-042]]); failures Jenkins red + Grafana ([[ops/tickets/WF-045]]). Playwright is cron + MCP ([[ops/tickets/WF-011]]). Close public Place writes ([[ops/tickets/WF-046]]).
 - Do **not** require all lanes for a one-line fix. Match risk.
 
 ## Clean code (when possible)

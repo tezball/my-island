@@ -36,14 +36,18 @@ Architecture’s draft is canon. Do not invent a competing stack.
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[ops/tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[ops/tickets/WF-004]] |
 | CI | **Jenkins** local compose + JCasC; GHA dual-run for remote PRs/automerge. No legacy Jenkins restore. | [[ops/tickets/WF-031]] |
-| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. Mock-prod deploy: [[ops/tickets/WF-032]]. | [[ops/tickets/WF-025]] |
+| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. Mock-prod deploy: [[ops/tickets/WF-032]] unattended from green `main`: [[ops/tickets/WF-040]]. | [[ops/tickets/WF-025]] |
 
 ### MCP gaps (must close for idea→prod)
 
 | Gap | Ticket | Status |
 |---|---|---|
 | Remote / staging MCP (HTTP/SSE, not laptop stdio) | [[ops/tickets/WF-004]] | blocked on [[ops/tickets/WF-010]] |
-| Alert → agent (Alertmanager webhook → Cloud Agent) | [[ops/tickets/WF-009]] | inbox |
+| Mock-prod house Prom/Loki + Grafana MCP HTTP/SSE | [[ops/tickets/WF-041]] | implement |
+| Agent MCP pack (Jenkins, Gatling, Playwright, Postgres RO) | [[ops/tickets/WF-042]] | implement |
+| Gatling fail → Jenkins red + Grafana/AM (agents **read** via MCP) | [[ops/tickets/WF-045]] | implement |
+| Close public Place writes (seed/import only) | [[ops/tickets/WF-046]] | implement |
+| Alert → agent (Alertmanager webhook → Cloud Agent spawn) | [[ops/tickets/WF-009]] | inbox |
 
 Host, OIDC provider, and curator-admin depth remain open in STACK.
 
@@ -89,4 +93,30 @@ CHK / ME / ACC stay off this public slice until a later ticket. 500-place launch
 |---|---|---|
 | 14 | **Mock-prod host** is fishing-journals.com (apex). Fishing-journals app stack is retired. | [[ops/tickets/WF-032]], [[ops/runbooks/MOCK_PROD_DEPLOY]] |
 | 15 | **Google Sign-In** on that host reuses the fishing-journals GIS client and path `/api/auth/google`. | [[ops/tickets/WF-014]] |
+
+## 2026-09-19 — VisitIntent slice; unattended mock-prod; agent MCP
+
+**Terry.** Next public slice is **VisitIntent** (`been` / `want` / `never`) on the existing Ireland POI directory. This is **not** a live consumer app. Merging to `main` is enough for the test server. Agents never SSH. Reviewer agents comment only. Ready PRs auto-merge when CI is green. This company **has no production environment and probably never will.** Q&A is **closed** (Terry chose **A** on public counts: anonymous been only).
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 16 | **Unattended loop.** Git commit / green `main` → Jenkins `deploy-mock-prod` → post-deploy **HTTP/API smoke** confirm (health + info SHA). Not a full UI suite. Playwright is cron + MCP ([[ops/tickets/WF-011]]). Catalog API, Chaos Monkey, and ZAP are **merge CI**. Gatling is a **light trickle** on fishing-journals.com (ongoing smoke) plus **weekly** full perf — not a merge load test ([[ops/tickets/WF-042]]). SSH key stays in Jenkins. Never in git, never in Cloud Agent chat. Agents never SSH. | [[ops/tickets/WF-040]], [[ops/tickets/WF-042]], [[ops/tickets/WF-043]], [[ops/tickets/WF-044]], [[ops/tickets/WF-045]], [[ops/workflow/PIPELINE]] |
+| 17 | **VisitIntent** is the Guest’s mark on a Place: `been`, `want`, or `never`. One per Guest+Place; change replaces. **Never** is explicit. Browse is public; ticks require a **signed-in Guest**. Keep live Explore. Ireland seed only. **Do not** implement [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] as one-tap / My Places. | [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md), [[ops/tickets/PRD-015]] |
+| 18 | **Observe lock C.** House Prometheus/Loki data comes from the **test server** (fishing-journals.com). Agents read/act via Grafana MCP **HTTP/SSE**. Laptop Grafana uses the **same** datasources (script/tunnel). Do **not** leave agents on local-compose-only metrics. Do **not** publish Prometheus on the public internet. Leftover `grafana.fishing-journals.com` is not house Grafana. | [[ops/tickets/WF-041]] |
+| 19 | **Agent MCP pack** (plus public HTTPS): catalog API, Jenkins job status + deploy-on-main, Gatling, Playwright, Postgres RO, deploy/status. Credentials in Jenkins / agent env, never in `docs/`. If a tool needs a shell on the box, it is a Jenkins job or MCP wrapper. | [[ops/tickets/WF-042]], [[ops/workflow/MCP]] |
+| 20 | **No human approve gate** on this path after this lock. Planner → implementer → reviewer comment → CI automerge → Jenkins follows `main` → post-deploy tests. Chat agents still do not `gh pr merge`. | [[ops/workflow/LOOP]], [[ops/workflow/SAFETY]] |
+| 21 | **Build order C.** Two streams in **parallel**, both `status: implement`: (1) unattended mock-prod + house observe + agent MCP + chaos-in-CI + ZAP-in-CI + Gatling fail path + close public Place writes ([[ops/tickets/WF-040]] · [[ops/tickets/WF-041]] · [[ops/tickets/WF-042]] · [[ops/tickets/WF-043]] · [[ops/tickets/WF-044]] · [[ops/tickets/WF-045]] · [[ops/tickets/WF-046]]); (2) auth + VisitIntent ([[ops/tickets/PRD-010]] · [[ops/tickets/PRD-015]]). Do **not** wait for deploy before starting ticks. | [[ops/workshops/poi-visitintent]] |
+| 22 | **Guest auth: username/password AND Google SSO.** GIS can stay. Seed **password** Guests for Gatling/agents (env, not docs). Do not make GIS a blocker. No OIDC stub. Spring redirect OIDC remains [[ops/tickets/WF-014]] (later). | [[ops/tickets/PRD-010]] |
+| 23 | **Chaos lock C.** Chaos Monkey in **merge CI** (Jenkins + GHA), house overlay / Testcontainers, to prove **retries and default fallbacks**. Chaos **off** UI-less `unit`/`catalog`. Do **not** run Chaos Monkey against public fishing-journals.com on every deploy. Do **not** move Chaos to cron. MCP may trigger a drill later. | [[ops/tickets/WF-043]] |
+| 24 | **Security lock B.** ZAP-style scanner **in merge CI** against **local compose/Testcontainers**, **every merge**. Not the primary scan against public fishing-journals.com. Do **not** move ZAP to cron. Keep it off `unit`/`catalog`. | [[ops/tickets/WF-044]] |
+| 25 | **Test lanes.** **Only UI/Playwright is outside merge CI** as a browser suite (cron + MCP, [[ops/tickets/WF-011]]). Merge CI: catalog/BFF API, Chaos Monkey, ZAP. Fast merge: keep Playwright off required UI-less jobs (`unit`/`catalog`). Gatling is **not** a merge load test — see #26. | [[ops/tickets/WF-011]], [[ops/workflow/TEST_STACK]] |
+| 26 | **Gatling lock.** **Light trickle** on fishing-journals.com as ongoing smoke through all features (not a merge-CI load test). **Full Gatling performance** = weekly Jenkins cron and/or MCP/manual. Do **not** put full perf on every merge. Seeded password Guest. | [[ops/tickets/WF-042]] |
+| 27 | **Alerts lock C.** Trickle smoke and weekly Gatling failures mark **Jenkins red** and fire **Grafana/Alertmanager**. Agents read both via MCP. Mute leftover fishing-journals email (do not restore). | [[ops/tickets/WF-045]], [[ops/tickets/INC-001]] |
+| 28 | **Catalog writes lock C.** No public POST/PUT/PATCH/DELETE of Places. Place rows change only via **seed/import in CI/deploy**. Guests authenticate to write **VisitIntent only**. Close the open `POST /api/v1/places`. Directory GETs stay public. | [[ops/tickets/WF-046]], [[ops/tickets/PRD-015]] |
+| 29 | **VisitIntent privacy.** Guest lists are **private**. Place pages may show **anonymous counts only** (no PII). | [[ops/tickets/PRD-015]], [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md) |
+| 30 | **Public counts lock A.** Place API/UI expose anonymous **been count** only. **Want** and **never** are private to the Guest. No PII. | [[ops/tickets/PRD-015]], [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md) |
+
+Domain terms (do not invent synonyms in tickets): **Place**, **County**, **Guest**, **VisitIntent**. Host / Experience owner / Support: glossary only; no UI in this slice.
+
+CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer Release 1 backlog. This slice does not ship them.
 

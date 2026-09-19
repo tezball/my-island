@@ -9,15 +9,15 @@ cssclasses:
 
 # Mock-prod deploy
 
-**Not production.** Apex host is `https://fishing-journals.com/` (CEO playground VPS). Credentials stay in `.env` / remote `.env.mock-prod`.
+**Not production.** Apex host is `https://fishing-journals.com/` (CEO playground VPS). Credentials stay in `.env` / remote `.env.mock-prod`. **Agents never SSH.** Unattended path: green `main` → Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). The SSH key stays in Jenkins.
 
 ```bash
-# from a machine with MOCK_PROD_* and GOOGLE_* in .env
+# from a machine with MOCK_PROD_* and GOOGLE_* in .env — humans / Jenkins only
 # MOCK_PROD_URL must be https://fishing-journals.com (not http://<vps-ip> — Caddy 308s HTTP).
 ./scripts/deploy-mock-prod.sh
 ```
 
-Jenkins job `deploy-mock-prod` runs the same script when those env vars are present.
+Jenkins job `deploy-mock-prod` runs the same script when those env vars are present. Cloud Agents watch the public site (`/actuator/health`, `/actuator/info`) and Jenkins/MCP ([[ops/tickets/WF-042]]); they do not run this script. Post-deploy confirm is **HTTP/API smoke**, not Playwright. Do **not** start Chaos Monkey on this host as a deploy hook ([[ops/tickets/WF-043]] is merge CI). Do **not** make this apex the primary ZAP target ([[ops/tickets/WF-044]] scans local compose every merge). Gatling **light trickle** may already run here ([[ops/tickets/WF-042]]); full perf is weekly. Trickle/weekly failures mark Jenkins red and fire house Grafana/AM ([[ops/tickets/WF-045]]); leftover FJ email stays muted.
 
 Health 200 is not enough. The script stamps `GIT_COMMIT` into the catalog image and then requires public JSON at `/actuator/info` to match that SHA (`ops/scripts/check_deploy_info.py`). HTML (PWA), `unknown`, or a different hash fails the job.
 

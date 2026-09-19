@@ -22,8 +22,8 @@ NFR-10 (unit + integration + E2E) maps to **how + contract + browser**. DoD stil
 | **1. How (unit)** | Implementation is correct. Not the product promise. | **Gate:** vault pytest `not stack`; thin JUnit (`PlaceServiceTest`). | Vitest with [[ops/tickets/PRD-003]] (haversine, filters). ArchUnit on hot packages. | `./scripts/app test` · `/app-test` · IDEA `mvnw test` |
 | **2. What (contract)** | API behaviour. **BDD = integration.** Gherkin scenarios against Testcontainers PostGIS (Flyway, HTTP, authz, mail). | **Gate:** `features/place_catalog.feature` (create/list/get + 404/400) on Testcontainers. `CatalogTest` keeps schema/seed/how. | More scenarios in **that same job**. Negative auth, Mailpit live here when those APIs exist. Duplicate JUnit HTTP tests go away. | Read/run one feature; `mvnw test` (no compose) |
 | **3. Wiring (stack)** | Boxes talk. Do **not** re-assert create/list/get. | **Gate:** pytest `@pytest.mark.stack` | Keep thin. | `./scripts/app test` after compose up |
-| **4. Browser** | The user’s what. Playwright is the **only browser E2E** ([`product/ENGINEERING.md`](../../product/ENGINEERING.md) §3.4). | **Tool:** Playwright MCP. No tests. [[ops/tickets/WF-011]] blocked. | **Gate** when Explore exists: Playwright vs job-started compose. axe (NFR-04) here. | MCP explore; CI is the gate |
-| **5. Operate** | Seed, load, break, observe — **not** a second contract. | **Tool:** `./scripts/dev sim` (seed). **Workshop:** chaos overlay (`/stack-e2e`). Grafana / PromQL. | Sim + **Gatling** `./scripts/dev traffic` = one traffic idea (gentle local flow + optional soak). Chaos stays workshop. | Leave traffic up; query `up{job="catalog"}` |
+| **4. Browser** | The user’s what. Playwright is the **only browser E2E** ([`product/ENGINEERING.md`](../../product/ENGINEERING.md) §3.4). | **Tool:** Playwright MCP. No tests. [[ops/tickets/WF-011]] implement (cron + MCP). | **Not a merge gate.** Cron vs fishing-journals.com (recommend 6h) + MCP on demand. Keep Playwright off `unit`/`catalog`. | MCP explore; cron is the suite |
+| **5. Operate** | Seed, load, break, observe — **not** a second contract. | **Tool:** `./scripts/dev sim` (seed). **Workshop:** chaos overlay (`/stack-e2e`). Grafana / PromQL. | Sim remains a tool. **Gatling:** light trickle on fishing-journals.com + weekly full perf ([[ops/tickets/WF-042]]) — not merge load. Failures → Jenkins red + Grafana/AM ([[ops/tickets/WF-045]]). **Chaos Monkey merge CI** ([[ops/tickets/WF-043]]). **ZAP every merge** ([[ops/tickets/WF-044]]). | Leave traffic up; query `up{job="catalog"}` |
 
 Legend: **gate** = required CI · **tool** = entrypoint, not automerge · **workshop** = opt-in.
 
@@ -38,8 +38,8 @@ OPERATE (sim / Gatling / chaos / Grafana) sits beside, does not replace WHAT
 | **One contract** | BDD and integration are the same lane. Testcontainers is the engine; Gherkin is the language. |
 | **Left first** | New API behaviour is a contract scenario, not Playwright and not chat curl. |
 | **One UI runner** | Playwright clicks the PWA. Gherkin does **not** drive the browser. |
-| **Tools ≠ gates** | Sim, Gatling, chaos, MCP browser are how agents **work**. |
-| **No chaos in merge** | [[CI]] rule 8. |
+| **Tools ≠ gates** | Sim, workshop chaos, MCP browser are how agents **work**. Dedicated Chaos / ZAP jobs are **merge gates**. Gatling trickle + weekly perf are not merge load. Playwright is cron + MCP, not merge. |
+| **No chaos in merge** happy-path jobs | `unit` / `catalog` / `web` / `stack` stay chaos-off ([[CI]] rule 8). Dedicated chaos job: [[ops/tickets/WF-043]]. |
 | **Same command** | `./scripts/app test` / `./scripts/dev test` locally, Jenkins, GHA. |
 
 ## Tests as tools
@@ -59,9 +59,9 @@ Do not add a second CLI family. Extend `./scripts/dev`.
 
 ## Required CI
 
-**Now:** `unit` (how / vault) · `catalog` (what / Testcontainers; Gherkin joins this job) · `web` (Vitest + Vite build) · `stack` (wiring).
+**Now:** `unit` (how / vault) · `catalog` (what / Testcontainers; Gherkin joins this job) · `web` (Vitest + Vite build) · `stack` (wiring). Tickets add merge jobs: chaos [[ops/tickets/WF-043]], ZAP [[ops/tickets/WF-044]]. Gatling is trickle + weekly ([[ops/tickets/WF-042]]), not merge load.
 
-**When Explore is on main:** Playwright job (browser) via [[ops/tickets/WF-011]]. Still **out:** chaos, Gatling soak, kill-application.
+**Browser:** Playwright is **not** merge CI ([[ops/tickets/WF-011]] cron + MCP). Keep Playwright off `unit`/`catalog`. Still **out of UI-less job bodies:** chaos overlay, ZAP, full Gatling perf, kill-application. Do **not** primary-scan public fishing-journals.com. Do **not** move Chaos/ZAP to cron. Do **not** put full Gatling on every merge.
 
 ## Out
 
@@ -71,8 +71,9 @@ Do not add a second CLI family. Extend `./scripts/dev`.
 ## Next slices
 
 1. More Gherkin on the existing `catalog` job (authz when PRD-010 lands).
-2. Gatling traffic — same operate lane as sim.
+2. Gatling light trickle + weekly full perf: [[ops/tickets/WF-042]]. Failures Jenkins red + Grafana/AM: [[ops/tickets/WF-045]]. Chaos merge CI: [[ops/tickets/WF-043]]. ZAP merge CI: [[ops/tickets/WF-044]]. Playwright cron: [[ops/tickets/WF-011]]. Close public Place writes: [[ops/tickets/WF-046]].
 3. Vitest with [[ops/tickets/PRD-003]] — **landed** as GHA/Jenkins `web`. Playwright remains [[ops/tickets/WF-011]].
+4. VisitIntent API contract on the existing `catalog` job ([[ops/tickets/PRD-015]]).
 
 ## Related
 

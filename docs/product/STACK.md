@@ -4,7 +4,7 @@ type: product
 status: active
 owner: Architecture
 created: 2026-09-01
-updated: 2026-09-12
+updated: 2026-09-19
 ---
 
 # Stack
@@ -17,8 +17,13 @@ not re-litigate the house. Client stays **light and fast** (not a Next.js-heavy
 monolith). Agents run idea→`main` with logs, metrics and alerts through MCP.
 There is **no production environment** and probably never will be (CEO 2026-09-12).
 
-Nothing here is running yet except the local compose observability stack.
-These are constraints on the first service and UI commits.
+Local compose (`./scripts/app start`) is the agent **runtime**. Mock-prod
+(https://fishing-journals.com/, not a GitHub `production` Environment) already
+serves the Ireland POI directory. House observe **source of truth** after
+[[ops/tickets/WF-041]] is Prometheus/Loki data **from that test server**, read
+via Grafana MCP HTTP/SSE (laptop Grafana uses the same datasources). Local
+compose Grafana remains a workshop fallback — not the agent SoR. These remain
+constraints on new services and UI.
 
 ## Decisions (signed)
 
@@ -29,12 +34,13 @@ These are constraints on the first service and UI commits.
 | Database | **PostgreSQL 17 + PostGIS** | Map/geo is a first-class MVP surface. One engine for relational + distance queries. |
 | Migrations | **Flyway** in the API | Expand/contract only. Agents never ad-hoc DDL against shared envs. |
 | Observability | **MCP, OSS first** | Logs, metrics, alerts via Grafana stack + `mcp-grafana`. Prefer $0 self-hosted. |
-| CI | **Jenkins** (local compose + JCasC); GHA dual-run for remote PRs | Clone→`./scripts/dev up` → :8085. Same `unit`/`catalog`/`stack` contract. No legacy Jenkins restore. [[ops/tickets/WF-031]] |
-| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green. | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. |
+| CI | **Jenkins** (local compose + JCasC); GHA dual-run for remote PRs | Clone→`./scripts/dev up` → :8085. Same `unit`/`catalog`/`stack` contract. Dedicated chaos + ZAP jobs: [[ops/tickets/WF-043]] · [[ops/tickets/WF-044]]. No legacy Jenkins restore. [[ops/tickets/WF-031]] |
+| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green. Mock-prod follows `main` via Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. Agents never SSH; the key stays in Jenkins. |
 
-Hosting (EU VPS / Fly / Railway / etc.) remains an open pick as long as it can
-run the API + Grafana compose sidecars and meet NFRs. Object storage default:
-MinIO local, S3-compatible (e.g. R2) in staging/prod.
+Mock-prod host is the existing fishing-journals.com VPS (CEO 2026-09-13). A
+separate always-on staging-with-Grafana-sidecars box remains the open pick on
+[[ops/tickets/WF-010]] (still blocked). Object storage default: MinIO local,
+S3-compatible later. Do not treat Vercel as the default host.
 
 ## Java / Spring house
 
@@ -103,13 +109,19 @@ writes, or secret values.
 | **GitHub MCP** | PRs, checks, Actions, issues | Fine-grained PAT or GitHub App. No admin. |
 | **Postgres MCP** | Read-only SQL | Staging first. `SELECT` only, timeout, row limit. No prod until replica + policy. |
 | **Docker MCP** | Compose status / sidecar logs | Local + staging. Not prod. |
-| **Browser / Playwright MCP** | Drive the running UI | Local + staging URLs only. |
+| **Browser / Playwright MCP** | Drive the running UI | Local + staging / mock-prod URLs only. |
 | **IntelliJ MCP** | Inspections, build, symbols via IDEA 2025.2+ | **Laptop.** IDE open. Not Cloud Agents. [[ops/tickets/WF-034]] |
 | **Mailpit** (HTTP or thin MCP) | Assert outbound mail | Local + staging. No prod mail read. **Not packed yet.** |
+| **Jenkins / deploy status** | Job status + deploy-on-main | Mock-prod. Key stays in Jenkins. Ticket: [[ops/tickets/WF-042]] |
+| **Gatling** | Light trickle on fishing-journals.com + weekly full perf (MCP/manual) | Not merge load. Failures → Jenkins red + Grafana/AM. Ticket: [[ops/tickets/WF-042]] · [[ops/tickets/WF-045]] |
+| **Chaos Monkey (CI)** | Retries + default fallbacks | Dedicated **merge** job. Not cron. Ticket: [[ops/tickets/WF-043]] |
+| **ZAP-style DAST (CI)** | Every merge vs local compose/Testcontainers | Not cron. Not primary public-host scan. Ticket: [[ops/tickets/WF-044]] |
+| **Catalog Place writes** | None on public HTTP | Seed/import in CI/deploy only. Close `POST /api/v1/places`. Guests write VisitIntent only. Ticket: [[ops/tickets/WF-046]] |
 
 Not in the pack: Stripe (no payments in MVP), Notion (vault is `ops/`
 in git), filesystem MCP (workspace is the files). Local Jenkins is compose
-house CI ([[ops/tickets/WF-031]]), not an MCP server.
+house CI ([[ops/tickets/WF-031]]). Jenkins **as MCP** is [[ops/tickets/WF-042]],
+not a second CD system.
 
 Tickets and company OS stay in the Obsidian vault at `ops/` (git). Agents edit
 markdown via the repo, not a desktop-only vault MCP.
@@ -118,10 +130,11 @@ markdown via the repo, not a desktop-only vault MCP.
 
 | Gap | Why it matters | Unblock |
 |---|---|---|
-| **Remote / staging MCP** | Cloud Agents cannot use laptop `.mcp.json` stdio | HTTP/SSE (or Cursor catalog) for Grafana + Postgres-RO on always-on EU staging. Ticket: [`ops/tickets/WF-004.md`](../ops/tickets/WF-004.md) |
-| **Alert → agent** | On-call still human-only | Alertmanager webhook → Cursor automation / Cloud Agent with firing payload. Ticket: [`ops/tickets/WF-009.md`](../ops/tickets/WF-009.md) |
+| **Remote / staging MCP** | Cloud Agents cannot use laptop `.mcp.json` stdio | Observe lock C: test-server Prom/Loki + Grafana MCP HTTP/SSE ([[ops/tickets/WF-041]]). Do not leave agents on local-compose-only metrics. Do not publish Prometheus. Generic staging/prod MCP remains [`WF-004`](../ops/tickets/WF-004.md) (blocked on [`WF-010`](../ops/tickets/WF-010.md)). |
+| **Alert → agent** | On-call still human-only for spawn | Agents **read** Jenkins + AM via MCP now ([[ops/tickets/WF-045]]). Webhook spawn remains [`ops/tickets/WF-009.md`](../ops/tickets/WF-009.md). Mute leftover FJ email ([[ops/tickets/INC-001]]). |
 | **Always-on staging** | Nowhere safe for an agent to be wrong | Small EU staging from first deployable API + web. Ticket: [`ops/tickets/WF-010.md`](../ops/tickets/WF-010.md) |
-| **Required Playwright in CI** | Agents ship UI that “looks right” in a screenshot | Playwright required on PR; job starts compose. Ticket: [`ops/tickets/WF-011.md`](../ops/tickets/WF-011.md) |
+| **Required Playwright in CI** | UI coverage without blocking merge | **Not a merge gate.** Cron vs fishing-journals.com (6h) + MCP on demand. Ticket: [`ops/tickets/WF-011.md`](../ops/tickets/WF-011.md) |
+| **Open `POST /api/v1/places`** | Anyone can create Places on the public catalog | **Catalog writes lock C:** close it. Seed/import in CI/deploy. Guests write VisitIntent only. Ticket: [`ops/tickets/WF-046.md`](../ops/tickets/WF-046.md) |
 | **Image registry + digest deploys** | Cannot roll back a bad agent deploy | GHCR; deploy by SHA digest |
 | **Deploy MCP** | Host pick may lack a first-class MCP | Prefer hosts with API/`fly`/`gh` scriptability; accept CLI until a connector exists |
 | **Auth provider console** | OIDC setup is often dashboard-only | Document human one-time setup; agents use Spring config thereafter |

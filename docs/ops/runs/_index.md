@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-040-planner]] — POI VisitIntent tickets + plans on main (WF-040–045, WF-011, PRD-015)
 - [[WF-039-implement]] — GIS origin_mismatch: localhost canonical + Console origins
 - [[WF-038-implement]] — sibling worktrees; primary on `main`; VPS tracks `main`
 - [[INC-001-implement]] — mute leftover FJ ApiDown email on mock-prod VPS

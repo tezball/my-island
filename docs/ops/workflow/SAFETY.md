@@ -17,3 +17,5 @@ Copied from the CTO review, then relaxed by CEO 2026-09-12 ([[ops/company/DECISI
 8. **Do not implement product MVP** unless the ticket id starts with `PRD-` and status is `implement`.
 9. **Do not polish application code** on `WF-*` tickets. App trees are disposable scaffolding ([[ops/company/SCAFFOLDING]]).
 10. **House stack is [`product/STACK.md`](../../product/STACK.md).** Java / Spring Boot; light Vite+React PWA (not Next); Postgres+PostGIS; Grafana MCP; Jenkins local CI. Do not recommend FastAPI, Neon, or Vercel as defaults.
+11. **No public Place writes.** Close `POST /api/v1/places`. No public PUT/PATCH/DELETE of Places. Seed/import in CI/deploy only. Guests authenticate to write VisitIntent only ([[ops/tickets/WF-046]]).
+12. **VisitIntent privacy.** Guest lists are private. Place API/UI expose anonymous been count only; want and never stay private to the Guest. No PII ([[ops/tickets/PRD-015]]).

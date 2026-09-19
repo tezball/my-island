@@ -29,7 +29,7 @@ pick ticket → plan/docs on main → implement in worktree + open PR → review
 | CI `unit` + `catalog` + `stack` | GHA (+ local Jenkins) | **auto** | [[ops/workflow/CI]] · [[ops/tickets/WF-031]] |
 | Approve + squash-merge ready PR | GitHub Actions | **auto** | [[ops/tickets/WF-025]] — drafts/forks skipped |
 | Delete feature branch + worktree | Agent / house rule | agent | After merge; primary stays on `main` |
-| Confirm `main` CI green | Agent | agent | Watch Actions on `main` after merge; if red, open a fix PR and repeat from implement |
+| Confirm `main` CI green | Agent | agent | Watch Actions on `main` after merge; if red, open a fix PR and repeat from implement. Merge CI includes catalog API, Chaos, ZAP. Playwright is cron. Gatling is trickle + weekly, not merge load. |
 | Board sync (when statuses change) | Agent | agent | `board_sync.py` after ticket frontmatter |
 
 Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specified** but **not enabled** for MVP ([[ops/tickets/WF-003]] `done`). Until then, a human or Cloud Agent **starts** each session; the merge step is still auto. PR CI green is not enough — **`main` must stay green** after the squash.
@@ -43,9 +43,13 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 | Compose stack `./scripts/dev test` | **auto** | Required; GHA uses `SKIP_JENKINS=1` |
 | Local Jenkins UI / `local-ci` | **auto** (laptop) | `./scripts/dev up` → :8085 |
 | Jenkins multibranch PR poll | agent+secret | Needs `JENKINS_GITHUB_TOKEN` in `.env` |
-| Playwright / consumer UI CI | **human** backlog | Waits [[ops/tickets/WF-011]] |
-| Test mix (how / what / wiring / operate) | map | [[ops/workflow/TEST_STACK]] — contract is Gherkin on Testcontainers |
-| Deploy to mock-prod VPS | **human** / blocked | From **`main` only** ([[ops/tickets/WF-032]]); host [[ops/tickets/WF-010]] |
+| Playwright / consumer UI | **auto** (cron) | **Not merge CI.** Cron vs fishing-journals.com (recommend 6h) + MCP on demand [[ops/tickets/WF-011]]. Keep off `unit`/`catalog`. |
+| Test mix (how / what / wiring / operate) | map | [[ops/workflow/TEST_STACK]] — contract is Gherkin on Testcontainers. Only Playwright is outside merge CI. |
+| Chaos Monkey (retries / fallbacks) | **auto** (merge) | Dedicated merge job [[ops/tickets/WF-043]]. Not inside `unit`/`catalog`. Not cron. Not on public fishing-journals.com every deploy. |
+| ZAP-style DAST | **auto** (merge) | Every merge vs local compose/Testcontainers [[ops/tickets/WF-044]]. Not cron. Not the primary scan of the public test server. |
+| Gatling trickle | **auto** (ongoing) | Light trickle on fishing-journals.com as feature smoke — not merge load [[ops/tickets/WF-042]]. Failures mark Jenkins red and fire Grafana/AM [[ops/tickets/WF-045]]. |
+| Gatling full perf | **auto** (weekly) | Weekly Jenkins cron and/or MCP/manual. Not every merge. Failures mark Jenkins red and fire Grafana/AM [[ops/tickets/WF-045]]. |
+| Deploy to mock-prod VPS | **auto** (Jenkins) | Green `main` → Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). From **`main` only**. SSH key stays in Jenkins. Agents never SSH. Job already exists ([[ops/tickets/WF-032]]); this ticket wires the unattended trigger. Not a GitHub `production` Environment. Host-pick ticket [[ops/tickets/WF-010]] stays blocked. Do **not** run Chaos Monkey or primary ZAP against the public host on every deploy. |
 | Production deploy | **never** | No prod Environment ([[ops/company/DECISIONS]]) |
 
 ## Explicitly not automated (today)
@@ -53,7 +57,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 | Item | Mode | Ticket / note |
 |---|---|---|
 | Save + Activate Cursor Automations UI | **human** (deferred) | Plan kept; not MVP — [[ops/workflow/AUTOMATIONS]] |
-| Google Sign-In client id/secret | **human** post-MVP | [[ops/tickets/WF-014]] |
+| Google Sign-In client id/secret | **human** if Console origins change | GIS already live; [[ops/tickets/WF-014]] Spring OIDC still later. Password seed Guests are the agent login path ([[ops/tickets/PRD-010]]). |
 | Apple Sign-In Developer creds | **human** post-MVP | [[ops/tickets/WF-033]] |
 | Counsel revisit before customer-facing prod | **human** later | [[ops/tickets/PRD-009]] — data OK for current use |
 | Staging host pick | **human** | [[ops/tickets/WF-010]] |
@@ -62,7 +66,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 
 ## Product loop (MVP agents)
 
-Implement work is **agent**, not cron: [[ops/agents/mvp-team]]. Suggested parallel: seed ∥ auth ∥ explore → place → checkoff → me → launch.
+Implement work is **agent**, not cron: [[ops/agents/mvp-team]]. CEO lock **C**: two streams in **parallel** — (1) [[ops/tickets/WF-040]] + [[ops/tickets/WF-041]] + [[ops/tickets/WF-042]] + [[ops/tickets/WF-043]] + [[ops/tickets/WF-044]] + [[ops/tickets/WF-045]] + [[ops/tickets/WF-046]] (commit→deploy→test→confirm; chaos + ZAP in CI; Gatling trickle/weekly fail → Jenkins red + Grafana/AM; close public Place writes); (2) [[ops/tickets/PRD-010]] + [[ops/tickets/PRD-015]] (password **and** Google SSO; VisitIntent). Do not serialize VisitIntent behind deploy. GIS stays. Do not pick [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] for that slice.
 
 ## Related
 

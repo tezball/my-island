@@ -29,7 +29,7 @@ SORT file.name DESC
 | [[PRD-007]] | Wave 1 leads acceptance |
 | [[PRD-008]] | Draft Place import |
 | [[PRD-009]] | Counsel gate |
-| [[PRD-010]] | **Email+password auth** (no OIDC stub; Google later) |
+| [[PRD-010]] | Username/password **and** Google SSO (GIS stays; seed Guests) |
 | [[PRD-011]] | Place detail |
 | [[PRD-012]] | Check-off / visits |
 | [[PRD-013]] | My Places |
@@ -50,3 +50,12 @@ SORT file.name DESC
 | [[WF-031]] | Jenkins local house CI |
 | [[WF-034]] | Agent DX pack (Goal 1 list; Goal 2 after review) |
 | [[WF-035]] | Test stack today vs want (shift-left, human+agent) |
+| [[WF-040]] | Unattended mock-prod from green `main` |
+| [[WF-041]] | Test-server Prom/Loki + Grafana MCP HTTP/SSE (not compose-only) |
+| [[WF-042]] | Agent MCP pack (no secrets in docs) |
+| [[WF-043]] | Chaos Monkey in CI (retries/fallbacks; not public host every deploy) |
+| [[WF-044]] | ZAP-style DAST in CI vs local compose/Testcontainers every merge |
+| [[WF-045]] | Trickle/weekly Gatling fail → Jenkins red + Grafana/AM; leftover FJ email stays muted |
+| [[WF-046]] | Close public Place writes; seed/import in CI/deploy; Guests write VisitIntent only |
+| [[WF-011]] | Playwright cron vs fishing-journals.com (not a merge gate) |
+| [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |

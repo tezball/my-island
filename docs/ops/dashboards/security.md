@@ -11,7 +11,7 @@ cssclasses:
 Role: [[ops/agents/roles/eng-security]]. Policy: [[ops/agents/roles/trust-safety]]. SAFETY: [[ops/workflow/SAFETY]].
 
 > [!danger] Focus
-> No secrets in notes. No prod. Trust gate: [[ops/tickets/PRD-009]].
+> No secrets in notes. No prod. Trust gate: [[ops/tickets/PRD-009]]. ZAP-style **merge CI** vs local compose: [[ops/tickets/WF-044]] (not cron; not primary public-host scan). **Catalog writes lock C:** close public Place POST ([[ops/tickets/WF-046]]).
 
 ![[ops/dashboards/security.base]]
 

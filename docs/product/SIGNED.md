@@ -81,3 +81,13 @@ Host and OIDC remain open. Database is PostgreSQL 17 + PostGIS (see [`STACK.md`]
 **Signed by CEO 2026-09-05.** Product canon = `product/`. House = [`STACK.md`](STACK.md).
 Release 1 sequence and gated chunks: [`MILESTONES.md`](MILESTONES.md).
 Research Wave 1 (leads only; counsel before publish still [`PRD-009`](../ops/tickets/PRD-009.md)): [`WAVE-1.md`](WAVE-1.md).
+
+---
+
+## 2026-09-19 — VisitIntent slice (does not rewrite 2026-09-05)
+
+CEO lock: next **public** slice is three personal marks on the live Ireland POI directory — not one-tap check-off / My Places as drafted in this folder.
+
+Canon for that slice: [`POI-VISITINTENT.md`](POI-VISITINTENT.md). Ticket: [`PRD-015`](../ops/tickets/PRD-015.md). Auth: username/password **and** Google SSO ([`PRD-010`](../ops/tickets/PRD-010.md)); GIS can stay. Guest lists are **private**; Place API/UI expose an **anonymous been count** only (no PII); want and never stay private to the Guest. Do not implement [`PRD-012`](../ops/tickets/PRD-012.md) / [`PRD-013`](../ops/tickets/PRD-013.md) as this slice. Longer Release 1 (CHK / ME) in [`MVP.md`](MVP.md) stays signed; it is not what we ship next.
+
+Mock-prod is fishing-journals.com (not a GitHub `production` Environment). Loop: green `main` → Jenkins deploy → HTTP/API smoke confirm. Playwright is cron + MCP, not merge. Catalog API, Chaos Monkey, and ZAP are merge CI. Gatling is a light trickle plus weekly full perf. Trickle/weekly failures mark Jenkins red and fire Grafana/AM; leftover FJ email stays muted. No public Place POST/PUT/PATCH/DELETE; seed/import in CI/deploy; Guests write VisitIntent only. Agents never SSH. Company log: [`ops/company/DECISIONS.md`](../ops/company/DECISIONS.md).
