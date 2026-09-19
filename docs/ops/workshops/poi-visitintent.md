@@ -44,7 +44,7 @@ Campsite / B&B / experience booking, per-county mocks, map rewrite, Datadog/Next
 
 ## Wrong-shape tickets (leave open)
 
-[[ops/tickets/PRD-012]] and [[ops/tickets/PRD-013]] stay `implement` as the signed CHK/ME backlog. **Do not pick them for this slice.**
+[[ops/tickets/PRD-012]] and [[ops/tickets/PRD-013]] are **`blocked`** (wrong shape; signed CHK/ME backlog). `next_ticket.py` only picks `ready` / `implement` / `review`, so it will not hand an implementer one-tap or My Places before [[ops/tickets/PRD-015]].
 
 [[ops/tickets/WF-004]] / [[ops/tickets/WF-010]] stay **blocked** (generic staging host). Mock-prod observe is WF-041.
 
