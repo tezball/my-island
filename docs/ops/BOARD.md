@@ -31,7 +31,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-046|WF-046]] P0 Close public Place writes; seed/import only
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
-- [ ] [[ops/tickets/WF-047|WF-047]] P1 Human and agent DX handbook
 
 ## In review
 
@@ -39,6 +38,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
 - [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
+- [ ] [[ops/tickets/WF-047|WF-047]] P1 Human and agent DX handbook
 
 ## Blocked
 

@@ -1549,7 +1549,8 @@ def test_wf_047_dx_handbook() -> None:
     assert meta["owner"] == "automation-expert"
     assert meta["type"] == "workflow"
     assert meta["priority"] == "P1"
-    assert meta["status"] in ("implement", "review")
+    assert meta["status"] == "review"
+    assert meta.get("pr", "") == "https://github.com/tezball/my-island/pull/99"
     assert "tickets/WF-000" in meta.get("parent", "")
     assert "plans/WF-047" in meta.get("plan", "")
     assert (OPS / "plans" / "WF-047.md").is_file()
