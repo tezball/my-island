@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import stat
 import subprocess
 from pathlib import Path
@@ -83,6 +84,27 @@ VALID_STATUS = {
     "blocked",
 }
 VALID_TYPE = {"epic", "story", "bug", "incident", "workflow"}
+
+HAPPY_PATH_CI_JOBS = ("unit", "catalog", "web", "stack", "automerge")
+
+
+def gha_job_body(ci: str, job: str) -> str:
+    """YAML body of a top-level GitHub Actions job (indent-2 key)."""
+    marker = f"\n  {job}:"
+    start = ci.find(marker)
+    if start < 0:
+        return ""
+    rest = ci[start + len(marker) :]
+    nxt = re.search(r"\n  [A-Za-z0-9_-]+:", rest)
+    return rest[: nxt.start()] if nxt else rest
+
+
+def assert_happy_path_ci_no_chaos(ci: str) -> None:
+    for job in HAPPY_PATH_CI_JOBS:
+        body = gha_job_body(ci, job)
+        assert "compose.chaos.yml" not in body, job
+        assert "SPRING_PROFILES_ACTIVE: chaos" not in body, job
+        assert "--profile chaos" not in body, job
 
 
 def test_required_vault_files_exist() -> None:
@@ -600,9 +622,7 @@ def test_e2e_place_stub_mcp_chaos_followups() -> None:
     assert "plans/WF-017" in by_id["WF-017"].get("plan", "")
     assert "github.com/tezball/my-island/pull/36" in by_id["WF-017"].get("pr", "")
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
-    assert "compose.chaos.yml" not in ci
-    assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
-    assert "--profile chaos" not in ci
+    assert_happy_path_ci_no_chaos(ci)
 
 
 def test_wf_017_stack_e2e_skill_and_runbook() -> None:
@@ -641,8 +661,7 @@ def test_wf_017_stack_e2e_skill_and_runbook() -> None:
     index = (OPS / "runbooks" / "_index.md").read_text()
     assert "STACK_E2E_PLACE_STUB" in index
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
-    assert "compose.chaos.yml" not in ci
-    assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
+    assert_happy_path_ci_no_chaos(ci)
 
 
 def test_wf_019_place_listing_sim() -> None:
@@ -816,9 +835,7 @@ def test_wf_016_cloud_mcp_attach_docs() -> None:
     assert "does **not** attach" in agents or "does not attach" in agents
     assert "TODO Engineering" in agents
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
-    assert "compose.chaos.yml" not in ci
-    assert "SPRING_PROFILES_ACTIVE: chaos" not in ci
-    assert "--profile chaos" not in ci
+    assert_happy_path_ci_no_chaos(ci)
     assert by_id["WF-004"]["status"] == "blocked"
     assert by_id["WF-010"]["status"] == "blocked"
 
@@ -998,6 +1015,7 @@ def test_wf_025_no_prod_and_automerge() -> None:
     assert "merge_method: 'squash'" in ci
     automerge = ci.split("automerge:")[1]
     assert "compose.chaos.yml" not in automerge
+    assert_happy_path_ci_no_chaos(ci)
     assert (OPS / "plans" / "WF-025.md").is_file()
 
 
@@ -1143,7 +1161,7 @@ def test_wf_035_test_stack_today_vs_want() -> None:
         "only browser E2E",
     ):
         assert needle in stack, needle
-    assert "compose.chaos.yml" not in (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert_happy_path_ci_no_chaos((REPO / ".github" / "workflows" / "ci.yml").read_text())
     brief = (OPS / "workshops" / "cto-test-stack.md").read_text()
     assert "[[ops/tickets/WF-035]]" in brief
     assert "Gatling" in brief
@@ -1314,4 +1332,177 @@ def test_wf_039_gis_origin_mismatch() -> None:
     assert "no-referrer-when-downgrade" in vite
     mock = (OPS / "runbooks" / "MOCK_PROD_DEPLOY.md").read_text()
     assert "GOOGLE_GIS" in mock
+
+
+def test_poi_visitintent_planner_land() -> None:
+    """CEO 2026-09-19 VisitIntent slice + unattended mock-prod tickets on main."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    for ident, typ, owner, parent in (
+        ("WF-040", "workflow", "automation-expert", "WF-032"),
+        ("WF-041", "workflow", "eng-infra", "WF-032"),
+        ("WF-042", "workflow", "automation-expert", "WF-000"),
+        ("WF-043", "workflow", "automation-expert", "WF-000"),
+        ("WF-044", "workflow", "eng-security", "WF-000"),
+        ("WF-045", "workflow", "eng-infra", "WF-042"),
+        ("WF-046", "workflow", "eng-backend", "WF-000"),
+        ("PRD-015", "story", "eng-backend", "PRD-000"),
+    ):
+        meta = by_id[ident]
+        assert meta["status"] == "implement", ident
+        assert meta["type"] == typ, ident
+        assert meta["priority"] == "P0", ident
+        assert meta["owner"] == owner, ident
+        assert f"tickets/{parent}" in meta.get("parent", ""), ident
+        assert f"plans/{ident}" in meta.get("plan", ""), ident
+        plan = (OPS / "plans" / f"{ident}.md").read_text()
+        assert "status: approved" in plan, ident
+        assert "gh pr merge" not in plan.lower() or "do not" in plan.lower()
+    assert by_id["PRD-012"]["status"] == "implement"
+    assert by_id["PRD-013"]["status"] == "implement"
+    assert "tickets/PRD-000" in by_id["PRD-012"].get("parent", "")
+    assert "plans/PRD-012" in by_id["PRD-012"].get("plan", "")
+    prd012 = (OPS / "tickets" / "PRD-012.md").read_text()
+    prd013 = (OPS / "tickets" / "PRD-013.md").read_text()
+    for text in (prd012, prd013):
+        assert "PRD-015" in text
+        assert "VisitIntent" in text
+        assert "wrong shape" in text
+    assert by_id["WF-004"]["status"] == "blocked"
+    assert by_id["WF-010"]["status"] == "blocked"
+    wf011 = by_id["WF-011"]
+    assert wf011["status"] == "implement"
+    assert wf011["type"] == "workflow"
+    assert wf011["owner"] == "automation-expert"
+    assert "tickets/WF-007" in wf011.get("parent", "")
+    assert "plans/WF-011" in wf011.get("plan", "")
+    assert "status: approved" in (OPS / "plans" / "WF-011.md").read_text()
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "2026-09-19" in decisions
+    assert "VisitIntent" in decisions
+    assert "Agents never SSH" in decisions
+    assert "has no production environment and probably never will" in decisions
+    slice_note = (PRODUCT / "POI-VISITINTENT.md").read_text()
+    assert "been" in slice_note and "want" in slice_note and "never" in slice_note
+    assert "VisitIntent" in slice_note
+    assert "PRD-012" in slice_note and "PRD-013" in slice_note
+    workshop = (OPS / "workshops" / "poi-visitintent.md").read_text()
+    assert "WF-040" in workshop and "PRD-015" in workshop
+    assert "WF-045" in workshop
+    assert "Alerts lock C" in workshop
+    pipeline = (OPS / "workflow" / "PIPELINE.md").read_text()
+    assert "WF-040" in pipeline
+    assert "Agents never SSH" in pipeline
+    assert "WF-045" in pipeline
+    assert "Jenkins red" in pipeline
+    mcp = (OPS / "workflow" / "MCP.md").read_text()
+    assert "WF-041" in mcp and "WF-042" in mcp
+    assert "WF-043" in mcp and "WF-044" in mcp
+    assert "WF-045" in mcp
+    assert "TODO (Engineering" in mcp or "TODO Engineering" in mcp
+    assert "Alerts lock C" in mcp
+    assert "WF-046" in mcp
+    assert "Catalog writes lock C" in mcp
+    assert "VisitIntent privacy" in mcp
+    assert "Public counts lock A" in mcp
+    assert (OPS / "runs" / "WF-040-planner.md").is_file()
+    wf041 = (OPS / "tickets" / "WF-041.md").read_text() + (
+        OPS / "plans" / "WF-041.md"
+    ).read_text()
+    assert "fishing-journals.com" in wf041
+    assert "local-compose-only" in wf041
+    assert "HTTP/SSE" in wf041
+    assert "same" in wf041.lower() and "datasource" in wf041.lower()
+    assert "public internet" in wf041.lower()
+    assert by_id["PRD-010"]["status"] == "implement"
+    assert "password" in by_id["PRD-010"]["title"].lower()
+    prd010 = (OPS / "tickets" / "PRD-010.md").read_text()
+    assert "Google SSO" in prd010 or "GIS" in prd010
+    assert "No OIDC stub" in (OPS / "plans" / "PRD-010.md").read_text()
+    assert "Observe lock C" in decisions or "test server" in decisions.lower()
+    assert "username/password AND Google SSO" in decisions
+    assert "Chaos lock C" in decisions
+    assert "Security lock B" in decisions
+    assert "retries and default fallbacks" in decisions
+    assert "ZAP-style" in decisions
+    assert "Alerts lock C" in decisions
+    assert "Jenkins red" in decisions
+    assert "Alertmanager" in decisions
+    assert "light trickle" in decisions.lower()
+    assert "not a merge-CI load test" in decisions
+    assert "Catalog writes lock C" in decisions
+    assert "POST /api/v1/places" in decisions
+    assert "VisitIntent privacy" in decisions
+    assert "anonymous counts only" in decisions
+    assert "been count" in decisions
+    assert "Public counts lock A" in decisions
+    assert "Q&A is **closed**" in decisions or "Q&A is closed" in decisions
+    assert "Want" in decisions and "never" in decisions.lower() and "private to the Guest" in decisions
+    wf046 = (OPS / "tickets" / "WF-046.md").read_text() + (
+        OPS / "plans" / "WF-046.md"
+    ).read_text()
+    assert "POST /api/v1/places" in wf046
+    assert "seed/import" in wf046.lower()
+    assert "VisitIntent" in wf046
+    prd015 = (OPS / "tickets" / "PRD-015.md").read_text() + (
+        OPS / "plans" / "PRD-015.md"
+    ).read_text()
+    assert "private" in prd015.lower()
+    assert "been count" in prd015.lower()
+    assert "Public counts lock A" in prd015
+    assert "want" in prd015.lower() and "never" in prd015.lower()
+    assert "PII" in prd015 or "pii" in prd015.lower()
+    assert "no PII" in prd015 or "no pii" in prd015.lower()
+    slice_privacy = (PRODUCT / "POI-VISITINTENT.md").read_text()
+    assert "private" in slice_privacy.lower()
+    assert "been count" in slice_privacy.lower()
+    assert "Public counts lock A" in slice_privacy
+    assert "private to the Guest" in slice_privacy
+    wf042 = (OPS / "tickets" / "WF-042.md").read_text() + (
+        OPS / "plans" / "WF-042.md"
+    ).read_text()
+    assert "light trickle" in wf042.lower()
+    assert "not a merge-CI load test" in wf042
+    assert "weekly" in wf042.lower()
+    wf045 = (OPS / "tickets" / "WF-045.md").read_text() + (
+        OPS / "plans" / "WF-045.md"
+    ).read_text()
+    assert "Jenkins red" in wf045
+    assert "Alertmanager" in wf045
+    assert "leftover" in wf045.lower()
+    inc001 = (OPS / "tickets" / "INC-001.md").read_text()
+    assert "WF-045" in inc001
+    assert "muted" in inc001.lower()
+    wf043 = (OPS / "tickets" / "WF-043.md").read_text() + (
+        OPS / "plans" / "WF-043.md"
+    ).read_text()
+    assert "fishing-journals.com" in wf043
+    assert "retries" in wf043.lower()
+    assert "unit" in wf043 and "catalog" in wf043
+    assert "required chaos lane" in wf043.lower()
+    wf044 = (OPS / "tickets" / "WF-044.md").read_text() + (
+        OPS / "plans" / "WF-044.md"
+    ).read_text()
+    assert "ZAP" in wf044
+    assert "Testcontainers" in wf044
+    assert "every merge" in wf044.lower()
+    assert "fishing-journals.com" in wf044
+    assert "not" in wf044.lower() and "primary" in wf044.lower()
+    forbidden = ("BEGIN OPENSSH", "ghp_", "github_pat_", "-----BEGIN")
+    for ident in (
+        "WF-011",
+        "WF-040",
+        "WF-041",
+        "WF-042",
+        "WF-043",
+        "WF-044",
+        "WF-045",
+        "WF-046",
+        "PRD-015",
+    ):
+        blob = (OPS / "tickets" / f"{ident}.md").read_text() + (
+            OPS / "plans" / f"{ident}.md"
+        ).read_text()
+        for needle in forbidden:
+            assert needle not in blob, ident
+        assert "MOCK_PROD_SSH_KEY" not in blob
 

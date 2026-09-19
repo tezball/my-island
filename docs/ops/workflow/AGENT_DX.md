@@ -86,7 +86,7 @@ python3 ops/scripts/board_sync.py
 
 ### Place-stub e2e drill
 
-**`/stack-e2e`**. Happy-path compose, HTTP create/list/get, observe, optional chaos overlay. Chaos stays **out** of required CI.
+**`/stack-e2e`**. Happy-path compose, HTTP create/list/get, observe, optional chaos overlay. Chaos stays **off** default start and UI-less `unit`/`catalog`. Dedicated **merge** Chaos: [[ops/tickets/WF-043]]. ZAP every merge: [[ops/tickets/WF-044]]. Gatling trickle + weekly: [[ops/tickets/WF-042]]. Failures Jenkins red + Grafana: [[ops/tickets/WF-045]]. Playwright is cron + MCP only: [[ops/tickets/WF-011]]. Live catalog closes public Place writes: [[ops/tickets/WF-046]] (workshop POST is stub history).
 
 ## IntelliJ MCP (laptop)
 

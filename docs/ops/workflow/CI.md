@@ -17,8 +17,12 @@ Agents must be able to **clone → test → PR** without a human laptop ritual. 
 | `catalog` | `services/catalog/mvnw test` (Temurin 21, Testcontainers PostGIS — **contract** / what) | Jenkins / GHA `catalog` |
 | `web` | `npm ci && npm test && npm run build` in `web/` | Jenkins / GHA `web` |
 | `stack` | `./scripts/dev test` with compose (`SKIP_WEB=1`; seed still runs) | Jenkins / GHA `stack` (`SKIP_JENKINS=1` in Actions) |
+| `chaos` (ticket) | House overlay / Testcontainers; retries + default fallbacks | [[ops/tickets/WF-043]] — **merge CI**, not inside `unit`/`catalog`, not cron |
+| `zap` (ticket) | ZAP-style DAST vs local compose/Testcontainers | [[ops/tickets/WF-044]] — **every merge**; **not** primary scan of fishing-journals.com; not cron |
+| `gatling` (ticket) | Light trickle on fishing-journals.com; weekly full perf | [[ops/tickets/WF-042]] — **not** a merge load test. Failures → Jenkins red + Grafana/AM [[ops/tickets/WF-045]] |
+| Playwright | Cron vs fishing-journals.com + MCP on demand | [[ops/tickets/WF-011]] — **not** a merge gate; keep off `unit`/`catalog` |
 
-Vitest is a merge gate. Playwright still waits on [[ops/tickets/WF-011]]. House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js. Full mix (gates vs tools vs want): [[TEST_STACK]].
+Vitest is a merge gate. Merge CI: catalog API, Chaos, ZAP. Playwright is cron + MCP. Gatling is trickle + weekly perf (not merge load). **Catalog writes lock C:** no public Place POST/PUT/PATCH/DELETE — seed/import in CI/deploy; Guests write VisitIntent only ([[ops/tickets/WF-046]]). House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js. Full mix (gates vs tools vs want): [[TEST_STACK]].
 
 ## Local Jenkins
 
@@ -37,8 +41,9 @@ Vitest is a merge gate. Playwright still waits on [[ops/tickets/WF-011]]. House:
 5. **One ticket’s diff.**
 6. **Pytest is the contract for the OS.** Vault files the loop depends on → `ops/tests/test_vault.py`.
 7. **Markers.** `stack` = needs compose. Default tests must not need it.
-8. **No chaos in required CI.**
+8. **No chaos / ZAP / Playwright / full Gatling inside UI-less jobs.** `unit` / `catalog` stay fast. Dedicated merge jobs: Chaos Monkey [[ops/tickets/WF-043]], ZAP [[ops/tickets/WF-044]]. Playwright is **cron + MCP only** ([[ops/tickets/WF-011]]). Gatling: light trickle + weekly perf, **not** merge load ([[ops/tickets/WF-042]]). Do not assault public fishing-journals.com with Chaos Monkey on every deploy. Do not move Chaos/ZAP to cron.
 9. **Do not restore legacy Jenkins** from `docs/automation/`.
+10. **ZAP-style DAST in merge CI** against local compose/Testcontainers **every merge** ([[ops/tickets/WF-044]]). Not the primary scan of the public test server.
 
 ## Branch and PR
 
@@ -50,6 +55,6 @@ Vitest is a merge gate. Playwright still waits on [[ops/tickets/WF-011]]. House:
 
 ## Adding a check
 
-1. File a `WF-*` ticket owned by **automation-expert**. Decide **gate vs tool** on [[TEST_STACK]] first (chaos and Gatling soak are tools, not automerge).
+1. File a `WF-*` ticket owned by **automation-expert** (or **eng-security** for DAST). Merge CI: catalog API, Chaos, ZAP. Playwright is cron + MCP. Gatling is trickle + weekly (not merge load). Keep Chaos/ZAP/Playwright/full-perf off `unit`/`catalog` bodies.
 2. Implement in `Jenkinsfile` + `.github/workflows/ci.yml` + `./scripts/dev` if humans/agents must run it too.
 3. Document the job in this note and the TEST_STACK row.

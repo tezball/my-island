@@ -20,7 +20,7 @@ Keep **SAFETY**, secrets hygiene, and trust-gate adjacency honest. No prod — s
 
 ## Outputs
 
-Review comments on PRs that risk secrets or unsafe CI; tickets for SAFETY gaps.
+Keep review comments on PRs that risk secrets or unsafe CI; tickets for SAFETY gaps. ZAP-style merge-gate DAST: [[ops/tickets/WF-044]]. Close public Place writes: [[ops/tickets/WF-046]].
 
 ## Owned folders
 

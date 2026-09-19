@@ -53,6 +53,22 @@ Catalog `place` `SELECT` as `ops_reader` waits on Engineering grants (TODO above
 
 Staging/prod Grafana remains [[ops/tickets/WF-004]] (blocked on [[ops/tickets/WF-010]]). Do not treat this local-compose path as remote observe.
 
+**Mock-prod house observe (lock C, CEO 2026-09-19):** [[ops/tickets/WF-041]] — Prometheus/Loki data from the **test server** (fishing-journals.com). Agents read/act via Grafana MCP **HTTP/SSE** (`--disable-write`). Laptop Grafana uses the **same** datasources (script/tunnel). Do **not** leave agents on local-compose-only metrics (the PromQL snippet above is a compose **fallback**, not house SoR after WF-041). Do not put Prometheus on the public internet. Leftover `grafana.fishing-journals.com` is not house Grafana.
+
+**Agent MCP pack (CEO 2026-09-19):** [[ops/tickets/WF-042]] — catalog API, Jenkins job status + deploy-on-main, Gatling, Playwright, Postgres RO, deploy/status. Secrets in Jenkins / Cursor MCP settings, **never** in `docs/`. Agents never SSH.
+
+**Chaos lock C (CEO 2026-09-19):** [[ops/tickets/WF-043]] — Chaos Monkey in **merge CI** (Jenkins + GHA, house overlay / Testcontainers) to prove retries and default fallbacks. Do **not** move to cron. MCP may still trigger this workshop drill later. Do not assault public fishing-journals.com on every deploy.
+
+**Security lock B (CEO 2026-09-19):** [[ops/tickets/WF-044]] — ZAP-style scanner in **merge CI** against local compose/Testcontainers, every merge. Do **not** move to cron. Not the primary scan of fishing-journals.com.
+
+**Test lanes (CEO 2026-09-19):** Playwright is cron + MCP ([[ops/tickets/WF-011]]). Merge CI: catalog API, Chaos, ZAP. Gatling is light trickle + weekly full perf (not merge load) [[ops/tickets/WF-042]]. Keep Playwright off `unit`/`catalog`.
+
+**Alerts lock C (CEO 2026-09-19):** [[ops/tickets/WF-045]] — trickle and weekly Gatling failures mark Jenkins red and fire Grafana/Alertmanager. Agents read both via MCP. Leftover FJ email stays muted ([[ops/tickets/INC-001]]).
+
+**Catalog writes lock C (CEO 2026-09-19):** [[ops/tickets/WF-046]] — no public POST/PUT/PATCH/DELETE of Places. Seed/import in CI/deploy only. Guests authenticate to write VisitIntent only. Close `POST /api/v1/places`.
+
+**VisitIntent privacy (CEO 2026-09-19):** [[ops/tickets/PRD-015]] — Guest lists are **private**. **Public counts lock A:** Place API/UI expose anonymous **been count** only. Want and never are private to the Guest. No PII.
+
 ## Prod / staging (not in this file)
 
 When Grafana exists remotely:

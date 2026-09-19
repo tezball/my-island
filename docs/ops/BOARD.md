@@ -24,7 +24,16 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-012|PRD-012]] P0 Check-off and visits API
 - [ ] [[ops/tickets/PRD-013|PRD-013]] P0 My Places list, map, and counts
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
+- [ ] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
+- [ ] [[ops/tickets/WF-041|WF-041]] P0 House Prometheus and Loki from mock-prod
+- [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
+- [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
+- [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
+- [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
+- [ ] [[ops/tickets/WF-046|WF-046]] P0 Close public Place writes; seed/import only
+- [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
 
 ## In review
@@ -36,7 +45,6 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/WF-004|WF-004]] P1 Remote Grafana MCP for staging/prod observe
 - [ ] [[ops/tickets/WF-010|WF-010]] P1 Always-on EU staging for API + Grafana sidecars
-- [ ] [[ops/tickets/WF-011|WF-011]] P1 Required Playwright on product PRs (job starts compose)
 - [ ] [[ops/tickets/WF-013|WF-013]] P2 Deploy path scriptable (API/fly/gh) until a deploy MCP exists
 - [ ] [[ops/tickets/WF-014|WF-014]] P2 Google Sign-In (OIDC console + Spring)
 - [ ] [[ops/tickets/WF-033|WF-033]] P2 Apple Sign-In (OIDC console + Spring)
