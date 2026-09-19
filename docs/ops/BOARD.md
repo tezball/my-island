@@ -27,7 +27,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
 - [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
 - [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
-- [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
 - [ ] [[ops/tickets/WF-046|WF-046]] P0 Close public Place writes; seed/import only
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
@@ -36,6 +35,7 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
+- [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
 - [ ] [[ops/tickets/WF-048|WF-048]] P0 Main CI after GITHUB_TOKEN squash-merge
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
 - [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
