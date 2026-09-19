@@ -65,11 +65,20 @@ Chunks **9** (wider marketplace) and **10** (native / offline) remain in
 [`EXPANSION.md`](EXPANSION.md). They are not Release 1 and are not on this freeze
 board.
 
+## Booking-site program (mock-prod, after VisitIntent)
+
+CEO brief 2026-09-19. Not a live consumer app. Expansion entry gates above are
+waived **for planning**. Tickets: [`PRD-016`](../ops/tickets/PRD-016.md)–[`PRD-029`](../ops/tickets/PRD-029.md)
+(`inbox`). Epic [`PRD-004`](../ops/tickets/PRD-004.md) stays unimplementable.
+Canon: [`BOOKING-SITE.md`](BOOKING-SITE.md). Do not promote while P0 `WF-*` /
+PRD-010 / PRD-015 are the auto pick. Leave PRD-012/013 blocked.
+
 ## Links
 
 - [`SIGNED.md`](SIGNED.md) — CEO sign-off, kill list, Chunk 1 rule
 - [`MVP.md`](MVP.md) — 92 stories, §7 metrics, §8 sequence, §9 DoD
 - [`EXPANSION.md`](EXPANSION.md) — questions, gates, scope per chunk
 - [`STACK.md`](STACK.md) — house (Spring, Vite+React PWA, PostGIS, Grafana MCP)
+- [`BOOKING-SITE.md`](BOOKING-SITE.md) — campsite/B&B program after VisitIntent
 - [`ops/BOARD.md`](../ops/BOARD.md) — live engineering kanban
 - [`ops/MILESTONES.md`](../ops/MILESTONES.md) — this map as Obsidian columns

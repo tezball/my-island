@@ -13,6 +13,7 @@ Living spec is **outside** this vault. Do not fork it.
 |---|---|
 | Signed decisions (CEO 2026-09-05) | [`product/SIGNED.md`](../../product/SIGNED.md) |
 | VisitIntent slice (CEO 2026-09-19) | [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md) · [[ops/tickets/PRD-015]] |
+| Booking-site program (planner 2026-09-19) | [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md) · [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] |
 | CEO briefing | [`product/BRIEFING.md`](../../product/BRIEFING.md) |
 | Vision | [`product/VISION.md`](../../product/VISION.md) |
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |
@@ -22,7 +23,7 @@ Living spec is **outside** this vault. Do not fork it.
 
 ## One sentence
 
-A mobile directory of Irish POIs, experiences, campsites and B&Bs that you tick off as you go. Later: hosts, booking, messages, reviews — only when expansion gates pass.
+A mobile directory of Irish POIs, experiences, campsites and B&Bs that you tick off as you go. **VisitIntent** is the current slice. **Booking-site** (campsites/B&Bs, mock-prod) is filed as [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] (`inbox`).
 
 ## MVP includes
 
@@ -36,7 +37,7 @@ Booking, payments, partner portals, reviews, guest–host messaging, native apps
 
 - Directory epic: [[ops/tickets/PRD-000]]
 - **This slice:** [[ops/tickets/PRD-015]] VisitIntent (`been` / `want` / `never`). Do not implement [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] as one-tap / My Places.
-- Marketplace epic (gated): [[ops/tickets/PRD-004]]
+- Marketplace epic (never implement): [[ops/tickets/PRD-004]] — children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] `inbox`
 
 History of the camping booking build: [`docs/README.md`](../../README.md). Do not implement from `docs/`.
 

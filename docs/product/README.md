@@ -20,6 +20,7 @@ Product definition for the rebuild. Start here.
 |---|---|
 | [`SIGNED.md`](SIGNED.md) | CEO sign-off 2026-09-05 — directory MVP, kill list, house bar |
 | [`POI-VISITINTENT.md`](POI-VISITINTENT.md) | **2026-09-19 slice** — been / want / never on the live POI directory (`PRD-015`). Does not replace `MVP.md` |
+| [`BOOKING-SITE.md`](BOOKING-SITE.md) | **After VisitIntent** — campsite/B&B booking program (`PRD-016`–`PRD-029`). Mock-prod only. |
 | [`WAVE-1.md`](WAVE-1.md) | Research Wave 1 acceptance — leads in `data/leads/` (not publish; counsel still PRD-009) |
 | [`BRIEFING.md`](BRIEFING.md) | CEO briefing — what the repo is, what we are building, what was built before, open decisions |
 | [`VISION.md`](VISION.md) | What we are building and why. Principles, roles, decisions made, open questions for the business |
@@ -43,7 +44,7 @@ gated on the answer.
 
 ## Status
 
-**Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md). **Directory browse is live** on local compose and mock-prod (101 Ireland POIs). Next slice: [`POI-VISITINTENT.md`](POI-VISITINTENT.md) ([[ops/tickets/PRD-015]]).
+**Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md). **Directory browse is live** on local compose and mock-prod (101 Ireland POIs). Current slice: [`POI-VISITINTENT.md`](POI-VISITINTENT.md) ([[ops/tickets/PRD-015]]). Next **product program** (inbox, not pickable yet): [`BOOKING-SITE.md`](BOOKING-SITE.md).
 House is **signed** in [`STACK.md`](STACK.md): Java / Spring Boot, light
 Vite+React PWA (not Next.js), PostgreSQL 17 + PostGIS, Flyway, Jenkins + GitHub Actions,
 Grafana OSS MCP. Mock-prod is fishing-journals.com (no GitHub `production` Environment).

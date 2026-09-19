@@ -24,6 +24,7 @@ LIMIT 25
 - [[WF-048-implement]] — automerge dispatch + PR-head gate so Jenkins can deploy squash SHAs
 - [[PRD-015-implement]] — VisitIntent been/want/never on catalog + Explore PWA
 - [[WF-047-implement]] — human+agent DX handbook; confirm-deploy runbook; import-header examples
+- [[PRD-004-plan]] — booking-site program: PRD-016–029 inbox + BOOKING-SITE.md
 - [[WF-040-implement]] — unattended green main → Jenkins deploy-mock-prod → HTTP/API smoke
 - [[PRD-012-park]] — park PRD-012/013 `blocked` so next_ticket skips CHK/ME
 - [[WF-040-planner]] — POI VisitIntent tickets + plans on main (WF-040–045, WF-011, PRD-015)

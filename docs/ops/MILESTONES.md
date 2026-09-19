@@ -28,7 +28,7 @@ kanban-plugin: basic
 
 ## After MVP (gated)
 
-- [ ] **Chunk 1** Partners claim — return + unsolicited claims ([[ops/tickets/PRD-004]] stays inbox)
+- [ ] **Chunk 1** Partners claim — return + unsolicited claims
 - [ ] **Chunk 2** Personal depth
 - [ ] **Chunk 3** Content depth
 - [ ] **Chunk 4** Sharing / social
@@ -36,3 +36,17 @@ kanban-plugin: basic
 - [ ] **Chunk 6a → 6b** Enquiry, then booking
 - [ ] **Chunk 7** Monetisation
 - [ ] **Chunk 8** Running a business
+
+## Booking-site (mock-prod program)
+
+Hand-maintained. Children `inbox` so they do not starve P0 `WF-*`. Canon: [`product/BOOKING-SITE.md`](../product/BOOKING-SITE.md).
+
+- [ ] **PRD-016** Stay seed — first to promote
+- [ ] **PRD-017** Guest search
+- [ ] **PRD-018** Book + mock pay
+- [ ] **PRD-019** Trips / cancel
+- [ ] **PRD-020–022** Host onboard / calendar / reservations
+- [ ] **PRD-023–025** Messages / reviews / payouts
+- [ ] **PRD-026–027** Admin + disputes
+- [ ] **PRD-028–029** Help + support inbox
+- [ ] Epic [[ops/tickets/PRD-004]] — never implement

@@ -20,6 +20,7 @@ Gorse gold. Signed product truth. **Do not implement** unless the ticket is `PRD
 | [[product/README]] | Product hub |
 | [[product/SIGNED]] | CEO sign-off 2026-09-05 |
 | [[product/POI-VISITINTENT]] | 2026-09-19 VisitIntent slice (been / want / never) |
+| [[product/BOOKING-SITE]] | After VisitIntent — campsite/B&B booking program (PRD-016–029) |
 | [[product/VISION]] | Why |
 | [[product/MVP]] | Release 1 directory |
 | [[product/MILESTONES]] | M0–M7 + gated chunks |
