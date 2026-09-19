@@ -43,6 +43,7 @@ Usage: ./scripts/dev <command>
   ps        Compose status
   test      Run pytest (same path as CI)
   sim       Happy-path catalog create→list→get (no chaos). Same as ./scripts/sim-place-listing.sh
+  traffic   Light Gatling trickle (Guest login, places, VisitIntent). Not weekly soak.
   wait      Wait until Grafana answers /api/health
   config    Validate compose.yml (and chaos overlay)
 
@@ -211,6 +212,12 @@ cmd_sim() {
   python3 "$sim" "$@"
 }
 
+cmd_traffic() {
+  local trickle="$REPO/ops/scripts/gatling_trickle.sh"
+  chmod +x "$trickle"
+  bash "$trickle" "$@"
+}
+
 cmd_wait() {
   local url="${GRAFANA_URL:-}"
   local candidates=()
@@ -273,6 +280,7 @@ case "$cmd" in
   wait) cmd_wait ;;
   test) cmd_test "$@" ;;
   sim) cmd_sim "$@" ;;
+  traffic) cmd_traffic "$@" ;;
   config) cmd_config ;;
   -h|--help|help|"") usage; [ -n "$cmd" ] || exit 1 ;;
   *) usage; echo "unknown command: $cmd" >&2; exit 1 ;;

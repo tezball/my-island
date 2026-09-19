@@ -12,6 +12,8 @@ __pycache__/
 .pytest_cache/
 .venv/
 services/**/target/
+ops/gatling/target/
+gatling-results/
 web/node_modules/
 web/dist/
 web/dev-dist/
