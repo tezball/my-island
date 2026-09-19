@@ -118,7 +118,7 @@ writes, or secret values.
 | **ZAP-style DAST (CI)** | Every merge vs local compose/Testcontainers | Not cron. Not primary public-host scan. Ticket: [[ops/tickets/WF-044]] |
 | **Catalog Place writes** | None on public HTTP | Seed/import in CI/deploy only. Close `POST /api/v1/places`. Guests write VisitIntent only. Ticket: [[ops/tickets/WF-046]] |
 
-Not in the pack: Stripe (no payments in MVP), Notion (vault is `ops/`
+Not in the pack: Stripe (no live payments; booking mock PSP is [[ops/tickets/PRD-018]]), Notion (vault is `ops/`
 in git), filesystem MCP (workspace is the files). Local Jenkins is compose
 house CI ([[ops/tickets/WF-031]]). Jenkins **as MCP** is [[ops/tickets/WF-042]],
 not a second CD system.

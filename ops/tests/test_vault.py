@@ -1626,3 +1626,62 @@ def test_wf_048_main_ci_after_squash() -> None:
     assert (OPS / "plans" / "WF-048.md").is_file()
     assert by_id["WF-047"]["title"] == "Human and agent DX handbook"
 
+
+def test_booking_site_planner_land() -> None:
+    """CEO brief 2026-09-19: sequenced campsite/B&B backlog; do not starve WF-*."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["PRD-004"]["type"] == "epic"
+    assert by_id["PRD-004"]["status"] == "inbox"
+    assert by_id["PRD-004"]["status"] != "implement"
+    assert "plans/PRD-004" in by_id["PRD-004"].get("plan", "")
+    assert "status: approved" in (OPS / "plans" / "PRD-004.md").read_text()
+    children = [f"PRD-{n:03d}" for n in range(16, 30)]
+    for ident in children:
+        meta = by_id[ident]
+        assert meta["type"] == "story", ident
+        assert meta["status"] == "inbox", ident
+        assert meta["priority"] == "P1", ident
+        assert "tickets/PRD-004" in meta.get("parent", ""), ident
+        assert f"plans/{ident}" in meta.get("plan", ""), ident
+        plan = (OPS / "plans" / f"{ident}.md").read_text()
+        assert "status: approved" in plan, ident
+        assert "Next.js" in plan or "Next.js" in (OPS / "tickets" / f"{ident}.md").read_text()
+    assert by_id["PRD-012"]["status"] == "blocked"
+    assert by_id["PRD-013"]["status"] == "blocked"
+    canon = (PRODUCT / "BOOKING-SITE.md").read_text()
+    assert "PRD-016" in canon and "PRD-029" in canon
+    assert "mock PSP" in canon.lower() or "Mock PSP" in canon
+    assert "32" in canon
+    assert "inbox" in canon
+    assert "WF-046" in canon
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "Booking-site program" in decisions
+    assert "Mock PSP in catalog" in decisions
+    workshop = (OPS / "workshops" / "booking-site.md").read_text()
+    assert "PRD-016" in workshop
+    assert "gh pr merge" in workshop.lower()
+    assert "do not" in workshop.lower() or "never" in workshop.lower()
+    rows = next_ticket.tickets(OPS / "tickets")
+    planner = next_ticket.pick("planner", rows)
+    if planner is not None:
+        assert planner[1]["id"] != "PRD-016"
+        assert not planner[1]["id"].startswith("PRD-01") or planner[1]["id"] in {
+            "PRD-000",
+            "PRD-009",
+            "PRD-010",
+            "PRD-014",
+            "PRD-015",
+        }
+    implementer = next_ticket.pick("implementer", rows)
+    assert implementer is not None
+    assert implementer[1]["id"] not in children
+    forbidden = ("BEGIN OPENSSH", "ghp_", "github_pat_", "-----BEGIN")
+    for ident in ["PRD-004", *children]:
+        blob = (OPS / "tickets" / f"{ident}.md").read_text() + (
+            OPS / "plans" / f"{ident}.md"
+        ).read_text()
+        for needle in forbidden:
+            assert needle not in blob, ident
+        assert "MOCK_PROD_SSH_KEY" not in blob
+    assert (OPS / "runs" / "PRD-004-plan.md").is_file()
+

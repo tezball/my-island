@@ -85,6 +85,9 @@ Humans start by hat. Agents use the board + `next_ticket.py`. Index: [[ops/dashb
 > [!tip] Workshop — POI VisitIntent
 > Next public slice: been / want / never on the live directory. Ticket: [[ops/tickets/PRD-015]] · brief [[ops/workshops/poi-visitintent]] · canon [`product/POI-VISITINTENT.md`](product/POI-VISITINTENT.md).
 
+> [!tip] Workshop — Booking-site
+> After VisitIntent: campsite/B&B Booking.com-like program. Tickets [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] stay **`inbox`** (do not starve P0 `WF-*`). Epic [[ops/tickets/PRD-004]] is never implement. Canon [`product/BOOKING-SITE.md`](product/BOOKING-SITE.md) · brief [[ops/workshops/booking-site]].
+
 > [!warning] Blocked
 > Host / staging still open. Do not treat these as pickable.
 
@@ -111,7 +114,7 @@ Wikilinks (`[[ops/BOARD]]`, `[[product/SIGNED]]`) resolve when the Obsidian vaul
 | Dashboards | [[ops/dashboards/_index]] |
 | Tickets | [`ops/tickets/_index.md`](ops/tickets/_index.md) · [[ops/tickets/_index]] |
 | Workflow | [`DX`](ops/workflow/DX.md) · [`LOOP`](ops/workflow/LOOP.md) · [`WORKTREES`](ops/workflow/WORKTREES.md) · [`LOCAL`](ops/workflow/LOCAL.md) · [`CI`](ops/workflow/CI.md) · [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/DX]] · [[ops/workflow/LOOP]] · [[ops/workflow/WORKTREES]] · [[ops/workflow/LOCAL]] · [[ops/workflow/CI]] · [[ops/workflow/TEST_STACK]] |
-| Workshops | [[ops/workshops/_index]] · [[ops/workshops/cto-pipeline-brief]] · [[ops/workshops/cto-test-stack]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/second-brain]] · [[ops/workshops/e2e-place-stub]] · [[ops/workshops/poi-visitintent]] |
+| Workshops | [[ops/workshops/_index]] · [[ops/workshops/cto-pipeline-brief]] · [[ops/workshops/cto-test-stack]] · [[ops/workshops/vault-os-ux]] · [[ops/workshops/second-brain]] · [[ops/workshops/e2e-place-stub]] · [[ops/workshops/poi-visitintent]] · [[ops/workshops/booking-site]] |
 | Test mix | [`TEST_STACK`](ops/workflow/TEST_STACK.md) · [[ops/workflow/TEST_STACK]] — gates vs agent tools |
 | Leads | [`data/leads/README.md`](data/leads/README.md) |
 | History | [`leads/`](leads/CAMPSITE_LEADS.md) · [`automation/`](automation/OBSERVABILITY_MCP_OPTIONS.md) — **fence: do not implement** |

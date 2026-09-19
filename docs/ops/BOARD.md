@@ -6,6 +6,20 @@ kanban-plugin: basic
 
 ## Upcoming
 
+- [ ] [[ops/tickets/PRD-016|PRD-016]] P1 Stay inventory schema and mock seed
+- [ ] [[ops/tickets/PRD-017|PRD-017]] P1 Guest stay search and listing detail
+- [ ] [[ops/tickets/PRD-018|PRD-018]] P1 Guest book, mock pay, confirmation
+- [ ] [[ops/tickets/PRD-019|PRD-019]] P1 Guest trips, cancel, refund
+- [ ] [[ops/tickets/PRD-020|PRD-020]] P1 Host identity and listing onboard
+- [ ] [[ops/tickets/PRD-021|PRD-021]] P1 Host calendar, availability, pricing
+- [ ] [[ops/tickets/PRD-022|PRD-022]] P1 Host reservations
+- [ ] [[ops/tickets/PRD-023|PRD-023]] P1 Guest-host messaging
+- [ ] [[ops/tickets/PRD-024|PRD-024]] P1 Stay reviews after checkout
+- [ ] [[ops/tickets/PRD-025|PRD-025]] P1 Host payouts ledger (mock)
+- [ ] [[ops/tickets/PRD-026|PRD-026]] P1 Admin moderation, users, catalog
+- [ ] [[ops/tickets/PRD-027|PRD-027]] P1 Admin disputes and refunds
+- [ ] [[ops/tickets/PRD-028|PRD-028]] P1 Help center and policies
+- [ ] [[ops/tickets/PRD-029|PRD-029]] P1 Support inbox and tickets
 - [ ] [[ops/tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
 - [ ] [[ops/tickets/WF-009|WF-009]] P2 Alertmanager webhook to spawn an agent
 - [ ] [[ops/tickets/WF-012|WF-012]] P2 GHCR image registry and digest deploys

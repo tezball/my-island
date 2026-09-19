@@ -120,3 +120,16 @@ Domain terms (do not invent synonyms in tickets): **Place**, **County**, **Guest
 
 CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer Release 1 backlog. This slice does not ship them.
 
+## 2026-09-19 — Booking-site program (planner locks)
+
+**Planner, CEO brief.** File a sequenced campsite/B&B booking backlog for **mock-prod** after POI + VisitIntent. Not a live consumer app. Expansion gates in [`product/EXPANSION.md`](../../product/EXPANSION.md) are waived **for planning** only. Children stay `inbox` so they do not starve in-flight P0 `WF-*` / [[ops/tickets/PRD-010]] / [[ops/tickets/PRD-015]]. Epic [[ops/tickets/PRD-004]] is never `implement`.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 31 | **Booking-site program** after VisitIntent: Guest search/book/pay/trips/reviews/messages; Host onboard/calendar/reservations/payouts; Admin moderation/disputes; Help + support inbox; mock seed per Irish county. | [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md), [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] |
+| 32 | **Bookable kinds:** campsite + B&B only. POI/experience stay directory + VisitIntent. | [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md) |
+| 33 | **Mock PSP in catalog** (authorize/capture/refund). EUR. 10% platform fee. No live card keys on mock-prod. No second payments service. | [[ops/tickets/PRD-018]] |
+| 34 | **Host writes** are authenticated drafts (`/api/v1/host/…`). Public Place POST stays closed ([[ops/tickets/WF-046]]). Admin publishes. Skip claim-existing-POI. | [[ops/tickets/PRD-020]], [[ops/tickets/PRD-026]] |
+| 35 | **Seed:** ≥1 mock campsite + ≥1 mock B&B per 32 counties. Do not replace 101 POIs. | [[ops/tickets/PRD-016]] |
+| 36 | **Do not promote** booking children to `ready`/`implement` while stream-1 `WF-040`–`WF-046` and PRD-010/015 are the P0 auto pick. First child to promote: [[ops/tickets/PRD-016]]. Leave [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] blocked. | [[ops/plans/PRD-004]] |
+

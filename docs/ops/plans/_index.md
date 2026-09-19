@@ -61,3 +61,18 @@ SORT file.name DESC
 | [[WF-047]] | Human + agent DX handbook (clone/run, MCP, ticket → test box) |
 | [[WF-011]] | Playwright cron vs fishing-journals.com (not a merge gate) |
 | [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |
+| [[PRD-004]] | Booking-site **program** (epic; never implement) |
+| [[PRD-016]] | Stay inventory + mock seed (first booking slice to promote) |
+| [[PRD-017]] | Guest stay search + listing |
+| [[PRD-018]] | Guest book + mock pay |
+| [[PRD-019]] | Trips + cancel/refund |
+| [[PRD-020]] | Host identity + onboard |
+| [[PRD-021]] | Host calendar / pricing |
+| [[PRD-022]] | Host reservations |
+| [[PRD-023]] | Guest–host messaging |
+| [[PRD-024]] | Stay reviews |
+| [[PRD-025]] | Host payouts (mock) |
+| [[PRD-026]] | Admin moderation / users / catalog |
+| [[PRD-027]] | Admin disputes / refunds |
+| [[PRD-028]] | Help center + policies |
+| [[PRD-029]] | Support inbox |
