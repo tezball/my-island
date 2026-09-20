@@ -60,7 +60,9 @@ SORT file.name DESC
 | [[WF-046]] | Close public Place writes; seed/import in CI/deploy; Guests write VisitIntent only |
 | [[WF-047]] | Human + agent DX handbook (clone/run, MCP, ticket → test box) |
 | [[WF-011]] | Playwright cron vs fishing-journals.com (not a merge gate) |
+| [[WF-049]] | Cloud→Jenkins **lock C**: Mac mini self-hosted worker triggers host Jenkins (not B HTTPS, not D GHA SSH) |
 | [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |
+| [[PRD-030]] | Guest been/want on map or list (reuse VisitIntent; not PRD-013) |
 | [[PRD-004]] | Booking-site **program** (epic; never implement) |
 | [[PRD-016]] | Stay inventory + mock seed (first booking slice to promote) |
 | [[PRD-017]] | Guest stay search + listing |

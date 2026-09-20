@@ -1351,7 +1351,9 @@ def test_poi_visitintent_planner_land() -> None:
         ("PRD-015", "story", "eng-backend", "PRD-000"),
     ):
         meta = by_id[ident]
-        expected_status = "review" if ident in {"PRD-015", "WF-045"} else "implement"
+        expected_status = {"PRD-015": "done", "WF-045": "review"}.get(
+            ident, "implement"
+        )
         assert meta["status"] == expected_status, ident
         assert meta["type"] == typ, ident
         assert meta["priority"] == "P0", ident
@@ -1684,4 +1686,55 @@ def test_booking_site_planner_land() -> None:
             assert needle not in blob, ident
         assert "MOCK_PROD_SSH_KEY" not in blob
     assert (OPS / "runs" / "PRD-004-plan.md").is_file()
+
+
+def test_mvp_ui_gaps_prd_030_wf_049() -> None:
+    """2026-09-20: been/want map lists + Cloud→Jenkins lock C (Mac mini worker)."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    prd030 = by_id["PRD-030"]
+    assert prd030["status"] == "implement"
+    assert prd030["type"] == "story"
+    assert prd030["priority"] == "P0"
+    assert prd030["owner"] == "eng-frontend"
+    assert "tickets/PRD-000" in prd030.get("parent", "")
+    assert "plans/PRD-030" in prd030.get("plan", "")
+    assert "status: approved" in (OPS / "plans" / "PRD-030.md").read_text()
+    assert by_id["PRD-015"]["status"] == "done"
+    assert by_id["PRD-012"]["status"] == "blocked"
+    assert by_id["PRD-013"]["status"] == "blocked"
+    assert by_id["PRD-010"]["status"] == "implement"
+    ticket030 = (OPS / "tickets" / "PRD-030.md").read_text()
+    assert "VisitIntent" in ticket030
+    assert "PRD-013" in ticket030
+    assert "map" in ticket030.lower() and "list" in ticket030.lower()
+    wf049 = by_id["WF-049"]
+    assert wf049["status"] == "implement"
+    assert wf049["type"] == "workflow"
+    assert wf049["priority"] == "P0"
+    assert wf049["owner"] == "automation-expert"
+    assert "tickets/WF-040" in wf049.get("parent", "")
+    assert "plans/WF-049" in wf049.get("plan", "")
+    plan049 = (OPS / "plans" / "WF-049.md").read_text()
+    ticket049 = (OPS / "tickets" / "WF-049.md").read_text()
+    blob = ticket049 + plan049
+    assert "Lock C" in blob or "lock C" in blob
+    assert "self-hosted" in blob.lower()
+    assert "Mac mini" in blob
+    assert "Do **not** pick **B**" in ticket049 or "Do not pick B" in blob
+    assert "Do **not** pick **D**" in ticket049 or "Do not pick D" in blob or "not D" in blob.lower()
+    assert "Agents never SSH" in blob
+    assert "production" in blob.lower()
+    assert "MOCK_PROD_SSH_KEY" not in blob
+    for needle in ("BEGIN OPENSSH", "ghp_", "github_pat_", "-----BEGIN"):
+        assert needle not in blob
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "Cloud→Jenkins lock C" in decisions
+    assert "WF-049" in decisions
+    assert by_id["WF-042"]["status"] == "implement"
+    wf042 = (OPS / "tickets" / "WF-042.md").read_text()
+    assert "WF-049" in wf042
+    assert "lock c" in wf042.lower()
+    assert (OPS / "runs" / "PRD-030-plan.md").is_file()
+    assert (OPS / "runs" / "WF-049-plan.md").is_file()
+
 

@@ -44,12 +44,12 @@ Campsite / B&B / experience booking, per-county mocks, map rewrite, Datadog/Next
 
 ## Wrong-shape tickets (leave open)
 
-[[ops/tickets/PRD-012]] and [[ops/tickets/PRD-013]] are **`blocked`** (wrong shape; signed CHK/ME backlog). `next_ticket.py` only picks `ready` / `implement` / `review`, so it will not hand an implementer one-tap or My Places before [[ops/tickets/PRD-015]].
+[[ops/tickets/PRD-012]] and [[ops/tickets/PRD-013]] are **`blocked`** (wrong shape; signed CHK/ME backlog). Stay blocked. Map/list of been/want is [[ops/tickets/PRD-030]], not a PRD-013 reopen.
 
-[[ops/tickets/WF-004]] / [[ops/tickets/WF-010]] stay **blocked** (generic staging host). Mock-prod observe is WF-041.
+[[ops/tickets/WF-004]] / [[ops/tickets/WF-010]] stay **blocked** (generic staging host). Mock-prod observe is WF-041. Cloud→Jenkins **lock C:** [[ops/tickets/WF-049]] (Mac mini self-hosted worker; not B; not D).
 
 ## Links
 
 - Product: [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md)
-- Plans: [[ops/plans/WF-040]] · [[ops/plans/WF-041]] · [[ops/plans/WF-042]] · [[ops/plans/WF-043]] · [[ops/plans/WF-044]] · [[ops/plans/WF-045]] · [[ops/plans/WF-046]] · [[ops/plans/WF-011]] · [[ops/plans/PRD-010]] · [[ops/plans/PRD-015]]
+- Plans: [[ops/plans/WF-040]] · [[ops/plans/WF-041]] · [[ops/plans/WF-042]] · [[ops/plans/WF-043]] · [[ops/plans/WF-044]] · [[ops/plans/WF-045]] · [[ops/plans/WF-046]] · [[ops/plans/WF-011]] · [[ops/plans/WF-049]] · [[ops/plans/PRD-010]] · [[ops/plans/PRD-015]] · [[ops/plans/PRD-030]]
 - Directory workshop (browse slice, 2026-09-12): [[ops/workshops/poi-directory-mvp]]

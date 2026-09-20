@@ -12,7 +12,7 @@ cssclasses:
 
 CEO lock **2026-09-19** — [[ops/company/DECISIONS]]. This note is the product shape for the **next public slice** on the live Ireland directory. It does **not** rewrite [`SIGNED.md`](SIGNED.md) or [`MVP.md`](MVP.md) (those remain the longer Release 1 canon: one-tap check-off + My Places).
 
-Ticket: [[ops/tickets/PRD-015]] (`status: implement`). **Parallel** with stream 1 (unattended mock-prod + MCP/observe). Workshop: [[ops/workshops/poi-visitintent]]. House: [`STACK.md`](STACK.md).
+Ticket: [[ops/tickets/PRD-015]] (`status: done`, #97 on `main`). Lists are **list-only**; map/list of been + want is [[ops/tickets/PRD-030]]. **Do not** implement [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]]. Workshop: [[ops/workshops/poi-visitintent]]. House: [`STACK.md`](STACK.md).
 
 ## Slice
 
@@ -44,7 +44,7 @@ List of places (POI) plus three personal marks: **been**, **want to go**, **neve
 
 ## Tickets
 
-**Do not** implement [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] as written (one-tap check-off / My Places). This slice is [[ops/tickets/PRD-015]].
+**Do not** implement [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] as written (one-tap check-off / My Places). VisitIntent API/ticks/lists: [[ops/tickets/PRD-015]] (`done`). Profile map **or** list of been/want: [[ops/tickets/PRD-030]].
 
 **Build order C:** stream 1 = [[ops/tickets/WF-040]] + [[ops/tickets/WF-041]] + [[ops/tickets/WF-042]] + [[ops/tickets/WF-043]] + [[ops/tickets/WF-044]] + [[ops/tickets/WF-045]] + [[ops/tickets/WF-046]]; stream 2 = [[ops/tickets/PRD-010]] + this ticket. Parallel. Do not wait on deploy.
 

@@ -21,6 +21,8 @@ LIMIT 25
 
 
 - [[WF-039-close]] — Terry registered GIS JS origins; Google SSO works; ticket `done`
+- [[PRD-030-plan]] — been/want map or list; PRD-015 done; PRD-012/013 stay blocked
+- [[WF-049-plan]] — Cloud→Jenkins lock C (Mac mini self-hosted worker; not B; not D)
 - [[WF-045-trickle]] — light Gatling Guest trickle (not weekly soak)
 - [[WF-048-implement]] — automerge dispatch + PR-head gate so Jenkins can deploy squash SHAs
 - [[PRD-015-implement]] — VisitIntent been/want/never on catalog + Explore PWA
