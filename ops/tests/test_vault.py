@@ -1740,3 +1740,55 @@ def test_mvp_ui_gaps_prd_030_wf_049() -> None:
     assert (OPS / "runs" / "WF-049-plan.md").is_file()
 
 
+def test_wf_050_review_gated_automerge_and_prd_031() -> None:
+    """2026-09-20: review-gated automerge + mobile place-detail back (plan, not implement)."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    wf050 = by_id["WF-050"]
+    assert wf050["status"] == "implement"
+    assert wf050["type"] == "workflow"
+    assert wf050["priority"] == "P0"
+    assert wf050["owner"] == "automation-expert"
+    assert wf050["area"] == "ops"
+    assert "tickets/WF-000" in wf050.get("parent", "")
+    assert "plans/WF-050" in wf050.get("plan", "")
+    plan050 = (OPS / "plans" / "WF-050.md").read_text()
+    ticket050 = (OPS / "tickets" / "WF-050.md").read_text()
+    blob050 = ticket050 + plan050
+    assert "status: approved" in plan050
+    assert "createReview" in blob050
+    assert "APPROVE" in blob050
+    assert "pull_request_review" in blob050
+    assert "waiting for review" in blob050.lower()
+    assert "github-actions[bot]" in blob050
+    assert "head SHA" in blob050 or "head SHA" in plan050
+    assert "CHANGES_REQUESTED" in blob050 or "Request-changes" in blob050 or "Request changes" in blob050
+    assert "gh pr merge" in blob050
+    assert "production" in blob050.lower()
+    assert "H/5" in blob050
+    assert "do not fail" in plan050.lower() or "does **not** fail" in ticket050
+    wf025 = (OPS / "tickets" / "WF-025.md").read_text()
+    assert "WF-050" in wf025
+    assert by_id["WF-025"]["status"] == "done"
+    prd031 = by_id["PRD-031"]
+    assert prd031["status"] == "plan"
+    assert prd031["status"] != "implement"
+    assert prd031["type"] == "bug"
+    assert prd031["priority"] == "P1"
+    assert prd031["owner"] == "eng-frontend"
+    assert prd031["area"] == "explore"
+    assert "tickets/PRD-000" in prd031.get("parent", "")
+    assert "plans/PRD-031" in prd031.get("plan", "")
+    plan031 = (OPS / "plans" / "PRD-031.md").read_text()
+    ticket031 = (OPS / "tickets" / "PRD-031.md").read_text()
+    blob031 = ticket031 + plan031
+    assert "status: approved" in plan031
+    assert "WF-050" in blob031
+    assert "PRD-030" in blob031
+    assert "implement" in blob031.lower()
+    assert "PlacePage" in blob031 or "place-detail" in blob031.lower()
+    assert (OPS / "runs" / "WF-050-plan.md").is_file()
+    # Planner does not change the live GHA auto-APPROVE; implementer of WF-050 does.
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "createReview" in ci
+
+

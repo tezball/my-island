@@ -31,6 +31,7 @@ kanban-plugin: basic
 ## Planning
 
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
+- [ ] [[ops/tickets/PRD-031|PRD-031]] P1 Mobile place-detail home/back control
 
 ## Doing
 
@@ -43,6 +44,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
 - [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
 - [ ] [[ops/tickets/WF-046|WF-046]] P0 Close public Place writes; seed/import only
+- [ ] [[ops/tickets/WF-050|WF-050]] P0 Review-gated automerge
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
 
