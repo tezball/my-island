@@ -22,7 +22,7 @@ code / mixed implement
   → same close-out: delete branch + remove worktree → confirm main CI green, else fix
 ```
 
-Happy path: pick → plan/docs on `main` → implement in a worktree + PR → review comment → CI → squash-merge → delete branch + remove worktree → **confirm `main` CI green, else fix**.
+Happy path: pick → plan/docs on `main` → implement in a worktree + PR → CI (`unit tests` + `catalog tests` + `web tests` + `compose stack`) → valid non-author `APPROVED` → squash-merge → delete branch + remove worktree → **confirm `main` CI green, else fix**.
 
 `main` is what the playground VPS should run ([[ops/tickets/WF-032]]). Feature branches never deploy there. Checkout layout: [[WORKTREES]].
 
@@ -41,8 +41,8 @@ Do **not** use Cursor “memory” for this — it belongs in git ([[ops/workflo
 | Role | May | Must not |
 |---|---|---|
 | **Planner** | Write plans, set ticket toward `implement`, land docs on `main` | App code; wait on a human unless `gate: human` |
-| **Implementer** | Worktree after `implement` on `main`, code, meet [[ops/workflow/DOD]], `gh pr create`, `status: review` | Merge from chat; review own PR as required review; feature-commit in the primary clone |
-| **Reviewer** | Comment on PR | `gh pr merge` from chat; push |
+| **Implementer** | Worktree after `implement` on `main`, code, meet [[ops/workflow/DOD]], `gh pr create`, `status: review` | Merge from chat; **approve their own PR**; feature-commit in the primary clone |
+| **Reviewer** | Comment; **may** submit Approve or Request changes | `gh pr merge` from chat; push |
 
 Same person may wear all three hats. **Same agent session must not.**
 

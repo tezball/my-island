@@ -51,8 +51,8 @@ implement ticket → ready PR → GHA CI → automerge → Jenkins mock-prod →
 1. Ticket `status: implement` on `main` (`PRD-*` product, `WF-*` workflow). Skip `type: epic`. `python3 ops/scripts/next_ticket.py --role auto`. One hat.
 2. Sibling worktree from `origin/main` ([[ops/runbooks/WORKTREE]]). Cloud Agents: branch in the VM; they do not use laptop worktrees.
 3. Meet [[DOD]]. Open a **ready** (non-draft, same-repo) PR. Title `<id>: <title>`. Chat does **not** `gh pr merge`.
-4. **GHA** jobs on the PR: `unit` (vault pytest) + `catalog` (Testcontainers BFF) + `web` (Vitest) + `stack` (`./scripts/dev test`, `SKIP_JENKINS=1`). Green → Actions auto-approve and **squash-merge** ([[ops/tickets/WF-025]]). Drafts and forks skip.
-5. Reviewer comments are practice, not a merge gate.
+4. **GHA** jobs on the PR: `unit tests` (vault pytest) + `catalog tests` (Testcontainers BFF) + `web tests` (Vitest) + `compose stack` (`./scripts/dev test`, `SKIP_JENKINS=1`). Green is not enough. A **different** actor (not the implementer, not `github-actions[bot]`) must submit GitHub review state `APPROVED` on the head SHA; then Actions **squash-merges** ([[ops/tickets/WF-050]]). Drafts and forks skip. If CI is green with no valid Approve, the merge job waits (succeeds, PR stays open).
+5. Reviewer **may** Approve or Request changes. Implementer must not Approve their own PR. Chat never `gh pr merge`.
 6. After `main` is green, Jenkins job `deploy-mock-prod` (cron `H/5` + GHA check gate) deploys **`origin/main` only** to https://fishing-journals.com/. SSH key stays in Jenkins. **Agents never SSH.** They do not run `./scripts/deploy-mock-prod.sh`. **Lock C:** a session on the **Mac mini self-hosted worker** may trigger that job on loopback Jenkins ([[ops/tickets/WF-049]]). Cloud VMs do not reach Jenkins over HTTPS (not B). Not GHA SSH (not D).
 7. Job smoke: `ops/scripts/smoke_mock_prod.py` — health UP, `/actuator/info` SHA matches `origin/main`, `GET /api/v1/places?published=true`. Not Playwright.
 

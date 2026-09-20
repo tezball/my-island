@@ -100,7 +100,7 @@
 		{
 			"id": "n_merge",
 			"type": "text",
-			"text": "6. Automerge\nready PR \u2192 squash\n**auto** (WF-025)",
+			"text": "6. Automerge\nCI + APPROVED \u2192 squash\n**auto** (WF-050)",
 			"x": 1240,
 			"y": -100,
 			"width": 240,

@@ -73,7 +73,7 @@ Optional laptop: install the **Cursor plugin inside IntelliJ** (ACP) so you stay
 
 ### Review a PR without merging
 
-**`/review`**. Agent comments against SAFETY + DoD. Ready PRs squash-merge via GitHub Actions when CI is green. Chat never `gh pr merge`.
+**`/review`**. Agent comments against SAFETY + DoD. **May** Approve or Request changes. Ready PRs squash-merge via GitHub Actions when CI is green **and** a valid non-author `APPROVED` exists. Chat never `gh pr merge`.
 
 ### New workflow ticket
 

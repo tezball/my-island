@@ -42,7 +42,7 @@ Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`
 ## Reviewer (`--role reviewer`)
 
 1. `gh pr view` / `gh pr diff`.
-2. SAFETY + DoD (blockers only, no nits). Comment. Do not merge or push.
+2. SAFETY + DoD (blockers only). **May** submit Approve or Request changes. Nits in the review body only — no inline threads for nits. Do not merge or push. Do not approve a PR you implemented.
 
 ## Board hygiene
 

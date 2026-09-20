@@ -35,7 +35,7 @@ constraints on new services and UI.
 | Migrations | **Flyway** in the API | Expand/contract only. Agents never ad-hoc DDL against shared envs. |
 | Observability | **MCP, OSS first** | Logs, metrics, alerts via Grafana stack + `mcp-grafana`. Prefer $0 self-hosted. |
 | CI | **Jenkins** (local compose + JCasC); GHA dual-run for remote PRs | Clone→`./scripts/dev up` → :8085. Same `unit`/`catalog`/`stack` contract. Dedicated chaos + ZAP jobs: [[ops/tickets/WF-043]] · [[ops/tickets/WF-044]]. No legacy Jenkins restore. [[ops/tickets/WF-031]] |
-| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green. Mock-prod follows `main` via Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. Agents never SSH; the key stays in Jenkins. |
+| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green **and** a valid non-author `APPROVED` exists ([[ops/tickets/WF-050]]). Mock-prod follows `main` via Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. Agents never SSH; the key stays in Jenkins. |
 
 Mock-prod host is the existing fishing-journals.com VPS (CEO 2026-09-13). A
 separate always-on staging-with-Grafana-sidecars box remains the open pick on

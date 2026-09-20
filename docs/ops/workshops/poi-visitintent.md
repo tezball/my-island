@@ -22,7 +22,7 @@ Missing: been / want / never, username/password + seed Guests, unattended commit
 
 1. Planner files tickets on `main` (`PRD-*` / `WF-*`, `status: implement` when ready). **This PR.**
 2. Implementer works in a worktree, tests in Jenkins + GHA (Testcontainers).
-3. Reviewer comments only. Ready PR auto-merges when CI is green.
+3. Reviewer **may** Approve or Request changes. Ready PR squash-merges when CI is green **and** a valid non-author `APPROVED` exists ([[ops/tickets/WF-050]]).
 4. Jenkins (holds the SSH key) deploys `main` to the test box. Agents do not SSH.
 5. Post-deploy: smoke + Gatling trickle against https://fishing-journals.com.
 6. Agent MCP: Grafana/PromQL, catalog API, Jenkins, Gatling, Playwright, Postgres RO.

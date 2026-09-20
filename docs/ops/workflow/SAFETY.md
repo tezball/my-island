@@ -7,7 +7,7 @@ type: workflow
 
 Copied from the CTO review, then relaxed by CEO 2026-09-12 ([[ops/company/DECISIONS]]). Non-negotiable for agents.
 
-1. **Ready PRs merge themselves.** Non-draft, same-repo PRs are auto-reviewed, approved, and squash-merged when CI `unit` + `catalog` + `stack` are green ([[ops/tickets/WF-025]]). Drafts and forks never auto-merge. Chat agents (planner / implementer / reviewer hats) still do not `gh pr merge` — GitHub Actions does.
+1. **Ready PRs merge themselves.** Non-draft, same-repo PRs squash-merge when GHA `unit tests` + `catalog tests` + `web tests` + `compose stack` are green **and** a GitHub review on the head SHA has state `APPROVED` from an actor that is not `github-actions[bot]` and not the PR author ([[ops/tickets/WF-050]]). `CHANGES_REQUESTED` blocks. Stale Approve (`commit_id` ≠ head) does not count. Actions does not `createReview` APPROVE. Drafts and forks never auto-merge. Chat agents (planner / implementer / reviewer hats) still do not `gh pr merge` — GitHub Actions squash-merges when the gate passes.
 2. **There is no production.** CEO lock: this company has no prod and probably never will. Do not invent `compose.prod`, prod SSH, or a GitHub Environment prod gate. Local compose is the runtime.
 3. **No prod SQL writes** (vacuous). Local `ops_reader` is SELECT-only. There is no prod SQL MCP to turn on.
 4. **Grafana `--disable-write`.** Silences and datasource edits stay off the agent path.
