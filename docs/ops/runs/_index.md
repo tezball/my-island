@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-039-close]] — Terry registered GIS JS origins; Google SSO works; ticket `done`
 - [[WF-045-trickle]] — light Gatling Guest trickle (not weekly soak)
 - [[WF-048-implement]] — automerge dispatch + PR-head gate so Jenkins can deploy squash SHAs
 - [[PRD-015-implement]] — VisitIntent been/want/never on catalog + Explore PWA
