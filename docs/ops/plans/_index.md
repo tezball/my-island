@@ -61,8 +61,10 @@ SORT file.name DESC
 | [[WF-047]] | Human + agent DX handbook (clone/run, MCP, ticket → test box) |
 | [[WF-011]] | Playwright cron vs fishing-journals.com (not a merge gate) |
 | [[WF-049]] | Cloud→Jenkins **lock C**: Mac mini self-hosted worker triggers host Jenkins (not B HTTPS, not D GHA SSH) |
+| [[WF-050]] | Review-gated automerge (no github-actions auto-APPROVE; valid non-author Approve + green CI) |
 | [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |
 | [[PRD-030]] | Guest been/want on map or list (reuse VisitIntent; not PRD-013) |
+| [[PRD-031]] | Mobile place-detail home/back overlay (plan; implement after WF-050) |
 | [[PRD-004]] | Booking-site **program** (epic; never implement) |
 | [[PRD-016]] | Stay inventory + mock seed (first booking slice to promote) |
 | [[PRD-017]] | Guest stay search + listing |
