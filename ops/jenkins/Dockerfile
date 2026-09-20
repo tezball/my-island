@@ -9,6 +9,7 @@ RUN apt-get update \
         curl \
         git \
         gnupg \
+        python3 \
     && install -m 0755 -d /etc/apt/keyrings \
     && curl --retry 3 --retry-delay 5 -fsSL https://download.docker.com/linux/debian/gpg \
         | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \

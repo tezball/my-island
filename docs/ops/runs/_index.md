@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-049-implement]] — loopback Jenkins deploy; python3 on controller; seed via catalog:8080
 - [[WF-039-close]] — Terry registered GIS JS origins; Google SSO works; ticket `done`
 - [[PRD-030-plan]] — been/want map or list; PRD-015 done; PRD-012/013 stay blocked
 - [[WF-049-plan]] — Cloud→Jenkins lock C (Mac mini self-hosted worker; not B; not D)

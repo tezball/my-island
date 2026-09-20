@@ -108,11 +108,20 @@ seed_local_pois() {
   fi
   echo "seeding published POIs from data/leads (local demo; not PRD-009 counsel)"
   export CATALOG_IMPORT_KEY="${CATALOG_IMPORT_KEY:-local-import}"
+  # Jenkins runs this from the controller container: 127.0.0.1:8081 is not
+  # catalog. Compose DNS `catalog:8080` is. GHA/host still uses loopback.
+  if [ -z "${CATALOG_URL:-}" ]; then
+    if curl -sf --max-time 2 http://catalog:8080/actuator/health >/dev/null 2>&1; then
+      CATALOG_URL=http://catalog:8080
+    else
+      CATALOG_URL=http://127.0.0.1:8081
+    fi
+  fi
   python3 "$REPO/ops/scripts/import_leads.py" \
     --place-type poi \
     --require-coords \
     --publish-local \
-    --base-url "${CATALOG_URL:-http://127.0.0.1:8081}"
+    --base-url "$CATALOG_URL"
 }
 
 ensure_catalog_db() {
