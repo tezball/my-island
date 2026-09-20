@@ -21,7 +21,8 @@ This note does **not** rewrite [`SIGNED.md`](SIGNED.md) or [`MVP.md`](MVP.md). D
 | Spring catalog + PostGIS + Flyway | done | [[ops/tickets/PRD-001]] |
 | 101 published **POI** Places, 32 counties, OSM map, Place detail | done | [[ops/tickets/PRD-002]] · [[ops/tickets/PRD-003]] · [[ops/tickets/PRD-011]] |
 | Guest auth (password **and** Google SSO) | implement | [[ops/tickets/PRD-010]] |
-| **VisitIntent** `been` / `want` / `never` (private lists; public **been** count only) | review (#97 on `main`) | [[ops/tickets/PRD-015]] |
+| **VisitIntent** `been` / `want` / `never` (private lists; public **been** count only) | **done** (#97 on `main`; `/lists` is list-only) | [[ops/tickets/PRD-015]] |
+| Been/want on **map or list** | implement | [[ops/tickets/PRD-030]] |
 | One-tap CHK / My Places | **blocked** — wrong shape; leave them | [[ops/tickets/PRD-012]] · [[ops/tickets/PRD-013]] |
 | Public Place writes | closed (seed/import only) | [[ops/tickets/WF-046]] |
 | Stream-1 mock-prod / MCP / chaos / ZAP / Gatling | in flight P0 | [[ops/tickets/WF-040]]–[[ops/tickets/WF-046]] |

@@ -14,7 +14,7 @@ kanban-plugin: basic
 - [ ] **M2** Content critical path — [[ops/tickets/PRD-002]] / [[ops/tickets/PRD-007]] / [[ops/tickets/PRD-008]] / [[ops/tickets/PRD-009]] ready; [[ops/tickets/PRD-006]] already landed
 - [ ] **M3** Explore — [[ops/tickets/PRD-003]] (`DIR-*`, `MAP-*`)
 - [ ] **M4** Place detail — `PLC-*` (child of [[ops/tickets/PRD-000]]; no separate ticket yet)
-- [ ] **M5** Core loop — signed CHK/ME (`PRD-012`/`PRD-013`) stay backlog; **this slice** is VisitIntent [[ops/tickets/PRD-015]]
+- [ ] **M5** Core loop — signed CHK/ME (`PRD-012`/`PRD-013`) stay blocked; VisitIntent [[ops/tickets/PRD-015]] **done**; map/list of been/want is [[ops/tickets/PRD-030]]
 - [ ] **M6** Launch quality — NFR, GDPR, MCP metrics (`NFR-*`, `ADM-*`)
 - [ ] **M7** Launch DoD — 500+ places / 32 counties, §7 metrics, thresholds before launch ([[ops/tickets/PRD-000]])
 

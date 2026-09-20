@@ -133,3 +133,11 @@ CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer
 | 35 | **Seed:** ≥1 mock campsite + ≥1 mock B&B per 32 counties. Do not replace 101 POIs. | [[ops/tickets/PRD-016]] |
 | 36 | **Do not promote** booking children to `ready`/`implement` while stream-1 `WF-040`–`WF-046` and PRD-010/015 are the P0 auto pick. First child to promote: [[ops/tickets/PRD-016]]. Leave [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] blocked. | [[ops/plans/PRD-004]] |
 
+## 2026-09-20 — Cloud→Jenkins lock C
+
+**Terry.** Cloud Agents asked how to use Jenkins to deploy. Pick **C**.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 37 | **Cloud→Jenkins lock C.** Self-hosted Cursor worker on the Mac mini that already has Jenkins + `MOCK_PROD_*` + the SSH key. That worker triggers `deploy-mock-prod` on loopback Jenkins. Do **not** pick B (Cloud VMs reaching Jenkins over HTTPS). Do **not** pick D (GHA SSH; key in GitHub secrets). Key stays in Jenkins. Agents never SSH. Not a GitHub Environment `production`. | [[ops/tickets/WF-049]], [[ops/plans/WF-049]] |
+

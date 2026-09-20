@@ -36,18 +36,19 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
+- [ ] [[ops/tickets/PRD-030|PRD-030]] P0 Guest been and want lists on map
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[ops/tickets/WF-041|WF-041]] P0 House Prometheus and Loki from mock-prod
 - [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
 - [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
 - [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
 - [ ] [[ops/tickets/WF-046|WF-046]] P0 Close public Place writes; seed/import only
+- [ ] [[ops/tickets/WF-049|WF-049]] P0 Cloud Agents trigger host Jenkins deploy
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
 
 ## In review
 
-- [ ] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
 - [ ] [[ops/tickets/WF-048|WF-048]] P0 Main CI after GITHUB_TOKEN squash-merge
@@ -74,6 +75,7 @@ kanban-plugin: basic
 - [x] [[ops/tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [x] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 - [x] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
+- [x] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
 - [x] [[ops/tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [x] [[ops/tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
 - [x] [[ops/tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test
