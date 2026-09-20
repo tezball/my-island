@@ -52,7 +52,6 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
 - [ ] [[ops/tickets/WF-048|WF-048]] P0 Main CI after GITHUB_TOKEN squash-merge
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
-- [ ] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 - [ ] [[ops/tickets/WF-047|WF-047]] P1 Human and agent DX handbook
 
 ## Blocked
@@ -100,4 +99,5 @@ kanban-plugin: basic
 - [x] [[ops/tickets/WF-035|WF-035]] P1 Test stack: shift-left mix for human and agent
 - [x] [[ops/tickets/WF-036|WF-036]] P1 Second brain — atlas MOCs, folder colour, engineer notes
 - [x] [[ops/tickets/WF-037|WF-037]] P1 Mock-prod info probe (version + git hash)
+- [x] [[ops/tickets/WF-039|WF-039]] P1 GIS origin_mismatch for Google Sign-In
 - [x] [[ops/tickets/WF-032|WF-032]] P2 Jenkins deploy job to mock-prod VPS
