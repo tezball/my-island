@@ -45,6 +45,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
 - [ ] [[ops/tickets/WF-046|WF-046]] P0 Close public Place writes; seed/import only
 - [ ] [[ops/tickets/WF-050|WF-050]] P0 Review-gated automerge
+- [ ] [[ops/tickets/WF-051|WF-051]] P0 Jenkins posts PR checks; isolate compose; Maven/npm cache
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
 
