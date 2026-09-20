@@ -95,7 +95,8 @@ def test_gha_test_jobs_still_present() -> None:
 def test_wf_051_ticket_and_docs() -> None:
     ticket = (REPO / "docs" / "ops" / "tickets" / "WF-051.md").read_text()
     plan = (REPO / "docs" / "ops" / "plans" / "WF-051.md").read_text()
-    assert "status: implement" in ticket.split("---", 2)[1]
+    assert "status: review" in ticket.split("---", 2)[1]
+    assert "pull/107" in ticket
     assert "unit tests" in ticket
     assert "my-island-ci" in plan
     ci = (REPO / "docs" / "ops" / "workflow" / "CI.md").read_text()
