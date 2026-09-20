@@ -142,7 +142,7 @@ SORT file.mtime DESC
 ## Agent rules
 
 - **One ticket** per session (skip `type: epic`).
-- **Ready PRs auto-merge** when CI is green (no prod; CEO 2026-09-12). Chat agents open PRs and comment; they do not merge from chat.
+- **Ready PRs squash-merge** when CI is green **and** a valid non-author `APPROVED` exists (no prod; CEO 2026-09-12 / WF-050). Chat agents open PRs and comment; they do not merge from chat.
 - **Product code** only on `PRD-*` with `status: implement`.
 
 Full list: [`AGENTS.md`](AGENTS.md). Plugins: [[ops/PLUGINS]].

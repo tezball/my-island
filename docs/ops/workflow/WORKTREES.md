@@ -24,7 +24,7 @@ Local compose remains the agent runtime ([[LOCAL]]). The VPS is a playground tha
 
 ```
 main (primary)  →  company OS + what mock-prod should match
-     ↑ squash-merge when CI green
+     ↑ squash-merge when CI green + valid APPROVED
 worktree branch  →  this ticket’s PR and tests
 ```
 

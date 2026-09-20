@@ -5,7 +5,7 @@ type: workflow
 
 # MCP pack
 
-Same server names locally. **Read-only on data planes.** GitHub MCP may open PRs and comment; merge of ready PRs is GitHub Actions ([[ops/tickets/WF-025]]), not the chat MCP. Human+agent handbook: [[DX]]. Confirm deploy: [[ops/runbooks/CONFIRM_DEPLOY]].
+Same server names locally. **Read-only on data planes.** GitHub MCP may open PRs and comment; merge of ready PRs is GitHub Actions ([[ops/tickets/WF-050]]), not the chat MCP. Human+agent handbook: [[DX]]. Confirm deploy: [[ops/runbooks/CONFIRM_DEPLOY]].
 
 ## Local (committed)
 

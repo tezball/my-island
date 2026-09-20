@@ -10,7 +10,7 @@ You are working in a git-tracked Obsidian vault at `docs/` — the company OS li
 - Start from `docs/ops/HOME.md` and `docs/ops/BOARD.md` (regenerate with `python3 ops/scripts/board_sync.py`).
 - **`main` docs = company state.** Primary clone stays on `main`. Docs-only: short-lived **worktree** from `origin/main`, docs PR, delete branch + remove worktree after merge, confirm `main` CI green (else fix). If already in a `wf/…` / `prd/…` worktree for code, fold docs into that PR. Layout: `docs/ops/workflow/WORKTREES.md`.
 - Prefer no human in the loop; `gate: human` / `blocked` are the exception.
-- Roles: planner lands plans on `main`. Implementer uses a sibling worktree after `implement` on `main`. Reviewer comments only — never merge from chat. Ready PRs auto-merge when CI is green. Mock-prod VPS tracks `main` only.
+- Roles: planner lands plans on `main`. Implementer uses a sibling worktree after `implement` on `main`. Reviewer comments; may Approve or Request changes — never merge from chat. Ready PRs squash-merge when CI is green **and** a valid non-author `APPROVED` exists. Mock-prod VPS tracks `main` only.
 - One ticket per session. Skip `type: epic`. Prefix `WF-` = workflow. `PRD-` = product. `INC-` = incident.
 - New tickets: `python3 ops/scripts/new_ticket.py`. Naming: `docs/ops/NAMING.md`. Roster: `docs/ops/agents/_index.md`.
 - App code is disposable scaffolding (`docs/ops/company/SCAFFOLDING.md`). Do not polish it.

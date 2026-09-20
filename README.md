@@ -43,7 +43,7 @@ Keep marketplace stubs **absent**. Consumer Explore is [`web/`](web) (Vite + Rea
 
 ## Agent rules (short)
 
-One ticket per session (skip `type: epic`). Ready PRs auto-merge when CI is green; chat agents open PRs and comment. Product code only on `PRD-*` with `status: implement`. Full list: [`docs/AGENTS.md`](docs/AGENTS.md).
+One ticket per session (skip `type: epic`). Ready PRs squash-merge when CI is green **and** a valid non-author `APPROVED` exists; chat agents open PRs and comment. Product code only on `PRD-*` with `status: implement`. Full list: [`docs/AGENTS.md`](docs/AGENTS.md).
 
 ## What we automate
 

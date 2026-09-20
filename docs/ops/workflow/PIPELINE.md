@@ -27,7 +27,7 @@ pick ticket → plan/docs on main → implement in worktree + open PR → review
 | Implement + open PR | Implementer | agent | Sibling worktree `wf/…` or `prd/…`; `gh pr create` ([[ops/workflow/WORKTREES]]) |
 | Safety review comment | Reviewer | agent | Comment only; no merge from chat |
 | CI `unit` + `catalog` + `stack` | GHA (+ local Jenkins) | **auto** | [[ops/workflow/CI]] · [[ops/tickets/WF-031]] |
-| Approve + squash-merge ready PR | GitHub Actions | **auto** | [[ops/tickets/WF-025]] — drafts/forks skipped |
+| Approve + squash-merge ready PR | GitHub Actions | **auto** after valid `APPROVED` | [[ops/tickets/WF-050]] — green `unit tests`+`catalog tests`+`web tests`+`compose stack` **and** non-author, non-`github-actions[bot]` Approve on the head SHA. Drafts/forks skipped. Actions does not `createReview`. |
 | Delete feature branch + worktree | Agent / house rule | agent | After merge; primary stays on `main` |
 | Confirm `main` CI green | Agent | agent | Watch Actions on `main` after merge; if red, open a fix PR and repeat from implement. Merge CI includes catalog API, Chaos, ZAP. Playwright is cron. Gatling is trickle + weekly, not merge load. |
 | Board sync (when statuses change) | Agent | agent | `board_sync.py` after ticket frontmatter |
