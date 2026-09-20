@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-050-implement]] — review-gated automerge; merge job off ci.yml; workflow_run after CI success
 - [[WF-050-plan]] — review-gated automerge + PRD-031 mobile back tickets; no ci.yml
 - [[WF-049-implement]] — loopback Jenkins deploy; python3 on controller; seed via catalog:8080
 - [[WF-039-close]] — Terry registered GIS JS origins; Google SSO works; ticket `done`

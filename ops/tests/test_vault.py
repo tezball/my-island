@@ -1753,7 +1753,8 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
     """2026-09-20: review-gated automerge + mobile place-detail back (plan, not implement)."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     wf050 = by_id["WF-050"]
-    assert wf050["status"] in {"implement", "review"}
+    assert wf050["status"] == "review"
+    assert wf050.get("pr", "") == "https://github.com/tezball/my-island/pull/106"
     assert wf050["type"] == "workflow"
     assert wf050["priority"] == "P0"
     assert wf050["owner"] == "automation-expert"
