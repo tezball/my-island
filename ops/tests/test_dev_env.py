@@ -177,6 +177,7 @@ def test_seed_and_compose_share_catalog_import_key() -> None:
     assert "CATALOG_IMPORT_KEY" in seed
     assert "local-import" in seed
     assert "import_leads.py" in seed
+    assert "http://catalog:8080" in seed
     importer = (REPO / "ops" / "scripts" / "import_leads.py").read_text()
     assert 'DEFAULT_IMPORT_KEY = "local-import"' in importer
     assert "X-Catalog-Import-Key" in importer
