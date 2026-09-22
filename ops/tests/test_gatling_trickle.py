@@ -48,5 +48,13 @@ def test_light_trickle_gatling_exists_and_is_not_merge_load() -> None:
     assert "gatling" not in automerge.lower()
     assert "gatling:test" not in ci
     assert "gatling:test" not in automerge
-    jobs = list((OPS / "jenkins" / "casc" / "jobs").glob("*.groovy"))
-    assert not any("weekly" in p.name for p in jobs)
+    weekly = (OPS / "jenkins" / "casc" / "jobs" / "gatling-weekly.groovy").read_text()
+    assert "cron('H 6 * * 0')" in weekly
+    assert "gatling_weekly.sh" in weekly
+    assert "notify_house_alertmanager.py" in weekly
+    assert "email_configs" not in weekly
+    rules = (OPS / "observability" / "prometheus" / "rules" / "gatling.yml").read_text()
+    assert "CatalogHttpErrors" in rules
+    notify = (OPS / "scripts" / "notify_house_alertmanager.py").read_text()
+    assert "email_configs" not in notify
+    assert "HOUSE_ALERTMANAGER_URL" in notify

@@ -1,0 +1,10 @@
+groups:
+  - name: gatling
+    rules:
+      - alert: CatalogHttpErrors
+        expr: sum(rate(http_server_requests_seconds_count{job="catalog",status=~"5.."}[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Catalog 5xx rate crossed the Gatling trickle/weekly bar

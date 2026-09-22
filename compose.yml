@@ -49,6 +49,7 @@ services:
       - --storage.tsdb.retention.time=7d
     volumes:
       - ./ops/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./ops/observability/prometheus/rules:/etc/prometheus/rules:ro
     ports:
       - "${OPS_PROM_HOST_PORT:-9091}:9090"
     healthcheck:

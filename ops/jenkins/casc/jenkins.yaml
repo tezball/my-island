@@ -39,4 +39,5 @@ jobs:
   - file: /var/jenkins_casc_jobs/github-multibranch.groovy
   - file: /var/jenkins_casc_jobs/deploy-mock-prod.groovy
   - file: /var/jenkins_casc_jobs/gatling-trickle.groovy
+  - file: /var/jenkins_casc_jobs/gatling-weekly.groovy
   - file: /var/jenkins_casc_jobs/playwright-cron.groovy
