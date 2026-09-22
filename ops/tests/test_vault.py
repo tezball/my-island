@@ -1021,7 +1021,7 @@ def test_wf_025_no_prod_and_automerge() -> None:
     assert "name: auto-review approve merge" not in ci
     assert "\n  automerge:" not in ci
     assert "name: automerge" not in ci
-    assert "needs: [unit, catalog, web, stack]" in ci
+    assert "needs: [unit, catalog, web, stack, chaos]" in ci
     automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
     assert "compose.chaos.yml" not in automerge
     assert "gha_review_gate.py" in automerge
@@ -1360,7 +1360,7 @@ def test_poi_visitintent_planner_land() -> None:
         ("PRD-015", "story", "eng-backend", "PRD-000"),
     ):
         meta = by_id[ident]
-        expected_status = {"PRD-015": "done", "WF-045": "review"}.get(
+        expected_status = {"PRD-015": "done", "WF-045": "review", "WF-043": "review"}.get(
             ident, "implement"
         )
         assert meta["status"] == expected_status, ident
