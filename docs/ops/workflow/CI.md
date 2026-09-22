@@ -30,7 +30,8 @@ Vitest is a merge gate. Merge CI: catalog API, Chaos, ZAP. Playwright is cron + 
 - State: Docker volume `ops_jenkins` (survives restart; wipe with `down -v`).
 - UI: http://127.0.0.1:8085 (`admin` / `admin` unless `.env` overrides).
 - GitHub PR builds: set `JENKINS_GITHUB_TOKEN` in `.env`, recreate jenkins, scan `my-island` multibranch (polls; no public webhook).
-- Automerge for remote PRs still waits on **GHA** greens ([[ops/tickets/WF-025]]) during dual-run.
+- Multibranch posts commit statuses named `unit tests` / `catalog tests` / `web tests` / `compose stack` ([[ops/tickets/WF-051]]). Stack uses Compose project `my-island-ci` and remapped host ports so it does not recreate the laptop `my-island` stack. Maven/npm caches: volumes `ops_m2` / `ops_npm`.
+- Automerge for remote PRs still waits on **GHA** greens ([[ops/tickets/WF-025]]) during dual-run. Do not retarget branch protection until those Jenkins statuses are green on a PR. Do not delete GHA test jobs in WF-051.
 - After squash to `main`, GHA `automerge` **dispatches** CI on `main` (`workflow_dispatch`). `GITHUB_TOKEN` squash does **not** fire `push`, so Jenkins cannot wait on push-check-runs for the squash SHA ([[ops/tickets/WF-048]]). Dispatch + merged-PR-head fallback give `unit` + `catalog` + `web` + `stack` on a SHA the `H/5` gate can see. GHA `mock-prod-signal` is the visible “main is green” check (push **or** dispatch). No `production` Environment.
 
 ## Agent rules
