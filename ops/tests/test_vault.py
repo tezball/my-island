@@ -366,7 +366,7 @@ def test_harvested_mvp_plans_and_children() -> None:
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
         assert "tickets/PRD-000" in by_id[ident].get("parent", "")
-    assert by_id["PRD-010"]["status"] == "implement"
+    assert by_id["PRD-010"]["status"] == "review"
     assert "plans/PRD-010" in by_id["PRD-010"].get("plan", "")
     assert "password" in by_id["PRD-010"]["title"].lower()
     assert by_id["PRD-003"]["status"] == "done"
@@ -1421,7 +1421,7 @@ def test_poi_visitintent_planner_land() -> None:
     assert "HTTP/SSE" in wf041
     assert "same" in wf041.lower() and "datasource" in wf041.lower()
     assert "public internet" in wf041.lower()
-    assert by_id["PRD-010"]["status"] == "implement"
+    assert by_id["PRD-010"]["status"] == "review"
     assert "password" in by_id["PRD-010"]["title"].lower()
     prd010 = (OPS / "tickets" / "PRD-010.md").read_text()
     assert "Google SSO" in prd010 or "GIS" in prd010
@@ -1704,7 +1704,7 @@ def test_mvp_ui_gaps_prd_030_wf_049() -> None:
     assert by_id["PRD-015"]["status"] == "done"
     assert by_id["PRD-012"]["status"] == "blocked"
     assert by_id["PRD-013"]["status"] == "blocked"
-    assert by_id["PRD-010"]["status"] == "implement"
+    assert by_id["PRD-010"]["status"] == "review"
     ticket030 = (OPS / "tickets" / "PRD-030.md").read_text()
     assert "VisitIntent" in ticket030
     assert "PRD-013" in ticket030
