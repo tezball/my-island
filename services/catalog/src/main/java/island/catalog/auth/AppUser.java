@@ -2,4 +2,4 @@ package island.catalog.auth;
 
 import java.util.UUID;
 
-public record AppUser(UUID id, String email, String displayName) {}
+public record AppUser(UUID id, String email, String displayName, boolean emailVerified) {}

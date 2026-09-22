@@ -1,8 +1,10 @@
 package island.catalog.api;
 
 import island.catalog.api.dto.ErrorBody;
+import island.catalog.auth.DuplicateAccountException;
 import island.catalog.auth.InvalidCredentialsException;
 import island.catalog.auth.InvalidGoogleIdTokenException;
+import island.catalog.auth.InvalidTokenException;
 import island.catalog.place.BadRequestException;
 import island.catalog.place.DuplicateSlugException;
 import island.catalog.place.PlaceAlreadyPublishedException;
@@ -44,6 +46,16 @@ public class ApiExceptionHandler {
   @ExceptionHandler(InvalidCredentialsException.class)
   ResponseEntity<ErrorBody> invalidPassword(InvalidCredentialsException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorBody(ex.getMessage()));
+  }
+
+  @ExceptionHandler(DuplicateAccountException.class)
+  ResponseEntity<ErrorBody> duplicateAccount(DuplicateAccountException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorBody(ex.getMessage()));
+  }
+
+  @ExceptionHandler(InvalidTokenException.class)
+  ResponseEntity<ErrorBody> invalidToken(InvalidTokenException ex) {
+    return ResponseEntity.badRequest().body(new ErrorBody(ex.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
