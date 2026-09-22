@@ -1694,7 +1694,7 @@ def test_mvp_ui_gaps_prd_030_wf_049() -> None:
     """2026-09-20: been/want map lists + Cloud→Jenkins lock C (Mac mini worker)."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     prd030 = by_id["PRD-030"]
-    assert prd030["status"] == "implement"
+    assert prd030["status"] == "review"
     assert prd030["type"] == "story"
     assert prd030["priority"] == "P0"
     assert prd030["owner"] == "eng-frontend"
