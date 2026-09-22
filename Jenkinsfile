@@ -48,6 +48,17 @@ pipeline {
         '''
       }
     }
+    stage('zap') {
+      steps {
+        sh '''#!/usr/bin/env bash
+          set -euo pipefail
+          ROOT="${HOST_REPO:-$WORKSPACE}"
+          cd "$ROOT"
+          SKIP_JENKINS=1 SKIP_WEB=1 ./scripts/dev up
+          python3 ops/scripts/zap_style_scan.py http://127.0.0.1:8081
+        '''
+      }
+    }
     stage('chaos') {
       steps {
         sh '''#!/usr/bin/env bash

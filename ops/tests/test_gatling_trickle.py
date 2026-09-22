@@ -44,7 +44,7 @@ def test_light_trickle_gatling_exists_and_is_not_merge_load() -> None:
     assert "gatling-trickle.groovy" in casc
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     automerge = ci.split("automerge:")[1].split("mock-prod-signal:")[0]
-    assert "needs: [unit, catalog, web, stack, chaos]" in automerge
+    assert "needs: [unit, catalog, web, stack, chaos, zap]" in automerge
     assert "gatling" not in automerge.lower()
     assert "gatling:test" not in ci
     jobs = list((OPS / "jenkins" / "casc" / "jobs").glob("*.groovy"))

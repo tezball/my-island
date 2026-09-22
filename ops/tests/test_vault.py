@@ -1013,7 +1013,7 @@ def test_wf_025_no_prod_and_automerge() -> None:
     assert "There is no production" in safety
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "name: auto-review approve merge" in ci
-    assert "needs: [unit, catalog, web, stack, chaos]" in ci
+    assert "needs: [unit, catalog, web, stack, chaos, zap]" in ci
     assert "github.event.pull_request.draft == false" in ci
     assert "head.repo.full_name == github.repository" in ci
     assert "merge_method: 'squash'" in ci
@@ -1353,7 +1353,12 @@ def test_poi_visitintent_planner_land() -> None:
         ("PRD-015", "story", "eng-backend", "PRD-000"),
     ):
         meta = by_id[ident]
-        expected_status = {"PRD-015": "done", "WF-045": "review", "WF-043": "review"}.get(
+        expected_status = {
+            "PRD-015": "done",
+            "WF-045": "review",
+            "WF-043": "review",
+            "WF-044": "review",
+        }.get(
             ident, "implement"
         )
         assert meta["status"] == expected_status, ident

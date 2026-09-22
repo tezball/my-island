@@ -113,9 +113,9 @@ Workshop sims (`./scripts/dev sim`, STACK-E2E) must send the import header. Publ
 
 | Lane | When | Command / home |
 |---|---|---|
-| **Merge CI = BFF** | Every PR + `main` | GHA `unit` + `catalog` (Testcontainers / Gherkin) + `web` + `stack`. Automerge waits on these. Same as `./scripts/dev test` / `services/catalog/mvnw test`. |
-| **Chaos Monkey** | Merge CI (not cron, not public host) | [[ops/tickets/WF-043]]. Off `unit`/`catalog`. Overlay workshop: `/stack-e2e`. **Not in `.github/workflows/ci.yml` until that ticket lands.** |
-| **ZAP-style DAST** | Merge CI vs local compose/Testcontainers | [[ops/tickets/WF-044]]. Not the primary scan of fishing-journals.com. **Not in `ci.yml` until that ticket lands.** |
+| **Merge CI = BFF** | Every PR + `main` | GHA `unit` + `catalog` (Testcontainers / Gherkin) + `web` + `stack` + `chaos` + `zap`. Automerge waits on these. Same as `./scripts/dev test` / `services/catalog/mvnw test`. |
+| **Chaos Monkey** | Merge CI (not cron, not public host) | [[ops/tickets/WF-043]]. Job `chaos` in `.github/workflows/ci.yml`. Off `unit`/`catalog`. Overlay workshop: `/stack-e2e`. |
+| **ZAP-style DAST** | Merge CI vs local compose/Testcontainers | [[ops/tickets/WF-044]]. Job `zap` in `ci.yml` scans `http://127.0.0.1:8081`. Not the primary scan of fishing-journals.com. |
 | **Playwright** | Cron (~6h) + MCP on demand | [[ops/tickets/WF-011]]. **Not a merge gate.** Keep off `unit`/`catalog`. |
 | **Gatling trickle** | Ongoing on fishing-journals.com | Feature smoke, not merge load ([[ops/tickets/WF-042]]). Fail → Jenkins red + Grafana/AM ([[ops/tickets/WF-045]]). |
 | **Gatling full perf** | Weekly Jenkins cron or MCP/manual | Not every merge. Same fail path. Seeded password Guest, not Google. |
