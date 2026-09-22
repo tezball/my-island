@@ -1378,7 +1378,7 @@ def test_poi_visitintent_planner_land() -> None:
     assert by_id["WF-004"]["status"] == "blocked"
     assert by_id["WF-010"]["status"] == "blocked"
     wf011 = by_id["WF-011"]
-    assert wf011["status"] == "implement"
+    assert wf011["status"] == "review"
     assert wf011["type"] == "workflow"
     assert wf011["owner"] == "automation-expert"
     assert "tickets/WF-007" in wf011.get("parent", "")
