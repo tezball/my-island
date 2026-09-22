@@ -48,6 +48,17 @@ pipeline {
         '''
       }
     }
+    stage('chaos') {
+      steps {
+        sh '''#!/usr/bin/env bash
+          set -euo pipefail
+          ROOT="${HOST_REPO:-$WORKSPACE}"
+          cd "$ROOT"
+          docker compose run --rm --no-deps workspace \
+            bash -lc 'cd services/catalog && ./mvnw -B -Dtest=RetryFallbackTest test'
+        '''
+      }
+    }
     stage('stack') {
       steps {
         sh '''#!/usr/bin/env bash
