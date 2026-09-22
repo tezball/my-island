@@ -1362,9 +1362,10 @@ def test_poi_visitintent_planner_land() -> None:
         meta = by_id[ident]
         expected_status = {
             "PRD-015": "done",
-            "WF-045": "review",
             "WF-043": "review",
             "WF-044": "review",
+            "WF-045": "review",
+            "WF-046": "review",
         }.get(
             ident, "implement"
         )
