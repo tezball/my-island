@@ -42,7 +42,7 @@ docker compose up -d jenkins --force-recreate --wait
 
 4. Open `my-island` → **Scan Multibranch Pipeline Now**.
 
-Laptop Jenkins **polls** GitHub (no public webhook URL). Remote PR merges still use GitHub Actions until a shared Jenkins exists on mock-prod.
+Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci-<job>` (host-visible) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
 
 ## Survive restart / wipe
 
