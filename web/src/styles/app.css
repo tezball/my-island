@@ -88,6 +88,42 @@ h2,
   cursor: pointer;
 }
 
+.auth-switch {
+  margin: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.auth-switch button,
+.auth-note {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.auth-note {
+  margin: 0;
+  max-width: 16rem;
+  text-decoration: none;
+  cursor: default;
+}
+
+.auth-page {
+  padding: 24px 16px 80px;
+  display: grid;
+  gap: 12px;
+  max-width: 28rem;
+}
+
+.auth-page-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .auth-error {
   margin: 0;
   font-size: 0.75rem;

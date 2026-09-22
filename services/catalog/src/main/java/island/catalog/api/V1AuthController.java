@@ -1,18 +1,15 @@
 package island.catalog.api;
 
 import island.catalog.api.dto.ForgotRequest;
-import island.catalog.api.dto.GoogleAuthRequest;
 import island.catalog.api.dto.PasswordLoginRequest;
 import island.catalog.api.dto.ResetRequest;
 import island.catalog.api.dto.SignupRequest;
 import island.catalog.api.dto.TokenRequest;
 import island.catalog.auth.AppUser;
-import island.catalog.auth.GoogleIdTokenVerification;
 import island.catalog.auth.GuestAccountService;
 import island.catalog.auth.InvalidCredentialsException;
 import island.catalog.auth.SessionLogin;
 import island.catalog.auth.UserJdbc;
-import island.catalog.auth.VerifiedGoogleIdentity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,24 +24,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Plan paths under `/api/v1/auth`. `/api/auth/*` stays the live client path. */
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+@RequestMapping("/api/v1/auth")
+public class V1AuthController {
 
-  private final GoogleIdTokenVerification googleTokens;
+  private final GuestAccountService accounts;
   private final UserJdbc users;
   private final PasswordEncoder passwords;
-  private final GuestAccountService accounts;
 
-  public AuthController(
-      GoogleIdTokenVerification googleTokens,
-      UserJdbc users,
-      PasswordEncoder passwords,
-      GuestAccountService accounts) {
-    this.googleTokens = googleTokens;
+  public V1AuthController(GuestAccountService accounts, UserJdbc users, PasswordEncoder passwords) {
+    this.accounts = accounts;
     this.users = users;
     this.passwords = passwords;
-    this.accounts = accounts;
   }
 
   @PostMapping("/signup")
@@ -57,17 +49,6 @@ public class AuthController {
     SessionLogin.establish(user, request, response);
   }
 
-  @PostMapping("/google")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  void google(
-      @Valid @RequestBody GoogleAuthRequest body,
-      HttpServletRequest request,
-      HttpServletResponse response) {
-    VerifiedGoogleIdentity identity = googleTokens.verify(body.idToken());
-    AppUser user = users.upsertGoogle(identity);
-    SessionLogin.establish(user, request, response);
-  }
-
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   void login(
@@ -75,9 +56,7 @@ public class AuthController {
       HttpServletRequest request,
       HttpServletResponse response) {
     AppUser user =
-        users
-            .findByUsername(body.username())
-            .orElseThrow(InvalidCredentialsException::new);
+        users.findByUsername(body.username()).orElseThrow(InvalidCredentialsException::new);
     String hash = users.passwordHashForUsername(body.username()).orElse(null);
     if (!StringUtils.hasText(hash) || !passwords.matches(body.password(), hash)) {
       throw new InvalidCredentialsException();
@@ -91,8 +70,7 @@ public class AuthController {
       @Valid @RequestBody TokenRequest body,
       HttpServletRequest request,
       HttpServletResponse response) {
-    AppUser user = accounts.verify(body.token());
-    SessionLogin.establish(user, request, response);
+    SessionLogin.establish(accounts.verify(body.token()), request, response);
   }
 
   @PostMapping("/forgot")
@@ -113,8 +91,7 @@ public class AuthController {
     SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
     logoutHandler.setInvalidateHttpSession(true);
     logoutHandler.setClearAuthentication(true);
-    logoutHandler.logout(
-        request, response, SecurityContextHolder.getContext().getAuthentication());
+    logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
     SecurityContextHolder.clearContext();
   }
 }

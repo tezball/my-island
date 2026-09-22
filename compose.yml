@@ -129,6 +129,13 @@ services:
     command: ["sleep", "infinity"]
     init: true
 
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    restart: unless-stopped
+
   catalog:
     build:
       context: ./services/catalog
@@ -149,6 +156,11 @@ services:
       CATALOG_SEED_GUEST_USERNAME: ${CATALOG_SEED_GUEST_USERNAME:-guest}
       CATALOG_SEED_GUEST_PASSWORD: ${CATALOG_SEED_GUEST_PASSWORD:-guest}
       CATALOG_SEED_GUEST_EMAIL: ${CATALOG_SEED_GUEST_EMAIL:-guest@local.test}
+      CATALOG_MAIL_MODE: smtp
+      CATALOG_MAIL_FROM: noreply@localhost
+      SPRING_MAIL_HOST: mailpit
+      SPRING_MAIL_PORT: "1025"
+      APP_PUBLIC_ORIGIN: ${APP_PUBLIC_ORIGIN:-http://localhost:5173}
       GIT_COMMIT: ${GIT_COMMIT:-unknown}
       GIT_COMMIT_SHORT: ${GIT_COMMIT_SHORT:-unknown}
       GIT_BRANCH: ${GIT_BRANCH:-unknown}
@@ -159,6 +171,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8080/actuator/health/readiness || exit 1"]
       interval: 5s

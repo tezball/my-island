@@ -1,3 +1,3 @@
 package island.catalog.api.dto;
 
-public record MeResponse(String id, String email, String displayName) {}
+public record MeResponse(String id, String email, String displayName, boolean emailVerified) {}

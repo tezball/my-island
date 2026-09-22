@@ -31,6 +31,9 @@ public final class CatalogPostgis {
     registry.add("catalog.seed.guest.username", () -> "guest");
     registry.add("catalog.seed.guest.password", () -> "guest");
     registry.add("catalog.seed.guest.email", () -> "guest@local.test");
+    registry.add("catalog.mail.mode", () -> "memory");
+    registry.add("catalog.mail.from", () -> "noreply@localhost");
+    registry.add("catalog.mail.public-origin", () -> "http://localhost:5173");
     registry.add("google.client-id", () -> "test.apps.googleusercontent.com");
     registry.add("google.client-secret", () -> "test-secret");
   }

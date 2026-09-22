@@ -1,9 +1,12 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react"
 import {
   fetchMe,
+  forgotPassword,
+  isSignupPassword,
   loginWithGoogleIdToken,
   loginWithPassword,
   logout,
+  signup,
   type Me,
 } from "../api/auth"
 import { gisCanonicalUrl, gisInitializeConfig, gisOriginMismatchMessage } from "./gisOrigin"
@@ -40,6 +43,9 @@ export function GuestAuth({ me, onMe }: Props) {
   const [busy, setBusy] = useState(false)
   const [username, setUsername] = useState("guest")
   const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("")
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login")
+  const [note, setNote] = useState<string | null>(null)
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
   const handleCredential = useCallback(
@@ -134,9 +140,23 @@ export function GuestAuth({ me, onMe }: Props) {
     e.preventDefault()
     setBusy(true)
     setError(null)
+    setNote(null)
     try {
-      await loginWithPassword(username, password)
-      onMe(await fetchMe())
+      if (mode === "signup") {
+        if (!isSignupPassword(password)) {
+          setError("Password must be 8–72 characters.")
+          return
+        }
+        await signup(username, email, password)
+        onMe(await fetchMe())
+        setNote("Check Mailpit (local) for the verify link.")
+      } else if (mode === "forgot") {
+        await forgotPassword(username)
+        setNote("If that account exists, a reset link was sent.")
+      } else {
+        await loginWithPassword(username, password)
+        onMe(await fetchMe())
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign-in failed")
     } finally {
@@ -161,26 +181,58 @@ export function GuestAuth({ me, onMe }: Props) {
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              aria-label="Username"
+              aria-label={mode === "forgot" ? "Username or email" : "Username"}
               autoComplete="username"
             />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              aria-label="Password"
-              autoComplete="current-password"
-              placeholder="Password"
-            />
+            {mode === "signup" ? (
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-label="Email"
+                autoComplete="email"
+                placeholder="Email"
+              />
+            ) : null}
+            {mode === "forgot" ? null : (
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-label="Password"
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                placeholder="Password"
+              />
+            )}
             <button className="bar-btn ghost" type="submit" disabled={busy}>
-              Sign in
+              {mode === "signup" ? "Sign up" : mode === "forgot" ? "Send reset" : "Sign in"}
             </button>
           </form>
+          <p className="auth-switch">
+            {mode === "login" ? (
+              <>
+                <button type="button" onClick={() => setMode("signup")}>
+                  Sign up
+                </button>
+                <button type="button" onClick={() => setMode("forgot")}>
+                  Forgot password
+                </button>
+              </>
+            ) : (
+              <button type="button" onClick={() => setMode("login")}>
+                Sign in
+              </button>
+            )}
+          </p>
           {clientId && !clientId.includes("changeme") ? (
             <div ref={btnRef} className="gis-btn" aria-busy={busy} />
           ) : null}
         </>
       )}
+      {me && me.emailVerified === false ? (
+        <p className="auth-note">Email not verified yet.</p>
+      ) : null}
+      {note ? <p className="auth-note">{note}</p> : null}
       {error ? (
         <p className="auth-error" role="alert">
           {error}
