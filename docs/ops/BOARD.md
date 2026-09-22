@@ -54,6 +54,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
 - [ ] [[ops/tickets/WF-048|WF-048]] P0 Main CI after GITHUB_TOKEN squash-merge
 - [ ] [[ops/tickets/WF-049|WF-049]] P0 Cloud Agents trigger host Jenkins deploy
+- [ ] [[ops/tickets/WF-051|WF-051]] P0 Jenkins posts PR checks; isolate compose; Maven/npm cache
 - [ ] [[ops/tickets/INC-001|INC-001]] P1 Mute leftover fishing-journals down-alert email
 - [ ] [[ops/tickets/WF-047|WF-047]] P1 Human and agent DX handbook
 
