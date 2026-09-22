@@ -53,6 +53,9 @@ Environment:
   REQUIRE_STACK=1          Fail if Grafana/Postgres are not reachable (CI sets this)
   DEV_TEST_IN_WORKSPACE=1  Run pytest inside the workspace image (CI stack job)
   SKIP_JENKINS=1           Do not start Jenkins (GHA stack job sets this)
+  SKIP_WEB=1               Do not start the Vite container (CI web job covers npm)
+  COMPOSE_PROJECT_NAME     Override Compose project (Jenkins stack uses my-island-ci)
+  OPS_*_HOST_PORT          Host port overrides (defaults 5433/8081/3030/…; Jenkins stack remaps)
   JENKINS_GITHUB_TOKEN     GitHub PAT for local Jenkins PR polling (optional; see .env.example)
 
 Catalog API (after up): http://127.0.0.1:8081
