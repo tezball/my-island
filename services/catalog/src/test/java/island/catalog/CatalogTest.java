@@ -536,6 +536,31 @@ class CatalogTest {
             new HttpEntity<>(request, cookie),
             String.class);
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    for (HttpMethod method : List.of(HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE)) {
+      ResponseEntity<String> write =
+          http.exchange(
+              "/api/v1/places/" + "00000000-0000-0000-0000-000000000001",
+              method,
+              new HttpEntity<>("{}", jsonPlus(cookie)),
+              String.class);
+      assertThat(write.getStatusCode().value()).isIn(401, 403);
+    }
+  }
+
+  @Test
+  void anonymousPlaceMutationsAreDenied() {
+    HttpHeaders json = jsonHeaders();
+    for (HttpMethod method : List.of(HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE)) {
+      ResponseEntity<String> write =
+          http.exchange(
+              "/api/v1/places/public-write-blocked",
+              method,
+              new HttpEntity<>("{}", json),
+              String.class);
+      assertThat(write.getStatusCode().value()).isIn(401, 403);
+    }
+    ResponseEntity<String> list = http.getForEntity("/api/v1/places", String.class);
+    assertThat(list.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test

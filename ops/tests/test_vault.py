@@ -1353,7 +1353,7 @@ def test_poi_visitintent_planner_land() -> None:
         ("PRD-015", "story", "eng-backend", "PRD-000"),
     ):
         meta = by_id[ident]
-        expected_status = {"PRD-015": "done", "WF-045": "review"}.get(
+        expected_status = {"PRD-015": "done", "WF-045": "review", "WF-046": "review"}.get(
             ident, "implement"
         )
         assert meta["status"] == expected_status, ident
