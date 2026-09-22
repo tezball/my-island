@@ -1,21 +1,20 @@
-// Seeded by JCasC (WF-045). Light trickle vs fishing-journals.com. Failures = red ball.
-// Not weekly soak. Not merge load. Agents never SSH. Leftover FJ email stays muted.
-pipelineJob('gatling-trickle') {
-  description('Light Gatling Guest trickle on fishing-journals.com (login, places, VisitIntent). Non-zero fails the build (red). Not weekly perf. Not a GitHub production Environment.')
+// WF-045. Weekly Gatling perf. Failures = red ball + house Alertmanager. Not merge load.
+pipelineJob('gatling-weekly') {
+  description('Weekly Gatling Guest perf on fishing-journals.com. Non-zero fails the build (red) and notifies house Alertmanager. Not a GitHub production Environment.')
   definition {
     cps {
       sandbox(true)
       script("""
 pipeline {
   agent any
-  triggers { cron('H/15 * * * *') }
+  triggers { cron('H 6 * * 0') }
   options {
     timestamps()
-    timeout(time: 30, unit: 'MINUTES')
+    timeout(time: 60, unit: 'MINUTES')
     disableConcurrentBuilds()
   }
   stages {
-    stage('trickle') {
+    stage('weekly') {
       steps {
         sh '''#!/usr/bin/env bash
           set -euo pipefail
@@ -27,8 +26,8 @@ pipeline {
             set +a
           fi
           export GATLING_BASE_URL="\${GATLING_BASE_URL:-\${MOCK_PROD_PUBLIC_ORIGIN:-https://fishing-journals.com}}"
-          chmod +x ./ops/scripts/gatling_trickle.sh
-          ./scripts/dev traffic
+          chmod +x ./ops/scripts/gatling_weekly.sh
+          ./ops/scripts/gatling_weekly.sh
         '''
       }
     }
@@ -38,7 +37,7 @@ pipeline {
       sh '''#!/usr/bin/env bash
         set -euo pipefail
         cd "\$HOST_REPO"
-        export GATLING_JOB=gatling-trickle
+        export GATLING_JOB=gatling-weekly
         python3 ops/scripts/notify_house_alertmanager.py
       '''
     }
