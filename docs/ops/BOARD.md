@@ -36,7 +36,6 @@ kanban-plugin: basic
 ## Doing
 
 - [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
-- [ ] [[ops/tickets/PRD-030|PRD-030]] P0 Guest been and want lists on map
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
 - [ ] [[ops/tickets/WF-041|WF-041]] P0 House Prometheus and Loki from mock-prod
 - [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
@@ -49,6 +48,7 @@ kanban-plugin: basic
 ## In review
 
 - [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
+- [ ] [[ops/tickets/PRD-030|PRD-030]] P0 Guest been and want lists on map
 - [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana
 - [ ] [[ops/tickets/WF-048|WF-048]] P0 Main CI after GITHUB_TOKEN squash-merge

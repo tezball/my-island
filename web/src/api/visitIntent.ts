@@ -52,3 +52,13 @@ export function placesForMark<T extends { id: string }>(
 ): T[] {
   return places.filter((place) => marks[place.id] === mark);
 }
+
+/** Been and want can be mapped. Never stays list-only. */
+export function placesOnMap<T extends { id: string }>(
+  places: T[],
+  marks: Record<string, VisitMark>,
+  mark: VisitMark,
+): T[] {
+  if (mark === "never") return [];
+  return placesForMark(places, marks, mark);
+}
