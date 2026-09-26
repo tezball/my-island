@@ -376,6 +376,10 @@ a.bar-btn {
   gap: 8px;
 }
 
+.lists-marks {
+  padding: 0 12px 8px;
+}
+
 .chip {
   min-height: 44px;
   padding: 0 14px;
