@@ -1051,6 +1051,9 @@ def test_wf_031_jenkins_local_house_ci() -> None:
     assert (REPO / "Jenkinsfile").is_file()
     dockerfile = (REPO / "ops" / "jenkins" / "Dockerfile").read_text()
     assert "python3" in dockerfile
+    assert "rsync" in dockerfile
+    assert "safe.directory" in dockerfile
+    assert "MOCK_PROD_SSH_KEY_PATH" in compose
     assert (OPS / "runbooks" / "JENKINS_LOCAL.md").is_file()
     assert (OPS / "plans" / "WF-031.md").is_file()
     assert (OPS / "workshops" / "jenkins-local-ci.md").is_file()
