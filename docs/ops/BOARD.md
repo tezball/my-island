@@ -40,6 +40,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-041|WF-041]] P0 House Prometheus and Loki from mock-prod
 - [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
+- [ ] [[ops/tickets/WF-052|WF-052]] P1 Dedicated Jenkins CI checkout directory
 
 ## In review
 

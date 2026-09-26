@@ -42,7 +42,7 @@ docker compose up -d jenkins --force-recreate --wait
 
 4. Open `my-island` → **Scan Multibranch Pipeline Now**.
 
-Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci-<job>` (host-visible) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
+Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci/<job>` (one dedicated directory, [[ops/tickets/WF-052]]) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
 
 ## Survive restart / wipe
 
@@ -51,7 +51,12 @@ Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WO
   `docker compose stop jenkins && docker compose rm -f jenkins && docker volume rm -f my-island_ops_jenkins && ./scripts/dev up`
 - Full wipe (Postgres + Grafana + Jenkins): `docker compose down -v`.
 
-Jenkins bind-mounts the repo at the **host path** (`HOST_REPO=$PWD`) so `docker compose` volume mounts resolve under Docker Desktop File Sharing.
+Jenkins bind-mounts the repo at the **host path** (`HOST_REPO=$PWD`) so `docker compose` volume mounts resolve under Docker Desktop File Sharing. It also bind-mounts only `JENKINS_CI_ROOT` (default `~/Projects/my-island-ci`), not all of `~/Projects`. A compose change does not enter the running container. After this volume is on `main`, and after any in-flight publish turn:
+
+```bash
+mkdir -p ~/Projects/my-island-ci
+docker compose up -d jenkins --force-recreate --no-deps
+```
 
 ## Security
 

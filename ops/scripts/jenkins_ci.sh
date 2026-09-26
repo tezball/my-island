@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# Sourced by Jenkinsfile (WF-051). Not for humans.
+# Sourced by Jenkinsfile (WF-051 / WF-052). Not for humans.
 # Copies $WORKSPACE onto a host path Docker Desktop can bind-mount.
+# Parent is JENKINS_CI_ROOT (default: sibling directory my-island-ci), not ~/Projects.
 
 jenkins_ci_host_root() {
   local host="${HOST_REPO:-}"
   local ws="${WORKSPACE:-}"
   if [ -n "$host" ] && [ -n "$ws" ] && [ -f "$ws/Jenkinsfile" ] && [ "$ws" != "$host" ]; then
-    local safe
+    local safe parent
     safe="$(printf '%s' "${JOB_BASE_NAME:-ci}" | tr -c 'A-Za-z0-9._-' '-')"
-    printf '%s' "${host%/*}/my-island-ci-${safe}"
+    parent="${JENKINS_CI_ROOT:-${host%/*}/my-island-ci}"
+    printf '%s' "${parent%/}/${safe}"
   elif [ -n "$ws" ] && [ -f "$ws/Jenkinsfile" ]; then
     printf '%s' "$ws"
   else
@@ -17,10 +19,15 @@ jenkins_ci_host_root() {
 }
 
 jenkins_ci_prepare() {
-  local dest ws
+  local dest ws parent
   dest="$(jenkins_ci_host_root)"
   ws="${WORKSPACE:-}"
   if [ -n "$ws" ] && [ -f "$ws/Jenkinsfile" ] && [ "$dest" != "$ws" ]; then
+    parent="$(dirname "$dest")"
+    if [ ! -d "$parent" ] || [ ! -w "$parent" ]; then
+      echo "CI parent ${parent} is not writable. Bind-mount JENKINS_CI_ROOT into the jenkins service and recreate that container." >&2
+      exit 1
+    fi
     rm -rf "$dest"
     mkdir -p "$dest"
     cp -a "$ws"/. "$dest"/
