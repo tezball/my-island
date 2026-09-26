@@ -80,4 +80,8 @@ SORT file.name DESC
 | [[PRD-026]] | Admin moderation / users / catalog |
 | [[PRD-027]] | Admin disputes / refunds |
 | [[PRD-028]] | Help center + policies |
-| [[PRD-029]] | Support inbox |
+| [[PRD-029]] | Support inbox (booking; stay inbox) |
+| [[PRD-032]] | Listing kinds on the map, including supplier |
+| [[PRD-033]] | Free host and supplier draft submit |
+| [[PRD-034]] | Support self-serve and role homes |
+| [[PRD-035]] | Phone-first look and feel refactor |

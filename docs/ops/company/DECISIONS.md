@@ -36,7 +36,7 @@ Architecture’s draft is canon. Do not invent a competing stack.
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[ops/tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[ops/tickets/WF-004]] |
 | CI | **Jenkins** local compose + JCasC; GHA dual-run for remote PRs/automerge. No legacy Jenkins restore. | [[ops/tickets/WF-031]] |
-| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs squash-merge when the four GHA jobs are green **and** a valid non-author `APPROVED` exists. Mock-prod deploy: [[ops/tickets/WF-032]] unattended from green `main`: [[ops/tickets/WF-040]]. | [[ops/tickets/WF-050]] |
+| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs squash-merge when the four GHA jobs are green **and** a valid non-author `APPROVED` exists. Mock-prod deploy: [[ops/tickets/WF-032]] unattended from green `main`: [[ops/tickets/WF-040]]. **This product’s host** is decision 39. | [[ops/tickets/WF-050]] |
 
 ### MCP gaps (must close for idea→prod)
 
@@ -131,7 +131,7 @@ CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer
 | 33 | **Mock PSP in catalog** (authorize/capture/refund). EUR. 10% platform fee. No live card keys on mock-prod. No second payments service. | [[ops/tickets/PRD-018]] |
 | 34 | **Host writes** are authenticated drafts (`/api/v1/host/…`). Public Place POST stays closed ([[ops/tickets/WF-046]]). Admin publishes. Skip claim-existing-POI. | [[ops/tickets/PRD-020]], [[ops/tickets/PRD-026]] |
 | 35 | **Seed:** ≥1 mock campsite + ≥1 mock B&B per 32 counties. Do not replace 101 POIs. | [[ops/tickets/PRD-016]] |
-| 36 | **Do not promote** booking children to `ready`/`implement` while stream-1 `WF-040`–`WF-046` and PRD-010/015 are the P0 auto pick. First child to promote: [[ops/tickets/PRD-016]]. Leave [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] blocked. | [[ops/plans/PRD-004]] |
+| 36 | **Do not promote** booking children to `ready`/`implement` while stream-1 `WF-040`–`WF-046` and PRD-010/015 are the P0 auto pick. First child to promote was [[ops/tickets/PRD-016]]. **Build order superseded by decision 39** — do not promote PRD-016–029. Leave [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] blocked. | [[ops/plans/PRD-004]], [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md) |
 
 ## 2026-09-20 — Cloud→Jenkins lock C
 
@@ -148,4 +148,12 @@ CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer
 | # | Decision | Where it lives |
 |---|---|---|
 | 38 | **Review-gated automerge.** Ready same-repo non-draft PRs squash-merge only when GHA job names `unit tests`, `catalog tests`, `web tests`, and `compose stack` have all succeeded on the head SHA **and** a GitHub review on that SHA has state `APPROVED` (create-review event is `APPROVE`) from an actor that is not `github-actions[bot]` and not the PR author. `CHANGES_REQUESTED` blocks. Stale Approve does not count. If CI is green but no valid Approve yet, the merge job succeeds as waiting — it does not fail the PR red. Actions does not `createReview`. Chat never `gh pr merge`. Cursor PR-review automation trigger is **Workflow run completed** (workflow `CI`, success only), not Pull request opened. Required GitHub checks = those four test job names only — never `automerge`, never `auto-review approve merge`, never `Cursor Automation: Untitled`. Jenkins `H/5` unchanged. No production Environment. | [[ops/tickets/WF-050]], [[ops/workflow/CI]], [[ops/workflow/SAFETY]] |
+
+## 2026-09-26 — Free Ireland directory; this product has a host
+
+**Terry.** Build the free Ireland directory on the public site. Decision **38** is already review-gated automerge (2026-09-20). This host call is **39**. It supersedes decision 7 and the “no prod” line in [`product/STACK.md`](../../product/STACK.md) **for this product only**. It also supersedes decision 36’s “first child to promote is PRD-016”.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 39 | **Production host for this product.** https://fishing-journals.com. Dated exception to the 2026-09-12 no-prod lock, this product only. The current VPS is still **one machine** (the same host decision 14 called mock-prod) until a later split. Local compose stays the build runtime. Deploy stays Jenkins `deploy-mock-prod` from `main` (Mac mini, decision 37). Agents never SSH. Do **not** add a GitHub Environment named `production`, `compose.prod`, or a prod SSH path. Free directory: campsites, B&Bs, POIs, experiences, suppliers. Journey is [[ops/tickets/PRD-030]]. No checkout and no payment gateway in this program. Leave [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] in `inbox`. | [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md), [[ops/tickets/WF-040]], [[ops/workflow/SAFETY]], `.cursor/rules/no-prod.mdc` |
 

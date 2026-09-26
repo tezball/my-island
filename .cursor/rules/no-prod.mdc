@@ -1,5 +1,5 @@
 ---
-description: There is no production environment and there probably never will be.
+description: No GitHub production Environment. This product's host is fishing-journals.com (decision 39).
 alwaysApply: true
 ---
 
@@ -8,6 +8,7 @@ alwaysApply: true
 CEO lock 2026-09-12 (`docs/ops/company/DECISIONS.md`). This company **has no prod** and **probably never will**.
 
 - Do not invent a production GitHub Environment, `compose.prod`, prod SSH, prod deploy gates, or “wait for a human to ship prod”.
-- Local compose (`./scripts/app start`) is the runtime. `main` is git. That is enough.
+- **Dated exception (decision 39, 2026-09-26), this product only.** The production host is https://fishing-journals.com. The current VPS is still one machine (the same box as mock-prod) until a later split. Deploy stays Jenkins `deploy-mock-prod` from `main` (Mac mini, decision 37). Agents never SSH. Still no GitHub Environment named `production`, no `compose.prod`, and no prod SSH path. Program: `docs/product/FREE-DIRECTORY.md`.
+- Local compose (`./scripts/app start`) is the runtime. `main` is git. That is enough for the build. The public host is how an implementer confirms.
 - Ready (non-draft, same-repo) PRs squash-merge when GHA `unit tests` + `catalog tests` + `web tests` + `compose stack` are green **and** a GitHub review state `APPROVED` exists from an actor that is not `github-actions[bot]` and not the PR author. Drafts and forks do not. Chat agents still do not `gh pr merge` as a reviewer hat — Actions does. Actions does not `createReview` APPROVE.
 - Staging tickets may still exist. They are not prod. Do not block ordinary workflow work on a future prod fleet.

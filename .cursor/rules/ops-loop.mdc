@@ -14,6 +14,6 @@ You are working in a git-tracked Obsidian vault at `docs/` — the company OS li
 - One ticket per session. Skip `type: epic`. Prefix `WF-` = workflow. `PRD-` = product. `INC-` = incident.
 - New tickets: `python3 ops/scripts/new_ticket.py`. Naming: `docs/ops/NAMING.md`. Roster: `docs/ops/agents/_index.md`.
 - App code is disposable scaffolding (`docs/ops/company/SCAFFOLDING.md`). Do not polish it.
-- CI is Jenkins (house) + GitHub Actions dual-run. No production environment (probably never). No secrets in notes.
+- CI is Jenkins (house) + GitHub Actions dual-run. No GitHub production Environment (probably never). Decision 39: this product’s host is https://fishing-journals.com (one VPS until a later split). No secrets in notes. Current build: `docs/product/FREE-DIRECTORY.md` (pipeline, then the free directory). Do not promote the booking checkout program.
 - Full loop: `docs/ops/workflow/LOOP.md`. Worktrees: `docs/ops/workflow/WORKTREES.md`. CI: `docs/ops/workflow/CI.md`. Safety: `docs/ops/workflow/SAFETY.md`.
 - Do not implement product unless `PRD-*` and `status: implement`.
