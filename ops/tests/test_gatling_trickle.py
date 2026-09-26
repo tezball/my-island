@@ -43,9 +43,18 @@ def test_light_trickle_gatling_exists_and_is_not_merge_load() -> None:
     casc = (OPS / "jenkins" / "casc" / "jenkins.yaml").read_text()
     assert "gatling-trickle.groovy" in casc
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
-    automerge = ci.split("automerge:")[1].split("mock-prod-signal:")[0]
-    assert "needs: [unit, catalog, web, stack]" in automerge
+    automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
+    assert "needs: [unit, catalog, web, stack, chaos, zap]" in ci
     assert "gatling" not in automerge.lower()
     assert "gatling:test" not in ci
-    jobs = list((OPS / "jenkins" / "casc" / "jobs").glob("*.groovy"))
-    assert not any("weekly" in p.name for p in jobs)
+    assert "gatling:test" not in automerge
+    weekly = (OPS / "jenkins" / "casc" / "jobs" / "gatling-weekly.groovy").read_text()
+    assert "cron('H 6 * * 0')" in weekly
+    assert "gatling_weekly.sh" in weekly
+    assert "notify_house_alertmanager.py" in weekly
+    assert "email_configs" not in weekly
+    rules = (OPS / "observability" / "prometheus" / "rules" / "gatling.yml").read_text()
+    assert "CatalogHttpErrors" in rules
+    notify = (OPS / "scripts" / "notify_house_alertmanager.py").read_text()
+    assert "email_configs" not in notify
+    assert "HOUSE_ALERTMANAGER_URL" in notify

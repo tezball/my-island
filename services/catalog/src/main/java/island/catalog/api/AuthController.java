@@ -1,9 +1,14 @@
 package island.catalog.api;
 
+import island.catalog.api.dto.ForgotRequest;
 import island.catalog.api.dto.GoogleAuthRequest;
 import island.catalog.api.dto.PasswordLoginRequest;
+import island.catalog.api.dto.ResetRequest;
+import island.catalog.api.dto.SignupRequest;
+import island.catalog.api.dto.TokenRequest;
 import island.catalog.auth.AppUser;
 import island.catalog.auth.GoogleIdTokenVerification;
+import island.catalog.auth.GuestAccountService;
 import island.catalog.auth.InvalidCredentialsException;
 import island.catalog.auth.SessionLogin;
 import island.catalog.auth.UserJdbc;
@@ -29,12 +34,27 @@ public class AuthController {
   private final GoogleIdTokenVerification googleTokens;
   private final UserJdbc users;
   private final PasswordEncoder passwords;
+  private final GuestAccountService accounts;
 
   public AuthController(
-      GoogleIdTokenVerification googleTokens, UserJdbc users, PasswordEncoder passwords) {
+      GoogleIdTokenVerification googleTokens,
+      UserJdbc users,
+      PasswordEncoder passwords,
+      GuestAccountService accounts) {
     this.googleTokens = googleTokens;
     this.users = users;
     this.passwords = passwords;
+    this.accounts = accounts;
+  }
+
+  @PostMapping("/signup")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  void signup(
+      @Valid @RequestBody SignupRequest body,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    AppUser user = accounts.signup(body.username(), body.email(), body.password());
+    SessionLogin.establish(user, request, response);
   }
 
   @PostMapping("/google")
@@ -63,6 +83,28 @@ public class AuthController {
       throw new InvalidCredentialsException();
     }
     SessionLogin.establish(user, request, response);
+  }
+
+  @PostMapping("/verify")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  void verify(
+      @Valid @RequestBody TokenRequest body,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    AppUser user = accounts.verify(body.token());
+    SessionLogin.establish(user, request, response);
+  }
+
+  @PostMapping("/forgot")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  void forgot(@Valid @RequestBody ForgotRequest body) {
+    accounts.forgot(body.username());
+  }
+
+  @PostMapping("/reset")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  void reset(@Valid @RequestBody ResetRequest body) {
+    accounts.reset(body.token(), body.password());
   }
 
   @PostMapping("/logout")

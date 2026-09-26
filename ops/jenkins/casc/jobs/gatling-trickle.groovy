@@ -33,6 +33,16 @@ pipeline {
       }
     }
   }
+  post {
+    failure {
+      sh '''#!/usr/bin/env bash
+        set -euo pipefail
+        cd "\$HOST_REPO"
+        export GATLING_JOB=gatling-trickle
+        python3 ops/scripts/notify_house_alertmanager.py
+      '''
+    }
+  }
 }
 """)
     }

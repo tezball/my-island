@@ -19,6 +19,9 @@ spring:
     jdbc:
       initialize-schema: never
     timeout: 30d
+  mail:
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:1025}
 
 server:
   port: ${SERVER_PORT:8080}
@@ -35,6 +38,10 @@ google:
   client-secret: ${GOOGLE_CLIENT_SECRET:}
 
 catalog:
+  mail:
+    mode: ${CATALOG_MAIL_MODE:log}
+    from: ${CATALOG_MAIL_FROM:noreply@localhost}
+    public-origin: ${APP_PUBLIC_ORIGIN:http://localhost:5173}
   auth:
     google:
       stub-enabled: false
@@ -57,6 +64,9 @@ info:
     buildTime: ${APP_BUILD_TIME:unknown}
 
 management:
+  health:
+    mail:
+      enabled: false
   endpoints:
     web:
       exposure:

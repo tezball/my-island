@@ -11,8 +11,10 @@ Read `docs/ops/workflow/SAFETY.md` and `docs/ops/workflow/DOD.md`. Then `gh pr v
 
 **Block** only on: wrong ticket outcome, missing/broken verify, SAFETY, house-stack violation, tests that do not prove the change, secrets, scope creep.
 
-**Do not** merge, approve as the sole required review, push, or nitpick style/import order/optional refactors.
+**May** submit GitHub **Approve** or **Request changes**. Nits belong in the review **body**, not inline threads.
 
-One ticket. Chat does not `gh pr merge` — Actions squash-merges ready PRs when CI is green.
+**Do not** merge, push, nitpick style/import order/optional refactors, or Approve a PR you implemented.
 
-Comment. Stop.
+One ticket. Chat does not `gh pr merge` — Actions squash-merges ready PRs when the four GHA jobs are green **and** a valid non-author `APPROVED` exists ([[ops/tickets/WF-050]]).
+
+Comment (or Approve / Request changes). Stop.

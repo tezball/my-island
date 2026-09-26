@@ -87,7 +87,7 @@ VALID_STATUS = {
 }
 VALID_TYPE = {"epic", "story", "bug", "incident", "workflow"}
 
-HAPPY_PATH_CI_JOBS = ("unit", "catalog", "web", "stack", "automerge")
+HAPPY_PATH_CI_JOBS = ("unit", "catalog", "web", "stack")
 
 
 def gha_job_body(ci: str, job: str) -> str:
@@ -366,7 +366,7 @@ def test_harvested_mvp_plans_and_children() -> None:
         assert ident in by_id, ident
         assert by_id[ident]["type"] == "story"
         assert "tickets/PRD-000" in by_id[ident].get("parent", "")
-    assert by_id["PRD-010"]["status"] == "implement"
+    assert by_id["PRD-010"]["status"] == "review"
     assert "plans/PRD-010" in by_id["PRD-010"].get("plan", "")
     assert "password" in by_id["PRD-010"]["title"].lower()
     assert by_id["PRD-003"]["status"] == "done"
@@ -1004,21 +1004,28 @@ def test_wf_025_no_prod_and_automerge() -> None:
     assert "plans/WF-025" in meta.get("plan", "")
     decisions = (OPS / "company" / "DECISIONS.md").read_text()
     assert "has no production environment and probably never will" in decisions
-    assert "Ready PRs auto-review, approve, and squash-merge" in decisions
+    assert "Ready PRs auto-review, approve, and squash-merge" not in decisions
+    assert "Ready PRs squash-merge" in decisions
+    assert "github-actions[bot]" in decisions
     rule = (REPO / ".cursor" / "rules" / "no-prod.mdc").read_text()
     assert "alwaysApply: true" in rule
     assert "no prod" in rule.lower()
+    assert "createReview" in rule
     safety = (OPS / "workflow" / "SAFETY.md").read_text()
     assert "Ready PRs merge themselves" in safety
     assert "There is no production" in safety
+    assert "github-actions[bot]" in safety
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
-    assert "name: auto-review approve merge" in ci
-    assert "needs: [unit, catalog, web, stack]" in ci
-    assert "github.event.pull_request.draft == false" in ci
-    assert "head.repo.full_name == github.repository" in ci
-    assert "merge_method: 'squash'" in ci
-    automerge = ci.split("automerge:")[1]
+    assert "createReview" not in ci
+    assert "pulls.createReview" not in ci
+    assert "name: auto-review approve merge" not in ci
+    assert "\n  automerge:" not in ci
+    assert "name: automerge" not in ci
+    assert "needs: [unit, catalog, web, stack, chaos, zap]" in ci
+    automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
     assert "compose.chaos.yml" not in automerge
+    assert "gha_review_gate.py" in automerge
+    assert "createReview" not in automerge
     assert_happy_path_ci_no_chaos(ci)
     assert (OPS / "plans" / "WF-025.md").is_file()
 
@@ -1353,7 +1360,13 @@ def test_poi_visitintent_planner_land() -> None:
         ("PRD-015", "story", "eng-backend", "PRD-000"),
     ):
         meta = by_id[ident]
-        expected_status = {"PRD-015": "done", "WF-045": "review"}.get(
+        expected_status = {
+            "PRD-015": "done",
+            "WF-043": "review",
+            "WF-044": "review",
+            "WF-045": "review",
+            "WF-046": "review",
+        }.get(
             ident, "implement"
         )
         assert meta["status"] == expected_status, ident
@@ -1378,7 +1391,7 @@ def test_poi_visitintent_planner_land() -> None:
     assert by_id["WF-004"]["status"] == "blocked"
     assert by_id["WF-010"]["status"] == "blocked"
     wf011 = by_id["WF-011"]
-    assert wf011["status"] == "implement"
+    assert wf011["status"] == "review"
     assert wf011["type"] == "workflow"
     assert wf011["owner"] == "automation-expert"
     assert "tickets/WF-007" in wf011.get("parent", "")
@@ -1421,7 +1434,7 @@ def test_poi_visitintent_planner_land() -> None:
     assert "HTTP/SSE" in wf041
     assert "same" in wf041.lower() and "datasource" in wf041.lower()
     assert "public internet" in wf041.lower()
-    assert by_id["PRD-010"]["status"] == "implement"
+    assert by_id["PRD-010"]["status"] == "review"
     assert "password" in by_id["PRD-010"]["title"].lower()
     prd010 = (OPS / "tickets" / "PRD-010.md").read_text()
     assert "Google SSO" in prd010 or "GIS" in prd010
@@ -1618,10 +1631,12 @@ def test_wf_048_main_ci_after_squash() -> None:
     assert "tickets/WF-040" in meta.get("parent", "")
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "workflow_dispatch:" in ci
-    assert "createWorkflowDispatch" in ci
-    automerge = gha_job_body(ci, "automerge")
+    automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
     assert "actions: write" in automerge
-    assert "createWorkflowDispatch" in automerge
+    assert "gha_review_gate.py" in automerge
+    gate = (RUNTIME / "scripts" / "gha_review_gate.py").read_text()
+    assert "actions/workflows/ci.yml/dispatches" in gate
+    assert "merge_method" in gate and "squash" in gate
     groovy = (REPO / "ops" / "jenkins" / "casc" / "jobs" / "deploy-mock-prod.groovy").read_text()
     assert "git show origin/main:ops/scripts/gate_mock_prod_deploy.py" in groovy
     gate = (RUNTIME / "scripts" / "gate_mock_prod_deploy.py").read_text()
@@ -1694,7 +1709,7 @@ def test_mvp_ui_gaps_prd_030_wf_049() -> None:
     """2026-09-20: been/want map lists + Cloud→Jenkins lock C (Mac mini worker)."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     prd030 = by_id["PRD-030"]
-    assert prd030["status"] == "implement"
+    assert prd030["status"] == "review"
     assert prd030["type"] == "story"
     assert prd030["priority"] == "P0"
     assert prd030["owner"] == "eng-frontend"
@@ -1704,7 +1719,7 @@ def test_mvp_ui_gaps_prd_030_wf_049() -> None:
     assert by_id["PRD-015"]["status"] == "done"
     assert by_id["PRD-012"]["status"] == "blocked"
     assert by_id["PRD-013"]["status"] == "blocked"
-    assert by_id["PRD-010"]["status"] == "implement"
+    assert by_id["PRD-010"]["status"] == "review"
     ticket030 = (OPS / "tickets" / "PRD-030.md").read_text()
     assert "VisitIntent" in ticket030
     assert "PRD-013" in ticket030
@@ -1744,7 +1759,8 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
     """2026-09-20: review-gated automerge + mobile place-detail back (plan, not implement)."""
     by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
     wf050 = by_id["WF-050"]
-    assert wf050["status"] == "implement"
+    assert wf050["status"] == "review"
+    assert wf050.get("pr", "") == "https://github.com/tezball/my-island/pull/106"
     assert wf050["type"] == "workflow"
     assert wf050["priority"] == "P0"
     assert wf050["owner"] == "automation-expert"
@@ -1756,11 +1772,11 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
     blob050 = ticket050 + plan050
     assert "status: approved" in plan050
     assert "createReview" in blob050
-    assert "APPROVE" in blob050
+    assert "APPROVED" in blob050
     assert "pull_request_review" in blob050
     assert "waiting for review" in blob050.lower()
     assert "github-actions[bot]" in blob050
-    assert "head SHA" in blob050 or "head SHA" in plan050
+    assert "head SHA" in blob050 or "commit_id" in blob050
     assert "CHANGES_REQUESTED" in blob050 or "Request-changes" in blob050 or "Request changes" in blob050
     assert "gh pr merge" in blob050
     assert "production" in blob050.lower()
@@ -1787,8 +1803,58 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
     assert "implement" in blob031.lower()
     assert "PlacePage" in blob031 or "place-detail" in blob031.lower()
     assert (OPS / "runs" / "WF-050-plan.md").is_file()
-    # Planner does not change the live GHA auto-APPROVE; implementer of WF-050 does.
+
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
-    assert "createReview" in ci
+    automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
+    workflows = ci + automerge
+    assert "createReview" not in workflows
+    assert "pulls.createReview" not in workflows
+    assert "event: 'APPROVE'" not in workflows
+    assert "\n  automerge:" not in ci
+    assert "name: auto-review approve merge" not in workflows
+    assert "pull_request_review" not in ci.split("jobs:", 1)[0]
+    assert "workflow_run:" in automerge
+    assert 'workflows: ["CI"]' in automerge
+    assert "types: [completed]" in automerge
+    assert "pull_request_review:" in automerge
+    assert "types: [submitted]" in automerge
+    assert "github.event.workflow_run.conclusion == 'success'" in automerge
+    assert "name: unit tests" not in automerge
+    assert "name: catalog tests" not in automerge
+    assert "name: web tests" not in automerge
+    assert "name: compose stack" not in automerge
+    assert "gha_review_gate.py" in automerge
+    assert "core.setFailed" not in automerge
+    for job in ("unit:", "catalog:", "web:", "stack:", "mock-prod-signal:"):
+        assert f"\n  {job}" in ci
+    gate = (RUNTIME / "scripts" / "gha_review_gate.py").read_text()
+    assert "APPROVED" in gate
+    assert "github-actions[bot]" in gate
+    assert "waiting for review" in gate
+    assert "CHANGES_REQUESTED" in gate
+    assert "createReview" in gate
+    assert "merge_method" in gate and "squash" in gate
+    assert "return 0" in gate
+    ci_doc = (OPS / "workflow" / "CI.md").read_text()
+    assert "Workflow run completed" in ci_doc
+    assert "cannot set" in ci_doc.lower() or "cannot edit" in ci_doc.lower()
+    assert "unit tests" in ci_doc and "catalog tests" in ci_doc
+    assert "web tests" in ci_doc and "compose stack" in ci_doc
+    assert "Cursor Automation: Untitled" in ci_doc
+    assert "auto-review approve merge" in ci_doc
+    assert "Nits" in ci_doc or "nits" in ci_doc
+    assert "no inline threads" in ci_doc.lower() or "no inline threads for nits" in ci_doc
+    assert "t=0" in ci_doc or "queued" in ci_doc.lower()
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "Ready PRs auto-review, approve, and squash-merge" not in decisions
+    assert "Review-gated automerge" in decisions
+    jenkins = (OPS / "runbooks" / "JENKINS_LOCAL.md").read_text()
+    assert "H/5" in jenkins
+    loop = (OPS / "workflow" / "LOOP.md").read_text()
+    assert "Approve or Request changes" in loop
+    assert "approve their own PR" in loop
+    safety = (OPS / "workflow" / "SAFETY.md").read_text()
+    assert "createReview" in safety
+    assert "APPROVED" in safety
 
 

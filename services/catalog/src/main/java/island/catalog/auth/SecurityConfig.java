@@ -51,7 +51,20 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/auth/login")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/auth/logout")
+                    .requestMatchers(HttpMethod.POST, "/api/auth/logout", "/api/v1/auth/logout")
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/api/auth/signup",
+                        "/api/v1/auth/signup",
+                        "/api/auth/verify",
+                        "/api/v1/auth/verify",
+                        "/api/auth/forgot",
+                        "/api/v1/auth/forgot",
+                        "/api/auth/reset",
+                        "/api/v1/auth/reset")
+                    .permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/login")
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/places/**")
                     .permitAll()

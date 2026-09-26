@@ -36,7 +36,7 @@ Architecture’s draft is canon. Do not invent a competing stack.
 | Data | PostgreSQL 17 + PostGIS, Flyway | [[ops/tickets/PRD-001]] |
 | Observe | Grafana OSS MCP (`mcp-grafana`) | [[ops/tickets/WF-004]] |
 | CI | **Jenkins** local compose + JCasC; GHA dual-run for remote PRs/automerge. No legacy Jenkins restore. | [[ops/tickets/WF-031]] |
-| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs auto-merge when CI is green. Mock-prod deploy: [[ops/tickets/WF-032]] unattended from green `main`: [[ops/tickets/WF-040]]. | [[ops/tickets/WF-025]] |
+| CD | `main` is git; **no production Environment** (CEO 2026-09-12). Ready PRs squash-merge when the four GHA jobs are green **and** a valid non-author `APPROVED` exists. Mock-prod deploy: [[ops/tickets/WF-032]] unattended from green `main`: [[ops/tickets/WF-040]]. | [[ops/tickets/WF-050]] |
 
 ### MCP gaps (must close for idea→prod)
 
@@ -60,7 +60,7 @@ Host, OIDC provider, and curator-admin depth remain open in STACK.
 | # | Decision | Where it lives |
 |---|---|---|
 | 7 | **No prod.** No GitHub Environment prod gate, no `compose.prod`, no prod SSH. Local compose is the runtime. Do not block agent work on a hypothetical prod. | this note, [[ops/workflow/SAFETY]], `.cursor/rules/no-prod.mdc` |
-| 8 | **Ready PRs auto-review, approve, and squash-merge** when CI `unit` + `catalog` + `web` + `stack` are green. Drafts and forks never auto-merge. Chat reviewer hat still does not merge. | [[ops/tickets/WF-025]], [[ops/workflow/CI]] |
+| 8 | **Ready PRs squash-merge** when GHA `unit tests` + `catalog tests` + `web tests` + `compose stack` are green **and** a GitHub review on the head SHA has state `APPROVED` from an actor that is not `github-actions[bot]` and not the PR author. Actions does not `createReview` APPROVE. Drafts and forks never auto-merge. Chat reviewer hat still does not merge. | [[ops/tickets/WF-050]], [[ops/workflow/CI]] (no-prod lock remains [[ops/tickets/WF-025]]) |
 
 CD line in [`product/STACK.md`](../../product/STACK.md): `main` is git; there is no prod Environment. Staging tickets ([[ops/tickets/WF-010]]) are separate and not a prod stand-in.
 
@@ -96,7 +96,7 @@ CHK / ME / ACC stay off this public slice until a later ticket. 500-place launch
 
 ## 2026-09-19 — VisitIntent slice; unattended mock-prod; agent MCP
 
-**Terry.** Next public slice is **VisitIntent** (`been` / `want` / `never`) on the existing Ireland POI directory. This is **not** a live consumer app. Merging to `main` is enough for the test server. Agents never SSH. Reviewer agents comment only. Ready PRs auto-merge when CI is green. This company **has no production environment and probably never will.** Q&A is **closed** (Terry chose **A** on public counts: anonymous been only).
+**Terry.** Next public slice is **VisitIntent** (`been` / `want` / `never`) on the existing Ireland POI directory. This is **not** a live consumer app. Merging to `main` is enough for the test server. Agents never SSH. Reviewer agents comment; they may Approve or Request changes. Ready PRs squash-merge when CI is green **and** a valid non-author `APPROVED` exists ([[ops/tickets/WF-050]]). This company **has no production environment and probably never will.** Q&A is **closed** (Terry chose **A** on public counts: anonymous been only).
 
 | # | Decision | Where it lives |
 |---|---|---|
@@ -140,4 +140,12 @@ CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer
 | # | Decision | Where it lives |
 |---|---|---|
 | 37 | **Cloud→Jenkins lock C.** Self-hosted Cursor worker on the Mac mini that already has Jenkins + `MOCK_PROD_*` + the SSH key. That worker triggers `deploy-mock-prod` on loopback Jenkins. Do **not** pick B (Cloud VMs reaching Jenkins over HTTPS). Do **not** pick D (GHA SSH; key in GitHub secrets). Key stays in Jenkins. Agents never SSH. Not a GitHub Environment `production`. | [[ops/tickets/WF-049]], [[ops/plans/WF-049]] |
+
+## 2026-09-20 — Review-gated automerge (no Actions auto-APPROVE)
+
+**Terry.** No-prod from [[ops/tickets/WF-025]] **stays**. What changes is the merge gate: GitHub Actions must not approve PRs.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 38 | **Review-gated automerge.** Ready same-repo non-draft PRs squash-merge only when GHA job names `unit tests`, `catalog tests`, `web tests`, and `compose stack` have all succeeded on the head SHA **and** a GitHub review on that SHA has state `APPROVED` (create-review event is `APPROVE`) from an actor that is not `github-actions[bot]` and not the PR author. `CHANGES_REQUESTED` blocks. Stale Approve does not count. If CI is green but no valid Approve yet, the merge job succeeds as waiting — it does not fail the PR red. Actions does not `createReview`. Chat never `gh pr merge`. Cursor PR-review automation trigger is **Workflow run completed** (workflow `CI`, success only), not Pull request opened. Required GitHub checks = those four test job names only — never `automerge`, never `auto-review approve merge`, never `Cursor Automation: Untitled`. Jenkins `H/5` unchanged. No production Environment. | [[ops/tickets/WF-050]], [[ops/workflow/CI]], [[ops/workflow/SAFETY]] |
 

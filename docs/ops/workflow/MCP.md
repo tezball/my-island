@@ -5,7 +5,7 @@ type: workflow
 
 # MCP pack
 
-Same server names locally. **Read-only on data planes.** GitHub MCP may open PRs and comment; merge of ready PRs is GitHub Actions ([[ops/tickets/WF-025]]), not the chat MCP. Human+agent handbook: [[DX]]. Confirm deploy: [[ops/runbooks/CONFIRM_DEPLOY]].
+Same server names locally. **Read-only on data planes.** GitHub MCP may open PRs and comment; merge of ready PRs is GitHub Actions ([[ops/tickets/WF-050]]), not the chat MCP. Human+agent handbook: [[DX]]. Confirm deploy: [[ops/runbooks/CONFIRM_DEPLOY]].
 
 ## Local (committed)
 
@@ -61,7 +61,7 @@ Staging/prod Grafana remains [[ops/tickets/WF-004]] (blocked on [[ops/tickets/WF
 
 **Security lock B (CEO 2026-09-19):** [[ops/tickets/WF-044]] — ZAP-style scanner in **merge CI** against local compose/Testcontainers, every merge. Do **not** move to cron. Not the primary scan of fishing-journals.com.
 
-**Test lanes (CEO 2026-09-19):** Playwright is cron + MCP ([[ops/tickets/WF-011]]). Merge CI: catalog API, Chaos, ZAP. Gatling is light trickle + weekly full perf (not merge load) [[ops/tickets/WF-042]]. Keep Playwright off `unit`/`catalog`.
+**Test lanes (CEO 2026-09-19):** Playwright is cron + MCP on demand ([[ops/tickets/WF-011]]). The cron workflow is `.github/workflows/playwright.yml` (every 6 hours vs https://fishing-journals.com/). Agents can run the same `web/e2e` spec with Playwright MCP; it is not a merge check. Merge CI: catalog API, Chaos, ZAP. Gatling is light trickle + weekly full perf (not merge load) [[ops/tickets/WF-042]]. Keep Playwright off `unit`/`catalog`.
 
 **Alerts lock C (CEO 2026-09-19):** [[ops/tickets/WF-045]] — trickle and weekly Gatling failures mark Jenkins red and fire Grafana/Alertmanager. Agents read both via MCP. Leftover FJ email stays muted ([[ops/tickets/INC-001]]).
 

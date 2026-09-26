@@ -40,7 +40,7 @@ There is no second tracker. If it is not in git, the company does not know it.
 ## Operating principles
 
 1. **One ticket per agent session.** Sibling worktree; primary clone stays on `main`. [[ops/workflow/LOOP]] · [[ops/workflow/WORKTREES]]
-2. **Ready PRs merge themselves when CI is green.** Chat agents do not merge. There is no prod. [[ops/workflow/SAFETY]]
+2. **Ready PRs merge themselves when CI is green and a valid non-author `APPROVED` exists.** Chat agents do not merge. Actions does not auto-APPROVE. There is no prod. [[ops/workflow/SAFETY]]
 3. **Workflows before app.** Do not polish or refactor application code for its own sake.
 4. **App code is disposable scaffolding.** Replace it when workflows need a new shape. [[ops/company/SCAFFOLDING]]
 5. **Secrets never live in notes.** Env and Cursor MCP settings only.

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -137,6 +138,38 @@ public class PlaceSteps {
     PlaceResponse[] listed =
         http.getForObject("/api/v1/places?countyId=" + countyId, PlaceResponse[].class);
     assertThat(listed).extracting(PlaceResponse::id).contains(CatalogWorld.I.lastPlace.id());
+  }
+
+  @When("I POST {string} without an import key")
+  public void postWithoutKey(String path) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity<String> response =
+        http.postForEntity(path, new HttpEntity<>("{}", headers), String.class);
+    CatalogWorld.I.lastStatus = response.getStatusCode().value();
+  }
+
+  @When("I PUT {string} without a session")
+  public void putWithoutSession(String path) {
+    writeWithoutSession(HttpMethod.PUT, path);
+  }
+
+  @When("I PATCH {string} without a session")
+  public void patchWithoutSession(String path) {
+    writeWithoutSession(HttpMethod.PATCH, path);
+  }
+
+  @When("I DELETE {string} without a session")
+  public void deleteWithoutSession(String path) {
+    writeWithoutSession(HttpMethod.DELETE, path);
+  }
+
+  private void writeWithoutSession(HttpMethod method, String path) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    ResponseEntity<String> response =
+        http.exchange(path, method, new HttpEntity<>("{}", headers), String.class);
+    CatalogWorld.I.lastStatus = response.getStatusCode().value();
   }
 
   private void post(CreatePlaceRequest request) {

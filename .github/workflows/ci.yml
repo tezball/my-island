@@ -8,6 +8,10 @@ on:
   # so origin/main gets check-runs Jenkins deploy-mock-prod can see (WF-048).
   workflow_dispatch:
 
+# Merge lives in automerge.yml (workflow_run after this workflow succeeds).
+# Do not add an automerge / auto-review job here — GitHub would list it queued
+# from t=0 on pull_request, before unit/catalog/web/stack exist (WF-050).
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -58,6 +62,34 @@ jobs:
         working-directory: web
         run: npm ci && npm test && npm run build
 
+  zap:
+    name: zap baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start local catalog
+        env:
+          SKIP_JENKINS: "1"
+          SKIP_WEB: "1"
+        run: ./scripts/dev up
+      - name: ZAP-style Place write scan
+        run: python3 ops/scripts/zap_style_scan.py http://127.0.0.1:8081
+
+  chaos:
+    name: chaos monkey
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: services/catalog/pom.xml
+      - name: Retries and default fallback
+        working-directory: services/catalog
+        run: ./mvnw -B -Dtest=RetryFallbackTest test
+
   stack:
     name: compose stack
     runs-on: ubuntu-latest
@@ -83,68 +115,6 @@ jobs:
         if: failure()
         run: docker compose ps && docker compose logs --no-color --tail=120
 
-  # CEO 2026-09-12 (WF-025): no prod; ready PRs merge themselves.
-  automerge:
-    name: auto-review approve merge
-    if: >
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.draft == false &&
-      github.event.pull_request.head.repo.full_name == github.repository
-    needs: [unit, catalog, web, stack]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      actions: write
-    steps:
-      - name: Approve and squash-merge
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pull_number = context.payload.pull_request.number;
-            const { owner, repo } = context.repo;
-            try {
-              await github.rest.pulls.createReview({
-                owner,
-                repo,
-                pull_number,
-                event: 'APPROVE',
-                body: 'CI unit + catalog + web + stack green. Auto-approved (WF-025 / CEO 2026-09-12: no prod; ready PRs merge themselves).',
-              });
-            } catch (error) {
-              core.warning(`approve skipped: ${error.message}`);
-            }
-            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
-            if (pr.draft) {
-              core.info('draft — skip');
-              return;
-            }
-            if (pr.head.repo.full_name !== `${owner}/${repo}`) {
-              core.info('fork — skip');
-              return;
-            }
-            if (!pr.merged) {
-              await github.rest.pulls.merge({
-                owner,
-                repo,
-                pull_number,
-                merge_method: 'squash',
-                sha: pr.head.sha,
-              });
-            } else {
-              core.info('already merged');
-            }
-            try {
-              await github.rest.actions.createWorkflowDispatch({
-                owner,
-                repo,
-                workflow_id: 'ci.yml',
-                ref: 'main',
-              });
-            } catch (error) {
-              core.warning(`main CI dispatch skipped: ${error.message}`);
-            }
-
   # WF-040: laptop Jenkins polls GitHub checks (cron H/5). This job is the
   # "main is green" signal — not a GitHub production Environment, not SSH.
   mock-prod-signal:
@@ -152,7 +122,7 @@ jobs:
     if: >
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       github.ref == 'refs/heads/main'
-    needs: [unit, catalog, web, stack]
+    needs: [unit, catalog, web, stack, chaos, zap]
     runs-on: ubuntu-latest
     steps:
       - name: Record SHA for Jenkins deploy-mock-prod
