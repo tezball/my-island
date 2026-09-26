@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/WF-040]]"
 role: planner
 started: 2026-09-26
 finished: 2026-09-26
-pr:
+pr: https://github.com/tezball/my-island/pull/117
 cssclasses:
   - run
 ---
