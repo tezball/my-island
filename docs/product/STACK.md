@@ -15,7 +15,7 @@ Technology decisions for the rebuild. Product capabilities live in
 **CEO lock (2026-09-05):** Java / Spring backend is permanent. Architecture does
 not re-litigate the house. Client stays **light and fast** (not a Next.js-heavy
 monolith). Agents run idea→`main` with logs, metrics and alerts through MCP.
-There is **no production environment** and probably never will be (CEO 2026-09-12).
+There is **no production environment** and probably never will be (CEO 2026-09-12). **Dated exception (decision 39, 2026-09-26), this product only:** the host is https://fishing-journals.com. The current VPS is still one machine until a later split. Do not add a GitHub Environment named `production`, `compose.prod`, or a prod SSH path.
 
 Local compose (`./scripts/app start`) is the agent **runtime**. Mock-prod
 (https://fishing-journals.com/, not a GitHub `production` Environment) already
@@ -35,9 +35,9 @@ constraints on new services and UI.
 | Migrations | **Flyway** in the API | Expand/contract only. Agents never ad-hoc DDL against shared envs. |
 | Observability | **MCP, OSS first** | Logs, metrics, alerts via Grafana stack + `mcp-grafana`. Prefer $0 self-hosted. |
 | CI | **Jenkins** (local compose + JCasC); GHA dual-run for remote PRs | Clone→`./scripts/dev up` → :8085. Same `unit`/`catalog`/`stack` contract. Dedicated chaos + ZAP jobs: [[ops/tickets/WF-043]] · [[ops/tickets/WF-044]]. No legacy Jenkins restore. [[ops/tickets/WF-031]] |
-| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green **and** a valid non-author `APPROVED` exists ([[ops/tickets/WF-050]]). Mock-prod follows `main` via Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]]). | There is no prod fleet and probably never will be (CEO 2026-09-12). Agents do not invent `compose.prod`. Agents never SSH; the key stays in Jenkins. |
+| CD | **No production Environment.** `main` is git. Local compose is the runtime. Ready PRs squash-merge when CI is green **and** a valid non-author `APPROVED` exists ([[ops/tickets/WF-050]]). This product is served at https://fishing-journals.com via Jenkins `deploy-mock-prod` ([[ops/tickets/WF-040]], decision 39). | Decision 39 (2026-09-26) names that host for this product only. The VPS is still one machine until a later split. Agents do not invent `compose.prod` or a prod SSH path. Agents never SSH; the key stays in Jenkins. |
 
-Mock-prod host is the existing fishing-journals.com VPS (CEO 2026-09-13). A
+The public host is the existing fishing-journals.com VPS (CEO 2026-09-13, decision 14). Decision 39 (2026-09-26) calls that same machine this product’s production host. It is still one machine until a later split. A
 separate always-on staging-with-Grafana-sidecars box remains the open pick on
 [[ops/tickets/WF-010]] (still blocked). Object storage default: MinIO local,
 S3-compatible later. Do not treat Vercel as the default host.

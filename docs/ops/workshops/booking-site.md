@@ -9,6 +9,8 @@ cssclasses:
 
 # Workshop — Booking-site (campsites + B&Bs)
 
+**2026-09-26: parked.** Do not promote [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]]. Current build: [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md).
+
 CEO brief 2026-09-19: plan the rest of a Booking.com-like site. **Planner session only** — no product code.
 
 Canon: [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md). Epic [[ops/tickets/PRD-004]]. Children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]].
@@ -25,5 +27,5 @@ Canon: [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md). Epic [[ops/ti
 
 - Implement listings/checkout in the planner PR
 - Pick [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]]
-- Set children `ready`/`implement` while P0 stream-1 and PRD-010/015 are the auto pick
+- Set children `ready`/`implement` (decision 39: do not promote this program; build [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md))
 - SSH; Next.js BFF; second API language

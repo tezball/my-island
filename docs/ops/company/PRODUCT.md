@@ -13,7 +13,8 @@ Living spec is **outside** this vault. Do not fork it.
 |---|---|
 | Signed decisions (CEO 2026-09-05) | [`product/SIGNED.md`](../../product/SIGNED.md) |
 | VisitIntent slice (CEO 2026-09-19) | [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md) · [[ops/tickets/PRD-015]] |
-| Booking-site program (planner 2026-09-19) | [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md) · [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] |
+| Free Ireland directory (Terry 2026-09-26) | [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md) · [[ops/tickets/WF-040]] then [[ops/tickets/PRD-030]]–[[ops/tickets/PRD-035]] |
+| Booking-site program (parked 2026-09-26) | [`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md) · [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] stay inbox |
 | CEO briefing | [`product/BRIEFING.md`](../../product/BRIEFING.md) |
 | Vision | [`product/VISION.md`](../../product/VISION.md) |
 | MVP (92 stories) | [`product/MVP.md`](../../product/MVP.md) |

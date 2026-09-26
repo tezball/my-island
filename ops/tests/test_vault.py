@@ -384,7 +384,7 @@ def test_harvested_mvp_plans_and_children() -> None:
         elif ident in ("PRD-012", "PRD-013"):
             assert by_id[ident]["status"] == "blocked"
         else:
-            assert by_id[ident]["status"] == "implement"
+            assert by_id[ident]["status"] == "plan"
         assert f"plans/{ident}" in by_id[ident].get("plan", "")
     plan010 = (OPS / "plans" / "PRD-010.md").read_text()
     assert "No OIDC stub" in plan010 or "no OIDC stub" in plan010.lower()
@@ -1536,7 +1536,7 @@ def test_wf_040_unattended_mock_prod() -> None:
     meta = by_id["WF-040"]
     assert meta["type"] == "workflow"
     assert meta["owner"] == "automation-expert"
-    assert meta["status"] == "review"
+    assert meta["status"] == "implement"
     assert "tickets/WF-032" in meta.get("parent", "")
     groovy = (REPO / "ops" / "jenkins" / "casc" / "jobs" / "deploy-mock-prod.groovy").read_text()
     assert "cron('H/5 * * * *')" in groovy
@@ -1859,5 +1859,70 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
     safety = (OPS / "workflow" / "SAFETY.md").read_text()
     assert "createReview" in safety
     assert "APPROVED" in safety
+
+
+def test_free_directory_2026_09_26() -> None:
+    """Terry 2026-09-26: free Ireland directory. Pipeline implement; checkout stays inbox."""
+    by_id = {meta["id"]: meta for _, meta in next_ticket.tickets(OPS / "tickets")}
+    assert by_id["WF-040"]["status"] == "implement"
+    assert by_id["WF-048"]["status"] == "review"
+    assert by_id["WF-049"]["status"] == "review"
+    assert by_id["PRD-030"]["status"] == "review"
+    assert by_id["PRD-014"]["status"] == "plan"
+    assert by_id["PRD-031"]["status"] == "plan"
+    for ident in ("PRD-032", "PRD-033", "PRD-034", "PRD-035"):
+        meta = by_id[ident]
+        assert meta["status"] == "plan", ident
+        assert meta["status"] != "implement"
+        assert meta["status"] != "ready"
+        assert meta["type"] == "story"
+        assert meta["priority"] == "P0"
+        assert "tickets/PRD-000" in meta.get("parent", "")
+        assert f"plans/{ident}" in meta.get("plan", "")
+        plan = (OPS / "plans" / f"{ident}.md").read_text()
+        assert "status: approved" in plan
+        assert "fishing-journals.com" in plan
+        assert "compose.prod" in plan
+    for n in range(16, 30):
+        assert by_id[f"PRD-{n:03d}"]["status"] == "inbox"
+    decisions = (OPS / "company" / "DECISIONS.md").read_text()
+    assert "Review-gated automerge" in decisions
+    assert "Production host for this product" in decisions
+    assert "https://fishing-journals.com" in decisions
+    assert "one machine" in decisions
+    assert "has no production environment and probably never will" in decisions
+    program = (PRODUCT / "FREE-DIRECTORY.md").read_text()
+    assert "WF-040" in program and "PRD-030" in program
+    assert "PRD-032" in program and "PRD-035" in program
+    assert "PRD-016" in program
+    booking = (PRODUCT / "BOOKING-SITE.md").read_text()
+    assert "do not promote" in booking.lower() or "Do not promote" in booking
+    kinds = (OPS / "data" / "listing-types.md").read_text()
+    assert "supplier" in kinds
+    rule = (REPO / ".cursor" / "rules" / "no-prod.mdc").read_text()
+    assert "no prod" in rule.lower()
+    assert "decision 39" in rule.lower()
+    assert "createReview" in rule
+    safety = (OPS / "workflow" / "SAFETY.md").read_text()
+    assert "There is no production" in safety
+    assert "decision 39" in safety.lower()
+    rows = next_ticket.tickets(OPS / "tickets")
+    implementer = next_ticket.pick("implementer", rows)
+    assert implementer is not None
+    assert implementer[1]["id"] == "WF-040"
+    planner = next_ticket.pick("planner", rows)
+    if planner is not None:
+        assert planner[1]["id"] not in {
+            "PRD-032",
+            "PRD-033",
+            "PRD-034",
+            "PRD-035",
+            "PRD-016",
+        }
+    blob = program + decisions
+    for needle in ("BEGIN OPENSSH", "ghp_", "github_pat_", "-----BEGIN"):
+        assert needle not in blob
+    assert "MOCK_PROD_SSH_KEY" not in blob
+    assert (OPS / "runs" / "FREE-DIRECTORY-plan.md").is_file()
 
 
