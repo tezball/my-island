@@ -362,7 +362,7 @@ a.bar-btn {
   background: var(--sheet);
   border-radius: 16px 16px 0 0;
   padding: 16px 16px calc(var(--bar-h) + 16px);
-  z-index: 5;
+  z-index: 1101;
   box-shadow: 0 -8px 32px rgba(28, 36, 24, 0.16);
 }
 
@@ -398,7 +398,7 @@ a.bar-btn {
   position: fixed;
   inset: 0;
   background: rgba(28, 36, 24, 0.4);
-  z-index: 4;
+  z-index: 1100;
   border: 0;
 }
 
