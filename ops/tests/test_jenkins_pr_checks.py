@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -64,7 +65,8 @@ def test_jenkinsfile_posts_four_contexts_and_isolates_stack() -> None:
     assert "jenkins_isolate_env" in text
     assert "COMPOSE_PROJECT_NAME" in (REPO / "ops" / "scripts" / "jenkins_ci.sh").read_text()
     helper = (REPO / "ops" / "scripts" / "jenkins_ci.sh").read_text()
-    assert "my-island-ci" in helper
+    assert "my-island-ci-${safe}" not in helper
+    assert "${parent%/}/${safe}" in helper
     assert "OPS_PG_HOST_PORT" in helper
     assert "15433" in helper
     assert "18081" in helper
@@ -72,6 +74,76 @@ def test_jenkinsfile_posts_four_contexts_and_isolates_stack() -> None:
     assert "my-island_ops_npm" in text
     assert "MAVEN_USER_HOME=/cache/m2" in text
     assert "docker compose down" in text
+
+
+def _ci_host_root(env: dict[str, str]) -> str:
+    script = REPO / "ops" / "scripts" / "jenkins_ci.sh"
+    return subprocess.check_output(
+        ["bash", "-c", f'source "{script}"; jenkins_ci_host_root'],
+        env=env,
+        text=True,
+    ).strip()
+
+
+def test_ci_root_uses_dedicated_parent_not_projects_sibling(tmp_path: Path) -> None:
+    ws = tmp_path / "ws"
+    ws.mkdir()
+    (ws / "Jenkinsfile").write_text("pipeline {}\n")
+    env = os.environ.copy()
+    env.pop("JENKINS_CI_ROOT", None)
+    env.update(
+        {
+            "HOST_REPO": "/Users/tezball/Projects/my-island",
+            "WORKSPACE": str(ws),
+            "JOB_BASE_NAME": "cursor%2Fireland-directory-program-3a04",
+        }
+    )
+    assert _ci_host_root(env) == (
+        "/Users/tezball/Projects/my-island-ci/cursor-2Fireland-directory-program-3a04"
+    )
+    env["JENKINS_CI_ROOT"] = "/ci-parent"
+    assert _ci_host_root(env) == "/ci-parent/cursor-2Fireland-directory-program-3a04"
+
+
+def test_prepare_refuses_unwritable_ci_parent(tmp_path: Path) -> None:
+    parent = tmp_path / "locked"
+    parent.mkdir()
+    ws = tmp_path / "ws"
+    ws.mkdir()
+    (ws / "Jenkinsfile").write_text("pipeline {}\n")
+    os.chmod(parent, 0o555)
+    script = REPO / "ops" / "scripts" / "jenkins_ci.sh"
+    env = os.environ.copy()
+    env.update(
+        {
+            "HOST_REPO": "/Users/tezball/Projects/my-island",
+            "WORKSPACE": str(ws),
+            "JOB_BASE_NAME": "main",
+            "JENKINS_CI_ROOT": str(parent),
+        }
+    )
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", f'source "{script}"; jenkins_ci_prepare'],
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    finally:
+        os.chmod(parent, 0o755)
+    assert proc.returncode == 1
+    assert "not writable" in proc.stderr
+    assert "recreate" in proc.stderr
+    assert not (parent / "main").exists()
+
+
+def test_compose_mounts_ci_parent_only() -> None:
+    compose = (REPO / "compose.yml").read_text()
+    mount = "${JENKINS_CI_ROOT:-${PWD}/../my-island-ci}:${JENKINS_CI_ROOT:-${PWD}/../my-island-ci}"
+    assert mount in compose
+    assert "/Users/tezball/Projects:" not in compose
+    assert "${PWD}/..:" not in compose
 
 
 def test_compose_port_overrides_and_caches() -> None:
