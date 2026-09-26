@@ -243,6 +243,9 @@ services:
       - ./ops/jenkins/casc/jobs:/var/jenkins_casc_jobs:ro
       - ${PWD}:${PWD}
       - /var/run/docker.sock:/var/run/docker.sock
+      # VPS key stays on the mini (MOCK_PROD_SSH_KEY_PATH in .env). Same path inside
+      # the controller so deploy-mock-prod.sh can read it. Unset → harmless file mount.
+      - ${MOCK_PROD_SSH_KEY_PATH:-./ops/jenkins/plugins.txt}:${MOCK_PROD_SSH_KEY_PATH:-/tmp/mock-prod-ssh-key-unset}:ro
     # Local-only: docker.sock access. Do not expose this pattern on a shared host.
     group_add:
       - "${DOCKER_GID:-0}"
