@@ -15,8 +15,9 @@ def test_zap_job_scans_local_catalog_not_the_public_host() -> None:
     assert "zap_style_scan.py" not in unit
     assert "zap_style_scan.py" not in catalog
     assert "playwright" not in unit.lower()
-    automerge = ci.split("\n  automerge:")[1].split("\n  mock-prod-signal:")[0]
-    assert "zap" in automerge
+    signal = ci.split("\n  mock-prod-signal:")[1]
+    assert "needs: [unit, catalog, web, stack, chaos, zap]" in signal
+    assert "\n  automerge:" not in ci
     jenkins = (REPO / "Jenkinsfile").read_text()
     assert "zap_style_scan.py" in jenkins
     script = (REPO / "ops" / "scripts" / "zap_style_scan.py").read_text()
