@@ -218,6 +218,8 @@ services:
   # Local house CI (WF-031). JCasC from ops/jenkins/casc; state on ops_jenkins.
   # Repo is bind-mounted at the host path so `docker compose` from Jenkins resolves
   # relative volumes (Docker Desktop File Sharing).
+  # CI checkouts go to JENKINS_CI_ROOT only (WF-052), not the primary clone and not ~/Projects.
+  # The running container does not see a new volume until jenkins is recreated.
   # GitHub scan cred: GITHUB_USERNAME + JENKINS_GITHUB_TOKEN in .env (username/password Casc).
   jenkins:
     build:
@@ -232,6 +234,7 @@ services:
       GITHUB_USERNAME: ${GITHUB_USERNAME:-tezball}
       JENKINS_GITHUB_TOKEN: ${JENKINS_GITHUB_TOKEN:-changeme}
       HOST_REPO: ${PWD}
+      JENKINS_CI_ROOT: ${JENKINS_CI_ROOT:-${PWD}/../my-island-ci}
       JAVA_OPTS: >-
         -Djenkins.install.runSetupWizard=false
         -Dcasc.jenkins.config=/var/jenkins_home/casc_configs
@@ -242,7 +245,11 @@ services:
       - ./ops/jenkins/casc:/var/jenkins_home/casc_configs:ro
       - ./ops/jenkins/casc/jobs:/var/jenkins_casc_jobs:ro
       - ${PWD}:${PWD}
+      - ${JENKINS_CI_ROOT:-${PWD}/../my-island-ci}:${JENKINS_CI_ROOT:-${PWD}/../my-island-ci}
       - /var/run/docker.sock:/var/run/docker.sock
+      # VPS key stays on the mini (MOCK_PROD_SSH_KEY_PATH in .env). Same path inside
+      # the controller so deploy-mock-prod.sh can read it. Unset → harmless file mount.
+      - ${MOCK_PROD_SSH_KEY_PATH:-./ops/jenkins/plugins.txt}:${MOCK_PROD_SSH_KEY_PATH:-/tmp/mock-prod-ssh-key-unset}:ro
     # Local-only: docker.sock access. Do not expose this pattern on a shared host.
     group_add:
       - "${DOCKER_GID:-0}"

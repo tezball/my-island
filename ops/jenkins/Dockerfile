@@ -10,6 +10,7 @@ RUN apt-get update \
         git \
         gnupg \
         python3 \
+        rsync \
     && install -m 0755 -d /etc/apt/keyrings \
     && curl --retry 3 --retry-delay 5 -fsSL https://download.docker.com/linux/debian/gpg \
         | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
@@ -22,6 +23,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd -f docker \
     && usermod -aG docker jenkins
+# Host checkout is another uid. origin is git@github.com; the token is already in the controller env.
+RUN git config --system --add safe.directory '*' \
+    && git config --system url."https://github.com/".insteadOf "git@github.com:" \
+    && git config --system credential."https://github.com".helper '!f() { echo "username=x-access-token"; echo "password=$$JENKINS_GITHUB_TOKEN"; }; f'
 
 USER jenkins
 COPY --chown=jenkins:jenkins plugins.txt /usr/share/jenkins/ref/plugins.txt
