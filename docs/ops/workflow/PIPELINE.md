@@ -74,3 +74,4 @@ Implement work is **agent**, not cron: [[ops/agents/mvp-team]]. CEO lock **C**: 
 - Safety: [[ops/workflow/SAFETY]]
 - Test mix: [[ops/workflow/TEST_STACK]] · [[ops/workshops/cto-test-stack]]
 - Jenkins canvas (CI only): [[ops/workflow/jenkins-local-ci]]
+- Drawing (running now vs planned): [[automation-pipeline.excalidraw]]
