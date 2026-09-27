@@ -7,7 +7,12 @@ that is behind main, or dirty, is updated by merging main into that branch
 first. That update is a merge commit, not a force-push. Forks are not
 updated. A conflict posts one pull request comment and skips the squash.
 A successful merge dispatches ci.yml on that head branch (workflow_dispatch).
-A dispatch failure is logged and does not fail the poll. The new SHA still
+A dispatch failure is logged and does not fail the poll. When a same-repo
+head already has completed github-actions check runs for the four job names
+and a name is missing from the pull request rollup, that conclusion is
+copied onto a commit status (success or failure only). Nothing is invented.
+An existing failure on that same context is not overwritten with success.
+Forks are skipped. The rollup is re-fetched after posting. The new SHA still
 needs the four green checks and a valid non-author APPROVED.
 
 Exit 0 for skip / waiting-for-review / waiting-for-CI / merge attempted.
@@ -409,6 +414,215 @@ def dispatch_main_ci(owner: str, repo: str, token: str) -> None:
     _github_request("POST", url, token, {"ref": "main"})
 
 
+def _is_github_actions_run(run: dict[str, Any]) -> bool:
+    app = run.get("app")
+    if not isinstance(app, dict):
+        return False
+    return str(app.get("slug") or "").strip().lower() == "github-actions"
+
+
+def _latest_actions_check(runs: list[dict[str, Any]], label: str) -> dict[str, Any] | None:
+    """Latest completed-or-not github-actions check run with this exact name.
+
+    ``jenkins/compose stack`` is a different context and does not match
+    ``compose stack``.
+    """
+    matches = [
+        run
+        for run in runs
+        if isinstance(run, dict)
+        and str(run.get("name") or "").strip() == label
+        and _is_github_actions_run(run)
+    ]
+    if not matches:
+        return None
+    matches.sort(
+        key=lambda run: (
+            str(run.get("started_at") or run.get("completed_at") or ""),
+            int(run.get("id") or 0),
+        )
+    )
+    return matches[-1]
+
+
+def statuses_to_mirror(
+    runs: list[dict[str, Any]],
+    rollup_names: set[str],
+    existing_states: dict[str, str],
+) -> list[tuple[str, str]]:
+    """Commit statuses to copy from completed github-actions check runs.
+
+    A name already on the rollup is left alone. Only ``success`` and
+    ``failure`` are copied. A missing or unfinished run posts nothing.
+    An existing ``failure`` on that exact context is not replaced with
+    ``success``.
+    """
+    plan: list[tuple[str, str]] = []
+    for label in REQUIRED_CHECK_NAMES:
+        if label in rollup_names:
+            continue
+        latest = _latest_actions_check(runs, label)
+        if latest is None:
+            continue
+        status = str(latest.get("status") or "").lower()
+        if status != "completed":
+            continue
+        conclusion = str(latest.get("conclusion") or "").lower()
+        if conclusion not in {"success", "failure"}:
+            continue
+        existing = str(existing_states.get(label) or "").lower()
+        if existing == "failure" and conclusion == "success":
+            continue
+        plan.append((label, conclusion))
+    return plan
+
+
+def fetch_pr_rollup_names(
+    owner: str, repo: str, number: int, head_sha: str, token: str
+) -> set[str]:
+    """Names and contexts on this pull request head's status check rollup."""
+    query = """
+    query($owner: String!, $name: String!, $number: Int!, $cursor: String) {
+      repository(owner: $owner, name: $name) {
+        pullRequest(number: $number) {
+          commits(last: 1) {
+            nodes {
+              commit {
+                oid
+                statusCheckRollup {
+                  contexts(first: 100, after: $cursor) {
+                    pageInfo { hasNextPage endCursor }
+                    nodes {
+                      __typename
+                      ... on CheckRun { name }
+                      ... on StatusContext { context }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    names: set[str] = set()
+    cursor: str | None = None
+    seen_cursors: set[str] = set()
+    while True:
+        data = _graphql(
+            token,
+            query,
+            {"owner": owner, "name": repo, "number": number, "cursor": cursor},
+        )
+        repository = data.get("repository") if isinstance(data.get("repository"), dict) else {}
+        pull = repository.get("pullRequest") if isinstance(repository.get("pullRequest"), dict) else {}
+        commits = pull.get("commits") if isinstance(pull.get("commits"), dict) else {}
+        nodes = commits.get("nodes") if isinstance(commits.get("nodes"), list) else []
+        commit = nodes[0].get("commit") if nodes and isinstance(nodes[0], dict) else {}
+        if not isinstance(commit, dict):
+            return names
+        oid = str(commit.get("oid") or "").strip().lower()
+        wanted = (head_sha or "").strip().lower()
+        if wanted and oid and oid != wanted:
+            return set()
+        rollup = commit.get("statusCheckRollup")
+        if not isinstance(rollup, dict):
+            return names
+        contexts = rollup.get("contexts") if isinstance(rollup.get("contexts"), dict) else {}
+        context_nodes = contexts.get("nodes") if isinstance(contexts.get("nodes"), list) else []
+        for node in context_nodes:
+            if not isinstance(node, dict):
+                continue
+            label = str(node.get("name") or node.get("context") or "").strip()
+            if label:
+                names.add(label)
+        page = contexts.get("pageInfo") if isinstance(contexts.get("pageInfo"), dict) else {}
+        if not page.get("hasNextPage"):
+            return names
+        cursor = str(page.get("endCursor") or "").strip() or None
+        if cursor is None or cursor in seen_cursors:
+            return names
+        seen_cursors.add(cursor)
+
+
+def fetch_commit_status_states(
+    owner: str, repo: str, sha: str, token: str
+) -> dict[str, str]:
+    """Latest commit-status state for each exact context on ``sha``."""
+    quoted = urllib.parse.quote(sha, safe="")
+    url = f"https://api.github.com/repos/{owner}/{repo}/commits/{quoted}/status"
+    payload, _ = _github_request("GET", url, token)
+    states: dict[str, str] = {}
+    if not isinstance(payload, dict):
+        return states
+    rows = payload.get("statuses")
+    if not isinstance(rows, list):
+        return states
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        context = str(row.get("context") or "").strip()
+        state = str(row.get("state") or "").strip().lower()
+        if context and context not in states:
+            states[context] = state
+    return states
+
+
+def post_commit_status(
+    owner: str, repo: str, sha: str, context: str, state: str, token: str
+) -> None:
+    """POST a commit status. Refuses any state other than success or failure."""
+    if context not in REQUIRED_CHECK_NAMES:
+        raise GateError("refuse to post a status outside the four check names")
+    if state not in {"success", "failure"}:
+        raise GateError("refuse to post a status that is not success or failure")
+    quoted = urllib.parse.quote(sha, safe="")
+    url = f"https://api.github.com/repos/{owner}/{repo}/statuses/{quoted}"
+    _github_request(
+        "POST",
+        url,
+        token,
+        {
+            "state": state,
+            "context": context,
+            "description": "copied from github-actions check run",
+        },
+    )
+
+
+def mirror_missing_check_statuses(
+    owner: str,
+    repo: str,
+    number: int,
+    sha: str,
+    runs: list[dict[str, Any]],
+    token: str,
+) -> list[str]:
+    """Copy missing rollup names from completed check runs, then re-fetch.
+
+    The second fetch is what a later step in this poll observes. Forks are
+    the caller's responsibility.
+    """
+    if not sha:
+        return []
+    rollup_names = fetch_pr_rollup_names(owner, repo, number, sha, token)
+    existing = fetch_commit_status_states(owner, repo, sha, token)
+    plan = statuses_to_mirror(runs, rollup_names, existing)
+    if not plan:
+        return []
+    lines: list[str] = []
+    for context, state in plan:
+        post_commit_status(owner, repo, sha, context, state, token)
+        lines.append(f"#{number} mirrored {context} {state}")
+    refreshed = fetch_pr_rollup_names(owner, repo, number, sha, token)
+    lines.append(f"#{number} rollup refreshed")
+    for context, _state in plan:
+        if context not in refreshed:
+            lines.append(f"#{number} rollup still missing {context}")
+    return lines
+
+
 def dispatch_head_ci(owner: str, repo: str, head_ref: str, token: str) -> None:
     """Dispatch ci.yml on a pull request head branch.
 
@@ -598,6 +812,7 @@ def poll_ready(
     update: Any | None = None,
     on_conflict: Any | None = None,
     dispatch_head: Any | None = None,
+    mirror: Any | None = None,
 ) -> list[str]:
     """Same ready and ``decide`` path as one-PR automerge.
 
@@ -611,6 +826,10 @@ def poll_ready(
     and skips that pull request. A new merge commit dispatches ci.yml on
     that head branch, then skips ready and squash until a later run sees
     the new SHA. A dispatch failure is logged and does not stop the list.
+
+    When ``mirror`` is set, a same-repo head copies completed github-actions
+    conclusions onto commit statuses for any of the four names missing from
+    the rollup, then re-fetches that rollup. Forks are not mirrored.
     """
     lines: list[str] = []
     for row in rows:
@@ -662,6 +881,17 @@ def poll_ready(
                         ref = _head_ref(current) if isinstance(current, dict) else ""
                         lines.append(f"#{number} dispatched CI on {ref}")
                 continue
+        if (
+            mirror is not None
+            and isinstance(current, dict)
+            and not _is_fork(current)
+        ):
+            try:
+                mirrored = mirror(current, runs_list) or []
+            except GateError as exc:
+                lines.append(f"#{number} mirror skipped: {exc}")
+            else:
+                lines.extend(str(line) for line in mirrored)
         if should_mark_ready(pr=current, checks_green=False, check_runs=runs_list):
             current, ready_line = confirm_ready(number, current, mark)
             lines.append(ready_line)
@@ -732,8 +962,18 @@ def poll_open(owner: str, repo: str, token: str) -> int:
     def dispatch_head(pr: dict[str, Any]) -> None:
         dispatch_head_ci(owner, repo, _head_ref(pr), token)
 
+    def mirror(pr: dict[str, Any], runs: list[dict[str, Any]]) -> list[str]:
+        return mirror_missing_check_statuses(
+            owner,
+            repo,
+            int(pr.get("number") or 0),
+            _head_sha(pr),
+            runs,
+            token,
+        )
+
     for line in poll_ready(
-        rows, load, merge, dispatch, mark, update, on_conflict, dispatch_head
+        rows, load, merge, dispatch, mark, update, on_conflict, dispatch_head, mirror
     ):
         print(line)
     return 0
@@ -802,6 +1042,19 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)
+        if head_sha and not _is_fork(pr):
+            mirror_runs = (
+                check_runs
+                if check_runs is not None
+                else fetch_check_runs(owner, repo, head_sha, token)
+            )
+            try:
+                for line in mirror_missing_check_statuses(
+                    owner, repo, number, head_sha, mirror_runs, token
+                ):
+                    print(line)
+            except GateError as exc:
+                print(f"#{number} mirror skipped: {exc}")
         if should_mark_ready(pr=pr, checks_green=checks_green, check_runs=check_runs):
             pr, ready_line = confirm_ready(
                 number,
