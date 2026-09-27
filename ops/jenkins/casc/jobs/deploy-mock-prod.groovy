@@ -1,13 +1,17 @@
 // Seeded by JCasC (WF-031 / WF-032 / WF-040). Unattended: poll + GHA green on origin/main.
+// Cron is a Job DSL trigger. A cron inside the pipeline script is registered only
+// after a build, and the next JCasC re-seed clears it, so the timer never comes back.
 pipelineJob('deploy-mock-prod') {
   description('Green origin/main (GHA unit+catalog+web+stack) → fishing-journals.com. Agents never SSH. Key in Jenkins/.env. Not a GitHub production Environment.')
+  triggers {
+    cron('H/5 * * * *')
+  }
   definition {
     cps {
       sandbox(true)
       script("""
 pipeline {
   agent any
-  triggers { cron('H/5 * * * *') }
   options {
     timestamps()
     timeout(time: 90, unit: 'MINUTES')
@@ -58,7 +62,20 @@ pipeline {
             exit 1
           fi
           git fetch origin main
-          git merge --ff-only origin/main
+          # Do not ff-only HOST_REPO. A dirty tree (local compose ports, Obsidian)
+          # makes merge --ff-only abort before deploy. Ship a clean origin/main clone.
+          deploy_tree="\${JENKINS_DEPLOY_TREE:-\$HOST_REPO/.jenkins-deploy-main}"
+          if [[ ! -d "\$deploy_tree/.git" ]]; then
+            rm -rf "\$deploy_tree"
+            git clone --reference "\$HOST_REPO" --branch main https://github.com/tezball/my-island.git "\$deploy_tree"
+          fi
+          git -C "\$deploy_tree" remote set-url origin https://github.com/tezball/my-island.git
+          git -C "\$deploy_tree" fetch origin main
+          git -C "\$deploy_tree" checkout -f main
+          git -C "\$deploy_tree" reset --hard origin/main
+          git -C "\$deploy_tree" clean -fd
+          printf '%s\n' "\$deploy_tree" > "\$WORKSPACE/deploy-tree.txt"
+          echo "Deploy tree \$(git -C "\$deploy_tree" rev-parse --abbrev-ref HEAD) \$(git -C "\$deploy_tree" rev-parse HEAD)"
         '''
       }
     }
@@ -72,7 +89,8 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           set -euo pipefail
-          cd "\$HOST_REPO"
+          deploy_tree="\$(tr -d '\\n' < "\$WORKSPACE/deploy-tree.txt")"
+          cd "\$deploy_tree"
           if [[ -f "\$HOST_REPO/.env" ]]; then
             set -a
             # shellcheck disable=SC1091
@@ -100,7 +118,8 @@ pipeline {
       steps {
         sh '''#!/usr/bin/env bash
           set -euo pipefail
-          cd "\$HOST_REPO"
+          deploy_tree="\$(tr -d '\\n' < "\$WORKSPACE/deploy-tree.txt")"
+          cd "\$deploy_tree"
           if [[ -f "\$HOST_REPO/.env" ]]; then
             set -a
             # shellcheck disable=SC1091
