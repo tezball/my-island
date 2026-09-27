@@ -11,12 +11,12 @@ import jenkins_github_status as status
 REPO = Path(__file__).resolve().parents[2]
 
 
-def test_status_contexts_match_gha_job_names() -> None:
+def test_status_contexts_do_not_use_required_gha_names() -> None:
     assert status.CONTEXTS == (
-        "unit tests",
-        "catalog tests",
-        "web tests",
-        "compose stack",
+        "jenkins/unit tests",
+        "jenkins/catalog tests",
+        "jenkins/web tests",
+        "jenkins/compose stack",
     )
 
 
@@ -26,10 +26,10 @@ def test_payload_rejects_unknown_context() -> None:
 
 
 def test_payload_shape() -> None:
-    body = status.payload("unit tests", "success", "Jenkins unit ok")
+    body = status.payload("jenkins/unit tests", "success", "Jenkins unit ok")
     assert body == {
         "state": "success",
-        "context": "unit tests",
+        "context": "jenkins/unit tests",
         "description": "Jenkins unit ok",
     }
 
@@ -46,7 +46,7 @@ def test_main_skips_without_token(capsys: pytest.CaptureFixture[str]) -> None:
     env.pop("JENKINS_GITHUB_TOKEN", None)
     env.pop("GITHUB_TOKEN", None)
     try:
-        code = status.main(["--context", "web tests", "--state", "pending"])
+        code = status.main(["--context", "jenkins/web tests", "--state", "pending"])
     finally:
         if old is not None:
             env["JENKINS_GITHUB_TOKEN"] = old
@@ -72,6 +72,8 @@ def test_jenkinsfile_posts_four_contexts_and_isolates_stack() -> None:
         assert "--state pending" in text
         assert "--state success" in text
         assert "--state failure" in text
+    for bare in ("unit tests", "catalog tests", "web tests", "compose stack"):
+        assert f'--context "{bare}"' not in text
     assert "jenkins_ci_prepare" in text
     assert "jenkins_isolate_env" in text
     assert "COMPOSE_PROJECT_NAME" in (REPO / "ops" / "scripts" / "jenkins_ci.sh").read_text()
