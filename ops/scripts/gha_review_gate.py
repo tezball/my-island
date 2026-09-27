@@ -2,7 +2,11 @@
 """WF-050: squash-merge a ready PR only after green CI and a valid Approve.
 
 GitHub Actions is not permitted to createReview APPROVE. Chat never merges.
-AUTOMERGE_POLL=1 lists open PRs and runs this same gate.
+AUTOMERGE_POLL=1 lists open PRs and runs this same gate. A same-repo head
+that is behind main, or dirty, is updated by merging main into that branch
+first. That update is a merge commit, not a force-push. Forks are not
+updated. A conflict posts one pull request comment and skips the squash.
+The new SHA still needs the four green checks and a valid non-author APPROVED.
 
 Exit 0 for skip / waiting-for-review / waiting-for-CI / merge attempted.
 Never fail the merge job red because Approve is missing.
@@ -13,6 +17,7 @@ import json
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from typing import Any
@@ -45,7 +50,13 @@ class Decision:
 
 
 class GateError(RuntimeError):
-    pass
+    def __init__(self, message: str, status: int | None = None) -> None:
+        super().__init__(message)
+        self.status = status
+
+
+class UpdateConflict(GateError):
+    """Merging origin/main into the pull request head hit a conflict."""
 
 
 def _login(user: Any) -> str:
@@ -231,7 +242,10 @@ def _github_request(
             return (json.loads(body) if body else None), link
     except urllib.error.HTTPError as exc:
         err_body = exc.read().decode("utf-8", errors="replace")
-        raise GateError(f"HTTP {exc.code} {method} {url}: {err_body[:240]}") from exc
+        raise GateError(
+            f"HTTP {exc.code} {method} {url}: {err_body[:240]}",
+            status=exc.code,
+        ) from exc
     except urllib.error.URLError as exc:
         raise GateError(f"request failed {method} {url}: {exc.reason}") from exc
 
@@ -360,20 +374,166 @@ def list_open_pulls(owner: str, repo: str, token: str) -> list[dict[str, Any]]:
     return out
 
 
+CONFLICT_COMMENT_LEAD = "update skipped: merge of origin/main conflicts"
+
+
+def _head_ref(pr: dict[str, Any]) -> str:
+    head = pr.get("head") if isinstance(pr.get("head"), dict) else {}
+    return str(head.get("ref") or "").strip()
+
+
+def _base_ref(pr: dict[str, Any]) -> str:
+    base = pr.get("base") if isinstance(pr.get("base"), dict) else {}
+    return str(base.get("ref") or "main").strip() or "main"
+
+
+def branch_update_reason(pr: dict[str, Any], compare: dict[str, Any] | None) -> str | None:
+    """Why a same-repo head should receive a merge of origin/main.
+
+    ``behind`` is behind the base, including a diverged compare. ``dirty``
+    is a merge conflict. Forks are never updated.
+    """
+    if _is_fork(pr) or pr.get("merged") or pr.get("merged_at"):
+        return None
+    state = str(pr.get("mergeable_state") or "").strip().lower()
+    if pr.get("mergeable") is False or state == "dirty":
+        return "dirty"
+    if state == "behind":
+        return "behind"
+    if isinstance(compare, dict):
+        try:
+            behind = int(compare.get("behind_by") or 0)
+        except (TypeError, ValueError):
+            behind = 0
+        status = str(compare.get("status") or "").strip().lower()
+        if behind > 0 or status in {"behind", "diverged"}:
+            return "behind"
+    return None
+
+
+def conflict_comment_body(head_sha: str) -> str:
+    sha = (head_sha or "").strip()
+    return (
+        f"{CONFLICT_COMMENT_LEAD}\n\n"
+        f"Merging origin/main into `{sha}` hit a conflict. "
+        "This run did not force-push and did not squash-merge."
+    )
+
+
+def conflict_comment_exists(comments: list[dict[str, Any]], head_sha: str) -> bool:
+    body = conflict_comment_body(head_sha)
+    for comment in comments:
+        if isinstance(comment, dict) and str(comment.get("body") or "") == body:
+            return True
+    return False
+
+
+def merge_main_into_head(owner: str, repo: str, head_ref: str, token: str) -> bool:
+    """Merge main into ``head_ref``. True when a merge commit was created.
+
+    Uses the merges API (a merge commit). Does not force-push. Refuses to
+    take ``main`` as the branch being updated. HTTP 409 is a conflict.
+    HTTP 204 means the branch already contains main.
+    """
+    ref = head_ref.strip()
+    if not ref:
+        raise GateError("pull request head ref missing")
+    if ref == "main" or ref == "refs/heads/main":
+        raise GateError("refuse to merge into main")
+    url = f"https://api.github.com/repos/{owner}/{repo}/merges"
+    try:
+        payload, _ = _github_request(
+            "POST",
+            url,
+            token,
+            {
+                "base": ref,
+                "head": "main",
+                "commit_message": "Merge origin/main into pull request head",
+            },
+        )
+    except GateError as exc:
+        if exc.status == 409:
+            raise UpdateConflict(str(exc)) from exc
+        raise
+    return payload is not None
+
+
+def fetch_compare(owner: str, repo: str, base_ref: str, head_sha: str, token: str) -> dict[str, Any]:
+    base_q = urllib.parse.quote(base_ref, safe="")
+    head_q = urllib.parse.quote(head_sha, safe="")
+    url = f"https://api.github.com/repos/{owner}/{repo}/compare/{base_q}...{head_q}"
+    payload, _ = _github_request("GET", url, token)
+    if not isinstance(payload, dict):
+        raise GateError("compare payload missing")
+    return payload
+
+
+def fetch_pr_for_update(owner: str, repo: str, number: int, token: str) -> dict[str, Any]:
+    """GET the pull request, once more if mergeability is still unknown."""
+    pr = fetch_pr(owner, repo, number, token)
+    state = str(pr.get("mergeable_state") or "").strip().lower()
+    if pr.get("mergeable") is None or state in {"", "unknown"}:
+        pr = fetch_pr(owner, repo, number, token)
+    return pr
+
+
+def fetch_issue_comments(owner: str, repo: str, number: int, token: str) -> list[dict[str, Any]]:
+    url = (
+        f"https://api.github.com/repos/{owner}/{repo}/issues/{number}/comments"
+        "?per_page=100"
+    )
+    out: list[dict[str, Any]] = []
+    while url:
+        payload, link = _github_request("GET", url, token)
+        if not isinstance(payload, list):
+            raise GateError("issue comments payload missing list")
+        out.extend(row for row in payload if isinstance(row, dict))
+        url = _next_link(link) or ""
+    return out
+
+
+def comment_on_conflict(owner: str, repo: str, number: int, head_sha: str, token: str) -> bool:
+    """Post one issue comment for this head. Not a review. True if posted."""
+    if conflict_comment_exists(fetch_issue_comments(owner, repo, number, token), head_sha):
+        return False
+    url = f"https://api.github.com/repos/{owner}/{repo}/issues/{number}/comments"
+    _github_request("POST", url, token, {"body": conflict_comment_body(head_sha)})
+    return True
+
+
+def _as_loaded(
+    loaded: Any,
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any] | None]:
+    if not isinstance(loaded, tuple) or len(loaded) < 3:
+        raise GateError("load payload missing")
+    pr = loaded[0] if isinstance(loaded[0], dict) else {}
+    reviews = loaded[1] if isinstance(loaded[1], list) else []
+    runs = loaded[2] if isinstance(loaded[2], list) else []
+    compare = loaded[3] if len(loaded) > 3 and isinstance(loaded[3], dict) else None
+    return pr, reviews, runs, compare
+
+
 def poll_ready(
     rows: list[dict[str, Any]],
     load: Any,
     merge: Any,
     dispatch: Any,
     mark: Any | None = None,
+    update: Any | None = None,
+    on_conflict: Any | None = None,
 ) -> list[str]:
     """Same ready and ``decide`` path as one-PR automerge.
 
     Forks and already-merged PRs are skipped before check-runs are fetched.
     A same-repo draft is marked ready when the four checks succeeded, then
     the review gate runs. A failed or pending check stays a draft. Merge
-    errors do not stop the list. This does not approve, close, or update
-    the branch.
+    errors do not stop the list. This does not approve or close.
+
+    When ``update`` is set, a same-repo head that is behind main or dirty
+    is updated first. Forks are not updated. A conflict calls ``on_conflict``
+    and skips that pull request. A new merge commit skips ready and squash
+    until a later run sees the new SHA.
     """
     lines: list[str] = []
     for row in rows:
@@ -392,13 +552,31 @@ def poll_ready(
             lines.append(f"#{number} {preview.reason}")
             continue
         try:
-            pr, reviews, runs = load(number)
+            pr, reviews, runs, compare = _as_loaded(load(number))
         except GateError as exc:
             lines.append(f"#{number} merge skipped: {exc}")
             continue
         head_sha = _head_sha(pr) if isinstance(pr, dict) else ""
         current = pr if isinstance(pr, dict) else row
         runs_list = runs if isinstance(runs, list) else []
+        reason = branch_update_reason(current, compare) if update is not None else None
+        if reason and update is not None:
+            try:
+                changed = bool(update(current, reason))
+            except UpdateConflict:
+                if on_conflict is not None:
+                    try:
+                        on_conflict(number, head_sha)
+                    except GateError as exc:
+                        lines.append(f"#{number} comment skipped: {exc}")
+                lines.append(f"#{number} {CONFLICT_COMMENT_LEAD}")
+                continue
+            except GateError as exc:
+                lines.append(f"#{number} update skipped: {exc}")
+                continue
+            if changed:
+                lines.append(f"#{number} updated: merged origin/main ({reason})")
+                continue
         if should_mark_ready(pr=current, checks_green=False, check_runs=runs_list):
             try:
                 if mark is not None:
@@ -442,12 +620,20 @@ def poll_open(owner: str, repo: str, token: str) -> int:
         return 0
     print(f"poll: {len(rows)} open pull request(s)")
 
-    def load(number: int) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
-        pr = fetch_pr(owner, repo, number, token)
+    def load(
+        number: int,
+    ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any] | None]:
+        pr = fetch_pr_for_update(owner, repo, number, token)
         head_sha = _head_sha(pr)
         reviews = fetch_reviews(owner, repo, number, token)
         runs = fetch_check_runs(owner, repo, head_sha, token) if head_sha else []
-        return pr, reviews, runs
+        compare = None
+        if head_sha and not _is_fork(pr):
+            try:
+                compare = fetch_compare(owner, repo, _base_ref(pr), head_sha, token)
+            except GateError:
+                compare = None
+        return pr, reviews, runs, compare
 
     def merge(number: int, sha: str) -> None:
         squash_merge(owner, repo, number, sha, token)
@@ -458,7 +644,14 @@ def poll_open(owner: str, repo: str, token: str) -> int:
     def mark(number: int) -> None:
         mark_ready(owner, repo, number, token)
 
-    for line in poll_ready(rows, load, merge, dispatch, mark):
+    def update(pr: dict[str, Any], reason: str) -> bool:
+        del reason
+        return merge_main_into_head(owner, repo, _head_ref(pr), token)
+
+    def on_conflict(number: int, head_sha: str) -> None:
+        comment_on_conflict(owner, repo, number, head_sha, token)
+
+    for line in poll_ready(rows, load, merge, dispatch, mark, update, on_conflict):
         print(line)
     return 0
 
@@ -494,10 +687,30 @@ def main(argv: list[str] | None = None) -> int:
         if number is None:
             print("skip — no pull request for this SHA")
             return 0
-        pr = fetch_pr(owner, repo, number, token)
+        pr = fetch_pr_for_update(owner, repo, number, token)
         # Reviews are on the PR head SHA, not the pull_request merge commit
         # that workflow_run.head_sha may point at.
         head_sha = str((pr.get("head") or {}).get("sha") or "") or head_sha_env
+        compare = None
+        if head_sha and not _is_fork(pr):
+            try:
+                compare = fetch_compare(owner, repo, _base_ref(pr), head_sha, token)
+            except GateError as exc:
+                print(f"compare skipped: {exc}")
+        reason = branch_update_reason(pr, compare)
+        if reason:
+            try:
+                changed = merge_main_into_head(owner, repo, _head_ref(pr), token)
+            except UpdateConflict:
+                try:
+                    comment_on_conflict(owner, repo, number, head_sha, token)
+                except GateError as exc:
+                    print(f"#{number} comment skipped: {exc}")
+                print(f"#{number} {CONFLICT_COMMENT_LEAD}")
+                return 0
+            if changed:
+                print(f"#{number} updated: merged origin/main ({reason})")
+                return 0
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)
         if should_mark_ready(pr=pr, checks_green=checks_green, check_runs=check_runs):
