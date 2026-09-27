@@ -1,0 +1,97 @@
+filters:
+  and:
+    - file.inFolder("ops/tickets")
+    - file.ext == "md"
+    - 'id'
+    - 'type != "epic"'
+properties:
+  id:
+    displayName: Id
+  priority:
+    displayName: Priority
+  status:
+    displayName: Status
+  title:
+    displayName: Title
+  owner:
+    displayName: Owner
+  area:
+    displayName: Area
+  pr:
+    displayName: PR
+views:
+  - type: table
+    name: Open
+    filters:
+      and:
+        - 'status != "done"'
+        - 'status != "inbox"'
+    groupBy:
+      property: note.status
+      direction: ASC
+    order:
+      - id
+      - priority
+      - status
+      - title
+      - owner
+      - area
+  - type: table
+    name: Implement
+    filters:
+      and:
+        - 'status == "implement"'
+    order:
+      - id
+      - priority
+      - title
+      - owner
+      - area
+      - pr
+  - type: table
+    name: Review
+    filters:
+      and:
+        - 'status == "review"'
+    order:
+      - id
+      - priority
+      - title
+      - owner
+      - area
+      - pr
+  - type: cards
+    name: Open cards
+    filters:
+      and:
+        - 'status != "done"'
+        - 'status != "inbox"'
+    order:
+      - id
+      - priority
+      - status
+      - title
+      - owner
+  - type: cards
+    name: Implement cards
+    filters:
+      and:
+        - 'status == "implement"'
+    order:
+      - id
+      - priority
+      - title
+      - owner
+      - area
+  - type: cards
+    name: Review cards
+    filters:
+      and:
+        - 'status == "review"'
+    order:
+      - id
+      - priority
+      - title
+      - owner
+      - area
+      - pr
