@@ -18,6 +18,7 @@ How agents learn the loop without a wiki outside git. Owner: [[ops/agents/roles/
 | Skill | Place-stub STACK-E2E | `.cursor/skills/stack-e2e-place-stub/SKILL.md` | E2E-001 / STACK-E2E / chaos overlay |
 | Skill | Clone and run | `.cursor/skills/clone-run/SKILL.md` | `./scripts/app`, compose down |
 | Skill | Reviewer | `.cursor/skills/reviewer/SKILL.md` | PR review hat |
+| Skill | PR loop | `.cursor/skills/pr-loop/SKILL.md` | Failing Actions, review comments, or green PR missing Approve |
 | Skill | MCP observe | `.cursor/skills/mcp-observe/SKILL.md` | grafana/postgres; HTTP PromQL fallback |
 | Skill | IntelliJ IDEA | `.cursor/skills/intellij-ide/SKILL.md` | IDEA MCP vs files/Maven |
 | Skill | Spring catalog | `.cursor/skills/spring-catalog/SKILL.md` | `services/catalog` PRD work (thin) |

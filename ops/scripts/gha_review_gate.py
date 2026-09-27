@@ -138,6 +138,40 @@ def four_checks_success(runs: list[dict[str, Any]]) -> tuple[bool, str]:
     return True, "four checks success"
 
 
+def _is_fork(pr: dict[str, Any]) -> bool:
+    head = pr.get("head") if isinstance(pr.get("head"), dict) else {}
+    base = pr.get("base") if isinstance(pr.get("base"), dict) else {}
+    head_repo = head.get("repo") if isinstance(head.get("repo"), dict) else {}
+    base_repo = base.get("repo") if isinstance(base.get("repo"), dict) else {}
+    head_full = str(head_repo.get("full_name") or "")
+    base_full = str(base_repo.get("full_name") or "")
+    return bool(head_full and base_full and head_full != base_full)
+
+
+def should_mark_ready(
+    *,
+    pr: dict[str, Any],
+    checks_green: bool,
+    check_runs: list[dict[str, Any]] | None,
+) -> bool:
+    """A same-repo draft becomes ready only after the four checks succeeded.
+
+    Agents open pull requests as drafts. CI still runs. This gate used to
+    skip the draft and never come back, so a green PR stayed a draft.
+    Forks stay drafts. A failed or pending check stays a draft.
+    """
+    if not pr.get("draft"):
+        return False
+    if pr.get("merged") or pr.get("merged_at"):
+        return False
+    if _is_fork(pr):
+        return False
+    if checks_green:
+        return True
+    ok, _why = four_checks_success(check_runs or [])
+    return ok
+
+
 def decide(
     *,
     pr: dict[str, Any],
@@ -150,13 +184,7 @@ def decide(
         return Decision("skip", "already merged")
     if pr.get("draft"):
         return Decision("skip", "draft — skip")
-    head = pr.get("head") if isinstance(pr.get("head"), dict) else {}
-    base = pr.get("base") if isinstance(pr.get("base"), dict) else {}
-    head_repo = head.get("repo") if isinstance(head.get("repo"), dict) else {}
-    base_repo = base.get("repo") if isinstance(base.get("repo"), dict) else {}
-    head_full = str(head_repo.get("full_name") or "")
-    base_full = str(base_repo.get("full_name") or "")
-    if head_full and base_full and head_full != base_full:
+    if _is_fork(pr):
         return Decision("skip", "fork — skip")
 
     if not checks_green:
@@ -253,6 +281,12 @@ def fetch_check_runs(owner: str, repo: str, sha: str, token: str) -> list[dict[s
     return out
 
 
+def mark_ready(owner: str, repo: str, number: int, token: str) -> None:
+    """Convert a draft to ready for review. REST draft=false."""
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{number}"
+    _github_request("PATCH", url, token, {"draft": False})
+
+
 def squash_merge(owner: str, repo: str, number: int, sha: str, token: str) -> str:
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{number}/merge"
     payload, _ = _github_request(
@@ -333,6 +367,11 @@ def main(argv: list[str] | None = None) -> int:
         head_sha = str((pr.get("head") or {}).get("sha") or "") or head_sha_env
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)
+        if should_mark_ready(pr=pr, checks_green=checks_green, check_runs=check_runs):
+            mark_ready(owner, repo, number, token)
+            pr = dict(pr)
+            pr["draft"] = False
+            print(f"#{number} marked ready")
         decision = decide(
             pr=pr,
             reviews=reviews,
