@@ -16,6 +16,8 @@ def test_pr_loop_keeps_the_merge_gate() -> None:
     assert "pr-loop fix" in text
     assert "*/15" in text
     assert "my-island PR loop" in text
+    assert "draft: false" in text
+    assert "Forks stay drafts" in text
     skill = (REPO / ".cursor" / "skills" / "pr-loop" / "SKILL.md").read_text()
     assert "name: pr-loop" in skill
     assert "gh pr merge" in skill

@@ -103,6 +103,8 @@ Review, failed Actions, and review comments are one Cursor automation, **my-isla
 
 The automation may Approve as `cursor` after the four checks are success. It does not merge. It does not push `main`. A Jenkins commit status is not a failed required check. Squash-merge stays in `automerge.yml`.
 
+Agents open pull requests as drafts. When the CI workflow succeeds, `automerge` sets `draft: false` on a same-repo pull request, then applies the review gate. Forks stay drafts. A failed or pending check stays a draft. Merge still requires the four checks and a valid non-author `APPROVED`.
+
 ## Required GitHub checks
 
 Branch protection / rulesets: required checks = **only** the four test job names (`unit tests`, `catalog tests`, `web tests`, `compose stack`). **Never** require `automerge`, `auto-review approve merge`, or `Cursor Automation: Untitled`.
