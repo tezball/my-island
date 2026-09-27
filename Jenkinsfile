@@ -119,7 +119,26 @@ pipeline {
           ROOT="${HOST_REPO:-$WORKSPACE}"
           cd "$ROOT"
           SKIP_JENKINS=1 SKIP_WEB=1 ./scripts/dev up
-          python3 ops/scripts/zap_style_scan.py http://127.0.0.1:8081
+          # dev up waits for the in-container healthcheck, not for the URL
+          # this process will scan. The controller shares the compose network:
+          # catalog:8080 is catalog; 127.0.0.1:8081 is only the host publish.
+          TARGET="http://127.0.0.1:8081"
+          if curl -sf --max-time 2 http://catalog:8080/actuator/health/readiness >/dev/null 2>&1; then
+            TARGET="http://catalog:8080"
+          fi
+          ready=0
+          for _ in $(seq 1 30); do
+            if curl -sf --max-time 2 "${TARGET}/api/v1/places" >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ready" != "1" ]; then
+            echo "catalog not accepting ${TARGET}/api/v1/places" >&2
+            exit 1
+          fi
+          python3 ops/scripts/zap_style_scan.py "$TARGET"
         '''
       }
     }
