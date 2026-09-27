@@ -42,17 +42,18 @@ fi
 
 EXPECTED_COMMIT="$(git -C "$REPO" rev-parse HEAD)"
 EXPECTED_SHORT="$(git -C "$REPO" rev-parse --short=12 HEAD)"
-EXPECTED_BRANCH="$(git -C "$REPO" rev-parse --abbrev-ref HEAD)"
+ORIGIN_MAIN="$(git -C "$REPO" rev-parse origin/main)"
 APP_VERSION="${APP_VERSION:-0.0.1-SNAPSHOT}"
 APP_BUILD_TIME="${APP_BUILD_TIME:-$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
 if [[ -z "$EXPECTED_COMMIT" ]]; then
   echo "Could not resolve git HEAD for deploy stamp." >&2
   exit 1
 fi
-if [[ "$EXPECTED_BRANCH" != "main" ]]; then
-  echo "Refuse to deploy branch ${EXPECTED_BRANCH} — mock-prod tracks origin/main only (WF-040)." >&2
+if [[ "$EXPECTED_COMMIT" != "$ORIGIN_MAIN" ]]; then
+  echo "Refuse to deploy ${EXPECTED_COMMIT} — mock-prod tracks origin/main ${ORIGIN_MAIN} only (WF-040)." >&2
   exit 1
 fi
+EXPECTED_BRANCH="main"
 echo "==> Stamping catalog image GIT_COMMIT=${EXPECTED_COMMIT} version=${APP_VERSION} branch=${EXPECTED_BRANCH}"
 
 SSH_BASE=(

@@ -23,7 +23,7 @@ pipeline {
           set -euo pipefail
           source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
           jenkins_ci_cd
-          jenkins_status --context "unit tests" --state pending --description "Jenkins unit"
+          jenkins_status --context "jenkins/unit tests" --state pending --description "Jenkins unit"
           docker compose run --rm --no-deps workspace \
             bash -lc 'python3 -m pytest ops/tests -q -m "not stack"'
         '''
@@ -33,14 +33,14 @@ pipeline {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "unit tests" --state success --description "Jenkins unit ok"
+            jenkins_status --context "jenkins/unit tests" --state success --description "Jenkins unit ok"
           '''
         }
         failure {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "unit tests" --state failure --description "Jenkins unit failed"
+            jenkins_status --context "jenkins/unit tests" --state failure --description "Jenkins unit failed"
           '''
         }
       }
@@ -51,7 +51,7 @@ pipeline {
           set -euo pipefail
           source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
           jenkins_ci_cd
-          jenkins_status --context "catalog tests" --state pending --description "Jenkins catalog"
+          jenkins_status --context "jenkins/catalog tests" --state pending --description "Jenkins catalog"
           docker compose run --rm --no-deps --user root \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -e DOCKER_HOST=unix:///var/run/docker.sock \
@@ -66,14 +66,14 @@ pipeline {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "catalog tests" --state success --description "Jenkins catalog ok"
+            jenkins_status --context "jenkins/catalog tests" --state success --description "Jenkins catalog ok"
           '''
         }
         failure {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "catalog tests" --state failure --description "Jenkins catalog failed"
+            jenkins_status --context "jenkins/catalog tests" --state failure --description "Jenkins catalog failed"
           '''
         }
       }
@@ -84,7 +84,7 @@ pipeline {
           set -euo pipefail
           source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
           jenkins_ci_cd
-          jenkins_status --context "web tests" --state pending --description "Jenkins web"
+          jenkins_status --context "jenkins/web tests" --state pending --description "Jenkins web"
           ROOT="$(pwd)"
           docker run --rm \
             -v "$ROOT/web:/src" \
@@ -100,14 +100,14 @@ pipeline {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "web tests" --state success --description "Jenkins web ok"
+            jenkins_status --context "jenkins/web tests" --state success --description "Jenkins web ok"
           '''
         }
         failure {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "web tests" --state failure --description "Jenkins web failed"
+            jenkins_status --context "jenkins/web tests" --state failure --description "Jenkins web failed"
           '''
         }
       }
@@ -160,7 +160,7 @@ pipeline {
           source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
           jenkins_ci_cd
           jenkins_isolate_env
-          jenkins_status --context "compose stack" --state pending --description "Jenkins stack"
+          jenkins_status --context "jenkins/compose stack" --state pending --description "Jenkins stack"
           SKIP_JENKINS=1 SKIP_WEB=1 ./scripts/dev up
           REQUIRE_STACK=1 DEV_TEST_IN_WORKSPACE=1 SKIP_JENKINS=1 SKIP_WEB=1 ./scripts/dev test
         '''
@@ -170,14 +170,14 @@ pipeline {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "compose stack" --state success --description "Jenkins stack ok"
+            jenkins_status --context "jenkins/compose stack" --state success --description "Jenkins stack ok"
           '''
         }
         failure {
           sh '''#!/usr/bin/env bash
             set -euo pipefail
             source "${WORKSPACE}/ops/scripts/jenkins_ci.sh"
-            jenkins_status --context "compose stack" --state failure --description "Jenkins stack failed"
+            jenkins_status --context "jenkins/compose stack" --state failure --description "Jenkins stack failed"
           '''
         }
         always {
