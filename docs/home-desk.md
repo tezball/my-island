@@ -31,9 +31,9 @@ Directory browse is on the public host and on local compose. VisitIntent is done
 
 | Lane | What it is |
 |---|---|
-| Implement | [[ops/tickets/PRD-014]] launch quality · [[ops/tickets/WF-041]] host metrics · [[ops/tickets/WF-042]] MCP pack · [[ops/tickets/WF-038]] worktrees |
+| Implement | [[ops/tickets/WF-040]] unattended mock-prod · [[ops/tickets/WF-041]] host metrics · [[ops/tickets/WF-042]] MCP pack · [[ops/tickets/WF-038]] worktrees |
 | Review | Product: [[ops/tickets/PRD-010]] visitor auth · [[ops/tickets/PRD-030]] been/want on the map. With them: deploy, CI, chaos, ZAP, Gatling, Place writes. |
-| Plan | [[ops/tickets/PRD-009]] counsel before publish · [[ops/tickets/PRD-031]] mobile place-detail home control |
+| Plan | [[ops/tickets/PRD-009]] counsel before publish · [[ops/tickets/PRD-031]] mobile place-detail home control · [[ops/tickets/PRD-014]] launch quality |
 | Held | [[ops/tickets/WF-010]] staging · [[ops/tickets/WF-014]] · [[ops/tickets/WF-033]] sign-in · [[ops/tickets/PRD-012]] · [[ops/tickets/PRD-013]] check-off |
 
 Epic [[ops/tickets/WF-000]] stays `implement` and is excluded below (`type: epic`). `inbox` (booking-site stories) is excluded. Source of truth: ticket frontmatter. Generated board: [[ops/BOARD]].

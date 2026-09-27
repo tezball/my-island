@@ -16,7 +16,7 @@ One directory. One host. Three ways onward.
 
 Ireland listings, free to browse, on [fishing-journals.com](https://fishing-journals.com/). House: Java / Spring Boot, Vite + React PWA, PostgreSQL 17 + PostGIS, Flyway, Grafana OSS, Jenkins and GitHub Actions. [[product/STACK]]
 
-The directory is live. VisitIntent is done ([[ops/tickets/PRD-015]]). In hand: [[ops/tickets/PRD-014]], [[ops/tickets/WF-041]], [[ops/tickets/WF-042]], [[ops/tickets/WF-038]]. In review, start with [[ops/tickets/PRD-010]] and [[ops/tickets/PRD-030]]. Next plans: [[ops/tickets/PRD-009]] · [[ops/tickets/PRD-031]].
+The directory is live. VisitIntent is done ([[ops/tickets/PRD-015]]). In hand: [[ops/tickets/WF-040]], [[ops/tickets/WF-041]], [[ops/tickets/WF-042]], [[ops/tickets/WF-038]]. In review, start with [[ops/tickets/PRD-010]] and [[ops/tickets/PRD-030]]. Next plans: [[ops/tickets/PRD-009]] · [[ops/tickets/PRD-031]] · [[ops/tickets/PRD-014]].
 
 ```mermaid
 flowchart LR

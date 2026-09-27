@@ -36,13 +36,13 @@ The directory (list and map) is on the public host. VisitIntent — been, want, 
 
 ## In hand
 
-Four notes are `implement` (frontmatter, 2026-09-27): launch quality [[ops/tickets/PRD-014]], metrics from the host [[ops/tickets/WF-041]], the agent MCP pack [[ops/tickets/WF-042]], and worktrees [[ops/tickets/WF-038]]. The operations epic [[ops/tickets/WF-000]] stays `implement` and stays off this grid.
+Four notes are `implement` (frontmatter, 2026-09-27): unattended mock-prod [[ops/tickets/WF-040]], metrics from the host [[ops/tickets/WF-041]], the agent MCP pack [[ops/tickets/WF-042]], and worktrees [[ops/tickets/WF-038]]. The operations epic [[ops/tickets/WF-000]] stays `implement` and stays off this grid.
 
 ![[ops/dashboards/company-home.base#Implement cards]]
 
 ## Next
 
-Counsel before publish [[ops/tickets/PRD-009]] and the mobile place-detail home control [[ops/tickets/PRD-031]] are `plan`. The directory epic [[ops/tickets/PRD-000]] is the container; its children do the work.
+Counsel before publish [[ops/tickets/PRD-009]], the mobile place-detail home control [[ops/tickets/PRD-031]], and launch quality [[ops/tickets/PRD-014]] are `plan`. The directory epic [[ops/tickets/PRD-000]] is the container; its children do the work.
 
 > [!warning]- Held
 > Staging [[ops/tickets/WF-010]], sign-in [[ops/tickets/WF-014]] · [[ops/tickets/WF-033]], and the check-off pair [[ops/tickets/PRD-012]] · [[ops/tickets/PRD-013]] are `blocked`. Booking-site stories sit in `inbox` and are off this home.
