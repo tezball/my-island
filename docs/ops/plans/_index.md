@@ -63,6 +63,7 @@ SORT file.name DESC
 | [[WF-049]] | Cloud→Jenkins **lock C**: Mac mini self-hosted worker triggers host Jenkins (not B HTTPS, not D GHA SSH) |
 | [[WF-051]] | Jenkins posts the four PR check names; isolate compose; Maven/npm cache (GHA tests stay) |
 | [[WF-052]] | Dedicated Jenkins CI checkout directory (`~/Projects/my-island-ci/<job>` only) |
+| [[WF-053]] | Jenkins zap waits until the catalog address it can reach accepts places |
 | [[WF-050]] | Review-gated automerge (no github-actions auto-APPROVE; valid non-author Approve + green CI) |
 | [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |
 | [[PRD-030]] | Guest been/want on map or list (reuse VisitIntent; not PRD-013) |
