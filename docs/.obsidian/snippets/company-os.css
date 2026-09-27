@@ -355,3 +355,130 @@
 .markdown-preview-view.moc a.internal-link:hover {
   color: var(--os-gorse);
 }
+
+/* ── Candidate homes. Live home remains HOME.md. ── */
+
+.nav-file-title[data-path="home-signal.md"] .nav-file-title-content {
+  color: var(--os-gorse);
+  font-weight: 600;
+}
+.nav-file-title[data-path="home-desk.md"] .nav-file-title-content {
+  color: var(--os-sea);
+  font-weight: 600;
+}
+.nav-file-title[data-path="home-atlas.md"] .nav-file-title-content {
+  color: var(--os-moss);
+  font-weight: 600;
+}
+
+.markdown-preview-view.home-signal,
+.markdown-source-view.home-signal {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--os-gorse) 22%, var(--os-paper)) 0, transparent 240px),
+    var(--background-primary);
+}
+
+.markdown-preview-view.home-signal h1,
+.markdown-source-view.home-signal h1 {
+  font-size: 2.65em;
+  font-weight: 560;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  border: none;
+  border-left: 8px solid var(--os-gorse);
+  padding: 0.02em 0 0.08em 0.32em;
+  margin-top: 0.15em;
+}
+
+.markdown-preview-view.home-signal h2,
+.markdown-source-view.home-signal h2 {
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--os-sea);
+  border-top: 1px solid color-mix(in srgb, var(--os-gorse) 60%, transparent);
+  padding-top: 0.85em;
+  margin-top: 1.9em;
+}
+
+.markdown-preview-view.home-signal .callout[data-callout="quote"],
+.markdown-source-view.home-signal .callout[data-callout="quote"] {
+  font-size: 1.18em;
+  line-height: 1.45;
+  background: color-mix(in srgb, var(--os-gorse) 16%, var(--background-primary));
+  border-left-width: 0;
+}
+
+.markdown-preview-view.home-desk,
+.markdown-source-view.home-desk {
+  background:
+    linear-gradient(90deg, var(--os-sea) 0 6px, transparent 6px),
+    var(--background-primary);
+}
+
+.markdown-preview-view.home-desk h1,
+.markdown-source-view.home-desk h1 {
+  font-family: var(--font-monospace);
+  font-size: 1.45em;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--os-sea);
+  padding-bottom: 0.28em;
+}
+
+.markdown-preview-view.home-desk h2,
+.markdown-source-view.home-desk h2 {
+  font-family: var(--font-monospace);
+  font-size: 0.98em;
+  color: var(--os-sea);
+  margin-top: 1.35em;
+  margin-bottom: 0.35em;
+}
+
+.markdown-preview-view.home-desk table,
+.markdown-source-view.home-desk table {
+  font-size: 0.92em;
+}
+
+.markdown-preview-view.home-desk table thead th,
+.markdown-source-view.home-desk table thead th {
+  background: color-mix(in srgb, var(--os-sea) 16%, var(--background-primary));
+  border-bottom: 2px solid var(--os-sea);
+}
+
+.markdown-preview-view.home-atlas,
+.markdown-source-view.home-atlas {
+  background:
+    radial-gradient(1100px 460px at 0% 0%, color-mix(in srgb, var(--os-moss) 18%, transparent), transparent 62%),
+    var(--background-primary);
+}
+
+.markdown-preview-view.home-atlas h1,
+.markdown-source-view.home-atlas h1 {
+  font-weight: 460;
+  font-size: 2.15em;
+  letter-spacing: -0.03em;
+  border-bottom: 1px solid color-mix(in srgb, var(--os-moss) 55%, transparent);
+  padding-bottom: 0.3em;
+}
+
+.markdown-preview-view.home-atlas h2,
+.markdown-source-view.home-atlas h2 {
+  margin-top: 2.3em;
+  font-weight: 560;
+  color: var(--os-moss);
+  letter-spacing: -0.02em;
+}
+
+.markdown-preview-view.home-atlas .callout,
+.markdown-source-view.home-atlas .callout {
+  box-shadow: none;
+}
+
+.markdown-preview-view.home-atlas .mermaid,
+.markdown-source-view.home-atlas .mermaid {
+  background: color-mix(in srgb, var(--os-moss) 8%, var(--background-primary));
+  border-radius: 10px;
+  padding: 0.6em 0.4em;
+}

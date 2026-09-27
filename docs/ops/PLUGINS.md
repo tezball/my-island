@@ -7,7 +7,7 @@ cssclasses:
 
 # Recommended Obsidian plugins
 
-The vault is **`docs/`** only. Dataview `FROM "ops/tickets"`. Start at [`HOME.md`](../HOME.md) then [[ATLAS]] (sitemap) then [[ops/HOME]] or a [[ops/dashboards/_index|role dashboard]].
+The vault is **`docs/`** only. Dataview `FROM "ops/tickets"`. Start at [`HOME.md`](../HOME.md) then [[ATLAS]] (sitemap) then [[ops/HOME]] or a [[ops/dashboards/_index|role dashboard]]. Candidate homes share one short plugin list: [[home-plugins]].
 
 Core settings in `docs/.obsidian/` are committed. **Do not commit plugin binaries** (`main.js`). Install community plugins on your machine.
 
