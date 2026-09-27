@@ -4,7 +4,7 @@ ticket: "[[ops/tickets/WF-054]]"
 role: planner
 started: 2026-09-27
 finished: 2026-09-27
-pr:
+pr: https://github.com/tezball/my-island/pull/126
 ---
 
 # Run WF-054
