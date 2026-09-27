@@ -66,7 +66,7 @@ Cloud Cursor Automations (board runner / PR reviewer / re-review) are **specifie
 
 ## Product loop (MVP agents)
 
-Implement work is **agent**, not cron: [[ops/agents/mvp-team]]. CEO lock **C**: two streams in **parallel** — (1) [[ops/tickets/WF-040]] + [[ops/tickets/WF-041]] + [[ops/tickets/WF-042]] + [[ops/tickets/WF-043]] + [[ops/tickets/WF-044]] + [[ops/tickets/WF-045]] + [[ops/tickets/WF-046]] (commit→deploy→test→confirm; chaos + ZAP in CI; Gatling trickle/weekly fail → Jenkins red + Grafana/AM; close public Place writes); (2) [[ops/tickets/PRD-010]] + [[ops/tickets/PRD-015]] (password **and** Google SSO; VisitIntent). Do not serialize VisitIntent behind deploy. GIS stays. Do not pick [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]] for that slice.
+Implement work is **agent**, not cron: [[ops/agents/mvp-team]]. CEO lock **C** (2026-09-19) ran two streams in parallel. **2026-09-26 supersedes the pick:** [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md). Next implement ticket is [[ops/tickets/WF-040]] (public git SHA). Do not promote [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]]. Do not pick [[ops/tickets/PRD-012]] / [[ops/tickets/PRD-013]]. GIS stays. Agents never SSH.
 
 ## Related
 

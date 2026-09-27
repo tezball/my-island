@@ -17,6 +17,8 @@ Charter: [[ops/CHARTER]]. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN
 
 ## Right now
 
+→ **Current build:** [`product/FREE-DIRECTORY.md`](../product/FREE-DIRECTORY.md) — [[ops/tickets/WF-040]] is `implement` (public git SHA), then the free Ireland directory. Do not promote [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]].
+
 → **[[ATLAS]]** — Maps of Content (work / product / engineering / company / knowledge / archive). Engineer notes: [[notes/_index]].
 
 → **[[ops/dashboards/_index|Role dashboards]]** — human entry by hat (Bases + Dataview).
@@ -64,6 +66,6 @@ Charter: [[ops/CHARTER]]. Sitemap: [[ATLAS]]. Design: [[ops/company/VAULT_DESIGN
 
 1. Work **one ticket**. Update its `status`. Run `python3 ops/scripts/board_sync.py`.
 2. **Planner** writes `plans/<id>.md`. **Implementer** opens a PR. **Reviewer** only comments — never merge.
-3. No production writes. Grafana/Postgres MCP is **read-only**.
+3. No production SQL writes. Grafana/Postgres MCP is **read-only**. This product’s public host is https://fishing-journals.com (decision 39): still one VPS; agents never SSH; no GitHub Environment named `production`.
 4. Skip `type: epic`. Do not spend the session on disposable app code.
 5. New ids: `python3 ops/scripts/new_ticket.py --prefix WF --type workflow --title "…"`.

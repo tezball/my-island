@@ -54,6 +54,17 @@ def test_main_skips_without_token(capsys: pytest.CaptureFixture[str]) -> None:
     assert "skip status" in capsys.readouterr().out
 
 
+def test_zap_stage_waits_for_the_catalog_it_can_reach() -> None:
+    text = (REPO / "Jenkinsfile").read_text()
+    zap = text.split("stage('zap')", 1)[1].split("stage('chaos')", 1)[0]
+    up_at = zap.index("./scripts/dev up")
+    wait_at = zap.index('"${TARGET}/api/v1/places"')
+    scan_at = zap.index('zap_style_scan.py "$TARGET"')
+    assert up_at < wait_at < scan_at
+    assert "http://catalog:8080" in zap
+    assert "zap_style_scan.py http://127.0.0.1:8081" not in zap
+
+
 def test_jenkinsfile_posts_four_contexts_and_isolates_stack() -> None:
     text = (REPO / "Jenkinsfile").read_text()
     for name in status.CONTEXTS:

@@ -62,4 +62,4 @@ Guest signs in with **username/password and Google SSO**. GIS can stay (`POST /a
 
 A Guest can browse the live list, sign in (password **or** Google), mark a Place been / want / never, and see those **private** lists. Place API/UI expose an **anonymous been count** only (no PII); want and never stay private to the Guest. A merged ticket reaches fishing-journals.com without a human SSH (**commit → deploy → test → confirm**). An agent can, via MCP: check the site, read metrics/logs, trigger Gatling as a seed Guest, and troubleshoot without SSH.
 
-Campsite / B&B booking is **not this slice**. After VisitIntent: [`BOOKING-SITE.md`](BOOKING-SITE.md) ([[ops/tickets/PRD-016]]+).
+Campsite / B&B booking is **not this slice**. The current build is the free directory ([`FREE-DIRECTORY.md`](FREE-DIRECTORY.md)). Journey map of been/want is [[ops/tickets/PRD-030]]. Checkout stays parked: [`BOOKING-SITE.md`](BOOKING-SITE.md) ([[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] inbox).
