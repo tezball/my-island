@@ -12,8 +12,15 @@ head already has completed github-actions check runs for the four job names
 and a name is missing from the pull request rollup, that conclusion is
 copied onto a commit status (success or failure only). Nothing is invented.
 An existing failure on that same context is not overwritten with success.
-Forks are skipped. The rollup is re-fetched after posting. The new SHA still
-needs the four green checks and a valid non-author APPROVED.
+Forks are skipped. The rollup is re-fetched after posting. When the head
+commit author is cursoragent (cursoragent@cursor.com), those four checks
+are success, and there is no valid non-author APPROVED, the poll adds one
+empty commit on that branch (message ``Trigger review for pull request
+head``, authored by the Actions token, fast-forward, no force-push),
+dispatches ci.yml there, and skips ready, mirror, and squash for that pull
+request in that run. If the head message is already that trigger, it does
+not push another. The new SHA still needs the four green checks and a
+valid non-author APPROVED.
 
 Exit 0 for skip / waiting-for-review / waiting-for-CI / merge attempted.
 Never fail the merge job red because Approve is missing.
@@ -623,6 +630,143 @@ def mirror_missing_check_statuses(
     return lines
 
 
+TRIGGER_REVIEW_MESSAGE = "Trigger review for pull request head"
+CURSORAGENT_EMAIL = "cursoragent@cursor.com"
+
+
+def _commit_git(commit: dict[str, Any]) -> dict[str, Any]:
+    git = commit.get("commit")
+    return git if isinstance(git, dict) else {}
+
+
+def _commit_author(commit: dict[str, Any]) -> dict[str, Any]:
+    author = _commit_git(commit).get("author")
+    return author if isinstance(author, dict) else {}
+
+
+def is_cursoragent_commit(commit: dict[str, Any]) -> bool:
+    """True when the git author is cursoragent, not the GitHub login."""
+    author = _commit_author(commit)
+    email = str(author.get("email") or "").strip().lower()
+    name = str(author.get("name") or "").strip()
+    return email == CURSORAGENT_EMAIL or name == "cursoragent"
+
+
+def is_trigger_review_commit(commit: dict[str, Any]) -> bool:
+    message = str(_commit_git(commit).get("message") or "")
+    first = message.split("\n", 1)[0].strip()
+    return first == TRIGGER_REVIEW_MESSAGE
+
+
+def should_trigger_cursoragent_review(
+    commit: dict[str, Any],
+    pr: dict[str, Any],
+    reviews: list[dict[str, Any]],
+    runs: list[dict[str, Any]],
+) -> bool:
+    """Whether the poll should push one empty review-trigger commit.
+
+    Same-repo only. Requires the four checks success and no valid
+    non-author APPROVED. Does not approve and does not weaken that gate.
+    """
+    if not isinstance(pr, dict) or _is_fork(pr):
+        return False
+    if not is_cursoragent_commit(commit) or is_trigger_review_commit(commit):
+        return False
+    ok, _why = four_checks_success(runs)
+    if not ok:
+        return False
+    approved, _why = has_valid_approve(pr, reviews, _head_sha(pr))
+    return not approved
+
+
+def fetch_commit(owner: str, repo: str, sha: str, token: str) -> dict[str, Any]:
+    quoted = urllib.parse.quote(sha, safe="")
+    url = f"https://api.github.com/repos/{owner}/{repo}/commits/{quoted}"
+    payload, _ = _github_request("GET", url, token)
+    if not isinstance(payload, dict):
+        raise GateError("commit payload missing")
+    return payload
+
+
+def create_empty_commit(
+    owner: str, repo: str, parent_sha: str, tree_sha: str, token: str
+) -> str:
+    """Create a commit with the parent's tree. The token user is the author.
+
+    Omitting author and committer lets GitHub attribute the commit to the
+    authenticated Actions token. This is not a force-push.
+    """
+    url = f"https://api.github.com/repos/{owner}/{repo}/git/commits"
+    payload, _ = _github_request(
+        "POST",
+        url,
+        token,
+        {
+            "message": TRIGGER_REVIEW_MESSAGE,
+            "tree": tree_sha,
+            "parents": [parent_sha],
+        },
+    )
+    if not isinstance(payload, dict):
+        raise GateError("empty commit payload missing")
+    sha = str(payload.get("sha") or "").strip()
+    if not sha:
+        raise GateError("empty commit sha missing")
+    return sha
+
+
+def fast_forward_branch(owner: str, repo: str, branch: str, sha: str, token: str) -> None:
+    """Move ``branch`` to ``sha`` only when it fast-forwards. Never force."""
+    ref = branch.strip().removeprefix("refs/heads/")
+    if not ref:
+        raise GateError("pull request head ref missing")
+    if ref == "main":
+        raise GateError("refuse to update main")
+    quoted = urllib.parse.quote(ref, safe="/")
+    url = f"https://api.github.com/repos/{owner}/{repo}/git/refs/heads/{quoted}"
+    _github_request("PATCH", url, token, {"sha": sha, "force": False})
+
+
+def trigger_cursoragent_review(
+    owner: str,
+    repo: str,
+    pr: dict[str, Any],
+    reviews: list[dict[str, Any]],
+    runs: list[dict[str, Any]],
+    token: str,
+) -> list[str] | None:
+    """Push one trigger commit and dispatch CI, or return None to continue.
+
+    A returned list means this poll run must skip ready, mirror, and squash
+    for the pull request. Forks and an existing trigger commit return None.
+    """
+    if _is_fork(pr):
+        return None
+    sha = _head_sha(pr)
+    number = int(pr.get("number") or 0)
+    if not sha:
+        return None
+    commit = fetch_commit(owner, repo, sha, token)
+    if not should_trigger_cursoragent_review(commit, pr, reviews, runs):
+        return None
+    tree = _commit_git(commit).get("tree")
+    tree_sha = str(tree.get("sha") or "").strip() if isinstance(tree, dict) else ""
+    if not tree_sha:
+        raise GateError("commit tree missing")
+    new_sha = create_empty_commit(owner, repo, sha, tree_sha, token)
+    ref = _head_ref(pr)
+    fast_forward_branch(owner, repo, ref, new_sha, token)
+    lines = [f"#{number} triggered review"]
+    try:
+        dispatch_head_ci(owner, repo, ref, token)
+    except GateError as exc:
+        lines.append(f"#{number} CI dispatch skipped: {exc}")
+    else:
+        lines.append(f"#{number} dispatched CI on {ref}")
+    return lines
+
+
 def dispatch_head_ci(owner: str, repo: str, head_ref: str, token: str) -> None:
     """Dispatch ci.yml on a pull request head branch.
 
@@ -813,6 +957,7 @@ def poll_ready(
     on_conflict: Any | None = None,
     dispatch_head: Any | None = None,
     mirror: Any | None = None,
+    trigger: Any | None = None,
 ) -> list[str]:
     """Same ready and ``decide`` path as one-PR automerge.
 
@@ -830,6 +975,10 @@ def poll_ready(
     When ``mirror`` is set, a same-repo head copies completed github-actions
     conclusions onto commit statuses for any of the four names missing from
     the rollup, then re-fetches that rollup. Forks are not mirrored.
+
+    When ``trigger`` returns lines, a same-repo cursoragent head was given
+    one empty commit and CI was dispatched. Ready, mirror, and squash are
+    skipped for that pull request in this run.
     """
     lines: list[str] = []
     for row in rows:
@@ -881,6 +1030,19 @@ def poll_ready(
                         ref = _head_ref(current) if isinstance(current, dict) else ""
                         lines.append(f"#{number} dispatched CI on {ref}")
                 continue
+        if (
+            trigger is not None
+            and isinstance(current, dict)
+            and not _is_fork(current)
+        ):
+            try:
+                triggered = trigger(current, reviews, runs_list)
+            except GateError as exc:
+                lines.append(f"#{number} trigger skipped: {exc}")
+            else:
+                if triggered is not None:
+                    lines.extend(str(line) for line in triggered)
+                    continue
         if (
             mirror is not None
             and isinstance(current, dict)
@@ -972,8 +1134,24 @@ def poll_open(owner: str, repo: str, token: str) -> int:
             token,
         )
 
+    def trigger(
+        pr: dict[str, Any],
+        reviews: list[dict[str, Any]],
+        runs: list[dict[str, Any]],
+    ) -> list[str] | None:
+        return trigger_cursoragent_review(owner, repo, pr, reviews, runs, token)
+
     for line in poll_ready(
-        rows, load, merge, dispatch, mark, update, on_conflict, dispatch_head, mirror
+        rows,
+        load,
+        merge,
+        dispatch,
+        mark,
+        update,
+        on_conflict,
+        dispatch_head,
+        mirror,
+        trigger,
     ):
         print(line)
     return 0

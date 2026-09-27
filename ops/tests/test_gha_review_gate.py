@@ -14,8 +14,13 @@ from gha_review_gate import (
     comment_on_conflict,
     conflict_comment_body,
     conflict_comment_exists,
+    TRIGGER_REVIEW_MESSAGE,
+    create_empty_commit,
     decide,
     dispatch_head_ci,
+    fast_forward_branch,
+    is_cursoragent_commit,
+    should_trigger_cursoragent_review,
     four_checks_success,
     has_valid_approve,
     latest_vote_by_user,
@@ -1086,3 +1091,100 @@ def test_automerge_workflow_can_write_statuses() -> None:
     poll = (REPO / ".github" / "workflows" / "automerge-poll.yml").read_text()
     assert "statuses: write" in automerge
     assert "statuses: write" in poll
+
+
+def _cursoragent_commit(message: str = "feat: something") -> dict:
+    return {
+        "sha": "abc",
+        "commit": {
+            "message": message,
+            "author": {"name": "Cursor Agent", "email": "cursoragent@cursor.com"},
+            "tree": {"sha": "tree123"},
+        },
+    }
+
+
+def test_cursoragent_email_is_the_head_author() -> None:
+    assert is_cursoragent_commit(_cursoragent_commit())
+    other = _cursoragent_commit()
+    other["commit"]["author"] = {"name": "github-actions[bot]", "email": "41898282+github-actions[bot]@users.noreply.github.com"}
+    assert not is_cursoragent_commit(other)
+
+
+def test_should_trigger_review_only_when_green_and_unapproved() -> None:
+    pr = _numbered(4)
+    pr["head"]["sha"] = "abc"
+    commit = _cursoragent_commit()
+    assert should_trigger_cursoragent_review(commit, pr, [], _green_runs())
+    assert not should_trigger_cursoragent_review(
+        _cursoragent_commit(TRIGGER_REVIEW_MESSAGE), pr, [], _green_runs()
+    )
+    assert not should_trigger_cursoragent_review(commit, _numbered(2, fork=True), [], _green_runs())
+    red = _green_runs()
+    red[-1] = _run("compose stack", conclusion="failure", rid=4)
+    assert not should_trigger_cursoragent_review(commit, pr, [], red)
+    approved = [_review("cursor[bot]", APPROVED)]
+    assert not should_trigger_cursoragent_review(commit, pr, approved, _green_runs())
+    author_only = [_review("tezball", APPROVED)]
+    assert should_trigger_cursoragent_review(commit, pr, author_only, _green_runs())
+
+
+def test_empty_trigger_commit_fast_forwards_without_author(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: list[tuple[str, str, dict]] = []
+
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del token, timeout
+        seen.append((method, url, payload or {}))
+        if url.endswith("/git/commits"):
+            return {"sha": "newsha"}, ""
+        return {}, ""
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    assert create_empty_commit("tezball", "my-island", "abc", "tree123", "tok") == "newsha"
+    fast_forward_branch("tezball", "my-island", "cursor/feature", "newsha", "tok")
+    created = seen[0][2]
+    assert seen[0][0] == "POST"
+    assert seen[0][1].endswith("/git/commits")
+    assert created["message"] == TRIGGER_REVIEW_MESSAGE
+    assert created["tree"] == "tree123"
+    assert created["parents"] == ["abc"]
+    assert "author" not in created
+    assert "committer" not in created
+    moved = seen[1][2]
+    assert seen[1][0] == "PATCH"
+    assert seen[1][1].endswith("/git/refs/heads/cursor/feature")
+    assert moved == {"sha": "newsha", "force": False}
+    with pytest.raises(GateError, match="refuse to update main"):
+        fast_forward_branch("tezball", "my-island", "main", "newsha", "tok")
+
+
+def test_poll_trigger_skips_mirror_ready_and_squash() -> None:
+    mirrored: list[int] = []
+    marked: list[int] = []
+    merged: list[int] = []
+    pr = _numbered(4)
+    pr["head"]["ref"] = "cursor/feature"
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [], _green_runs(), {"behind_by": 0, "status": "ahead"}),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        mark=lambda number: marked.append(number),
+        mirror=lambda current, runs: mirrored.append(current["number"]) or [],
+        trigger=lambda current, reviews, runs: ["#4 triggered review"],
+    )
+    assert mirrored == []
+    assert marked == []
+    assert merged == []
+    assert any("triggered review" in line for line in lines)
+    assert not any("squash-merged" in line for line in lines)
+
+
+def test_existing_trigger_commit_does_not_push_another() -> None:
+    pr = _numbered(4)
+    assert not should_trigger_cursoragent_review(
+        _cursoragent_commit(TRIGGER_REVIEW_MESSAGE + "\n\nbody"),
+        pr,
+        [],
+        _green_runs(),
+    )
