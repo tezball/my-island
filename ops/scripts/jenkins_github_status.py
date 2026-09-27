@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Post GitHub commit statuses from laptop Jenkins (WF-051).
 
-Contexts match GHA job names so branch protection can retarget later.
+Contexts are prefixed so they do not collide with required GHA check names.
 Never prints the token. Exit 0 when the token is unset (local-ci without PAT).
 """
 from __future__ import annotations
@@ -14,10 +14,10 @@ import urllib.error
 import urllib.request
 
 CONTEXTS = (
-    "unit tests",
-    "catalog tests",
-    "web tests",
-    "compose stack",
+    "jenkins/unit tests",
+    "jenkins/catalog tests",
+    "jenkins/web tests",
+    "jenkins/compose stack",
 )
 STATES = frozenset({"pending", "success", "failure", "error"})
 

@@ -2,14 +2,24 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from gha_review_gate import (
     APPROVED,
     CHANGES_REQUESTED,
+    CONFLICT_COMMENT_LEAD,
     GateError,
+    UpdateConflict,
+    branch_update_reason,
+    comment_on_conflict,
+    conflict_comment_body,
+    conflict_comment_exists,
     decide,
     four_checks_success,
     has_valid_approve,
     latest_vote_by_user,
+    mark_ready,
+    merge_main_into_head,
     pick_pr_number,
     poll_ready,
     should_mark_ready,
@@ -281,21 +291,75 @@ def test_poll_skips_fork_without_loading_and_keeps_a_red_draft() -> None:
     assert any("fork" in line for line in lines)
 
 
+def _refetched_ready(pr: dict) -> dict:
+    ready = dict(pr)
+    ready["draft"] = False
+    return ready
+
+
 def test_poll_marks_green_same_repo_draft_ready() -> None:
     marked: list[int] = []
     merged: list[tuple[int, str]] = []
     pr = _numbered(9, draft=True)
+
+    def mark(number: int) -> dict:
+        marked.append(number)
+        return _refetched_ready(pr)
+
     lines = poll_ready(
         [pr],
         lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
         lambda number, sha: merged.append((number, sha)),
         lambda number: None,
-        mark=lambda number: marked.append(number),
+        mark=mark,
     )
     assert marked == [9]
     assert merged == [(9, "abc")]
     assert any("marked ready" in line for line in lines)
     assert any("squash-merged" in line for line in lines)
+
+
+def test_memory_only_ready_flip_does_not_count() -> None:
+    merged: list[tuple[int, str]] = []
+    pr = _numbered(9, draft=True)
+
+    def mark(number: int) -> None:
+        del number
+        pr["draft"] = False
+        return None
+
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        mark=mark,
+    )
+    assert merged == []
+    assert not any("marked ready" in line for line in lines)
+    assert any("ready skipped: still a draft" in line for line in lines)
+    assert any("draft — skip" in line for line in lines)
+
+
+def test_ready_mutation_failure_stays_a_draft() -> None:
+    merged: list[int] = []
+    pr = _numbered(9, draft=True)
+
+    def mark(number: int) -> dict:
+        del number
+        raise GateError("graphql: boom")
+
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        mark=mark,
+    )
+    assert merged == []
+    assert not any("marked ready" in line for line in lines)
+    assert any("ready skipped: graphql: boom" in line for line in lines)
+    assert any("draft — skip" in line for line in lines)
 
 
 def test_poll_waits_when_checks_green_but_no_approve() -> None:
@@ -429,6 +493,282 @@ def test_automerge_poll_workflow_does_not_rerun_tests() -> None:
         assert job_name not in text
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "schedule:" not in ci
+
+
+def test_behind_same_repo_merges_main_and_does_not_squash() -> None:
+    updated: list[tuple[int, str, str]] = []
+    marked: list[int] = []
+    merged: list[tuple[int, str]] = []
+    pr = _numbered(11)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    lines = poll_ready(
+        [pr],
+        lambda number: (
+            pr,
+            [_review("cursor[bot]", APPROVED)],
+            _green_runs(),
+            {"behind_by": 2, "status": "behind"},
+        ),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        mark=lambda number: marked.append(number),
+        update=lambda current, reason: updated.append(
+            (current["number"], reason, current["head"]["ref"])
+        )
+        or True,
+    )
+    assert updated == [(11, "behind", "feature")]
+    assert marked == []
+    assert merged == []
+    assert any("updated: merged origin/main (behind)" in line for line in lines)
+
+
+def test_dirty_conflict_comments_and_skips() -> None:
+    comments: list[tuple[int, str]] = []
+    marked: list[int] = []
+    merged: list[int] = []
+    pr = _numbered(12, draft=True)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "dirty"
+    pr["mergeable"] = False
+
+    def update(current: dict, reason: str) -> bool:
+        del current, reason
+        raise UpdateConflict("HTTP 409")
+
+    lines = poll_ready(
+        [pr],
+        lambda number: (
+            pr,
+            [_review("cursor[bot]", APPROVED)],
+            _green_runs(),
+            {"behind_by": 1, "status": "diverged"},
+        ),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        mark=lambda number: marked.append(number),
+        update=update,
+        on_conflict=lambda number, sha: comments.append((number, sha)),
+    )
+    assert comments == [(12, "abc")]
+    assert marked == []
+    assert merged == []
+    assert any(CONFLICT_COMMENT_LEAD in line for line in lines)
+
+
+def test_up_to_date_draft_is_still_marked_ready() -> None:
+    called: list[str] = []
+    marked: list[int] = []
+    pr = _numbered(9, draft=True)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "clean"
+    pr["mergeable"] = True
+    def mark(number: int) -> dict:
+        marked.append(number)
+        return _refetched_ready(pr)
+
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [], _green_runs(), {"behind_by": 0, "status": "ahead"}),
+        lambda number, sha: None,
+        lambda number: None,
+        mark=mark,
+        update=lambda current, reason: called.append(reason) or True,
+    )
+    assert called == []
+    assert marked == [9]
+    assert any("marked ready" in line for line in lines)
+    assert any("waiting for review" in line for line in lines)
+
+
+def test_fork_is_not_updated_even_when_behind() -> None:
+    called: list[str] = []
+    pr = _numbered(2, fork=True, draft=True)
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    compare = {"behind_by": 4, "status": "behind"}
+    assert branch_update_reason(pr, compare) is None
+    poll_ready(
+        [pr],
+        lambda number: (pr, [], _green_runs(), compare),
+        lambda number, sha: None,
+        lambda number: None,
+        update=lambda current, reason: called.append(reason) or True,
+    )
+    assert called == []
+
+
+def test_diverged_compare_counts_as_behind() -> None:
+    pr = _numbered(1)
+    pr["mergeable_state"] = "blocked"
+    pr["mergeable"] = True
+    assert branch_update_reason(pr, {"behind_by": 3, "status": "diverged"}) == "behind"
+
+
+def test_stale_behind_flag_still_merges_when_already_up_to_date() -> None:
+    merged: list[tuple[int, str]] = []
+    pr = _numbered(8)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs(), None),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        update=lambda current, reason: False,
+    )
+    assert merged == [(8, "abc")]
+    assert any("squash-merged" in line for line in lines)
+
+
+def test_actions_bot_approve_still_does_not_merge() -> None:
+    merged: list[int] = []
+    pr = _numbered(6)
+    pr["mergeable_state"] = "clean"
+    pr["mergeable"] = True
+    lines = poll_ready(
+        [pr],
+        lambda number: (
+            pr,
+            [_review("github-actions[bot]", APPROVED)],
+            _green_runs(),
+            {"behind_by": 0, "status": "ahead"},
+        ),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        update=lambda current, reason: True,
+    )
+    assert merged == []
+    assert any("waiting for review" in line for line in lines)
+
+
+def test_merge_main_into_head_posts_a_merge_commit(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: dict[str, object] = {}
+
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del token, timeout
+        seen["method"] = method
+        seen["url"] = url
+        seen["payload"] = payload
+        return {"sha": "deadbeef"}, ""
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    assert merge_main_into_head("tezball", "my-island", "feature", "tok") is True
+    assert seen["method"] == "POST"
+    assert str(seen["url"]).endswith("/repos/tezball/my-island/merges")
+    payload = seen["payload"]
+    assert isinstance(payload, dict)
+    assert payload["base"] == "feature"
+    assert payload["head"] == "main"
+    assert "force" not in payload
+
+
+def test_merge_main_into_head_conflict_and_refuse_main(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del method, url, token, payload, timeout
+        raise GateError("HTTP 409 conflict", status=409)
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    with pytest.raises(UpdateConflict):
+        merge_main_into_head("tezball", "my-island", "feature", "tok")
+    with pytest.raises(GateError, match="refuse to merge into main"):
+        merge_main_into_head("tezball", "my-island", "main", "tok")
+
+
+def test_merge_main_into_head_already_contains_main(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del method, url, token, payload, timeout
+        return None, ""
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    assert merge_main_into_head("tezball", "my-island", "feature", "tok") is False
+
+
+def test_conflict_comment_posts_once_and_is_not_a_review(monkeypatch: pytest.MonkeyPatch) -> None:
+    posted: list[tuple[str, str, dict]] = []
+    comments: list[dict] = []
+
+    def fake_fetch(owner: str, repo: str, number: int, token: str) -> list[dict]:
+        del owner, repo, number, token
+        return list(comments)
+
+    def fake_request(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del token, timeout
+        assert payload is not None
+        posted.append((method, url, payload))
+        comments.append(payload)
+        return {"id": 1}, ""
+
+    monkeypatch.setattr("gha_review_gate.fetch_issue_comments", fake_fetch)
+    monkeypatch.setattr("gha_review_gate._github_request", fake_request)
+    assert comment_on_conflict("tezball", "my-island", 4, "abc", "tok") is True
+    assert comment_on_conflict("tezball", "my-island", 4, "abc", "tok") is False
+    assert len(posted) == 1
+    assert posted[0][0] == "POST"
+    assert posted[0][1].endswith("/issues/4/comments")
+    assert "/reviews" not in posted[0][1]
+    body = conflict_comment_body("abc")
+    assert posted[0][2]["body"] == body
+    assert conflict_comment_exists([{"body": body}], "abc")
+    assert CONFLICT_COMMENT_LEAD in body
+    assert "did not force-push" in body
+
+
+def test_mark_ready_uses_graphql_then_refetch(monkeypatch: pytest.MonkeyPatch) -> None:
+    fetches: list[dict] = [
+        {"node_id": "PR_node", "draft": True, "number": 9},
+        {"node_id": "PR_node", "draft": False, "number": 9},
+    ]
+    seen: dict[str, object] = {}
+
+    def fake_fetch(owner: str, repo: str, number: int, token: str) -> dict:
+        del owner, repo, number, token
+        return fetches.pop(0)
+
+    def fake_request(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del token, timeout
+        seen["method"] = method
+        seen["url"] = url
+        seen["payload"] = payload
+        return {"data": {"markPullRequestReadyForReview": {"pullRequest": {"isDraft": False}}}}, ""
+
+    monkeypatch.setattr("gha_review_gate.fetch_pr", fake_fetch)
+    monkeypatch.setattr("gha_review_gate._github_request", fake_request)
+    refreshed = mark_ready("tezball", "my-island", 9, "tok")
+    assert refreshed["draft"] is False
+    assert seen["method"] == "POST"
+    assert seen["url"] == "https://api.github.com/graphql"
+    payload = seen["payload"]
+    assert isinstance(payload, dict)
+    assert "markPullRequestReadyForReview" in payload["query"]
+    assert payload["variables"] == {"id": "PR_node"}
+    assert "draft" not in payload
+    assert fetches == []
+
+
+def test_mark_ready_does_not_patch_rest_draft() -> None:
+    text = (REPO / "ops" / "scripts" / "gha_review_gate.py").read_text()
+    assert "markPullRequestReadyForReview" in text
+    assert '{"draft": False}' not in text
+    assert "{'draft': False}" not in text
+    assert "PATCH" not in text.split("def mark_ready", 1)[1].split("def confirm_ready", 1)[0]
+
+
+def test_no_second_five_minute_poll() -> None:
+    workflows = REPO / ".github" / "workflows"
+    scheduled = [
+        path.name
+        for path in sorted(workflows.glob("*.yml"))
+        if 'cron: "*/5 * * * *"' in path.read_text()
+    ]
+    assert scheduled == ["automerge-poll.yml"]
+    poll = (workflows / "automerge-poll.yml").read_text()
+    assert poll.count("cron:") == 1
+    assert "issues: write" in poll
+    assert "on:\n  schedule:" in poll
 
 
 def test_pick_pr_number_prefers_open() -> None:
