@@ -19,6 +19,7 @@ permissions:
   issues: write
   checks: read
   actions: write
+  statuses: write
 
 concurrency:
   group: automerge-poll
