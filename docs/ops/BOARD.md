@@ -58,6 +58,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-011|WF-011]] P1 Playwright cron vs fishing-journals.com (not a merge gate)
 - [ ] [[ops/tickets/WF-047|WF-047]] P1 Human and agent DX handbook
 - [ ] [[ops/tickets/WF-052|WF-052]] P1 Dedicated Jenkins CI checkout directory
+- [ ] [[ops/tickets/WF-053|WF-053]] P1 Wait for catalog before the Jenkins zap scan
 
 ## Blocked
 
