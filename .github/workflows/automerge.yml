@@ -39,6 +39,7 @@ jobs:
       issues: write
       actions: write
       checks: read
+      statuses: write
     steps:
       # Gate script from main — do not execute the PR tree on workflow_run.
       - uses: actions/checkout@v4

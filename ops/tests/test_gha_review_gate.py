@@ -21,8 +21,11 @@ from gha_review_gate import (
     latest_vote_by_user,
     mark_ready,
     merge_main_into_head,
+    mirror_missing_check_statuses,
     pick_pr_number,
     poll_ready,
+    post_commit_status,
+    statuses_to_mirror,
     should_mark_ready,
 )
 
@@ -920,3 +923,166 @@ def test_pick_pr_number_prefers_open() -> None:
     assert pick_pr_number([{"number": 4, "state": "closed"}]) == 4
     assert pick_pr_number([]) is None
     assert pick_pr_number({"pulls": []}) is None
+
+
+def _actions_run(
+    name: str,
+    *,
+    conclusion: str = "success",
+    status: str = "completed",
+    rid: int = 1,
+    slug: str = "github-actions",
+) -> dict:
+    return {
+        "id": rid,
+        "name": name,
+        "status": status,
+        "conclusion": conclusion,
+        "app": {"slug": slug},
+        "started_at": f"2026-09-20T12:00:0{rid}Z",
+    }
+
+
+def _four_actions_runs() -> list[dict]:
+    return [
+        _actions_run("unit tests", rid=1),
+        _actions_run("catalog tests", rid=2),
+        _actions_run("web tests", rid=3),
+        _actions_run("compose stack", rid=4),
+    ]
+
+
+def test_statuses_to_mirror_copies_only_missing_names() -> None:
+    plan = statuses_to_mirror(
+        _four_actions_runs(),
+        {"unit tests", "jenkins/compose stack"},
+        {},
+    )
+    assert plan == [
+        ("catalog tests", "success"),
+        ("web tests", "success"),
+        ("compose stack", "success"),
+    ]
+
+
+def test_statuses_to_mirror_copies_failure_and_skips_unfinished() -> None:
+    runs = [
+        _actions_run("unit tests", conclusion="failure", rid=1),
+        _actions_run("catalog tests", status="in_progress", conclusion="", rid=2),
+        _actions_run("web tests", conclusion="skipped", rid=3),
+        _actions_run("compose stack", conclusion="success", rid=4, slug="jenkins"),
+    ]
+    assert statuses_to_mirror(runs, set(), {}) == [("unit tests", "failure")]
+
+
+def test_statuses_to_mirror_does_not_overwrite_failure_with_success() -> None:
+    plan = statuses_to_mirror(
+        _four_actions_runs(),
+        set(),
+        {"compose stack": "failure", "jenkins/compose stack": "failure"},
+    )
+    assert ("compose stack", "success") not in plan
+    assert ("unit tests", "success") in plan
+    assert all(not context.startswith("jenkins/") for context, _state in plan)
+
+
+def test_missing_check_run_posts_nothing_for_that_name() -> None:
+    runs = [run for run in _four_actions_runs() if run["name"] != "web tests"]
+    plan = statuses_to_mirror(runs, set(), {})
+    assert "web tests" not in {context for context, _state in plan}
+
+
+def test_post_commit_status_uses_statuses_api(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: dict[str, object] = {}
+
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del token, timeout
+        seen["method"] = method
+        seen["url"] = url
+        seen["payload"] = payload
+        return {}, ""
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    post_commit_status("tezball", "my-island", "abc", "unit tests", "success", "tok")
+    assert seen["method"] == "POST"
+    assert str(seen["url"]).endswith("/statuses/abc")
+    assert "/check-runs" not in str(seen["url"])
+    payload = seen["payload"]
+    assert isinstance(payload, dict)
+    assert payload["context"] == "unit tests"
+    assert payload["state"] == "success"
+    with pytest.raises(GateError, match="not success or failure"):
+        post_commit_status("tezball", "my-island", "abc", "unit tests", "pending", "tok")
+    with pytest.raises(GateError, match="outside the four check names"):
+        post_commit_status("tezball", "my-island", "abc", "jenkins/compose stack", "success", "tok")
+
+
+def test_mirror_refetches_rollup_after_posting(monkeypatch: pytest.MonkeyPatch) -> None:
+    rollups = [set(), {"unit tests", "catalog tests", "web tests", "compose stack"}]
+    posted: list[tuple[str, str]] = []
+
+    def fake_rollup(owner: str, repo: str, number: int, head_sha: str, token: str) -> set[str]:
+        del owner, repo, number, head_sha, token
+        return rollups.pop(0)
+
+    def fake_states(owner: str, repo: str, sha: str, token: str) -> dict[str, str]:
+        del owner, repo, sha, token
+        return {"jenkins/compose stack": "failure"}
+
+    def fake_post(owner: str, repo: str, sha: str, context: str, state: str, token: str) -> None:
+        del owner, repo, sha, token
+        posted.append((context, state))
+
+    monkeypatch.setattr("gha_review_gate.fetch_pr_rollup_names", fake_rollup)
+    monkeypatch.setattr("gha_review_gate.fetch_commit_status_states", fake_states)
+    monkeypatch.setattr("gha_review_gate.post_commit_status", fake_post)
+    lines = mirror_missing_check_statuses(
+        "tezball", "my-island", 129, "b4e5dcb", _four_actions_runs(), "tok"
+    )
+    assert posted == [
+        ("unit tests", "success"),
+        ("catalog tests", "success"),
+        ("web tests", "success"),
+        ("compose stack", "success"),
+    ]
+    assert any("rollup refreshed" in line for line in lines)
+    assert rollups == []
+    assert not any("rollup still missing" in line for line in lines)
+
+
+def test_poll_mirrors_then_keeps_the_approval_gate() -> None:
+    mirrored: list[int] = []
+    merged: list[int] = []
+    pr = _numbered(129)
+    pr["head"]["sha"] = "b4e5dcb"
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [], _four_actions_runs(), {"behind_by": 0, "status": "ahead"}),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        mirror=lambda current, runs: mirrored.append(current["number"]) or ["#129 mirrored unit tests success"],
+    )
+    assert mirrored == [129]
+    assert merged == []
+    assert any("waiting for review" in line for line in lines)
+    assert any("mirrored unit tests success" in line for line in lines)
+
+
+def test_poll_does_not_mirror_a_fork() -> None:
+    mirrored: list[int] = []
+    pr = _numbered(2, fork=True, draft=True)
+    poll_ready(
+        [pr],
+        lambda number: (pr, [], _four_actions_runs(), {"behind_by": 1, "status": "behind"}),
+        lambda number, sha: None,
+        lambda number: None,
+        mirror=lambda current, runs: mirrored.append(current["number"]) or [],
+    )
+    assert mirrored == []
+
+
+def test_automerge_workflow_can_write_statuses() -> None:
+    automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
+    poll = (REPO / ".github" / "workflows" / "automerge-poll.yml").read_text()
+    assert "statuses: write" in automerge
+    assert "statuses: write" in poll
