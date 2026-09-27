@@ -302,10 +302,68 @@ def fetch_check_runs(owner: str, repo: str, sha: str, token: str) -> list[dict[s
     return out
 
 
-def mark_ready(owner: str, repo: str, number: int, token: str) -> None:
-    """Convert a draft to ready for review. REST draft=false."""
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{number}"
-    _github_request("PATCH", url, token, {"draft": False})
+MARK_READY_MUTATION = """
+mutation($id: ID!) {
+  markPullRequestReadyForReview(input: {pullRequestId: $id}) {
+    pullRequest { isDraft }
+  }
+}
+"""
+
+
+def _graphql(token: str, query: str, variables: dict[str, Any]) -> dict[str, Any]:
+    payload, _ = _github_request(
+        "POST",
+        "https://api.github.com/graphql",
+        token,
+        {"query": query, "variables": variables},
+    )
+    if not isinstance(payload, dict):
+        raise GateError("graphql payload missing")
+    errors = payload.get("errors")
+    if isinstance(errors, list) and errors:
+        first = errors[0]
+        message = first.get("message") if isinstance(first, dict) else str(first)
+        raise GateError(f"graphql: {message}")
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        raise GateError("graphql data missing")
+    return data
+
+
+def mark_ready(owner: str, repo: str, number: int, token: str) -> dict[str, Any]:
+    """Mark a draft ready and return the re-fetched pull request.
+
+    The REST draft field is ignored. GitHub only clears draft via
+    ``markPullRequestReadyForReview``. The caller must trust the re-fetched
+    ``draft`` flag, not an in-memory flip.
+    """
+    current = fetch_pr(owner, repo, number, token)
+    node_id = str(current.get("node_id") or "").strip()
+    if not node_id:
+        raise GateError("pull request node id missing")
+    _graphql(token, MARK_READY_MUTATION, {"id": node_id})
+    return fetch_pr(owner, repo, number, token)
+
+
+def confirm_ready(number: int, pr: dict[str, Any], mark: Any | None) -> tuple[dict[str, Any], str]:
+    """Return the pull request to decide on, plus the log line.
+
+    ``marked ready`` only when the re-fetch has ``draft`` false. A failed
+    mutation, or a re-fetch that is still a draft, leaves ``draft`` true so
+    ``decide`` still skips it.
+    """
+    try:
+        refreshed = mark(number) if mark is not None else None
+    except GateError as exc:
+        kept = dict(pr)
+        kept["draft"] = True
+        return kept, f"#{number} ready skipped: {exc}"
+    if isinstance(refreshed, dict) and refreshed.get("draft") is False:
+        return refreshed, f"#{number} marked ready"
+    kept = dict(pr)
+    kept["draft"] = True
+    return kept, f"#{number} ready skipped: still a draft"
 
 
 def squash_merge(owner: str, repo: str, number: int, sha: str, token: str) -> str:
@@ -578,15 +636,8 @@ def poll_ready(
                 lines.append(f"#{number} updated: merged origin/main ({reason})")
                 continue
         if should_mark_ready(pr=current, checks_green=False, check_runs=runs_list):
-            try:
-                if mark is not None:
-                    mark(number)
-            except GateError as exc:
-                lines.append(f"#{number} ready skipped: {exc}")
-                continue
-            current = dict(current)
-            current["draft"] = False
-            lines.append(f"#{number} marked ready")
+            current, ready_line = confirm_ready(number, current, mark)
+            lines.append(ready_line)
         decision = decide(
             pr=current,
             reviews=reviews,
@@ -641,8 +692,8 @@ def poll_open(owner: str, repo: str, token: str) -> int:
     def dispatch(_number: int) -> None:
         dispatch_main_ci(owner, repo, token)
 
-    def mark(number: int) -> None:
-        mark_ready(owner, repo, number, token)
+    def mark(number: int) -> dict[str, Any]:
+        return mark_ready(owner, repo, number, token)
 
     def update(pr: dict[str, Any], reason: str) -> bool:
         del reason
@@ -714,10 +765,12 @@ def main(argv: list[str] | None = None) -> int:
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)
         if should_mark_ready(pr=pr, checks_green=checks_green, check_runs=check_runs):
-            mark_ready(owner, repo, number, token)
-            pr = dict(pr)
-            pr["draft"] = False
-            print(f"#{number} marked ready")
+            pr, ready_line = confirm_ready(
+                number,
+                pr,
+                lambda n: mark_ready(owner, repo, n, token),
+            )
+            print(ready_line)
         decision = decide(
             pr=pr,
             reviews=reviews,
