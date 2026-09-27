@@ -90,44 +90,49 @@ Same four job names
 Automerge still waits
 on GitHub Actions ^00000052
 
+WF-052 CI checkout
+Dedicated CI checkout
+Mount is in use
+Not the primary clone ^00000054
+
 Playwright cron
 Every 6 hours
 against fishing-journals.com
 Not a merge gate
-WF-011 ^00000054
+WF-011 ^00000056
 
 Gatling trickle and weekly
 Not a merge load test
 Fail marks Jenkins red
 House Alertmanager fires
 Leftover email stays muted
-WF-045 ^00000056
+WF-045 ^00000058
 
 mock-prod signal
 On main only, after
 unit, catalog, web, stack,
 chaos, and zap succeed
-Visible main-is-green check ^00000058
+Visible main-is-green check ^00000060
 
 Dashed cards run on a schedule.
-They do not sit on the merge arrow. ^00000059
+They do not sit on the merge arrow. ^00000061
 
-2. Planned next ^00000062
+2. Planned next ^00000064
 
-Filed and not finished. No new platform, no second fleet, no production Environment. ^00000063
+Filed and not finished. No new platform, no second fleet, no production Environment. ^00000065
 
 WF-041 House Prometheus and Loki
 Catalog metrics and logs from
 fishing-journals.com
 Private. Not on the public internet.
 Leftover grafana.fishing-journals.com
-is not house Grafana. ^00000065
+is not house Grafana. ^00000067
 
 WF-041 Agent observe
 Grafana MCP over HTTP/SSE
 disable-write
 Laptop Grafana uses
-the same datasources ^00000067
+the same datasources ^00000069
 
 WF-042 Status without SSH
 Jenkins job status
@@ -135,23 +140,16 @@ Deploy status and info SHA
 Gatling trigger and status
 Playwright MCP on demand
 Postgres read-only
-Catalog health over HTTPS ^00000069
+Catalog health over HTTPS ^00000071
 
 WF-049 Deploy trigger
 Mac mini worker talks to
 loopback Jenkins
 Not a Cloud VM reaching
 Jenkins on the internet
-Not GitHub Actions SSH ^00000071
+Not GitHub Actions SSH ^00000073
 
-WF-052 CI checkout
-Dedicated Jenkins
-checkout directory
-Recreate Jenkins so
-the mount exists
-Not the primary clone ^00000073
-
-WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in the running area. ^00000078
+WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in the running area. ^00000077
 
 ## Drawing
 ```json
@@ -2015,10 +2013,10 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000054",
       "type": "text",
-      "x": 386.79999999999995,
-      "y": 785.0,
-      "width": 246.40000000000003,
-      "height": 100.0,
+      "x": 407.6,
+      "y": 795.0,
+      "width": 184.8,
+      "height": 80.0,
       "angle": 0,
       "strokeColor": "#1a1a1a",
       "backgroundColor": "transparent",
@@ -2038,13 +2036,13 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "Playwright cron\nEvery 6 hours\nagainst fishing-journals.com\nNot a merge gate\nWF-011",
+      "text": "WF-052 CI checkout\nDedicated CI checkout\nMount is in use\nNot the primary clone",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000053",
-      "originalText": "Playwright cron\nEvery 6 hours\nagainst fishing-journals.com\nNot a merge gate\nWF-011",
+      "originalText": "WF-052 CI checkout\nDedicated CI checkout\nMount is in use\nNot the primary clone",
       "autoResize": true,
       "lineHeight": 1.25
     },
@@ -2053,14 +2051,14 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "type": "rectangle",
       "x": 360,
       "y": 760,
-      "width": 300,
+      "width": 280,
       "height": 150,
       "angle": 0,
       "strokeColor": "#2b8a3e",
       "backgroundColor": "#d3f9d8",
       "fillStyle": "solid",
       "strokeWidth": 2,
-      "strokeStyle": "dashed",
+      "strokeStyle": "solid",
       "roughness": 0,
       "opacity": 100,
       "groupIds": [],
@@ -2085,10 +2083,10 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000056",
       "type": "text",
-      "x": 745.6,
+      "x": 698.8,
       "y": 785.0,
-      "width": 228.8,
-      "height": 120.0,
+      "width": 246.40000000000003,
+      "height": 100.0,
       "angle": 0,
       "strokeColor": "#1a1a1a",
       "backgroundColor": "transparent",
@@ -2108,23 +2106,23 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "Gatling trickle and weekly\nNot a merge load test\nFail marks Jenkins red\nHouse Alertmanager fires\nLeftover email stays muted\nWF-045",
+      "text": "Playwright cron\nEvery 6 hours\nagainst fishing-journals.com\nNot a merge gate\nWF-011",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000055",
-      "originalText": "Gatling trickle and weekly\nNot a merge load test\nFail marks Jenkins red\nHouse Alertmanager fires\nLeftover email stays muted\nWF-045",
+      "originalText": "Playwright cron\nEvery 6 hours\nagainst fishing-journals.com\nNot a merge gate\nWF-011",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
       "id": "00000055",
       "type": "rectangle",
-      "x": 700,
+      "x": 672,
       "y": 760,
-      "width": 320,
-      "height": 170,
+      "width": 300,
+      "height": 150,
       "angle": 0,
       "strokeColor": "#2b8a3e",
       "backgroundColor": "#d3f9d8",
@@ -2155,10 +2153,10 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000058",
       "type": "text",
-      "x": 1101.2,
-      "y": 790.0,
-      "width": 237.60000000000002,
-      "height": 100.0,
+      "x": 1049.6,
+      "y": 785.0,
+      "width": 228.8,
+      "height": 120.0,
       "angle": 0,
       "strokeColor": "#1a1a1a",
       "backgroundColor": "transparent",
@@ -2178,29 +2176,29 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "mock-prod signal\nOn main only, after\nunit, catalog, web, stack,\nchaos, and zap succeed\nVisible main-is-green check",
+      "text": "Gatling trickle and weekly\nNot a merge load test\nFail marks Jenkins red\nHouse Alertmanager fires\nLeftover email stays muted\nWF-045",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000057",
-      "originalText": "mock-prod signal\nOn main only, after\nunit, catalog, web, stack,\nchaos, and zap succeed\nVisible main-is-green check",
+      "originalText": "Gatling trickle and weekly\nNot a merge load test\nFail marks Jenkins red\nHouse Alertmanager fires\nLeftover email stays muted\nWF-045",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
       "id": "00000057",
       "type": "rectangle",
-      "x": 1060,
+      "x": 1004,
       "y": 760,
       "width": 320,
-      "height": 160,
+      "height": 170,
       "angle": 0,
       "strokeColor": "#2b8a3e",
       "backgroundColor": "#d3f9d8",
       "fillStyle": "solid",
       "strokeWidth": 2,
-      "strokeStyle": "solid",
+      "strokeStyle": "dashed",
       "roughness": 0,
       "opacity": 100,
       "groupIds": [],
@@ -2223,9 +2221,79 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "locked": false
     },
     {
-      "id": "00000059",
+      "id": "00000060",
       "type": "text",
-      "x": 1420,
+      "x": 1397.2,
+      "y": 790.0,
+      "width": 237.60000000000002,
+      "height": 100.0,
+      "angle": 0,
+      "strokeColor": "#1a1a1a",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 0,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": null,
+      "seed": 59820,
+      "version": 2,
+      "versionNonce": 7860,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1750000000000,
+      "link": null,
+      "locked": false,
+      "text": "mock-prod signal\nOn main only, after\nunit, catalog, web, stack,\nchaos, and zap succeed\nVisible main-is-green check",
+      "fontSize": 16,
+      "fontFamily": 2,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "00000059",
+      "originalText": "mock-prod signal\nOn main only, after\nunit, catalog, web, stack,\nchaos, and zap succeed\nVisible main-is-green check",
+      "autoResize": true,
+      "lineHeight": 1.25
+    },
+    {
+      "id": "00000059",
+      "type": "rectangle",
+      "x": 1356,
+      "y": 760,
+      "width": 320,
+      "height": 160,
+      "angle": 0,
+      "strokeColor": "#2b8a3e",
+      "backgroundColor": "#d3f9d8",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 0,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": {
+        "type": 3
+      },
+      "seed": 58823,
+      "version": 2,
+      "versionNonce": 7729,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "id": "00000060",
+          "type": "text"
+        }
+      ],
+      "updated": 1750000000000,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "00000061",
+      "type": "text",
+      "x": 1710,
       "y": 800,
       "width": 308.0,
       "height": 40.0,
@@ -2240,9 +2308,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "groupIds": [],
       "frameId": null,
       "roundness": null,
-      "seed": 58823,
+      "seed": 60817,
       "version": 2,
-      "versionNonce": 7729,
+      "versionNonce": 7991,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1750000000000,
@@ -2259,7 +2327,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "lineHeight": 1.25
     },
     {
-      "id": "00000060",
+      "id": "00000062",
       "type": "arrow",
       "x": 415.0,
       "y": 569.0,
@@ -2278,9 +2346,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "roundness": {
         "type": 2
       },
-      "seed": 59820,
+      "seed": 61814,
       "version": 2,
-      "versionNonce": 7860,
+      "versionNonce": 8122,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1750000000000,
@@ -2303,7 +2371,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "endArrowhead": "arrow"
     },
     {
-      "id": "00000061",
+      "id": "00000063",
       "type": "rectangle",
       "x": 24,
       "y": 1100,
@@ -2322,9 +2390,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "roundness": {
         "type": 3
       },
-      "seed": 60817,
+      "seed": 62811,
       "version": 2,
-      "versionNonce": 7991,
+      "versionNonce": 8253,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1750000000000,
@@ -2332,7 +2400,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "locked": false
     },
     {
-      "id": "00000062",
+      "id": "00000064",
       "type": "text",
       "x": 44,
       "y": 1114,
@@ -2349,9 +2417,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "groupIds": [],
       "frameId": null,
       "roundness": null,
-      "seed": 61814,
+      "seed": 63808,
       "version": 2,
-      "versionNonce": 8122,
+      "versionNonce": 8384,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1750000000000,
@@ -2368,7 +2436,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "lineHeight": 1.25
     },
     {
-      "id": "00000063",
+      "id": "00000065",
       "type": "text",
       "x": 280,
       "y": 1122,
@@ -2376,42 +2444,6 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "height": 20.0,
       "angle": 0,
       "strokeColor": "#364036",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 1,
-      "strokeStyle": "solid",
-      "roughness": 0,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "roundness": null,
-      "seed": 62811,
-      "version": 2,
-      "versionNonce": 8253,
-      "isDeleted": false,
-      "boundElements": null,
-      "updated": 1750000000000,
-      "link": null,
-      "locked": false,
-      "text": "Filed and not finished. No new platform, no second fleet, no production Environment.",
-      "fontSize": 16,
-      "fontFamily": 2,
-      "textAlign": "left",
-      "verticalAlign": "top",
-      "containerId": null,
-      "originalText": "Filed and not finished. No new platform, no second fleet, no production Environment.",
-      "autoResize": true,
-      "lineHeight": 1.25
-    },
-    {
-      "id": "00000065",
-      "type": "text",
-      "x": 135.2,
-      "y": 1205.0,
-      "width": 325.6,
-      "height": 120.0,
-      "angle": 0,
-      "strokeColor": "#5c3b00",
       "backgroundColor": "transparent",
       "fillStyle": "solid",
       "strokeWidth": 1,
@@ -2429,57 +2461,23 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "WF-041 House Prometheus and Loki\nCatalog metrics and logs from\nfishing-journals.com\nPrivate. Not on the public internet.\nLeftover grafana.fishing-journals.com\nis not house Grafana.",
+      "text": "Filed and not finished. No new platform, no second fleet, no production Environment.",
       "fontSize": 16,
       "fontFamily": 2,
-      "textAlign": "center",
-      "verticalAlign": "middle",
-      "containerId": "00000064",
-      "originalText": "WF-041 House Prometheus and Loki\nCatalog metrics and logs from\nfishing-journals.com\nPrivate. Not on the public internet.\nLeftover grafana.fishing-journals.com\nis not house Grafana.",
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "containerId": null,
+      "originalText": "Filed and not finished. No new platform, no second fleet, no production Environment.",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
-      "id": "00000064",
-      "type": "rectangle",
-      "x": 48,
-      "y": 1170,
-      "width": 500,
-      "height": 190,
-      "angle": 0,
-      "strokeColor": "#e67700",
-      "backgroundColor": "#fff3bf",
-      "fillStyle": "solid",
-      "strokeWidth": 2,
-      "strokeStyle": "solid",
-      "roughness": 0,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "roundness": {
-        "type": 3
-      },
-      "seed": 63808,
-      "version": 2,
-      "versionNonce": 8384,
-      "isDeleted": false,
-      "boundElements": [
-        {
-          "id": "00000065",
-          "type": "text"
-        }
-      ],
-      "updated": 1750000000000,
-      "link": null,
-      "locked": false
-    },
-    {
       "id": "00000067",
       "type": "text",
-      "x": 740.0,
-      "y": 1215.0,
-      "width": 220.00000000000003,
-      "height": 100.0,
+      "x": 205.2,
+      "y": 1205.0,
+      "width": 325.6,
+      "height": 120.0,
       "angle": 0,
       "strokeColor": "#5c3b00",
       "backgroundColor": "transparent",
@@ -2499,22 +2497,22 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "WF-041 Agent observe\nGrafana MCP over HTTP/SSE\ndisable-write\nLaptop Grafana uses\nthe same datasources",
+      "text": "WF-041 House Prometheus and Loki\nCatalog metrics and logs from\nfishing-journals.com\nPrivate. Not on the public internet.\nLeftover grafana.fishing-journals.com\nis not house Grafana.",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000066",
-      "originalText": "WF-041 Agent observe\nGrafana MCP over HTTP/SSE\ndisable-write\nLaptop Grafana uses\nthe same datasources",
+      "originalText": "WF-041 House Prometheus and Loki\nCatalog metrics and logs from\nfishing-journals.com\nPrivate. Not on the public internet.\nLeftover grafana.fishing-journals.com\nis not house Grafana.",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
       "id": "00000066",
       "type": "rectangle",
-      "x": 600,
+      "x": 48,
       "y": 1170,
-      "width": 500,
+      "width": 640,
       "height": 190,
       "angle": 0,
       "strokeColor": "#e67700",
@@ -2546,10 +2544,10 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000069",
       "type": "text",
-      "x": 1287.6,
-      "y": 1210.0,
-      "width": 228.8,
-      "height": 140.0,
+      "x": 970.0,
+      "y": 1215.0,
+      "width": 220.00000000000003,
+      "height": 100.0,
       "angle": 0,
       "strokeColor": "#5c3b00",
       "backgroundColor": "transparent",
@@ -2569,23 +2567,23 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "WF-042 Status without SSH\nJenkins job status\nDeploy status and info SHA\nGatling trigger and status\nPlaywright MCP on demand\nPostgres read-only\nCatalog health over HTTPS",
+      "text": "WF-041 Agent observe\nGrafana MCP over HTTP/SSE\ndisable-write\nLaptop Grafana uses\nthe same datasources",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000068",
-      "originalText": "WF-042 Status without SSH\nJenkins job status\nDeploy status and info SHA\nGatling trigger and status\nPlaywright MCP on demand\nPostgres read-only\nCatalog health over HTTPS",
+      "originalText": "WF-041 Agent observe\nGrafana MCP over HTTP/SSE\ndisable-write\nLaptop Grafana uses\nthe same datasources",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
       "id": "00000068",
       "type": "rectangle",
-      "x": 1152,
+      "x": 760,
       "y": 1170,
-      "width": 500,
-      "height": 220,
+      "width": 640,
+      "height": 190,
       "angle": 0,
       "strokeColor": "#e67700",
       "backgroundColor": "#fff3bf",
@@ -2616,10 +2614,10 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000071",
       "type": "text",
-      "x": 1848.4,
+      "x": 1677.6,
       "y": 1210.0,
-      "width": 211.20000000000002,
-      "height": 120.0,
+      "width": 228.8,
+      "height": 140.0,
       "angle": 0,
       "strokeColor": "#5c3b00",
       "backgroundColor": "transparent",
@@ -2639,23 +2637,23 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "WF-049 Deploy trigger\nMac mini worker talks to\nloopback Jenkins\nNot a Cloud VM reaching\nJenkins on the internet\nNot GitHub Actions SSH",
+      "text": "WF-042 Status without SSH\nJenkins job status\nDeploy status and info SHA\nGatling trigger and status\nPlaywright MCP on demand\nPostgres read-only\nCatalog health over HTTPS",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000070",
-      "originalText": "WF-049 Deploy trigger\nMac mini worker talks to\nloopback Jenkins\nNot a Cloud VM reaching\nJenkins on the internet\nNot GitHub Actions SSH",
+      "originalText": "WF-042 Status without SSH\nJenkins job status\nDeploy status and info SHA\nGatling trigger and status\nPlaywright MCP on demand\nPostgres read-only\nCatalog health over HTTPS",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
       "id": "00000070",
       "type": "rectangle",
-      "x": 1704,
+      "x": 1472,
       "y": 1170,
-      "width": 500,
-      "height": 200,
+      "width": 640,
+      "height": 220,
       "angle": 0,
       "strokeColor": "#e67700",
       "backgroundColor": "#fff3bf",
@@ -2686,9 +2684,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000073",
       "type": "text",
-      "x": 2413.6,
-      "y": 1205.0,
-      "width": 184.8,
+      "x": 2398.4,
+      "y": 1210.0,
+      "width": 211.20000000000002,
       "height": 120.0,
       "angle": 0,
       "strokeColor": "#5c3b00",
@@ -2709,23 +2707,23 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "updated": 1750000000000,
       "link": null,
       "locked": false,
-      "text": "WF-052 CI checkout\nDedicated Jenkins\ncheckout directory\nRecreate Jenkins so\nthe mount exists\nNot the primary clone",
+      "text": "WF-049 Deploy trigger\nMac mini worker talks to\nloopback Jenkins\nNot a Cloud VM reaching\nJenkins on the internet\nNot GitHub Actions SSH",
       "fontSize": 16,
       "fontFamily": 2,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "00000072",
-      "originalText": "WF-052 CI checkout\nDedicated Jenkins\ncheckout directory\nRecreate Jenkins so\nthe mount exists\nNot the primary clone",
+      "originalText": "WF-049 Deploy trigger\nMac mini worker talks to\nloopback Jenkins\nNot a Cloud VM reaching\nJenkins on the internet\nNot GitHub Actions SSH",
       "autoResize": true,
       "lineHeight": 1.25
     },
     {
       "id": "00000072",
       "type": "rectangle",
-      "x": 2256,
+      "x": 2184,
       "y": 1170,
-      "width": 500,
-      "height": 190,
+      "width": 640,
+      "height": 200,
       "angle": 0,
       "strokeColor": "#e67700",
       "backgroundColor": "#fff3bf",
@@ -2756,9 +2754,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000074",
       "type": "arrow",
-      "x": 552,
+      "x": 692,
       "y": 1265.0,
-      "width": 44,
+      "width": 64,
       "height": 1,
       "angle": 0,
       "strokeColor": "#e67700",
@@ -2787,7 +2785,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
           0
         ],
         [
-          44,
+          64,
           0.01
         ]
       ],
@@ -2800,9 +2798,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000075",
       "type": "arrow",
-      "x": 1104,
+      "x": 1404,
       "y": 1265.0,
-      "width": 44,
+      "width": 64,
       "height": 15.0,
       "angle": 0,
       "strokeColor": "#e67700",
@@ -2831,7 +2829,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
           0
         ],
         [
-          44,
+          64,
           15.0
         ]
       ],
@@ -2844,9 +2842,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     {
       "id": "00000076",
       "type": "arrow",
-      "x": 1656,
+      "x": 2116,
       "y": 1280.0,
-      "width": 44,
+      "width": 64,
       "height": 10.0,
       "angle": 0,
       "strokeColor": "#e67700",
@@ -2875,7 +2873,7 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
           0
         ],
         [
-          44,
+          64,
           -10.0
         ]
       ],
@@ -2887,50 +2885,6 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
     },
     {
       "id": "00000077",
-      "type": "arrow",
-      "x": 2208,
-      "y": 1270.0,
-      "width": 44,
-      "height": 5.0,
-      "angle": 0,
-      "strokeColor": "#e67700",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 2,
-      "strokeStyle": "solid",
-      "roughness": 0,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "roundness": {
-        "type": 2
-      },
-      "seed": 76769,
-      "version": 2,
-      "versionNonce": 10087,
-      "isDeleted": false,
-      "boundElements": null,
-      "updated": 1750000000000,
-      "link": null,
-      "locked": false,
-      "points": [
-        [
-          0,
-          0
-        ],
-        [
-          44,
-          -5.0
-        ]
-      ],
-      "lastCommittedPoint": null,
-      "startBinding": null,
-      "endBinding": null,
-      "startArrowhead": null,
-      "endArrowhead": "arrow"
-    },
-    {
-      "id": "00000078",
       "type": "text",
       "x": 48,
       "y": 1512,
@@ -2947,9 +2901,9 @@ WF-043 chaos, WF-044 zap, WF-011 cron, and the WF-045 fail path are already in t
       "groupIds": [],
       "frameId": null,
       "roundness": null,
-      "seed": 77766,
+      "seed": 76769,
       "version": 2,
-      "versionNonce": 10218,
+      "versionNonce": 10087,
       "isDeleted": false,
       "boundElements": null,
       "updated": 1750000000000,
