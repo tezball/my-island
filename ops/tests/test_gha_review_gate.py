@@ -12,6 +12,7 @@ from gha_review_gate import (
     latest_vote_by_user,
     pick_pr_number,
     poll_ready,
+    should_mark_ready,
 )
 
 REPO = Path(__file__).resolve().parents[2]
@@ -130,6 +131,40 @@ def test_waiting_for_review_when_ci_green_no_approve() -> None:
     assert decision.reason == "waiting for review"
 
 
+def test_green_same_repo_draft_is_marked_ready() -> None:
+    draft = _pr(draft=True)
+    assert should_mark_ready(pr=draft, checks_green=True, check_runs=None)
+    assert should_mark_ready(
+        pr=draft,
+        checks_green=False,
+        check_runs=[
+            _run("unit tests"),
+            _run("catalog tests"),
+            _run("web tests"),
+            _run("compose stack"),
+        ],
+    )
+    pending = [
+        _run("unit tests"),
+        _run("catalog tests"),
+        _run("web tests"),
+        _run("compose stack", status="in_progress", conclusion=""),
+    ]
+    assert not should_mark_ready(pr=draft, checks_green=False, check_runs=pending)
+    assert not should_mark_ready(pr=_pr(draft=True, fork=True), checks_green=True, check_runs=None)
+    assert not should_mark_ready(pr=_pr(), checks_green=True, check_runs=None)
+    ready = dict(draft)
+    ready["draft"] = False
+    decision = decide(
+        pr=ready,
+        reviews=[_review("cursor[bot]", APPROVED)],
+        head_sha="abc",
+        checks_green=True,
+        check_runs=None,
+    )
+    assert decision.action == "merge"
+
+
 def test_draft_and_fork_skip() -> None:
     draft = decide(
         pr=_pr(draft=True),
@@ -221,19 +256,46 @@ def _green_runs() -> list[dict]:
     ]
 
 
-def test_poll_skips_draft_and_fork_without_loading() -> None:
+def test_poll_skips_fork_without_loading_and_keeps_a_red_draft() -> None:
     loaded: list[int] = []
+    marked: list[int] = []
     merged: list[tuple[int, str]] = []
+
+    def load(number: int) -> tuple[dict, list[dict], list[dict]]:
+        loaded.append(number)
+        runs = _green_runs()
+        runs[-1] = _run("compose stack", conclusion="failure", rid=4)
+        return _numbered(number, draft=True), [], runs
+
     lines = poll_ready(
         [_numbered(1, draft=True), _numbered(2, fork=True)],
-        lambda number: loaded.append(number),
+        load,
         lambda number, sha: merged.append((number, sha)),
         lambda number: None,
+        mark=lambda number: marked.append(number),
     )
-    assert loaded == []
+    assert loaded == [1]
+    assert marked == []
     assert merged == []
     assert any("draft" in line for line in lines)
     assert any("fork" in line for line in lines)
+
+
+def test_poll_marks_green_same_repo_draft_ready() -> None:
+    marked: list[int] = []
+    merged: list[tuple[int, str]] = []
+    pr = _numbered(9, draft=True)
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        mark=lambda number: marked.append(number),
+    )
+    assert marked == [9]
+    assert merged == [(9, "abc")]
+    assert any("marked ready" in line for line in lines)
+    assert any("squash-merged" in line for line in lines)
 
 
 def test_poll_waits_when_checks_green_but_no_approve() -> None:

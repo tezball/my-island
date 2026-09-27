@@ -1,7 +1,8 @@
 # Same gate as automerge.yml (ops/scripts/gha_review_gate.py).
 # Marking a draft ready does not fire workflow_run or pull_request_review,
 # so CI can already be green and the merge job never ran. This poll retries
-# that gate. It does not run the four test jobs.
+# that gate, including draft: false when the four checks already succeeded.
+# It does not run the four test jobs.
 name: Automerge poll
 
 on:

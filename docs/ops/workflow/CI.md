@@ -52,7 +52,7 @@ Vitest is a merge gate. Merge CI: catalog API, Chaos, ZAP. Playwright is cron + 
 - Branch: `wf/<id>-slug` or `prd/<id>-slug` from a sibling worktree ([[ops/workflow/WORKTREES]]); Cloud Agent `cursor/…`.
 - Title: `<id>: <ticket title>`.
 - Body: links `docs/ops/tickets/<id>.md` and `docs/ops/plans/<id>.md`.
-- CI must be green before merge. Ready same-repo PRs are squash-merged by the sibling GHA `Automerge` workflow (`workflow_run` after `CI` succeeds, or `pull_request_review` submitted) when the four test jobs succeeded **and** a current `APPROVED` exists from `cursor` / a non-author who is not `github-actions[bot]` ([[ops/tickets/WF-050]]). Merge is **not** a job in `ci.yml`, so it does not appear queued at t=0. If CI is green but that Approve is missing, `automerge` succeeds as `waiting for review` — it does **not** fail the PR red. Drafts and forks are skipped. Chat agents do not merge. Actions does not `createReview`.
+- CI must be green before merge. Ready same-repo PRs are squash-merged by the sibling GHA `Automerge` workflow (`workflow_run` after `CI` succeeds, or `pull_request_review` submitted) when the four test jobs succeeded **and** a current `APPROVED` exists from `cursor` / a non-author who is not `github-actions[bot]` ([[ops/tickets/WF-050]]). Merge is **not** a job in `ci.yml`, so it does not appear queued at t=0. If CI is green but that Approve is missing, `automerge` succeeds as `waiting for review` — it does **not** fail the PR red. A same-repo draft is marked ready when those four checks succeeded. Forks stay drafts. Chat agents do not merge. Actions does not `createReview`.
 - After merge: confirm Actions on **`main`** are green. PR green is not the finish line — if `main` goes red, open a fix PR and re-run the loop ([[ops/workflow/PIPELINE]]).
 
 ## Adding a check
@@ -74,7 +74,7 @@ Merge is a **sibling** workflow [`.github/workflows/automerge.yml`](../../../.gi
 
 Separate workflow **names** mean a review event cannot cancel in-flight `unit` / `catalog` / `web` / `stack`. `Automerge` does not define those four jobs (no skip-propagation).
 
-Marking a draft ready does not fire either trigger, so a PR whose four checks already succeeded never reaches this job. [`.github/workflows/automerge-poll.yml`](../../../.github/workflows/automerge-poll.yml) lists open pull requests every five minutes (`*/5 * * * *`, and `workflow_dispatch`) and runs the same script. It does not re-run `unit tests`, `catalog tests`, `web tests`, or `compose stack`. Jenkins commit statuses reuse those context names; the script reads check-runs only, so a failing Jenkins status does not hide a green Actions check-run. The latest check-run of each name still wins — a later failed check-run named `compose stack` blocks. The poll does not `createReview`.
+Marking a draft ready does not fire either trigger, so a PR whose four checks already succeeded never reaches this job. [`.github/workflows/automerge-poll.yml`](../../../.github/workflows/automerge-poll.yml) lists open pull requests every five minutes (`*/5 * * * *`, and `workflow_dispatch`) and runs the same script, including `draft: false` when the four checks already succeeded on a same-repo pull request. It does not re-run `unit tests`, `catalog tests`, `web tests`, or `compose stack`. Jenkins commit statuses reuse those context names; the script reads check-runs only, so a failing Jenkins status does not hide a green Actions check-run. The latest check-run of each name still wins — a later failed check-run named `compose stack` blocks. The poll does not `createReview`.
 
 Ready same-repo non-draft PRs squash-merge only when those four **job names** succeeded on the head SHA **and** a GitHub review on that SHA has state `APPROVED` (create-review event is `APPROVE`) from `cursor` / any actor that is **not** `github-actions[bot]` and **not** the PR author. `CHANGES_REQUESTED` blocks. Stale Approve (`commit_id` ≠ head) does not count. Actions does not `createReview`.
 
@@ -98,6 +98,14 @@ The existing automation **Untitled** must **not** fire on Pull request opened or
 | Do | Review the diff against the linked ticket/plan. Submit **Approve** or **Request changes**. Nits go in the **review body only** — no inline threads for nits. |
 | Do not | Merge, push, start before the four jobs above are success. Prompt must **no-op** if `unit tests` / `catalog tests` / `web tests` / `compose stack` are not all success. |
 | Must not be a required GitHub check | `Cursor Automation: Untitled`, `automerge`, `auto-review approve merge` |
+
+## PR loop (WF-054)
+
+Review, failed Actions, and review comments are one Cursor automation, **my-island PR loop**, specified in [[ops/workflow/PR-LOOP]]. It uses **CI completed**, not only **Workflow run completed**, because `CI` runs on `pull_request` and that workflow-run trigger does not start for `pull_request`. A cron `*/3 * * * *` is the testing backstop when the event is dropped (including pushes by `cursor[bot]`).
+
+The automation may Approve as `cursor` after the four checks are success. It does not merge. It does not push `main`. A Jenkins commit status is not a failed required check. Squash-merge stays in `automerge.yml`.
+
+Agents open pull requests as drafts. When the CI workflow succeeds, `automerge` sets `draft: false` on a same-repo pull request, then applies the review gate. Forks stay drafts. A failed or pending check stays a draft. Merge still requires the four checks and a valid non-author `APPROVED`.
 
 ## Required GitHub checks
 

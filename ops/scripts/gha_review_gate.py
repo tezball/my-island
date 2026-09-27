@@ -145,6 +145,40 @@ def four_checks_success(runs: list[dict[str, Any]]) -> tuple[bool, str]:
     return True, "four checks success"
 
 
+def _is_fork(pr: dict[str, Any]) -> bool:
+    head = pr.get("head") if isinstance(pr.get("head"), dict) else {}
+    base = pr.get("base") if isinstance(pr.get("base"), dict) else {}
+    head_repo = head.get("repo") if isinstance(head.get("repo"), dict) else {}
+    base_repo = base.get("repo") if isinstance(base.get("repo"), dict) else {}
+    head_full = str(head_repo.get("full_name") or "")
+    base_full = str(base_repo.get("full_name") or "")
+    return bool(head_full and base_full and head_full != base_full)
+
+
+def should_mark_ready(
+    *,
+    pr: dict[str, Any],
+    checks_green: bool,
+    check_runs: list[dict[str, Any]] | None,
+) -> bool:
+    """A same-repo draft becomes ready only after the four checks succeeded.
+
+    Agents open pull requests as drafts. CI still runs. This gate used to
+    skip the draft and never come back, so a green PR stayed a draft.
+    Forks stay drafts. A failed or pending check stays a draft.
+    """
+    if not pr.get("draft"):
+        return False
+    if pr.get("merged") or pr.get("merged_at"):
+        return False
+    if _is_fork(pr):
+        return False
+    if checks_green:
+        return True
+    ok, _why = four_checks_success(check_runs or [])
+    return ok
+
+
 def decide(
     *,
     pr: dict[str, Any],
@@ -157,13 +191,7 @@ def decide(
         return Decision("skip", "already merged")
     if pr.get("draft"):
         return Decision("skip", "draft — skip")
-    head = pr.get("head") if isinstance(pr.get("head"), dict) else {}
-    base = pr.get("base") if isinstance(pr.get("base"), dict) else {}
-    head_repo = head.get("repo") if isinstance(head.get("repo"), dict) else {}
-    base_repo = base.get("repo") if isinstance(base.get("repo"), dict) else {}
-    head_full = str(head_repo.get("full_name") or "")
-    base_full = str(base_repo.get("full_name") or "")
-    if head_full and base_full and head_full != base_full:
+    if _is_fork(pr):
         return Decision("skip", "fork — skip")
 
     if not checks_green:
@@ -260,6 +288,12 @@ def fetch_check_runs(owner: str, repo: str, sha: str, token: str) -> list[dict[s
     return out
 
 
+def mark_ready(owner: str, repo: str, number: int, token: str) -> None:
+    """Convert a draft to ready for review. REST draft=false."""
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{number}"
+    _github_request("PATCH", url, token, {"draft": False})
+
+
 def squash_merge(owner: str, repo: str, number: int, sha: str, token: str) -> str:
     url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{number}/merge"
     payload, _ = _github_request(
@@ -311,7 +345,7 @@ def _head_sha(pr: dict[str, Any]) -> str:
 
 
 def list_open_pulls(owner: str, repo: str, token: str) -> list[dict[str, Any]]:
-    """Open pull requests only. Drafts stay in the list; the gate skips them."""
+    """Open pull requests only. The poll applies the same ready and merge gate."""
     url = (
         f"https://api.github.com/repos/{owner}/{repo}/pulls"
         "?state=open&per_page=100"
@@ -331,11 +365,15 @@ def poll_ready(
     load: Any,
     merge: Any,
     dispatch: Any,
+    mark: Any | None = None,
 ) -> list[str]:
-    """Same ``decide`` path as one-PR automerge. Merge errors do not stop the list.
+    """Same ready and ``decide`` path as one-PR automerge.
 
-    Drafts, forks, and already-merged PRs are skipped before check-runs are
-    fetched. This does not approve, close, or update the branch.
+    Forks and already-merged PRs are skipped before check-runs are fetched.
+    A same-repo draft is marked ready when the four checks succeeded, then
+    the review gate runs. A failed or pending check stays a draft. Merge
+    errors do not stop the list. This does not approve, close, or update
+    the branch.
     """
     lines: list[str] = []
     for row in rows:
@@ -350,7 +388,7 @@ def poll_ready(
             checks_green=True,
             check_runs=None,
         )
-        if preview.action == "skip":
+        if preview.action == "skip" and not row.get("draft"):
             lines.append(f"#{number} {preview.reason}")
             continue
         try:
@@ -359,12 +397,24 @@ def poll_ready(
             lines.append(f"#{number} merge skipped: {exc}")
             continue
         head_sha = _head_sha(pr) if isinstance(pr, dict) else ""
+        current = pr if isinstance(pr, dict) else row
+        runs_list = runs if isinstance(runs, list) else []
+        if should_mark_ready(pr=current, checks_green=False, check_runs=runs_list):
+            try:
+                if mark is not None:
+                    mark(number)
+            except GateError as exc:
+                lines.append(f"#{number} ready skipped: {exc}")
+                continue
+            current = dict(current)
+            current["draft"] = False
+            lines.append(f"#{number} marked ready")
         decision = decide(
-            pr=pr if isinstance(pr, dict) else row,
+            pr=current,
             reviews=reviews,
             head_sha=head_sha,
             checks_green=False,
-            check_runs=runs,
+            check_runs=runs_list,
         )
         lines.append(f"#{number} {decision.reason}")
         if decision.action != "merge":
@@ -405,7 +455,10 @@ def poll_open(owner: str, repo: str, token: str) -> int:
     def dispatch(_number: int) -> None:
         dispatch_main_ci(owner, repo, token)
 
-    for line in poll_ready(rows, load, merge, dispatch):
+    def mark(number: int) -> None:
+        mark_ready(owner, repo, number, token)
+
+    for line in poll_ready(rows, load, merge, dispatch, mark):
         print(line)
     return 0
 
@@ -447,6 +500,11 @@ def main(argv: list[str] | None = None) -> int:
         head_sha = str((pr.get("head") or {}).get("sha") or "") or head_sha_env
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)
+        if should_mark_ready(pr=pr, checks_green=checks_green, check_runs=check_runs):
+            mark_ready(owner, repo, number, token)
+            pr = dict(pr)
+            pr["draft"] = False
+            print(f"#{number} marked ready")
         decision = decide(
             pr=pr,
             reviews=reviews,
