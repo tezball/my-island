@@ -24,6 +24,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[MCP]] | Server pack and prod observe rules |
 | [[AGENT_DX]] | Engineer toolbox: skills, slash, MCP, IntelliJ — with examples |
 | [[AUTOMATIONS]] | Cursor cloud jobs |
+| [[PR-LOOP]] | Review, CI fix, comment fix; merge stays Automerge |
 | [[SAFETY]] | Non-negotiables |
 | [[agent-pipeline]] | Living canvas: automated vs not |
 | [[e2e-place-stub]] | Place listing stub e2e workshop (living canvas) |

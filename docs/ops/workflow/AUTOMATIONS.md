@@ -35,6 +35,16 @@ Detail and required-check names: [[ops/workflow/CI]].
 | Does | Same as reviewer, shorter: only the new commits |
 | Does not | Merge |
 
+## 4. PR loop (review, failed CI, review comments)
+
+| | |
+|---|---|
+| Name | `my-island PR loop` |
+| When | **CI completed** (any conclusion, PRs, not drafts). Also PR review submitted, PR review comment, comment added, and cron `*/15 * * * *` so a `cursor[bot]` push or a `pull_request`-only Actions run is not missed. |
+| Does | One PR. Fix a failed Actions check-run, or fix `CHANGES_REQUESTED` / review comments, or Approve / Request changes when the four checks are green. Spec and prompt: [[ops/workflow/PR-LOOP]]. |
+| Does not | Merge, push `main`, treat a Jenkins commit status as failed CI, open a second PR, approve before the four checks are success |
+| Merge | Still [[ops/tickets/WF-050]] `automerge.yml`. This job does not squash-merge. |
+
 ## Enablement
 
-These cannot be fully saved from chat until you confirm the draft in the Automations UI. Chat **cannot set** the Untitled trigger from git — Terry clicks **Workflow run completed** / workflow `CI` / success only. Local loop works without them: open Cursor and say “work the next ready ticket”.
+These cannot be fully saved from chat until you confirm the draft in the Automations UI. Chat **cannot set** the Untitled trigger from git — Terry clicks **Workflow run completed** / workflow `CI` / success only. The PR loop row is the same limit: paste [[ops/workflow/PR-LOOP]] and Activate. Local loop works without them: open Cursor and say “work the next ready ticket”.

@@ -37,6 +37,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-034|PRD-034]] P0 Support self-serve and role homes
 - [ ] [[ops/tickets/PRD-035|PRD-035]] P0 Phone-first look and feel refactor
 - [ ] [[ops/tickets/PRD-031|PRD-031]] P1 Mobile place-detail home/back control
+- [ ] [[ops/tickets/WF-054|WF-054]] P1 Automate review, CI fix, and comment fix on every PR
 
 ## Doing
 
