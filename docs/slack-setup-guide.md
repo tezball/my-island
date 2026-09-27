@@ -2,7 +2,7 @@
 
 Follow these steps in order. Every name you type is in a copy-paste block. You do not choose names, channels, or app settings.
 
-You can finish Part 1 in Slack today. Part 2 is where the three webhook URLs would go in CI. Those paste spots are not in the repo yet. Part 2 tells you to stop and hand the step to an engineer.
+You can finish Part 1 in Slack today. The alerts webhook already has a paste spot: `SLACK_ALERTS_WEBHOOK` in `.env.example`, which loads `ops/observability/alertmanager.slack.yml` into `#alert`. Deploy (G) and pull-request failure (I) still stop before CI wiring. Those two paste spots are not in the repo yet.
 
 Use a computer. Open the Slack desktop app, or open https://app.slack.com in a browser. The app settings later use https://api.slack.com/apps in the same browser.
 
@@ -13,11 +13,11 @@ Send nothing. Create no second workspace. Create no extra channel. Post no test 
 | Item | Exact value |
 |---|---|
 | Workspace | The workspace this Cursor Slack connection already uses. Sidebar already shows `#all-my-island`, `#social`, and `#new-channel`. Organization name: `My-Island`. |
-| Channels, in this order | `#architecture`, `#product`, `#direction`, `#alerts`, `#deploy`, `#pr-failures` |
+| Channels, in this order | `#architecture`, `#product`, `#direction`, `#alert`, `#deploy`, `#pr-failures` |
 | Channel type | Private |
 | App name | `my-island-notify` |
 | App features | Incoming webhooks only |
-| Webhooks, in this order | one for `#deploy`, one for `#alerts`, one for `#pr-failures` |
+| Webhooks, in this order | one for `#deploy`, one for `#alert`, one for `#pr-failures` |
 | Deploy messages | Every result, pass or fail, one line |
 | `#pr-failures` | A red run on a pull request, and a red run on `main` |
 | Alert messages | A firing alert only. Nothing in this guide starts an agent. |
@@ -141,12 +141,12 @@ CEO sets company direction
 
 **Worked:** Header shows a lock and `#direction`.
 
-### B4. `#alerts`
+### B4. `#alert`
 
 Same clicks. Paste this into the name box:
 
 ```
-alerts
+alert
 ```
 
 Description, only if **Create** will not press:
@@ -155,7 +155,7 @@ Description, only if **Create** will not press:
 House alerts that are firing
 ```
 
-**Worked:** Header shows a lock and `#alerts`.
+**Worked:** Header shows a lock and `#alert`.
 
 ### B5. `#deploy`
 
@@ -187,7 +187,7 @@ Description, only if **Create** will not press:
 A required check went red
 ```
 
-**Worked:** Header shows a lock and `#pr-failures`. The sidebar now has all six, each with a lock: `#architecture`, `#product`, `#direction`, `#alerts`, `#deploy`, `#pr-failures`.
+**Worked:** Header shows a lock and `#pr-failures`. The sidebar now has all six, each with a lock: `#architecture`, `#product`, `#direction`, `#alert`, `#deploy`, `#pr-failures`.
 
 **A name in that list is missing:** Create only the missing one, using its step above. Keep the order if you still have more than one left.
 
@@ -211,14 +211,14 @@ from: <ceo|po|cto|eng|ci>  to: <po|cto|eng|record>  kind: <kind>
 | `feature` | `po` | `cto` | `#product` | `docs/ops/tickets/PRD-*.md` |
 | `architecture` | `cto` or `eng` | `eng`, `cto`, or `record` | `#architecture` | Ticket, plan, or pull request |
 | `deploy` | `ci` | `record` | `#deploy` | Jenkins `deploy-mock-prod` build URL |
-| `alert` | `ci` or `eng` | `eng` or `record` | `#alerts` | Grafana alert, or the `INC-*` once it exists |
+| `alert` | `ci` or `eng` | `eng` or `record` | `#alert` | Grafana alert, or the `INC-*` once it exists |
 | `pull-request failure` | `ci` | `eng` | `#pr-failures` | The pull request, or the Actions run on `main` |
 
 `to: record` means stop. The link is the company record.
 
-`#direction`, `#product`, and `#architecture` get these lines from a person, through the Cursor Slack connection, after the vault note exists. `#deploy`, `#alerts`, and `#pr-failures` get these lines from the three webhooks after an engineer wires CI. You do not paste a webhook message by hand today.
+`#direction`, `#product`, and `#architecture` get these lines from a person, through the Cursor Slack connection, after the vault note exists. `#alert` posts from house Alertmanager when `SLACK_ALERTS_WEBHOOK` is set. `#deploy` and `#pr-failures` get these lines from webhooks after an engineer wires CI. You do not paste a webhook message by hand today.
 
-A deploy line is posted for every result, pass or fail, one line. A failed smoke also gets one `kind: alert` line in `#alerts`. A `#pr-failures` line is posted when one required check is red on a pull request or on `main`.
+A deploy line is posted for every result, pass or fail, one line. A failed smoke also gets one `kind: alert` line in `#alert`. A `#pr-failures` line is posted when one required check is red on a pull request or on `main`.
 
 Copy-paste examples:
 
@@ -390,7 +390,7 @@ On **Basic Information**, do not click **Install to Workspace** and do not click
 
 ## F. Create the three webhooks
 
-Create them in this order: `#deploy`, then `#alerts`, then `#pr-failures`.
+Create them in this order: `#deploy`, then `#alert`, then `#pr-failures`.
 
 You must already be a member of the channel. You are, because you created it.
 
@@ -439,23 +439,23 @@ The URL is a secret. The saved place is the password manager. It does not go in 
 
 **The row’s channel is not `#deploy`:** Do not save that URL under the deploy name. Find the row whose channel is `#deploy`, and copy that URL.
 
-### F3. Webhook for `#alerts`
+### F3. Webhook for `#alert`
 
 Same clicks as F1. In the channel menu, type:
 
 ```
-alerts
+alert
 ```
 
-Click the locked row `#alerts`. Click **Authorize** (or **Allow**).
+Click the locked row `#alert`. Click **Authorize** (or **Allow**).
 
-**Worked:** **Webhook URLs for Your Workspace** now has two rows. One channel is `#deploy`. One channel is `#alerts`.
+**Worked:** **Webhook URLs for Your Workspace** now has two rows. One channel is `#deploy`. One channel is `#alert`.
 
-**The new row is a second `#deploy`:** You picked the wrong channel. On that new row, click the revoke or delete control Slack shows for that webhook (it may be a trash icon or **Remove**). Then repeat F3 and pick `#alerts`.
+**The new row is a second `#deploy`:** You picked the wrong channel. On that new row, click the revoke or delete control Slack shows for that webhook (it may be a trash icon or **Remove**). Then repeat F3 and pick `#alert`.
 
-### F4. Copy the `#alerts` URL
+### F4. Copy the `#alert` URL
 
-Copy only the URL on the row whose channel is `#alerts`.
+Copy only the URL on the row whose channel is `#alert`.
 
 New password-manager item. Paste this as the name:
 
@@ -477,7 +477,7 @@ pr-failures
 
 Click the locked row `#pr-failures`. Click **Authorize** (or **Allow**).
 
-**Worked:** Three rows. Channels are `#deploy`, `#alerts`, and `#pr-failures`.
+**Worked:** Three rows. Channels are `#deploy`, `#alert`, and `#pr-failures`.
 
 **#pr-failures is missing from the menu:** In Slack, open `#pr-failures` and confirm the lock in the header. Then repeat F5 from the **Incoming Webhooks** page.
 
@@ -505,7 +505,7 @@ my-island-notify pr-failures
 
 Slack’s own help shows a “Hello, world” post. Skip it. Do not click a **Send** or test button. The three channels stay empty.
 
-**Worked:** `#deploy`, `#alerts`, and `#pr-failures` have no new message from `my-island-notify`.
+**Worked:** `#deploy`, `#alert`, and `#pr-failures` have no new message from `my-island-notify`.
 
 ---
 
@@ -513,11 +513,11 @@ Slack’s own help shows a “Hello, world” post. Skip it. Do not click a **Se
 
 - The sidebar shows the six private channels, in addition to `#all-my-island`, `#social`, and `#new-channel`.
 - https://api.slack.com/apps shows one app named `my-island-notify`.
-- **Incoming Webhooks** shows three URLs, one each for `#deploy`, `#alerts`, and `#pr-failures`.
+- **Incoming Webhooks** shows three URLs, one each for `#deploy`, `#alert`, and `#pr-failures`.
 - **Event Subscriptions** is off, **Slash Commands** is empty, and **Bot Token Scopes** is empty.
 - The three URLs are in the password manager under the three names above.
 
-Nothing posts yet. Wiring the URLs into CI is Part 2, and that wiring is not in the repo.
+The `#alert` URL goes in `SLACK_ALERTS_WEBHOOK`. Nothing posts until that value is set on the host. Deploy and pull-request failure wiring are Part 2 and are not in the repo.
 
 ---
 
@@ -533,7 +533,7 @@ PASTE_WEBHOOK_URL_HERE
 
 That placeholder is not a real URL. Do not replace it inside a file, this guide, or chat. The real value stays in the password manager until the engineer adds a real field.
 
-There are three stops.
+Deploy (G) and pull-request failure (I) are the two stops. Alerts (H) are already wired.
 
 ## G. Deploy URL — Jenkins job `deploy-mock-prod`
 
@@ -554,7 +554,7 @@ There is no step after those stages that reads a Slack URL.
 
 **Credential file:** `ops/jenkins/casc/jenkins.yaml`
 
-The credential list in that file has one entry. Its id is `github-token`. The value comes from `.env` keys `JENKINS_GITHUB_TOKEN` and `GITHUB_USERNAME`, documented in `.env.example`. There is no Slack key in `.env.example` and no Slack credential id in `jenkins.yaml`.
+The credential list in that file has one entry. Its id is `github-token`. The value comes from `.env` keys `JENKINS_GITHUB_TOKEN` and `GITHUB_USERNAME`, documented in `.env.example`. `.env.example` documents `SLACK_ALERTS_WEBHOOK` for house alerts into `#alert`. There is no Slack credential id in `jenkins.yaml` for this deploy webhook.
 
 Jenkins on the Mac mini loads that same file. The screen at `http://127.0.0.1:8085/` (see `JENKINS_URL` in `.env.example` and `docs/ops/runbooks/JENKINS_LOCAL.md`) has no saved field for this webhook.
 
@@ -564,27 +564,19 @@ Jenkins on the Mac mini loads that same file. The screen at `http://127.0.0.1:80
 
 **Password-manager item:** `my-island-notify alerts`
 
-**What this URL is for:** Firing house alerts only, into `#alerts`. Resolved alerts stay off that channel (`send_resolved: false` in the plan). This notify does not start an agent.
+**What this URL is for:** Firing house alerts only, into `#alert`. Resolved alerts stay off that channel (`send_resolved: false`). This notify does not start an agent.
 
-**Config file:** `ops/observability/alertmanager.yml`
+**Config files:** `ops/observability/alertmanager.yml` and `ops/observability/alertmanager.slack.yml`
 
-That file today is only:
+`alertmanager.yml` stays receiver `keep` so CI boots with no secret. When `SLACK_ALERTS_WEBHOOK` is set, compose writes the URL inside the container and loads `ops/observability/alertmanager.slack.yml` (`channel: "#alert"`, `send_resolved: false`, `api_url_file`). Do not add a second Slack receiver or a second channel.
 
-```
-route:
-  receiver: keep
+The env key is `SLACK_ALERTS_WEBHOOK` in `.env.example`. The value is the incoming-webhook URL for `#alert`. Never commit a real value. Empty keeps receiver `keep`.
 
-receivers:
-  - name: keep
-```
-
-Compose mounts it into the `alertmanager` service from `compose.yml` (`ops/observability/alertmanager.yml` → `/etc/alertmanager/alertmanager.yml`). There is no Slack receiver and no secret file next to it.
-
-Gatling failures call `ops/scripts/notify_house_alertmanager.py`. That script posts to `HOUSE_ALERTMANAGER_URL` plus `/api/v2/alerts`. `HOUSE_ALERTMANAGER_URL` is the Alertmanager address, not a Slack URL. Do not put `PASTE_WEBHOOK_URL_HERE` in `HOUSE_ALERTMANAGER_URL`.
+Gatling failures call `ops/scripts/notify_house_alertmanager.py`. That script posts to `HOUSE_ALERTMANAGER_URL` plus `/api/v2/alerts`. `HOUSE_ALERTMANAGER_URL` is the Alertmanager address, not a Slack URL. Do not put the webhook URL in `HOUSE_ALERTMANAGER_URL`.
 
 The leftover fishing-journals Alertmanager is a different file. `ops/deploy/disable_legacy_alerts.py` keeps it as receiver `keep` at `/home/ubuntu/app/infra/observability/alertmanager/alertmanager.yml`. That file does not get this URL.
 
-**Stop.** Hand this to an engineer. The file that would have to change is `ops/observability/alertmanager.yml`: one receiver beside `keep`, firing only, aimed at `#alerts`, reading `PASTE_WEBHOOK_URL_HERE` from a secret outside git. You do not edit that file.
+**Already wired.** Put the password-manager URL in `SLACK_ALERTS_WEBHOOK` on the host that runs compose. Do not edit `alertmanager.yml` to add another Slack receiver.
 
 ## I. Pull-request failure URL — GitHub Actions workflow `CI`
 
@@ -623,12 +615,13 @@ Workflow `.github/workflows/automerge.yml` is named `Automerge`. Its job `name:`
 
 **Stop.** Hand this to an engineer. The file that would have to change is `.github/workflows/ci.yml`: one failure step that posts when `unit tests`, `catalog tests`, `web tests`, or `compose stack` fails on a pull request or on `main`, using `PASTE_WEBHOOK_URL_HERE` from a GitHub Actions secret. You do not create that secret, because no step reads it yet.
 
-## What you do after the three stops
+## What you do after the stops
 
-Leave the password-manager items as they are. Tell an engineer that Part 1 is done and that Part 2 stopped at:
+Leave the password-manager items as they are. Put the alerts URL in `SLACK_ALERTS_WEBHOOK` on the host that runs compose. Do not commit it. Tell an engineer that Part 1 is done and that Part 2 stopped at:
 
 - `ops/jenkins/casc/jenkins.yaml` and `ops/jenkins/casc/jobs/deploy-mock-prod.groovy`
-- `ops/observability/alertmanager.yml`
 - `.github/workflows/ci.yml`
 
-The engineer gets the three URLs from you through the password manager. They do not go in the guide, in git, or in chat.
+Do not ask them to add a Slack receiver to `ops/observability/alertmanager.yml`. That file stays receiver `keep`. The Slack config is `ops/observability/alertmanager.slack.yml`.
+
+The engineer gets the deploy and pull-request URLs from you through the password manager. They do not go in the guide, in git, or in chat.
