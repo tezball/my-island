@@ -14,7 +14,7 @@ def test_pr_loop_keeps_the_merge_gate() -> None:
     assert "continuous-integration/jenkins/branch" in text
     assert "compose stack" in text
     assert "pr-loop fix" in text
-    assert "*/15" in text
+    assert "*/3 * * * *" in text
     assert "my-island PR loop" in text
     assert "draft: false" in text
     assert "Forks stay drafts" in text

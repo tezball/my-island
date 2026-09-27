@@ -99,7 +99,7 @@ The existing automation **Untitled** must **not** fire on Pull request opened or
 
 ## PR loop (WF-054)
 
-Review, failed Actions, and review comments are one Cursor automation, **my-island PR loop**, specified in [[ops/workflow/PR-LOOP]]. It uses **CI completed**, not only **Workflow run completed**, because `CI` runs on `pull_request` and that workflow-run trigger does not start for `pull_request`. A cron `*/15` is the backstop when the event is dropped (including pushes by `cursor[bot]`).
+Review, failed Actions, and review comments are one Cursor automation, **my-island PR loop**, specified in [[ops/workflow/PR-LOOP]]. It uses **CI completed**, not only **Workflow run completed**, because `CI` runs on `pull_request` and that workflow-run trigger does not start for `pull_request`. A cron `*/3 * * * *` is the testing backstop when the event is dropped (including pushes by `cursor[bot]`).
 
 The automation may Approve as `cursor` after the four checks are success. It does not merge. It does not push `main`. A Jenkins commit status is not a failed required check. Squash-merge stays in `automerge.yml`.
 

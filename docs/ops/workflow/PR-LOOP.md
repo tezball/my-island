@@ -56,7 +56,7 @@ Save **one** automation named `my-island PR loop` at [cursor.com/automations](ht
 | PR review submitted | Any review state. Ignore drafts. |
 | PR review comment | Ignore drafts. |
 | Comment added | Ignore drafts. |
-| Scheduled | `*/15 * * * *`. Repository must be set (a schedule defaults to no repo). |
+| Scheduled | `*/3 * * * *` (testing cadence). Repository must be set (a schedule defaults to no repo). |
 
 Tools: **Comment on pull request** with approvals **on** and inline comments **off** (nits stay in the review body). **Resolve review threads** on. **Pull request creation off** (the agent pushes the existing head branch; it does not open another PR). Memories off. Slack off. Computer use off.
 

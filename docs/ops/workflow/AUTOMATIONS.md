@@ -40,7 +40,7 @@ Detail and required-check names: [[ops/workflow/CI]].
 | | |
 |---|---|
 | Name | `my-island PR loop` |
-| When | **CI completed** (any conclusion, PRs, not drafts). Also PR review submitted, PR review comment, comment added, and cron `*/15 * * * *` so a `cursor[bot]` push or a `pull_request`-only Actions run is not missed. |
+| When | **CI completed** (any conclusion, PRs, not drafts). Also PR review submitted, PR review comment, comment added, and cron `*/3 * * * *` (testing cadence) so a `cursor[bot]` push or a `pull_request`-only Actions run is not missed. |
 | Does | One PR. Fix a failed Actions check-run, or fix `CHANGES_REQUESTED` / review comments, or Approve / Request changes when the four checks are green. Spec and prompt: [[ops/workflow/PR-LOOP]]. |
 | Does not | Merge, push `main`, treat a Jenkins commit status as failed CI, open a second PR, approve before the four checks are success |
 | Merge | Still [[ops/tickets/WF-050]] `automerge.yml`. This job does not squash-merge. |
