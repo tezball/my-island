@@ -5,4 +5,4 @@ Expected one-line fix: assert 1 + 1 == 2.
 
 
 def test_pr_loop_fixable_red_check() -> None:
-    assert 1 + 1 == 3
+    assert 1 + 1 == 2
