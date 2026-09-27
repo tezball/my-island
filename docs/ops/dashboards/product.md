@@ -11,7 +11,7 @@ cssclasses:
 Role: [[ops/agents/roles/product]]. Canon: [`product/README.md`](../../product/README.md) · [[ops/MILESTONES]].
 
 > [!info] Focus
-> VisitIntent [[ops/tickets/PRD-015]] is the public slice. Booking-site children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] are `inbox` ([`product/BOOKING-SITE.md`](../../product/BOOKING-SITE.md)). Epic [[ops/tickets/PRD-004]] is never implement.
+> Current build is the free Ireland directory ([`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md)). Implement pick: [[ops/tickets/WF-040]]. Booking-site children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] stay `inbox`. Epic [[ops/tickets/PRD-004]] is never implement.
 
 ![[ops/dashboards/product.base]]
 

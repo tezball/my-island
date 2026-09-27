@@ -10,7 +10,9 @@ cssclasses:
 
 # Booking-site program (campsites + B&Bs)
 
-Planner locks **2026-09-19** from the CEO brief (plan the rest of a Booking.com-like site). **Not a live consumer app.** Mock-prod is fishing-journals.com. There is **no GitHub production Environment**. House: [`STACK.md`](STACK.md). Epic [[ops/tickets/PRD-004]] is never implement — children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] are.
+**2026-09-26 — do not build this.** Terry ordered the free directory in [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md) (decision 39). Leave [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] at `inbox`. Do not promote them. Checkout, mock pay, calendars, and payouts wait until the free site is in use. There is still **no GitHub production Environment**.
+
+Planner locks **2026-09-19** from the CEO brief (plan the rest of a Booking.com-like site). **Not a live consumer app.** The public host is fishing-journals.com (one VPS). House: [`STACK.md`](STACK.md). Epic [[ops/tickets/PRD-004]] is never implement — children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] are.
 
 This note does **not** rewrite [`SIGNED.md`](SIGNED.md) or [`MVP.md`](MVP.md). Directory + VisitIntent remain the public slice until those children are promoted. [`EXPANSION.md`](EXPANSION.md) gates (return rate, unsolicited claims, enquiry-before-booking) are **waived for mock-prod planning only**.
 
@@ -33,7 +35,7 @@ Kind already exists on Place: `poi`, `experience`, `campsite`, `bnb`. Explore sh
 
 Children stay **`inbox`** (Upcoming) with **approved plans**. `next_ticket.py --role auto` prefers any `ready` story over in-flight `implement` P0s — so these must **not** be `ready` or `implement` until VisitIntent/auth/stream-1 are no longer the pick.
 
-**Promote only [[ops/tickets/PRD-016]] first** (`inbox` → `ready` → `implement`). Later tickets wait on the deps in the table.
+**Do not promote any of these.** Decision 39 replaced “promote [[ops/tickets/PRD-016]] first”. The free-directory order is in [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md). The table below is the parked checkout backlog.
 
 | # | Ticket | Lane | Depends on | Status now |
 |---|---|---|---|---|
