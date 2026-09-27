@@ -7,6 +7,7 @@ import stat
 import subprocess
 import urllib.error
 import urllib.request
+import uuid
 from pathlib import Path
 
 import pytest
@@ -218,9 +219,11 @@ def test_seeded_pois_and_place_post_requires_import_key() -> None:
     except urllib.error.HTTPError as exc:
         assert exc.code in {401, 403}
 
+    # A fixed slug collides with the previous Jenkins stack volume (HTTP 409).
+    slug = f"import-key-stack-{uuid.uuid4().hex[:12]}".encode()
     keyed = urllib.request.Request(
         f"{base}/api/v1/places",
-        data=payload.replace(b"anon-write-blocked-stack", b"import-key-stack-ok"),
+        data=payload.replace(b"anon-write-blocked-stack", slug),
         method="POST",
         headers={
             "Content-Type": "application/json",
