@@ -31,12 +31,17 @@ kanban-plugin: basic
 ## Planning
 
 - [ ] [[ops/tickets/PRD-009|PRD-009]] P0 Trust / counsel gate before publish
+- [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
+- [ ] [[ops/tickets/PRD-032|PRD-032]] P0 Listing kinds on the map
+- [ ] [[ops/tickets/PRD-033|PRD-033]] P0 Free host and supplier draft submit
+- [ ] [[ops/tickets/PRD-034|PRD-034]] P0 Support self-serve and role homes
+- [ ] [[ops/tickets/PRD-035|PRD-035]] P0 Phone-first look and feel refactor
 - [ ] [[ops/tickets/PRD-031|PRD-031]] P1 Mobile place-detail home/back control
 
 ## Doing
 
-- [ ] [[ops/tickets/PRD-014|PRD-014]] P0 Launch quality: NFR, GDPR, admin, metrics
 - [ ] [[ops/tickets/WF-000|WF-000]] P0 Agent operations loop (epic)
+- [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/WF-041|WF-041]] P0 House Prometheus and Loki from mock-prod
 - [ ] [[ops/tickets/WF-042|WF-042]] P0 Agent MCP pack for mock-prod
 - [ ] [[ops/tickets/WF-038|WF-038]] P1 Git worktrees for multi-session Cursor
@@ -45,7 +50,6 @@ kanban-plugin: basic
 
 - [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
 - [ ] [[ops/tickets/PRD-030|PRD-030]] P0 Guest been and want lists on map
-- [ ] [[ops/tickets/WF-040|WF-040]] P0 Unattended mock-prod from green main
 - [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
 - [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
 - [ ] [[ops/tickets/WF-045|WF-045]] P0 Gatling trickle and weekly perf fail Jenkins plus Grafana

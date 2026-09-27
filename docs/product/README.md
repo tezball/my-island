@@ -20,7 +20,8 @@ Product definition for the rebuild. Start here.
 |---|---|
 | [`SIGNED.md`](SIGNED.md) | CEO sign-off 2026-09-05 — directory MVP, kill list, house bar |
 | [`POI-VISITINTENT.md`](POI-VISITINTENT.md) | **2026-09-19 slice** — been / want / never on the live POI directory (`PRD-015`). Does not replace `MVP.md` |
-| [`BOOKING-SITE.md`](BOOKING-SITE.md) | **After VisitIntent** — campsite/B&B booking program (`PRD-016`–`PRD-029`). Mock-prod only. |
+| [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md) | **Current build (2026-09-26)** — free Ireland directory on https://fishing-journals.com. Pipeline, then journey, kinds, submit, support, look-and-feel. |
+| [`BOOKING-SITE.md`](BOOKING-SITE.md) | **Parked** — campsite/B&B checkout program (`PRD-016`–`PRD-029`). Leave inbox. Do not promote. |
 | [`WAVE-1.md`](WAVE-1.md) | Research Wave 1 acceptance — leads in `data/leads/` (not publish; counsel still PRD-009) |
 | [`BRIEFING.md`](BRIEFING.md) | CEO briefing — what the repo is, what we are building, what was built before, open decisions |
 | [`VISION.md`](VISION.md) | What we are building and why. Principles, roles, decisions made, open questions for the business |
@@ -44,10 +45,10 @@ gated on the answer.
 
 ## Status
 
-**Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md). **Directory browse is live** on local compose and mock-prod (101 Ireland POIs). Current slice: [`POI-VISITINTENT.md`](POI-VISITINTENT.md) ([[ops/tickets/PRD-015]]). Next **product program** (inbox, not pickable yet): [`BOOKING-SITE.md`](BOOKING-SITE.md).
+**Signed** by CEO 2026-09-05 — [`SIGNED.md`](SIGNED.md). **Directory browse is live** on https://fishing-journals.com. **Current build:** [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md) (decision 39). Journey stays [[ops/tickets/PRD-030]]. The checkout program [`BOOKING-SITE.md`](BOOKING-SITE.md) (`PRD-016`–`PRD-029`) stays inbox — do not promote it.
 House is **signed** in [`STACK.md`](STACK.md): Java / Spring Boot, light
 Vite+React PWA (not Next.js), PostgreSQL 17 + PostGIS, Flyway, Jenkins + GitHub Actions,
-Grafana OSS MCP. Mock-prod is fishing-journals.com (no GitHub `production` Environment).
+Grafana OSS MCP. The public host is fishing-journals.com, still one VPS (no GitHub `production` Environment, no `compose.prod`, no prod SSH).
 Do not start a new stack. Do not implement product unless a `PRD-*` ticket is `implement`.
 
 The previous camping-platform build has had its code removed from the working tree; its
