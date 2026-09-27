@@ -5,6 +5,10 @@ Open **this folder** as the Obsidian vault. Living company notes and product can
 | Path | What |
 |---|---|
 | [`HOME.md`](HOME.md) | Company dashboard (website home) |
+| [`home-signal.md`](home-signal.md) | Candidate home — editorial |
+| [`home-desk.md`](home-desk.md) | Candidate home — operational desk |
+| [`home-atlas.md`](home-atlas.md) | Candidate home — map of content |
+| [`home-plugins.md`](home-plugins.md) | Plugin list shared by the three candidates |
 | [`ATLAS.md`](ATLAS.md) | Maps of Content — sitemap for every group |
 | [`atlas/`](atlas/_index.md) | Group MOCs (work, product, engineering, company, knowledge, archive) |
 | [`notes/`](notes/_index.md) | Engineer notes, ADRs, meetings |

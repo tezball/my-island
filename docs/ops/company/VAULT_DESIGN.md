@@ -46,8 +46,11 @@ Light-first. Dark theme remaps ink/paper via the same snippet. Folder colour is 
 | `wiki` / `product` | Confluence-style pages |
 | `note` / `adr` | Engineer notes |
 | `archive` | History fence |
+| `home-signal` | `home-signal.md` — editorial candidate |
+| `home-desk` | `home-desk.md` — operational desk candidate |
+| `home-atlas` | `home-atlas.md` — map-of-content candidate |
 
-Custom callouts: `work`, `product`, `knowledge`, `note`, `archive`.
+Custom callouts: `work`, `product`, `knowledge`, `note`, `archive`. Live company home remains `HOME.md` until one candidate is chosen.
 
 ## Snippet
 
