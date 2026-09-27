@@ -1539,13 +1539,19 @@ def test_wf_040_unattended_mock_prod() -> None:
     assert meta["status"] == "implement"
     assert "tickets/WF-032" in meta.get("parent", "")
     groovy = (REPO / "ops" / "jenkins" / "casc" / "jobs" / "deploy-mock-prod.groovy").read_text()
-    assert "cron('H/5 * * * *')" in groovy
+    dsl, script = groovy.split("script(", 1)
+    assert "cron('H/5 * * * *')" in dsl
+    assert "cron(" not in script
+    assert ".jenkins-deploy-main" in groovy
+    assert "reset --hard origin/main" in groovy
+    assert "git merge --ff-only" not in groovy
     assert "gate_mock_prod_deploy.py" in groovy
     assert "smoke_mock_prod.py" in groovy
     assert "production" in groovy.lower()
     deploy = (REPO / "scripts" / "deploy-mock-prod.sh").read_text()
     assert "WF-040" in deploy
-    assert 'EXPECTED_BRANCH" != "main"' in deploy
+    assert "tracks origin/main" in deploy
+    assert 'EXPECTED_COMMIT" != "$ORIGIN_MAIN"' in deploy
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     assert "mock-prod-signal" in ci
     assert "environment: production" not in ci
