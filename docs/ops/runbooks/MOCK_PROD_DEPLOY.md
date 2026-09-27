@@ -9,7 +9,7 @@ cssclasses:
 
 # Mock-prod deploy
 
-**Not production.** Apex host is `https://fishing-journals.com/` (CEO playground VPS). Credentials stay in `.env` / remote `.env.mock-prod`. **Agents never SSH.** Unattended path: green `main` → Jenkins `deploy-mock-prod` (cron `H/5` + GitHub check gate) → HTTP/API smoke ([[ops/tickets/WF-040]]). The SSH key stays in Jenkins. No human click.
+**Not production** as a GitHub Environment, `compose.prod`, or prod SSH path. **Decision 39 (2026-09-26):** this same apex is the product host. It is still one machine. Apex host is `https://fishing-journals.com/`. Credentials stay in `.env` / remote `.env.mock-prod`. **Agents never SSH.** Unattended path: green `main` → Jenkins `deploy-mock-prod` (cron `H/5` + GitHub check gate) → HTTP/API smoke ([[ops/tickets/WF-040]]). The SSH key stays in Jenkins. No human click.
 
 ```bash
 # humans / Jenkins only — not the agent path. Agents do not run this script.

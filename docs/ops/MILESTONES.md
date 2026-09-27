@@ -37,11 +37,22 @@ kanban-plugin: basic
 - [ ] **Chunk 7** Monetisation
 - [ ] **Chunk 8** Running a business
 
-## Booking-site (mock-prod program)
+## Free Ireland directory (2026-09-26)
 
-Hand-maintained. Children `inbox` so they do not starve P0 `WF-*`. Canon: [`product/BOOKING-SITE.md`](../product/BOOKING-SITE.md).
+Hand-maintained. Canon: [`product/FREE-DIRECTORY.md`](../product/FREE-DIRECTORY.md). One `implement` ticket at a time.
 
-- [ ] **PRD-016** Stay seed — first to promote
+- [ ] **WF-040** Public `gitCommit` equals `origin/main` — **implement now**
+- [ ] **PRD-030** Journey (been / ticked off) — `review`; do not re-implement
+- [ ] **PRD-032** Kinds on the map, including supplier — `plan`
+- [ ] **PRD-033** Free host and supplier drafts — `plan`
+- [ ] **PRD-034** Support self-serve and role homes — `plan`
+- [ ] **PRD-035** Phone-first look and feel — `plan`
+
+## Booking-site (parked)
+
+Hand-maintained. Children stay `inbox`. Do not promote. Canon: [`product/BOOKING-SITE.md`](../product/BOOKING-SITE.md).
+
+- [ ] **PRD-016** Stay seed — do not promote
 - [ ] **PRD-017** Guest search
 - [ ] **PRD-018** Book + mock pay
 - [ ] **PRD-019** Trips / cancel

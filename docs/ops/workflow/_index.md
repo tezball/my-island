@@ -16,6 +16,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[DOD]] | Implement Definition of Done (**draft**) |
 | [[TEST_STACK]] | Five lanes: how / what (Gherkin=IT) / wiring / browser / operate |
 | [[PIPELINE]] | Auto vs agent vs human (CTO map + tables) |
+| [[automation-pipeline.excalidraw]] | Automation pipeline drawing: running now vs planned |
 | [[CI]] | GitHub Actions + agent test commands |
 | [[SKILLS]] | Cursor skills, hooks, Grok routines |
 | [[LOCAL]] | Compose, Dev Container, clone/run |
