@@ -20,6 +20,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/PRD-027|PRD-027]] P1 Admin disputes and refunds
 - [ ] [[ops/tickets/PRD-028|PRD-028]] P1 Help center and policies
 - [ ] [[ops/tickets/PRD-029|PRD-029]] P1 Support inbox and tickets
+- [ ] [[ops/tickets/WF-055|WF-055]] P1 Review gate undraft is a no-op
 - [ ] [[ops/tickets/PRD-004|PRD-004]] P2 Ireland stays marketplace (hosts, booking, trust)
 - [ ] [[ops/tickets/WF-009|WF-009]] P2 Alertmanager webhook to spawn an agent
 - [ ] [[ops/tickets/WF-012|WF-012]] P2 GHCR image registry and digest deploys
