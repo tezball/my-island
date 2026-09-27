@@ -8,6 +8,7 @@ from gha_review_gate import (
     has_valid_approve,
     latest_vote_by_user,
     pick_pr_number,
+    should_mark_ready,
 )
 
 
@@ -122,6 +123,40 @@ def test_waiting_for_review_when_ci_green_no_approve() -> None:
     )
     assert decision.action == "wait"
     assert decision.reason == "waiting for review"
+
+
+def test_green_same_repo_draft_is_marked_ready() -> None:
+    draft = _pr(draft=True)
+    assert should_mark_ready(pr=draft, checks_green=True, check_runs=None)
+    assert should_mark_ready(
+        pr=draft,
+        checks_green=False,
+        check_runs=[
+            _run("unit tests"),
+            _run("catalog tests"),
+            _run("web tests"),
+            _run("compose stack"),
+        ],
+    )
+    pending = [
+        _run("unit tests"),
+        _run("catalog tests"),
+        _run("web tests"),
+        _run("compose stack", status="in_progress", conclusion=""),
+    ]
+    assert not should_mark_ready(pr=draft, checks_green=False, check_runs=pending)
+    assert not should_mark_ready(pr=_pr(draft=True, fork=True), checks_green=True, check_runs=None)
+    assert not should_mark_ready(pr=_pr(), checks_green=True, check_runs=None)
+    ready = dict(draft)
+    ready["draft"] = False
+    decision = decide(
+        pr=ready,
+        reviews=[_review("cursor[bot]", APPROVED)],
+        head_sha="abc",
+        checks_green=True,
+        check_runs=None,
+    )
+    assert decision.action == "merge"
 
 
 def test_draft_and_fork_skip() -> None:

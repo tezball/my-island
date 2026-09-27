@@ -2,6 +2,7 @@
 # Separate workflow name so pull_request_review cannot cancel in-flight
 # unit / catalog / web / stack. Do not add this job as a required check.
 # Actions must not approve PRs. Chat never gh pr merge.
+# A same-repo draft is marked ready when this CI run succeeded. Forks stay drafts.
 name: Automerge
 
 on:
