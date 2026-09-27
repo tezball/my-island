@@ -1,0 +1,14 @@
+route:
+  receiver: slack
+
+receivers:
+  - name: keep
+  - name: slack
+    slack_configs:
+      - api_url_file: /tmp/slack-alerts-url
+        send_resolved: false
+        channel: "#alert"
+        title: "{{ .CommonLabels.alertname }}"
+        text: |-
+          kind: alert
+          {{ .CommonAnnotations.summary }}

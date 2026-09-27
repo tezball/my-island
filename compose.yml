@@ -61,10 +61,24 @@ services:
 
   alertmanager:
     image: prom/alertmanager:v0.28.1
+    # Empty SLACK_ALERTS_WEBHOOK keeps receiver `keep` so CI boots with no secret.
+    # A set value writes the URL inside the container and loads the Slack config.
+    environment:
+      SLACK_ALERTS_WEBHOOK: ${SLACK_ALERTS_WEBHOOK:-}
+    entrypoint: ["/bin/sh", "-c"]
     command:
-      - --config.file=/etc/alertmanager/alertmanager.yml
+      - |
+        set -eu
+        if [ -n "$${SLACK_ALERTS_WEBHOOK:-}" ]; then
+          printf '%s' "$$SLACK_ALERTS_WEBHOOK" > /tmp/slack-alerts-url
+          cfg=/etc/alertmanager/alertmanager.slack.yml
+        else
+          cfg=/etc/alertmanager/alertmanager.yml
+        fi
+        exec /bin/alertmanager --config.file="$$cfg" --storage.path=/alertmanager
     volumes:
       - ./ops/observability/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./ops/observability/alertmanager.slack.yml:/etc/alertmanager/alertmanager.slack.yml:ro
     ports:
       - "${OPS_AM_HOST_PORT:-9094}:9093"
     healthcheck:
