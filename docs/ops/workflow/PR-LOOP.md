@@ -23,10 +23,10 @@ PR opened or marked ready
 | Step | Runner | Pushes? | Approves? | Merges? |
 |---|---|---|---|---|
 | Test | [`.github/workflows/ci.yml`](../../../.github/workflows/ci.yml) on `pull_request` | No | No | No |
-| Review, CI fix, comment fix | Cursor automation **my-island PR loop** (prompt below) | Only the PR head branch, and only to fix | Yes, as `cursor`, and only when the four checks are already green | No |
+| Review, CI fix, comment fix | Cursor automation **my-island PR loop** (prompt below) | Only the PR head branch, and only to fix | Yes, only through the Cursor pull-request review tool that posts as `cursor[bot]`, and only when the four checks are already green | No |
 | Merge | [`.github/workflows/automerge.yml`](../../../.github/workflows/automerge.yml) | No | No. Actions does not `createReview` | Squash, `sha` = head |
 
-Required check names, same as CI: `unit tests`, `catalog tests`, `web tests`, `compose stack`. Pending or failure is not green. `CHANGES_REQUESTED` blocks merge. A stale Approve (`commit_id` ≠ head) does not count. `github-actions[bot]` and the PR author do not count. GitHub review approvals from an automation run as `cursor`, which does count.
+Required check names, same as CI: `unit tests`, `catalog tests`, `web tests`, `compose stack`. Pending or failure is not green. `CHANGES_REQUESTED` blocks merge. A stale Approve (`commit_id` ≠ head) does not count. `github-actions[bot]` and the PR author do not count. Submit Approve or Request changes only through the Cursor pull-request review tool that posts as `cursor[bot]`. That review counts. The 15:00 UTC loop run did not land a review. `gh api` as `cursor` returned 403, and the GitHub MCP ran as `tezball`, the author. Those do not count. Squash still needs those four green checks and a valid non-author `APPROVED` on the head SHA.
 
 Chat still does not `gh pr merge`.
 
@@ -80,7 +80,7 @@ Decide in this order:
 
 2. The latest review state is CHANGES_REQUESTED, or a review comment / top-level comment asks for a code change that is not done. Push one fix to the PR head branch. Comment `pr-loop fix`. Same cap. Do not approve. Do not dismiss someone else's review.
 
-3. Those four check-runs are success and there is no valid APPROVED on the head SHA from an actor other than github-actions[bot] and other than the PR author. Review against SAFETY and the linked ticket/plan. Nits go in the review body only. If SAFETY is broken, Request changes. Otherwise Approve. Do not push.
+3. Those four check-runs are success and there is no valid APPROVED on the head SHA from an actor other than github-actions[bot] and other than the PR author. Review against SAFETY and the linked ticket/plan. Nits go in the review body only. If SAFETY is broken, Request changes. Otherwise Approve. Submit that Approve or Request changes only through the Cursor pull-request review tool that posts as cursor[bot]. gh api as cursor returned 403 and does not land a review. The GitHub MCP running as the PR author does not count. Do not push.
 
 4. Otherwise stop. Automerge squash-merges when the four checks are green and that Approve is on the head SHA.
 
