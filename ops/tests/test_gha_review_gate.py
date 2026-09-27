@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from gha_review_gate import (
     APPROVED,
     CHANGES_REQUESTED,
+    GateError,
     decide,
     four_checks_success,
     has_valid_approve,
     latest_vote_by_user,
     pick_pr_number,
+    poll_ready,
 )
+
+REPO = Path(__file__).resolve().parents[2]
 
 
 def _pr(*, author: str = "tezball", draft: bool = False, fork: bool = False, merged: bool = False) -> dict:
@@ -198,6 +204,169 @@ def test_latest_failed_check_does_not_count_as_green() -> None:
     )
     assert not ok
     assert "failure" in why
+
+
+def _numbered(number: int, **kwargs: object) -> dict:
+    pr = _pr(**kwargs)  # type: ignore[arg-type]
+    pr["number"] = number
+    return pr
+
+
+def _green_runs() -> list[dict]:
+    return [
+        _run("unit tests", rid=1),
+        _run("catalog tests", rid=2),
+        _run("web tests", rid=3),
+        _run("compose stack", rid=4),
+    ]
+
+
+def test_poll_skips_draft_and_fork_without_loading() -> None:
+    loaded: list[int] = []
+    merged: list[tuple[int, str]] = []
+    lines = poll_ready(
+        [_numbered(1, draft=True), _numbered(2, fork=True)],
+        lambda number: loaded.append(number),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+    )
+    assert loaded == []
+    assert merged == []
+    assert any("draft" in line for line in lines)
+    assert any("fork" in line for line in lines)
+
+
+def test_poll_waits_when_checks_green_but_no_approve() -> None:
+    merged: list[int] = []
+    pr = _numbered(7)
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [], _green_runs()),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+    )
+    assert merged == []
+    assert any("waiting for review" in line for line in lines)
+
+
+def test_poll_squash_merges_with_head_sha_when_gate_passes() -> None:
+    merged: list[tuple[int, str]] = []
+    dispatched: list[int] = []
+    pr = _numbered(8)
+    reviews = [_review("cursor[bot]", APPROVED)]
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, reviews, _green_runs()),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: dispatched.append(number),
+    )
+    assert merged == [(8, "abc")]
+    assert dispatched == [8]
+    assert any("squash-merged" in line for line in lines)
+
+
+def test_poll_merge_rejection_continues_to_next_pr() -> None:
+    merged: list[tuple[int, str]] = []
+    pr_bad = _numbered(3)
+    pr_ok = _numbered(4)
+    reviews = [_review("cursor[bot]", APPROVED)]
+
+    def load(number: int) -> tuple[dict, list[dict], list[dict]]:
+        pr = pr_bad if number == 3 else pr_ok
+        return pr, reviews, _green_runs()
+
+    def merge(number: int, sha: str) -> None:
+        merged.append((number, sha))
+        if number == 3:
+            raise GateError("HTTP 405 not mergeable")
+
+    lines = poll_ready([pr_bad, pr_ok], load, merge, lambda number: None)
+    assert merged == [(3, "abc"), (4, "abc")]
+    assert any("#3 merge skipped" in line for line in lines)
+    assert any("#4 squash-merged" in line for line in lines)
+
+
+def test_poll_pending_check_does_not_merge() -> None:
+    merged: list[int] = []
+    pr = _numbered(5)
+    runs = _green_runs()
+    runs[-1] = _run("compose stack", status="in_progress", conclusion="", rid=4)
+    poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], runs),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+    )
+    assert merged == []
+
+
+def test_commit_status_does_not_hide_actions_check_run() -> None:
+    runs = _green_runs()
+    runs.append(
+        {
+            "context": "compose stack",
+            "state": "failure",
+            "id": 99,
+            "description": "Jenkins",
+        }
+    )
+    ok, why = four_checks_success(runs)
+    assert ok, why
+
+
+def test_latest_failed_check_run_blocks_regardless_of_app() -> None:
+    runs = [
+        _run("unit tests", rid=1),
+        _run("catalog tests", rid=2),
+        _run("web tests", rid=3),
+        {
+            **_run("compose stack", conclusion="success", rid=4),
+            "app": {"slug": "github-actions"},
+        },
+        {
+            **_run("compose stack", conclusion="failure", rid=5),
+            "app": {"slug": "jenkins"},
+        },
+    ]
+    ok, why = four_checks_success(runs)
+    assert not ok
+    assert "failure" in why
+
+
+def test_earlier_failed_check_run_does_not_block_later_success() -> None:
+    ok, _why = four_checks_success(
+        [
+            _run("unit tests"),
+            _run("catalog tests"),
+            _run("web tests"),
+            _run("compose stack", conclusion="failure", rid=1),
+            _run("compose stack", conclusion="success", rid=2),
+        ]
+    )
+    assert ok
+
+
+def test_automerge_poll_workflow_does_not_rerun_tests() -> None:
+    text = (REPO / ".github" / "workflows" / "automerge-poll.yml").read_text()
+    assert 'cron: "*/5 * * * *"' in text
+    assert "workflow_dispatch:" in text
+    assert "contents: write" in text
+    assert "pull-requests: write" in text
+    assert "checks: read" in text
+    assert "actions: write" in text
+    assert "AUTOMERGE_POLL" in text
+    assert "gha_review_gate.py" in text
+    assert "createReview" not in text
+    assert "slack" not in text.lower()
+    for job_name in (
+        "name: unit tests",
+        "name: catalog tests",
+        "name: web tests",
+        "name: compose stack",
+    ):
+        assert job_name not in text
+    ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
+    assert "schedule:" not in ci
 
 
 def test_pick_pr_number_prefers_open() -> None:

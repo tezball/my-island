@@ -74,6 +74,8 @@ Merge is a **sibling** workflow [`.github/workflows/automerge.yml`](../../../.gi
 
 Separate workflow **names** mean a review event cannot cancel in-flight `unit` / `catalog` / `web` / `stack`. `Automerge` does not define those four jobs (no skip-propagation).
 
+Marking a draft ready does not fire either trigger, so a PR whose four checks already succeeded never reaches this job. [`.github/workflows/automerge-poll.yml`](../../../.github/workflows/automerge-poll.yml) lists open pull requests every five minutes (`*/5 * * * *`, and `workflow_dispatch`) and runs the same script. It does not re-run `unit tests`, `catalog tests`, `web tests`, or `compose stack`. Jenkins commit statuses reuse those context names; the script reads check-runs only, so a failing Jenkins status does not hide a green Actions check-run. The latest check-run of each name still wins — a later failed check-run named `compose stack` blocks. The poll does not `createReview`.
+
 Ready same-repo non-draft PRs squash-merge only when those four **job names** succeeded on the head SHA **and** a GitHub review on that SHA has state `APPROVED` (create-review event is `APPROVE`) from `cursor` / any actor that is **not** `github-actions[bot]` and **not** the PR author. `CHANGES_REQUESTED` blocks. Stale Approve (`commit_id` ≠ head) does not count. Actions does not `createReview`.
 
 If CI is green but there is no valid Approve yet, `automerge` **succeeds** with `waiting for review`. It does not `setFailed`. Red CI is the four test jobs, never this job.

@@ -1,0 +1,41 @@
+# Same gate as automerge.yml (ops/scripts/gha_review_gate.py).
+# Marking a draft ready does not fire workflow_run or pull_request_review,
+# so CI can already be green and the merge job never ran. This poll retries
+# that gate. It does not run the four test jobs.
+name: Automerge poll
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+# actions: write is only so a successful squash can dispatch ci.yml on main
+# (GITHUB_TOKEN squash does not fire push). This workflow does not run tests.
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+  actions: write
+
+concurrency:
+  group: automerge-poll
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    name: poll ready pull requests
+    runs-on: ubuntu-latest
+    steps:
+      # Gate script from main — do not execute a pull request tree.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Squash-merge if the review gate already passed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          AUTOMERGE_POLL: "1"
+        run: python3 ops/scripts/gha_review_gate.py

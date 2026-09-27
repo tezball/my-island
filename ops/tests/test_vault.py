@@ -1809,7 +1809,8 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
 
     ci = (REPO / ".github" / "workflows" / "ci.yml").read_text()
     automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
-    workflows = ci + automerge
+    poll = (REPO / ".github" / "workflows" / "automerge-poll.yml").read_text()
+    workflows = ci + automerge + poll
     assert "createReview" not in workflows
     assert "pulls.createReview" not in workflows
     assert "event: 'APPROVE'" not in workflows
