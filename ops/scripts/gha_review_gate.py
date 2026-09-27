@@ -6,7 +6,9 @@ AUTOMERGE_POLL=1 lists open PRs and runs this same gate. A same-repo head
 that is behind main, or dirty, is updated by merging main into that branch
 first. That update is a merge commit, not a force-push. Forks are not
 updated. A conflict posts one pull request comment and skips the squash.
-The new SHA still needs the four green checks and a valid non-author APPROVED.
+A successful merge dispatches ci.yml on that head branch (workflow_dispatch).
+A dispatch failure is logged and does not fail the poll. The new SHA still
+needs the four green checks and a valid non-author APPROVED.
 
 Exit 0 for skip / waiting-for-review / waiting-for-CI / merge attempted.
 Never fail the merge job red because Approve is missing.
@@ -407,6 +409,21 @@ def dispatch_main_ci(owner: str, repo: str, token: str) -> None:
     _github_request("POST", url, token, {"ref": "main"})
 
 
+def dispatch_head_ci(owner: str, repo: str, head_ref: str, token: str) -> None:
+    """Dispatch ci.yml on a pull request head branch.
+
+    GITHUB_TOKEN may call workflow_dispatch. The ref is the branch name.
+    Refuses main so a behind-merge cannot start CI on the default branch.
+    """
+    ref = head_ref.strip()
+    if not ref:
+        raise GateError("pull request head ref missing")
+    if ref in {"main", "refs/heads/main"}:
+        raise GateError("refuse to dispatch CI on main")
+    url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/ci.yml/dispatches"
+    _github_request("POST", url, token, {"ref": ref})
+
+
 def env_flag(name: str) -> bool:
     return os.environ.get(name, "").strip() in {"1", "true", "TRUE", "yes"}
 
@@ -580,6 +597,7 @@ def poll_ready(
     mark: Any | None = None,
     update: Any | None = None,
     on_conflict: Any | None = None,
+    dispatch_head: Any | None = None,
 ) -> list[str]:
     """Same ready and ``decide`` path as one-PR automerge.
 
@@ -590,8 +608,9 @@ def poll_ready(
 
     When ``update`` is set, a same-repo head that is behind main or dirty
     is updated first. Forks are not updated. A conflict calls ``on_conflict``
-    and skips that pull request. A new merge commit skips ready and squash
-    until a later run sees the new SHA.
+    and skips that pull request. A new merge commit dispatches ci.yml on
+    that head branch, then skips ready and squash until a later run sees
+    the new SHA. A dispatch failure is logged and does not stop the list.
     """
     lines: list[str] = []
     for row in rows:
@@ -634,6 +653,14 @@ def poll_ready(
                 continue
             if changed:
                 lines.append(f"#{number} updated: merged origin/main ({reason})")
+                if dispatch_head is not None:
+                    try:
+                        dispatch_head(current)
+                    except GateError as exc:
+                        lines.append(f"#{number} CI dispatch skipped: {exc}")
+                    else:
+                        ref = _head_ref(current) if isinstance(current, dict) else ""
+                        lines.append(f"#{number} dispatched CI on {ref}")
                 continue
         if should_mark_ready(pr=current, checks_green=False, check_runs=runs_list):
             current, ready_line = confirm_ready(number, current, mark)
@@ -702,7 +729,12 @@ def poll_open(owner: str, repo: str, token: str) -> int:
     def on_conflict(number: int, head_sha: str) -> None:
         comment_on_conflict(owner, repo, number, head_sha, token)
 
-    for line in poll_ready(rows, load, merge, dispatch, mark, update, on_conflict):
+    def dispatch_head(pr: dict[str, Any]) -> None:
+        dispatch_head_ci(owner, repo, _head_ref(pr), token)
+
+    for line in poll_ready(
+        rows, load, merge, dispatch, mark, update, on_conflict, dispatch_head
+    ):
         print(line)
     return 0
 
@@ -761,6 +793,12 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
             if changed:
                 print(f"#{number} updated: merged origin/main ({reason})")
+                head_ref = _head_ref(pr)
+                try:
+                    dispatch_head_ci(owner, repo, head_ref, token)
+                    print(f"#{number} dispatched CI on {head_ref}")
+                except GateError as exc:
+                    print(f"#{number} CI dispatch skipped: {exc}")
                 return 0
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)

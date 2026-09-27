@@ -41,7 +41,7 @@ Fix a failed **check-run** from GitHub Actions on the head SHA. Jenkins posts **
 - At most **3** fix commits on one PR. Before pushing, count prior comments whose first line is `pr-loop fix`. At 3, comment `pr-loop stopped: fix cap` and stop.
 - One PR per automation run. Do not open a second pull request.
 - Do not force-push. Do not push `main`. Do not close the PR. Do not post to Slack. Do not touch Jenkins.
-- A same-repo head that is behind `main`, or dirty, is updated by merging `origin/main` into that branch. No force-push. A conflict comments `update skipped: merge of origin/main conflicts` and skips the pull request. Forks are not updated. The new SHA still needs the four checks and a valid non-author `APPROVED`.
+- A same-repo head that is behind `main`, or dirty, is updated by merging `origin/main` into that branch. No force-push. A conflict comments `update skipped: merge of origin/main conflicts` and skips the pull request. A successful merge dispatches `ci.yml` on that head branch. A dispatch failure is logged and does not fail the poll. Forks are not updated. The new SHA still needs the four checks and a valid non-author `APPROVED`.
 - Automerge marks a same-repo draft ready when CI succeeded (`draft: false`) by calling `markPullRequestReadyForReview`, and only after a re-fetch shows it is not a draft. A failed mutation leaves it a draft. The loop does not do that itself. Forks stay drafts. A failed or pending check stays a draft.
 
 ## Triggers to save

@@ -15,6 +15,7 @@ from gha_review_gate import (
     conflict_comment_body,
     conflict_comment_exists,
     decide,
+    dispatch_head_ci,
     four_checks_success,
     has_valid_approve,
     latest_vote_by_user,
@@ -523,6 +524,145 @@ def test_behind_same_repo_merges_main_and_does_not_squash() -> None:
     assert marked == []
     assert merged == []
     assert any("updated: merged origin/main (behind)" in line for line in lines)
+
+
+def test_successful_behind_merge_dispatches_ci_on_head_ref() -> None:
+    dispatched: list[str] = []
+    merged: list[tuple[int, str]] = []
+    pr = _numbered(11)
+    pr["head"]["ref"] = "cursor/pr-loop-clean-green-86de"
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    lines = poll_ready(
+        [pr],
+        lambda number: (
+            pr,
+            [_review("cursor[bot]", APPROVED)],
+            _green_runs(),
+            {"behind_by": 2, "status": "behind"},
+        ),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        update=lambda current, reason: True,
+        dispatch_head=lambda current: dispatched.append(current["head"]["ref"]),
+    )
+    assert dispatched == ["cursor/pr-loop-clean-green-86de"]
+    assert merged == []
+    assert any("dispatched CI on cursor/pr-loop-clean-green-86de" in line for line in lines)
+    assert not any("dispatched CI on main" in line for line in lines)
+    assert not any("waiting for review" in line for line in lines)
+
+
+def test_successful_dirty_merge_dispatches_ci_on_head_ref() -> None:
+    dispatched: list[str] = []
+    pr = _numbered(12)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "dirty"
+    pr["mergeable"] = False
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [], _green_runs(), {"behind_by": 1, "status": "diverged"}),
+        lambda number, sha: None,
+        lambda number: None,
+        update=lambda current, reason: reason == "dirty",
+        dispatch_head=lambda current: dispatched.append(current["head"]["ref"]),
+    )
+    assert dispatched == ["feature"]
+    assert any("dispatched CI on feature" in line for line in lines)
+    assert any("updated: merged origin/main (dirty)" in line for line in lines)
+
+
+def test_ci_dispatch_failure_is_logged_and_poll_continues() -> None:
+    dispatched: list[str] = []
+    merged: list[int] = []
+    first = _numbered(11)
+    first["head"]["ref"] = "feature"
+    first["mergeable_state"] = "behind"
+    first["mergeable"] = True
+    second = _numbered(13)
+    second["head"]["ref"] = "other"
+    second["mergeable_state"] = "behind"
+    second["mergeable"] = True
+
+    def dispatch_head(current: dict) -> None:
+        ref = current["head"]["ref"]
+        if ref == "feature":
+            raise GateError("HTTP 403 dispatch")
+        dispatched.append(ref)
+
+    lines = poll_ready(
+        [first, second],
+        lambda number: (
+            first if number == 11 else second,
+            [],
+            _green_runs(),
+            {"behind_by": 1, "status": "behind"},
+        ),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        update=lambda current, reason: True,
+        dispatch_head=dispatch_head,
+    )
+    assert dispatched == ["other"]
+    assert merged == []
+    assert any("#11 CI dispatch skipped: HTTP 403 dispatch" in line for line in lines)
+    assert any("#13 dispatched CI on other" in line for line in lines)
+
+
+def test_already_up_to_date_merge_does_not_dispatch_ci() -> None:
+    dispatched: list[str] = []
+    pr = _numbered(8)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs(), None),
+        lambda number, sha: None,
+        lambda number: None,
+        update=lambda current, reason: False,
+        dispatch_head=lambda current: dispatched.append(current["head"]["ref"]),
+    )
+    assert dispatched == []
+
+
+def test_fork_behind_does_not_dispatch_ci() -> None:
+    dispatched: list[str] = []
+    pr = _numbered(2, fork=True, draft=True)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    poll_ready(
+        [pr],
+        lambda number: (pr, [], _green_runs(), {"behind_by": 4, "status": "behind"}),
+        lambda number, sha: None,
+        lambda number: None,
+        update=lambda current, reason: True,
+        dispatch_head=lambda current: dispatched.append("called"),
+    )
+    assert dispatched == []
+
+
+def test_dispatch_head_ci_posts_branch_not_main(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: dict[str, object] = {}
+
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del token, timeout
+        seen["method"] = method
+        seen["url"] = url
+        seen["payload"] = payload
+        return {}, ""
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    dispatch_head_ci("tezball", "my-island", "cursor/pr-loop-draft-undraft-86de", "tok")
+    assert seen["method"] == "POST"
+    assert str(seen["url"]).endswith("/actions/workflows/ci.yml/dispatches")
+    payload = seen["payload"]
+    assert isinstance(payload, dict)
+    assert payload["ref"] == "cursor/pr-loop-draft-undraft-86de"
+    assert payload["ref"] != "main"
+    with pytest.raises(GateError, match="refuse to dispatch CI on main"):
+        dispatch_head_ci("tezball", "my-island", "main", "tok")
 
 
 def test_dirty_conflict_comments_and_skips() -> None:

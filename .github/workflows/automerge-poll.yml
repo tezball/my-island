@@ -10,8 +10,9 @@ on:
     - cron: "*/5 * * * *"
   workflow_dispatch:
 
-# actions: write is only so a successful squash can dispatch ci.yml on main
-# (GITHUB_TOKEN squash does not fire push). This workflow does not run tests.
+# actions: write lets GITHUB_TOKEN dispatch ci.yml. After squash that ref is
+# main. After a behind or dirty merge it is the pull request head branch.
+# This workflow does not run the four test jobs.
 permissions:
   contents: write
   pull-requests: write
