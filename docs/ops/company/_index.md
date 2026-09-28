@@ -19,4 +19,5 @@ Who we are and how we behave. Product *what* is `product/` (outside this vault).
 | [[PEOPLE]] | Humans. Agents are [[ops/agents/_index]] |
 | [[PRODUCT]] | Pointer to vision, MVP, marketplace gate |
 | [[DECISIONS]] | CEO locks (2026-09-05) — stack, MVP drafted, cleanup |
+| [[ops/company/ab-deploy/AB deploy]] | Research: zero-downtime A/B on the one VPS (not a decision) |
 | [[SCAFFOLDING]] | App code is disposable — do not preserve it |
