@@ -44,6 +44,7 @@ jenkins_ci_cd() {
 
 jenkins_isolate_env() {
   export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-my-island-ci}"
+  export JENKINS_CI_STACK=1
   export OPS_PG_HOST_PORT="${OPS_PG_HOST_PORT:-15433}"
   export OPS_LOKI_HOST_PORT="${OPS_LOKI_HOST_PORT:-13101}"
   export OPS_PROM_HOST_PORT="${OPS_PROM_HOST_PORT:-19091}"

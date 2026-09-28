@@ -1,0 +1,6 @@
+# Jenkins stack overlay. scripts/dev loads this when JENKINS_CI_STACK=1.
+# Do not publish Mailpit on the host (1025/8025 clash with a local ./scripts/dev up).
+# Catalog still reaches mailpit:1025 on the compose network.
+services:
+  mailpit:
+    ports: !override []
