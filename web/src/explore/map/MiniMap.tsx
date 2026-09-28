@@ -22,9 +22,9 @@ export function MiniMap({ lat, lng }: { lat: number; lng: number }) {
     }).addTo(map);
     L.circleMarker([lat, lng], {
       radius: 8,
-      color: "#F4F0E6",
+      color: "#FFFFFF",
       weight: 2,
-      fillColor: "#215C4E",
+      fillColor: "#1F7A4D",
       fillOpacity: 1,
     }).addTo(map);
     requestAnimationFrame(() => map.invalidateSize());

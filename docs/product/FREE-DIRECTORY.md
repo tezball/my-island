@@ -22,16 +22,16 @@ A signed-in person tracks places they have been and ticks them off on a journey 
 
 ## Build order
 
-One ticket at a time. `next_ticket.py` picks `implement` by priority then id. Product tickets below stay `plan` until the previous one is `done`. Only then does a planner set the next single ticket to `implement`.
+One ticket at a time. `next_ticket.py` picks `implement` by priority then id. PRD-032, PRD-033, and PRD-034 stay `plan`. PRD-035 is in `review` on the green-and-white palette in [`LOOK.md`](LOOK.md). That look does not mark PRD-034 done.
 
-| # | Ticket | Status to keep until the previous is done | Done when |
+| # | Ticket | Status | Done when |
 |---|---|---|---|
 | 1 | [[ops/tickets/WF-040]] | **`implement` now** | Public `/actuator/info` `gitCommit` equals `origin/main` after an unattended deploy |
 | 2 | [[ops/tickets/PRD-030]] | `review` (code is on `main`; do not re-implement) | Journey map of been/want confirmed on the public host after step 1 |
 | 3 | [[ops/tickets/PRD-032]] | `plan` | Campsite, B&B, experience, and supplier kinds on the map |
 | 4 | [[ops/tickets/PRD-033]] | `plan` | Host and supplier authenticated drafts; curator publishes; anonymous Place POST stays closed |
 | 5 | [[ops/tickets/PRD-034]] | `plan` | Guest, host, supplier, curator/admin, and support self-serve, with role homes and a support help path |
-| 6 | [[ops/tickets/PRD-035]] | `plan` | Phone-first look-and-feel refactor of the current Vite PWA |
+| 6 | [[ops/tickets/PRD-035]] | `review` | Phone-first look-and-feel refactor of the current Vite PWA |
 
 [[ops/tickets/WF-048]] and [[ops/tickets/WF-049]] already describe the deploy trigger. They stay `review`. Do not open a third pipeline ticket for the same SHA outcome.
 

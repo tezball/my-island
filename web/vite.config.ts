@@ -15,8 +15,8 @@ export default defineConfig({
         name: "Explore — OPEN",
         short_name: "Explore",
         description: "A directory of places across Ireland",
-        theme_color: "#215C4E",
-        background_color: "#F4F0E6",
+        theme_color: "#1F7A4D",
+        background_color: "#F3FAF6",
         display: "standalone",
         start_url: ".",
         icons: [

@@ -65,18 +65,24 @@ Use these as the **mood and subject set** (real Irish bucket-list places). Inven
 
 Photography feeling: Discover Ireland *quality of place*, Airbnb *image dominance*, National Geographic *honesty* — without copying any of those brands.
 
-### Colour — green, but quiet
+### Colour — green and white
 
-Green is the brand colour. It must **not** dominate.
+One palette. The phone UI is green and white, with amber for calls to action.
 
-- A **soft Irish green**: moss, sage, lichen, Atlantic pine — not Kelly, not emerald, not “St Patrick’s Day”
-- Green is for: wordmark accent, selected chips, map category, the check-off when ticked, focus rings, small labels
-- Most of the UI is **warm paper / stone / mist / cream**. Large fills of green are wrong
-- Photographs carry the colour of the landscape; the chrome stays quiet so the photos punch
-- One restrained gold/gorse accent only if needed (locate FAB, “near me”) — never competing with green
-- Dark ink for type. High contrast outdoors (WCAG 2.2 AA). Legible in Irish daylight and in a car park at dusk
+| Role | Hex |
+|---|---|
+| Page background | `#f3faf6` |
+| Cards and sheets | `#ffffff` |
+| Text | `#143028` |
+| Header and primary green | `#1f7a4d` |
+| Call to action, including Directions | `#f5a524` |
 
-Suggest a small token set: paper, ink, moss (primary), mist (hairline), sheet (surfaces), gorse (rare accent), danger.
+- The header bar is the primary green (`#1f7a4d`) with white type. The same green is the wordmark, selected chips, links, map pins, focus rings, and the favicon.
+- Cards, sheets, and search fields are white (`#ffffff`). The page behind them is `#f3faf6`.
+- Text is `#143028`.
+- Calls to action, including the Directions button and the locate control, are amber `#f5a524`. Brown `#c98400` is not a colour in this UI.
+- Hairlines are a light green mist in this same palette. Photographs still carry the landscape.
+- High contrast outdoors (WCAG 2.2 AA). Legible in Irish daylight and in a car park at dusk.
 
 ### Mobile-first, non-negotiable
 
@@ -112,14 +118,14 @@ Headlines: a distinctive serif or Irish-inflected display that can sit on a phot
 - Tourism-board pastiche, shamrocks, harps as decoration, claddagh, “céad míle fáilte” as a headline
 - Marketplace / booking chrome (dates, guests, “from €89”, Superhost)
 - Tiny thumbnails that waste Ireland
-- Saturated green backgrounds, neon CTAs, dark-mode-first (light, outdoor, paper)
+- Neon CTAs or a dark-mode-first chrome. The UI stays the light green-and-white palette above
 - Designing desktop first and shrinking it
 
 ### Output
 
 High-fidelity **mobile** frames for the screens above, plus a one-page visual system (tokens, type, card anatomy, check-off, map pin, photography crop rules). If you show desktop, it is a 2-column Explore (list | map) using the same mobile components — not a different product.
 
-Tone of the finished UI: **quiet chrome, loud landscape**. Green as a whisper. Ireland as the photograph.
+Tone of the finished UI: **green header, white cards, amber actions**. Ireland as the photograph.
 
 ---
 
@@ -129,9 +135,9 @@ Paste **Shared system** once, then one screen prompt per generation. Keep the sa
 
 ### Shared system
 
-Phone-first Irish place directory PWA. 390×844. Quiet warm paper chrome; **soft moss/sage green as accent only** — never a green fill. Photography is the product: cinematic Ireland, weather allowed. No shamrocks, no Fáilte / Discover Ireland / Wild Atlantic Way branding, no booking chrome. 44px targets, bottom tab bar, one-thumb. Categories: POI, experience, campsite, B&B. One-tap check-off on every place surface.
+Phone-first Irish place directory PWA. 390×844. Page `#f3faf6`, white cards, text `#143028`, header and primary green `#1f7a4d`, call to action including Directions amber `#f5a524`. Photography is the product: cinematic Ireland, weather allowed. No shamrocks, no Fáilte / Discover Ireland / Wild Atlantic Way branding, no booking chrome. 44px targets, bottom tab bar, one-thumb. Categories: POI, experience, campsite, B&B. One-tap check-off on every place surface.
 
-Tokens: paper (warm cream), ink (near-black green-grey), moss (selected / ticked / links), mist (hairlines), sheet (cards), gorse (rare locate accent). Serif for place names, humanist sans for UI.
+Tokens: page `#f3faf6`, cards `#ffffff`, text `#143028`, header and primary green `#1f7a4d`, amber `#f5a524` for calls to action including Directions. Serif for place names, humanist sans for UI.
 
 ### 1 — Explore list
 
@@ -139,16 +145,16 @@ Design the Explore **list**. Search + category/county chips without scrolling. R
 
 ### 2 — Explore map
 
-Same system. Ireland map, clustered pins by category, ticked pins distinct. Locate FAB (gorse, once). After pan: “Search this area”. One pin open as a **bottom sheet**: big photo of Skellig Michael in mist, name, Kerry, one-tap Been here, Open place. Sheet over the map; tab bar still visible.
+Same system. Ireland map, clustered pins by category, ticked pins distinct. Locate control in amber `#f5a524`. After pan: “Search this area”. One pin open as a **bottom sheet**: big photo of Skellig Michael in mist, name, Kerry, one-tap Been here, Open place. Sheet over the map; tab bar still visible.
 
 ### 3 — Place detail
 
-Same system. Hero is a postcard crop of Great Blasket cottages by the sea (or Fanad Lighthouse). Back control on the photo. Name in serif, category pill in moss, county/town, short direct description, chips for parking / dogs / season / free or €. Mini-map. Nearby photo-led cards. Sticky bottom: Directions + Been here (Stayed as well if this were a B&B). Safe area above the tab bar.
+Same system. Hero is a postcard crop of Great Blasket cottages by the sea (or Fanad Lighthouse). Back control on the photo. Name in serif, category pill in the primary green, county/town, short direct description, chips for parking / dogs / season / free or €. Mini-map. Nearby photo-led cards. Sticky bottom: Directions in amber `#f5a524` + Been here (Stayed as well if this were a B&B). Safe area above the tab bar.
 
 ### 4 — My Places
 
-Same system. Feels like a journal. Hero number: **counties visited of 32**. Total places + breakdown (POI / experience / campsite / B&B). Photo grid of ticked places (Moher, Newgrange, a campsite stay, a B&B). Toggle to a personal map of coverage. No settings-page energy. Check-offs already ticked, moss.
+Same system. Feels like a journal. Hero number: **counties visited of 32**. Total places + breakdown (POI / experience / campsite / B&B). Photo grid of ticked places (Moher, Newgrange, a campsite stay, a B&B). Toggle to a personal map of coverage. No settings-page energy. Check-offs already ticked, in the primary green.
 
 ### 5 — Visual system sheet (optional)
 
-One frame: token swatches, type pairing, list-card anatomy (photo crop rules), check-off empty/ticked, map pin set (four categories + ticked), bottom tab bar, chip selected/unselected. Caption: quiet chrome, loud landscape.
+One frame: token swatches, type pairing, list-card anatomy (photo crop rules), check-off empty/ticked, map pin set (four categories + ticked), bottom tab bar, chip selected/unselected. Caption: green header, white cards, amber actions.

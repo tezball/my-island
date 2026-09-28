@@ -1885,7 +1885,10 @@ def test_free_directory_2026_09_26() -> None:
     assert by_id["PRD-031"]["status"] == "plan"
     for ident in ("PRD-032", "PRD-033", "PRD-034", "PRD-035"):
         meta = by_id[ident]
-        assert meta["status"] == "plan", ident
+        if ident == "PRD-035":
+            assert meta["status"] == "review", ident
+        else:
+            assert meta["status"] == "plan", ident
         assert meta["status"] != "implement"
         assert meta["status"] != "ready"
         assert meta["type"] == "story"
