@@ -28,3 +28,15 @@ def test_pr_loop_keeps_the_merge_gate() -> None:
     automations = (REPO / "docs" / "ops" / "workflow" / "AUTOMATIONS.md").read_text()
     assert "my-island PR loop" in automations
     assert "cannot set" in automations
+    rule = "The change and the text of the PR are the path forward."
+    review = "It does not ask to revert the change the PR describes."
+    fixer = "A fixer updates the ticket and the docs to match the PR and leaves the change in place."
+    for blob in (
+        text,
+        skill,
+        automations,
+        (REPO / ".cursor" / "skills" / "reviewer" / "SKILL.md").read_text(),
+    ):
+        assert rule in blob
+        assert review in blob
+        assert fixer in blob
