@@ -1,20 +1,24 @@
-# WF-050: squash-merge AFTER workflow CI has completed successfully.
-# Separate workflow name so pull_request_review cannot cancel in-flight
-# unit / catalog / web / stack. Do not add this job as a required check.
+# WF-050: squash-merge when the four Actions checks succeed, or a non-author
+# review is submitted. One run per head SHA. A second run is refused while
+# one is in flight or has already decided (see gha_review_gate.py).
+# Do not cancel an in-flight gate. Do not add this job as a required check.
 # Actions must not approve PRs. Chat never gh pr merge.
-# A same-repo draft is marked ready when this CI run succeeded. Forks stay drafts.
+# GITHUB_TOKEN still does not run pull_request workflows. The gate keeps
+# workflow_dispatch of ci.yml for that case. The hourly poll is the backstop.
 name: Automerge
 
 on:
   workflow_run:
     workflows: ["CI"]
     types: [completed]
+  check_run:
+    types: [completed]
   pull_request_review:
     types: [submitted]
 
 concurrency:
-  group: automerge-${{ github.event.workflow_run.head_sha || github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: automerge-${{ github.event.check_run.head_sha || github.event.pull_request.head.sha || github.event.workflow_run.head_sha || github.event.pull_request.number }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -28,9 +32,20 @@ jobs:
         github.event.workflow_run.conclusion == 'success' &&
         github.event.workflow_run.head_repository.full_name == github.repository
       ) || (
+        github.event_name == 'check_run' &&
+        github.event.check_run.conclusion == 'success' &&
+        github.event.check_run.app.slug == 'github-actions' &&
+        (
+          github.event.check_run.name == 'unit tests' ||
+          github.event.check_run.name == 'catalog tests' ||
+          github.event.check_run.name == 'web tests' ||
+          github.event.check_run.name == 'compose stack'
+        )
+      ) || (
         github.event_name == 'pull_request_review' &&
         github.event.pull_request.draft == false &&
-        github.event.pull_request.head.repo.full_name == github.repository
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.review.user.login != github.event.pull_request.user.login
       )
     runs-on: ubuntu-latest
     permissions:
@@ -52,7 +67,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha }}
+          PR_NUMBER: ${{ github.event_name == 'pull_request_review' && github.event.pull_request.number || github.event_name == 'workflow_run' && github.event.workflow_run.pull_requests[0].number || '' }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.event.check_run.head_sha || github.event.workflow_run.head_sha }}
           AUTOMERGE_CHECKS_GREEN: ${{ github.event_name == 'workflow_run' && '1' || '0' }}
+          AUTOMERGE_REVIEW_EVENT: ${{ github.event_name == 'pull_request_review' && '1' || '0' }}
         run: python3 ops/scripts/gha_review_gate.py

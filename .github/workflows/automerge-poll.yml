@@ -1,13 +1,12 @@
-# Same gate as automerge.yml (ops/scripts/gha_review_gate.py).
-# Marking a draft ready does not fire workflow_run or pull_request_review,
-# so CI can already be green and the merge job never ran. This poll retries
-# that gate, including draft: false when the four checks already succeeded.
-# It does not run the four test jobs.
+# Hourly backstop for the same gate as automerge.yml (ops/scripts/gha_review_gate.py).
+# The fast path is check_run / workflow_run / a non-author review, not this poll.
+# A missed webhook can still merge. This poll does not run the four test jobs.
+# It does not merge origin/main unless that pass is about to squash.
 name: Automerge poll
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 # actions: write lets GITHUB_TOKEN dispatch ci.yml. After squash that ref is

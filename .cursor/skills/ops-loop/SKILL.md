@@ -36,7 +36,7 @@ Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`
 1. Plan + `status: implement` already on `main`.
 2. Sibling worktree `wf/<id>-short-slug` from latest `main` (`docs/ops/runbooks/WORKTREE.md`). Do not feature-commit in the primary clone.
 3. Boot stack if needed: `./scripts/app start`.
-4. Implement only that ticket; meet [[ops/workflow/DOD]] (draft) + verify; `gh pr create`.
+4. Implement only that ticket; meet [[ops/workflow/DOD]] (draft) + verify. Before `gh pr create`, the ticket, the code, and the docs in that PR are in sync. The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync. A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place. Then `gh pr create`.
 5. Set `pr:` + `status: review`; board_sync; run note. Do not merge from chat.
 
 ## Reviewer (`--role reviewer`)

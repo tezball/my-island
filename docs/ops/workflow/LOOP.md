@@ -73,7 +73,7 @@ python3 ops/scripts/new_ticket.py --prefix PRD --type story --title "…"
 
 1. **Primary clone stays on `main`.** Company-state docs still land via short docs PR + delete branch ([[WORKTREES]]).
 2. **Implement in a sibling worktree** (`wf/<id>-slug` or `prd/<id>-slug`). One session, one tree, one branch. Commands: [[ops/runbooks/WORKTREE]].
-3. PR title `<id>: <title>`; body links ticket + plan.
+3. PR title `<id>: <title>`; body links ticket + plan. Before opening the PR, the ticket, the code, and the docs are in sync. The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync. A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
 4. Never `--no-verify`. Never force-push `main`. Never deploy a feature branch to the VPS.
 5. After merge: delete local and remote feature branches, **remove the worktree**, `git pull --ff-only` on the primary; confirm Actions on `main` are green — if not, fix on a new worktree.
 6. One laptop Compose (`name: my-island`). Do not start the stack from two worktrees at once.

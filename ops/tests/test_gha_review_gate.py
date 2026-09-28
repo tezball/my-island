@@ -25,8 +25,12 @@ from gha_review_gate import (
     comment_on_conflict,
     conflict_comment_body,
     conflict_comment_exists,
+    DECISION_CONTEXT,
+    MemoryClaim,
     TRIGGER_REVIEW_MESSAGE,
+    begin_event,
     create_empty_commit,
+    second_run_refusal,
     decide,
     dispatch_head_ci,
     fast_forward_branch,
@@ -493,7 +497,9 @@ def test_earlier_failed_check_run_does_not_block_later_success() -> None:
 
 def test_automerge_poll_workflow_does_not_rerun_tests() -> None:
     text = (REPO / ".github" / "workflows" / "automerge-poll.yml").read_text()
-    assert 'cron: "*/5 * * * *"' in text
+    assert 'cron: "0 * * * *"' in text
+    assert "*/5" not in text
+    assert "H/5" not in text
     assert "workflow_dispatch:" in text
     assert "contents: write" in text
     assert "pull-requests: write" in text
@@ -579,7 +585,12 @@ def test_successful_dirty_merge_dispatches_ci_on_head_ref() -> None:
     pr["mergeable"] = False
     lines = poll_ready(
         [pr],
-        lambda number: (pr, [], _green_runs(), {"behind_by": 1, "status": "diverged"}),
+        lambda number: (
+            pr,
+            [_review("cursor[bot]", APPROVED)],
+            _green_runs(),
+            {"behind_by": 1, "status": "diverged"},
+        ),
         lambda number, sha: None,
         lambda number: None,
         update=lambda current, reason: reason == "dirty",
@@ -612,7 +623,7 @@ def test_ci_dispatch_failure_is_logged_and_poll_continues() -> None:
         [first, second],
         lambda number: (
             first if number == 11 else second,
-            [],
+            [_review("cursor[bot]", APPROVED)],
             _green_runs(),
             {"behind_by": 1, "status": "behind"},
         ),
@@ -687,7 +698,7 @@ def test_dirty_conflict_comments_and_skips() -> None:
     comments: list[tuple[int, str]] = []
     marked: list[int] = []
     merged: list[int] = []
-    pr = _numbered(12, draft=True)
+    pr = _numbered(12)
     pr["head"]["ref"] = "feature"
     pr["mergeable_state"] = "dirty"
     pr["mergeable"] = False
@@ -920,13 +931,126 @@ def test_no_second_five_minute_poll() -> None:
     scheduled = [
         path.name
         for path in sorted(workflows.glob("*.yml"))
-        if 'cron: "*/5 * * * *"' in path.read_text()
+        if 'cron: "*/5' in path.read_text() or 'cron: "H/5' in path.read_text()
     ]
-    assert scheduled == ["automerge-poll.yml"]
+    assert scheduled == []
     poll = (workflows / "automerge-poll.yml").read_text()
+    assert 'cron: "0 * * * *"' in poll
     assert poll.count("cron:") == 1
     assert "issues: write" in poll
     assert "on:\n  schedule:" in poll
+    assert "gha_review_gate.py" in poll
+
+
+def test_one_event_does_not_double_merge() -> None:
+    claim = MemoryClaim()
+    merges: list[str] = []
+    pr = _numbered(8)
+    pr["mergeable_state"] = "clean"
+    pr["mergeable"] = True
+
+    def once() -> list[str]:
+        return poll_ready(
+            [pr],
+            lambda number: (
+                pr,
+                [_review("cursor[bot]", APPROVED)],
+                _green_runs(),
+                {"behind_by": 0, "status": "ahead"},
+            ),
+            lambda number, sha: merges.append(sha),
+            lambda number: None,
+            claim=claim,
+        )
+
+    first = once()
+    second = once()
+    assert merges == ["abc"]
+    assert any("squash-merged" in line for line in first)
+    assert any("refused: already decided" in line for line in second)
+
+    inflight = MemoryClaim()
+    inflight.put("abc", "pending", "in flight")
+    assert begin_event(inflight, "abc", review_event=False) == "in flight"
+    assert second_run_refusal(inflight.get("abc"), review_event=True) == "in flight"
+    blocked: list[str] = []
+    lines = poll_ready(
+        [pr],
+        lambda number: (
+            pr,
+            [_review("cursor[bot]", APPROVED)],
+            _green_runs(),
+            {"behind_by": 0, "status": "ahead"},
+        ),
+        lambda number, sha: blocked.append(sha),
+        lambda number: None,
+        claim=inflight,
+    )
+    assert blocked == []
+    assert any("refused: in flight" in line for line in lines)
+
+
+def test_poll_does_not_merge_main_unless_about_to_squash() -> None:
+    called: list[str] = []
+    merged: list[int] = []
+    pr = _numbered(11)
+    pr["head"]["ref"] = "feature"
+    pr["mergeable_state"] = "behind"
+    pr["mergeable"] = True
+    lines = poll_ready(
+        [pr],
+        lambda number: (
+            pr,
+            [],
+            _green_runs(),
+            {"behind_by": 2, "status": "behind"},
+        ),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        update=lambda current, reason: called.append(reason) or True,
+    )
+    assert called == []
+    assert merged == []
+    assert any("waiting for review" in line for line in lines)
+    assert not any("updated: merged origin/main" in line for line in lines)
+
+
+def test_hourly_backstop_still_calls_the_gate() -> None:
+    poll = (REPO / ".github" / "workflows" / "automerge-poll.yml").read_text()
+    automerge = (REPO / ".github" / "workflows" / "automerge.yml").read_text()
+    assert 'cron: "0 * * * *"' in poll
+    assert "*/5" not in poll
+    assert "AUTOMERGE_POLL" in poll
+    assert "gha_review_gate.py" in poll
+    assert "workflow_dispatch:" in poll
+    assert "check_run:" in automerge
+    assert "cancel-in-progress: false" in automerge
+    assert "github.event.review.user.login != github.event.pull_request.user.login" in automerge
+    assert "gha_review_gate.py" in automerge
+
+
+def test_cursoragent_trigger_commit_is_still_present() -> None:
+    text = (REPO / "ops" / "scripts" / "gha_review_gate.py").read_text()
+    assert TRIGGER_REVIEW_MESSAGE == "Trigger review for pull request head"
+    assert f'TRIGGER_REVIEW_MESSAGE = "{TRIGGER_REVIEW_MESSAGE}"' in text
+    assert "def trigger_cursoragent_review" in text
+    assert "def create_empty_commit" in text
+    assert "tezball86@gmail.com" not in text
+    assert "git config" not in text
+    assert DECISION_CONTEXT == "automerge/decision"
+    assert DECISION_CONTEXT not in REQUIRED_CHECK_NAMES
+    note = (REPO / "docs" / "ops" / "workflow" / "AUTOMATIONS.md").read_text()
+    assert "https://cursor.com/automations/2a5248fd-aedf-11f1-bf4b-42ffb4d10ea7" in note
+    assert TRIGGER_REVIEW_MESSAGE in note
+    assert "Run as Terry" in note
+
+
+def test_review_event_may_rerun_after_waiting_decision() -> None:
+    claim = MemoryClaim()
+    claim.put("abc", "success", "review:waiting for review")
+    assert second_run_refusal(claim.get("abc"), review_event=False) == "already decided"
+    assert second_run_refusal(claim.get("abc"), review_event=True) is None
+    assert begin_event(claim, "abc", review_event=True) is None
 
 
 def test_pick_pr_number_prefers_open() -> None:

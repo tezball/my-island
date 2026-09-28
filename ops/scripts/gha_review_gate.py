@@ -2,10 +2,19 @@
 """WF-050: squash-merge a ready PR only after green CI and a valid Approve.
 
 GitHub Actions is not permitted to createReview APPROVE. Chat never merges.
-AUTOMERGE_POLL=1 lists open PRs and runs this same gate. A same-repo head
-that is behind main, or dirty, is updated by merging main into that branch
-first. That update is a merge commit, not a force-push. Forks are not
-updated. A conflict posts one pull request comment and skips the squash.
+The event path runs when the four Actions checks succeed on a head, and
+when a non-author review is submitted. A second run for that head SHA is
+refused while one is in flight or has already decided (commit status
+``automerge/decision``, which is not a required check and not a main-red
+signal). A non-author review may run again after a wait. AUTOMERGE_POLL=1
+is the hourly backstop: it lists open PRs and runs this same gate. It does
+not merge main on a pass that is not about to squash.
+
+A same-repo head that is behind main, or dirty, is updated by merging main
+into that branch once, immediately before squash. That update is a merge
+commit, not a force-push. If the merge changes the head, this run does not
+squash. Forks are not updated. A conflict posts one pull request comment
+and skips the squash.
 A successful merge dispatches ci.yml on that head branch (workflow_dispatch).
 A dispatch failure is logged and does not fail the poll. When a same-repo
 head already has completed github-actions check runs for the four job names
@@ -19,8 +28,8 @@ empty commit on that branch (message ``Trigger review for pull request
 head``, authored by the Actions token, fast-forward, no force-push),
 dispatches ci.yml there, and skips ready, mirror, and squash for that pull
 request in that run. If the head message is already that trigger, it does
-not push another. The new SHA still needs the four green checks and a
-valid non-author APPROVED.
+not push another. The empty commit does not set a git author. The new
+SHA still needs the four green checks and a valid non-author APPROVED.
 
 While a main-red issue is open and main still has a real red signal, squash
 is skipped for every pull request except one labeled main-fix. A pull
@@ -64,6 +73,8 @@ CHECK_ALIASES = {
     "compose stack": ("compose stack", "stack"),
 }
 BOT_LOGINS = frozenset({"github-actions[bot]"})
+# Not one of the four required checks. Branch protection must not require it.
+DECISION_CONTEXT = "automerge/decision"
 # REST listReviews state. Creating a review uses event APPROVE.
 APPROVED = "APPROVED"
 CHANGES_REQUESTED = "CHANGES_REQUESTED"
@@ -1139,6 +1150,203 @@ def comment_on_conflict(owner: str, repo: str, number: int, head_sha: str, token
     return True
 
 
+class MemoryClaim:
+    """In-process head-SHA claim. Tests share one instance across two events."""
+
+    def __init__(self) -> None:
+        self.records: dict[str, dict[str, str]] = {}
+
+    def get(self, sha: str) -> dict[str, str] | None:
+        return self.records.get(sha)
+
+    def put(self, sha: str, state: str, description: str) -> None:
+        self.records[sha] = {"state": state, "description": description}
+
+
+class GithubClaim:
+    """Commit status ``automerge/decision`` for one head SHA. Not a required check."""
+
+    def __init__(self, owner: str, repo: str, token: str) -> None:
+        self.owner = owner
+        self.repo = repo
+        self.token = token
+
+    def get(self, sha: str) -> dict[str, str] | None:
+        return fetch_decision_record(self.owner, self.repo, sha, self.token)
+
+    def put(self, sha: str, state: str, description: str) -> None:
+        post_decision_status(self.owner, self.repo, sha, state, description, self.token)
+
+
+def fetch_decision_record(
+    owner: str, repo: str, sha: str, token: str
+) -> dict[str, str] | None:
+    """Latest ``automerge/decision`` status on ``sha``, if any."""
+    quoted = urllib.parse.quote(sha, safe="")
+    url = f"https://api.github.com/repos/{owner}/{repo}/commits/{quoted}/status"
+    payload, _ = _github_request("GET", url, token)
+    if not isinstance(payload, dict):
+        return None
+    rows = payload.get("statuses")
+    if not isinstance(rows, list):
+        return None
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("context") or "").strip() != DECISION_CONTEXT:
+            continue
+        return {
+            "state": str(row.get("state") or "").strip().lower(),
+            "description": str(row.get("description") or "").strip(),
+        }
+    return None
+
+
+def post_decision_status(
+    owner: str,
+    repo: str,
+    sha: str,
+    state: str,
+    description: str,
+    token: str,
+) -> None:
+    """POST ``automerge/decision`` only. Never one of the four check names."""
+    if DECISION_CONTEXT in REQUIRED_CHECK_NAMES or DECISION_CONTEXT.startswith("jenkins/"):
+        raise GateError("refuse to post automerge/decision on a real check name")
+    if state not in {"pending", "success"}:
+        raise GateError("refuse to post a decision that is not pending or success")
+    allowed = description in {"in flight", "open", "squash-merged"} or description.startswith(
+        "review:"
+    )
+    if not allowed:
+        raise GateError("refuse to post an unknown decision")
+    quoted = urllib.parse.quote(sha, safe="")
+    url = f"https://api.github.com/repos/{owner}/{repo}/statuses/{quoted}"
+    _github_request(
+        "POST",
+        url,
+        token,
+        {"state": state, "context": DECISION_CONTEXT, "description": description},
+    )
+
+
+def second_run_refusal(record: dict[str, str] | None, *, review_event: bool) -> str | None:
+    """Refuse a second event for this head while it is in flight or already decided.
+
+    A non-author review may run again after a settled wait (``review:``).
+    ``squash-merged`` and ``pending`` block every event, including a review.
+    """
+    if not record:
+        return None
+    state = str(record.get("state") or "")
+    description = str(record.get("description") or "")
+    if state == "pending":
+        return "in flight"
+    if description == "squash-merged":
+        return "already decided"
+    if description.startswith("review:") and not review_event:
+        return "already decided"
+    return None
+
+
+def squash_block(record: dict[str, str] | None) -> str | None:
+    """Block a second squash. A settled wait does not block the hourly poll."""
+    if not record:
+        return None
+    if str(record.get("state") or "") == "pending":
+        return "in flight"
+    if str(record.get("description") or "") == "squash-merged":
+        return "already decided"
+    return None
+
+
+def claim_squash_block(claim: Any | None, sha: str) -> str | None:
+    if claim is None or not sha:
+        return None
+    try:
+        record = claim.get(sha)
+    except GateError as exc:
+        print(f"claim read skipped: {exc}")
+        return None
+    return squash_block(record)
+
+
+def begin_event(claim: Any | None, sha: str, *, review_event: bool) -> str | None:
+    """Mark the head in flight, or return a refusal. None means this run holds it."""
+    if claim is None or not sha:
+        return None
+    try:
+        record = claim.get(sha)
+    except GateError as exc:
+        print(f"claim read skipped: {exc}")
+        return None
+    refusal = second_run_refusal(record, review_event=review_event)
+    if refusal:
+        return refusal
+    try:
+        claim.put(sha, "pending", "in flight")
+    except GateError as exc:
+        print(f"claim write skipped: {exc}")
+    return None
+
+
+def finish_event(
+    claim: Any | None,
+    sha: str,
+    action: str,
+    reason: str,
+    *,
+    checks_settled: bool,
+) -> None:
+    """Release the in-flight claim. A squash already wrote ``squash-merged``."""
+    if claim is None or not sha or action == "merge":
+        return
+    description = "open"
+    if checks_settled and (
+        "waiting for review" in reason or reason == "CHANGES_REQUESTED blocks"
+    ):
+        description = f"review:{reason}"
+    try:
+        claim.put(sha, "success", description)
+    except GateError as exc:
+        print(f"claim write skipped: {exc}")
+
+
+def squash_or_refuse(claim: Any | None, sha: str, merge: Any, *, held: bool) -> str:
+    """Squash once. ``held`` means this run already owns the in-flight claim."""
+    if claim is not None and sha:
+        try:
+            record = claim.get(sha)
+        except GateError as exc:
+            print(f"claim read skipped: {exc}")
+            record = None
+        if record and str(record.get("description") or "") == "squash-merged":
+            return "already decided"
+        if not held:
+            blocked = squash_block(record)
+            if blocked:
+                return blocked
+            try:
+                claim.put(sha, "pending", "in flight")
+            except GateError as exc:
+                print(f"claim write skipped: {exc}")
+    try:
+        merge()
+    except Exception:
+        if claim is not None and sha:
+            try:
+                claim.put(sha, "success", "open")
+            except GateError as exc:
+                print(f"claim write skipped: {exc}")
+        raise
+    if claim is not None and sha:
+        try:
+            claim.put(sha, "success", "squash-merged")
+        except GateError as exc:
+            print(f"claim write skipped: {exc}")
+    return "merge"
+
+
 def _as_loaded(
     loaded: Any,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any] | None]:
@@ -1164,6 +1372,7 @@ def poll_ready(
     trigger: Any | None = None,
     hold: Any | None = None,
     queue: Any | None = None,
+    claim: Any | None = None,
 ) -> list[str]:
     """Same ready and ``decide`` path as one-PR automerge.
 
@@ -1173,10 +1382,11 @@ def poll_ready(
     errors do not stop the list. This does not approve or close.
 
     When ``update`` is set, a same-repo head that is behind main or dirty
-    is updated first. Forks are not updated. A conflict calls ``on_conflict``
-    and skips that pull request. A new merge commit dispatches ci.yml on
-    that head branch, then skips ready and squash until a later run sees
-    the new SHA. A dispatch failure is logged and does not stop the list.
+    is updated once, immediately before squash. A poll that is not about to
+    squash does not merge main. Forks are not updated. A conflict calls
+    ``on_conflict`` and skips that pull request. A new merge commit
+    dispatches ci.yml on that head branch and does not squash on this run.
+    A dispatch failure is logged and does not stop the list.
 
     When ``mirror`` is set, a same-repo head copies completed github-actions
     conclusions onto commit statuses for any of the four names missing from
@@ -1186,9 +1396,13 @@ def poll_ready(
     one empty commit and CI was dispatched. Ready, mirror, and squash are
     skipped for that pull request in this run.
 
-    When ``hold`` returns true, squash is skipped after ``decide``. Reviews,
-    ready, mirror, and CI updates still run. ``queue`` posts ``queue/main-fix``
-    on a same-repo head and does not run for a fork.
+    When ``hold`` returns true, squash is skipped after ``decide``, and main
+    is not merged on that pass. Reviews, ready, mirror, and the cursoragent
+    trigger still run. ``queue`` posts ``queue/main-fix`` on a same-repo head
+    and does not run for a fork.
+
+    ``claim`` refuses a second squash for the same head SHA while one is in
+    flight or has already squash-merged.
     """
     lines: list[str] = []
     for row in rows:
@@ -1221,32 +1435,6 @@ def poll_ready(
                 lines.append(f"#{number} queue skipped: {exc}")
             else:
                 lines.extend(str(line) for line in queued)
-        reason = branch_update_reason(current, compare) if update is not None else None
-        if reason and update is not None:
-            try:
-                changed = bool(update(current, reason))
-            except UpdateConflict:
-                if on_conflict is not None:
-                    try:
-                        on_conflict(number, head_sha)
-                    except GateError as exc:
-                        lines.append(f"#{number} comment skipped: {exc}")
-                lines.append(f"#{number} {CONFLICT_COMMENT_LEAD}")
-                continue
-            except GateError as exc:
-                lines.append(f"#{number} update skipped: {exc}")
-                continue
-            if changed:
-                lines.append(f"#{number} updated: merged origin/main ({reason})")
-                if dispatch_head is not None:
-                    try:
-                        dispatch_head(current)
-                    except GateError as exc:
-                        lines.append(f"#{number} CI dispatch skipped: {exc}")
-                    else:
-                        ref = _head_ref(current) if isinstance(current, dict) else ""
-                        lines.append(f"#{number} dispatched CI on {ref}")
-                continue
         if (
             trigger is not None
             and isinstance(current, dict)
@@ -1284,6 +1472,11 @@ def poll_ready(
         lines.append(f"#{number} {decision.reason}")
         if decision.action != "merge":
             continue
+        if claim is not None and head_sha:
+            blocked = claim_squash_block(claim, head_sha)
+            if blocked:
+                lines.append(f"#{number} refused: {blocked}")
+                continue
         if hold is not None:
             try:
                 held = bool(hold(current))
@@ -1293,10 +1486,44 @@ def poll_ready(
             if held:
                 lines.append(f"#{number} squash skipped: held while main is red")
                 continue
+        reason = branch_update_reason(current, compare) if update is not None else None
+        if reason and update is not None:
+            try:
+                changed = bool(update(current, reason))
+            except UpdateConflict:
+                if on_conflict is not None:
+                    try:
+                        on_conflict(number, head_sha)
+                    except GateError as exc:
+                        lines.append(f"#{number} comment skipped: {exc}")
+                lines.append(f"#{number} {CONFLICT_COMMENT_LEAD}")
+                continue
+            except GateError as exc:
+                lines.append(f"#{number} update skipped: {exc}")
+                continue
+            if changed:
+                lines.append(f"#{number} updated: merged origin/main ({reason})")
+                if dispatch_head is not None:
+                    try:
+                        dispatch_head(current)
+                    except GateError as exc:
+                        lines.append(f"#{number} CI dispatch skipped: {exc}")
+                    else:
+                        ref = _head_ref(current) if isinstance(current, dict) else ""
+                        lines.append(f"#{number} dispatched CI on {ref}")
+                continue
         try:
-            merge(number, head_sha)
+            outcome = squash_or_refuse(
+                claim,
+                head_sha,
+                lambda: merge(number, head_sha),
+                held=False,
+            )
         except GateError as exc:
             lines.append(f"#{number} merge skipped: {exc}")
+            continue
+        if outcome != "merge":
+            lines.append(f"#{number} refused: {outcome}")
             continue
         lines.append(f"#{number} squash-merged")
         try:
@@ -1394,6 +1621,7 @@ def poll_open(owner: str, repo: str, token: str) -> int:
         trigger,
         hold_skip,
         queue,
+        GithubClaim(owner, repo, token),
     ):
         print(line)
     return 0
@@ -1406,6 +1634,7 @@ def main(argv: list[str] | None = None) -> int:
     pr_number_raw = (os.environ.get("PR_NUMBER") or "").strip()
     head_sha_env = (os.environ.get("HEAD_SHA") or "").strip()
     checks_green = env_flag("AUTOMERGE_CHECKS_GREEN")
+    review_event = env_flag("AUTOMERGE_REVIEW_EVENT")
 
     if "/" not in repository:
         print("waiting for review (missing GITHUB_REPOSITORY)")
@@ -1421,6 +1650,13 @@ def main(argv: list[str] | None = None) -> int:
         except ValueError:
             number = None
 
+    claim = GithubClaim(owner, repo, token)
+    claimed = False
+    action = "wait"
+    reason = "waiting"
+    checks_settled = False
+    head_sha = head_sha_env
+    pr: dict[str, Any] = {}
     try:
         if number is None:
             if not head_sha_env:
@@ -1434,32 +1670,18 @@ def main(argv: list[str] | None = None) -> int:
         # Reviews are on the PR head SHA, not the pull_request merge commit
         # that workflow_run.head_sha may point at.
         head_sha = str((pr.get("head") or {}).get("sha") or "") or head_sha_env
+        if head_sha:
+            refusal = begin_event(claim, head_sha, review_event=review_event)
+            if refusal:
+                print(f"refused: {refusal}")
+                return 0
+            claimed = True
         compare = None
         if head_sha and not _is_fork(pr):
             try:
                 compare = fetch_compare(owner, repo, _base_ref(pr), head_sha, token)
             except GateError as exc:
                 print(f"compare skipped: {exc}")
-        reason = branch_update_reason(pr, compare)
-        if reason:
-            try:
-                changed = merge_main_into_head(owner, repo, _head_ref(pr), token)
-            except UpdateConflict:
-                try:
-                    comment_on_conflict(owner, repo, number, head_sha, token)
-                except GateError as exc:
-                    print(f"#{number} comment skipped: {exc}")
-                print(f"#{number} {CONFLICT_COMMENT_LEAD}")
-                return 0
-            if changed:
-                print(f"#{number} updated: merged origin/main ({reason})")
-                head_ref = _head_ref(pr)
-                try:
-                    dispatch_head_ci(owner, repo, head_ref, token)
-                    print(f"#{number} dispatched CI on {head_ref}")
-                except GateError as exc:
-                    print(f"#{number} CI dispatch skipped: {exc}")
-                return 0
         reviews = fetch_reviews(owner, repo, number, token)
         check_runs = None if checks_green else fetch_check_runs(owner, repo, head_sha, token)
         if head_sha and not _is_fork(pr):
@@ -1489,42 +1711,89 @@ def main(argv: list[str] | None = None) -> int:
             checks_green=checks_green,
             check_runs=check_runs,
         )
+        action = decision.action
+        reason = decision.reason
+        checks_settled = checks_green or four_checks_success(check_runs or [])[0]
+        print(decision.reason)
+        hold = MainRedHold(False, "")
+        if not _is_fork(pr):
+            try:
+                hold = load_main_red_hold(owner, repo, token)
+            except GateError as exc:
+                print(f"#{number} hold skipped: {exc}")
+            else:
+                try:
+                    for line in post_queue_for_pull(owner, repo, pr, hold, token):
+                        print(line)
+                except GateError as exc:
+                    print(f"#{number} queue skipped: {exc}")
+        if decision.action != "merge":
+            return 0
+        if squash_held(pr, active=hold.active):
+            print("squash skipped: held while main is red")
+            action = "wait"
+            reason = "held while main is red"
+            checks_settled = False
+            return 0
+        update_reason = branch_update_reason(pr, compare)
+        if update_reason:
+            try:
+                changed = merge_main_into_head(owner, repo, _head_ref(pr), token)
+            except UpdateConflict:
+                try:
+                    comment_on_conflict(owner, repo, number, head_sha, token)
+                except GateError as exc:
+                    print(f"#{number} comment skipped: {exc}")
+                print(f"#{number} {CONFLICT_COMMENT_LEAD}")
+                action = "wait"
+                reason = CONFLICT_COMMENT_LEAD
+                checks_settled = False
+                return 0
+            if changed:
+                print(f"#{number} updated: merged origin/main ({update_reason})")
+                head_ref = _head_ref(pr)
+                try:
+                    dispatch_head_ci(owner, repo, head_ref, token)
+                    print(f"#{number} dispatched CI on {head_ref}")
+                except GateError as exc:
+                    print(f"#{number} CI dispatch skipped: {exc}")
+                action = "wait"
+                reason = "head moved"
+                checks_settled = False
+                return 0
+        outcome = squash_or_refuse(
+            claim,
+            head_sha,
+            lambda: squash_merge(owner, repo, number, head_sha, token),
+            held=True,
+        )
+        if outcome != "merge":
+            print(f"refused: {outcome}")
+            action = "wait"
+            checks_settled = False
+            return 0
+        print("squash-merged")
+        action = "merge"
+        try:
+            dispatch_main_ci(owner, repo, token)
+            print("dispatched CI on main")
+        except GateError as exc:
+            print(f"main CI dispatch skipped: {exc}")
+        return 0
     except GateError as exc:
         print(f"waiting ({exc})")
+        action = "wait"
+        checks_settled = False
         return 0
-
-    print(decision.reason)
-    hold = MainRedHold(False, "")
-    if not _is_fork(pr):
-        try:
-            hold = load_main_red_hold(owner, repo, token)
-        except GateError as exc:
-            print(f"#{number} hold skipped: {exc}")
-        else:
-            try:
-                for line in post_queue_for_pull(owner, repo, pr, hold, token):
-                    print(line)
-            except GateError as exc:
-                print(f"#{number} queue skipped: {exc}")
-    if decision.action != "merge":
-        return 0
-    if squash_held(pr, active=hold.active):
-        print("squash skipped: held while main is red")
-        return 0
-
-    try:
-        squash_merge(owner, repo, number, head_sha, token)
-        print("squash-merged")
-    except GateError as exc:
-        print(f"merge skipped: {exc}")
-        return 0
-
-    try:
-        dispatch_main_ci(owner, repo, token)
-        print("dispatched CI on main")
-    except GateError as exc:
-        print(f"main CI dispatch skipped: {exc}")
-    return 0
+    finally:
+        if claimed and action != "merge":
+            finish_event(
+                claim,
+                head_sha,
+                action,
+                reason,
+                checks_settled=checks_settled,
+            )
 
 
 if __name__ == "__main__":

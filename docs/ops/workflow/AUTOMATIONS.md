@@ -73,6 +73,30 @@ The live Cursor automation cannot be edited from git (no API). Paste this prompt
 The issue is a red main SHA. Open one fix pull request from latest main. Label it main-fix and link the issue. Do not push to main. Do not post a green status. Do not weaken checks. Do not click Jenkins Build. Do not SSH. If the only log is http://127.0.0.1:8085 and the status description does not name the cause, say so on the issue and stop. If a main-fix pull request for this SHA already exists, do not open another. A failing fix pull request is not a new main failure.
 ```
 
+## 6. Faster PR loop (dashboard)
+
+There is no API to change a live automation or to create one. Terry saves these two prompts in the Cursor dashboard. Chat does not.
+
+### PR Review — include cursoragent
+
+Existing automation: [PR Review](https://cursor.com/automations/2a5248fd-aedf-11f1-bf4b-42ffb4d10ea7).
+
+Trigger stays **Workflow run completed**, workflow `CI`, **success only**. It must not run on a red head. If an author filter excludes `cursoragent`, include `cursoragent`. After Terry saves that, the empty commit `Trigger review for pull request head` can go. Until then the poll keeps that fallback.
+
+```
+Trigger stays Workflow run completed, workflow CI, success only. If an author filter excludes cursoragent, include cursoragent. Do not run on a red head. No-op unless unit tests, catalog tests, web tests, and compose stack are all success.
+```
+
+### Changes requested — fixer
+
+A second dashboard automation, or an added trigger on the fixer, fires on **PR review submitted** when the review requests changes.
+
+**Run as Terry** (the GitHub user the reviewer already watches) so the pull request opens as him. A cursoragent cloud agent must not rewrite its git identity. Do not set `user.email`. Do not push to `main`.
+
+```
+The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Update the stale ticket or doc in that pull request. Do not revert the change the PR describes. Do not push to main.
+```
+
 ## Enablement
 
 These cannot be fully saved from chat until you confirm the draft in the Automations UI. Chat **cannot set** the Untitled trigger from git — Terry clicks **Workflow run completed** / workflow `CI` / success only. The PR loop row is the same limit: paste [[ops/workflow/PR-LOOP]] and Activate. Local loop works without them: open Cursor and say “work the next ready ticket”.
