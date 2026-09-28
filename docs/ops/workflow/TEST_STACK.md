@@ -51,7 +51,8 @@ Same files, two jobs: **prove** (lanes 1–4) and **operate** (lane 5).
 | `/app-test` · `./scripts/app test` | 1–3 | Clone→prove |
 | `mvnw test` | 1–2 | Contract without compose; run `features/*.feature` |
 | `./scripts/dev sim` | 5 | Seed unique places (today’s traffic) |
-| `./scripts/dev traffic` | 5 | Light Gatling trickle (Guest login / places / VisitIntent); not weekly soak |
+| `./scripts/dev traffic` | 5 | Gatling trickle: ten seeded pulse users, one walk. Jenkins `H/15`. Not the 10-minute pulse |
+| `./scripts/dev pulse` | 5 | 100-user Gatling hold (10 minutes, think time). Local catalog by default. Jenkins `gatling-pulse` is on demand against the public site and is not a deploy trigger |
 | `/stack-e2e` | 5 | Chaos drill; restore happy path |
 | Playwright MCP | 4 | Tap the running PWA |
 

@@ -45,6 +45,7 @@ Pick the **smallest set** that proves the slice. Prefer fast tests. Do not inven
 **Rules of thumb**
 
 - New API behavior → one **contract** scenario (Gherkin / Testcontainers), not “I curled it once.”
+- A shipped customer API also gets one named chain on `GuestFeatureChains` (`walkOnce()`). The 10-user trickle and the 100-user pulse both walk it ([[ops/workflow/GATLING]]).
 - New Flyway migration → contract path that applies migrations and asserts behaviour.
 - Docs-only / skill / rule → vault pytest if the loop depends on the file; otherwise verify is the checklist + CI `unit`.
 - Sim / workshop chaos **operate** the stack; they do not replace the contract. Dedicated Chaos Monkey and ZAP jobs are **merge CI** ([[ops/tickets/WF-043]] · [[ops/tickets/WF-044]]). Gatling is trickle + weekly, not merge load ([[ops/tickets/WF-042]]); failures Jenkins red + Grafana ([[ops/tickets/WF-045]]). Playwright is cron + MCP ([[ops/tickets/WF-011]]). Close public Place writes ([[ops/tickets/WF-046]]).

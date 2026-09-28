@@ -15,6 +15,7 @@ Policy. Procedures: [[ops/runbooks/_index]].
 | [[WORKTREES]] | Primary on `main`; sibling worktree per session; VPS tracks `main` |
 | [[DOD]] | Implement Definition of Done (**draft**) |
 | [[TEST_STACK]] | Five lanes: how / what (Gherkin=IT) / wiring / browser / operate |
+| [[GATLING]] | 10-user trickle vs on-demand 100-user pulse; a feature adds a chain |
 | [[PIPELINE]] | Auto vs agent vs human (CTO map + tables) |
 | [[automation-pipeline.excalidraw]] | Automation pipeline drawing: running now vs planned |
 | [[CI]] | GitHub Actions + agent test commands |

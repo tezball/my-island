@@ -65,6 +65,7 @@ kanban-plugin: basic
 - [ ] [[ops/tickets/WF-052|WF-052]] P1 Dedicated Jenkins CI checkout directory
 - [ ] [[ops/tickets/WF-053|WF-053]] P1 Wait for catalog before the Jenkins zap scan
 - [ ] [[ops/tickets/WF-054|WF-054]] P1 Automate review, CI fix, and comment fix on every PR
+- [ ] [[ops/tickets/WF-056|WF-056]] P2 On-demand hundred-user Gatling pulse
 
 ## Blocked
 
