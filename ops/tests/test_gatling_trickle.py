@@ -42,13 +42,20 @@ def test_light_trickle_gatling_exists_and_is_not_merge_load() -> None:
     assert "TRICKLE = 10" in users
     pom = (OPS / "gatling" / "pom.xml").read_text()
     assert "gatling-maven-plugin" in pom
-    assert "GuestTrickleSimulation" in pom
+    assert (
+        "<gatling.simulationClass>island.gatling.GuestTrickleSimulation</gatling.simulationClass>"
+        in pom
+    )
+    assert "<simulationClass>${gatling.simulationClass}</simulationClass>" in pom
+    assert "<simulationClass>island.gatling." not in pom
     script = (OPS / "scripts" / "gatling_trickle.sh").read_text()
     assert "set -euo pipefail" in script
     assert "gatling:test" in script
     assert "pulse-001" in script
     assert "not weekly" in script.lower()
     assert "10-minute" in script
+    assert "GuestPulseSimulation" not in script
+    assert "-Dgatling.simulationClass" not in script
     dev = (REPO / "scripts" / "dev").read_text()
     assert "cmd_traffic()" in dev
     traffic = dev.split("cmd_traffic()")[1].split("cmd_wait()")[0]
@@ -70,6 +77,8 @@ def test_light_trickle_gatling_exists_and_is_not_merge_load() -> None:
     weekly = (OPS / "jenkins" / "casc" / "jobs" / "gatling-weekly.groovy").read_text()
     assert "cron('H 6 * * 0')" in weekly
     assert "gatling_weekly.sh" in weekly
+    weekly_script = (OPS / "scripts" / "gatling_weekly.sh").read_text()
+    assert "-Dgatling.simulationClass=island.gatling.GuestWeeklySimulation" in weekly_script
     assert "notify_house_alertmanager.py" in weekly
     assert "email_configs" not in weekly
     rules = (OPS / "observability" / "prometheus" / "rules" / "gatling.yml").read_text()
