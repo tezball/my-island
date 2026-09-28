@@ -19,7 +19,7 @@ Agents must be able to **clone → test → PR** without a human laptop ritual. 
 | `stack` | `./scripts/dev test` with compose (`SKIP_WEB=1`; seed still runs) | Jenkins / GHA `stack` (`SKIP_JENKINS=1` in Actions) |
 | `chaos` (ticket) | House overlay / Testcontainers; retries + default fallbacks | [[ops/tickets/WF-043]] — **merge CI**, not inside `unit`/`catalog`, not cron |
 | `zap` (ticket) | ZAP-style DAST vs local compose/Testcontainers | [[ops/tickets/WF-044]] — **every merge**; **not** primary scan of fishing-journals.com; not cron |
-| `gatling` (ticket) | Light trickle on fishing-journals.com; weekly full perf | [[ops/tickets/WF-042]] — **not** a merge load test. Failures → Jenkins red + Grafana/AM [[ops/tickets/WF-045]] |
+| `gatling` (ticket) | 10-user trickle on fishing-journals.com (`H/15`); weekly perf; on-demand 100-user 10-minute pulse | [[ops/tickets/WF-042]] · [[ops/tickets/WF-056]] — **not** a merge load test. `gatling-pulse` has no cron and is not a deploy trigger. Failures → Jenkins red + Grafana/AM [[ops/tickets/WF-045]] |
 | Playwright | Cron vs fishing-journals.com + MCP on demand | [[ops/tickets/WF-011]] — **not** a merge gate; keep off `unit`/`catalog` |
 
 Vitest is a merge gate. Merge CI: catalog API, Chaos, ZAP. Playwright is cron + MCP. Gatling is trickle + weekly perf (not merge load). **Catalog writes lock C:** no public Place POST/PUT/PATCH/DELETE — seed/import in CI/deploy; Guests write VisitIntent only ([[ops/tickets/WF-046]]). House: Java/Spring + Vite/React PWA per [`product/STACK.md`](../../product/STACK.md) — not Next.js. Full mix (gates vs tools vs want): [[TEST_STACK]].

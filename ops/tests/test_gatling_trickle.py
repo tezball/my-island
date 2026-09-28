@@ -17,19 +17,38 @@ def test_light_trickle_gatling_exists_and_is_not_merge_load() -> None:
         / "gatling"
         / "GuestTrickleSimulation.java"
     ).read_text()
-    assert "password-login" in sim
-    assert "/api/v1/places" in sim
-    assert "visit-intent" in sim
-    assert "atOnceUsers(1)" in sim
+    assert "GuestFeatureChains.walkOnce()" in sim
+    assert "atOnceUsers(PulseUsers.TRICKLE)" in sim
+    assert "ofMinutes(10)" not in sim
+    assert "during(" not in sim
     assert "google" not in sim.lower()
+    chains = (
+        OPS
+        / "gatling"
+        / "src"
+        / "test"
+        / "java"
+        / "island"
+        / "gatling"
+        / "GuestFeatureChains.java"
+    ).read_text()
+    assert "password-login" in chains
+    assert "/api/v1/places" in chains
+    assert "visit-intent" in chains
+    assert "pause(THINK_SECONDS)" in chains
+    users = (
+        OPS / "gatling" / "src" / "test" / "java" / "island" / "gatling" / "PulseUsers.java"
+    ).read_text()
+    assert "TRICKLE = 10" in users
     pom = (OPS / "gatling" / "pom.xml").read_text()
     assert "gatling-maven-plugin" in pom
     assert "GuestTrickleSimulation" in pom
     script = (OPS / "scripts" / "gatling_trickle.sh").read_text()
     assert "set -euo pipefail" in script
     assert "gatling:test" in script
-    assert "CATALOG_SEED_GUEST" in script
+    assert "pulse-001" in script
     assert "not weekly" in script.lower()
+    assert "10-minute" in script
     dev = (REPO / "scripts" / "dev").read_text()
     assert "cmd_traffic()" in dev
     traffic = dev.split("cmd_traffic()")[1].split("cmd_wait()")[0]

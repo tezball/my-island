@@ -1,7 +1,7 @@
 // Seeded by JCasC (WF-045). Light trickle vs fishing-journals.com. Failures = red ball.
 // Not weekly soak. Not merge load. Agents never SSH. Leftover FJ email stays muted.
 pipelineJob('gatling-trickle') {
-  description('Light Gatling Guest trickle on fishing-journals.com (login, places, VisitIntent). Non-zero fails the build (red). Not weekly perf. Not a GitHub production Environment.')
+  description('Light Gatling trickle on fishing-journals.com: ten seeded pulse users, one walk. Non-zero fails the build (red). Not the 10-minute 100-user pulse. Not weekly perf. Not a GitHub production Environment.')
   definition {
     cps {
       sandbox(true)

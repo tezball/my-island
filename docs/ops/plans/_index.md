@@ -57,6 +57,7 @@ SORT file.name DESC
 | [[WF-043]] | Chaos Monkey in CI (retries/fallbacks; not public host every deploy) |
 | [[WF-044]] | ZAP-style DAST in CI vs local compose/Testcontainers every merge |
 | [[WF-045]] | Trickle/weekly Gatling fail → Jenkins red + Grafana/AM; leftover FJ email stays muted |
+| [[WF-056]] | 100-user on-demand Gatling pulse, 10-user trickle, Flyway seed |
 | [[WF-046]] | Close public Place writes; seed/import in CI/deploy; Guests write VisitIntent only |
 | [[WF-047]] | Human + agent DX handbook (clone/run, MCP, ticket → test box) |
 | [[WF-011]] | Playwright cron vs fishing-journals.com (not a merge gate) |

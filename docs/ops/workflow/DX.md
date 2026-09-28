@@ -117,7 +117,8 @@ Workshop sims (`./scripts/dev sim`, STACK-E2E) must send the import header. Publ
 | **Chaos Monkey** | Merge CI (not cron, not public host) | [[ops/tickets/WF-043]]. Job `chaos` in `.github/workflows/ci.yml`. Off `unit`/`catalog`. Overlay workshop: `/stack-e2e`. |
 | **ZAP-style DAST** | Merge CI vs local compose/Testcontainers | [[ops/tickets/WF-044]]. Job `zap` in `ci.yml` scans `http://127.0.0.1:8081`. Not the primary scan of fishing-journals.com. |
 | **Playwright** | Cron (~6h) + MCP on demand | [[ops/tickets/WF-011]]. **Not a merge gate.** Keep off `unit`/`catalog`. |
-| **Gatling trickle** | Ongoing on fishing-journals.com | Feature smoke, not merge load ([[ops/tickets/WF-042]]). Fail → Jenkins red + Grafana/AM ([[ops/tickets/WF-045]]). |
+| **Gatling trickle** | Ongoing on fishing-journals.com | Ten seeded users, one walk (`H/15`). Not merge load ([[ops/tickets/WF-042]]). Fail → Jenkins red + Grafana/AM ([[ops/tickets/WF-045]]). |
+| **Gatling pulse** | On demand | Jenkins `gatling-pulse`: 100 users held 10 minutes on fishing-journals.com. No cron. Not a deploy trigger. HTML report archived ([[ops/tickets/WF-056]]). |
 | **Gatling full perf** | Weekly Jenkins cron or MCP/manual | Not every merge. Same fail path. Seeded password Guest, not Google. |
 
 Vitest is a merge gate. Do not assault public fishing-journals.com with Chaos Monkey on every deploy. Map: [[TEST_STACK]].
