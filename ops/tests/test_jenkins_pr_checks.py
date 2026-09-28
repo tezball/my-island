@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 from pathlib import Path
@@ -167,6 +168,67 @@ def test_compose_port_overrides_and_caches() -> None:
     assert "ops_m2:/cache/m2" in compose
     assert "ops_npm:/cache/npm" in compose
     assert "MAVEN_USER_HOME: /cache/m2" in compose
+
+
+def test_isolate_env_sets_jenkins_ci_stack_and_overlay_clears_mailpit_ports() -> None:
+    script = REPO / "ops" / "scripts" / "jenkins_ci.sh"
+    env = os.environ.copy()
+    env.pop("JENKINS_CI_STACK", None)
+    flag = subprocess.check_output(
+        [
+            "bash",
+            "-c",
+            f'source "{script}"; jenkins_isolate_env; printf %s "$JENKINS_CI_STACK"',
+        ],
+        env=env,
+        text=True,
+    )
+    assert flag == "1"
+
+    overlay = (REPO / "compose.ci.yml").read_text()
+    assert "mailpit:" in overlay
+    assert "ports: !override []" in overlay
+    assert "1025:" not in overlay
+    assert "8025:" not in overlay
+
+    dev = (REPO / "scripts" / "dev").read_text()
+    assert "${JENKINS_CI_STACK:-0}" in dev
+    assert '-f "$REPO/compose.ci.yml"' in dev
+
+    base = (REPO / "compose.yml").read_text()
+    assert '"1025:1025"' in base
+    assert '"8025:8025"' in base
+
+    docker = subprocess.run(
+        ["docker", "info"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if docker.returncode != 0:
+        return
+
+    def rendered(extra: list[str]) -> dict:
+        proc = subprocess.run(
+            ["docker", "compose", "-f", str(REPO / "compose.yml"), *extra, "config", "--format", "json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert proc.returncode == 0, proc.stderr
+        return json.loads(proc.stdout)
+
+    local = rendered([])
+    local_ports = local["services"]["mailpit"].get("ports") or []
+    published = {str(item.get("published")) for item in local_ports}
+    assert "1025" in published
+    assert "8025" in published
+
+    ci = rendered(["-f", str(REPO / "compose.ci.yml")])
+    assert not (ci["services"]["mailpit"].get("ports") or [])
+    catalog_env = ci["services"]["catalog"]["environment"]
+    assert catalog_env["SPRING_MAIL_HOST"] == "mailpit"
+    assert str(catalog_env["SPRING_MAIL_PORT"]) == "1025"
 
 
 def test_gha_test_jobs_still_present() -> None:
