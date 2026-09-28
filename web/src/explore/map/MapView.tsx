@@ -120,9 +120,9 @@ function syncPins(layer: L.LayerGroup, places: Place[], onSelect: (place: Place)
     layer.addLayer(hit);
     const marker = L.circleMarker([place.latitude, place.longitude], {
       radius: 8,
-      color: "#F4F0E6",
+      color: "#FFFFFF",
       weight: 2,
-      fillColor: "#215C4E",
+      fillColor: "#1F7A4D",
       fillOpacity: 1,
     });
     marker.on("click", open);

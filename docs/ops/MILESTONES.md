@@ -46,7 +46,7 @@ Hand-maintained. Canon: [`product/FREE-DIRECTORY.md`](../product/FREE-DIRECTORY.
 - [ ] **PRD-032** Kinds on the map, including supplier — `plan`
 - [ ] **PRD-033** Free host and supplier drafts — `plan`
 - [ ] **PRD-034** Support self-serve and role homes — `plan`
-- [ ] **PRD-035** Phone-first look and feel — `plan`
+- [ ] **PRD-035** Phone-first look and feel — `review`
 
 ## Booking-site (parked)
 

@@ -1,12 +1,12 @@
 :root {
-  --paper: #f4f0e6;
-  --ink: #1c2418;
-  --bog: #215c4e;
-  --gorse: #c98400;
-  --mist: #d9d3c4;
-  --photo-miss: #c5b9a4;
+  --paper: #f3faf6;
+  --ink: #143028;
+  --bog: #1f7a4d;
+  --amber: #f5a524;
+  --mist: #d5e6dc;
+  --photo-miss: #e4efe8;
   --danger: #8b2e2e;
-  --sheet: #fffcf6;
+  --sheet: #ffffff;
   --radius: 12px;
   --bar-h: calc(64px + env(safe-area-inset-bottom));
   font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
@@ -55,7 +55,9 @@ h2,
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 16px 8px;
+  padding: 12px 16px 10px;
+  background: var(--bog);
+  color: #fff;
 }
 
 .header-meta {
@@ -142,6 +144,10 @@ h2,
   width: 7rem;
   font-size: 0.8rem;
   padding: 4px 6px;
+  background: var(--sheet);
+  color: var(--ink);
+  border: 1px solid var(--mist);
+  border-radius: 6px;
 }
 
 .visit-ticks {
@@ -179,7 +185,7 @@ h2,
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--bog);
+  color: #fff;
 }
 
 .count {
@@ -267,7 +273,7 @@ h2,
 }
 
 .muted {
-  color: #3d4638;
+  color: #3e5c4c;
   font-size: 0.9rem;
 }
 
@@ -280,7 +286,7 @@ h2,
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-  background: rgba(244, 240, 230, 0.96);
+  background: rgba(255, 255, 255, 0.96);
   border-top: 1px solid var(--mist);
 }
 
@@ -289,8 +295,8 @@ h2,
   min-height: 44px;
   border: 0;
   border-radius: 999px;
-  background: var(--bog);
-  color: #fff;
+  background: var(--amber);
+  color: var(--ink);
   font-weight: 600;
 }
 
@@ -331,7 +337,7 @@ a.bar-btn {
   min-width: 44px;
   border-radius: 999px;
   border: 0;
-  background: var(--gorse);
+  background: var(--amber);
   color: var(--ink);
   font-weight: 600;
   padding: 0 16px;
@@ -363,7 +369,7 @@ a.bar-btn {
   border-radius: 16px 16px 0 0;
   padding: 16px 16px calc(var(--bar-h) + 16px);
   z-index: 1101;
-  box-shadow: 0 -8px 32px rgba(28, 36, 24, 0.16);
+  box-shadow: 0 -8px 32px rgba(20, 48, 40, 0.16);
 }
 
 .sheet h2 {
@@ -397,7 +403,7 @@ a.bar-btn {
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(28, 36, 24, 0.4);
+  background: rgba(20, 48, 40, 0.4);
   z-index: 1100;
   border: 0;
 }
@@ -405,7 +411,7 @@ a.bar-btn {
 .hint {
   margin: 0 16px 8px;
   font-size: 0.85rem;
-  color: #3d4638;
+  color: #3e5c4c;
 }
 
 .here-dot {
@@ -504,6 +510,7 @@ a.bar-btn {
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  background: var(--amber);
 }
 
 .sr-only {
