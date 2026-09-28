@@ -9,7 +9,18 @@ from gha_review_gate import (
     CHANGES_REQUESTED,
     CONFLICT_COMMENT_LEAD,
     GateError,
+    QUEUE_CONTEXT,
+    QUEUE_HELD_DESCRIPTION,
+    REQUIRED_CHECK_NAMES,
     UpdateConflict,
+    hold_is_active,
+    linked_pull_numbers,
+    post_commit_status,
+    post_queue_status,
+    pull_numbers_from_timeline,
+    queue_status_plan,
+    should_post_queue,
+    squash_held,
     branch_update_reason,
     comment_on_conflict,
     conflict_comment_body,
@@ -29,7 +40,6 @@ from gha_review_gate import (
     mirror_missing_check_statuses,
     pick_pr_number,
     poll_ready,
-    post_commit_status,
     statuses_to_mirror,
     should_mark_ready,
 )
@@ -1188,3 +1198,197 @@ def test_existing_trigger_commit_does_not_push_another() -> None:
         [],
         _green_runs(),
     )
+
+
+def test_poll_skips_squash_while_held_except_main_fix() -> None:
+    merged: list[tuple[int, str]] = []
+    held = _numbered(8)
+    fix = _numbered(9)
+    fix["labels"] = [{"name": "main-fix"}]
+    reviews = [_review("cursor[bot]", APPROVED)]
+
+    def load(number: int) -> tuple[dict, list[dict], list[dict]]:
+        pr = held if number == 8 else fix
+        return pr, reviews, _green_runs()
+
+    lines = poll_ready(
+        [held, fix],
+        load,
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        hold=lambda pr: squash_held(pr, active=True, linked=set()),
+    )
+    assert merged == [(9, "abc")]
+    assert any("#8 squash skipped: held while main is red" in line for line in lines)
+    assert any("valid APPROVED" in line for line in lines)
+    assert any("#9 squash-merged" in line for line in lines)
+
+
+def test_hold_still_marks_ready_then_skips_squash() -> None:
+    marked: list[int] = []
+    merged: list[int] = []
+    pr = _numbered(8, draft=True)
+
+    def mark(number: int) -> dict:
+        marked.append(number)
+        return _refetched_ready(pr)
+
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        mark=mark,
+        hold=lambda current: True,
+    )
+    assert marked == [8]
+    assert merged == []
+    assert any("marked ready" in line for line in lines)
+    assert any("squash skipped: held while main is red" in line for line in lines)
+
+
+def test_main_fix_still_needs_approval_and_four_checks() -> None:
+    merged: list[int] = []
+    fix = _numbered(9)
+    fix["labels"] = [{"name": "main-fix"}]
+    lines = poll_ready(
+        [fix],
+        lambda number: (fix, [], _green_runs()),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        hold=lambda current: False,
+    )
+    assert merged == []
+    assert any("waiting for review" in line for line in lines)
+
+    red = _green_runs()
+    red[0] = _run("unit tests", conclusion="failure", rid=1)
+    lines = poll_ready(
+        [fix],
+        lambda number: (fix, [_review("cursor[bot]", APPROVED)], red),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        hold=lambda current: False,
+    )
+    assert merged == []
+    assert any("waiting for CI" in line for line in lines)
+
+
+def test_linked_pull_is_not_held() -> None:
+    linked = _numbered(12)
+    other = _numbered(13)
+    assert linked_pull_numbers("see https://github.com/tezball/my-island/pull/12") == {12}
+    assert pull_numbers_from_timeline(
+        [
+            {
+                "event": "cross-referenced",
+                "source": {"issue": {"number": 12, "pull_request": {"url": "x"}}},
+            }
+        ]
+    ) == {12}
+    assert squash_held(linked, active=True, linked={12}) is False
+    assert squash_held(other, active=True, linked={12}) is True
+
+
+def test_pending_does_not_activate_hold_or_skip_squash() -> None:
+    assert hold_is_active(open_issues=1, states=["pending"]) is False
+    assert (
+        hold_is_active(
+            open_issues=1,
+            states=["success", "pending", "skipped", "cancelled", "neutral"],
+        )
+        is False
+    )
+    assert hold_is_active(open_issues=0, states=["failure"]) is False
+    assert hold_is_active(open_issues=1, states=["pending", "failure"]) is True
+    assert hold_is_active(open_issues=1, states=None) is True
+    merged: list[tuple[int, str]] = []
+    pr = _numbered(8)
+    lines = poll_ready(
+        [pr],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
+        lambda number, sha: merged.append((number, sha)),
+        lambda number: None,
+        hold=lambda current: squash_held(
+            current,
+            active=hold_is_active(open_issues=1, states=["pending"]),
+            linked=set(),
+        ),
+    )
+    assert merged == [(8, "abc")]
+    assert not any("squash skipped" in line for line in lines)
+
+
+def test_queue_status_is_not_a_real_check() -> None:
+    other = _numbered(3)
+    fix = _numbered(4)
+    fix["labels"] = [{"name": "main-fix"}]
+    fork = _numbered(6, fork=True)
+    assert queue_status_plan(other, active=True, linked=set()) == (
+        "failure",
+        QUEUE_HELD_DESCRIPTION,
+    )
+    assert QUEUE_HELD_DESCRIPTION == "held while main is red"
+    assert queue_status_plan(fix, active=True, linked=set()) == ("success", "main-fix")
+    assert queue_status_plan(_numbered(5), active=True, linked={5}) == ("success", "main-fix")
+    assert queue_status_plan(other, active=False, linked=set()) == ("success", "main is not red")
+    assert queue_status_plan(fork, active=True, linked=set()) is None
+    assert QUEUE_CONTEXT == "queue/main-fix"
+    assert QUEUE_CONTEXT not in REQUIRED_CHECK_NAMES
+    assert not QUEUE_CONTEXT.startswith("jenkins/")
+    assert should_post_queue("failure", "success") is True
+    assert should_post_queue("success", "success") is False
+    with pytest.raises(GateError):
+        post_commit_status("tezball", "my-island", "abc", QUEUE_CONTEXT, "success", "tok")
+
+
+def test_post_queue_status_uses_only_queue_context(monkeypatch: pytest.MonkeyPatch) -> None:
+    seen: dict[str, object] = {}
+
+    def fake(method: str, url: str, token: str, payload: dict | None = None, timeout: float = 30):
+        del method, url, token, timeout
+        seen["payload"] = payload
+        return {}, ""
+
+    monkeypatch.setattr("gha_review_gate._github_request", fake)
+    post_queue_status(
+        "tezball",
+        "my-island",
+        "abc",
+        "failure",
+        "held while main is red",
+        "tok",
+    )
+    payload = seen["payload"]
+    assert isinstance(payload, dict)
+    assert payload["context"] == "queue/main-fix"
+    assert payload["context"] not in REQUIRED_CHECK_NAMES
+    assert not str(payload["context"]).startswith("jenkins/")
+    assert payload["description"] == "held while main is red"
+    assert payload["state"] == "failure"
+    post_queue_status("tezball", "my-island", "abc", "success", "main is not red", "tok")
+    released = seen["payload"]
+    assert isinstance(released, dict)
+    assert released["context"] == "queue/main-fix"
+    assert released["state"] == "success"
+    with pytest.raises(GateError):
+        post_queue_status("tezball", "my-island", "abc", "failure", "unit tests", "tok")
+
+
+def test_poll_posts_queue_on_same_repo_heads_only() -> None:
+    queued: list[int] = []
+    merged: list[int] = []
+    pr = _numbered(8)
+    lines = poll_ready(
+        [pr, _numbered(2, fork=True)],
+        lambda number: (pr, [_review("cursor[bot]", APPROVED)], _green_runs()),
+        lambda number, sha: merged.append(number),
+        lambda number: None,
+        hold=lambda current: True,
+        queue=lambda current: queued.append(current["number"])
+        or [f"#{current['number']} queue/main-fix failure"],
+    )
+    assert queued == [8]
+    assert merged == []
+    assert any("#8 queue/main-fix failure" in line for line in lines)
+    assert any("squash skipped: held while main is red" in line for line in lines)

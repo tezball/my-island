@@ -1,0 +1,40 @@
+# Open one main-red issue when the current main HEAD is failure or error.
+# check_run and status workflows run from the default branch. The script
+# still ignores every SHA that is not current main HEAD, so a red
+# feature-branch pull request does not open an issue.
+# Pending, success, skipped, cancelled, and neutral are not red.
+# This job is not a required check. It does not post commit statuses,
+# does not edit rulesets, and does not merge.
+name: Main red
+
+on:
+  check_run:
+    types: [completed]
+  status:
+
+permissions:
+  contents: read
+
+jobs:
+  main-red:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      checks: read
+      statuses: read
+    steps:
+      # Script from main — do not execute a pull request tree.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Open or close the main-red issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: python3 ops/scripts/main_red_issue.py
