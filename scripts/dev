@@ -43,7 +43,8 @@ Usage: ./scripts/dev <command>
   ps        Compose status
   test      Run pytest (same path as CI)
   sim       Happy-path catalog create→list→get (no chaos). Same as ./scripts/sim-place-listing.sh
-  traffic   Light Gatling trickle (Guest login, places, VisitIntent). Not weekly soak.
+  traffic   Gatling trickle: ten seeded pulse users, one walk. Not the 10-minute pulse.
+  pulse     On-demand 100-user Gatling hold (local catalog unless GATLING_BASE_URL is set).
   wait      Wait until Grafana answers /api/health
   config    Validate compose.yml (and chaos overlay)
 
@@ -230,6 +231,12 @@ cmd_traffic() {
   bash "$trickle" "$@"
 }
 
+cmd_pulse() {
+  local pulse="$REPO/ops/scripts/gatling_pulse.sh"
+  chmod +x "$pulse"
+  bash "$pulse" "$@"
+}
+
 cmd_wait() {
   local url="${GRAFANA_URL:-}"
   local candidates=()
@@ -293,6 +300,7 @@ case "$cmd" in
   test) cmd_test "$@" ;;
   sim) cmd_sim "$@" ;;
   traffic) cmd_traffic "$@" ;;
+  pulse) cmd_pulse "$@" ;;
   config) cmd_config ;;
   -h|--help|help|"") usage; [ -n "$cmd" ] || exit 1 ;;
   *) usage; echo "unknown command: $cmd" >&2; exit 1 ;;
