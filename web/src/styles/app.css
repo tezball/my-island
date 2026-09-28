@@ -511,7 +511,7 @@ a.bar-btn {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  background: #c98400;
+  background: var(--amber);
 }
 
 .sr-only {
