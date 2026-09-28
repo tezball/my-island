@@ -51,19 +51,19 @@ Detail and required-check names: [[ops/workflow/CI]].
 
 ## 5. Main red
 
-GitHub Actions workflow [`.github/workflows/main-red.yml`](../../../.github/workflows/main-red.yml) runs on `main` only. The script is [`ops/scripts/main_red_issue.py`](../../../ops/scripts/main_red_issue.py). `check_run` completed and commit `status` (including `jenkins/*`) both call it. The job checks out `main`.
+GitHub Actions workflow [`.github/workflows/main-red.yml`](../../../.github/workflows/main-red.yml) runs on `main` only. The script is [`ops/scripts/main_red_issue.py`](../../../ops/scripts/main_red_issue.py). `check_run` completed and commit `status` both call it. The job checks out `main`.
 
 | | |
 |---|---|
 | Opens | One issue labeled `main-red` per red main SHA. The title and body include the SHA, each failing check name, the status description, and the target URL. If that issue already exists, a new failing check is a comment. A second issue for the same SHA is not opened. |
-| Red | A check-run conclusion of `failure`, or a commit status of `failure` or `error`. |
-| Not red | `pending`, `success`, `skipped`, `cancelled`, and `neutral`. A pending Jenkins status does not open an issue and does not keep one open by itself. |
+| Red | A failed Actions check named `unit tests`, `catalog tests`, `web tests`, or `compose stack`, or a commit status `failure` or `error` named `jenkins/unit tests`, `jenkins/catalog tests`, `jenkins/web tests`, or `jenkins/compose stack`. |
+| Not red | `pending`, `success`, `skipped`, `cancelled`, and `neutral`. Also `queue/main-fix` and `continuous-integration/jenkins/branch` (“This commit cannot be built”). A pending Jenkins status does not open an issue or keep one open by itself. A `queue/main-fix` failure on main does not open or keep an issue and does not keep the hold. |
 | Ignores | Every SHA that is not the current `main` HEAD. A red feature-branch pull request does not open an issue. |
 | Closes | When that SHA is green, or `main` HEAD has moved on, with a short comment. |
 
-While a `main-red` issue is open, [`ops/scripts/gha_review_gate.py`](../../../ops/scripts/gha_review_gate.py) (the poll and the one-PR automerge) skips squash-merge for every pull request except the open one linked from that issue or labeled `main-fix`. Reviews and CI keep running. The fix pull request still needs `unit tests`, `catalog tests`, `web tests`, `compose stack`, and a non-author approval.
+While a `main-red` issue is open, [`ops/scripts/gha_review_gate.py`](../../../ops/scripts/gha_review_gate.py) (the poll and the one-PR automerge) skips squash-merge for every pull request except one labeled `main-fix`. A pull request number mentioned in a comment is not enough. Reviews and CI keep running. The fix pull request still needs `unit tests`, `catalog tests`, `web tests`, `compose stack`, and a non-author approval.
 
-The gate posts a commit status named `queue/main-fix`. It never uses the four real check names and never `jenkins/*`. Success on the main-fix pull request head. Failure on other same-repo open pull request heads, description `held while main is red`. It does not post that failure when the head SHA is main HEAD. `queue/main-fix` is ignored when deciding whether main is red, so it does not open or keep a `main-red` issue and does not keep the hold. When the issue closes or main is green, it posts success on those heads so they are not stuck. A pending status does not count as red, so it does not start or keep that hold.
+The gate posts a commit status named `queue/main-fix`. It never uses the four real check names and never `jenkins/*`. Success on a pull request labeled `main-fix`. Failure on other same-repo open pull request heads whose SHA is not main HEAD, description `held while main is red`. It does not post that failure onto main HEAD. When the issue closes or main is green, it posts success on those heads so they are not stuck. `queue/main-fix` is not a red main signal.
 
 This does not lock `main`, edit the ruleset, or add a bypass actor. The bypass list stays empty. The fix does not use the ruleset bypass list. After this is on `main`, `queue/main-fix` can be added as a required check. This PR does not add that required check. Requiring it before the workflow posts it would block the fix pull request too.
 

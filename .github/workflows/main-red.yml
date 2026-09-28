@@ -1,4 +1,8 @@
-# Open one main-red issue when the current main HEAD is failure or error.
+# Open one main-red issue when the current main HEAD is red.
+# Red is a failed Actions check named unit tests, catalog tests, web tests,
+# or compose stack, or a failure/error status named jenkins/unit tests,
+# jenkins/catalog tests, jenkins/web tests, or jenkins/compose stack.
+# queue/main-fix and continuous-integration/jenkins/branch are not red.
 # check_run and status workflows run from the default branch. The script
 # still ignores every SHA that is not current main HEAD, so a red
 # feature-branch pull request does not open an issue.

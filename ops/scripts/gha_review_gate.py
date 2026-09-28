@@ -22,17 +22,18 @@ request in that run. If the head message is already that trigger, it does
 not push another. The new SHA still needs the four green checks and a
 valid non-author APPROVED.
 
-While a main-red issue is open and main still has a failure or error, squash
-is skipped for every pull request except the one linked from that issue or
-labeled main-fix. Reviews and the four checks still run. The fix pull
-request still needs those four checks and a non-author APPROVED. The gate
-posts a commit status named queue/main-fix only: success on the main-fix
-head, failure on other same-repo heads ("held while main is red"). It does
-not post that failure when the head SHA is main HEAD. Pending is not red,
-and queue/main-fix is not a red signal. When the issue is closed or main
-is green, that status is posted success so those heads are not stuck. This
-does not write the four check names or jenkins/*, and it does not overwrite
-a failure on those contexts with success.
+While a main-red issue is open and main still has a real red signal, squash
+is skipped for every pull request except one labeled main-fix. A pull
+request number mentioned in a comment is not enough. Reviews and the four
+checks still run. The fix pull request still needs those four checks and a
+non-author APPROVED. The gate posts a commit status named queue/main-fix
+only: success on the main-fix head, failure on other same-repo heads that
+are not main HEAD ("held while main is red"). It does not post that failure
+onto main HEAD. queue/main-fix is not itself a red signal. Pending is not
+red. When the issue is closed or main is green, that status is posted
+success so those heads are not stuck. This does not write the four check
+names or jenkins/*, and it does not overwrite a failure on those contexts
+with success.
 
 Exit 0 for skip / waiting-for-review / waiting-for-CI / merge attempted.
 Never fail the merge job red because Approve is missing.
@@ -41,7 +42,6 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import sys
 import urllib.error
 import urllib.parse
@@ -49,7 +49,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any
 
-from main_red_issue import QUEUE_HOLD_CONTEXT, is_red_state, latest_signal_states
+from main_red_issue import is_red_state, latest_signal_states, normalize_sha
 
 REQUIRED_CHECK_NAMES = (
     "unit tests",
@@ -613,18 +613,16 @@ def post_commit_status(
     )
 
 
-QUEUE_CONTEXT = QUEUE_HOLD_CONTEXT
+QUEUE_CONTEXT = "queue/main-fix"
 QUEUE_HELD_DESCRIPTION = "held while main is red"
 MAIN_FIX_LABEL = "main-fix"
 MAIN_RED_LABEL = "main-red"
-_PULL_NUMBER = re.compile(r"/pull/(\d+)\b")
 
 
 @dataclass(frozen=True)
 class MainRedHold:
     active: bool
-    linked: frozenset[int]
-    main_sha: str = ""
+    main_sha: str
 
 
 def pr_label_names(pr: dict[str, Any]) -> set[str]:
@@ -644,44 +642,16 @@ def pr_label_names(pr: dict[str, Any]) -> set[str]:
     return names
 
 
-def linked_pull_numbers(text: str) -> set[int]:
-    return {int(match.group(1)) for match in _PULL_NUMBER.finditer(text or "")}
-
-
-def pull_numbers_from_timeline(events: list[dict[str, Any]]) -> set[int]:
-    """Pull requests GitHub linked from the issue timeline."""
-    numbers: set[int] = set()
-    for event in events:
-        if not isinstance(event, dict):
-            continue
-        if str(event.get("event") or "") not in {"cross-referenced", "connected"}:
-            continue
-        source = event.get("source") if isinstance(event.get("source"), dict) else {}
-        issue = source.get("issue") if isinstance(source.get("issue"), dict) else {}
-        if not isinstance(issue.get("pull_request"), dict):
-            continue
-        try:
-            number = int(issue.get("number") or 0)
-        except (TypeError, ValueError):
-            continue
-        if number:
-            numbers.add(number)
-    return numbers
-
-
-def is_main_fix_pull(pr: dict[str, Any], linked: set[int] | frozenset[int]) -> bool:
-    if MAIN_FIX_LABEL in pr_label_names(pr):
-        return True
-    try:
-        number = int(pr.get("number") or 0)
-    except (TypeError, ValueError):
-        return False
-    return bool(number) and number in linked
+def is_main_fix_pull(pr: dict[str, Any]) -> bool:
+    """The label is the only squash exemption. A mentioned number is not."""
+    return MAIN_FIX_LABEL in pr_label_names(pr)
 
 
 def hold_is_active(*, open_issues: int, states: list[str] | None) -> bool:
     """Hold only while a main-red issue is open and a signal is still red.
 
+    ``states`` come from ``latest_signal_states``, which already drops
+    ``queue/main-fix`` and ``continuous-integration/jenkins/branch``.
     ``states is None`` means the issue is open and the SHA signals could
     not be read. Pending, success, skipped, cancelled, and neutral do not
     keep the hold.
@@ -693,41 +663,34 @@ def hold_is_active(*, open_issues: int, states: list[str] | None) -> bool:
     return any(is_red_state(state) for state in states)
 
 
-def squash_held(
-    pr: dict[str, Any], *, active: bool, linked: set[int] | frozenset[int]
-) -> bool:
-    """Skip squash for every pull request except the open main-fix one.
+def squash_held(pr: dict[str, Any], *, active: bool) -> bool:
+    """Skip squash for every pull request except one labeled main-fix.
 
     Reviews and CI are unchanged. The caller still runs ``decide``, so the
     main-fix pull request needs the four checks and a non-author approval.
     """
     if not active:
         return False
-    return not is_main_fix_pull(pr, linked)
+    return not is_main_fix_pull(pr)
 
 
 def queue_status_plan(
-    pr: dict[str, Any],
-    *,
-    active: bool,
-    linked: set[int] | frozenset[int],
-    main_sha: str = "",
+    pr: dict[str, Any], *, active: bool, main_sha: str
 ) -> tuple[str, str] | None:
     """State and description for ``queue/main-fix``. None on a fork.
 
-    The context is never one of the four check names and never ``jenkins/*``.
-    Failure is not planned when the head SHA is main HEAD, so a same-as-main
-    pull request cannot write the hold onto the default branch.
+    Failure is not planned for main HEAD. The context is never one of the
+    four check names and never ``jenkins/*``.
     """
     if _is_fork(pr) or not _head_sha(pr):
         return None
     if not active:
         return ("success", "main is not red")
-    if is_main_fix_pull(pr, linked):
+    if is_main_fix_pull(pr):
         return ("success", "main-fix")
-    head = _head_sha(pr).strip().lower()
-    main = (main_sha or "").strip().lower()
-    if main and head == main:
+    head = normalize_sha(_head_sha(pr))
+    main = normalize_sha(main_sha)
+    if not main or head == main:
         return None
     return ("failure", QUEUE_HELD_DESCRIPTION)
 
@@ -795,54 +758,15 @@ def fetch_open_main_red_issues(owner: str, repo: str, token: str) -> list[dict[s
     return out
 
 
-def fetch_issue_timeline(
-    owner: str, repo: str, number: int, token: str
-) -> list[dict[str, Any]]:
-    url = (
-        f"https://api.github.com/repos/{owner}/{repo}/issues/{number}/timeline"
-        "?per_page=100"
-    )
-    out: list[dict[str, Any]] = []
-    while url:
-        payload, link = _github_request("GET", url, token)
-        if not isinstance(payload, list):
-            raise GateError("timeline payload missing list")
-        out.extend(row for row in payload if isinstance(row, dict))
-        url = _next_link(link) or ""
-    return out
-
-
 def load_main_red_hold(owner: str, repo: str, token: str) -> MainRedHold:
     """Active when an open main-red issue still has a red main signal."""
     issues = fetch_open_main_red_issues(owner, repo, token)
     if not issues:
-        return MainRedHold(False, frozenset())
-    linked: set[int] = set()
-    for issue in issues:
-        try:
-            number = int(issue.get("number") or 0)
-        except (TypeError, ValueError):
-            number = 0
-        chunks = [str(issue.get("body") or "")]
-        if number:
-            try:
-                comments = fetch_issue_comments(owner, repo, number, token)
-            except GateError:
-                comments = []
-            chunks.extend(
-                str(item.get("body") or "") for item in comments if isinstance(item, dict)
-            )
-            try:
-                linked |= pull_numbers_from_timeline(
-                    fetch_issue_timeline(owner, repo, number, token)
-                )
-            except GateError:
-                pass
-        linked |= linked_pull_numbers("\n".join(chunks))
-    states: list[str] | None
+        return MainRedHold(False, "")
     main_sha = ""
+    states: list[str] | None
     try:
-        main_sha = fetch_main_head_sha(owner, repo, token)
+        main_sha = normalize_sha(fetch_main_head_sha(owner, repo, token))
         runs = fetch_check_runs(owner, repo, main_sha, token)
         states_map = fetch_commit_status_states(owner, repo, main_sha, token)
         statuses = [
@@ -854,7 +778,6 @@ def load_main_red_hold(owner: str, repo: str, token: str) -> MainRedHold:
         states = None
     return MainRedHold(
         active=hold_is_active(open_issues=len(issues), states=states),
-        linked=frozenset(linked),
         main_sha=main_sha,
     )
 
@@ -862,13 +785,15 @@ def load_main_red_hold(owner: str, repo: str, token: str) -> MainRedHold:
 def post_queue_for_pull(
     owner: str, repo: str, pr: dict[str, Any], hold: MainRedHold, token: str
 ) -> list[str]:
-    plan = queue_status_plan(
-        pr, active=hold.active, linked=hold.linked, main_sha=hold.main_sha
-    )
+    plan = queue_status_plan(pr, active=hold.active, main_sha=hold.main_sha)
     if plan is None:
         return []
     state, description = plan
     sha = _head_sha(pr)
+    if state == "failure" and (
+        not normalize_sha(hold.main_sha) or normalize_sha(sha) == normalize_sha(hold.main_sha)
+    ):
+        return []
     existing = fetch_commit_status_states(owner, repo, sha, token).get(QUEUE_CONTEXT, "")
     if not should_post_queue(existing, state):
         return []
@@ -1446,7 +1371,7 @@ def poll_open(owner: str, repo: str, token: str) -> int:
         red_hold = load_main_red_hold(owner, repo, token)
     except GateError as exc:
         print(f"hold skipped: {exc}")
-        red_hold = MainRedHold(False, frozenset())
+        red_hold = MainRedHold(False, "")
     else:
         print("hold: active" if red_hold.active else "hold: inactive")
 
@@ -1454,7 +1379,7 @@ def poll_open(owner: str, repo: str, token: str) -> int:
         return post_queue_for_pull(owner, repo, pr, red_hold, token)
 
     def hold_skip(pr: dict[str, Any]) -> bool:
-        return squash_held(pr, active=red_hold.active, linked=red_hold.linked)
+        return squash_held(pr, active=red_hold.active)
 
     for line in poll_ready(
         rows,
@@ -1569,7 +1494,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     print(decision.reason)
-    hold = MainRedHold(False, frozenset())
+    hold = MainRedHold(False, "")
     if not _is_fork(pr):
         try:
             hold = load_main_red_hold(owner, repo, token)
@@ -1583,7 +1508,7 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"#{number} queue skipped: {exc}")
     if decision.action != "merge":
         return 0
-    if squash_held(pr, active=hold.active, linked=hold.linked):
+    if squash_held(pr, active=hold.active):
         print("squash skipped: held while main is red")
         return 0
 

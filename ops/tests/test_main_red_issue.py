@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from gha_review_gate import hold_is_active
 from main_red_issue import (
-    QUEUE_HOLD_CONTEXT,
     Check,
     Issue,
     handle,
@@ -13,7 +13,6 @@ from main_red_issue import (
     issue_body,
     issue_title,
     latest_signal_states,
-    red_checks,
 )
 
 REPO = Path(__file__).resolve().parents[2]
@@ -104,24 +103,28 @@ def _open(store: Fake) -> list[Issue]:
 
 def test_dedupe_one_issue_per_sha() -> None:
     store = Fake(MAIN)
-    first = _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit")
+    first = _status(MAIN, "failure", "jenkins/unit tests", "exit 1", "https://example/unit")
     handle("status", first, store)
     handle("status", first, store)
     assert len(store.rows) == 1
     assert store.rows[0].comments == []
     assert store.rows[0].title == issue_title(MAIN)
     assert MAIN in store.rows[0].body
-    assert "unit tests" in store.rows[0].body
+    assert "jenkins/unit tests" in store.rows[0].body
     assert "exit 1" in store.rows[0].body
     assert "https://example/unit" in store.rows[0].body
     second = _status(
-        MAIN, "error", "jenkins/job", "cannot be built", "http://127.0.0.1:8085/job/1"
+        MAIN,
+        "error",
+        "jenkins/catalog tests",
+        "cannot be built",
+        "http://127.0.0.1:8085/job/1",
     )
     handle("status", second, store)
     assert len(store.rows) == 1
     assert len(store.rows[0].comments) == 1
     comment = store.rows[0].comments[0]
-    assert "jenkins/job" in comment
+    assert "jenkins/catalog tests" in comment
     assert "cannot be built" in comment
     assert "http://127.0.0.1:8085/job/1" in comment
     handle("status", second, store)
@@ -131,7 +134,7 @@ def test_dedupe_one_issue_per_sha() -> None:
 
 def test_closed_issue_is_reopened_instead_of_a_second_issue() -> None:
     store = Fake(MAIN)
-    event = _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit")
+    event = _status(MAIN, "failure", "jenkins/unit tests", "exit 1", "https://example/unit")
     handle("status", event, store)
     store.rows[0].state = "closed"
     handle("status", event, store)
@@ -142,7 +145,7 @@ def test_closed_issue_is_reopened_instead_of_a_second_issue() -> None:
 
 def test_duplicate_open_issues_collapse_to_one() -> None:
     store = Fake(MAIN)
-    failing = Check("status", "unit tests", "exit 1", "https://example/unit", "failure")
+    failing = Check("status", "jenkins/unit tests", "exit 1", "https://example/unit", "failure")
     body = issue_body(MAIN, [failing])
     store.rows = [
         Issue(1, issue_title(MAIN), "open", body, []),
@@ -159,13 +162,19 @@ def test_feature_branch_and_old_main_sha_do_not_open() -> None:
     store = Fake(MAIN)
     handle(
         "status",
-        _status(FEATURE, "failure", "unit tests", "exit 1", "https://example/unit"),
+        _status(FEATURE, "failure", "jenkins/unit tests", "exit 1", "https://example/unit"),
         store,
     )
     handle("check_run", _check_run(FEATURE, "failure"), store)
     handle(
         "status",
-        _status(OTHER, "error", "jenkins/job", "cannot be built", "http://127.0.0.1:8085/9"),
+        _status(
+            OTHER,
+            "error",
+            "jenkins/catalog tests",
+            "cannot be built",
+            "http://127.0.0.1:8085/9",
+        ),
         store,
     )
     assert store.rows == []
@@ -181,7 +190,7 @@ def test_pending_is_not_red_and_does_not_keep_an_issue() -> None:
         _status(
             MAIN,
             "pending",
-            "continuous-integration/jenkins/branch",
+            "jenkins/unit tests",
             "This commit is being built",
             "http://127.0.0.1:8085",
         ),
@@ -190,13 +199,13 @@ def test_pending_is_not_red_and_does_not_keep_an_issue() -> None:
     assert store.rows == []
     handle(
         "status",
-        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
+        _status(MAIN, "failure", "jenkins/unit tests", "exit 1", "https://example/unit"),
         store,
     )
     assert len(_open(store)) == 1
     handle(
         "status",
-        _status(MAIN, "pending", "unit tests", "building", "http://127.0.0.1:8085"),
+        _status(MAIN, "pending", "jenkins/unit tests", "building", "http://127.0.0.1:8085"),
         store,
     )
     assert store.rows[0].state == "closed"
@@ -205,11 +214,7 @@ def test_pending_is_not_red_and_does_not_keep_an_issue() -> None:
 
 def test_pending_does_not_close_a_different_failure() -> None:
     store = Fake(MAIN)
-    handle(
-        "status",
-        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
-        store,
-    )
+    handle("check_run", _check_run(MAIN, "failure"), store)
     store.api[MAIN] = [
         Check("check", "unit tests", "exit 1", "https://example/unit", "failure")
     ]
@@ -218,21 +223,21 @@ def test_pending_does_not_close_a_different_failure() -> None:
         _status(
             MAIN,
             "pending",
-            "jenkins/job",
+            "jenkins/catalog tests",
             "building",
             "http://127.0.0.1:8085",
         ),
         store,
     )
     assert store.rows[0].state == "open"
-    assert not any("jenkins/job" in comment for comment in store.rows[0].comments)
+    assert not any("jenkins/catalog tests" in comment for comment in store.rows[0].comments)
 
 
 @pytest.mark.parametrize("state", ["pending", "success", "skipped", "cancelled", "neutral", "canceled"])
 def test_ignored_states_are_not_red(state: str) -> None:
     assert is_red_state(state) is False
     store = Fake(MAIN)
-    handle("status", _status(MAIN, state, "unit tests", state, "https://example"), store)
+    handle("status", _status(MAIN, state, "jenkins/unit tests", state, "https://example"), store)
     assert store.rows == []
 
 
@@ -241,13 +246,13 @@ def test_latest_pending_does_not_hide_a_different_failure() -> None:
         [],
         [
             {
-                "context": "jenkins/job",
+                "context": "jenkins/unit tests",
                 "state": "pending",
                 "description": "building",
                 "target_url": "http://127.0.0.1:8085",
             },
             {
-                "context": "jenkins/job",
+                "context": "jenkins/unit tests",
                 "state": "failure",
                 "description": "old",
                 "target_url": "http://127.0.0.1:8085",
@@ -269,7 +274,7 @@ def test_latest_pending_does_not_hide_a_different_failure() -> None:
         ],
         [
             {
-                "context": "jenkins/job",
+                "context": "jenkins/catalog tests",
                 "state": "pending",
                 "description": "building",
                 "target_url": "http://127.0.0.1:8085",
@@ -289,7 +294,7 @@ def test_latest_pending_does_not_hide_a_different_failure() -> None:
         ],
         [
             {
-                "context": "compose stack",
+                "context": "jenkins/compose stack",
                 "state": "failure",
                 "description": "jenkins red",
                 "target_url": "http://127.0.0.1:8085/job",
@@ -304,16 +309,16 @@ def test_close_when_head_moves_or_sha_is_green() -> None:
     store = Fake(MAIN)
     handle(
         "status",
-        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
+        _status(MAIN, "failure", "jenkins/unit tests", "exit 1", "https://example/unit"),
         store,
     )
     store.api[MAIN] = [
-        Check("status", "unit tests", "exit 1", "https://example/unit", "failure")
+        Check("status", "jenkins/unit tests", "exit 1", "https://example/unit", "failure")
     ]
     store.head = OTHER
     handle(
         "status",
-        _status(OTHER, "success", "unit tests", "ok", "https://example/unit"),
+        _status(OTHER, "success", "jenkins/unit tests", "ok", "https://example/unit"),
         store,
     )
     assert store.rows[0].state == "closed"
@@ -322,82 +327,122 @@ def test_close_when_head_moves_or_sha_is_green() -> None:
 
     store.head = MAIN
     store.api[MAIN] = [
-        Check("status", "unit tests", "ok", "https://example/unit", "success")
+        Check("status", "jenkins/unit tests", "ok", "https://example/unit", "success")
     ]
     handle(
         "status",
-        _status(MAIN, "failure", "catalog tests", "nope", "https://example/catalog"),
+        _status(MAIN, "failure", "jenkins/catalog tests", "nope", "https://example/catalog"),
         store,
     )
     assert len(store.rows) == 1
     assert store.rows[0].state == "open"
     handle(
         "status",
-        _status(MAIN, "success", "catalog tests", "ok", "https://example/catalog"),
+        _status(MAIN, "success", "jenkins/catalog tests", "ok", "https://example/catalog"),
         store,
     )
     assert store.rows[0].state == "closed"
     assert any("green" in comment for comment in store.rows[0].comments)
 
 
-def test_queue_hold_failure_on_main_does_not_open_or_keep_an_issue() -> None:
-    assert QUEUE_HOLD_CONTEXT == "queue/main-fix"
-    fresh = Fake(MAIN)
-    handle(
-        "status",
-        _status(MAIN, "failure", QUEUE_HOLD_CONTEXT, "held while main is red", ""),
-        fresh,
-    )
-    assert fresh.rows == []
-
+def test_queue_failure_on_main_does_not_open_keep_or_hold() -> None:
     store = Fake(MAIN)
-    handle(
-        "status",
-        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
-        store,
+    queue = _status(
+        MAIN,
+        "failure",
+        "queue/main-fix",
+        "held while main is red",
+        "https://example/queue",
     )
-    assert store.rows[0].state == "open"
+    handle("status", queue, store)
+    assert store.rows == []
+    handle("check_run", _check_run(MAIN, "failure"), store)
+    assert len(_open(store)) == 1
     store.api[MAIN] = [
-        Check("status", "unit tests", "ok", "https://example/unit", "success"),
-        Check("status", QUEUE_HOLD_CONTEXT, "held while main is red", "", "failure"),
+        Check("check", "unit tests", "ok", "https://example/unit", "success"),
+        Check(
+            "status",
+            "queue/main-fix",
+            "held while main is red",
+            "https://example/queue",
+            "failure",
+        ),
     ]
-    handle(
-        "status",
-        _status(MAIN, "failure", QUEUE_HOLD_CONTEXT, "held while main is red", ""),
-        store,
-    )
+    handle("check_run", _check_run(MAIN, "success"), store)
     assert store.rows[0].state == "closed"
-    assert any("green" in comment for comment in store.rows[0].comments)
-
-    kept = Fake(MAIN)
-    handle(
-        "status",
-        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
-        kept,
-    )
-    kept.api[MAIN] = [
-        Check("status", "unit tests", "exit 1", "https://example/unit", "failure"),
-        Check("status", QUEUE_HOLD_CONTEXT, "held while main is red", "", "failure"),
-    ]
-    handle(
-        "status",
-        _status(MAIN, "error", QUEUE_HOLD_CONTEXT, "held while main is red", ""),
-        kept,
-    )
-    assert kept.rows[0].state == "open"
-    assert red_checks(kept.api[MAIN])[0].name == "unit tests"
     states = latest_signal_states(
+        [
+            {
+                "name": "unit tests",
+                "status": "completed",
+                "conclusion": "success",
+                "id": 1,
+            }
+        ],
+        [
+            {
+                "context": "queue/main-fix",
+                "state": "failure",
+                "description": "held while main is red",
+                "target_url": "https://example/queue",
+            }
+        ],
+    )
+    assert states == ["success"]
+    assert hold_is_active(open_issues=1, states=states) is False
+    only_queue = latest_signal_states(
         [],
         [
             {
-                "context": QUEUE_HOLD_CONTEXT,
+                "context": "queue/main-fix",
                 "state": "failure",
                 "description": "held while main is red",
                 "target_url": "",
             }
         ],
     )
+    assert only_queue == []
+    assert hold_is_active(open_issues=1, states=only_queue) is False
+
+
+def test_jenkins_branch_status_is_not_a_main_failure() -> None:
+    store = Fake(MAIN)
+    handle(
+        "status",
+        _status(
+            MAIN,
+            "error",
+            "continuous-integration/jenkins/branch",
+            "This commit cannot be built",
+            "http://127.0.0.1:8085",
+        ),
+        store,
+    )
+    handle(
+        "status",
+        _status(MAIN, "failure", "compose stack", "jenkins reused the name", "http://127.0.0.1:8085"),
+        store,
+    )
+    assert store.rows == []
+    states = latest_signal_states(
+        [],
+        [
+            {
+                "context": "continuous-integration/jenkins/branch",
+                "state": "error",
+                "description": "This commit cannot be built",
+                "target_url": "http://127.0.0.1:8085",
+            },
+            {
+                "context": "compose stack",
+                "state": "failure",
+                "description": "jenkins reused the name",
+                "target_url": "http://127.0.0.1:8085",
+            },
+        ],
+    )
     assert states == []
+    assert hold_is_active(open_issues=1, states=states) is False
 
 
 def test_workflow_and_doc_do_not_weaken_checks() -> None:
@@ -417,6 +462,10 @@ def test_workflow_and_doc_do_not_weaken_checks() -> None:
     assert PASTE in note
     assert "queue/main-fix" in note
     assert "held while main is red" in note
+    assert "does not post that failure onto main HEAD" in note
+    assert "continuous-integration/jenkins/branch" in note
+    assert "jenkins/unit tests" in note
+    assert "mentioned in a comment is not enough" in note
     assert "bypass list stays empty" in note
     assert "does not add that required check" in note
     assert "main-red" in note

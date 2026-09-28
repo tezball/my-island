@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Open one GitHub issue per red main SHA, and close it when main is green.
 
-Runs from the Main red workflow on the default branch. A check run
-conclusion of failure, or a commit status of failure or error, is red.
-Pending, success, skipped, cancelled, and neutral are not. The hold
-status ``queue/main-fix`` is not a red signal. A SHA that is not the
-current main HEAD does not open an issue. One issue per SHA (label
-main-red). A later new failing check is a comment. This script does not
-post commit statuses and does not merge.
+Runs from the Main red workflow on the default branch. Red is a failed
+Actions check named unit tests, catalog tests, web tests, or compose
+stack, or a failure/error commit status named jenkins/unit tests,
+jenkins/catalog tests, jenkins/web tests, or jenkins/compose stack.
+queue/main-fix and continuous-integration/jenkins/branch are not red.
+Pending is not red. A SHA that is not the current main HEAD does not open
+an issue. One issue per SHA (label main-red). A later new failing check
+is a comment. This script does not post commit statuses and does not merge.
 """
 from __future__ import annotations
 
@@ -22,9 +23,22 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 LABEL = "main-red"
-# Posted by the review gate onto held pull requests. Not a main failure.
-QUEUE_HOLD_CONTEXT = "queue/main-fix"
 RED_STATES = frozenset({"failure", "error"})
+RED_CHECK_NAMES = frozenset(
+    {"unit tests", "catalog tests", "web tests", "compose stack"}
+)
+RED_STATUS_CONTEXTS = frozenset(
+    {
+        "jenkins/unit tests",
+        "jenkins/catalog tests",
+        "jenkins/web tests",
+        "jenkins/compose stack",
+    }
+)
+# Hold status and the laptop "cannot be built" context are not main failures.
+IGNORED_CONTEXTS = frozenset(
+    {"queue/main-fix", "continuous-integration/jenkins/branch"}
+)
 _TITLE = re.compile(r"^main red ([0-9a-f]{40})$")
 
 
@@ -79,8 +93,28 @@ def normalize_sha(sha: str) -> str:
 
 
 def is_red_state(state: str) -> bool:
-    """Failure and error are red. Pending is not."""
+    """Failure and error are red states. Pending is not."""
     return (state or "").strip().lower() in RED_STATES
+
+
+def counts_as_main_signal(check: Check) -> bool:
+    """True for the four Actions checks and the four jenkins/ status names.
+
+    ``queue/main-fix`` and ``continuous-integration/jenkins/branch`` never
+    count, even when their state is failure or error.
+    """
+    name = check.name.strip()
+    if name in IGNORED_CONTEXTS:
+        return False
+    if check.source == "check":
+        return name in RED_CHECK_NAMES
+    if check.source == "status":
+        return name in RED_STATUS_CONTEXTS
+    return False
+
+
+def is_red_signal(check: Check) -> bool:
+    return counts_as_main_signal(check) and is_red_state(check.state)
 
 
 def is_main_head(sha: str, main_head: str) -> bool:
@@ -115,17 +149,8 @@ def latest_by_key(checks: list[Check]) -> list[Check]:
     return list(by_key.values())
 
 
-def is_hold_status(check: Check) -> bool:
-    """True for the queue status the gate writes. It is not a main failure."""
-    return check.name == QUEUE_HOLD_CONTEXT
-
-
 def red_checks(checks: list[Check]) -> list[Check]:
-    return [
-        check
-        for check in latest_by_key(checks)
-        if is_red_state(check.state) and not is_hold_status(check)
-    ]
+    return [check for check in latest_by_key(checks) if is_red_signal(check)]
 
 
 def _check_description(run: dict[str, Any], fallback: str) -> str:
@@ -193,19 +218,15 @@ def checks_from_statuses(rows: list[dict[str, Any]]) -> list[Check]:
 def latest_signal_states(
     check_runs: list[dict[str, Any]], statuses: list[dict[str, Any]]
 ) -> list[str]:
-    """Latest state per check name and per status context.
+    """Latest state of each signal that can make main red.
 
-    A pending status does not replace a different check's failure. A
-    Jenkins status named like a GitHub check stays its own signal.
-    ``queue/main-fix`` is omitted: a failure there is the hold this
-    repo posts, not a reason to open or keep a main-red issue.
+    Omits ``queue/main-fix``, ``continuous-integration/jenkins/branch``, and
+    every other name. A pending status does not replace a different check's
+    failure. A Jenkins status stays separate from an Actions check of a
+    similar name.
     """
     checks = checks_from_check_runs(check_runs) + checks_from_statuses(statuses)
-    return [
-        check.state
-        for check in latest_by_key(checks)
-        if not is_hold_status(check)
-    ]
+    return [check.state for check in latest_by_key(checks) if counts_as_main_signal(check)]
 
 
 def format_checks(checks: list[Check]) -> str:

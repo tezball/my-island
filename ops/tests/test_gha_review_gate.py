@@ -4,24 +4,20 @@ from pathlib import Path
 
 import pytest
 
-from main_red_issue import latest_signal_states
-
 from gha_review_gate import (
     APPROVED,
     CHANGES_REQUESTED,
     CONFLICT_COMMENT_LEAD,
     GateError,
+    MainRedHold,
     QUEUE_CONTEXT,
     QUEUE_HELD_DESCRIPTION,
     REQUIRED_CHECK_NAMES,
     UpdateConflict,
-    MainRedHold,
     hold_is_active,
-    linked_pull_numbers,
     post_commit_status,
     post_queue_for_pull,
     post_queue_status,
-    pull_numbers_from_timeline,
     queue_status_plan,
     should_post_queue,
     squash_held,
@@ -1220,7 +1216,7 @@ def test_poll_skips_squash_while_held_except_main_fix() -> None:
         load,
         lambda number, sha: merged.append((number, sha)),
         lambda number: None,
-        hold=lambda pr: squash_held(pr, active=True, linked=set()),
+        hold=lambda pr: squash_held(pr, active=True),
     )
     assert merged == [(9, "abc")]
     assert any("#8 squash skipped: held while main is red" in line for line in lines)
@@ -1278,20 +1274,12 @@ def test_main_fix_still_needs_approval_and_four_checks() -> None:
     assert any("waiting for CI" in line for line in lines)
 
 
-def test_linked_pull_is_not_held() -> None:
-    linked = _numbered(12)
-    other = _numbered(13)
-    assert linked_pull_numbers("see https://github.com/tezball/my-island/pull/12") == {12}
-    assert pull_numbers_from_timeline(
-        [
-            {
-                "event": "cross-referenced",
-                "source": {"issue": {"number": 12, "pull_request": {"url": "x"}}},
-            }
-        ]
-    ) == {12}
-    assert squash_held(linked, active=True, linked={12}) is False
-    assert squash_held(other, active=True, linked={12}) is True
+def test_only_main_fix_label_may_squash() -> None:
+    mentioned = _numbered(12)
+    labeled = _numbered(12)
+    labeled["labels"] = [{"name": "main-fix"}]
+    assert squash_held(mentioned, active=True) is True
+    assert squash_held(labeled, active=True) is False
 
 
 def test_pending_does_not_activate_hold_or_skip_squash() -> None:
@@ -1316,7 +1304,6 @@ def test_pending_does_not_activate_hold_or_skip_squash() -> None:
         hold=lambda current: squash_held(
             current,
             active=hold_is_active(open_issues=1, states=["pending"]),
-            linked=set(),
         ),
     )
     assert merged == [(8, "abc")]
@@ -1328,15 +1315,25 @@ def test_queue_status_is_not_a_real_check() -> None:
     fix = _numbered(4)
     fix["labels"] = [{"name": "main-fix"}]
     fork = _numbered(6, fork=True)
-    assert queue_status_plan(other, active=True, linked=set()) == (
+    assert queue_status_plan(other, active=True, main_sha="mainsha") == (
         "failure",
         QUEUE_HELD_DESCRIPTION,
     )
     assert QUEUE_HELD_DESCRIPTION == "held while main is red"
-    assert queue_status_plan(fix, active=True, linked=set()) == ("success", "main-fix")
-    assert queue_status_plan(_numbered(5), active=True, linked={5}) == ("success", "main-fix")
-    assert queue_status_plan(other, active=False, linked=set()) == ("success", "main is not red")
-    assert queue_status_plan(fork, active=True, linked=set()) is None
+    assert queue_status_plan(fix, active=True, main_sha="mainsha") == ("success", "main-fix")
+    mentioned = _numbered(5)
+    assert queue_status_plan(mentioned, active=True, main_sha="mainsha") == (
+        "failure",
+        QUEUE_HELD_DESCRIPTION,
+    )
+    assert queue_status_plan(other, active=False, main_sha="mainsha") == (
+        "success",
+        "main is not red",
+    )
+    assert queue_status_plan(fork, active=True, main_sha="mainsha") is None
+    same_as_main = _numbered(7)
+    same_as_main["head"]["sha"] = "a" * 40
+    assert queue_status_plan(same_as_main, active=True, main_sha="a" * 40) is None
     assert QUEUE_CONTEXT == "queue/main-fix"
     assert QUEUE_CONTEXT not in REQUIRED_CHECK_NAMES
     assert not QUEUE_CONTEXT.startswith("jenkins/")
@@ -1346,64 +1343,17 @@ def test_queue_status_is_not_a_real_check() -> None:
         post_commit_status("tezball", "my-island", "abc", QUEUE_CONTEXT, "success", "tok")
 
 
-def test_queue_hold_failure_does_not_keep_the_hold_or_post_on_main(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    only_hold = latest_signal_states(
-        [],
-        [
-            {
-                "context": QUEUE_CONTEXT,
-                "state": "failure",
-                "description": QUEUE_HELD_DESCRIPTION,
-                "target_url": "",
-            }
-        ],
-    )
-    assert only_hold == []
-    assert hold_is_active(open_issues=1, states=only_hold) is False
-    still_red = latest_signal_states(
-        [],
-        [
-            {
-                "context": QUEUE_CONTEXT,
-                "state": "failure",
-                "description": QUEUE_HELD_DESCRIPTION,
-                "target_url": "",
-            },
-            {
-                "context": "unit tests",
-                "state": "failure",
-                "description": "exit 1",
-                "target_url": "https://example/unit",
-            },
-        ],
-    )
-    assert hold_is_active(open_issues=1, states=still_red) is True
-    same = _numbered(9)
-    same["head"]["sha"] = "abc"
-    assert queue_status_plan(same, active=True, linked=set(), main_sha="abc") is None
-    assert queue_status_plan(same, active=True, linked=set(), main_sha="ABC") is None
-    assert queue_status_plan(same, active=False, linked=set(), main_sha="abc") == (
-        "success",
-        "main is not red",
-    )
-    posted: list[str] = []
+def test_queue_failure_is_not_posted_on_main_head(monkeypatch: pytest.MonkeyPatch) -> None:
+    def boom(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("posted queue status")
 
-    def fake_post(*args: object, **kwargs: object) -> None:
-        del kwargs
-        posted.append(str(args[3]))
-
-    monkeypatch.setattr("gha_review_gate.fetch_commit_status_states", lambda *a, **k: {})
-    monkeypatch.setattr("gha_review_gate.post_queue_status", fake_post)
-    hold = MainRedHold(True, frozenset(), main_sha="abc")
-    assert post_queue_for_pull("tezball", "my-island", same, hold, "tok") == []
-    assert posted == []
-    other = _numbered(10)
-    other["head"]["sha"] = "def"
-    lines = post_queue_for_pull("tezball", "my-island", other, hold, "tok")
-    assert posted == ["failure"]
-    assert lines == ["#10 queue/main-fix failure"]
+    monkeypatch.setattr("gha_review_gate._github_request", boom)
+    pr = _numbered(3)
+    pr["head"]["sha"] = "a" * 40
+    assert (
+        post_queue_for_pull("tezball", "my-island", pr, MainRedHold(True, "a" * 40), "tok")
+        == []
+    )
 
 
 def test_post_queue_status_uses_only_queue_context(monkeypatch: pytest.MonkeyPatch) -> None:
