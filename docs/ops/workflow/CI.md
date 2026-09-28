@@ -95,9 +95,11 @@ The existing automation **Untitled** must **not** fire on Pull request opened or
 | Trigger | **Workflow run completed** |
 | Workflow | `CI` |
 | Filter | **success only** |
-| Do | Review the diff against the linked ticket/plan. Submit **Approve** or **Request changes**. Nits go in the **review body only** — no inline threads for nits. |
+| Do | Review the diff against the linked ticket/plan. Submit **Approve** or **Request changes**. Nits go in the **review body only** — no inline threads for nits. The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync. A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place. |
 | Do not | Merge, push, start before the four jobs above are success. Prompt must **no-op** if `unit tests` / `catalog tests` / `web tests` / `compose stack` are not all success. |
 | Must not be a required GitHub check | `Cursor Automation: Untitled`, `automerge`, `auto-review approve merge` |
+
+The live row is **PR Review** (`2a5248fd-aedf-11f1-bf4b-42ffb4d10ea7`). Its prompt is dashboard-only. There is no update API. Chat does not edit it. Paste the paragraph in [[ops/workflow/AUTOMATIONS]] into that prompt.
 
 ## PR loop (WF-054)
 

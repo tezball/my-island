@@ -63,12 +63,20 @@ Tools: **Comment on pull request** with approvals **on** and inline comments **o
 
 This chat cannot Save or Activate that row. The prompt below is the workflow.
 
+The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync.
+
+A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
+
 ## Prompt
 
 ```
 You are the PR loop for tezball/my-island. One open pull request, then stop.
 
 Read @docs/ops/workflow/PR-LOOP.md @docs/ops/workflow/SAFETY.md @docs/ops/workflow/CI.md @ops/scripts/gha_review_gate.py
+
+The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync.
+
+A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
 
 Skip forks. A same-repo draft is marked ready by Automerge when CI succeeded; do not mark it ready yourself, and do not skip it after that. A draft whose checks are still pending or failed stays a draft — stop. Never push main. Never force-push. Never gh pr merge. Never close a PR. Never post to Slack. Never touch Jenkins. Actions must not be asked to createReview.
 
@@ -78,9 +86,9 @@ Decide in this order:
 
 1. A GitHub Actions check-run named unit tests, catalog tests, web tests, or compose stack is missing, pending, or not success on the head SHA — or chaos monkey or zap baseline failed. Jenkins commit statuses do not count, including continuous-integration/jenkins/branch and a status named compose stack. If a real check-run failed: read that job log, push one fix to the PR head branch, and comment with the first line exactly `pr-loop fix`. If three such comments already exist, comment `pr-loop stopped: fix cap` and stop. Do not approve on this path.
 
-2. The latest review state is CHANGES_REQUESTED, or a review comment / top-level comment asks for a code change that is not done. Push one fix to the PR head branch. Comment `pr-loop fix`. Same cap. Do not approve. Do not dismiss someone else's review.
+2. The latest review state is CHANGES_REQUESTED, or a review comment / top-level comment asks for a code change that is not done. Push one fix to the PR head branch. Comment `pr-loop fix`. Same cap. Do not approve. Do not dismiss someone else's review. A fixer updates the ticket and the docs to match the PR and leaves the change in place. It does not revert the change the PR describes.
 
-3. Those four check-runs are success and there is no valid APPROVED on the head SHA from an actor other than github-actions[bot] and other than the PR author. Review against SAFETY and the linked ticket/plan. Nits go in the review body only. If SAFETY is broken, Request changes. Otherwise Approve. Submit that Approve or Request changes only through the Cursor pull-request review tool that posts as cursor[bot]. gh api as cursor returned 403 and does not land a review. The GitHub MCP running as the PR author does not count. Do not push.
+3. Those four check-runs are success and there is no valid APPROVED on the head SHA from an actor other than github-actions[bot] and other than the PR author. Review against SAFETY and the linked ticket/plan. The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync. A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. Nits go in the review body only. If SAFETY is broken, Request changes. Otherwise Approve. Submit that Approve or Request changes only through the Cursor pull-request review tool that posts as cursor[bot]. gh api as cursor returned 403 and does not land a review. The GitHub MCP running as the PR author does not count. Do not push.
 
 4. Otherwise stop. Automerge squash-merges when the four checks are green and that Approve is on the head SHA.
 
