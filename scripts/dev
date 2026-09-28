@@ -12,6 +12,10 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO"
 
 COMPOSE=(docker compose -f "$REPO/compose.yml")
+# Jenkins isolate sets JENKINS_CI_STACK=1. Overlay clears Mailpit host ports.
+if [ "${JENKINS_CI_STACK:-0}" = "1" ]; then
+  COMPOSE+=(-f "$REPO/compose.ci.yml")
+fi
 # Jenkins is local house CI (WF-031). Skip in GitHub Actions stack job (SKIP_JENKINS=1).
 INFRA_SERVICES=(postgres loki prometheus alertmanager grafana)
 if [ "${SKIP_JENKINS:-0}" != "1" ]; then
@@ -55,6 +59,7 @@ Environment:
   SKIP_JENKINS=1           Do not start Jenkins (GHA stack job sets this)
   SKIP_WEB=1               Do not start the Vite container (CI web job covers npm)
   COMPOSE_PROJECT_NAME     Override Compose project (Jenkins stack uses my-island-ci)
+  JENKINS_CI_STACK=1       Load compose.ci.yml (Mailpit publishes no host ports)
   OPS_*_HOST_PORT          Host port overrides (defaults 5433/8081/3030/…; Jenkins stack remaps)
   JENKINS_GITHUB_TOKEN     GitHub PAT for local Jenkins PR polling (optional; see .env.example)
 
