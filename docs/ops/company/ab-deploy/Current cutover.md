@@ -16,7 +16,7 @@ What ships today. Index: [[ops/company/ab-deploy/AB deploy]]. Host lock: [[ops/c
 
 Jenkins job `deploy-mock-prod` (`ops/jenkins/casc/jobs/deploy-mock-prod.groovy`):
 
-- Timer `H/5 * * * *`. No human click (decision 16 and 20).
+- No timer. GitHub Actions `mock-prod signal` starts the job after CI succeeds on `main` (Job DSL `genericTrigger`). No human click (decision 16 and 20).
 - `disableConcurrentBuilds()`, timeout 90 minutes.
 - Stage `gate-main-gha` runs `ops/scripts/gate_mock_prod_deploy.py`. It prints `DEPLOY <sha>` only when `origin/main` has green GHA `unit tests`, `catalog tests`, `web tests`, and `compose stack` (or the merged PR head that produced a squash SHA), and public `app.gitCommit` is different. Otherwise `SKIP`. Feature branches never deploy. Missing `MOCK_PROD_*` or an unreadable key fails closed.
 - Stage `ff-main` checks out a clean clone of `origin/main` (the Mac mini working tree is often dirty). The deploy script then refuses to run unless that clone's `HEAD` equals `origin/main`.

@@ -11,3 +11,4 @@ plain-credentials
 timestamper
 ws-cleanup
 pipeline-stage-view
+generic-webhook-trigger

@@ -70,7 +70,7 @@ curl -sS -u admin:admin -H 'content-type: application/json' \
 
 House SoR after [[ops/tickets/WF-041]] is Prom/Loki **from the test server** via Grafana MCP HTTP/SSE (`--disable-write`). Do not treat leftover `grafana.fishing-journals.com` as house. Do not publish Prometheus on the internet.
 
-If health is UP but info SHA lags `main`: wait for the next `H/5` Jenkins run, or inspect job status via UI/MCP ([[ops/tickets/WF-042]]). Still no SSH.
+If health is UP but info SHA lags `main`: `mock-prod signal` starts `deploy-mock-prod` after CI succeeds on `main`. Inspect that job via UI/MCP ([[ops/tickets/WF-042]]). Still no SSH.
 
 ## Must not
 

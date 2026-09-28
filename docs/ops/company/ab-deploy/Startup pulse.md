@@ -13,7 +13,7 @@ date: 2026-09-28
 The check [[ops/company/ab-deploy/A and B ports]], [[ops/company/ab-deploy/Blue green compose]], and [[ops/company/ab-deploy/Port redirect]] run before a process is allowed to take customers. It is a mechanism, not a second deploy system. Index: [[ops/company/ab-deploy/AB deploy]].
 
 > [!important] Idle port only
-> Public `https://fishing-journals.com/actuator/info` is what `ops/scripts/gate_mock_prod_deploy.py` calls the live SHA. The pulse curls the process that is not in the Caddyfile yet. Publishing B's info on the apex early makes the next timer `SKIP` while customers are still on A.
+> Public `https://fishing-journals.com/actuator/info` is what `ops/scripts/gate_mock_prod_deploy.py` calls the live SHA. The pulse curls the process that is not in the Caddyfile yet. Publishing B's info on the apex early makes the next gate `SKIP` while customers are still on A.
 
 ## What already exists
 
@@ -61,7 +61,7 @@ Caddy can also grow `health_uri /actuator/health/readiness` on `reverse_proxy`. 
 
 - Uses checks the repo already ships: readiness, PostGIS SQL, places JSON, git SHA.
 - Runs on the VPS over the SSH session the Jenkins job already opens. No new credential, no public Prometheus.
-- A failed pulse leaves A in the Caddyfile. The public SHA is unchanged, so the next `H/5` tick can `DEPLOY` again.
+- A failed pulse leaves A in the Caddyfile. The public SHA is unchanged, so the next `mock-prod signal` can start `deploy-mock-prod` and the gate can `DEPLOY` again.
 - Guest seed and Flyway are inside the readiness window, so the pulse does not pass in front of them.
 
 ## Cons

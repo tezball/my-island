@@ -115,8 +115,10 @@ jobs:
         if: failure()
         run: docker compose ps && docker compose logs --no-color --tail=120
 
-  # WF-040: laptop Jenkins polls GitHub checks (cron H/5). This job is the
-  # "main is green" signal — not a GitHub production Environment, not SSH.
+  # WF-040: after CI succeeds on main, start the one Jenkins job deploy-mock-prod.
+  # Not a git-push trigger (checks would not be green yet). Not a GitHub
+  # production Environment. Not SSH. Token and URL stay in Actions secrets
+  # named JENKINS_URL and JENKINS_ADMIN_PASSWORD (same names as .env).
   mock-prod-signal:
     name: mock-prod signal
     if: >
@@ -125,8 +127,10 @@ jobs:
     needs: [unit, catalog, web, stack, chaos, zap]
     runs-on: ubuntu-latest
     steps:
-      - name: Record SHA for Jenkins deploy-mock-prod
-        run: |
-          echo "origin/main ${{ github.sha }} is green (unit+catalog+web+stack)."
-          echo "Jenkins job deploy-mock-prod (cron + gate_mock_prod_deploy.py) deploys this SHA."
-          echo "Agents never SSH. No GitHub Environment named production."
+      - uses: actions/checkout@v4
+      - name: Start Jenkins deploy-mock-prod
+        env:
+          JENKINS_URL: ${{ secrets.JENKINS_URL }}
+          JENKINS_ADMIN_PASSWORD: ${{ secrets.JENKINS_ADMIN_PASSWORD }}
+          MOCK_PROD_SHA: ${{ github.sha }}
+        run: python3 ops/scripts/trigger_deploy_mock_prod.py

@@ -91,7 +91,7 @@ Three incoming webhooks. No second CI system. No GitHub Environment named produc
 
 ### Deploy → `#deploy`
 
-House path, unchanged: green `main` → Jenkins job `deploy-mock-prod` (cron `H/5`, `gate_mock_prod_deploy.py`) → `scripts/deploy-mock-prod.sh` → `ops/scripts/check_deploy_info.py` and `ops/scripts/smoke_mock_prod.py`. The job runs on the Mac mini Jenkins (loopback trigger, `WF-049`). Agents never SSH.
+House path: green `main` → GitHub Actions `mock-prod signal` starts Jenkins job `deploy-mock-prod` (`genericTrigger`, `gate_mock_prod_deploy.py`) → `scripts/deploy-mock-prod.sh` → `ops/scripts/check_deploy_info.py` and `ops/scripts/smoke_mock_prod.py`. The job runs on the Mac mini Jenkins. Agents never SSH.
 
 After that job finishes, one webhook post:
 

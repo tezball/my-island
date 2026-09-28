@@ -539,7 +539,7 @@ Deploy (G) and pull-request failure (I) are the two stops. Alerts (H) are alread
 
 **Password-manager item:** `my-island-notify deploy`
 
-**What this URL is for:** One Slack line each time Jenkins job `deploy-mock-prod` finishes, pass or fail. The line is `kind: deploy`. It links to that Jenkins build and to https://fishing-journals.com/actuator/info. GitHub Actions does not post a second deploy line. Job `mock-prod signal` in `.github/workflows/ci.yml` only records that `main` is green.
+**What this URL is for:** One Slack line each time Jenkins job `deploy-mock-prod` finishes, pass or fail. The line is `kind: deploy`. It links to that Jenkins build and to https://fishing-journals.com/actuator/info. GitHub Actions does not post a second deploy line. Job `mock-prod signal` in `.github/workflows/ci.yml` starts Jenkins `deploy-mock-prod` after CI succeeds on `main`. It does not rsync and it does not post the deploy line.
 
 **Job file:** `ops/jenkins/casc/jobs/deploy-mock-prod.groovy`
 
@@ -605,7 +605,7 @@ Same file, and they do not post to `#pr-failures`:
 | `chaos` | `chaos monkey` |
 | `mock-prod-signal` | `mock-prod signal` |
 
-`mock-prod signal` runs only on `main` after the jobs it needs. It is the “main is green” signal. It does not deploy and it does not post the deploy line.
+`mock-prod signal` runs only on `main` after the jobs it needs. It starts Jenkins `deploy-mock-prod`. It does not rsync and it does not post the deploy line.
 
 Jenkins writes the same four names as commit statuses from `Jenkinsfile` (`unit tests`, `catalog tests`, `web tests`, `compose stack`) via the multibranch job `my-island` in `ops/jenkins/casc/jobs/github-multibranch.groovy`. Jenkins does not post to Slack, so a red check is one Slack message, from Actions.
 
