@@ -44,7 +44,7 @@ docker compose up -d jenkins --force-recreate --wait
 
 The zap stage scans only after `GET /api/v1/places` answers. On the controller that is `http://catalog:8080` (compose DNS). `http://127.0.0.1:8081` is the host publish, used when that DNS name does not answer ([[ops/tickets/WF-053]]).
 
-Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci/<job>` (one dedicated directory, [[ops/tickets/WF-052]]) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
+Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci/<job>` (one dedicated directory, [[ops/tickets/WF-052]]) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …) + `JENKINS_CI_STACK=1` (`compose.ci.yml` clears Mailpit host ports; catalog still uses `mailpit:1025`). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
 
 ## Survive restart / wipe
 
