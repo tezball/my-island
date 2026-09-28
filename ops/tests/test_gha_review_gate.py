@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from main_red_issue import latest_signal_states
+
 from gha_review_gate import (
     APPROVED,
     CHANGES_REQUESTED,
@@ -13,9 +15,11 @@ from gha_review_gate import (
     QUEUE_HELD_DESCRIPTION,
     REQUIRED_CHECK_NAMES,
     UpdateConflict,
+    MainRedHold,
     hold_is_active,
     linked_pull_numbers,
     post_commit_status,
+    post_queue_for_pull,
     post_queue_status,
     pull_numbers_from_timeline,
     queue_status_plan,
@@ -1340,6 +1344,66 @@ def test_queue_status_is_not_a_real_check() -> None:
     assert should_post_queue("success", "success") is False
     with pytest.raises(GateError):
         post_commit_status("tezball", "my-island", "abc", QUEUE_CONTEXT, "success", "tok")
+
+
+def test_queue_hold_failure_does_not_keep_the_hold_or_post_on_main(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    only_hold = latest_signal_states(
+        [],
+        [
+            {
+                "context": QUEUE_CONTEXT,
+                "state": "failure",
+                "description": QUEUE_HELD_DESCRIPTION,
+                "target_url": "",
+            }
+        ],
+    )
+    assert only_hold == []
+    assert hold_is_active(open_issues=1, states=only_hold) is False
+    still_red = latest_signal_states(
+        [],
+        [
+            {
+                "context": QUEUE_CONTEXT,
+                "state": "failure",
+                "description": QUEUE_HELD_DESCRIPTION,
+                "target_url": "",
+            },
+            {
+                "context": "unit tests",
+                "state": "failure",
+                "description": "exit 1",
+                "target_url": "https://example/unit",
+            },
+        ],
+    )
+    assert hold_is_active(open_issues=1, states=still_red) is True
+    same = _numbered(9)
+    same["head"]["sha"] = "abc"
+    assert queue_status_plan(same, active=True, linked=set(), main_sha="abc") is None
+    assert queue_status_plan(same, active=True, linked=set(), main_sha="ABC") is None
+    assert queue_status_plan(same, active=False, linked=set(), main_sha="abc") == (
+        "success",
+        "main is not red",
+    )
+    posted: list[str] = []
+
+    def fake_post(*args: object, **kwargs: object) -> None:
+        del kwargs
+        posted.append(str(args[3]))
+
+    monkeypatch.setattr("gha_review_gate.fetch_commit_status_states", lambda *a, **k: {})
+    monkeypatch.setattr("gha_review_gate.post_queue_status", fake_post)
+    hold = MainRedHold(True, frozenset(), main_sha="abc")
+    assert post_queue_for_pull("tezball", "my-island", same, hold, "tok") == []
+    assert posted == []
+    other = _numbered(10)
+    other["head"]["sha"] = "def"
+    lines = post_queue_for_pull("tezball", "my-island", other, hold, "tok")
+    assert posted == ["failure"]
+    assert lines == ["#10 queue/main-fix failure"]
 
 
 def test_post_queue_status_uses_only_queue_context(monkeypatch: pytest.MonkeyPatch) -> None:

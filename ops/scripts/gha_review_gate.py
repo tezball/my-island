@@ -27,11 +27,12 @@ is skipped for every pull request except the one linked from that issue or
 labeled main-fix. Reviews and the four checks still run. The fix pull
 request still needs those four checks and a non-author APPROVED. The gate
 posts a commit status named queue/main-fix only: success on the main-fix
-head, failure on other same-repo heads ("held while main is red"). Pending
-is not red. When the issue is closed or main is green, that status is
-posted success so those heads are not stuck. This does not write the four
-check names or jenkins/*, and it does not overwrite a failure on those
-contexts with success.
+head, failure on other same-repo heads ("held while main is red"). It does
+not post that failure when the head SHA is main HEAD. Pending is not red,
+and queue/main-fix is not a red signal. When the issue is closed or main
+is green, that status is posted success so those heads are not stuck. This
+does not write the four check names or jenkins/*, and it does not overwrite
+a failure on those contexts with success.
 
 Exit 0 for skip / waiting-for-review / waiting-for-CI / merge attempted.
 Never fail the merge job red because Approve is missing.
@@ -48,7 +49,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Any
 
-from main_red_issue import is_red_state, latest_signal_states
+from main_red_issue import QUEUE_HOLD_CONTEXT, is_red_state, latest_signal_states
 
 REQUIRED_CHECK_NAMES = (
     "unit tests",
@@ -612,7 +613,7 @@ def post_commit_status(
     )
 
 
-QUEUE_CONTEXT = "queue/main-fix"
+QUEUE_CONTEXT = QUEUE_HOLD_CONTEXT
 QUEUE_HELD_DESCRIPTION = "held while main is red"
 MAIN_FIX_LABEL = "main-fix"
 MAIN_RED_LABEL = "main-red"
@@ -623,6 +624,7 @@ _PULL_NUMBER = re.compile(r"/pull/(\d+)\b")
 class MainRedHold:
     active: bool
     linked: frozenset[int]
+    main_sha: str = ""
 
 
 def pr_label_names(pr: dict[str, Any]) -> set[str]:
@@ -705,11 +707,17 @@ def squash_held(
 
 
 def queue_status_plan(
-    pr: dict[str, Any], *, active: bool, linked: set[int] | frozenset[int]
+    pr: dict[str, Any],
+    *,
+    active: bool,
+    linked: set[int] | frozenset[int],
+    main_sha: str = "",
 ) -> tuple[str, str] | None:
     """State and description for ``queue/main-fix``. None on a fork.
 
     The context is never one of the four check names and never ``jenkins/*``.
+    Failure is not planned when the head SHA is main HEAD, so a same-as-main
+    pull request cannot write the hold onto the default branch.
     """
     if _is_fork(pr) or not _head_sha(pr):
         return None
@@ -717,6 +725,10 @@ def queue_status_plan(
         return ("success", "main is not red")
     if is_main_fix_pull(pr, linked):
         return ("success", "main-fix")
+    head = _head_sha(pr).strip().lower()
+    main = (main_sha or "").strip().lower()
+    if main and head == main:
+        return None
     return ("failure", QUEUE_HELD_DESCRIPTION)
 
 
@@ -828,10 +840,11 @@ def load_main_red_hold(owner: str, repo: str, token: str) -> MainRedHold:
                 pass
         linked |= linked_pull_numbers("\n".join(chunks))
     states: list[str] | None
+    main_sha = ""
     try:
-        sha = fetch_main_head_sha(owner, repo, token)
-        runs = fetch_check_runs(owner, repo, sha, token)
-        states_map = fetch_commit_status_states(owner, repo, sha, token)
+        main_sha = fetch_main_head_sha(owner, repo, token)
+        runs = fetch_check_runs(owner, repo, main_sha, token)
+        states_map = fetch_commit_status_states(owner, repo, main_sha, token)
         statuses = [
             {"context": context, "state": state, "description": "", "target_url": ""}
             for context, state in states_map.items()
@@ -842,13 +855,16 @@ def load_main_red_hold(owner: str, repo: str, token: str) -> MainRedHold:
     return MainRedHold(
         active=hold_is_active(open_issues=len(issues), states=states),
         linked=frozenset(linked),
+        main_sha=main_sha,
     )
 
 
 def post_queue_for_pull(
     owner: str, repo: str, pr: dict[str, Any], hold: MainRedHold, token: str
 ) -> list[str]:
-    plan = queue_status_plan(pr, active=hold.active, linked=hold.linked)
+    plan = queue_status_plan(
+        pr, active=hold.active, linked=hold.linked, main_sha=hold.main_sha
+    )
     if plan is None:
         return []
     state, description = plan

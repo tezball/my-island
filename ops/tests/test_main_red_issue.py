@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from main_red_issue import (
+    QUEUE_HOLD_CONTEXT,
     Check,
     Issue,
     handle,
@@ -12,6 +13,7 @@ from main_red_issue import (
     issue_body,
     issue_title,
     latest_signal_states,
+    red_checks,
 )
 
 REPO = Path(__file__).resolve().parents[2]
@@ -336,6 +338,66 @@ def test_close_when_head_moves_or_sha_is_green() -> None:
     )
     assert store.rows[0].state == "closed"
     assert any("green" in comment for comment in store.rows[0].comments)
+
+
+def test_queue_hold_failure_on_main_does_not_open_or_keep_an_issue() -> None:
+    assert QUEUE_HOLD_CONTEXT == "queue/main-fix"
+    fresh = Fake(MAIN)
+    handle(
+        "status",
+        _status(MAIN, "failure", QUEUE_HOLD_CONTEXT, "held while main is red", ""),
+        fresh,
+    )
+    assert fresh.rows == []
+
+    store = Fake(MAIN)
+    handle(
+        "status",
+        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
+        store,
+    )
+    assert store.rows[0].state == "open"
+    store.api[MAIN] = [
+        Check("status", "unit tests", "ok", "https://example/unit", "success"),
+        Check("status", QUEUE_HOLD_CONTEXT, "held while main is red", "", "failure"),
+    ]
+    handle(
+        "status",
+        _status(MAIN, "failure", QUEUE_HOLD_CONTEXT, "held while main is red", ""),
+        store,
+    )
+    assert store.rows[0].state == "closed"
+    assert any("green" in comment for comment in store.rows[0].comments)
+
+    kept = Fake(MAIN)
+    handle(
+        "status",
+        _status(MAIN, "failure", "unit tests", "exit 1", "https://example/unit"),
+        kept,
+    )
+    kept.api[MAIN] = [
+        Check("status", "unit tests", "exit 1", "https://example/unit", "failure"),
+        Check("status", QUEUE_HOLD_CONTEXT, "held while main is red", "", "failure"),
+    ]
+    handle(
+        "status",
+        _status(MAIN, "error", QUEUE_HOLD_CONTEXT, "held while main is red", ""),
+        kept,
+    )
+    assert kept.rows[0].state == "open"
+    assert red_checks(kept.api[MAIN])[0].name == "unit tests"
+    states = latest_signal_states(
+        [],
+        [
+            {
+                "context": QUEUE_HOLD_CONTEXT,
+                "state": "failure",
+                "description": "held while main is red",
+                "target_url": "",
+            }
+        ],
+    )
+    assert states == []
 
 
 def test_workflow_and_doc_do_not_weaken_checks() -> None:

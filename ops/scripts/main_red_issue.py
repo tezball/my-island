@@ -3,10 +3,11 @@
 
 Runs from the Main red workflow on the default branch. A check run
 conclusion of failure, or a commit status of failure or error, is red.
-Pending, success, skipped, cancelled, and neutral are not. A SHA that is
-not the current main HEAD does not open an issue. One issue per SHA
-(label main-red). A later new failing check is a comment. This script
-does not post commit statuses and does not merge.
+Pending, success, skipped, cancelled, and neutral are not. The hold
+status ``queue/main-fix`` is not a red signal. A SHA that is not the
+current main HEAD does not open an issue. One issue per SHA (label
+main-red). A later new failing check is a comment. This script does not
+post commit statuses and does not merge.
 """
 from __future__ import annotations
 
@@ -21,6 +22,8 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 LABEL = "main-red"
+# Posted by the review gate onto held pull requests. Not a main failure.
+QUEUE_HOLD_CONTEXT = "queue/main-fix"
 RED_STATES = frozenset({"failure", "error"})
 _TITLE = re.compile(r"^main red ([0-9a-f]{40})$")
 
@@ -112,8 +115,17 @@ def latest_by_key(checks: list[Check]) -> list[Check]:
     return list(by_key.values())
 
 
+def is_hold_status(check: Check) -> bool:
+    """True for the queue status the gate writes. It is not a main failure."""
+    return check.name == QUEUE_HOLD_CONTEXT
+
+
 def red_checks(checks: list[Check]) -> list[Check]:
-    return [check for check in latest_by_key(checks) if is_red_state(check.state)]
+    return [
+        check
+        for check in latest_by_key(checks)
+        if is_red_state(check.state) and not is_hold_status(check)
+    ]
 
 
 def _check_description(run: dict[str, Any], fallback: str) -> str:
@@ -185,9 +197,15 @@ def latest_signal_states(
 
     A pending status does not replace a different check's failure. A
     Jenkins status named like a GitHub check stays its own signal.
+    ``queue/main-fix`` is omitted: a failure there is the hold this
+    repo posts, not a reason to open or keep a main-red issue.
     """
     checks = checks_from_check_runs(check_runs) + checks_from_statuses(statuses)
-    return [check.state for check in latest_by_key(checks)]
+    return [
+        check.state
+        for check in latest_by_key(checks)
+        if not is_hold_status(check)
+    ]
 
 
 def format_checks(checks: list[Check]) -> str:
