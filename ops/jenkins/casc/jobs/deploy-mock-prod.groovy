@@ -1,10 +1,50 @@
-// Seeded by JCasC (WF-031 / WF-032 / WF-040). Unattended: poll + GHA green on origin/main.
-// Cron is a Job DSL trigger. A cron inside the pipeline script is registered only
-// after a build, and the next JCasC re-seed clears it, so the timer never comes back.
+// Seeded by JCasC (WF-031 / WF-032 / WF-040). Unattended: mock-prod signal after
+// GHA success on main. The trigger lives in this Job DSL triggers block.
+// A cron or GenericTrigger inside the pipeline script is registered only after a
+// build, and the next JCasC re-seed clears it.
+// Token value is Jenkins credential deploy-mock-prod-trigger (env JENKINS_ADMIN_PASSWORD).
+// Do not commit the token or a webhook URL.
 pipelineJob('deploy-mock-prod') {
-  description('Green origin/main (GHA unit+catalog+web+stack) → fishing-journals.com. Agents never SSH. Key in Jenkins/.env. Not a GitHub production Environment.')
+  description('Green origin/main (GHA unit+catalog+web+stack) → fishing-journals.com. Started by mock-prod signal after CI succeeds on main. Agents never SSH. Key in Jenkins/.env. Not a GitHub production Environment.')
   triggers {
-    cron('H/5 * * * *')
+    genericTrigger {
+      genericVariables {
+        genericVariable {
+          key('conclusion')
+          value('$.conclusion')
+          expressionType('JSONPath')
+          regexpFilter('')
+          defaultValue('')
+        }
+        genericVariable {
+          key('ref')
+          value('$.ref')
+          expressionType('JSONPath')
+          regexpFilter('')
+          defaultValue('')
+        }
+      }
+      genericRequestVariables {
+        genericRequestVariable {
+          key('signal')
+          regexpFilter('')
+        }
+      }
+      genericHeaderVariables {
+        genericHeaderVariable {
+          key('user-agent')
+          regexpFilter('')
+        }
+      }
+      tokenCredentialId('deploy-mock-prod-trigger')
+      causeString('mock-prod signal: CI success on main')
+      printContributedVariables(false)
+      printPostContent(false)
+      silentResponse(false)
+      shouldNotFlatten(false)
+      regexpFilterText('$conclusion $ref')
+      regexpFilterExpression('^success refs/heads/main$')
+    }
   }
   definition {
     cps {

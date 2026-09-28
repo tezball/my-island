@@ -21,7 +21,7 @@ Local house CI: PR builds (poll + token), same `unit`/`catalog`/`stack` contract
 - `local-ci` job runs without GitHub token
 - Multibranch `my-island` polls when `JENKINS_GITHUB_TOKEN` is set
 - GHA remains remote required checks during dual-run (`SKIP_JENKINS=1` in Actions)
-- `deploy-mock-prod` cron-deploys green `origin/main` ([[ops/tickets/WF-040]]); fails closed without `MOCK_PROD_*`. [[ops/tickets/WF-010]] stays the staging-host pick, not this job.
+- `deploy-mock-prod` deploys green `origin/main` when `mock-prod signal` starts it ([[ops/tickets/WF-040]]); fails closed without `MOCK_PROD_*`. [[ops/tickets/WF-010]] stays the staging-host pick, not this job.
 
 ## Roles
 

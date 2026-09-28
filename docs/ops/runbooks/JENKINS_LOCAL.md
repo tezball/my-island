@@ -22,7 +22,7 @@ Jobs seeded by JCasC:
 |---|---|---|
 | `local-ci` | No | Build bind-mounted `/workspace` (`unit` → `catalog` → `stack`) |
 | `my-island` | Yes | GitHub multibranch; polls every 5m; builds `Jenkinsfile` |
-| `deploy-mock-prod` | No (SSH key in `.env` / Jenkins) | Cron `H/5` + `gate_mock_prod_deploy.py`. Green GHA on `origin/main` → `scripts/deploy-mock-prod.sh` → `smoke_mock_prod.py`. Info SHA gate ([[ops/tickets/WF-037]]). Unattended [[ops/tickets/WF-040]]. **Agents never SSH.** Feature branches never deploy. |
+| `deploy-mock-prod` | Yes (`JENKINS_ADMIN_PASSWORD` as credential `deploy-mock-prod-trigger`) | No cron. GitHub Actions `mock-prod signal` starts this one job after CI succeeds on `main`. `gate_mock_prod_deploy.py` still skips feature branches, red `main`, and an already-live SHA. Green → `scripts/deploy-mock-prod.sh` → `smoke_mock_prod.py`. Info SHA gate ([[ops/tickets/WF-037]]). Unattended [[ops/tickets/WF-040]]. **Agents never SSH.** |
 
 ## GitHub token
 
@@ -44,7 +44,9 @@ docker compose up -d jenkins --force-recreate --wait
 
 The zap stage scans only after `GET /api/v1/places` answers. On the controller that is `http://catalog:8080` (compose DNS). `http://127.0.0.1:8081` is the host publish, used when that DNS name does not answer ([[ops/tickets/WF-053]]).
 
-Laptop Jenkins **polls** GitHub (no public webhook URL). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci/<job>` (one dedicated directory, [[ops/tickets/WF-052]]) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …) + `JENKINS_CI_STACK=1` (`compose.ci.yml` clears Mailpit host ports; catalog still uses `mailpit:1025`). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
+`deploy-mock-prod` has no timer. Job DSL `triggers { genericTrigger }` (credential `deploy-mock-prod-trigger`) survives JCasC re-seed. The token value is `JENKINS_ADMIN_PASSWORD` from `.env` — the same name as the GitHub Actions secret. `JENKINS_URL` is the other Actions secret (same name as `.env`). The Actions URL must be reachable from GitHub-hosted runners. The mini `.env` can stay `http://127.0.0.1:8085/` for local use. Do not commit either value. Recreate the Jenkins image after this plugin change so `generic-webhook-trigger` is installed before Casc seeds the job. Do not click Build. Agents never SSH.
+
+Laptop Jenkins **polls** GitHub for multibranch PR builds (no public webhook URL on that job). Multibranch copies `$WORKSPACE` to `~/Projects/my-island-ci/<job>` (one dedicated directory, [[ops/tickets/WF-052]]) and posts the four GHA job names as commit statuses ([[ops/tickets/WF-051]]). Stack isolate: `COMPOSE_PROJECT_NAME=my-island-ci` + `OPS_*_HOST_PORT` (catalog `18081`, postgres `15433`, …) + `JENKINS_CI_STACK=1` (`compose.ci.yml` clears Mailpit host ports; catalog still uses `mailpit:1025`). Remote PR merges still use GitHub Actions until a shared Jenkins exists and branch protection is retargeted.
 
 ## Survive restart / wipe
 

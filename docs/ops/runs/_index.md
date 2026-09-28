@@ -20,6 +20,7 @@ LIMIT 25
 ```
 
 
+- [[WF-040-signal]] — deploy-mock-prod starts from mock-prod signal; H/5 timer removed
 - [[FREE-DIRECTORY-plan]] — decision 39; WF-040 implement; PRD-032–035 planned; booking stays inbox
 - [[WF-050-implement]] — review-gated automerge; merge job off ci.yml; workflow_run after CI success
 - [[WF-050-plan]] — review-gated automerge + PRD-031 mobile back tickets; no ci.yml
