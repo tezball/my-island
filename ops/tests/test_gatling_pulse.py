@@ -76,8 +76,17 @@ def test_hundred_user_pulse_is_on_demand_and_holds_ten_minutes() -> None:
     script = (OPS / "scripts" / "gatling_pulse.sh").read_text()
     assert "set -euo pipefail" in script
     assert "GuestPulseSimulation" in script
+    assert "-Dgatling.simulationClass=island.gatling.GuestPulseSimulation" in script
     assert "GATLING_BASE_URL:-http://127.0.0.1:8081" in script
     assert "MOCK_PROD_PUBLIC_ORIGIN" not in script
+
+    pom = (OPS / "gatling" / "pom.xml").read_text()
+    assert (
+        "<gatling.simulationClass>island.gatling.GuestTrickleSimulation</gatling.simulationClass>"
+        in pom
+    )
+    assert "<simulationClass>${gatling.simulationClass}</simulationClass>" in pom
+    assert "<simulationClass>island.gatling." not in pom
 
     dev = (REPO / "scripts" / "dev").read_text()
     assert "cmd_pulse()" in dev

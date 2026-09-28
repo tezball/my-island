@@ -15,6 +15,8 @@
     <maven.compiler.release>21</maven.compiler.release>
     <gatling.version>3.13.5</gatling.version>
     <gatling-maven-plugin.version>4.16.3</gatling-maven-plugin.version>
+    <!-- Default for the H/15 trickle. Override with -Dgatling.simulationClass. -->
+    <gatling.simulationClass>island.gatling.GuestTrickleSimulation</gatling.simulationClass>
   </properties>
 
   <dependencies>
@@ -41,7 +43,7 @@
         <artifactId>gatling-maven-plugin</artifactId>
         <version>${gatling-maven-plugin.version}</version>
         <configuration>
-          <simulationClass>island.gatling.GuestTrickleSimulation</simulationClass>
+          <simulationClass>${gatling.simulationClass}</simulationClass>
         </configuration>
       </plugin>
     </plugins>
