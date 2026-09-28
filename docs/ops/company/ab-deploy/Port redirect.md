@@ -40,7 +40,7 @@ Redirecting inside the bridge, from the address Caddy has cached for `island-cat
 
 - The customer path is Caddy → Docker DNS → container port. The redirectable host port is the health port.
 - HTTP routing (API versus static, actuator versus the PWA) lives in the Caddyfile. A port redirect is one TCP stream.
-- Docker owns the filter rules for published ports. The unattended script would be repairing nftables every `H/5` deploy, including deploys the gate `SKIP`s if someone put the rules in the wrong stage.
+- Docker owns the filter rules for published ports. The unattended script would be repairing nftables on every deploy the signal starts, including deploys the gate `SKIP`s if someone put the rules in the wrong stage.
 - Two containers and one `18081` still cannot both bind. The redirect does not remove that bind. One of them stays unpublished, which is the A/B-ports design, and Caddy remains the switch.
 - Failure mode is a black hole: a rule that matches and a container that failed its pulse. Caddy reload at least keeps serving A until the file changes. A broad prerouting rule does not have A's process as a fallback unless the rule is written that carefully, every time, by the same job.
 - `disableConcurrentBuilds` does not protect the kernel ruleset from a human or from Docker's own rewrite mid-job.

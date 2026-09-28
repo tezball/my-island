@@ -38,7 +38,7 @@ Jenkins stays the same job: gate, clean `origin/main`, script, public smoke. The
 
 Call [[ops/company/ab-deploy/Startup pulse]] on B before the reload. The pulse hits B's port only: readiness (datasource + `PostGIS_Version()`), then the same places GET the smoke already uses.
 
-Call [[ops/company/ab-deploy/Drain]] on A after the pulse and before `docker stop` of A. Caddy reload moves new requests immediately; the drain is how long A stays alive for requests already inside it. Cap the wait. The cron is `H/5` and the job cannot overlap itself.
+Call [[ops/company/ab-deploy/Drain]] on A after the pulse and before `docker stop` of A. Caddy reload moves new requests immediately; the drain is how long A stays alive for requests already inside it. Cap the wait. `disableConcurrentBuilds` stops a second deploy from overlapping.
 
 `import_leads.py` today targets `:18081` after the public site is up. Under A/B it has to target the slot that is about to be live (or the one Caddy just switched to), or it writes through the process that is about to die.
 

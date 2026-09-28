@@ -1540,7 +1540,9 @@ def test_wf_040_unattended_mock_prod() -> None:
     assert "tickets/WF-032" in meta.get("parent", "")
     groovy = (REPO / "ops" / "jenkins" / "casc" / "jobs" / "deploy-mock-prod.groovy").read_text()
     dsl, script = groovy.split("script(", 1)
-    assert "cron('H/5 * * * *')" in dsl
+    assert "genericTrigger {" in dsl
+    assert "tokenCredentialId('deploy-mock-prod-trigger')" in dsl
+    assert "cron(" not in groovy
     assert "cron(" not in script
     assert ".jenkins-deploy-main" in groovy
     assert "reset --hard origin/main" in groovy
@@ -1564,7 +1566,10 @@ def test_wf_040_unattended_mock_prod() -> None:
     assert (RUNTIME / "scripts" / "gate_mock_prod_deploy.py").is_file()
     assert (RUNTIME / "scripts" / "smoke_mock_prod.py").is_file()
     jenkins = (OPS / "runbooks" / "JENKINS_LOCAL.md").read_text()
-    assert "H/5" in jenkins or "cron" in jenkins.lower()
+    assert "deploy-mock-prod-trigger" in jenkins
+    assert "JENKINS_ADMIN_PASSWORD" in jenkins
+    assert "mock-prod signal" in jenkins
+    assert "H/5" not in jenkins
     assert "Agents never SSH" in jenkins
 
 
@@ -1859,7 +1864,8 @@ def test_wf_050_review_gated_automerge_and_prd_031() -> None:
     assert "Ready PRs auto-review, approve, and squash-merge" not in decisions
     assert "Review-gated automerge" in decisions
     jenkins = (OPS / "runbooks" / "JENKINS_LOCAL.md").read_text()
-    assert "H/5" in jenkins
+    assert "deploy-mock-prod-trigger" in jenkins
+    assert "H/5" not in jenkins
     loop = (OPS / "workflow" / "LOOP.md").read_text()
     assert "Approve or Request changes" in loop
     assert "approve their own PR" in loop

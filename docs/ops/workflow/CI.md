@@ -32,7 +32,7 @@ Vitest is a merge gate. Merge CI: catalog API, Chaos, ZAP. Playwright is cron + 
 - GitHub PR builds: set `JENKINS_GITHUB_TOKEN` in `.env`, recreate jenkins, scan `my-island` multibranch (polls; no public webhook).
 - Multibranch posts commit statuses named `unit tests` / `catalog tests` / `web tests` / `compose stack` ([[ops/tickets/WF-051]]). The host-visible checkout is `~/Projects/my-island-ci/<job>` ([[ops/tickets/WF-052]]), not a sibling under all of `~/Projects` and not the primary clone. Stack uses Compose project `my-island-ci` and remapped host ports so it does not recreate the laptop `my-island` stack. `jenkins_isolate_env` sets `JENKINS_CI_STACK=1`, and `scripts/dev` then loads `compose.ci.yml`, which clears Mailpit host ports 1025 and 8025. Catalog still sends mail to `mailpit:1025` on the compose network. Local `./scripts/dev up` keeps those host ports. Maven/npm caches: volumes `ops_m2` / `ops_npm`. The CI-directory mount applies only after the Jenkins container is recreated.
 - Automerge for remote PRs still waits on **GHA** greens plus a valid non-author `APPROVED` ([[ops/tickets/WF-050]], [[ops/tickets/WF-025]]) during dual-run. Do not retarget branch protection until those Jenkins statuses are green on a PR. Do not delete GHA test jobs in WF-051.
-- After squash to `main`, GHA `automerge` **dispatches** CI on `main` (`workflow_dispatch`). `GITHUB_TOKEN` squash does **not** fire `push`, so Jenkins cannot wait on push-check-runs for the squash SHA ([[ops/tickets/WF-048]]). Dispatch + merged-PR-head fallback give `unit` + `catalog` + `web` + `stack` on a SHA the `H/5` gate can see. GHA `mock-prod-signal` is the visible “main is green” check (push **or** dispatch). No `production` Environment.
+- After squash to `main`, GHA `automerge` **dispatches** CI on `main` (`workflow_dispatch`). `GITHUB_TOKEN` squash does **not** fire `push`, so a push-only Jenkins trigger would not see that SHA ([[ops/tickets/WF-048]]). Dispatch + merged-PR-head fallback give `unit` + `catalog` + `web` + `stack` on a SHA the gate can see. When those checks have succeeded, GHA `mock-prod signal` starts Jenkins `deploy-mock-prod` (push **or** dispatch, `main` only). No `production` Environment.
 
 ## Agent rules
 
@@ -82,7 +82,7 @@ If CI is green but there is no valid Approve yet, `automerge` **succeeds** with 
 
 Do **not** add `automerge` / `auto-review approve merge` / `Cursor Automation: Untitled` as required GitHub checks.
 
-Jenkins `H/5` mock-prod / [[ops/tickets/WF-048]] `workflow_dispatch` after squash is unchanged. No production Environment.
+Jenkins `deploy-mock-prod` starts from `mock-prod signal` after CI succeeds on `main` (no few-minute poll). [[ops/tickets/WF-048]] `workflow_dispatch` after squash still runs that CI. No production Environment.
 
 ## Cursor PR-review automation (Terry)
 

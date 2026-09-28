@@ -33,6 +33,11 @@ credentials:
               description: "GitHub PAT for PR polling / status (JENKINS_GITHUB_TOKEN)"
               username: "${GITHUB_USERNAME:-tezball}"
               password: "${JENKINS_GITHUB_TOKEN:-changeme}"
+          - string:
+              scope: GLOBAL
+              id: "deploy-mock-prod-trigger"
+              description: "Remote trigger token for deploy-mock-prod. Value is JENKINS_ADMIN_PASSWORD from .env. Never commit the value."
+              secret: "${JENKINS_ADMIN_PASSWORD:-admin}"
 
 jobs:
   - file: /var/jenkins_casc_jobs/local-ci.groovy

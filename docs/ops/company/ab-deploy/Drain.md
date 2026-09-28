@@ -42,7 +42,7 @@ Graceful HTTP shutdown does not watch:
 After B's pulse is green and before `docker stop` of A:
 
 1. Reload Caddy so new HTTP goes to B. Do this first. Draining A while Caddy still sends customers to A never converges.
-2. For a bounded wait (well under the 90 minute job timeout, and short enough that `H/5` plus `disableConcurrentBuilds` does not stack a queue of deploys), poll `pg_stat_activity` for A's `client_addr` in `active` or `idle in transaction`.
+2. For a bounded wait (well under the 90 minute job timeout, and short enough that `disableConcurrentBuilds` does not stack a queue of deploys), poll `pg_stat_activity` for A's `client_addr` in `active` or `idle in transaction`.
 3. If graceful shutdown gets turned on later, SIGTERM A at the start of this window so Tomcat stops accepting and finishes what it has, and let the phase timeout be the cap. Until that property exists, the wait only covers SQL that is already running; HTTP dies when the container stops.
 4. Stop A. Idle Hikari sessions disappear with the process. Postgres aborts any transaction that was still open when the socket died.
 5. Public smoke runs after this, as it does today.

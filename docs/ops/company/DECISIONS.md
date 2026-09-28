@@ -157,3 +157,11 @@ CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer
 |---|---|---|
 | 39 | **Production host for this product.** https://fishing-journals.com. Dated exception to the 2026-09-12 no-prod lock, this product only. The current VPS is still **one machine** (the same host decision 14 called mock-prod) until a later split. Local compose stays the build runtime. Deploy stays Jenkins `deploy-mock-prod` from `main` (Mac mini, decision 37). Agents never SSH. Do **not** add a GitHub Environment named `production`, `compose.prod`, or a prod SSH path. Free directory: campsites, B&Bs, POIs, experiences, suppliers. Journey is [[ops/tickets/PRD-030]]. No checkout and no payment gateway in this program. Leave [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] in `inbox`. | [`product/FREE-DIRECTORY.md`](../../product/FREE-DIRECTORY.md), [[ops/tickets/WF-040]], [[ops/workflow/SAFETY]], `.cursor/rules/no-prod.mdc` |
 
+## 2026-09-28 — Deploy when main’s checks succeed
+
+**Terry.** The `H/5` poll on `deploy-mock-prod` is retired. Decision 38’s “Jenkins `H/5` unchanged” no longer applies to this job. One job, `deploy-mock-prod`. No second deployer.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 40 | **Deploy on green main.** Jenkins `deploy-mock-prod` starts when GitHub Actions `mock-prod signal` runs, which is after CI succeeds on the default branch (`push` or `workflow_dispatch`). Not on the git push itself. Job DSL `triggers { genericTrigger }` with credential `deploy-mock-prod-trigger`. The token value is env `JENKINS_ADMIN_PASSWORD`. The URL value is env `JENKINS_URL`. Names only in git. `gate_mock_prod_deploy.py` still refuses feature branches, red `main`, and an already-live SHA. Agents never SSH. No GitHub Environment `production`. | [[ops/tickets/WF-040]], [[ops/workflow/CI]], [[ops/runbooks/JENKINS_LOCAL]] |
+
