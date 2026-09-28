@@ -43,6 +43,7 @@ Roster: `docs/ops/agents/_index.md`. Runbook: `docs/ops/runbooks/TICKET_LOOP.md`
 
 1. `gh pr view` / `gh pr diff`.
 2. SAFETY + DoD (blockers only). **May** submit Approve or Request changes. Nits in the review body only — no inline threads for nits. Do not merge or push. Do not approve a PR you implemented.
+3. The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync. A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
 
 ## Board hygiene
 

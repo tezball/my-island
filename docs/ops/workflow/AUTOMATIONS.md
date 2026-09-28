@@ -16,6 +16,10 @@ Cloud jobs that run the loop when nobody is in the IDE. They do **not** replace 
 | Does not | Merge, push, start before those four jobs succeeded, approve as `github-actions[bot]` |
 | Tools | Pull request review |
 
+The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync.
+
+A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
+
 Detail and required-check names: [[ops/workflow/CI]].
 
 ## 2. Board runner
@@ -41,10 +45,18 @@ Detail and required-check names: [[ops/workflow/CI]].
 |---|---|
 | Name | `my-island PR loop` |
 | When | **CI completed** (any conclusion, PRs, not drafts). Also PR review submitted, PR review comment, comment added, and cron `*/3 * * * *` (testing cadence) so a `cursor[bot]` push or a `pull_request`-only Actions run is not missed. |
-| Does | One PR. Fix a failed Actions check-run, or fix `CHANGES_REQUESTED` / review comments, or Approve / Request changes when the four checks are green. Spec and prompt: [[ops/workflow/PR-LOOP]]. |
+| Does | One PR. Fix a failed Actions check-run, or fix `CHANGES_REQUESTED` / review comments, or Approve / Request changes when the four checks are green. A fixer updates the ticket and the docs to match the PR and leaves the change in place. Spec and prompt: [[ops/workflow/PR-LOOP]]. |
 | Does not | Merge, push `main`, treat a Jenkins commit status as failed CI, open a second PR, approve before the four checks are success |
 | Merge | Still [[ops/tickets/WF-050]] `automerge.yml`. This job does not squash-merge. |
 
 ## Enablement
 
 These cannot be fully saved from chat until you confirm the draft in the Automations UI. Chat **cannot set** the Untitled trigger from git — Terry clicks **Workflow run completed** / workflow `CI` / success only. The PR loop row is the same limit: paste [[ops/workflow/PR-LOOP]] and Activate. Local loop works without them: open Cursor and say “work the next ready ticket”.
+
+The live automation **PR Review** (`2a5248fd-aedf-11f1-bf4b-42ffb4d10ea7`) stores its prompt on the dashboard. There is no update API. This note does not edit that prompt. Paste this paragraph into it:
+
+```
+The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync.
+
+A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
+```
