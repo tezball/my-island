@@ -6,6 +6,7 @@ import { VisitTicks } from "../explore/VisitTicks";
 import { useGuestSession } from "../auth/guestSession";
 import { haversineKm, hasCoords } from "../explore/geo";
 import { facilityLabel, priceLabel } from "../explore/labels";
+import { AccountSheet, BottomNav } from "../shell/Chrome";
 
 const MiniMap = lazy(() => import("../explore/map/MiniMap").then((m) => ({ default: m.MiniMap })));
 
@@ -15,6 +16,7 @@ export function PlacePage() {
   const [nearby, setNearby] = useState<Place[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [shareNote, setShareNote] = useState<string | null>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
   const { me, marks, setMark } = useGuestSession();
 
   useEffect(() => {
@@ -90,6 +92,10 @@ export function PlacePage() {
         )}
       </div>
       <div className="place-body">
+        <p className="county-badge">
+          CO. {place.county.name.toUpperCase()}
+          {place.town ? ` · ${place.town.toUpperCase()}` : ""}
+        </p>
         <h1 className="place-name">{place.name}</h1>
         <div className="chip-row">
           <span className="pill">{place.category.label}</span>
@@ -176,6 +182,8 @@ export function PlacePage() {
       ) : (
         <p className="status">Location not mapped yet.</p>
       )}
+      <BottomNav active="explore" onAccount={() => setAccountOpen(true)} />
+      {accountOpen ? <AccountSheet onClose={() => setAccountOpen(false)} /> : null}
     </article>
   );
 }

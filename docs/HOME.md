@@ -66,7 +66,7 @@ Humans start by hat. Agents use the board + `next_ticket.py`. Index: [[ops/dashb
 | [`WF-003`](ops/tickets/WF-003.md) · [[ops/tickets/WF-003]] | P1 | Cursor Automations for plan / implement / review |
 
 > [!info] Planning
-> [`PRD-032`](ops/tickets/PRD-032.md)–[`PRD-034`](ops/tickets/PRD-034.md) stay `plan`. [`PRD-035`](ops/tickets/PRD-035.md) is in `review` (green header, white cards, amber actions in [`product/LOOK.md`](product/LOOK.md)) and does not mark PRD-034 done. [`PRD-031`](ops/tickets/PRD-031.md) stays `plan`. Counsel gate remains [`PRD-009`](ops/tickets/PRD-009.md).
+> [`PRD-032`](ops/tickets/PRD-032.md)–[`PRD-034`](ops/tickets/PRD-034.md) stay `plan`. [`PRD-035`](ops/tickets/PRD-035.md) is in `review` (paper header, white cards, forest actions in [`product/LOOK.md`](product/LOOK.md)) and does not mark PRD-034 done. [`PRD-031`](ops/tickets/PRD-031.md) stays `plan`. Counsel gate remains [`PRD-009`](ops/tickets/PRD-009.md).
 
 > [!success] Workshop — E2E place-listing stub
 > Field source of truth on the running stub: `categoryId` / `countyId` / `latitude` / `longitude` (not `categorySlug` / `countySlug` / `lon`+`lat`).

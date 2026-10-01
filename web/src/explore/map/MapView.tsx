@@ -122,7 +122,7 @@ function syncPins(layer: L.LayerGroup, places: Place[], onSelect: (place: Place)
       radius: 8,
       color: "#FFFFFF",
       weight: 2,
-      fillColor: "#1F7A4D",
+      fillColor: "#002217",
       fillOpacity: 1,
     });
     marker.on("click", open);

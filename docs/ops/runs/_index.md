@@ -20,7 +20,8 @@ LIMIT 25
 ```
 
 
-- [[PRD-035-implement]] — green header, white cards, amber Directions; PRD-034 stays plan
+- [[PRD-035-stitch]] — Stitch paper header, forest primary, amber accent; PRD-034 stays plan
+- [[PRD-035-implement]] — earlier green header, white cards, amber Directions; PRD-034 stays plan
 - [[WF-040-signal]] — deploy-mock-prod starts from mock-prod signal; H/5 timer removed
 - [[FREE-DIRECTORY-plan]] — decision 39; WF-040 implement; PRD-032–035 planned; booking stays inbox
 - [[WF-050-implement]] — review-gated automerge; merge job off ci.yml; workflow_run after CI success

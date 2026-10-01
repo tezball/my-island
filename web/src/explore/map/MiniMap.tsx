@@ -24,7 +24,7 @@ export function MiniMap({ lat, lng }: { lat: number; lng: number }) {
       radius: 8,
       color: "#FFFFFF",
       weight: 2,
-      fillColor: "#1F7A4D",
+      fillColor: "#002217",
       fillOpacity: 1,
     }).addTo(map);
     requestAnimationFrame(() => map.invalidateSize());

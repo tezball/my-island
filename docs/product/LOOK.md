@@ -10,7 +10,7 @@ created: 2026-09-13
 
 Working visual brief for the **phone-first directory PWA**. Not signed. Public name is still unset — [`NAMING.md`](NAMING.md), [`ops/company/BRAND.md`](../ops/company/BRAND.md). Constraints: [`MVP.md`](MVP.md) §3.
 
-Feed the blocks below to Claude Design (or another visual designer). Do not print `my-island` on a customer surface.
+The live screens follow Terry’s Google Stitch export `explore_heritage_scenic_spots.html` (Drive, 2026-10-01): [explore_heritage_scenic_spots.html](https://drive.google.com/file/d/1SpNv7fPzBC9EWYrDyeny5V7LvPsUvR-B/view). Do not print `my-island` on a customer surface.
 
 Mood reference (place names only, not their marketing): [`Clippings/35 Bucket List Experiences in Ireland.md`](../Clippings/35%20Bucket%20List%20Experiences%20in%20Ireland.md).
 
@@ -65,23 +65,29 @@ Use these as the **mood and subject set** (real Irish bucket-list places). Inven
 
 Photography feeling: Discover Ireland *quality of place*, Airbnb *image dominance*, National Geographic *honesty* — without copying any of those brands.
 
-### Colour — green and white
+### Colour — forest, paper, amber accent
 
-One palette. The phone UI is green and white, with amber for calls to action.
+One palette, taken from the Stitch export. The phone UI is a pale paper field, white cards, and near-black forest for type and primary actions. Amber is an accent, not the button fill.
 
 | Role | Hex |
 |---|---|
-| Page background | `#f3faf6` |
+| Page background | `#f4fbf6` |
 | Cards and sheets | `#ffffff` |
-| Text | `#143028` |
-| Header and primary green | `#1f7a4d` |
-| Call to action, including Directions | `#f5a524` |
+| Text | `#161d1a` |
+| Primary (wordmark, selected chips, Directions, map pins, favicon) | `#002217` |
+| Primary container (field-note banner) | `#0f382a` |
+| Search field | `#eef5f0` |
+| County badge background / text | `#e8f0ec` / `#0f382a` |
+| Secondary amber (icons, count badge, locate) | `#904d00` |
+| Secondary container (locate fill, pulse) | `#fe932c` |
+| Amber text on a light status | `#92400e` |
 
-- The header bar is the primary green (`#1f7a4d`) with white type. The same green is the wordmark, selected chips, links, map pins, focus rings, and the favicon.
-- Cards, sheets, and search fields are white (`#ffffff`). The page behind them is `#f3faf6`.
-- Text is `#143028`.
-- Calls to action, including the Directions button and the locate control, are amber `#f5a524`. Brown `#c98400` is not a colour in this UI.
-- Hairlines are a light green mist in this same palette. Photographs still carry the landscape.
+- The header is translucent paper (`#f4fbf6` at 90%) with forest type. It is not a solid green bar. The wordmark is Newsreader in `#002217`. The explore mark is amber `#904d00`.
+- Selected chips, the floating map pill, Directions, and map pins use primary `#002217` with white type.
+- Cards are white. The page behind them is `#f4fbf6`. Search sits on `#eef5f0`.
+- Text is `#161d1a`. Secondary text is `#414844`.
+- Amber `#fe932c` and `#904d00` mark counts, the locate control, and paid/status dots. Brown `#c98400` and the old header green `#1f7a4d` are not in this UI. Directions is not amber.
+- Hairlines are `#e2e5e1`. Photographs still carry the landscape.
 - High contrast outdoors (WCAG 2.2 AA). Legible in Irish daylight and in a car park at dusk.
 
 ### Mobile-first, non-negotiable
@@ -98,34 +104,35 @@ Design for **one thumb**. Rural 3G, mid-range Android, installable PWA.
 ### Screens to design (mobile first)
 
 1. **Explore — list**
-   Search, category/county filters (reachable without scrolling), result count. Photo-led place cards: large image, name, category, county, distance, **check-off on the card**. Mix POI / campsite / B&B so the image language for each is obvious.
+   Sticky pill search, horizontal county chips, result count, Curated / A–Z. Forest field-note banner. Horizontal cards: photo, county badge, Newsreader name, status, View map, been / want / never when signed in. Floating map pill. Bottom tabs: Explore, Map, Saved, Profile.
 2. **Explore — map**
-   Ireland-centred, clustered pins coloured/iconed by category. Ticked places look different. Tap pin → **bottom sheet**: big photo, name, category, one-tap tick, “Open place”. “Search this area” after pan. Locate control.
+   Ireland-centred pins in `#002217`. Locate in `#fe932c`. After pan: “Search this area”. Tap pin → bottom sheet with photo, name, visit marks, Open place.
 3. **Place detail**
-   Hero photograph that could be a postcard of Ireland. Name, category, county/town, short original description, practical chips (parking, dogs, season, € / free), mini-map, nearby places, share. Sticky bottom: Directions + **Been here**. For a B&B or campsite, show **Stayed** as a sibling of visited — still one tap.
-4. **My Places**
-   Personal record: total count, **32 counties** as the motivating number, category breakdown, photo grid or list of ticked places, personal map. Feels like a journal you are proud of, not a settings page.
-5. **Optional fifth:** empty / first-run (“near me” with location off) and a quiet Google/Apple sign-in chip — never a wall of auth before browsing.
+   Hero photograph, back control, county badge, Newsreader name, description, facility chips, mini-map, nearby cards. Sticky Directions in `#002217`, above the tab bar.
+4. **Saved** (`/lists`)
+   Been / want / never, same cards, optional personal map. Profile is the sign-in sheet. County totals stay off this screen.
+5. **Empty / signed out**
+   Near-me off is a quiet hint. Profile holds sign-in. Browsing does not require an account.
 
 Also deliver: **colour tokens, type pairing, component notes** (card, chip, sheet, tab bar, check-off states, map pin). Check-off: empty → ticked, instant, satisfying, not a cartoon badge dump.
 
 ### Type
 
-Headlines: a distinctive serif or Irish-inflected display that can sit on a photograph (place names like *Skellig Michael*, *Fanad Lighthouse*). UI: a humanist sans. Keep the pairing calm. Place names do the romance; the chrome stays workwear.
+Headlines: **Newsreader** (place names, the Explore wordmark, the field-note title). UI: **Source Sans 3**. Icons: Material Symbols Outlined. Place names do the romance; the chrome stays workwear.
 
 ### What to avoid
 
 - Tourism-board pastiche, shamrocks, harps as decoration, claddagh, “céad míle fáilte” as a headline
 - Marketplace / booking chrome (dates, guests, “from €89”, Superhost)
-- Tiny thumbnails that waste Ireland
-- Neon CTAs or a dark-mode-first chrome. The UI stays the light green-and-white palette above
+- A solid green header bar, or amber as the Directions fill
+- Neon CTAs or a dark-mode-first chrome. The UI stays the light paper field with forest primary actions above
 - Designing desktop first and shrinking it
 
 ### Output
 
 High-fidelity **mobile** frames for the screens above, plus a one-page visual system (tokens, type, card anatomy, check-off, map pin, photography crop rules). If you show desktop, it is a 2-column Explore (list | map) using the same mobile components — not a different product.
 
-Tone of the finished UI: **green header, white cards, amber actions**. Ireland as the photograph.
+Tone of the finished UI: **paper header, white cards, forest primary actions, amber accents**. Ireland as the photograph. The Explore screen matches the Stitch frame: sticky search, a horizontal county chip rail (catalog counties, not invented heritage kinds), a forest field-note banner, horizontal photo cards, a floating map pill, and a bottom tab bar (Explore, Map, Saved, Profile).
 
 ---
 
@@ -135,26 +142,26 @@ Paste **Shared system** once, then one screen prompt per generation. Keep the sa
 
 ### Shared system
 
-Phone-first Irish place directory PWA. 390×844. Page `#f3faf6`, white cards, text `#143028`, header and primary green `#1f7a4d`, call to action including Directions amber `#f5a524`. Photography is the product: cinematic Ireland, weather allowed. No shamrocks, no Fáilte / Discover Ireland / Wild Atlantic Way branding, no booking chrome. 44px targets, bottom tab bar, one-thumb. Categories: POI, experience, campsite, B&B. One-tap check-off on every place surface.
+Phone-first Irish place directory PWA. 390×844. Page `#f4fbf6`, white cards, text `#161d1a`, primary `#002217`, field note `#0f382a`, amber accent `#904d00` / `#fe932c`. Header is translucent paper, not a solid green bar. Photography is the product: cinematic Ireland, weather allowed. No shamrocks, no Fáilte / Discover Ireland / Wild Atlantic Way branding, no booking chrome. 44px targets, bottom tab bar (Explore, Map, Saved, Profile), one-thumb. Categories stay the catalog’s. County chips filter the list. Visit marks stay been / want / never.
 
-Tokens: page `#f3faf6`, cards `#ffffff`, text `#143028`, header and primary green `#1f7a4d`, amber `#f5a524` for calls to action including Directions. Serif for place names, humanist sans for UI.
+Tokens: page `#f4fbf6`, cards `#ffffff`, text `#161d1a`, primary `#002217`, Directions the same primary, amber `#fe932c` for locate and small accents. Newsreader for place names, Source Sans 3 for UI.
 
 ### 1 — Explore list
 
-Design the Explore **list**. Search + category/county chips without scrolling. Result count. Full-bleed photo cards (not 112px thumbs) for: Cliffs of Moher (POI), a Kerry campsite, a Dingle B&B, Fanad Lighthouse, Glendalough. Each card: huge photo, name, category, county, distance, check-off control. Mix ticked and unticked. Bottom tabs: Explore / Map / My Places.
+Design the Explore **list** as the Stitch frame. Translucent header (explore mark, Newsreader “Explore”, search, bookmark, profile). Pill search. Horizontal county chips, All selected in `#002217` with an amber count. “Showing N places” plus a Curated / A–Z sort. Forest field-note banner. Horizontal cards: ~96px photo, county badge, Newsreader name, place line, status, View map. Floating “Interactive map view” pill. Bottom tabs: Explore / Map / Saved / Profile.
 
 ### 2 — Explore map
 
-Same system. Ireland map, clustered pins by category, ticked pins distinct. Locate control in amber `#f5a524`. After pan: “Search this area”. One pin open as a **bottom sheet**: big photo of Skellig Michael in mist, name, Kerry, one-tap Been here, Open place. Sheet over the map; tab bar still visible.
+Same system. Ireland map, pins in `#002217`. Locate control in amber `#fe932c`. After pan: “Search this area”. One pin open as a **bottom sheet**: photo, name, county, visit marks, Open place. Sheet over the map; tab bar still visible. Phone reaches this from the floating map pill or the Map tab (`/?view=map`).
 
 ### 3 — Place detail
 
-Same system. Hero is a postcard crop of Great Blasket cottages by the sea (or Fanad Lighthouse). Back control on the photo. Name in serif, category pill in the primary green, county/town, short direct description, chips for parking / dogs / season / free or €. Mini-map. Nearby photo-led cards. Sticky bottom: Directions in amber `#f5a524` + Been here (Stayed as well if this were a B&B). Safe area above the tab bar.
+Same system. Hero photograph. Back control on the photo. County badge, name in Newsreader, category pill, short description, facility chips, mini-map, nearby cards in the same horizontal card. Sticky bottom, above the tab bar: Share, and Directions in primary `#002217` (white type). Visit marks stay been / want / never.
 
 ### 4 — My Places
 
-Same system. Feels like a journal. Hero number: **counties visited of 32**. Total places + breakdown (POI / experience / campsite / B&B). Photo grid of ticked places (Moher, Newgrange, a campsite stay, a B&B). Toggle to a personal map of coverage. No settings-page energy. Check-offs already ticked, in the primary green.
+Same system, on `/lists`, titled **Saved**. Been / want / never chips in the same rail as Explore. Cards match Explore. A “Your map” control opens the personal pins. Profile is the existing sign-in sheet, not a new account API. No county-total journal (that stays blocked on PRD-013).
 
 ### 5 — Visual system sheet (optional)
 
-One frame: token swatches, type pairing, list-card anatomy (photo crop rules), check-off empty/ticked, map pin set (four categories + ticked), bottom tab bar, chip selected/unselected. Caption: green header, white cards, amber actions.
+One frame: token swatches, Newsreader + Source Sans 3, horizontal card anatomy, map pin in `#002217`, bottom tab bar, chip selected/unselected. Caption: paper header, white cards, forest actions, amber accents.
