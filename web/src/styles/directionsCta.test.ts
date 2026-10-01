@@ -64,10 +64,13 @@ function directionsBackground(css: string): string | undefined {
 }
 
 describe("Directions call to action", () => {
-  it("uses amber #f5a524", () => {
+  it("uses the Stitch primary #002217", () => {
     const css = readFileSync(new URL("./app.css", import.meta.url), "utf8");
     expect(css.toLowerCase()).not.toContain("#c98400");
-    expect(token(css, "--amber")).toBe("#f5a524");
-    expect(directionsBackground(css)).toBe("#f5a524");
+    expect(css.toLowerCase()).not.toContain("#f5a524");
+    expect(css.toLowerCase()).not.toContain("#1f7a4d");
+    expect(token(css, "--primary")).toBe("#002217");
+    expect(token(css, "--amber")).toBe("#fe932c");
+    expect(directionsBackground(css)).toBe("#002217");
   });
 });

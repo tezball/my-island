@@ -1,10 +1,9 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { listCounties, listPublishedPlaces, type County, type Place } from "../api/catalog";
-import { GuestAuth } from "../auth/GoogleLogin";
 import { useGuestSession } from "../auth/guestSession";
+import { AccountSheet, AppHeader, BottomNav } from "../shell/Chrome";
 import { applyFilters, inBounds, parseCsv } from "./filters";
-import { FilterSheet } from "./FilterSheet";
 import { formatKm, haversineKm, hasCoords } from "./geo";
 import { PinSheet } from "./PinSheet";
 import { PlaceCard } from "./PlaceCard";
@@ -21,9 +20,11 @@ export function ExplorePage() {
   const [error, setError] = useState<string | null>(null);
   const [here, setHere] = useState<{ lat: number; lng: number } | null>(null);
   const [geoOff, setGeoOff] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [pin, setPin] = useState<Place | null>(null);
-  const { me, setMe } = useGuestSession();
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [sortAz, setSortAz] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const { me } = useGuestSession();
   const [areaNeeded, setAreaNeeded] = useState(false);
   const [searchToken, setSearchToken] = useState(0);
   const [area, setArea] = useState<{
@@ -67,9 +68,14 @@ export function ExplorePage() {
     () => applyFilters(places, { q, county }, here),
     [places, q, county, here],
   );
-  const visible = useMemo(
-    () => (area ? filtered.filter((p) => inBounds(p, area)) : filtered),
-    [filtered, area],
+  const visible = useMemo(() => {
+    const rows = area ? filtered.filter((p) => inBounds(p, area)) : filtered;
+    if (!sortAz) return rows;
+    return [...rows].sort((a, b) => a.name.localeCompare(b.name));
+  }, [filtered, area, sortAz]);
+  const catalogCount = useMemo(
+    () => places.filter((place) => place.category.id === "poi").length,
+    [places],
   );
 
   const setView = (next: "list" | "map") => {
@@ -108,10 +114,9 @@ export function ExplorePage() {
     setParams(nextParams, { replace: true });
   };
 
-  const toggleCounty = (id: string) => {
-    const next = county.includes(id) ? county.filter((c) => c !== id) : [...county, id];
+  const selectCounty = (id: string | null) => {
     const nextParams = new URLSearchParams(params);
-    if (next.length) nextParams.set("county", next.join(","));
+    if (id) nextParams.set("county", id);
     else nextParams.delete("county");
     setParams(nextParams, { replace: true });
   };
@@ -123,6 +128,7 @@ export function ExplorePage() {
     setParams(nextParams, { replace: true });
     setArea(null);
     setAreaNeeded(false);
+    setSortAz(false);
   };
 
   const onSearchArea = useCallback(
@@ -136,44 +142,127 @@ export function ExplorePage() {
   const showMap = view === "map" || wide;
   const showList = view === "list" || wide;
   const hasFilters = Boolean(q || county.length || area);
+  const allSelected = county.length === 0;
 
   return (
     <div className={`explore ${view === "map" ? "is-map" : "is-list"}`}>
       <div className="explore-pane">
-        <header className="app-header">
-          <h1 className="wordmark">
-            Explore
-            <span>Ireland · OPEN</span>
-          </h1>
-          <div className="header-meta">
-            <GuestAuth me={me} onMe={setMe} />
-            <div className="count" aria-live="polite">
-              {visible.length} places
+        <AppHeader
+          title="Explore"
+          onSearch={() => searchRef.current?.focus()}
+          onAccount={() => setAccountOpen(true)}
+        />
+        {showList ? (
+          <section className="discover">
+            <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
+              <span className="ms search-icon" aria-hidden="true">
+                search
+              </span>
+              <input
+                ref={searchRef}
+                id="directory-search"
+                value={q}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={
+                  catalogCount
+                    ? `Search ${catalogCount} places, towns, counties…`
+                    : "Search places, towns, counties…"
+                }
+                aria-label="Search places"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              {q ? (
+                <button
+                  type="button"
+                  className="clear-search"
+                  aria-label="Clear search query"
+                  onClick={() => {
+                    setQuery("");
+                    searchRef.current?.focus();
+                  }}
+                >
+                  <span className="ms">cancel</span>
+                </button>
+              ) : null}
+            </form>
+            <div className="chip-rail" id="category-rail">
+              <button
+                type="button"
+                className={allSelected ? "category-chip is-on" : "category-chip"}
+                aria-pressed={allSelected}
+                onClick={() => selectCounty(null)}
+              >
+                All
+                <span className="chip-count">{catalogCount}</span>
+              </button>
+              {counties.map((row) => {
+                const on = county.includes(row.id);
+                return (
+                  <button
+                    key={row.id}
+                    type="button"
+                    className={on ? "category-chip is-on" : "category-chip"}
+                    aria-pressed={on}
+                    onClick={() => selectCounty(on ? null : row.id)}
+                  >
+                    {row.name}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="result-row">
+              <p className="result-count" aria-live="polite">
+                <span className="status-dot" aria-hidden="true" />
+                Showing {visible.length} places
+              </p>
+              <button type="button" className="sort-toggle" onClick={() => setSortAz((v) => !v)}>
+                <span className="ms">swap_vert</span>
+                <span>{sortAz ? "A–Z" : "Curated"}</span>
+              </button>
+            </div>
+          </section>
+        ) : null}
+        {showList ? (
+          <div className="field-note">
+            <div>
+              <p className="kicker">
+                <span className="ms">sailing</span>
+                Coastal atlas
+              </p>
+              <p className="field-title">Atlantic tides & seasonal access</p>
+              <p className="field-body">
+                {me
+                  ? "Your been, want, and never marks stay on Saved."
+                  : "Published places only. Sign in from Profile to keep a list."}
+              </p>
+            </div>
+            <div className="field-icon" aria-hidden="true">
+              <span className="ms">water</span>
             </div>
           </div>
-        </header>
-        <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
-          <input
-            value={q}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search name or town"
-            aria-label="Search places"
-          />
-          <button className="bar-btn ghost" type="button" onClick={() => setFiltersOpen(true)}>
-            Filters
-          </button>
-        </form>
-        {geoOff ? (
+        ) : null}
+        {geoOff && showList ? (
           <p className="hint">Near-me is off. Showing Ireland, sorted by name.</p>
         ) : null}
         {error ? (
           <p className="status">{error}</p>
         ) : showList ? (
           visible.length === 0 ? (
-            <p className="status">
-              No places match.
-              {hasFilters ? " Clear filters or pick another county." : ""}
-            </p>
+            <div className="empty-state">
+              <div className="empty-icon" aria-hidden="true">
+                <span className="ms">explore_off</span>
+              </div>
+              <h2 className="place-name">No places found</h2>
+              <p className="muted">
+                Try another name or clear the county chip to see the full directory.
+              </p>
+              {hasFilters ? (
+                <button type="button" className="primary" onClick={clearFilters}>
+                  Reset filters
+                </button>
+              ) : null}
+            </div>
           ) : (
             <ul className="place-list">
               {visible.map((place) => (
@@ -213,38 +302,27 @@ export function ExplorePage() {
               Search this area
             </button>
           ) : null}
-          {showMap && visible.length === 0 ? (
-            <p className="map-empty">No places in this view.</p>
-          ) : null}
+          {visible.length === 0 ? <p className="map-empty">No places in this view.</p> : null}
           <button className="fab-locate" type="button" onClick={locate} aria-label="Locate me">
-            ⌖
+            <span className="ms">my_location</span>
           </button>
         </div>
       ) : null}
-      <nav className="bottom-bar">
-        <button className="bar-btn" type="button" aria-pressed={view === "map"} onClick={() => setView("map")}>
-          Map
-        </button>
-        <button className="bar-btn" type="button" aria-pressed={view === "list"} onClick={() => setView("list")}>
-          List
-        </button>
-        <Link className="bar-btn" to="/lists">
-          Lists
-        </Link>
-        <button className="bar-btn ghost" type="button" onClick={() => setFiltersOpen(true)}>
-          Filters
-        </button>
-      </nav>
-      {filtersOpen ? (
-        <FilterSheet
-          counties={counties}
-          selected={county}
-          onToggle={toggleCounty}
-          onClear={clearFilters}
-          onClose={() => setFiltersOpen(false)}
-        />
+      {showList && !wide ? (
+        <div className="map-fab">
+          <button type="button" onClick={() => setView("map")}>
+            <span className="ms">map</span>
+            Interactive map view
+            <span className="pulse" aria-hidden="true" />
+          </button>
+        </div>
       ) : null}
+      <BottomNav
+        active={view === "map" && !wide ? "map" : "explore"}
+        onAccount={() => setAccountOpen(true)}
+      />
       {pin ? <PinSheet place={pin} onClose={() => setPin(null)} /> : null}
+      {accountOpen ? <AccountSheet onClose={() => setAccountOpen(false)} /> : null}
       <ol className="sr-only">
         {visible.map((place) => (
           <li key={`sr-${place.id}`}>
