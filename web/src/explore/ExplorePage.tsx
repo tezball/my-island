@@ -233,7 +233,7 @@ export function ExplorePage() {
               <p className="field-title">Atlantic tides & seasonal access</p>
               <p className="field-body">
                 {me
-                  ? "Your been, want, and never marks stay on Saved."
+                  ? "Your Visited, Next, and Saved marks stay on the lists page."
                   : "Published places only. Sign in from Profile to keep a list."}
               </p>
             </div>

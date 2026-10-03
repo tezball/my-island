@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { marksByPlace, placesForMark, placesOnMap, type VisitIntent } from "../api/visitIntent";
+import {
+  VISIT_MARK_LABEL,
+  marksByPlace,
+  placesForMark,
+  placesOnMap,
+  type VisitIntent,
+} from "../api/visitIntent";
 import type { Place } from "../api/catalog";
 
 function place(id: string, name: string): Place {
@@ -38,10 +44,14 @@ describe("placesForMark", () => {
     expect(placesForMark(rows, marks, "never")).toEqual([]);
   });
 
-  it("maps been and want and leaves never off the map", () => {
-    const marks = marksByPlace(intents);
+  it("includes Saved (never) on the map with Visited and Next", () => {
+    const marks = marksByPlace([
+      ...intents,
+      { placeId: "c", mark: "never", updatedAt: "2026-09-19T00:00:00Z" },
+    ]);
+    expect(VISIT_MARK_LABEL).toEqual({ been: "Visited", want: "Next", never: "Saved" });
     expect(placesOnMap(rows, marks, "been").map((p) => p.id)).toEqual(["a"]);
     expect(placesOnMap(rows, marks, "want").map((p) => p.id)).toEqual(["b"]);
-    expect(placesOnMap(rows, marks, "never")).toEqual([]);
+    expect(placesOnMap(rows, marks, "never").map((p) => p.id)).toEqual(["c"]);
   });
 });

@@ -104,13 +104,13 @@ Design for **one thumb**. Rural 3G, mid-range Android, installable PWA.
 ### Screens to design (mobile first)
 
 1. **Explore — list**
-   Sticky pill search, horizontal county chips, result count, Curated / A–Z. Forest field-note banner. Horizontal cards: photo, county badge, Newsreader name, status, View map, been / want / never when signed in. Floating map pill. Bottom tabs: Explore, Map, Saved, Profile.
+   Sticky pill search, horizontal county chips, result count, Curated / A–Z. Forest field-note banner. Horizontal cards: photo, county badge, Newsreader name, status, View map, Visited / Next / Saved when signed in (stored `been` / `want` / `never`). Floating map pill. Bottom tabs: Explore, Map, Saved, Profile.
 2. **Explore — map**
    Ireland-centred pins in `#002217`. Locate in `#fe932c`. After pan: “Search this area”. Tap pin → bottom sheet with photo, name, visit marks, Open place.
 3. **Place detail**
    Hero photograph, back control, county badge, Newsreader name, description, facility chips, mini-map, nearby cards. Sticky Directions in `#002217`, above the tab bar.
-4. **Saved** (`/lists`)
-   Been / want / never, same cards, optional personal map. Profile is the sign-in sheet. County totals stay off this screen.
+4. **Lists** (`/lists`, screen title Saved)
+   Chips **Visited**, **Next**, and **Saved**. Same cards. Each chip can show on the map, including Saved (stored `never`). Profile is the sign-in sheet. County totals stay off this screen. The public count on a card stays the been count.
 5. **Empty / signed out**
    Near-me off is a quiet hint. Profile holds sign-in. Browsing does not require an account.
 
@@ -142,7 +142,7 @@ Paste **Shared system** once, then one screen prompt per generation. Keep the sa
 
 ### Shared system
 
-Phone-first Irish place directory PWA. 390×844. Page `#f4fbf6`, white cards, text `#161d1a`, primary `#002217`, field note `#0f382a`, amber accent `#904d00` / `#fe932c`. Header is translucent paper, not a solid green bar. Photography is the product: cinematic Ireland, weather allowed. No shamrocks, no Fáilte / Discover Ireland / Wild Atlantic Way branding, no booking chrome. 44px targets, bottom tab bar (Explore, Map, Saved, Profile), one-thumb. Categories stay the catalog’s. County chips filter the list. Visit marks stay been / want / never.
+Phone-first Irish place directory PWA. 390×844. Page `#f4fbf6`, white cards, text `#161d1a`, primary `#002217`, field note `#0f382a`, amber accent `#904d00` / `#fe932c`. Header is translucent paper, not a solid green bar. Photography is the product: cinematic Ireland, weather allowed. No shamrocks, no Fáilte / Discover Ireland / Wild Atlantic Way branding, no booking chrome. 44px targets, bottom tab bar (Explore, Map, Saved, Profile), one-thumb. Categories stay the catalog’s. County chips filter the list. Visit marks read Visited, Next, and Saved (stored been, want, never). Saved shows on the personal map with the other two.
 
 Tokens: page `#f4fbf6`, cards `#ffffff`, text `#161d1a`, primary `#002217`, Directions the same primary, amber `#fe932c` for locate and small accents. Newsreader for place names, Source Sans 3 for UI.
 
@@ -156,11 +156,11 @@ Same system. Ireland map, pins in `#002217`. Locate control in amber `#fe932c`. 
 
 ### 3 — Place detail
 
-Same system. Hero photograph. Back control on the photo. County badge, name in Newsreader, category pill, short description, facility chips, mini-map, nearby cards in the same horizontal card. Sticky bottom, above the tab bar: Share, and Directions in primary `#002217` (white type). Visit marks stay been / want / never.
+Same system. Hero photograph. Back control on the photo. County badge, name in Newsreader, category pill, short description, facility chips, mini-map, nearby cards in the same horizontal card. Sticky bottom, above the tab bar: Share, and Directions in primary `#002217` (white type). Visit marks read Visited, Next, and Saved.
 
 ### 4 — My Places
 
-Same system, on `/lists`, titled **Saved**. Been / want / never chips in the same rail as Explore. Cards match Explore. A “Your map” control opens the personal pins. Profile is the existing sign-in sheet, not a new account API. No county-total journal (that stays blocked on PRD-013).
+Same system, on `/lists`, titled **Saved**. Chips **Visited**, **Next**, and **Saved** (stored `been`, `want`, `never`) in the same rail as Explore. Cards match Explore. A “Your map” control opens the personal pins for the selected chip, including Saved. Profile is the existing sign-in sheet, not a new account API. No county-total journal (that stays blocked on PRD-013). One mark per guest and place. No multiple named trips.
 
 ### 5 — Visual system sheet (optional)
 
