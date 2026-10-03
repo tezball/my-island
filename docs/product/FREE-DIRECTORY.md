@@ -20,7 +20,7 @@ A free Ireland-only directory: campsites, B&Bs, points of interest, experiences,
 
 A signed-in person tracks places as visited, next, and saved, and reviews that journey on a map across the island. That work is [[ops/tickets/PRD-030]]. Do not file a second visit-mark ticket.
 
-The locked Host and Stay slice is [[product/HOST-STAY]] and [[ops/tickets/PRD-036]]. A Stay is a new place. It does not mark [[ops/tickets/PRD-034]] done.
+The locked Host and Stay slice is [[product/HOST-STAY]] ([[ops/tickets/PRD-036]], `review`). A Stay is a new place. Automatic review, five kinds, no hand-publish. It does not mark [[ops/tickets/PRD-034]] done.
 
 ## Build order
 
