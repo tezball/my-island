@@ -2,11 +2,15 @@ package island.catalog.stay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.sun.net.httpserver.HttpServer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +45,49 @@ class StayReviewTest {
     StayReview.Result result =
         StayReview.review(draft("Lake", longStayText(), null, svg, "kerry"), url -> "", true);
     assertThat(result.banReason()).isEqualTo(StayReview.BAN_FILE);
+  }
+
+  @Test
+  void redirectToLoopbackIsFeedbackAndDoesNotFetchTheTarget() throws Exception {
+    AtomicInteger secretHits = new AtomicInteger();
+    HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+    int port = server.getAddress().getPort();
+    byte[] stayPage =
+        "A quiet campsite. Guests stay overnight.".getBytes(StandardCharsets.UTF_8);
+    server.createContext(
+        "/secret",
+        exchange -> {
+          secretHits.incrementAndGet();
+          exchange.sendResponseHeaders(200, stayPage.length);
+          exchange.getResponseBody().write(stayPage);
+          exchange.close();
+        });
+    server.createContext(
+        "/go",
+        exchange -> {
+          exchange
+              .getResponseHeaders()
+              .add("Location", "http://127.0.0.1:" + port + "/secret");
+          exchange.sendResponseHeaders(302, -1);
+          exchange.close();
+        });
+    server.start();
+    try {
+      String publicUrl = "http://127.0.0.1.nip.io:" + port + "/go";
+      assertThat(StayReview.normalUrl(publicUrl, false)).isTrue();
+      StayWebsite website = new StayWebsite(new StayProperties(false, 1, 2000, false));
+      StayReview.Result result =
+          StayReview.review(
+              draft("Lake", longStayText(), publicUrl, photo(), "kerry"),
+              website::load,
+              false);
+      assertThat(result.ban()).isFalse();
+      assertThat(result.status()).isEqualTo("hidden");
+      assertThat(result.feedback()).contains("did not load");
+      assertThat(secretHits).hasValue(0);
+    } finally {
+      server.stop(0);
+    }
   }
 
   @Test
