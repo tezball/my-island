@@ -44,7 +44,8 @@ Hand-maintained. Canon: [`product/FREE-DIRECTORY.md`](../product/FREE-DIRECTORY.
 - [ ] **WF-040** Public `gitCommit` equals `origin/main` — **implement now**
 - [ ] **PRD-030** Journey (been / ticked off) — `review`; do not re-implement
 - [ ] **PRD-032** Kinds on the map, including supplier — `plan`
-- [ ] **PRD-033** Free host and supplier drafts — `plan`
+- [ ] **PRD-033** Supplier drafts and curator publish — `plan` (host Stays are PRD-036)
+- [ ] **PRD-036** Host and Stay thin slice — `review`
 - [ ] **PRD-034** Support self-serve and role homes — `plan`
 - [ ] **PRD-035** Phone-first look and feel — `review`
 

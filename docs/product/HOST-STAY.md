@@ -10,7 +10,7 @@ cssclasses:
 
 # Host and Stay
 
-Terry, 2026-10-03. This is the thin slice. It does not mark [[ops/tickets/PRD-034]] done. Dates, payment, messages, and hotels are out. The parked checkout program stays in [[product/BOOKING-SITE]].
+Terry, 2026-10-03. This is the thin slice, ticket [[ops/tickets/PRD-036]] (`review`). It does not mark [[ops/tickets/PRD-034]] done. [[ops/tickets/PRD-033]] stays `plan`: host Stays landed here; leftover there is supplier drafts and curator publish. Dates, payment, messages, and hotels are out. The parked checkout program stays in [[product/BOOKING-SITE]].
 
 House: [[product/STACK]]. Public host: https://fishing-journals.com. Agents never SSH. No GitHub Environment named `production`, no `compose.prod`, no prod SSH path.
 
@@ -23,7 +23,7 @@ House: [[product/STACK]]. Public host: https://fishing-journals.com. Agents neve
 - Hidden from the public until automatic review finishes clean. Any edit hides it again until review passes. Review error or timeout keeps it hidden.
 - Review order, fail-closed:
   1. Tech. Store text as plain text. Reject script and non-photo files. A website, if present, must be a normal http(s) URL.
-  2. Fit. Required fields, Ireland pin, and a website if present must load and read as a place to stay. A down site fails review until it loads.
+  2. Fit. Required fields, Ireland pin, and a website if present must load and read as a place to stay. Review does not follow redirects. A 3xx is “did not load”, the same as a down site. A down site fails review until it loads.
   3. Conduct. Weak or off-topic content is feedback to fix and resubmit. Ban only for an attack or illegal content: script or markup in the text, a file that is not a photo, malware, or illegal material.
 - A ban hides every Stay of that host and blocks new submissions. They can still sign in and read the reason. Fit failures are feedback, not a ban.
 - Phone and email show on the public page when present.

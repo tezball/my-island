@@ -20,18 +20,18 @@ A free Ireland-only directory: campsites, B&Bs, points of interest, experiences,
 
 A signed-in person tracks places as visited, next, and saved, and reviews that journey on a map across the island. That work is [[ops/tickets/PRD-030]]. Do not file a second visit-mark ticket.
 
-The locked Host and Stay slice is [[product/HOST-STAY]]. A Stay is a new place. It does not mark [[ops/tickets/PRD-034]] done.
+The locked Host and Stay slice is [[product/HOST-STAY]] and [[ops/tickets/PRD-036]]. A Stay is a new place. It does not mark [[ops/tickets/PRD-034]] done.
 
 ## Build order
 
-One ticket at a time. `next_ticket.py` picks `implement` by priority then id. PRD-032, PRD-033, and PRD-034 stay `plan`. PRD-035 is in `review` on the Stitch palette in [`LOOK.md`](LOOK.md) (paper field, forest primary, amber accent). That look does not mark PRD-034 done.
+One ticket at a time. `next_ticket.py` picks `implement` by priority then id. Host/Stay thin slice is [[ops/tickets/PRD-036]] (`review`, [pull request 153](https://github.com/tezball/my-island/pull/153)). PRD-032, PRD-033, and PRD-034 stay `plan`. PRD-033 leftover is supplier drafts and curator publish. PRD-035 is in `review` on the Stitch palette in [`LOOK.md`](LOOK.md) (paper field, forest primary, amber accent). That look does not mark PRD-034 done.
 
 | # | Ticket | Status | Done when |
 |---|---|---|---|
 | 1 | [[ops/tickets/WF-040]] | **`implement` now** | Public `/actuator/info` `gitCommit` equals `origin/main` after an unattended deploy |
 | 2 | [[ops/tickets/PRD-030]] | `review` (code is on `main`; do not re-implement) | Journey map of visited, next, and saved confirmed on the public host after step 1 |
 | 3 | [[ops/tickets/PRD-032]] | `plan` | Campsite, B&B, experience, and supplier kinds on the map |
-| 4 | [[ops/tickets/PRD-033]] | `plan` | Host and supplier authenticated drafts; curator publishes; anonymous Place POST stays closed |
+| 4 | [[ops/tickets/PRD-033]] | `plan` | Supplier drafts and curator publish. Host Stays are [[product/HOST-STAY]] / [[ops/tickets/PRD-036]]. |
 | 5 | [[ops/tickets/PRD-034]] | `plan` | Guest, host, supplier, curator/admin, and support self-serve, with role homes and a support help path |
 | 6 | [[ops/tickets/PRD-035]] | `review` | Phone-first look-and-feel refactor of the current Vite PWA |
 

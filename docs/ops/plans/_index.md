@@ -85,6 +85,7 @@ SORT file.name DESC
 | [[PRD-028]] | Help center + policies |
 | [[PRD-029]] | Support inbox (booking; stay inbox) |
 | [[PRD-032]] | Listing kinds on the map, including supplier |
-| [[PRD-033]] | Free host and supplier draft submit |
+| [[PRD-033]] | Supplier drafts and curator publish (host Stays are [[PRD-036]]) |
 | [[PRD-034]] | Support self-serve and role homes |
 | [[PRD-035]] | Phone-first look and feel refactor |
+| [[PRD-036]] | Host and Stay thin slice |
