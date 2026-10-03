@@ -34,6 +34,9 @@ public final class CatalogPostgis {
     registry.add("catalog.mail.mode", () -> "memory");
     registry.add("catalog.mail.from", () -> "noreply@localhost");
     registry.add("catalog.mail.public-origin", () -> "http://localhost:5173");
+    registry.add("catalog.stay.auto-review", () -> "false");
+    registry.add("catalog.stay.allow-local-websites", () -> "true");
+    registry.add("catalog.admin.google-email", () -> "tezball86@gmail.com");
     registry.add("google.client-id", () -> "test.apps.googleusercontent.com");
     registry.add("google.client-secret", () -> "test-secret");
   }

@@ -9,6 +9,9 @@ import island.catalog.place.BadRequestException;
 import island.catalog.place.DuplicateSlugException;
 import island.catalog.place.PlaceAlreadyPublishedException;
 import island.catalog.place.PlaceNotFoundException;
+import island.catalog.stay.ForbiddenException;
+import island.catalog.stay.HostBannedException;
+import island.catalog.stay.StayNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,8 +21,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
-  @ExceptionHandler(PlaceNotFoundException.class)
-  ResponseEntity<ErrorBody> notFound(PlaceNotFoundException ex) {
+  @ExceptionHandler({PlaceNotFoundException.class, StayNotFoundException.class})
+  ResponseEntity<ErrorBody> notFound(RuntimeException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorBody(ex.getMessage()));
   }
 
@@ -56,6 +59,11 @@ public class ApiExceptionHandler {
   @ExceptionHandler(InvalidTokenException.class)
   ResponseEntity<ErrorBody> invalidToken(InvalidTokenException ex) {
     return ResponseEntity.badRequest().body(new ErrorBody(ex.getMessage()));
+  }
+
+  @ExceptionHandler({HostBannedException.class, ForbiddenException.class})
+  ResponseEntity<ErrorBody> forbidden(RuntimeException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorBody(ex.getMessage()));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -9,4 +9,6 @@ final class CatalogWorld {
   int lastStatus;
   PlaceResponse lastPlace;
   HttpHeaders session = new HttpHeaders();
+  String stayId;
+  String stayBody;
 }

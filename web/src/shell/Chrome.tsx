@@ -86,6 +86,17 @@ export function AccountSheet({ onClose }: { onClose: () => void }) {
         <h2 id="account-title" className="place-name">
           Profile
         </h2>
+        {me ? (
+          <p>
+            <Link to="/host">Host</Link>
+          </p>
+        ) : null}
+        {me?.admin ? (
+          <p>
+            <Link to="/admin">Admin</Link>
+          </p>
+        ) : null}
+        {me?.banned && me.banReason ? <p className="status">{me.banReason}</p> : null}
         <GuestAuth me={me} onMe={setMe} />
       </div>
     </>

@@ -22,6 +22,10 @@ spring:
   mail:
     host: ${SPRING_MAIL_HOST:localhost}
     port: ${SPRING_MAIL_PORT:1025}
+  servlet:
+    multipart:
+      max-file-size: 12MB
+      max-request-size: 40MB
 
 server:
   port: ${SERVER_PORT:8080}
@@ -47,6 +51,13 @@ catalog:
       stub-enabled: false
   import:
     key: ${CATALOG_IMPORT_KEY:}
+  admin:
+    google-email: ${CATALOG_ADMIN_GOOGLE_EMAIL:tezball86@gmail.com}
+  stay:
+    auto-review: ${CATALOG_STAY_AUTO_REVIEW:true}
+    review-delay-ms: ${CATALOG_STAY_REVIEW_DELAY_MS:2000}
+    website-timeout-ms: ${CATALOG_STAY_WEBSITE_TIMEOUT_MS:8000}
+    allow-local-websites: ${CATALOG_STAY_ALLOW_LOCAL_WEBSITES:false}
   seed:
     guest:
       username: ${CATALOG_SEED_GUEST_USERNAME:}

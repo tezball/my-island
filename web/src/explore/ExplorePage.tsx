@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { listPublicStays, type Stay } from "../stay/api";
 import { listCounties, listPublishedPlaces, type County, type Place } from "../api/catalog";
 import { useGuestSession } from "../auth/guestSession";
 import { AccountSheet, AppHeader, BottomNav } from "../shell/Chrome";
@@ -16,6 +17,7 @@ export function ExplorePage() {
   const q = params.get("q") ?? "";
   const county = parseCsv(params.get("county"));
   const [places, setPlaces] = useState<Place[]>([]);
+  const [stays, setStays] = useState<Stay[]>([]);
   const [counties, setCounties] = useState<County[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [here, setHere] = useState<{ lat: number; lng: number } | null>(null);
@@ -50,11 +52,12 @@ export function ExplorePage() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([listPublishedPlaces(), listCounties()])
-      .then(([rows, countyRows]) => {
+    Promise.all([listPublishedPlaces(), listCounties(), listPublicStays()])
+      .then(([rows, countyRows, stayRows]) => {
         if (cancelled) return;
         setPlaces(rows);
         setCounties(countyRows);
+        setStays(stayRows);
       })
       .catch(() => {
         if (!cancelled) setError("Couldn’t load places.");
@@ -211,6 +214,10 @@ export function ExplorePage() {
                 );
               })}
             </div>
+            <p className="result-count">
+              <Link to="/stays">Stays</Link>
+              {stays.length ? ` · ${stays.length} public` : ""}
+            </p>
             <div className="result-row">
               <p className="result-count" aria-live="polite">
                 <span className="status-dot" aria-hidden="true" />

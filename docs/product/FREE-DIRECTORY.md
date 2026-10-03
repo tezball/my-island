@@ -20,6 +20,8 @@ A free Ireland-only directory: campsites, B&Bs, points of interest, experiences,
 
 A signed-in person tracks places they have been and ticks them off on a journey across the island. That work is [[ops/tickets/PRD-030]]. Do not file a second been/want ticket.
 
+The locked Host and Stay slice is [[product/HOST-STAY]]. A Stay is a new place. It does not mark [[ops/tickets/PRD-034]] done.
+
 ## Build order
 
 One ticket at a time. `next_ticket.py` picks `implement` by priority then id. PRD-032, PRD-033, and PRD-034 stay `plan`. PRD-035 is in `review` on the Stitch palette in [`LOOK.md`](LOOK.md) (paper field, forest primary, amber accent). That look does not mark PRD-034 done.

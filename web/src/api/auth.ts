@@ -3,6 +3,10 @@ export type Me = {
   email: string
   displayName: string | null
   emailVerified?: boolean
+  host?: boolean
+  banned?: boolean
+  banReason?: string | null
+  admin?: boolean
 }
 
 export function isSignupPassword(value: string): boolean {
