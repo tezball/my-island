@@ -10,7 +10,7 @@ cssclasses:
 
 # Booking-site program (campsites + B&Bs)
 
-**2026-09-26 — do not build this.** Terry ordered the free directory in [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md) (decision 39). Leave [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] at `inbox`. Do not promote them. Checkout, mock pay, calendars, and payouts wait until the free site is in use. There is still **no GitHub production Environment**.
+**2026-09-26 — do not build this.** Terry ordered the free directory in [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md) (decision 39). The thin Host and Stay slice is [[product/HOST-STAY]]. Leave [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] at `inbox`. Do not promote them. Checkout, mock pay, calendars, and payouts wait until the free site is in use. There is still **no GitHub production Environment**.
 
 Planner locks **2026-09-19** from the CEO brief (plan the rest of a Booking.com-like site). **Not a live consumer app.** The public host is fishing-journals.com (one VPS). House: [`STACK.md`](STACK.md). Epic [[ops/tickets/PRD-004]] is never implement — children [[ops/tickets/PRD-016]]–[[ops/tickets/PRD-029]] are.
 

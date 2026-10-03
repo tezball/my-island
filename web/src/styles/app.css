@@ -1068,3 +1068,60 @@ a.primary {
     bottom: 24px;
   }
 }
+
+.stay-page,
+.stay-wizard {
+  padding: 16px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 40rem;
+}
+
+.stay-wizard input,
+.stay-wizard textarea,
+.stay-location input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--outline);
+  border-radius: var(--radius);
+  background: var(--sheet);
+}
+
+.stay-choices {
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stay-choices label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+}
+
+.stay-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pin-map,
+.pin-map.leaflet-container {
+  height: 240px;
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.stay-description {
+  white-space: pre-wrap;
+}
+
+.stay-page img {
+  width: 100%;
+  border-radius: var(--radius);
+  background: var(--photo-miss);
+}

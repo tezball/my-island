@@ -241,6 +241,19 @@ public class UserJdbc {
     return new AppUser(userId, identity.email(), identity.displayName(), true);
   }
 
+  public boolean hasGoogleIdentity(UUID userId) {
+    Integer count =
+        jdbc.queryForObject(
+            """
+            select count(*) from user_identity
+            where user_id = ? and issuer = ?
+            """,
+            Integer.class,
+            userId,
+            ISSUER_GOOGLE);
+    return count != null && count > 0;
+  }
+
   private UUID tokenUser(String tokenColumn, String expiryColumn, String token) {
     try {
       return jdbc.queryForObject(

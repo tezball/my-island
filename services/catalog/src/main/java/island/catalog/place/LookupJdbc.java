@@ -3,6 +3,7 @@ package island.catalog.place;
 import island.catalog.api.dto.CategoryResponse;
 import island.catalog.api.dto.CountyResponse;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -60,6 +61,24 @@ public class LookupJdbc {
             .query(Integer.class)
             .single()
         > 0;
+  }
+
+  public Optional<CountyResponse> county(String id) {
+    return jdbc.sql(
+            """
+            select id, name, country_code, ni
+            from county
+            where id = :id
+            """)
+        .param("id", id)
+        .query(
+            (rs, n) ->
+                new CountyResponse(
+                    rs.getString("id"),
+                    rs.getString("name"),
+                    rs.getString("country_code"),
+                    rs.getBoolean("ni")))
+        .optional();
   }
 
   public boolean facilityExists(String id) {
