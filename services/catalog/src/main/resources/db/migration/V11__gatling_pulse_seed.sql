@@ -25,7 +25,7 @@ INSERT INTO visit_intent (guest_id, place_id, mark)
 SELECT
   u.id,
   p.id,
-  (ARRAY['been', 'want', 'never'])[1 + ((u.n + p.rn) % 3)::int]
+  (ARRAY['visited', 'next', 'saved'])[1 + ((u.n + p.rn) % 3)::int]
 FROM (
   SELECT
     id,

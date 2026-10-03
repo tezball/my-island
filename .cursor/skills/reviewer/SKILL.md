@@ -9,7 +9,9 @@ description: >-
 
 Read `docs/ops/workflow/SAFETY.md` and `docs/ops/workflow/DOD.md`. Then `gh pr view` / `gh pr diff` (or the Cursor PR tools).
 
-**Block** only on: wrong ticket outcome, missing/broken verify, SAFETY, house-stack violation, tests that do not prove the change, secrets, scope creep.
+**Block** only on: wrong ticket outcome, missing/broken verify, SAFETY, house-stack violation, tests that do not prove the change, secrets, scope creep, or a slice that renames the screen and leaves the old domain word in the API, database, tests, or docs.
+
+**Domain language matches the code end to end.** UI, API, database, tests, and docs use the same domain terms. A thin slice may land before a deeper refactor. A slice does not rename the screen and leave the old word in the code.
 
 The change and the text of the PR are the path forward. If the docs say something else, that is an oversight and the docs need updating. Every PR leaves the ticket, the code, and the docs in sync.
 

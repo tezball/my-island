@@ -20,7 +20,7 @@ export function PinSheet({ place, onClose }: { place: Place; onClose: () => void
         <p className="muted">
           {place.category.label} · {place.county.name}
           {place.town ? ` · ${place.town}` : ""}
-          {` · ${place.beenCount} been`}
+          {` · ${place.visitedCount} visited`}
         </p>
         <VisitTicks placeId={place.id} me={me} mark={marks[place.id]} onMark={setMark} />
         {place.description ? <p>{place.description}</p> : null}

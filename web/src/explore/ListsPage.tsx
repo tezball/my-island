@@ -2,10 +2,11 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react
 import { Link, useSearchParams } from "react-router-dom";
 import { listPublishedPlaces, type Place } from "../api/catalog";
 import {
-  VISIT_MARK_LABEL,
+  VISIT_MARKS,
   isVisitMark,
   placesForMark,
   placesOnMap,
+  visitMarkLabel,
   type VisitMark,
 } from "../api/visitIntent";
 import { useGuestSession } from "../auth/guestSession";
@@ -20,8 +21,8 @@ const MapView = lazy(() => import("./map/MapView").then((m) => ({ default: m.Map
 export function ListsPage() {
   const { me, marks } = useGuestSession();
   const [params, setParams] = useSearchParams();
-  const requested = params.get("mark") ?? "been";
-  const mark: VisitMark = isVisitMark(requested) ? requested : "been";
+  const requested = params.get("mark") ?? "visited";
+  const mark: VisitMark = isVisitMark(requested) ? requested : "visited";
   const view = listsView(params.get("view"));
   const [places, setPlaces] = useState<Place[]>([]);
   const [pin, setPin] = useState<Place | null>(null);
@@ -62,7 +63,7 @@ export function ListsPage() {
     [places, marks, mark],
   );
   const panes = listsPanes(view, wide);
-  const markLabel = VISIT_MARK_LABEL[mark];
+  const markLabel = visitMarkLabel(mark);
   const showMap = Boolean(me) && panes.showMap;
   const showList = panes.showList;
 
@@ -92,7 +93,7 @@ export function ListsPage() {
           <>
             <div className="lists-toolbar">
               <div className="chip-rail lists-marks">
-                {(["been", "want", "never"] as VisitMark[]).map((id) => (
+                {VISIT_MARKS.map((id) => (
                   <button
                     key={id}
                     type="button"
@@ -100,7 +101,7 @@ export function ListsPage() {
                     aria-pressed={mark === id}
                     onClick={() => setMark(id)}
                   >
-                    {VISIT_MARK_LABEL[id]}
+                    {visitMarkLabel(id)}
                   </button>
                 ))}
               </div>

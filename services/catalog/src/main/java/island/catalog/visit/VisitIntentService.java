@@ -30,7 +30,7 @@ public class VisitIntentService {
 
   public List<VisitIntent> list(UUID guestId, String mark) {
     if (mark != null && !VisitIntent.MARKS.contains(mark)) {
-      throw new BadRequestException("mark must be been, want, or never");
+      throw new BadRequestException("mark must be visited, next, or saved");
     }
     return intents.listByGuest(guestId, mark);
   }
@@ -38,7 +38,7 @@ public class VisitIntentService {
   @Transactional
   public VisitIntent upsert(UUID guestId, UUID placeId, String mark) {
     if (!VisitIntent.MARKS.contains(mark)) {
-      throw new BadRequestException("mark must be been, want, or never");
+      throw new BadRequestException("mark must be visited, next, or saved");
     }
     if (places.findById(placeId).isEmpty()) {
       throw new PlaceNotFoundException(placeId.toString());

@@ -49,7 +49,7 @@ kanban-plugin: basic
 ## In review
 
 - [ ] [[ops/tickets/PRD-010|PRD-010]] P0 Visitor auth (email + password)
-- [ ] [[ops/tickets/PRD-030|PRD-030]] P0 Guest been and want lists on map
+- [ ] [[ops/tickets/PRD-030|PRD-030]] P0 Guest visited, next, and saved lists on map
 - [ ] [[ops/tickets/PRD-035|PRD-035]] P0 Phone-first look and feel refactor
 - [ ] [[ops/tickets/WF-043|WF-043]] P0 Chaos Monkey in CI for retries and fallbacks
 - [ ] [[ops/tickets/WF-044|WF-044]] P0 ZAP-style scanner in CI against local compose
@@ -87,7 +87,7 @@ kanban-plugin: basic
 - [x] [[ops/tickets/PRD-007|PRD-007]] P0 Research→leads pipeline acceptance
 - [x] [[ops/tickets/PRD-008|PRD-008]] P0 Curator promote-from-lead in admin
 - [x] [[ops/tickets/PRD-011|PRD-011]] P0 Place detail API and PWA
-- [x] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent been, want, never
+- [x] [[ops/tickets/PRD-015|PRD-015]] P0 VisitIntent visited, next, saved
 - [x] [[ops/tickets/WF-001|WF-001]] P0 Local compose and MCP pack
 - [x] [[ops/tickets/WF-002|WF-002]] P0 Agent rules, skills, and session hook
 - [x] [[ops/tickets/WF-005|WF-005]] P0 Dev Container, compose, and CI so any agent can start and test

@@ -17,7 +17,7 @@ Two customer simulations share one walk. Keep the jobs separate.
 
 `gatling-pulse` is on demand: no cron, no upstream project. Someone starts it. The job sets `GATLING_BASE_URL=https://fishing-journals.com`, holds 100 users for 10 minutes, and archives the Gatling HTML report (`gatling-report/**`). A red ball does not change cutover. `./scripts/dev pulse` still defaults to `http://127.0.0.1:8081`.
 
-Login password for every pulse user is the test password `guest` (Flyway `V11__gatling_pulse_seed.sql`, house BCrypt). Cohorts: new, a short step, moderate, heavy. Visits attach to places already in the catalog. The seed does not insert places and does not wipe a volume.
+Login password for every pulse user is the test password `guest` (Flyway `V11__gatling_pulse_seed.sql`, house BCrypt). Cohorts: new, a short step, moderate, heavy. Visits attach to places already in the catalog. The seed writes `visited`, `next`, and `saved`. `V12__visit_mark_words.sql` moves any older been, want, or never rows, including rows this seed already inserted. The walk sends `{"mark":"next"}`. The seed does not insert places and does not wipe a volume.
 
 This note does not choose an A/B cutover and does not change `scripts/deploy-mock-prod.sh`. Neither job is merge CI.
 

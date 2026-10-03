@@ -1,14 +1,16 @@
 import type { Me } from "../api/auth";
 import {
-  VISIT_MARK_LABEL,
+  VISIT_MARKS,
   deleteVisitIntent,
   putVisitIntent,
+  visitMarkLabel,
   type VisitMark,
 } from "../api/visitIntent";
 
-const MARKS: { id: VisitMark; label: string }[] = (
-  ["been", "want", "never"] as VisitMark[]
-).map((id) => ({ id, label: VISIT_MARK_LABEL[id] }));
+const MARKS: { id: VisitMark; label: string }[] = VISIT_MARKS.map((id) => ({
+  id,
+  label: visitMarkLabel(id),
+}));
 
 export function VisitTicks({
   placeId,

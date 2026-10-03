@@ -67,7 +67,7 @@ Staging/prod Grafana remains [[ops/tickets/WF-004]] (blocked on [[ops/tickets/WF
 
 **Catalog writes lock C (CEO 2026-09-19):** [[ops/tickets/WF-046]] — no public POST/PUT/PATCH/DELETE of Places. Seed/import in CI/deploy only. Guests authenticate to write VisitIntent only. Close `POST /api/v1/places`.
 
-**VisitIntent privacy (CEO 2026-09-19):** [[ops/tickets/PRD-015]] — Guest lists are **private**. **Public counts lock A:** Place API/UI expose anonymous **been count** only. Want and never are private to the Guest. No PII.
+**VisitIntent privacy (CEO 2026-09-19, words 2026-10-03):** [[ops/tickets/PRD-015]] — Guest lists are **private**. **Public counts lock A:** Place API/UI expose an anonymous **visited count** only. Next and saved are private to the Guest. No PII.
 
 ## Prod / staging (not in this file)
 

@@ -165,3 +165,11 @@ CHK / ME as signed in [`product/MVP.md`](../../product/MVP.md) remain the longer
 |---|---|---|
 | 40 | **Deploy on green main.** Jenkins `deploy-mock-prod` starts when GitHub Actions `mock-prod signal` runs, which is after CI succeeds on the default branch (`push` or `workflow_dispatch`). Not on the git push itself. Job DSL `triggers { genericTrigger }` with credential `deploy-mock-prod-trigger`. The token value is env `JENKINS_ADMIN_PASSWORD`. The URL value is env `JENKINS_URL`. Names only in git. `gate_mock_prod_deploy.py` still refuses feature branches, red `main`, and an already-live SHA. Agents never SSH. No GitHub Environment `production`. | [[ops/tickets/WF-040]], [[ops/workflow/CI]], [[ops/runbooks/JENKINS_LOCAL]] |
 
+## 2026-10-03 — Visit marks are visited, next, and saved
+
+**Terry.** The three lists keep one mark per guest and place. The words change. Decision 17 and decision 30 keep the privacy lock. The stored words in those rows are superseded by this one.
+
+| # | Decision | Where it lives |
+|---|---|---|
+| 41 | **Visit marks are visited, next, and saved.** Domain language matches the code end to end. UI, API, database, Gatling, the seed, tests, and docs use those words. The screen says Visited, Next, and Saved. Existing rows migrate: been → visited, want → next, never → saved. Visited stays the public visited count. Next and Saved stay private. Saved shows on the map. One mark per guest and place. No multiple named trips. A thin slice may land before a deeper refactor. A slice does not rename the screen and leave the old word in the code. | [`product/POI-VISITINTENT.md`](../../product/POI-VISITINTENT.md), [[ops/tickets/PRD-015]], [[ops/workflow/LOOP]] |
+

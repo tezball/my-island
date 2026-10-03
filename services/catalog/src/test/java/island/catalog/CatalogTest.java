@@ -564,29 +564,37 @@ class CatalogTest {
   }
 
   @Test
-  void passwordGuestVisitIntentUpsertPrivateListAndBeenCount() {
+  void passwordGuestVisitIntentUpsertPrivateListAndVisitedCount() {
     PlaceResponse place = createSample("visit-intent-place");
-    assertThat(place.beenCount()).isZero();
+    assertThat(place.visitedCount()).isZero();
 
     HttpHeaders guest = passwordLogin("guest", "guest");
-    ResponseEntity<Map> put =
+    ResponseEntity<String> oldWord =
         http.exchange(
             "/api/v1/me/places/" + place.id() + "/visit-intent",
             HttpMethod.PUT,
             new HttpEntity<>("{\"mark\":\"been\"}", jsonPlus(guest)),
+            String.class);
+    assertThat(oldWord.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+    ResponseEntity<Map> put =
+        http.exchange(
+            "/api/v1/me/places/" + place.id() + "/visit-intent",
+            HttpMethod.PUT,
+            new HttpEntity<>("{\"mark\":\"visited\"}", jsonPlus(guest)),
             Map.class);
     assertThat(put.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(put.getBody()).isNotNull();
-    assertThat(put.getBody().get("mark")).isEqualTo("been");
+    assertThat(put.getBody().get("mark")).isEqualTo("visited");
 
     ResponseEntity<Map> replace =
         http.exchange(
             "/api/v1/me/places/" + place.id() + "/visit-intent",
             HttpMethod.PUT,
-            new HttpEntity<>("{\"mark\":\"want\"}", jsonPlus(guest)),
+            new HttpEntity<>("{\"mark\":\"next\"}", jsonPlus(guest)),
             Map.class);
     assertThat(replace.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(replace.getBody().get("mark")).isEqualTo("want");
+    assertThat(replace.getBody().get("mark")).isEqualTo("next");
 
     Integer unique =
         jdbc.queryForObject(
@@ -601,21 +609,21 @@ class CatalogTest {
             place.id());
     assertThat(audits).isGreaterThanOrEqualTo(2);
 
-    PlaceResponse afterWant = http.getForObject("/api/v1/places/" + place.id(), PlaceResponse.class);
-    assertThat(afterWant.beenCount()).isZero();
-    assertThat(afterWant.toString()).doesNotContain("want");
+    PlaceResponse afterNext = http.getForObject("/api/v1/places/" + place.id(), PlaceResponse.class);
+    assertThat(afterNext.visitedCount()).isZero();
+    assertThat(afterNext.toString()).doesNotContain("next");
 
     http.exchange(
         "/api/v1/me/places/" + place.id() + "/visit-intent",
         HttpMethod.PUT,
-        new HttpEntity<>("{\"mark\":\"been\"}", jsonPlus(guest)),
+        new HttpEntity<>("{\"mark\":\"visited\"}", jsonPlus(guest)),
         Map.class);
-    PlaceResponse afterBeen = http.getForObject("/api/v1/places/" + place.id(), PlaceResponse.class);
-    assertThat(afterBeen.beenCount()).isEqualTo(1);
+    PlaceResponse afterVisited = http.getForObject("/api/v1/places/" + place.id(), PlaceResponse.class);
+    assertThat(afterVisited.visitedCount()).isEqualTo(1);
 
     ResponseEntity<List> privateList =
         http.exchange(
-            "/api/v1/me/visit-intents?mark=been",
+            "/api/v1/me/visit-intents?mark=visited",
             HttpMethod.GET,
             new HttpEntity<>(guest),
             List.class);
@@ -630,7 +638,7 @@ class CatalogTest {
     HttpHeaders other = googleLogin(token);
     ResponseEntity<List> otherList =
         http.exchange(
-            "/api/v1/me/visit-intents?mark=been",
+            "/api/v1/me/visit-intents?mark=visited",
             HttpMethod.GET,
             new HttpEntity<>(other),
             List.class);
@@ -645,7 +653,7 @@ class CatalogTest {
         http.exchange(
             "/api/v1/me/places/" + place.id() + "/visit-intent",
             HttpMethod.PUT,
-            new HttpEntity<>("{\"mark\":\"been\"}", jsonHeaders()),
+            new HttpEntity<>("{\"mark\":\"visited\"}", jsonHeaders()),
             String.class);
     assertThat(put.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
