@@ -291,7 +291,7 @@ public class PlaceJdbc {
         place.imageUrl(),
         place.imageCredit(),
         place.imageLicence(),
-        place.beenCount());
+        place.visitedCount());
   }
 
   private static final String PLACE_SELECT =
@@ -303,7 +303,7 @@ public class PlaceJdbc {
              c.id as category_id, c.label as category_label,
              y.id as county_id, y.name as county_name,
              (select count(*) from visit_intent vi
-               where vi.place_id = p.id and vi.mark = 'been') as been_count
+               where vi.place_id = p.id and vi.mark = 'visited') as visited_count
       from place p
       join category c on c.id = p.category_id
       join county y on y.id = p.county_id
@@ -335,6 +335,6 @@ public class PlaceJdbc {
         rs.getString("image_url"),
         rs.getString("image_credit"),
         rs.getString("image_licence"),
-        rs.getInt("been_count"));
+        rs.getInt("visited_count"));
   }
 }

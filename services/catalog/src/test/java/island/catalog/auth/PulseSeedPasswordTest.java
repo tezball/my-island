@@ -20,6 +20,7 @@ class PulseSeedPasswordTest {
     assertThat(new BCryptPasswordEncoder().matches("guest", hash.group())).isTrue();
     assertThat(sql).contains("generate_series(1, 100)");
     assertThat(sql).contains("ON CONFLICT (guest_id, place_id) DO NOTHING");
+    assertThat(sql).contains("ARRAY['visited', 'next', 'saved']");
     assertThat(sql.toLowerCase()).doesNotContain("insert into place");
   }
 }

@@ -58,7 +58,7 @@ public final class GuestFeatureChains {
                 .check(status().is(200))
                 .check(jsonPath("$.id").exists())
                 .check(jsonPath("$.slug").exists())
-                .check(jsonPath("$.beenCount").exists()))
+                .check(jsonPath("$.visitedCount").exists()))
         .pause(THINK_SECONDS);
   }
 
@@ -117,10 +117,10 @@ public final class GuestFeatureChains {
     return exec(
             http("save-visit-intent")
                 .put("/api/v1/me/places/#{placeId}/visit-intent")
-                .body(StringBody("{\"mark\":\"want\"}"))
+                .body(StringBody("{\"mark\":\"next\"}"))
                 .asJson()
                 .check(status().is(200))
-                .check(jsonPath("$.mark").is("want")))
+                .check(jsonPath("$.mark").is("next")))
         .pause(THINK_SECONDS);
   }
 
@@ -130,11 +130,11 @@ public final class GuestFeatureChains {
             http("get-visit-intent")
                 .get("/api/v1/me/places/#{placeId}/visit-intent")
                 .check(status().is(200))
-                .check(jsonPath("$.mark").is("want")))
+                .check(jsonPath("$.mark").is("next")))
         .pause(THINK_SECONDS);
   }
 
-  /** Private intent list, including the want filter the client uses. */
+  /** Private intent list, including the next filter the client uses. */
   public static ChainBuilder listVisitIntents() {
     return exec(
             http("list-intents")
@@ -142,10 +142,10 @@ public final class GuestFeatureChains {
                 .check(status().is(200))
                 .check(jsonPath("$[0].placeId").exists()))
         .exec(
-            http("list-intents-want")
-                .get("/api/v1/me/visit-intents?mark=want")
+            http("list-intents-next")
+                .get("/api/v1/me/visit-intents?mark=next")
                 .check(status().is(200))
-                .check(jsonPath("$[0].mark").is("want")))
+                .check(jsonPath("$[0].mark").is("next")))
         .pause(THINK_SECONDS);
   }
 

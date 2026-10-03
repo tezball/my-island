@@ -10,19 +10,13 @@ describe("listsView", () => {
 });
 
 describe("listsPanes", () => {
-  it("toggles been and want between list and map on a phone", () => {
-    expect(listsPanes("list", false, "been")).toEqual({ showMap: false, showList: true });
-    expect(listsPanes("map", false, "been")).toEqual({ showMap: true, showList: false });
-    expect(listsPanes("map", false, "want")).toEqual({ showMap: true, showList: false });
+  it("toggles list and map on a phone for every mark", () => {
+    expect(listsPanes("list", false)).toEqual({ showMap: false, showList: true });
+    expect(listsPanes("map", false)).toEqual({ showMap: true, showList: false });
   });
 
-  it("shows the map and the list together on a wide screen", () => {
-    expect(listsPanes("list", true, "want")).toEqual({ showMap: true, showList: true });
-    expect(listsPanes("map", true, "been")).toEqual({ showMap: true, showList: true });
-  });
-
-  it("keeps never on the list when the map was requested", () => {
-    expect(listsPanes("map", false, "never")).toEqual({ showMap: false, showList: true });
-    expect(listsPanes("map", true, "never")).toEqual({ showMap: false, showList: true });
+  it("shows the map and the list together on a wide screen, including Saved", () => {
+    expect(listsPanes("list", true)).toEqual({ showMap: true, showList: true });
+    expect(listsPanes("map", true)).toEqual({ showMap: true, showList: true });
   });
 });

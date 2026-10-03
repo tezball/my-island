@@ -37,7 +37,7 @@ curl -sS -H 'Accept: application/json' \
   'https://fishing-journals.com/api/v1/places?published=true'
 ```
 
-Expect a JSON array. Each Place may include anonymous **`beenCount`**. Do **not** POST Places at this URL without `X-Catalog-Import-Key` from Jenkins env (anonymous POST is 401). Do not print that key.
+Expect a JSON array. Each Place may include anonymous **`visitedCount`**. Do **not** POST Places at this URL without `X-Catalog-Import-Key` from Jenkins env (anonymous POST is 401). Do not print that key.
 
 ## 4. Optional session checks (local or seed Guest)
 
@@ -52,7 +52,7 @@ curl -sS -b /tmp/guest.cj http://127.0.0.1:8081/api/v1/me
 curl -sS -b /tmp/guest.cj http://127.0.0.1:8081/api/v1/me/visit-intents
 ```
 
-Private lists: 401/403 without a session. Want/never must not appear on public Place JSON.
+Private lists: 401/403 without a session. Next and saved must not appear on public Place JSON.
 
 ## Debug (Grafana MCP or PromQL)
 

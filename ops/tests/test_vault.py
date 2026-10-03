@@ -1406,7 +1406,7 @@ def test_poi_visitintent_planner_land() -> None:
     assert "Agents never SSH" in decisions
     assert "has no production environment and probably never will" in decisions
     slice_note = (PRODUCT / "POI-VISITINTENT.md").read_text()
-    assert "been" in slice_note and "want" in slice_note and "never" in slice_note
+    assert "visited" in slice_note and "next" in slice_note and "saved" in slice_note
     assert "VisitIntent" in slice_note
     assert "PRD-012" in slice_note and "PRD-013" in slice_note
     workshop = (OPS / "workshops" / "poi-visitintent.md").read_text()
@@ -1458,6 +1458,7 @@ def test_poi_visitintent_planner_land() -> None:
     assert "VisitIntent privacy" in decisions
     assert "anonymous counts only" in decisions
     assert "been count" in decisions
+    assert "visited, next, and saved" in decisions
     assert "Public counts lock A" in decisions
     assert "Q&A is **closed**" in decisions or "Q&A is closed" in decisions
     assert "Want" in decisions and "never" in decisions.lower() and "private to the Guest" in decisions
@@ -1471,14 +1472,14 @@ def test_poi_visitintent_planner_land() -> None:
         OPS / "plans" / "PRD-015.md"
     ).read_text()
     assert "private" in prd015.lower()
-    assert "been count" in prd015.lower()
+    assert "visited count" in prd015.lower()
     assert "Public counts lock A" in prd015
-    assert "want" in prd015.lower() and "never" in prd015.lower()
+    assert "visited" in prd015.lower() and "next" in prd015.lower() and "saved" in prd015.lower()
     assert "PII" in prd015 or "pii" in prd015.lower()
     assert "no PII" in prd015 or "no pii" in prd015.lower()
     slice_privacy = (PRODUCT / "POI-VISITINTENT.md").read_text()
     assert "private" in slice_privacy.lower()
-    assert "been count" in slice_privacy.lower()
+    assert "visited count" in slice_privacy.lower()
     assert "Public counts lock A" in slice_privacy
     assert "private to the Guest" in slice_privacy
     wf042 = (OPS / "tickets" / "WF-042.md").read_text() + (
@@ -1598,7 +1599,7 @@ def test_wf_047_dx_handbook() -> None:
         "X-Catalog-Import-Key",
         "POST /api/auth/login",
         "POST /api/auth/google",
-        "beenCount",
+        "visitedCount",
         "visit-intents",
         "automerge",
         "deploy-mock-prod",

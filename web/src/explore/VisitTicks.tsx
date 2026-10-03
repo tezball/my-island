@@ -1,15 +1,16 @@
 import type { Me } from "../api/auth";
 import {
+  VISIT_MARKS,
   deleteVisitIntent,
   putVisitIntent,
+  visitMarkLabel,
   type VisitMark,
 } from "../api/visitIntent";
 
-const MARKS: { id: VisitMark; label: string }[] = [
-  { id: "been", label: "Been" },
-  { id: "want", label: "Want" },
-  { id: "never", label: "Never" },
-];
+const MARKS: { id: VisitMark; label: string }[] = VISIT_MARKS.map((id) => ({
+  id,
+  label: visitMarkLabel(id),
+}));
 
 export function VisitTicks({
   placeId,
@@ -23,7 +24,7 @@ export function VisitTicks({
   onMark: (placeId: string, mark: VisitMark | undefined) => void;
 }) {
   if (!me) {
-    return <p className="tick-hint">Sign in to tick been, want, or never.</p>;
+    return <p className="tick-hint">Sign in to tick Visited, Next, or Saved.</p>;
   }
 
   const set = async (next: VisitMark) => {

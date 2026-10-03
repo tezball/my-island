@@ -67,7 +67,7 @@ SORT file.name DESC
 | [[WF-053]] | Jenkins zap waits until the catalog address it can reach accepts places |
 | [[WF-050]] | Review-gated automerge (no github-actions auto-APPROVE; valid non-author Approve + green CI) |
 | [[PRD-015]] | VisitIntent been / want / never; lists private; Place anonymous been count only |
-| [[PRD-030]] | Guest been/want on map or list (reuse VisitIntent; not PRD-013) |
+| [[PRD-030]] | Guest visited, next, and saved on map or list (reuse VisitIntent; not PRD-013) |
 | [[PRD-031]] | Mobile place-detail home/back overlay (plan; implement after WF-050) |
 | [[PRD-004]] | Booking-site **program** (epic; never implement) |
 | [[PRD-016]] | Stay inventory + mock seed (first booking slice to promote) |

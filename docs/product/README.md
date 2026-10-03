@@ -19,7 +19,7 @@ Product definition for the rebuild. Start here.
 | Document | What it is |
 |---|---|
 | [`SIGNED.md`](SIGNED.md) | CEO sign-off 2026-09-05 — directory MVP, kill list, house bar |
-| [`POI-VISITINTENT.md`](POI-VISITINTENT.md) | **2026-09-19 slice** — been / want / never on the live POI directory (`PRD-015`). Does not replace `MVP.md` |
+| [`POI-VISITINTENT.md`](POI-VISITINTENT.md) | **2026-09-19 slice, words locked 2026-10-03** — visited / next / saved on the live POI directory (`PRD-015`). Does not replace `MVP.md` |
 | [`FREE-DIRECTORY.md`](FREE-DIRECTORY.md) | **Current build (2026-09-26)** — free Ireland directory on https://fishing-journals.com. Pipeline, then journey, kinds, submit, support, look-and-feel. |
 | [[product/HOST-STAY]] | **Thin slice (2026-10-03)** — Host role and Stay pages. Not the booking program. Does not mark [[ops/tickets/PRD-034]] done. |
 | [`BOOKING-SITE.md`](BOOKING-SITE.md) | **Parked** — campsite/B&B checkout program (`PRD-016`–`PRD-029`). Leave inbox. Do not promote. |

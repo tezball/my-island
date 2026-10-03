@@ -18,7 +18,7 @@ House: [`STACK.md`](STACK.md). Host: decision 39 in [[ops/company/DECISIONS]] â€
 
 A free Ireland-only directory: campsites, B&Bs, points of interest, experiences, and local suppliers (farm shops and other small businesses). Guests, hosts, and suppliers do not pay. There is no checkout and no payment gateway in this program.
 
-A signed-in person tracks places they have been and ticks them off on a journey across the island. That work is [[ops/tickets/PRD-030]]. Do not file a second been/want ticket.
+A signed-in person tracks places as visited, next, and saved, and reviews that journey on a map across the island. That work is [[ops/tickets/PRD-030]]. Do not file a second visit-mark ticket.
 
 The locked Host and Stay slice is [[product/HOST-STAY]]. A Stay is a new place. It does not mark [[ops/tickets/PRD-034]] done.
 
@@ -29,7 +29,7 @@ One ticket at a time. `next_ticket.py` picks `implement` by priority then id. PR
 | # | Ticket | Status | Done when |
 |---|---|---|---|
 | 1 | [[ops/tickets/WF-040]] | **`implement` now** | Public `/actuator/info` `gitCommit` equals `origin/main` after an unattended deploy |
-| 2 | [[ops/tickets/PRD-030]] | `review` (code is on `main`; do not re-implement) | Journey map of been/want confirmed on the public host after step 1 |
+| 2 | [[ops/tickets/PRD-030]] | `review` (code is on `main`; do not re-implement) | Journey map of visited, next, and saved confirmed on the public host after step 1 |
 | 3 | [[ops/tickets/PRD-032]] | `plan` | Campsite, B&B, experience, and supplier kinds on the map |
 | 4 | [[ops/tickets/PRD-033]] | `plan` | Host and supplier authenticated drafts; curator publishes; anonymous Place POST stays closed |
 | 5 | [[ops/tickets/PRD-034]] | `plan` | Guest, host, supplier, curator/admin, and support self-serve, with role homes and a support help path |

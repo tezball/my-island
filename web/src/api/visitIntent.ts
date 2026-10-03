@@ -1,4 +1,6 @@
-export type VisitMark = "been" | "want" | "never";
+export const VISIT_MARKS = ["visited", "next", "saved"] as const;
+
+export type VisitMark = (typeof VISIT_MARKS)[number];
 
 export type VisitIntent = {
   placeId: string;
@@ -7,7 +9,12 @@ export type VisitIntent = {
 };
 
 export function isVisitMark(value: string): value is VisitMark {
-  return value === "been" || value === "want" || value === "never";
+  return (VISIT_MARKS as readonly string[]).includes(value);
+}
+
+/** Same word as the API and the database, with a capital for the screen. */
+export function visitMarkLabel(mark: VisitMark): string {
+  return mark.charAt(0).toUpperCase() + mark.slice(1);
 }
 
 export async function listMyVisitIntents(mark?: VisitMark): Promise<VisitIntent[]> {
@@ -53,12 +60,11 @@ export function placesForMark<T extends { id: string }>(
   return places.filter((place) => marks[place.id] === mark);
 }
 
-/** Been and want can be mapped. Never stays list-only. */
+/** Visited, Next, and Saved all show on the map. */
 export function placesOnMap<T extends { id: string }>(
   places: T[],
   marks: Record<string, VisitMark>,
   mark: VisitMark,
 ): T[] {
-  if (mark === "never") return [];
   return placesForMark(places, marks, mark);
 }
