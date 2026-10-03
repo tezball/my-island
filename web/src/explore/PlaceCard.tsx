@@ -47,7 +47,7 @@ export function PlaceCard({
               <span className="status-dot" aria-hidden="true" />
               {price ? price : place.category.label}
               {km != null ? ` · ${formatKm(km)}` : ""}
-              {` · ${place.beenCount} been`}
+              {` · ${place.visitedCount} visited`}
             </span>
             <Link className="view-link" to="/?view=map">
               View map

@@ -99,11 +99,11 @@ If Grafana MCP is red: compose down or MCP not reloaded — not a frontend ticke
 | `POST /api/auth/google` | Human Google GIS | JSON `{"idToken"}`. Keep GIS. Not an OIDC stub. |
 | `GET /api/v1/me` | Session cookie | 401 if logged out. |
 | `POST /api/auth/logout` | Session | |
-| `GET /api/v1/places` · `GET /api/v1/places/{id}` | Anyone | Public directory. JSON includes anonymous **`beenCount` only**. |
+| `GET /api/v1/places` · `GET /api/v1/places/{id}` | Anyone | Public directory. JSON includes anonymous **`visitedCount` only**. |
 | `POST /api/v1/places` | **Import key**, not a Guest | Header `X-Catalog-Import-Key`. Env `CATALOG_IMPORT_KEY`. Anonymous → 401. Guests cannot create Places. |
 | `PUT`/`PATCH`/`DELETE /api/v1/places/**` | Denied | Seed/import only ([[ops/tickets/WF-046]]). |
-| `GET /api/v1/me/visit-intents` | Signed-in Guest | Lists are **private**. Filter `?mark=been\|want\|never`. |
-| `PUT`/`DELETE /api/v1/me/places/{id}/visit-intent` | Signed-in Guest | `{"mark":"been\|want\|never"}`. Want/never stay off public Place JSON. |
+| `GET /api/v1/me/visit-intents` | Signed-in Guest | Lists are **private**. Filter `?mark=visited\|next\|saved`. |
+| `PUT`/`DELETE /api/v1/me/places/{id}/visit-intent` | Signed-in Guest | `{"mark":"visited\|next\|saved"}`. Next and saved stay off public Place JSON. |
 
 Local compose defaults (already in `compose.yml`, same class as Grafana `admin`/`admin`): seed Guest `guest` / `guest`; import key `local-import`. **Do not** copy mock-prod values into notes. Override via env / Jenkins. GIS Console origins: [[ops/runbooks/GOOGLE_GIS]].
 

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public record VisitIntent(UUID guestId, UUID placeId, String mark, Instant updatedAt) {
 
-  public static final Set<String> MARKS = Set.of("been", "want", "never");
+  public static final Set<String> MARKS = Set.of("visited", "next", "saved");
 }

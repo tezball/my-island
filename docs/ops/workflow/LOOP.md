@@ -50,6 +50,8 @@ The change and the text of the PR are the path forward. If the docs say somethin
 
 A review that finds them apart asks for the stale ticket or doc to be updated in that same PR. It does not ask to revert the change the PR describes. A fixer updates the ticket and the docs to match the PR and leaves the change in place.
 
+**Domain language matches the code end to end.** UI, API, database, tests, and docs use the same domain terms. A thin slice may land before a deeper refactor. A slice does not rename the screen and leave the old word in the code.
+
 ## Ticket states
 
 `inbox` → `ready` → `plan` → `implement` → `review` → `done`

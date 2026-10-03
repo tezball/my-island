@@ -23,14 +23,14 @@ public class VisitIntentSteps {
   @Autowired TestRestTemplate http;
   @Autowired ObjectMapper mapper;
 
-  @When("I PUT visit-intent been on that place without a session")
-  public void putBeenAnon() {
+  @When("I PUT visit-intent visited on that place without a session")
+  public void putVisitedAnon() {
     UUID id = CatalogWorld.I.lastPlace.id();
     ResponseEntity<String> response =
         http.exchange(
             "/api/v1/me/places/" + id + "/visit-intent",
             HttpMethod.PUT,
-            new HttpEntity<>("{\"mark\":\"been\"}", json()),
+            new HttpEntity<>("{\"mark\":\"visited\"}", json()),
             String.class);
     CatalogWorld.I.lastStatus = response.getStatusCode().value();
   }
@@ -74,11 +74,11 @@ public class VisitIntentSteps {
     CatalogWorld.I.lastStatus = response.getStatusCode().value();
   }
 
-  @Then("that place anonymous been count is {int}")
-  public void beenCount(int count) {
+  @Then("that place anonymous visited count is {int}")
+  public void visitedCount(int count) {
     PlaceResponse got =
         http.getForObject("/api/v1/places/" + CatalogWorld.I.lastPlace.id(), PlaceResponse.class);
-    assertThat(got.beenCount()).isEqualTo(count);
+    assertThat(got.visitedCount()).isEqualTo(count);
     assertThat(got.toString()).doesNotContain("guest_id");
   }
 

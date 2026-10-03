@@ -62,6 +62,9 @@ def test_hundred_user_pulse_is_on_demand_and_holds_ten_minutes() -> None:
     assert "/api/auth/login" in chains
     assert "/api/v1/me" in chains
     assert "/visit-intent" in chains
+    assert '{"mark":"next"}' in chains.replace('\\"', '"')
+    assert "visitedCount" in chains
+    assert "beenCount" not in chains
     assert "/api/v1/me/visit-intents" in chains
     assert "/api/auth/logout" in chains
 
@@ -141,6 +144,7 @@ def test_hundred_user_pulse_is_on_demand_and_holds_ten_minutes() -> None:
     assert "generate_series(1, 100)" in seed
     assert "pulse-" in seed
     assert "visit_intent" in seed
+    assert "ARRAY['visited', 'next', 'saved']" in seed
     assert "FROM place" in seed
     assert "INSERT INTO place" not in seed.upper()
     assert "DO NOTHING" in seed

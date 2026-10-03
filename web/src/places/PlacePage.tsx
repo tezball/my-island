@@ -104,7 +104,7 @@ export function PlacePage() {
         <p className="muted">
           {place.county.name}
           {place.town ? ` · ${place.town}` : ""}
-          {` · ${place.beenCount} been`}
+          {` · ${place.visitedCount} visited`}
         </p>
         <VisitTicks placeId={place.id} me={me} mark={marks[place.id]} onMark={setMark} />
         {place.description ? <p>{place.description}</p> : null}

@@ -1,7 +1,14 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { listPublishedPlaces, type Place } from "../api/catalog";
-import { isVisitMark, placesForMark, placesOnMap, type VisitMark } from "../api/visitIntent";
+import {
+  VISIT_MARKS,
+  isVisitMark,
+  placesForMark,
+  placesOnMap,
+  visitMarkLabel,
+  type VisitMark,
+} from "../api/visitIntent";
 import { useGuestSession } from "../auth/guestSession";
 import { AccountSheet, AppHeader, BottomNav } from "../shell/Chrome";
 import { hasCoords } from "./geo";
@@ -14,8 +21,8 @@ const MapView = lazy(() => import("./map/MapView").then((m) => ({ default: m.Map
 export function ListsPage() {
   const { me, marks } = useGuestSession();
   const [params, setParams] = useSearchParams();
-  const requested = params.get("mark") ?? "been";
-  const mark: VisitMark = isVisitMark(requested) ? requested : "been";
+  const requested = params.get("mark") ?? "visited";
+  const mark: VisitMark = isVisitMark(requested) ? requested : "visited";
   const view = listsView(params.get("view"));
   const [places, setPlaces] = useState<Place[]>([]);
   const [pin, setPin] = useState<Place | null>(null);
@@ -55,7 +62,8 @@ export function ListsPage() {
     () => placesOnMap(places, marks, mark).filter(hasCoords),
     [places, marks, mark],
   );
-  const panes = listsPanes(view, wide, mark);
+  const panes = listsPanes(view, wide);
+  const markLabel = visitMarkLabel(mark);
   const showMap = Boolean(me) && panes.showMap;
   const showList = panes.showList;
 
@@ -78,14 +86,14 @@ export function ListsPage() {
         <AppHeader title="Saved" onAccount={() => setAccountOpen(true)} />
         {!me ? (
           <p className="status">
-            Sign in from Profile to see been, want, and never.{" "}
+            Sign in from Profile to see Visited, Next, and Saved.{" "}
             <Link to="/">Back to Explore</Link>
           </p>
         ) : (
           <>
             <div className="lists-toolbar">
               <div className="chip-rail lists-marks">
-                {(["been", "want", "never"] as VisitMark[]).map((id) => (
+                {VISIT_MARKS.map((id) => (
                   <button
                     key={id}
                     type="button"
@@ -93,7 +101,7 @@ export function ListsPage() {
                     aria-pressed={mark === id}
                     onClick={() => setMark(id)}
                   >
-                    {id}
+                    {visitMarkLabel(id)}
                   </button>
                 ))}
               </div>
@@ -107,12 +115,9 @@ export function ListsPage() {
                 {view === "map" ? "List" : "Your map"}
               </button>
             </div>
-            {view === "map" && mark === "never" ? (
-              <p className="status">Never stays on the list.</p>
-            ) : null}
             {showList ? (
               rows.length === 0 ? (
-                <p className="status">Nothing marked {mark} yet.</p>
+                <p className="status">Nothing marked {markLabel} yet.</p>
               ) : (
                 <ul className="place-list">
                   {rows.map((place) => (
@@ -138,7 +143,7 @@ export function ListsPage() {
               onSearchArea={ignoreMapMove}
             />
           </Suspense>
-          {pins.length === 0 ? <p className="map-empty">No {mark} pins.</p> : null}
+          {pins.length === 0 ? <p className="map-empty">No {markLabel} pins.</p> : null}
         </div>
       ) : null}
       {pin && me ? <PinSheet place={pin} onClose={() => setPin(null)} /> : null}

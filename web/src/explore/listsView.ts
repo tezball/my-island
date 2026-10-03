@@ -1,5 +1,3 @@
-import type { VisitMark } from "../api/visitIntent";
-
 export type ListsView = "list" | "map";
 
 export function listsView(value: string | null): ListsView {
@@ -8,14 +6,13 @@ export function listsView(value: string | null): ListsView {
 
 /**
  * Phone shows one pane. Wide screens show the list and the map together, same as Explore.
- * Never stays on the list.
+ * Visited, Next, and Saved all use this rule.
  */
 export function listsPanes(
   view: ListsView,
   wide: boolean,
-  mark: VisitMark,
 ): { showMap: boolean; showList: boolean } {
-  const showMap = mark !== "never" && (view === "map" || wide);
-  const showList = view === "list" || wide || mark === "never";
+  const showMap = view === "map" || wide;
+  const showList = view === "list" || wide;
   return { showMap, showList };
 }

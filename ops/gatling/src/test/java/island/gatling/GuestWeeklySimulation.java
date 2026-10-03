@@ -65,12 +65,12 @@ public class GuestWeeklySimulation extends Simulation {
                     .check(status().in(200, 204)))
             .exec(http("me").get("/api/v1/me").check(status().is(200)))
             .exec(
-                http("upsert-want")
+                http("upsert-next")
                     .put("/api/v1/me/places/#{placeId}/visit-intent")
-                    .body(StringBody("{\"mark\":\"want\"}"))
+                    .body(StringBody("{\"mark\":\"next\"}"))
                     .asJson()
                     .check(status().is(200))
-                    .check(jsonPath("$.mark").is("want")))
+                    .check(jsonPath("$.mark").is("next")))
             .exec(
                 http("list-intents")
                     .get("/api/v1/me/visit-intents")

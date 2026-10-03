@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { marksByPlace, placesForMark, placesOnMap, type VisitIntent } from "../api/visitIntent";
+import {
+  marksByPlace,
+  placesForMark,
+  placesOnMap,
+  visitMarkLabel,
+  type VisitIntent,
+} from "../api/visitIntent";
 import type { Place } from "../api/catalog";
 
 function place(id: string, name: string): Place {
@@ -21,27 +27,33 @@ function place(id: string, name: string): Place {
     imageUrl: null,
     imageCredit: null,
     imageLicence: null,
-    beenCount: 0,
+    visitedCount: 0,
   };
 }
 
 describe("placesForMark", () => {
   const rows = [place("a", "A"), place("b", "B"), place("c", "C")];
   const intents: VisitIntent[] = [
-    { placeId: "a", mark: "been", updatedAt: "2026-09-19T00:00:00Z" },
-    { placeId: "b", mark: "want", updatedAt: "2026-09-19T00:00:00Z" },
+    { placeId: "a", mark: "visited", updatedAt: "2026-09-19T00:00:00Z" },
+    { placeId: "b", mark: "next", updatedAt: "2026-09-19T00:00:00Z" },
   ];
 
   it("keeps only the asked private list", () => {
     const marks = marksByPlace(intents);
-    expect(placesForMark(rows, marks, "been").map((p) => p.id)).toEqual(["a"]);
-    expect(placesForMark(rows, marks, "never")).toEqual([]);
+    expect(placesForMark(rows, marks, "visited").map((p) => p.id)).toEqual(["a"]);
+    expect(placesForMark(rows, marks, "saved")).toEqual([]);
   });
 
-  it("maps been and want and leaves never off the map", () => {
-    const marks = marksByPlace(intents);
-    expect(placesOnMap(rows, marks, "been").map((p) => p.id)).toEqual(["a"]);
-    expect(placesOnMap(rows, marks, "want").map((p) => p.id)).toEqual(["b"]);
-    expect(placesOnMap(rows, marks, "never")).toEqual([]);
+  it("includes Saved on the map with Visited and Next", () => {
+    const marks = marksByPlace([
+      ...intents,
+      { placeId: "c", mark: "saved", updatedAt: "2026-09-19T00:00:00Z" },
+    ]);
+    expect(visitMarkLabel("visited")).toBe("Visited");
+    expect(visitMarkLabel("next")).toBe("Next");
+    expect(visitMarkLabel("saved")).toBe("Saved");
+    expect(placesOnMap(rows, marks, "visited").map((p) => p.id)).toEqual(["a"]);
+    expect(placesOnMap(rows, marks, "next").map((p) => p.id)).toEqual(["b"]);
+    expect(placesOnMap(rows, marks, "saved").map((p) => p.id)).toEqual(["c"]);
   });
 });

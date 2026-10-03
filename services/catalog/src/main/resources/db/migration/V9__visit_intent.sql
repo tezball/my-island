@@ -8,14 +8,14 @@ CREATE UNIQUE INDEX app_user_username_lower_unique
 CREATE TABLE visit_intent (
   guest_id UUID NOT NULL REFERENCES app_user (id) ON DELETE CASCADE,
   place_id UUID NOT NULL REFERENCES place (id) ON DELETE CASCADE,
-  mark TEXT NOT NULL CHECK (mark IN ('been', 'want', 'never')),
+  mark TEXT NOT NULL CHECK (mark IN ('visited', 'next', 'saved')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (guest_id, place_id)
 );
 
 CREATE INDEX visit_intent_guest_mark_idx ON visit_intent (guest_id, mark);
-CREATE INDEX visit_intent_place_been_idx ON visit_intent (place_id) WHERE mark = 'been';
+CREATE INDEX visit_intent_place_visited_idx ON visit_intent (place_id) WHERE mark = 'visited';
 
 CREATE TABLE visit_intent_audit (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
