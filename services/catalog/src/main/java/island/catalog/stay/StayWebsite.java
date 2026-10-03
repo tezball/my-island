@@ -19,7 +19,7 @@ public class StayWebsite {
     this.http =
         HttpClient.newBuilder()
             .connectTimeout(Duration.ofMillis(Math.max(1000, properties.websiteTimeoutMs())))
-            .followRedirects(HttpClient.Redirect.NORMAL)
+            .followRedirects(HttpClient.Redirect.NEVER)
             .build();
   }
 

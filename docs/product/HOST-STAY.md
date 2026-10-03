@@ -10,7 +10,7 @@ cssclasses:
 
 # Host and Stay
 
-Terry, 2026-10-03. This is the thin slice. It does not mark [[ops/tickets/PRD-034]] done. Dates, payment, messages, and hotels are out. The parked checkout program stays in [[product/BOOKING-SITE]].
+Terry, 2026-10-03. Ticket [[ops/tickets/PRD-036]]. This is the thin slice. It does not mark [[ops/tickets/PRD-034]] done. Dates, payment, messages, and hotels are out. The parked checkout program stays in [[product/BOOKING-SITE]].
 
 House: [[product/STACK]]. Public host: https://fishing-journals.com. Agents never SSH. No GitHub Environment named `production`, no `compose.prod`, no prod SSH path.
 

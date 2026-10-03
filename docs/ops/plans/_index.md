@@ -88,3 +88,4 @@ SORT file.name DESC
 | [[PRD-033]] | Free host and supplier draft submit |
 | [[PRD-034]] | Support self-serve and role homes |
 | [[PRD-035]] | Phone-first look and feel refactor |
+| [[PRD-036]] | Host and Stay thin slice |
