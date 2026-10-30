@@ -2,11 +2,10 @@
 
 The MVP is not done until this path is boring.
 
-1. A change lands on `main` only through a pull request. The four checks are unit, API, web, and the compose stack.
-2. Merge to `main` starts the deploy. Feature branches never deploy.
-3. The deploy boots the compose stack for the public site, runs Flyway, and only then serves traffic.
-4. Jenkins runs Gatling against that deploy: 100 users browse, check off a place, edit a stay, and open admin. There is no GitHub Actions job.
-5. The live site’s commit matches `main`. If Gatling fails, the pipeline is red.
+1. Jenkins on this machine polls `origin/main`. Nobody clicks Build. There is no GitHub Actions job.
+2. The job fast-forwards the checkout, runs the test suite, then recreates the app container with that commit. Flyway runs on startup. A red test does not replace the app.
+3. Gatling then runs against that deploy: 100 users browse, check off a place, edit a stay, and open admin. A red Gatling run fails the job.
+4. The served commit is `GET /info`. It matches `main` after a green job. Agents do not SSH.
 
 Worktrees do not share ports. The pipeline job uses its own compose project name, the same way a second worktree does.
 
