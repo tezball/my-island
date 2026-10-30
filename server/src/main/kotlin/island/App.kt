@@ -40,7 +40,11 @@ fun Application.module() {
             call.respond(mapOf("gitCommit" to (System.getenv("GIT_COMMIT") ?: "unknown")))
         }
         get("/metrics") {
-            call.respondText("island_up 1\n", io.ktor.http.ContentType.parse("text/plain; version=0.0.4"))
+            val commit = (System.getenv("GIT_COMMIT") ?: "unknown").replace(Regex("[^A-Za-z0-9_.-]"), "_")
+            call.respondText(
+                "island_up{git_commit=\"$commit\"} 1\n",
+                io.ktor.http.ContentType.parse("text/plain; version=0.0.4"),
+            )
         }
         get("/") { call.respondText(phonePage(), io.ktor.http.ContentType.Text.Html) }
         get("/host") { call.respondText(hostPage(), io.ktor.http.ContentType.Text.Html) }

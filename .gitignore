@@ -2,3 +2,4 @@
 build/
 .kotlin/
 *.log
+ops/observe/grafana-mcp.env
