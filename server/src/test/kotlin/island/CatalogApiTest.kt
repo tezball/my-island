@@ -60,6 +60,15 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, admin.status)
         assertTrue(admin.bodyAsText().contains("\"hidden\":true"))
+        val hostsDenied = client.get("/admin/hosts") {
+            header("Authorization", "Bearer guest@example.com")
+        }
+        assertEquals(HttpStatusCode.Forbidden, hostsDenied.status)
+        val hosts = client.get("/admin/hosts") {
+            header("Authorization", "Bearer tezball86@gmail.com")
+        }
+        assertEquals(HttpStatusCode.OK, hosts.status)
+        assertTrue(hosts.bodyAsText().contains("host-001@example.com"))
         val added = client.post("/admin/places") {
             header("Authorization", "Bearer tezball86@gmail.com")
             contentType(ContentType.Application.Json)
@@ -136,6 +145,7 @@ class CatalogApiTest {
         assertTrue(client.get("/host").bodyAsText().contains("type=\"file\""))
         assertTrue(client.get("/").bodyAsText().contains("Host"))
         assertTrue(client.get("/admin").bodyAsText().contains("Add a place"))
+        assertTrue(client.get("/admin").bodyAsText().contains("Show hosts"))
         assertTrue(client.get("/supplier").bodyAsText().contains("Add an experience"))
     }
 

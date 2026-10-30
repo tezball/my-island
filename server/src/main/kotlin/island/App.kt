@@ -166,6 +166,14 @@ fun Application.module() {
             val id = ds.connection.use { it.insertPlace(body) }
             call.respond(mapOf("id" to id))
         }
+        get("/admin/hosts") {
+            val account = call.account(ds) ?: return@get
+            if (account.email != "tezball86@gmail.com") {
+                call.respond(HttpStatusCode.Forbidden)
+                return@get
+            }
+            call.respond(ds.connection.use { it.hosts() })
+        }
         get("/admin/listings") {
             val account = call.account(ds) ?: return@get
             if (account.email != "tezball86@gmail.com") {
@@ -221,6 +229,18 @@ private fun Connection.experiences(): List<ExperienceRow> {
     createStatement().use { st ->
         st.executeQuery("select id, name, county from experience where hidden = false order by name").use { rs ->
             while (rs.next()) rows += ExperienceRow(rs.getString(1), rs.getString(2), rs.getString(3))
+        }
+    }
+    return rows
+}
+
+private fun Connection.hosts(): List<HostRow> {
+    val rows = mutableListOf<HostRow>()
+    createStatement().use { st ->
+        st.executeQuery(
+            "select a.email, count(s.id) from account a left join stay s on s.host_id = a.id where a.role = 'host' group by a.email order by a.email"
+        ).use { rs ->
+            while (rs.next()) rows += HostRow(rs.getString(1), rs.getLong(2))
         }
     }
     return rows
@@ -364,6 +384,7 @@ private fun Connection.insertLots(stayId: Long, lots: List<LotDraft>) {
 
 @Serializable data class PlaceRow(val id: String, val name: String, val county: String?, val country: String?, val lat: Double?, val lng: Double?)
 @Serializable data class ExperienceRow(val id: String, val name: String, val county: String?)
+@Serializable data class HostRow(val email: String, val stays: Long)
 @Serializable data class StayRow(val id: Long, val title: String, val kind: String, val county: String?, val hidden: Boolean)
 @Serializable data class LotRow(val name: String, val sleeps: Int, val priceEur: String?)
 @Serializable data class Listing(val id: String, val kind: String, val name: String, val county: String?, val description: String?, val lots: List<LotRow>)
@@ -665,6 +686,7 @@ private fun adminPage(): String = """
 <main>
 <input id="email" value="tezball86@gmail.com"><input id="password" placeholder="Password" type="password">
 <button id="load" type="button">Show listings</button>
+<button id="hosts" type="button">Show hosts</button>
 <input id="name" placeholder="New place name"><input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
 <button id="add" type="button">Add a place</button>
 <pre id="out"></pre>
@@ -679,6 +701,11 @@ async function auth() {
 document.getElementById('load').onclick = async () => {
   const email = await auth();
   const res = await fetch('/admin/listings', {headers:{'Authorization':'Bearer '+email}});
+  document.getElementById('out').textContent = await res.text();
+};
+document.getElementById('hosts').onclick = async () => {
+  const email = await auth();
+  const res = await fetch('/admin/hosts', {headers:{'Authorization':'Bearer '+email}});
   document.getElementById('out').textContent = await res.text();
 };
 document.getElementById('add').onclick = async () => {
