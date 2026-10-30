@@ -67,6 +67,16 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, added.status)
         assertTrue(client.get("/places").bodyAsText().contains("Admin Point"))
+        val signup = client.post("/accounts") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"email":"new-host@example.com","password":"guest","role":"host"}""")
+        }
+        assertEquals(HttpStatusCode.OK, signup.status)
+        val again = client.post("/accounts") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"email":"new-host@example.com","password":"guest","role":"host"}""")
+        }
+        assertEquals(HttpStatusCode.Conflict, again.status)
         val created = client.post("/host/stays") {
             header("Authorization", "Bearer host-001@example.com")
             contentType(ContentType.Application.Json)

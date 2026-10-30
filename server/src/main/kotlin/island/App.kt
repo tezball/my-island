@@ -55,6 +55,23 @@ fun Application.module() {
             if (row == null) call.respond(HttpStatusCode.NotFound)
             else call.respondText(listingPage(row), io.ktor.http.ContentType.Text.Html)
         }
+        post("/accounts") {
+            val body = call.receive<Signup>()
+            if (body.role != "host" && body.role != "supplier") {
+                call.respond(HttpStatusCode.BadRequest)
+                return@post
+            }
+            val created = ds.connection.use { it.insertAccount(body) }
+            if (created == null) call.respond(HttpStatusCode.Conflict) else call.respond(created)
+        }
+        post("/sessions/google") {
+            val clientId = System.getenv("GOOGLE_CLIENT_ID")?.trim().orEmpty()
+            if (clientId.isEmpty()) {
+                call.respond(HttpStatusCode.ServiceUnavailable, mapOf("error" to "google client is not configured"))
+                return@post
+            }
+            call.respond(HttpStatusCode.NotImplemented, mapOf("error" to "google token check is not wired"))
+        }
         post("/sessions") {
             val body = call.receive<Login>()
             val account = ds.connection.use { it.login(body.email, body.password) }
@@ -244,6 +261,23 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
 @Serializable data class LotRow(val name: String, val sleeps: Int, val priceEur: String?)
 @Serializable data class Listing(val id: String, val kind: String, val name: String, val county: String?, val description: String?, val lots: List<LotRow>)
 @Serializable data class Login(val email: String, val password: String)
+@Serializable data class Signup(val email: String, val password: String, val role: String)
+
+private fun Connection.insertAccount(body: Signup): Account? {
+    val email = body.email.trim().lowercase()
+    if (!email.contains("@") || body.password.isBlank()) return null
+    prepareStatement(
+        "insert into account (email, password_hash, role) values (?, ?, ?) on conflict (email) do nothing returning id"
+    ).use { ps ->
+        ps.setString(1, email)
+        ps.setString(2, sha256(body.password))
+        ps.setString(3, body.role)
+        ps.executeQuery().use { rs ->
+            if (!rs.next()) return null
+            return Account(rs.getLong(1), email, body.role)
+        }
+    }
+}
 @Serializable data class Account(val id: Long, val email: String, val role: String)
 @Serializable data class VisitMark(val placeId: String)
 @Serializable data class StayDraft(val kind: String, val title: String, val description: String, val county: String?)
