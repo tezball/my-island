@@ -1,5 +1,6 @@
 package island
 
+import io.gatling.javaapi.core.CoreDsl.exec
 import io.gatling.javaapi.core.CoreDsl.StringBody
 import io.gatling.javaapi.core.CoreDsl.atOnceUsers
 import io.gatling.javaapi.core.CoreDsl.global
@@ -51,12 +52,30 @@ class CatalogLoad : Simulation() {
                 .check(status().`is`(200))
         )
         .exec(
-            http("host edit").post("/host/stays")
+            http("host stays").get("/host/stays")
                 .header("Authorization", "Bearer #{hostEmail}")
-                .body(StringBody("""{"kind":"campsite","title":"#{stayTitle}","description":"A pitch","county":"Kerry"}"""))
-                .asJson()
                 .check(status().`is`(200))
-                .check(jsonPath("$.hidden").`is`("true"))
+                .check(jsonPath("$[?(@.title == '#{stayTitle}')].id").optional().saveAs("existingStayId"))
+        )
+        .doIf { session -> session.contains("existingStayId") }.then(
+            exec(
+                http("host edit").post("/host/stays/#{existingStayId}")
+                    .header("Authorization", "Bearer #{hostEmail}")
+                    .body(StringBody("""{"kind":"campsite","title":"#{stayTitle}","description":"A pitch","county":"Kerry"}"""))
+                    .asJson()
+                    .check(status().`is`(200))
+                    .check(jsonPath("$.hidden").`is`("true"))
+            )
+        )
+        .doIf { session -> !session.contains("existingStayId") }.then(
+            exec(
+                http("host edit").post("/host/stays")
+                    .header("Authorization", "Bearer #{hostEmail}")
+                    .body(StringBody("""{"kind":"campsite","title":"#{stayTitle}","description":"A pitch","county":"Kerry"}"""))
+                    .asJson()
+                    .check(status().`is`(200))
+                    .check(jsonPath("$.hidden").`is`("true"))
+            )
         )
         .exec(
             http("edit stays hidden").get("/stays")

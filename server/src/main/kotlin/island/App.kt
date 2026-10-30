@@ -122,6 +122,14 @@ fun Application.module() {
             if (!updated) call.respond(HttpStatusCode.NotFound)
             else call.respond(mapOf("id" to id, "hidden" to (!passesExperienceReview(body)).toString()))
         }
+        get("/host/stays") {
+            val account = call.account(ds) ?: return@get
+            if (account.role != "host") {
+                call.respond(HttpStatusCode.Forbidden)
+                return@get
+            }
+            call.respond(ds.connection.use { it.staysForHost(account.id) })
+        }
         post("/host/stays") {
             val account = call.account(ds) ?: return@post
             if (account.role != "host") {
@@ -213,6 +221,17 @@ private fun Connection.experiences(): List<ExperienceRow> {
     createStatement().use { st ->
         st.executeQuery("select id, name, county from experience where hidden = false order by name").use { rs ->
             while (rs.next()) rows += ExperienceRow(rs.getString(1), rs.getString(2), rs.getString(3))
+        }
+    }
+    return rows
+}
+
+private fun Connection.staysForHost(hostId: Long): List<StayRow> {
+    val rows = mutableListOf<StayRow>()
+    prepareStatement("select id, title, kind, county, hidden from stay where host_id = ? order by id").use { ps ->
+        ps.setLong(1, hostId)
+        ps.executeQuery().use { rs ->
+            while (rs.next()) rows += StayRow(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getBoolean(5))
         }
     }
     return rows
