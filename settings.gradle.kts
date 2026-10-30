@@ -1,5 +1,5 @@
 rootProject.name = "island"
-include("server")
+include("server", "gatling")
 
 dependencyResolutionManagement {
     repositories {
