@@ -104,6 +104,22 @@ fun Application.module() {
             val id = ds.connection.use { it.insertStay(account.id, body) }
             call.respond(mapOf("id" to id.toString(), "hidden" to "true"))
         }
+        post("/host/stays/{id}") {
+            val account = call.account(ds) ?: return@post
+            if (account.role != "host") {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
+            val id = call.parameters["id"]?.toLongOrNull()
+            if (id == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@post
+            }
+            val body = call.receive<StayDraft>()
+            val updated = ds.connection.use { it.updateStay(account.id, id, body) }
+            if (!updated) call.respond(HttpStatusCode.NotFound)
+            else call.respond(mapOf("id" to id.toString(), "hidden" to "true"))
+        }
         post("/admin/places") {
             val account = call.account(ds) ?: return@post
             if (account.email != "tezball86@gmail.com") {
@@ -236,6 +252,20 @@ private fun Connection.markVisit(accountId: Long, placeId: String) {
         ps.setLong(1, accountId)
         ps.setString(2, placeId)
         ps.executeUpdate()
+    }
+}
+
+private fun Connection.updateStay(hostId: Long, stayId: Long, draft: StayDraft): Boolean {
+    prepareStatement(
+        "update stay set title = ?, description = ?, kind = ?, county = ?, hidden = true where id = ? and host_id = ?"
+    ).use { ps ->
+        ps.setString(1, draft.title)
+        ps.setString(2, draft.description)
+        ps.setString(3, draft.kind)
+        ps.setString(4, draft.county)
+        ps.setLong(5, stayId)
+        ps.setLong(6, hostId)
+        return ps.executeUpdate() == 1
     }
 }
 

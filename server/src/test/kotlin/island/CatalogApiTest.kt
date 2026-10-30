@@ -84,6 +84,14 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, created.status)
         assertFalse(client.get("/stays").bodyAsText().contains("Api Camp"))
+        val createdId = Regex("\"id\":\"(\\d+)\"").find(created.bodyAsText())!!.groupValues[1]
+        val edited = client.post("/host/stays/$createdId") {
+            header("Authorization", "Bearer host-001@example.com")
+            contentType(ContentType.Application.Json)
+            setBody("""{"kind":"glamping","title":"Api Camp Edited","description":"A pitch","county":"Kerry"}""")
+        }
+        assertEquals(HttpStatusCode.OK, edited.status)
+        assertFalse(client.get("/stays").bodyAsText().contains("Api Camp Edited"))
     }
 
     @Test
