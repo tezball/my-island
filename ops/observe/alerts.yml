@@ -1,0 +1,10 @@
+groups:
+  - name: island
+    rules:
+      - alert: IslandAppDown
+        expr: up{job="island"} == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: The island app is not being scraped

@@ -10,4 +10,4 @@ The MVP is not done until this path is boring.
 
 Worktrees do not share ports. The pipeline job uses its own compose project name, the same way a second worktree does.
 
-Agents watch the workflow. They do not SSH to the host. They read the live commit, the Gatling report, and the database through MCP.
+Agents watch the workflow. They do not SSH to the host. They read the live commit, the Gatling report, and the database through MCP. Logs, metrics, and alerts are Loki, Prometheus, and Alertmanager on localhost, opened in Grafana. No password is stored in git.

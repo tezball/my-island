@@ -1,10 +1,10 @@
 pipeline {
     agent any
-    options {
-        timeout(time: 5, unit: 'MINUTES')
-    }
     stages {
         stage('test') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
             steps {
                 sh './gradlew :server:test --no-daemon'
             }
