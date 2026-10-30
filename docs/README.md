@@ -10,3 +10,5 @@ Read in this order:
 - [Stack](STACK.md)
 - [Pipeline](PIPELINE.md)
 - [Open questions](GAPS.md)
+
+Reviewed places of interest from the old repo: [Places](places/README.md).
