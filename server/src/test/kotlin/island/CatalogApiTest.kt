@@ -131,6 +131,8 @@ class CatalogApiTest {
         val page = client.get("/page/$stayId")
         assertEquals(HttpStatusCode.OK, page.status)
         assertTrue(page.bodyAsText().contains("Lot"))
+        val placeId = Regex("\"id\":\"([^\"]+)\"").find(client.get("/places").bodyAsText())!!.groupValues[1]
+        assertTrue(client.get("/page/$placeId").bodyAsText().contains("I've been"))
     }
 
     @Test

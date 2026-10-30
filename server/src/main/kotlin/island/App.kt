@@ -584,6 +584,18 @@ private fun listingPage(row: Listing): String {
   <p>${row.county ?: ""} · ${row.kind}</p>
   <p>${row.description ?: ""}</p>
   <ul>$lots</ul>
+  ${if (row.kind == "place") """<button id="been" type="button">I've been</button>
+<script>
+document.getElementById('been').onclick = async () => {
+  const email = prompt('Email');
+  const password = prompt('Password');
+  if (!email || !password) return;
+  const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
+  if (!login.ok) { alert('Sign-in failed'); return; }
+  const mark = await fetch('/visits', {method:'POST', headers:{'Content-Type':'application/json', 'Authorization': 'Bearer ' + email}, body: JSON.stringify({placeId: '${row.id}'})});
+  alert(mark.ok ? 'Saved. Only you can see this.' : 'Could not save');
+};
+</script>""" else ""}
 </main>
 """.trimIndent()
 }
