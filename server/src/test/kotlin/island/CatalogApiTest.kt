@@ -136,6 +136,7 @@ class CatalogApiTest {
         assertTrue(client.get("/host").bodyAsText().contains("bed and breakfast"))
         assertTrue(client.get("/").bodyAsText().contains("Host"))
         assertTrue(client.get("/admin").bodyAsText().contains("Add a place"))
+        assertTrue(client.get("/supplier").bodyAsText().contains("Add an experience"))
     }
 
     @Test

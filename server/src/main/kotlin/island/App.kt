@@ -44,6 +44,7 @@ fun Application.module() {
         }
         get("/") { call.respondText(phonePage(), io.ktor.http.ContentType.Text.Html) }
         get("/host") { call.respondText(hostPage(), io.ktor.http.ContentType.Text.Html) }
+        get("/supplier") { call.respondText(supplierPage(), io.ktor.http.ContentType.Text.Html) }
         get("/admin") { call.respondText(adminPage(), io.ktor.http.ContentType.Text.Html) }
         get("/places") { call.respond(ds.connection.use { it.places() }) }
         get("/stays") { call.respond(ds.connection.use { it.stays(publicOnly = true) }) }
@@ -546,7 +547,7 @@ private fun phonePage(): String = """
 <header>Island</header>
 <main>
   <p>Places, stays, and experiences on the island of Ireland.</p>
-  <p><a href="/host">Host</a> · <a href="/admin">Admin</a></p>
+  <p><a href="/host">Host</a> · <a href="/supplier">Supplier</a> · <a href="/admin">Admin</a></p>
   <div id="map"></div>
   <div id="list"></div>
 </main>
@@ -592,6 +593,32 @@ document.getElementById('save').onclick = async () => {
   if (!login.ok) { document.getElementById('out').textContent = 'Sign-in failed'; return; }
   const body = {kind: document.getElementById('kind').value, title: document.getElementById('title').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), lots: [{name: document.getElementById('lot').value || 'Lot 1', sleeps: 2}]};
   const res = await fetch('/host/stays', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
+  document.getElementById('out').textContent = await res.text();
+};
+</script>
+</main>
+""".trimIndent()
+
+private fun supplierPage(): String = """
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supplier</title>
+<style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,textarea,button{display:block;width:100%;margin:8px 0;padding:8px}</style>
+<header>Add an experience</header>
+<main>
+<input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
+<input id="name" placeholder="Name"><textarea id="description" placeholder="Description"></textarea>
+<input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
+<button id="save" type="button">Save</button>
+<p id="out"></p>
+<script>
+document.getElementById('save').onclick = async () => {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
+  if (!login.ok) { document.getElementById('out').textContent = 'Sign-in failed'; return; }
+  const body = {name: document.getElementById('name').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value)};
+  const res = await fetch('/supplier/experiences', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
   document.getElementById('out').textContent = await res.text();
 };
 </script>
