@@ -34,6 +34,12 @@ fun Application.module() {
     install(ContentNegotiation) { json() }
     routing {
         get("/health") { call.respond(mapOf("ok" to "true")) }
+        get("/info") {
+            call.respond(mapOf("gitCommit" to (System.getenv("GIT_COMMIT") ?: "unknown")))
+        }
+        get("/metrics") {
+            call.respondText("island_up 1\n", io.ktor.http.ContentType.parse("text/plain; version=0.0.4"))
+        }
         get("/") { call.respondText(phonePage(), io.ktor.http.ContentType.Text.Html) }
         get("/places") { call.respond(ds.connection.use { it.places() }) }
         get("/stays") { call.respond(ds.connection.use { it.stays(publicOnly = true) }) }

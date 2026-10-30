@@ -18,6 +18,7 @@ services:
       JDBC_URL: jdbc:postgresql://db:5432/island
       JDBC_USER: island
       JDBC_PASSWORD: island
+      GIT_COMMIT: ${GIT_COMMIT:-unknown}
     ports:
       - "8080:8080"
     depends_on:
@@ -38,6 +39,15 @@ services:
       GF_AUTH_DISABLE_LOGIN_FORM: "false"
     ports:
       - "3000:3000"
+    volumes:
+      - ./ops/observe/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
     depends_on:
       - prometheus
       - loki
+      - alertmanager
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    volumes:
+      - ./ops/observe/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml

@@ -25,6 +25,8 @@ class CatalogApiTest {
         assertEquals(HttpStatusCode.OK, places.status)
         assertEquals(HttpStatusCode.OK, stays.status)
         assertEquals(HttpStatusCode.OK, experiences.status)
+        assertEquals(HttpStatusCode.OK, client.get("/metrics").status)
+        assertEquals(HttpStatusCode.OK, client.get("/info").status)
         assertTrue(places.bodyAsText().contains("\"id\""))
         assertFalse(stays.bodyAsText().contains("\"hidden\":true"))
         assertTrue(experiences.bodyAsText().contains("Lough Hyne"))
