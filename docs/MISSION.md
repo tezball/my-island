@@ -1,6 +1,6 @@
 # Mission
 
-People planning time on the island of Ireland can find a place to stay, see what is nearby, and book the things they want to do. Hosts run their own listings. An admin keeps the public site clean.
+People planning time on the island of Ireland, Republic and Northern Ireland, can find a place to stay, see what is nearby, and book the things they want to do. Hosts run their own listings. An admin keeps the public site clean.
 
 The product has three kinds of listing:
 
