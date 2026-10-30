@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MVP layout — Ireland directory</title>
+<style>
+  :root {
+    --paper: #f4fbf6;
+    --card: #ffffff;
+    --ink: #161d1a;
+    --muted: #414844;
+    --forest: #002217;
+    --deep: #0f382a;
+    --search: #eef5f0;
+    --badge: #e8f0ec;
+    --amber: #904d00;
+    --amber-hot: #fe932c;
+    --line: #e2e5e1;
+    --warn-bg: #f8efdf;
+    --warn-ink: #5c2e00;
+    --serif: "Noto Serif", Georgia, "Iowan Old Style", Palatino, "Palatino Linotype", serif;
+    --sans: Inter, "Segoe UI", system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: #e3eee6;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.45;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  h1, h2, h3, p { margin: 0; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--amber-hot); outline-offset: 2px; }
+  ::selection { background: #cfe3d4; }
+  ::placeholder { color: #5c6760; }
+
+  .reader {
+    flex: none;
+    padding: 14px 16px 12px;
+    background: #e7f2ea;
+    border-bottom: 1px solid #c9dbd0;
+  }
+  .kicker {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .reader h1 {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    color: var(--forest);
+    font-weight: 650;
+    line-height: 1.15;
+    margin-top: 2px;
+  }
+  .reader-dek {
+    margin: 4px 0 10px;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 68ch;
+  }
+  .screen-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .screen-switch button {
+    flex: none;
+    min-height: 44px;
+    padding: 8px 12px 8px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--forest);
+    background: #fff;
+    color: var(--forest);
+    font-weight: 650;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .screen-switch button[aria-pressed="true"] {
+    background: var(--forest);
+    color: #fff;
+  }
+  .num {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--amber-hot);
+    color: var(--forest);
+    font-size: 13px;
+    font-weight: 750;
+  }
+  .screen-switch button[aria-pressed="true"] .num {
+    background: #fff;
+    color: var(--forest);
+  }
+
+  .stage {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+  }
+  .phone {
+    container-name: phone;
+    container-type: inline-size;
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border: 10px solid var(--forest);
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0, 34, 23, 0.16);
+  }
+  @media (min-width: 900px) {
+    .phone { max-width: 1120px; }
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    min-height: 0;
+    position: relative;
+    background: var(--paper);
+  }
+  .screen.active {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .appbar { padding: 14px 14px 8px; }
+  .eyebrow {
+    color: var(--amber);
+    font-size: 13px;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .appbar h2 {
+    font-family: var(--serif);
+    font-size: 1.65rem;
+    line-height: 1.15;
+    color: var(--forest);
+    font-weight: 650;
+    margin-top: 2px;
+  }
+  .lede { color: var(--muted); font-size: 15px; margin-top: 4px; }
+  .toolbar, .screen-body { padding: 0 14px; }
+  .screen-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-bottom: 18px;
+  }
+  .toolbar { display: flex; flex-direction: column; gap: 8px; padding-bottom: 8px; }
+
+  .note {
+    background: var(--deep);
+    color: #f4fbf6;
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+  .search {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 999px;
+    border: 1px solid #d5ddd8;
+    background: var(--search);
+    padding: 10px 16px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips.scroll {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .chips button, .switcher button, .mode-toggle button {
+    flex: none;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 650;
+  }
+  .chips button[aria-pressed="true"],
+  .switcher button[aria-pressed="true"],
+  .mode-toggle button[aria-pressed="true"] {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: #fff;
+  }
+  .chip-count { margin-left: 6px; color: var(--amber); font-weight: 750; }
+  button[aria-pressed="true"] .chip-count { color: var(--amber-hot); }
+  .countline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 28px;
+  }
+  .countline p { font-size: 14px; color: var(--muted); }
+  .text-btn {
+    border: 0;
+    background: transparent;
+    color: var(--forest);
+    font-weight: 750;
+    min-height: 44px;
+    padding: 8px;
+  }
+  .mode-toggle { display: flex; gap: 8px; }
+  .split {
+    flex: 1;
+    min-height: 0;
+    padding: 0 14px 12px;
+    display: flex;
+    flex-direction: column;
+  }
+  .pane { min-height: 0; overflow: auto; }
+  .browser:not(.mode-map) .pane-map { display: none; }
+  .browser.mode-map .pane-list { display: none; }
+  @container phone (max-width: 699px) {
+    .browser.mode-map .note,
+    .browser.mode-map #county-chips { display: none; }
+    .browser.mode-map .map-canvas { width: min(100%, 260px); }
+  }
+  .browser .pane-list, .browser .pane-map { flex: 1; }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .card-hit {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+  }
+  .thumb {
+    width: 108px;
+    height: 84px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex: none;
+    background: #d7e4ea;
+  }
+  .card-copy { min-width: 0; }
+  .meta { font-size: 14px; color: var(--muted); }
+  .card-hit h3, .unit h3, .sheet h3, .host-card h3, .admin-card h3 {
+    font-family: var(--serif);
+    font-weight: 650;
+    font-size: 1.22rem;
+    color: var(--forest);
+    line-height: 1.2;
+  }
+  .dek { font-size: 15px; color: #24302b; margin-top: 4px; }
+  .clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .art, .art svg { width: 100%; height: 100%; display: block; }
+
+  .btn {
+    min-height: 44px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--forest);
+    background: var(--forest);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .btn.secondary { background: #fff; color: var(--forest); }
+  .btn.secondary:hover { background: var(--search); }
+  .btn.full { width: 100%; }
+  .appbar .btn { margin-top: 10px; }
+
+  .pane-map { display: flex; flex-direction: column; align-items: center; }
+  .map-canvas {
+    position: relative;
+    width: min(100%, 440px);
+    aspect-ratio: 420 / 560;
+    flex: none;
+    margin: 0 auto;
+    background: #d4e6f0;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .map-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .pin {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translate(-50%, -50%);
+  }
+  .pin .dot {
+    display: block;
+    width: 14px;
+    height: 14px;
+    margin: 15px auto 0;
+    background: var(--forest);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+  .pin.stay .dot { background: var(--amber); border-radius: 3px; }
+  .pin.experience .dot {
+    width: 12px;
+    height: 12px;
+    margin-top: 16px;
+    background: var(--deep);
+    border-radius: 2px;
+    transform: rotate(45deg);
+  }
+  .pin[aria-pressed="true"] .dot { outline: 3px solid var(--amber-hot); outline-offset: 2px; }
+  .pin.been .dot { box-shadow: 0 0 0 3px var(--amber-hot), 0 1px 2px rgba(0, 0, 0, 0.35); }
+  .pin.dim { opacity: 0.45; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    justify-content: center;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .legend i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    vertical-align: -1px;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px var(--forest);
+  }
+  .legend .place { background: var(--forest); border-radius: 50%; }
+  .legend .stay { background: var(--amber); border-radius: 2px; }
+  .legend .exp { background: var(--deep); transform: rotate(45deg); border-radius: 1px; }
+  .map-caption { text-align: center; font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+  .sheet {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 28px rgba(0, 34, 23, 0.16);
+    padding: 14px;
+    z-index: 3;
+    max-height: 46%;
+    overflow: auto;
+  }
+  .sheet .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+  .empty {
+    background: #fff;
+    border: 1px dashed #b7c4bc;
+    border-radius: 16px;
+    padding: 16px;
+    color: var(--muted);
+  }
+
+  .switcher { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .hero {
+    height: 72px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #d7e4ea;
+  }
+  .banner {
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    border: 1px solid #e6d2b0;
+    border-radius: 12px;
+    padding: 12px;
+    margin: 0 0 12px;
+  }
+  .badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 14px;
+    font-weight: 750;
+    background: var(--badge);
+    color: var(--deep);
+  }
+  .badge.wait { background: var(--warn-bg); color: var(--warn-ink); }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .fact {
+    background: var(--search);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .section-label {
+    font-family: var(--serif);
+    color: var(--forest);
+    font-size: 1.25rem;
+    margin: 10px 0 2px;
+  }
+  .units { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .unit {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--forest);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .unit.room { border-left-color: var(--amber); }
+  .unit h3 { font-size: 1.05rem; }
+  .unit p { margin-top: 4px; color: #24302b; font-size: 14px; }
+  .nearby { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+
+  .been-summary {
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--line);
+  }
+  .been-row {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  .been-row.on { background: #e7f3ea; border-color: #b7d0c0; }
+  .been-row .thumb { width: 84px; height: 68px; }
+  .been-btn { grid-column: 1 / -1; }
+
+  .host-card, .admin-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .host-card.flash { outline: 3px solid var(--amber-hot); }
+  .admin-card.waiting { background: #fffaf2; border-color: #e2c48a; }
+  .row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .host-card p, .admin-card p { margin-top: 4px; }
+
+  form.panel, .panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px;
+  }
+  fieldset { border: 0; padding: 0; margin: 0 0 8px; }
+  legend { font-weight: 750; padding: 0; }
+  .kinds { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .kind {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    font-weight: 650;
+  }
+  .kind:has(input:checked) { border-color: var(--forest); background: var(--badge); }
+  label.field { display: block; font-size: 14px; font-weight: 750; margin: 12px 0 6px; }
+  input[type="text"], select, textarea {
+    width: 100%;
+    border: 1px solid #c9d1cb;
+    border-radius: 10px;
+    background: #fff;
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  .help { font-size: 14px; color: var(--muted); margin-top: 6px; }
+  h3.block-title {
+    font-family: var(--serif);
+    color: var(--forest);
+    font-size: 1.3rem;
+    margin: 0 0 8px;
+  }
+
+  @container phone (min-width: 700px) {
+    .browser.mode-map .pane-list,
+    .browser .pane-list { display: block; }
+    .browser:not(.mode-map) .pane-map,
+    .browser .pane-map { display: flex; }
+    .browser .mode-toggle { display: none; }
+    .browser .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 12px;
+    }
+    .browser .map-canvas {
+      width: auto;
+      height: calc(100% - 72px);
+      max-width: 100%;
+      max-height: calc(100% - 72px);
+    }
+    .sheet { left: auto; right: 18px; width: min(400px, 42%); }
+    .hero { height: 200px; }
+    #county-chips { flex-wrap: wrap; overflow: visible; }
+    .listing-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .units { grid-template-columns: 1fr 1fr; }
+    .host-grid, .admin-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .been-row {
+      grid-template-columns: 84px minmax(0, 1fr) auto;
+    }
+    .been-btn { grid-column: auto; }
+  }
+</style>
+</head>
+<body>
+<header class="reader">
+  <p class="kicker">MVP layout</p>
+  <h1>Ireland directory</h1>
+  <p class="reader-dek">A layout of the MVP, not the live app. Phone first. On a wide window the same screens get wider.</p>
+  <nav class="screen-switch" aria-label="Screens">
+    <button type="button" data-screen="directory" aria-pressed="true"><span class="num">1</span> Directory</button>
+    <button type="button" data-screen="listing" aria-pressed="false"><span class="num">2</span> Listing</button>
+    <button type="button" data-screen="been" aria-pressed="false"><span class="num">3</span> Been here</button>
+    <button type="button" data-screen="host" aria-pressed="false"><span class="num">4</span> Host</button>
+    <button type="button" data-screen="admin" aria-pressed="false"><span class="num">5</span> Admin</button>
+  </nav>
+</header>
+<main class="stage">
+  <div class="phone" id="phone">
+    <section class="screen browser active" id="screen-directory" aria-labelledby="directory-title">
+      <header class="appbar">
+        <p class="eyebrow">Directory</p>
+        <h2 id="directory-title" tabindex="-1">Places, stays, and experiences</h2>
+      </header>
+      <div class="toolbar">
+        <p class="note">The island of Ireland: the Republic and Northern Ireland.</p>
+        <label class="visually-hidden" for="q">Search by name or town</label>
+        <input class="search" id="q" type="search" placeholder="Search by name or town" autocomplete="off">
+        <div class="chips" id="group-chips" role="group" aria-label="Kind">
+          <button type="button" data-action="group" data-group="all" aria-pressed="true">All <span class="chip-count" data-count="all"></span></button>
+          <button type="button" data-action="group" data-group="place">Places <span class="chip-count" data-count="place"></span></button>
+          <button type="button" data-action="group" data-group="stay">Stays <span class="chip-count" data-count="stay"></span></button>
+          <button type="button" data-action="group" data-group="experience">Experiences <span class="chip-count" data-count="experience"></span></button>
+        </div>
+        <div class="chips scroll" id="county-chips" role="group" aria-label="County"></div>
+        <div class="countline">
+          <p id="dir-count"></p>
+          <button type="button" class="text-btn" id="clear-filters" data-action="clear-filters" hidden>Clear</button>
+        </div>
+        <div class="mode-toggle" role="group" aria-label="List or map">
+          <button type="button" data-action="dir-mode" data-mode="list" aria-pressed="true">List</button>
+          <button type="button" data-action="dir-mode" data-mode="map" aria-pressed="false">Map</button>
+        </div>
+      </div>
+      <div class="split">
+        <div class="pane pane-list" id="dir-list"></div>
+        <div class="pane pane-map" id="dir-map" role="group" aria-label="Map of the island of Ireland"></div>
+      </div>
+      <div class="sheet" id="dir-sheet" hidden></div>
+    </section>
+
+    <section class="screen" id="screen-listing" aria-labelledby="listing-title" aria-hidden="true">
+      <header class="appbar">
+        <p class="eyebrow">Listing</p>
+        <h2 id="listing-title" tabindex="-1">Listing</h2>
+        <div class="switcher" id="listing-switch" role="group" aria-label="Which listing"></div>
+      </header>
+      <div class="screen-body" id="listing-body"></div>
+    </section>
+
+    <section class="screen browser" id="screen-been" aria-labelledby="been-title" aria-hidden="true">
+      <header class="appbar">
+        <p class="eyebrow">Signed in as Aoife Ryan</p>
+        <h2 id="been-title" tabindex="-1">Been here</h2>
+        <p class="lede" id="been-count" aria-live="polite"></p>
+      </header>
+      <div class="toolbar">
+        <div class="mode-toggle" role="group" aria-label="List or map of places been to">
+          <button type="button" data-action="been-mode" data-mode="list" aria-pressed="true">List</button>
+          <button type="button" data-action="been-mode" data-mode="map" aria-pressed="false">Map</button>
+        </div>
+      </div>
+      <div class="split">
+        <div class="pane pane-list" id="been-list"></div>
+        <div class="pane pane-map" id="been-map" role="group" aria-label="Map of places Aoife Ryan has been to"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-host" aria-labelledby="host-title" aria-hidden="true">
+      <header class="appbar">
+        <p class="eyebrow">Host</p>
+        <h2 id="host-title" tabindex="-1">Maeve Connolly</h2>
+        <p class="lede">One host, several listings. A new stay, or any edit, is hidden until review passes.</p>
+        <button type="button" class="btn" data-action="add-stay">Add a stay</button>
+      </header>
+      <div class="screen-body">
+        <div class="host-grid">
+          <div>
+            <h3 class="block-title">Listings</h3>
+            <div id="host-list"></div>
+          </div>
+          <form id="stay-form" class="panel">
+            <h3 class="block-title" id="form-heading">Add a stay</h3>
+            <p id="host-status" class="banner" hidden></p>
+            <fieldset>
+              <legend>Kind</legend>
+              <div class="kinds">
+                <label class="kind"><input type="radio" name="kind" value="campsite" checked> Campsite</label>
+                <label class="kind"><input type="radio" name="kind" value="glamping"> Glamping</label>
+                <label class="kind"><input type="radio" name="kind" value="bnb"> Bed and breakfast</label>
+              </div>
+            </fieldset>
+            <label class="field" for="stay-name">Name</label>
+            <input id="stay-name" name="name" type="text" maxlength="80" autocomplete="off">
+            <label class="field" for="stay-town">Town</label>
+            <input id="stay-town" name="town" type="text" maxlength="60" autocomplete="off">
+            <label class="field" for="stay-county">County</label>
+            <select id="stay-county" name="county">
+              <option value="">Choose a county</option>
+            </select>
+            <label class="field" for="stay-description">Description</label>
+            <textarea id="stay-description" name="description" maxlength="600"></textarea>
+            <label class="field" id="units-label" for="stay-units">Lots, one per line</label>
+            <textarea id="stay-units" name="units" maxlength="1200" placeholder="Bay lot - Level grass for two tents"></textarea>
+            <p class="help">One lot or room on each line. A note can follow a hyphen. They all show on the one listing page.</p>
+            <div class="row-actions">
+              <button class="btn" type="submit">Save listing</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-admin" aria-labelledby="admin-title" aria-hidden="true">
+      <header class="appbar">
+        <p class="eyebrow">Admin</p>
+        <h2 id="admin-title" tabindex="-1">Listings and hosts</h2>
+        <p class="lede">Signed in as tezball86@gmail.com</p>
+      </header>
+      <div class="screen-body">
+        <p id="admin-live" class="lede" aria-live="polite"></p>
+        <div class="admin-grid">
+          <div>
+            <h3 class="block-title">Listings</h3>
+            <div id="admin-listings"></div>
+          </div>
+          <div>
+            <h3 class="block-title">Hosts</h3>
+            <div id="admin-hosts"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<noscript><p class="reader-dek">This layout needs JavaScript. It does not need a server.</p></noscript>
+<script>
+"use strict";
+const GEO = { minLng: -10.9, maxLng: -5.25, minLat: 51.3, maxLat: 55.55, innerW: 400, innerH: 540, pad: 10, vbW: 420, vbH: 560 };
+const ISLAND_PATHS = ["M 341.5,195.7,335.4,194.9,331.2,197.1,328.4,199.2,325.7,198.9,318.1,199.7,310.9,199.5,309.9,196.2,311.1,186.2,309.5,183.5,302.6,182.1,300.1,179.7,296.1,172.8,295.4,169.6,294.8,165.1,290.6,159.4,285.6,155.3,282.6,155.1,276.7,161.8,271.8,168.6,273.5,172.0,275.1,176.5,272.4,179.7,264.4,187.1,263.1,190.0,261.0,191.5,257.1,189.5,247.6,190.0,243.2,188.7,238.1,183.2,225.6,179.6,223.5,170.9,221.1,169.3,206.9,154.3,205.1,149.3,206.9,146.3,212.2,141.8,229.9,134.4,232.7,131.4,233.3,128.7,228.1,125.7,223.4,122.3,221.8,120.1,221.6,118.2,224.3,115.7,229.7,115.5,233.9,116.7,237.3,114.4,243.2,112.2,247.1,109.4,250.6,102.1,254.2,95.5,254.5,91.9,257.7,79.5,259.4,76.4,270.6,68.2,273.5,72.7,279.0,73.7,283.9,69.6,289.8,56.7,294.0,55.9,298.5,56.9,307.4,55.3,323.3,49.3,330.3,49.2,340.3,52.3,347.8,52.3,354.4,61.5,357.9,76.1,366.2,90.5,376.9,103.1,377.4,110.7,373.5,114.9,365.5,120.0,365.5,125.5,370.8,122.7,375.4,121.4,386.5,122.6,390.3,128.2,393.0,136.5,394.4,143.4,393.4,150.8,390.5,148.5,387.4,141.8,384.1,138.7,380.2,137.1,382.0,146.2,381.3,158.4,383.0,159.6,388.2,159.8,384.7,172.3,377.6,175.7,369.2,177.0,367.2,181.4,365.7,187.1,361.3,195.6,355.6,200.4,348.4,199.5,341.5,195.7 Z", "M 77.4,218.0,77.1,221.6,71.8,217.0,69.3,212.1,54.9,209.8,60.9,204.8,63.8,206.3,74.0,206.5,76.8,208.6,77.4,218.0 Z", "M 270.6,68.2,259.4,76.4,257.7,79.5,254.5,91.9,254.2,95.5,250.6,102.1,247.1,109.4,243.2,112.2,237.3,114.4,233.9,116.7,229.7,115.5,224.3,115.7,221.6,118.2,221.8,120.1,223.4,122.3,228.1,125.7,233.3,128.7,232.7,131.4,229.9,134.4,212.2,141.8,206.9,146.3,205.1,149.3,206.9,154.3,221.1,169.3,223.5,170.9,225.6,179.6,238.1,183.2,243.2,188.7,247.6,190.0,257.1,189.5,261.0,191.5,263.1,190.0,264.4,187.1,272.4,179.7,275.1,176.5,273.5,172.0,271.8,168.6,276.7,161.8,282.6,155.1,285.6,155.3,290.6,159.4,294.8,165.1,295.4,169.6,296.1,172.8,300.1,179.7,302.6,182.1,309.5,183.5,311.1,186.2,309.9,196.2,310.9,199.5,318.1,199.7,325.7,198.9,328.4,199.2,331.2,197.1,335.4,194.9,341.5,195.7,344.5,200.1,345.8,204.8,340.6,206.5,335.1,205.5,332.5,208.6,332.3,214.4,334.1,221.9,337.8,227.2,340.7,239.3,343.1,252.6,346.9,260.6,347.6,270.6,347.1,275.5,347.8,284.3,346.2,287.4,347.4,295.7,351.8,312.9,353.7,322.4,355.0,343.3,351.8,351.1,347.7,358.5,344.9,367.3,342.8,376.8,341.5,392.1,332.4,410.0,328.6,414.4,324.1,417.2,333.9,429.7,325.9,435.3,317.2,437.1,307.5,433.9,301.5,434.3,296.0,438.4,293.9,440.8,292.1,439.6,288.5,429.4,285.9,440.0,280.3,443.4,270.8,442.6,254.9,445.5,248.8,448.5,246.2,453.2,244.3,458.7,241.9,461.9,239.1,463.6,226.8,467.7,224.4,469.3,218.7,478.1,211.2,483.2,205.0,484.8,199.6,479.6,197.3,476.5,194.8,474.9,186.3,475.2,189.0,476.8,190.7,480.4,191.6,487.4,190.6,494.2,186.4,497.6,181.5,498.3,173.7,505.4,163.3,507.3,157.7,513.8,123.5,524.8,121.6,524.9,116.9,522.1,111.7,520.9,106.6,521.8,92.3,527.9,85.4,526.7,94.2,511.4,106.1,503.7,107.4,501.6,103.5,500.5,80.9,505.9,73.0,510.5,65.2,511.8,68.8,504.8,78.9,495.3,84.4,490.8,87.7,489.0,91.5,483.4,102.1,477.0,67.8,490.2,58.7,488.6,56.6,484.9,49.6,486.6,46.9,477.7,57.3,464.3,63.4,458.5,70.6,455.4,77.5,450.9,80.1,445.4,76.8,443.7,56.1,445.1,46.1,443.9,46.6,439.6,48.5,434.8,58.8,426.5,64.4,425.2,69.3,426.0,74.2,428.1,78.2,430.9,89.8,429.3,85.0,424.0,84.1,413.3,80.4,409.8,85.2,404.8,90.6,401.8,99.8,391.6,103.0,390.0,121.1,387.5,140.5,382.1,159.8,374.7,149.9,370.6,145.2,365.1,137.6,376.2,132.1,380.4,116.6,382.7,111.7,381.4,104.8,378.0,102.6,379.3,100.7,381.9,90.4,387.4,79.6,388.7,92.2,378.7,108.1,361.8,111.6,356.5,116.6,347.2,115.1,343.1,111.8,340.7,123.3,321.6,127.4,318.1,134.8,317.6,140.2,314.6,142.6,314.5,144.7,313.4,149.5,307.7,142.1,304.0,134.6,302.2,111.2,304.2,108.1,303.7,105.2,302.0,103.3,299.4,101.9,293.0,100.2,291.5,94.9,291.5,89.7,293.5,86.1,293.3,82.5,290.5,88.2,283.8,80.9,282.3,73.4,283.6,67.3,281.5,67.1,277.4,69.9,273.2,66.2,269.3,65.4,264.3,69.3,261.9,73.6,262.7,82.3,259.0,93.5,257.2,83.9,253.6,80.1,250.4,79.9,245.7,80.7,241.6,91.8,234.7,103.6,231.7,102.7,227.1,103.5,222.2,91.6,220.8,79.8,224.3,81.1,214.9,83.9,206.4,84.4,200.8,83.9,194.8,78.4,197.4,77.7,188.9,75.3,183.2,67.2,187.2,67.4,179.5,69.7,174.2,74.0,171.9,78.3,172.9,86.1,172.8,93.7,168.8,104.7,167.7,122.2,169.0,134.2,180.3,137.3,178.3,142.1,171.1,144.3,170.3,162.4,173.5,173.7,177.6,176.7,176.3,175.1,168.4,171.2,162.9,176.1,155.7,182.0,150.8,185.9,148.4,195.0,145.3,199.0,142.5,201.6,133.2,205.9,125.5,183.0,129.5,161.2,120.4,164.7,113.9,169.3,110.3,177.2,107.5,178.0,104.1,182.0,101.3,188.6,93.9,186.2,84.3,187.5,77.3,192.2,72.7,193.7,66.1,195.9,61.3,205.6,59.6,214.9,55.1,218.2,55.5,229.2,54.5,233.0,56.3,232.1,48.3,238.9,47.3,241.5,48.9,242.7,54.5,245.8,58.1,246.7,64.4,244.6,69.2,241.2,72.9,244.3,76.7,239.5,83.6,244.7,80.6,252.2,73.9,251.8,68.4,250.6,61.5,248.5,55.3,249.4,48.4,253.7,44.1,264.7,41.9,260.2,34.1,264.2,33.4,268.6,35.0,275.1,41.1,281.8,45.9,288.8,49.7,282.1,57.2,273.9,62.5,270.6,68.2 Z"];
+const NI = new Set(["Antrim", "Armagh", "Derry", "Down", "Fermanagh", "Tyrone"]);
+const COUNTIES = ["Antrim","Armagh","Carlow","Cavan","Clare","Cork","Derry","Donegal","Down","Dublin","Fermanagh","Galway","Kerry","Kildare","Kilkenny","Laois","Leitrim","Limerick","Longford","Louth","Mayo","Meath","Monaghan","Offaly","Roscommon","Sligo","Tipperary","Tyrone","Waterford","Westmeath","Wexford","Wicklow"];
+const COUNTY_GEO = {
+  Antrim: [54.85, -6.25], Armagh: [54.35, -6.65], Carlow: [52.73, -6.84], Cavan: [53.99, -7.36],
+  Clare: [52.84, -9.0], Cork: [51.95, -8.7], Derry: [54.92, -7.0], Donegal: [54.8, -8.0],
+  Down: [54.38, -6.05], Dublin: [53.36, -6.35], Fermanagh: [54.34, -7.63], Galway: [53.35, -8.85],
+  Kerry: [52.16, -9.55], Kildare: [53.16, -6.8], Kilkenny: [52.58, -7.25], Laois: [53.0, -7.4],
+  Leitrim: [54.12, -8.0], Limerick: [52.48, -8.7], Longford: [53.72, -7.7], Louth: [53.95, -6.5],
+  Mayo: [53.9, -9.15], Meath: [53.6, -6.7], Monaghan: [54.24, -6.97], Offaly: [53.23, -7.6],
+  Roscommon: [53.73, -8.2], Sligo: [54.2, -8.5], Tipperary: [52.55, -7.9], Tyrone: [54.6, -7.15],
+  Waterford: [52.25, -7.6], Westmeath: [53.53, -7.4], Wexford: [52.45, -6.65], Wicklow: [52.98, -6.35]
+};
+const LEAD = ["cliffs-of-moher", "liscannor-bay", "clew-kayak", "giants-causeway", "hags-head-bb"];
+const SCREEN_IDS = ["directory", "listing", "been", "host", "admin"];
+
+const places = [
+  { id: "giants-causeway", name: "Giant's Causeway", county: "Antrim", town: "Bushmills", lat: 55.240833, lng: -6.511667, scene: "columns", variant: 0, description: "Basalt columns step into the sea on the north Antrim coast." },
+  { id: "carrick-a-rede", name: "Carrick-a-Rede Rope Bridge", county: "Antrim", town: "Ballintoy", lat: 55.239559, lng: -6.33251, scene: "bridge", variant: 1, description: "A rope bridge from the cliff to a small stack. It closes when the wind is up." },
+  { id: "dunluce-castle", name: "Dunluce Castle", county: "Antrim", town: "Bushmills", lat: 55.211389, lng: -6.579167, scene: "castle", variant: 2, description: "A ruined castle on a rock above the Atlantic, between Portrush and the Causeway." },
+  { id: "navan-fort", name: "Navan Fort", county: "Armagh", town: "Armagh", lat: 54.345278, lng: -6.718611, scene: "earth", variant: 0, description: "A great earthen ring west of Armagh, the old site of Emain Macha." },
+  { id: "slieve-donard", name: "Slieve Donard", county: "Down", town: "Newcastle", lat: 54.180278, lng: -5.920833, scene: "mountain", variant: 1, description: "The highest of the Mournes, straight up from Newcastle strand." },
+  { id: "marble-arch-caves", name: "Marble Arch Caves", county: "Fermanagh", town: "Florencecourt", lat: 54.258428, lng: -7.814314, scene: "cave", variant: 2, description: "A river cave under Cuilcagh, reached from Florencecourt." },
+  { id: "beaghmore", name: "Beaghmore Stone Circles", county: "Tyrone", town: "Cookstown", lat: 54.701466, lng: -6.938701, scene: "stones", variant: 3, description: "Stone circles and rows in bog country in the Sperrins." },
+  { id: "cliffs-of-moher", name: "Cliffs of Moher", county: "Clare", town: "Liscannor", lat: 52.936111, lng: -9.470833, scene: "cliff", variant: 0, description: "Eight kilometres of Atlantic cliff above the sea at Liscannor." },
+  { id: "poulnabrone-dolmen", name: "Poulnabrone dolmen", county: "Clare", town: "Carran", lat: 53.04869, lng: -9.140021, scene: "dolmen", variant: 1, description: "A portal tomb on the Burren pavement, a short walk from the road." },
+  { id: "skellig-michael", name: "Skellig Michael", county: "Kerry", town: "Portmagee", lat: 51.771111, lng: -10.540556, scene: "island", variant: 2, description: "A monastery on a pyramid of rock, eight miles off the Kerry coast." },
+  { id: "carrauntoohil", name: "Carrauntoohil", county: "Kerry", town: "Killarney", lat: 51.998889, lng: -9.742778, scene: "mountain", variant: 3, description: "Ireland's highest mountain, in the Reeks above the Gap of Dunloe." },
+  { id: "newgrange", name: "Newgrange", county: "Meath", town: "Donore", lat: 53.694725, lng: -6.475566, scene: "mound", variant: 0, description: "A passage tomb in the Boyne valley, built to catch the winter sunrise." },
+  { id: "hill-of-tara", name: "Hill of Tara", county: "Meath", town: "Navan", lat: 53.5775, lng: -6.611944, scene: "earth", variant: 1, description: "A low ridge of earthworks above the Meath plain." },
+  { id: "rock-of-cashel", name: "Rock of Cashel", county: "Tipperary", town: "Cashel", lat: 52.52, lng: -7.89, scene: "castle", variant: 4, description: "Round tower, cathedral, and Cormac's Chapel on the rock over the town." },
+  { id: "mizen-head", name: "Mizen Head", county: "Cork", town: "Goleen", lat: 51.450278, lng: -9.819444, scene: "cliff", variant: 2, description: "The signal station at the south-west tip, across a bridge over a sea gorge." },
+  { id: "dun-aonghasa", name: "Dún Aonghasa", county: "Galway", town: "Kilronan", lat: 53.12591, lng: -9.76636, scene: "fort", variant: 3, description: "A stone fort on the cliff of Inis Mór, with open air at the edge." },
+  { id: "kylemore-abbey", name: "Kylemore Abbey", county: "Galway", town: "Letterfrack", lat: 53.56168, lng: -9.889265, scene: "abbey", variant: 0, description: "A castle on a Connemara lake, with a walled garden in the next valley." },
+  { id: "croagh-patrick", name: "Croagh Patrick", county: "Mayo", town: "Murrisk", lat: 53.7595, lng: -9.6584, scene: "mountain", variant: 5, description: "The cone above Clew Bay. The path starts at Murrisk." },
+  { id: "slieve-league", name: "Slieve League", county: "Donegal", town: "Teelin", lat: 54.638056, lng: -8.681389, scene: "cliff", variant: 4, description: "Sea cliffs rising out of Donegal Bay, above Teelin." },
+  { id: "glendalough", name: "Glendalough", county: "Wicklow", town: "Laragh", lat: 53.010278, lng: -6.3275, scene: "abbey", variant: 1, description: "A monastic city in a valley of two lakes, with a round tower." },
+  { id: "kilkenny-castle", name: "Kilkenny Castle", county: "Kilkenny", town: "Kilkenny", lat: 52.650278, lng: -7.249167, scene: "castle", variant: 6, description: "A castle on the Nore, in the middle of Kilkenny." },
+  { id: "hook-lighthouse", name: "Hook Lighthouse", county: "Wexford", town: "Hook Head", lat: 52.123806, lng: -6.929306, scene: "light", variant: 2, description: "A medieval lighthouse that still works, on the tip of the Hook." },
+  { id: "benbulbin", name: "Benbulbin", county: "Sligo", town: "Drumcliff", lat: 54.366667, lng: -8.466667, scene: "flat", variant: 3, description: "The flat-topped mountain that holds the Sligo skyline." },
+  { id: "phoenix-park", name: "Phoenix Park", county: "Dublin", town: "Dublin", lat: 53.355789, lng: -6.329792, scene: "park", variant: 0, description: "A walled park west of Dublin, large enough for a herd of fallow deer." },
+  { id: "powerscourt-waterfall", name: "Powerscourt Waterfall", county: "Wicklow", town: "Enniskerry", lat: 53.146, lng: -6.211, scene: "fall", variant: 1, description: "Ireland's highest waterfall, in the valley above Enniskerry." },
+  { id: "ross-castle", name: "Ross Castle", county: "Kerry", town: "Killarney", lat: 52.041, lng: -9.531, scene: "castle", variant: 7, description: "A tower house on Lough Leane, where the boats leave for the lake." }
+];
+places.forEach(p => { p.group = "place"; p.kind = "place"; });
+
+const experience = {
+  id: "clew-kayak",
+  name: "Clew Bay kayak",
+  county: "Mayo",
+  town: "Murrisk",
+  lat: 53.782,
+  lng: -9.63,
+  scene: "kayak",
+  variant: 0,
+  group: "experience",
+  kind: "experience",
+  description: "A half-day paddle from the strand at Murrisk, under Croagh Patrick, among the islands of Clew Bay. It goes when the wind allows, from May into September."
+};
+
+let listings = [
+  {
+    id: "liscannor-bay",
+    kind: "campsite",
+    name: "Liscannor Bay Campsite",
+    town: "Liscannor",
+    county: "Clare",
+    lat: 52.962,
+    lng: -9.36,
+    scene: "camp",
+    variant: 0,
+    hostId: "maeve",
+    status: "public",
+    description: "Grass lots above Liscannor Bay, a short walk from the cliff path. Tents and camper vans. The host is Maeve Connolly.",
+    facts: ["Open March to October", "Water taps and showers", "Parking in the field"],
+    units: [
+      { name: "Bay lot", note: "Level grass for two tents, looking toward the bay. A tap on the hedge." },
+      { name: "Hedge lot", note: "Sheltered from the west wind. One tent, or a small van." },
+      { name: "Hardstand lot", note: "A hard stand for a camper van, with an electric hook-up." },
+      { name: "Meadow lot", note: "Room for a family tent and a table." },
+      { name: "Orchard lot", note: "Morning shade at the quiet end. No hook-up." }
+    ]
+  },
+  {
+    id: "hags-head-bb",
+    kind: "bnb",
+    name: "Hag's Head Bed and Breakfast",
+    town: "Liscannor",
+    county: "Clare",
+    lat: 52.945,
+    lng: -9.385,
+    scene: "house",
+    variant: 1,
+    hostId: "maeve",
+    status: "public",
+    description: "A house on the lane in Liscannor, used by people walking the cliffs. Four rooms, and breakfast at the kitchen table.",
+    facts: ["Open all year", "Breakfast in the kitchen", "Parking by the lane"],
+    units: [
+      { name: "Cliff double", note: "A double with a window toward the Atlantic." },
+      { name: "Lane twin", note: "Two beds, quieter, facing the lane." },
+      { name: "Single", note: "A small room with its own shower." },
+      { name: "Family room", note: "A double and a bunk, on the ground floor." }
+    ]
+  },
+  {
+    id: "fahee-glamping",
+    kind: "glamping",
+    name: "Fahee North Glamping",
+    town: "Carran",
+    county: "Clare",
+    lat: 53.06,
+    lng: -9.1,
+    scene: "dome",
+    variant: 2,
+    hostId: "maeve",
+    status: "hidden",
+    description: "Two domes and a pod on Burren limestone near Carran, a short walk from Poulnabrone dolmen.",
+    facts: ["Open April to September", "A lane off the R480"],
+    units: [
+      { name: "North dome", note: "A dome with two beds, on the limestone." },
+      { name: "South dome", note: "The same, a little lower and out of the wind." },
+      { name: "Pod lot", note: "A wooden pod for two, nearer the lane." }
+    ]
+  }
+];
+
+const hosts = [
+  { id: "maeve", name: "Maeve Connolly", place: "Liscannor, Clare", blurb: "Keeps the sample stays." },
+  { id: "admin", name: "tezball86@gmail.com", place: "Admin", blurb: "Signed in here. Also a host, with no listing of their own." }
+];
+
+const state = {
+  screen: "directory",
+  q: "",
+  group: "all",
+  county: "all",
+  dirMode: "list",
+  beenMode: "list",
+  selectedId: null,
+  listingId: "liscannor-bay",
+  been: new Set(["glendalough", "giants-causeway"]),
+  flashId: null,
+  formIntent: "new",
+  formId: ""
+};
+
+function el(tag, attrs, ...kids) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === "class") node.className = v;
+      else node.setAttribute(k, String(v));
+    }
+  }
+  for (const kid of kids) {
+    if (kid == null || kid === false) continue;
+    node.append(typeof kid === "string" ? document.createTextNode(kid) : kid);
+  }
+  return node;
+}
+
+function project(lat, lng) {
+  const x = GEO.pad + (lng - GEO.minLng) / (GEO.maxLng - GEO.minLng) * GEO.innerW;
+  const y = GEO.pad + (GEO.maxLat - lat) / (GEO.maxLat - GEO.minLat) * GEO.innerH;
+  return { x, y };
+}
+
+function jurisdiction(county) {
+  return NI.has(county) ? "Northern Ireland" : "Republic of Ireland";
+}
+
+function kindLabel(item) {
+  if (item.group === "place" || item.kind === "place") return "Place";
+  if (item.group === "experience" || item.kind === "experience") return "Experience";
+  if (item.kind === "bnb") return "Bed and breakfast";
+  if (item.kind === "glamping") return "Glamping";
+  return "Campsite";
+}
+
+function unitsNoun(kind) {
+  return kind === "bnb" ? "rooms" : "lots";
+}
+
+function sceneForKind(kind) {
+  if (kind === "bnb") return "house";
+  if (kind === "glamping") return "dome";
+  return "camp";
+}
+
+function sortItems(items) {
+  return items.slice().sort((a, b) => {
+    const ia = LEAD.indexOf(a.id);
+    const ib = LEAD.indexOf(b.id);
+    if (ia !== -1 || ib !== -1) {
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    }
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function stayItem(listing) {
+  return Object.assign({ group: "stay" }, listing);
+}
+
+function directoryItems() {
+  const stays = listings.filter(l => l.status === "public").map(stayItem);
+  return sortItems(places.concat(stays, [experience]));
+}
+
+function filteredItems() {
+  return directoryItems().filter(item => {
+    if (state.group !== "all" && item.group !== state.group) return false;
+    if (state.county !== "all" && item.county !== state.county) return false;
+    if (state.q) {
+      const hay = (item.name + " " + item.town + " " + item.county).toLowerCase();
+      if (!hay.includes(state.q)) return false;
+    }
+    return true;
+  });
+}
+
+function findListing(id) {
+  return listings.find(l => l.id === id) || null;
+}
+
+function sceneSvg(scene, n) {
+  const sky = ["#c5d6e4", "#d5e2ea", "#e6d9c8", "#d7e6df", "#c9d5e2"][n % 5];
+  const sea = ["#3e6e88", "#2c5c74", "#4a7c96"][n % 3];
+  const land = ["#5e8c58", "#4c7848", "#6b9156", "#3e6846"][n % 4];
+  const rock = ["#5c645e", "#6e655a", "#4a524e", "#7b6f62"][n % 4];
+  const deep = "#24362e";
+  let body = "";
+  if (scene === "cliff") {
+    body = `<path d="M0 96 C80 78 150 108 320 74 V180 H0 Z" fill="${sea}"/><path d="M0 72 L86 50 L104 180 H0 Z" fill="${deep}"/><path d="M84 52 L168 38 L186 180 H102 Z" fill="${rock}"/><path d="M166 40 L248 66 L268 180 H184 Z" fill="${land}"/><path d="M246 68 L320 52 V180 H266 Z" fill="${deep}"/>`;
+  } else if (scene === "columns") {
+    body = `<path d="M0 78 H320 V180 H0 Z" fill="${sea}"/>${[18, 50, 82, 114, 150, 182, 214, 250, 282].map((x, i) => `<rect x="${x}" y="${88 + (i % 3) * 10}" width="26" height="${92 - (i % 3) * 10}" fill="${i % 2 ? "#7a7468" : "#5e5952"}"/>`).join("")}<path d="M0 150 C70 142 120 160 320 146 V180 H0 Z" fill="#6d8fa2" opacity="0.55"/>`;
+  } else if (scene === "bridge") {
+    body = `<rect width="320" height="180" fill="${sea}"/><path d="M0 40 L70 70 L78 180 H0 Z" fill="${deep}"/><path d="M250 36 L320 58 V180 H242 Z" fill="${rock}"/><path d="M70 78 C120 120 200 120 250 74" fill="none" stroke="#f3efe6" stroke-width="6"/><path d="M70 92 C120 132 200 132 250 88" fill="none" stroke="#c4b8a4" stroke-width="3"/><circle cx="160" cy="112" r="5" fill="#f4efe4"/>`;
+  } else if (scene === "castle") {
+    const ground = n % 2 ? sea : land;
+    body = `<path d="M0 108 H320 V180 H0 Z" fill="${ground}"/><rect x="118" y="48" width="70" height="92" fill="#d9d0c2"/><rect x="108" y="40" width="18" height="16" fill="${deep}"/><rect x="142" y="40" width="18" height="16" fill="${deep}"/><rect x="176" y="40" width="18" height="16" fill="${deep}"/><rect x="142" y="86" width="22" height="34" fill="${deep}"/><rect x="128" y="70" width="14" height="12" fill="#8fb4c4"/><rect x="168" y="70" width="14" height="12" fill="#8fb4c4"/>`;
+  } else if (scene === "mountain") {
+    body = `<path d="M0 130 L70 130 L150 42 L190 78 L250 58 L320 120 V180 H0 Z" fill="${rock}"/><path d="M150 42 L168 70 L132 72 Z" fill="#f7f4ef"/><path d="M0 150 C80 140 160 162 320 148 V180 H0 Z" fill="${land}"/>`;
+  } else if (scene === "flat") {
+    body = `<path d="M0 120 H320 V180 H0 Z" fill="${land}"/><path d="M40 120 L70 70 H230 L270 120 Z" fill="${rock}"/><path d="M70 70 H230 V82 H70 Z" fill="#3e4742"/>`;
+  } else if (scene === "cave") {
+    body = `<path d="M0 40 H320 V180 H0 Z" fill="#1d2a28"/><path d="M40 180 C50 80 270 80 280 180 Z" fill="#0e1615"/><path d="M70 180 C90 120 230 120 250 180 Z" fill="#16302e"/><path d="M0 150 H320 V180 H0 Z" fill="${sea}"/>`;
+  } else if (scene === "stones") {
+    body = `<path d="M0 100 H320 V180 H0 Z" fill="#6d8a52"/><circle cx="70" cy="118" r="8" fill="${rock}"/><rect x="108" y="62" width="16" height="78" fill="#6a655c"/><rect x="146" y="48" width="18" height="92" fill="#7d776c"/><rect x="186" y="70" width="14" height="70" fill="#5c574f"/><rect x="220" y="80" width="16" height="60" rx="6" fill="#6a655c"/>`;
+  } else if (scene === "dolmen") {
+    body = `<path d="M0 118 H320 V180 H0 Z" fill="#8aa06a"/><path d="M70 118 L110 118 L100 70 Z" fill="#6e675c"/><path d="M190 118 L230 118 L210 66 Z" fill="#5e5950"/><path d="M78 74 H230 L214 52 H96 Z" fill="#8a8174"/>`;
+  } else if (scene === "mound") {
+    body = `<path d="M0 130 H320 V180 H0 Z" fill="${land}"/><ellipse cx="160" cy="120" rx="110" ry="48" fill="#7d8f62"/><ellipse cx="160" cy="112" rx="70" ry="30" fill="#6a7c52"/><rect x="146" y="108" width="28" height="22" fill="#1c2420"/>`;
+  } else if (scene === "earth") {
+    body = `<path d="M0 70 H320 V180 H0 Z" fill="#7f965c"/><ellipse cx="160" cy="120" rx="120" ry="36" fill="none" stroke="#5c6b40" stroke-width="8"/><ellipse cx="160" cy="120" rx="78" ry="22" fill="none" stroke="#4d5c38" stroke-width="6"/><circle cx="160" cy="118" r="8" fill="#5c564c"/>`;
+  } else if (scene === "island") {
+    body = `<rect width="320" height="180" fill="${sea}"/><path d="M150 28 L230 150 H90 Z" fill="${rock}"/><path d="M150 28 L186 78 L140 70 Z" fill="#ece7df"/><path d="M0 150 C80 140 200 164 320 146 V180 H0 Z" fill="#2c5870"/>`;
+  } else if (scene === "abbey") {
+    body = `<path d="M0 96 H320 V140 H0 Z" fill="${sea}"/><path d="M0 140 H320 V180 H0 Z" fill="${land}"/><rect x="70" y="78" width="150" height="62" fill="#e7e0d4"/><rect x="86" y="48" width="22" height="50" fill="#d5cec2"/><path d="M80 48 H114 L97 28 Z" fill="${deep}"/><rect x="150" y="92" width="18" height="28" fill="${deep}"/><rect x="108" y="96" width="16" height="14" fill="#8fb4c4"/>`;
+  } else if (scene === "fall") {
+    body = `<path d="M0 150 H320 V180 H0 Z" fill="${land}"/><path d="M40 150 L90 36 H150 L190 150 Z" fill="${rock}"/><path d="M108 40 H132 L140 150 H100 Z" fill="#f4f7f8"/><circle cx="48" cy="120" r="22" fill="#2f6a45"/><circle cx="230" cy="112" r="26" fill="#3d7a4e"/>`;
+  } else if (scene === "park") {
+    body = `<rect width="320" height="180" fill="#dfe8c8"/><path d="M150 180 L170 40 H190 L210 180 Z" fill="#cbb98a"/><circle cx="60" cy="110" r="28" fill="#2f6a45"/><circle cx="250" cy="100" r="34" fill="#3d7a4e"/><ellipse cx="100" cy="142" rx="16" ry="8" fill="#8a5a32"/>`;
+  } else if (scene === "light") {
+    body = `<path d="M0 110 H320 V180 H0 Z" fill="${sea}"/><rect x="148" y="36" width="28" height="100" fill="#f4efe6"/><rect x="140" y="28" width="44" height="14" fill="${deep}"/><path d="M176 40 L250 20 L250 70 Z" fill="#f6e2a8" opacity="0.85"/><rect x="154" y="60" width="8" height="10" fill="${sea}"/><rect x="168" y="78" width="8" height="10" fill="${sea}"/>`;
+  } else if (scene === "fort") {
+    body = `<path d="M0 100 H320 V180 H0 Z" fill="${sea}"/><path d="M40 100 C40 40 280 40 280 110 V150 H40 Z" fill="#6e675c"/><path d="M70 150 V90 H90 V150 Z" fill="${deep}"/><path d="M150 150 V78 H172 V150 Z" fill="${deep}"/><path d="M230 150 V96 H248 V150 Z" fill="${deep}"/>`;
+  } else if (scene === "camp") {
+    body = `<path d="M0 0 H320 V70 H0 Z" fill="${sky}"/><path d="M0 70 H320 V110 H0 Z" fill="${sea}"/><path d="M0 108 H320 V180 H0 Z" fill="${land}"/><path d="M48 150 L90 96 L132 150 Z" fill="#f4efe4"/><path d="M90 96 V150" stroke="${deep}" stroke-width="2"/><path d="M170 154 L214 108 L258 154 Z" fill="#f7f1e6"/><path d="M214 108 V154" stroke="${deep}" stroke-width="2"/>`;
+  } else if (scene === "house") {
+    body = `<path d="M0 120 H320 V180 H0 Z" fill="${land}"/><rect x="78" y="78" width="150" height="78" fill="#f7f1e6"/><path d="M64 82 L153 36 L236 82 Z" fill="#6b3a32"/><rect x="132" y="112" width="28" height="44" fill="${deep}"/><rect x="96" y="96" width="22" height="18" fill="#8fb4c4"/><rect x="186" y="96" width="22" height="18" fill="#8fb4c4"/><rect x="186" y="124" width="22" height="18" fill="#8fb4c4"/>`;
+  } else if (scene === "dome") {
+    body = `<path d="M0 90 H320 V180 H0 Z" fill="#d9d3c7"/><path d="M0 0 H320 V90 H0 Z" fill="${sky}"/><ellipse cx="120" cy="118" rx="48" ry="32" fill="#f4f7f5"/><ellipse cx="200" cy="124" rx="40" ry="26" fill="#f7f4ef"/><rect x="214" y="108" width="36" height="28" fill="#c4b59a"/><path d="M214 108 H250 L232 92 Z" fill="#6e5a42"/>`;
+  } else if (scene === "kayak") {
+    body = `<path d="M0 80 H320 V180 H0 Z" fill="${sea}"/><path d="M0 70 L80 40 L150 78 L220 36 L320 64 V80 H0 Z" fill="${rock}"/><ellipse cx="168" cy="128" rx="70" ry="16" fill="#e07a2f"/><path d="M120 128 H210" stroke="#f6d7b8" stroke-width="3"/><circle cx="188" cy="124" r="6" fill="#2a241e"/>`;
+  } else {
+    body = `<path d="M0 110 H320 V180 H0 Z" fill="${land}"/>`;
+  }
+  const skyRect = scene === "cave" || scene === "island" || scene === "camp" || scene === "kayak" ? "" : `<rect width="320" height="180" fill="${sky}"/>`;
+  return `<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${skyRect}${body}</svg>`;
+}
+
+function art(scene, n) {
+  const wrap = document.createElement("div");
+  wrap.className = "art";
+  wrap.innerHTML = sceneSvg(scene || "mountain", n || 0);
+  return wrap;
+}
+
+function metaLine(item) {
+  return kindLabel(item) + " · " + item.town + ", " + item.county + " · " + jurisdiction(item.county);
+}
+
+function show(id, setHash) {
+  if (!SCREEN_IDS.includes(id)) id = "directory";
+  state.screen = id;
+  for (const s of SCREEN_IDS) {
+    const sec = document.getElementById("screen-" + s);
+    const on = s === id;
+    sec.classList.toggle("active", on);
+    sec.setAttribute("aria-hidden", on ? "false" : "true");
+  }
+  document.querySelectorAll(".screen-switch button").forEach(btn => {
+    btn.setAttribute("aria-pressed", btn.dataset.screen === id ? "true" : "false");
+  });
+  if (setHash !== false && location.hash !== "#" + id) {
+    try { history.replaceState(null, "", "#" + id); } catch (err) { /* file:// may refuse */ }
+  }
+}
+
+function applyModes() {
+  document.getElementById("screen-directory").classList.toggle("mode-map", state.dirMode === "map");
+  document.getElementById("screen-been").classList.toggle("mode-map", state.beenMode === "map");
+  document.querySelectorAll("[data-action='dir-mode']").forEach(btn => {
+    btn.setAttribute("aria-pressed", btn.dataset.mode === state.dirMode ? "true" : "false");
+  });
+  document.querySelectorAll("[data-action='been-mode']").forEach(btn => {
+    btn.setAttribute("aria-pressed", btn.dataset.mode === state.beenMode ? "true" : "false");
+  });
+}
+
+function mapSvg() {
+  const fat = ISLAND_PATHS.map(d => `<path d="${d}" fill="#c3ddc4" stroke="#c3ddc4" stroke-width="8" stroke-linejoin="round"/>`).join("");
+  const line = ISLAND_PATHS.map(d => `<path d="${d}" fill="none" stroke="#5e8664" stroke-width="1.4" stroke-linejoin="round"/>`).join("");
+  const islands = [[51.771, -10.541, 9, 6], [53.126, -9.77, 14, 8]].map(([lat, lng, rx, ry]) => {
+    const p = project(lat, lng);
+    return `<ellipse cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" rx="${rx}" ry="${ry}" fill="#c3ddc4" stroke="#5e8664" stroke-width="1.2"/>`;
+  }).join("");
+  const lakes = [[54.62, -6.44, 14, 9], [53.48, -9.25, 9, 16], [52.93, -8.32, 7, 18]].map(([lat, lng, rx, ry]) => {
+    const p = project(lat, lng);
+    return `<ellipse cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" rx="${rx}" ry="${ry}" fill="#d4e6f0"/>`;
+  }).join("");
+  return `<svg viewBox="0 0 420 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect width="420" height="560" fill="#d4e6f0"/>${fat}${islands}${lakes}${line}<text x="18" y="28" fill="#245c38" font-size="14" font-family="Georgia, serif">N</text></svg>`;
+}
+
+function layoutPins(items) {
+  const placed = [];
+  return items.map(item => {
+    const p = project(item.lat, item.lng);
+    let x = p.x;
+    let y = p.y;
+    let n = 0;
+    while (n < 8 && placed.some(o => Math.hypot(o.x - x, o.y - y) < 16)) {
+      const ang = n * 1.25;
+      x = p.x + Math.cos(ang) * (14 + n * 3);
+      y = p.y + Math.sin(ang) * (14 + n * 3);
+      n += 1;
+    }
+    x = Math.max(14, Math.min(GEO.vbW - 14, x));
+    y = Math.max(14, Math.min(GEO.vbH - 14, y));
+    placed.push({ x, y });
+    return { item, x, y };
+  });
+}
+
+function legendList() {
+  return el("ul", { class: "legend" },
+    el("li", null, el("i", { class: "place" }), "Place"),
+    el("li", null, el("i", { class: "stay" }), "Stay"),
+    el("li", null, el("i", { class: "exp" }), "Experience")
+  );
+}
+
+function renderMap(pane, items, mode) {
+  const top = pane.scrollTop;
+  pane.replaceChildren();
+  const canvas = el("div", { class: "map-canvas" });
+  canvas.innerHTML = mapSvg();
+  const pins = layoutPins(items);
+  for (const pin of pins) {
+    const item = pin.item;
+    const marked = state.been.has(item.id);
+    const pressed = mode === "been" ? marked : state.selectedId === item.id;
+    const groupClass = item.group === "stay" ? "stay" : item.group === "experience" ? "experience" : "place";
+    const btn = el("button", {
+      type: "button",
+      class: "pin " + groupClass + (mode === "been" && marked ? " been" : "") + (mode === "been" && !marked ? " dim" : ""),
+      "data-action": mode === "been" ? "been" : "select",
+      "data-id": item.id,
+      "aria-pressed": pressed ? "true" : "false",
+      "aria-label": mode === "been"
+        ? (marked ? item.name + ". Been here. Clear it." : item.name + ". Mark as been here.")
+        : item.name + ", " + kindLabel(item) + ", " + item.county
+    });
+    btn.style.left = (pin.x / GEO.vbW * 100) + "%";
+    btn.style.top = (pin.y / GEO.vbH * 100) + "%";
+    const dot = el("span", { class: "dot" });
+    btn.append(dot);
+    canvas.append(btn);
+  }
+  pane.append(canvas, legendList(), el("p", { class: "map-caption" }, "Republic of Ireland and Northern Ireland."));
+  pane.scrollTop = top;
+}
+
+function renderDirectory() {
+  const all = directoryItems();
+  const counts = {
+    all: all.length,
+    place: all.filter(i => i.group === "place").length,
+    stay: all.filter(i => i.group === "stay").length,
+    experience: all.filter(i => i.group === "experience").length
+  };
+  document.querySelectorAll(".chip-count").forEach(node => {
+    node.textContent = String(counts[node.dataset.count] || 0);
+  });
+  document.querySelectorAll("#group-chips button").forEach(btn => {
+    btn.setAttribute("aria-pressed", btn.dataset.group === state.group ? "true" : "false");
+  });
+  const counties = Array.from(new Set(all.map(i => i.county))).sort((a, b) => a.localeCompare(b));
+  const countyRow = document.getElementById("county-chips");
+  countyRow.replaceChildren(el("button", {
+    type: "button",
+    "data-action": "county",
+    "data-county": "all",
+    "aria-pressed": state.county === "all" ? "true" : "false"
+  }, "All counties"));
+  for (const county of counties) {
+    countyRow.append(el("button", {
+      type: "button",
+      "data-action": "county",
+      "data-county": county,
+      "aria-pressed": state.county === county ? "true" : "false"
+    }, county));
+  }
+  const items = filteredItems();
+  document.getElementById("dir-count").textContent = "Showing " + items.length + " on the island";
+  const filtering = state.group !== "all" || state.county !== "all" || state.q;
+  document.getElementById("clear-filters").hidden = !filtering;
+  const list = document.getElementById("dir-list");
+  const scroll = list.scrollTop;
+  list.replaceChildren();
+  if (!items.length) {
+    list.append(el("div", { class: "empty" }, "Nothing matches. Clear the search, or choose All."));
+  }
+  for (const item of items) {
+    const hit = el("button", {
+      type: "button",
+      class: "card-hit",
+      "data-action": "select",
+      "data-id": item.id,
+      "aria-label": "Show " + item.name + " on the map"
+    });
+    const thumb = el("div", { class: "thumb" });
+    thumb.append(art(item.scene, item.variant));
+    hit.append(thumb, el("div", { class: "card-copy" },
+      el("p", { class: "meta" }, metaLine(item)),
+      el("h3", null, item.name),
+      el("p", { class: "dek clamp" }, item.description)
+    ));
+    const card = el("article", { class: "card" }, hit);
+    if (item.group === "stay") {
+      card.append(el("button", {
+        type: "button",
+        class: "btn secondary full",
+        "data-action": "open-listing",
+        "data-id": item.id
+      }, "Open listing"));
+    }
+    list.append(card);
+  }
+  list.scrollTop = scroll;
+  renderMap(document.getElementById("dir-map"), items, "directory");
+  renderSheet();
+  applyModes();
+}
+
+function renderSheet() {
+  const sheet = document.getElementById("dir-sheet");
+  const item = directoryItems().find(i => i.id === state.selectedId);
+  if (!item) {
+    sheet.hidden = true;
+    sheet.replaceChildren();
+    return;
+  }
+  sheet.hidden = false;
+  const actions = el("div", { class: "actions" }, el("button", {
+    type: "button",
+    class: "btn secondary",
+    "data-action": "close-sheet"
+  }, "Close"));
+  if (item.group === "stay") {
+    actions.append(el("button", {
+      type: "button",
+      class: "btn",
+      "data-action": "open-listing",
+      "data-id": item.id
+    }, "Open listing"));
+  }
+  sheet.replaceChildren(
+    el("p", { class: "meta" }, metaLine(item)),
+    el("h3", null, item.name),
+    el("p", { class: "dek" }, item.description),
+    actions
+  );
+}
+
+function nameList(names) {
+  if (!names.length) return "None marked yet.";
+  if (names.length === 1) return "Already marked: " + names[0] + ".";
+  if (names.length === 2) return "Already marked: " + names[0] + " and " + names[1] + ".";
+  return "Already marked: " + names.slice(0, -1).join(", ") + ", and " + names[names.length - 1] + ".";
+}
+
+function renderBeen() {
+  const items = directoryItems();
+  const marked = items.filter(i => state.been.has(i.id));
+  const word = marked.length === 1 ? "place" : "places";
+  document.getElementById("been-count").textContent = "Aoife Ryan has been to " + marked.length + " " + word + ".";
+  const list = document.getElementById("been-list");
+  const scroll = list.scrollTop;
+  list.replaceChildren(el("p", { class: "been-summary" }, nameList(marked.map(i => i.name))));
+  for (const item of items) {
+    const on = state.been.has(item.id);
+    const thumb = el("div", { class: "thumb" });
+    thumb.append(art(item.scene, item.variant));
+    const btn = el("button", {
+      type: "button",
+      class: "btn been-btn" + (on ? "" : " secondary"),
+      "data-action": "been",
+      "data-id": item.id,
+      "aria-pressed": on ? "true" : "false"
+    }, on ? "✓ Been here" : "Been here");
+    list.append(el("article", { class: "been-row" + (on ? " on" : ""), id: "been-row-" + item.id },
+      thumb,
+      el("div", null, el("p", { class: "meta" }, metaLine(item)), el("h3", { class: "block-title" }, item.name)),
+      btn
+    ));
+  }
+  list.scrollTop = scroll;
+  renderMap(document.getElementById("been-map"), items, "been");
+  applyModes();
+}
+
+function toggleBeen(id) {
+  if (state.been.has(id)) state.been.delete(id);
+  else state.been.add(id);
+  renderBeen();
+  const row = document.getElementById("been-row-" + id);
+  if (row) {
+    const btn = row.querySelector("button");
+    if (btn) btn.focus({ preventScroll: true });
+  }
+}
+
+function listingChoices() {
+  const current = findListing(state.listingId) || listings.find(l => l.status === "public") || listings[0];
+  state.listingId = current.id;
+  const buttons = listings.filter(l => l.status === "public" || l.id === current.id);
+  return { current, buttons };
+}
+
+function renderListing() {
+  const { current, buttons } = listingChoices();
+  document.getElementById("listing-title").textContent = current.name;
+  const switcher = document.getElementById("listing-switch");
+  switcher.replaceChildren();
+  for (const listing of buttons) {
+    const label = listing.name + (listing.status === "public" ? "" : " (hidden)");
+    switcher.append(el("button", {
+      type: "button",
+      "data-action": "open-listing",
+      "data-id": listing.id,
+      "aria-pressed": listing.id === current.id ? "true" : "false"
+    }, label));
+  }
+  const body = document.getElementById("listing-body");
+  const scroll = body.scrollTop;
+  body.replaceChildren();
+  if (current.status !== "public") {
+    body.append(el("p", { class: "banner", role: "status" }, "Hidden until review passes. It is off the public list and the map."));
+  }
+  const hero = el("div", { class: "hero" });
+  hero.append(art(current.scene, current.variant));
+  const copy = el("div", null,
+    el("p", { class: "meta" }, metaLine(stayItem(current))),
+    current.status === "public"
+      ? el("p", null, el("span", { class: "badge" }, "On the public list"))
+      : el("p", null, el("span", { class: "badge wait" }, "Hidden until review passes"))
+  );
+  const word = current.kind === "bnb" ? "Rooms" : "Lots";
+  const noun = unitsNoun(current.kind);
+  const units = el("div", { class: "units" });
+  for (const unit of current.units) {
+    units.append(el("article", { class: "unit" + (current.kind === "bnb" ? " room" : "") },
+      el("h3", null, unit.name),
+      el("p", null, unit.note)
+    ));
+  }
+  const nearbyItems = directoryItems().filter(i => i.county === current.county && i.id !== current.id).slice(0, 3);
+  const nearby = el("div", { class: "nearby" });
+  for (const item of nearbyItems) {
+    nearby.append(el("button", {
+      type: "button",
+      class: "btn secondary",
+      "data-action": "nearby",
+      "data-id": item.id
+    }, item.name));
+  }
+  body.append(
+    el("div", { class: "listing-top" }, hero, copy),
+    el("h3", { class: "section-label" }, word),
+    el("p", { class: "lede" }, "All " + current.units.length + " " + noun + " are on this page."),
+    units,
+    el("p", { class: "dek" }, current.description),
+    el("div", { class: "facts" }, ...current.facts.map(f => el("span", { class: "fact" }, f))),
+    el("p", { class: "dek" }, "Hosted by Maeve Connolly.")
+  );
+  if (nearbyItems.length) {
+    body.append(el("h3", { class: "section-label" }, "Nearby"), nearby);
+  }
+  body.scrollTop = scroll;
+}
+
+function statusLabel(listing) {
+  return listing.status === "public" ? "On the public list" : "Hidden until review passes";
+}
+
+function renderHostList() {
+  const mount = document.getElementById("host-list");
+  mount.replaceChildren();
+  const ordered = listings.slice().sort((a, b) => {
+    if (a.status !== b.status) return a.status === "hidden" ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+  for (const listing of ordered) {
+    const hidden = listing.status !== "public";
+    mount.append(el("article", {
+      class: "host-card" + (state.flashId === listing.id ? " flash" : ""),
+      id: "host-card-" + listing.id
+    },
+      el("p", { class: "meta" }, kindLabel(stayItem(listing)) + " · " + listing.town + ", " + listing.county),
+      el("h3", null, listing.name),
+      el("p", null, el("span", { class: hidden ? "badge wait" : "badge" }, statusLabel(listing))),
+      el("div", { class: "row-actions" },
+        el("button", { type: "button", class: "btn secondary", "data-action": "edit", "data-id": listing.id }, "Edit"),
+        el("button", { type: "button", class: "btn secondary", "data-action": "open-listing", "data-id": listing.id }, "Open listing")
+      )
+    ));
+  }
+}
+
+function updateUnitsLabel() {
+  const kind = document.getElementById("stay-form").elements["kind"].value || "campsite";
+  document.getElementById("units-label").textContent = (kind === "bnb" ? "Rooms" : "Lots") + ", one per line";
+}
+
+function setForm(listing) {
+  const form = document.getElementById("stay-form");
+  const status = document.getElementById("host-status");
+  status.hidden = true;
+  status.textContent = "";
+  if (!listing) {
+    state.formIntent = "new";
+    state.formId = "";
+    form.reset();
+    document.getElementById("form-heading").textContent = "Add a stay";
+  } else {
+    state.formIntent = "edit";
+    state.formId = listing.id;
+    form.elements["name"].value = listing.name;
+    form.elements["town"].value = listing.town;
+    form.elements["county"].value = listing.county;
+    form.elements["description"].value = listing.description;
+    form.elements["kind"].value = listing.kind;
+    form.elements["units"].value = listing.units.map(u => u.name + " - " + u.note).join("\n");
+    document.getElementById("form-heading").textContent = "Edit " + listing.name;
+  }
+  updateUnitsLabel();
+}
+
+function parseUnits(text) {
+  return text.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 12).map(line => {
+    const parts = line.split(/\s+-\s+/);
+    if (parts.length >= 2) return { name: parts[0].trim(), note: parts.slice(1).join(" - ").trim() };
+    return { name: line, note: "Shown on this listing page." };
+  }).filter(u => u.name);
+}
+
+function saveListing(event) {
+  event.preventDefault();
+  const form = document.getElementById("stay-form");
+  const name = form.elements["name"].value.trim();
+  const town = form.elements["town"].value.trim();
+  const county = form.elements["county"].value;
+  const description = form.elements["description"].value.trim();
+  const kind = form.elements["kind"].value;
+  const units = parseUnits(form.elements["units"].value);
+  const problems = [];
+  if (!name) problems.push("Add a name.");
+  if (!town) problems.push("Add a town.");
+  if (!county) problems.push("Choose a county.");
+  if (description.length < 12) problems.push("Write a short description.");
+  if (units.length < 2) problems.push("Add at least two " + unitsNoun(kind) + " on this page.");
+  const status = document.getElementById("host-status");
+  if (problems.length) {
+    status.hidden = false;
+    status.textContent = problems.join(" ");
+    return;
+  }
+  let listing = state.formIntent === "edit" ? findListing(state.formId) : null;
+  if (!listing) {
+    const geo = COUNTY_GEO[county];
+    listing = {
+      id: "stay-" + Date.now(),
+      hostId: "maeve",
+      lat: geo[0],
+      lng: geo[1],
+      facts: ["New listing", "Hidden until review passes"],
+      variant: 1
+    };
+    listings.unshift(listing);
+  }
+  listing.kind = kind;
+  listing.name = name;
+  listing.town = town;
+  listing.county = county;
+  listing.description = description;
+  listing.units = units;
+  listing.scene = sceneForKind(kind);
+  listing.status = "hidden";
+  state.flashId = listing.id;
+  state.listingId = listing.id;
+  status.hidden = false;
+  status.textContent = "Saved. This listing is hidden until review passes. It is not on the public list.";
+  refresh();
+  const card = document.getElementById("host-card-" + listing.id);
+  if (card) card.scrollIntoView({ block: "nearest" });
+}
+
+function hostListings(hostId) {
+  if (hostId !== "maeve") return [];
+  return listings;
+}
+
+function renderAdmin() {
+  const mount = document.getElementById("admin-listings");
+  mount.replaceChildren();
+  const waiting = listings.filter(l => l.status !== "public");
+  const live = listings.filter(l => l.status === "public");
+  function block(title, rows, waitingBlock) {
+    if (!rows.length) return;
+    mount.append(el("h3", { class: "section-label" }, title));
+    for (const listing of rows) {
+      const card = el("article", { class: "admin-card" + (waitingBlock ? " waiting" : "") },
+        el("p", { class: "meta" }, kindLabel(stayItem(listing)) + " · " + listing.town + ", " + listing.county),
+        el("h3", null, listing.name),
+        el("p", null, "Host: Maeve Connolly"),
+        el("p", null, el("span", { class: waitingBlock ? "badge wait" : "badge" }, waitingBlock ? "Waiting on review" : "On the public list"))
+      );
+      if (waitingBlock) {
+        card.append(el("div", { class: "row-actions" }, el("button", {
+          type: "button",
+          class: "btn",
+          "data-action": "review",
+          "data-id": listing.id
+        }, "Run review")));
+      }
+      mount.append(card);
+    }
+  }
+  block("Waiting on review", waiting, true);
+  block("On the public list", live, false);
+  const hostMount = document.getElementById("admin-hosts");
+  hostMount.replaceChildren();
+  for (const host of hosts) {
+    const mine = hostListings(host.id);
+    const waitCount = mine.filter(l => l.status !== "public").length;
+    const line = host.id === "maeve"
+      ? mine.length + " listings · " + waitCount + " waiting on review"
+      : "No listing yet";
+    hostMount.append(el("article", { class: "admin-card" },
+      el("h3", null, host.name),
+      el("p", { class: "meta" }, host.place),
+      el("p", null, host.blurb),
+      el("p", null, el("span", { class: waitCount ? "badge wait" : "badge" }, line))
+    ));
+  }
+}
+
+function runReview(id) {
+  const listing = findListing(id);
+  if (!listing) return;
+  const blob = (listing.name + " " + listing.description + " " + listing.units.map(u => u.name + " " + u.note).join(" ")).toLowerCase();
+  const live = document.getElementById("admin-live");
+  if (blob.includes("<") || blob.includes("script") || listing.units.length < 2 || listing.description.length < 12) {
+    listing.status = "hidden";
+    live.textContent = "Review failed for " + listing.name + ". The listing stays hidden.";
+  } else {
+    listing.status = "public";
+    live.textContent = "Review passed for " + listing.name + ". It is on the public list.";
+  }
+  refresh();
+}
+
+function refresh() {
+  renderDirectory();
+  renderListing();
+  renderBeen();
+  renderHostList();
+  renderAdmin();
+}
+
+function onClick(event) {
+  const btn = event.target.closest("[data-action]");
+  if (!btn || !document.getElementById("phone").contains(btn)) return;
+  const action = btn.dataset.action;
+  const id = btn.dataset.id;
+  if (action === "group") {
+    state.group = btn.dataset.group;
+    renderDirectory();
+  } else if (action === "county") {
+    state.county = btn.dataset.county;
+    renderDirectory();
+  } else if (action === "clear-filters") {
+    state.group = "all";
+    state.county = "all";
+    state.q = "";
+    document.getElementById("q").value = "";
+    renderDirectory();
+  } else if (action === "dir-mode") {
+    state.dirMode = btn.dataset.mode;
+    applyModes();
+  } else if (action === "been-mode") {
+    state.beenMode = btn.dataset.mode;
+    applyModes();
+  } else if (action === "select") {
+    state.selectedId = state.selectedId === id ? null : id;
+    renderSheet();
+    document.querySelectorAll("#dir-map .pin").forEach(pin => {
+      pin.setAttribute("aria-pressed", pin.dataset.id === state.selectedId ? "true" : "false");
+    });
+  } else if (action === "close-sheet") {
+    state.selectedId = null;
+    renderSheet();
+    document.querySelectorAll("#dir-map .pin").forEach(pin => pin.setAttribute("aria-pressed", "false"));
+  } else if (action === "open-listing") {
+    state.listingId = id;
+    show("listing");
+    renderListing();
+  } else if (action === "nearby") {
+    state.selectedId = id;
+    show("directory");
+    renderDirectory();
+  } else if (action === "been") {
+    toggleBeen(id);
+  } else if (action === "edit") {
+    setForm(findListing(id));
+    document.getElementById("stay-form").scrollIntoView({ block: "nearest" });
+  } else if (action === "add-stay") {
+    setForm(null);
+    document.getElementById("stay-form").scrollIntoView({ block: "nearest" });
+    document.getElementById("stay-name").focus({ preventScroll: true });
+  } else if (action === "review") {
+    runReview(id);
+  }
+}
+
+function fillCounties() {
+  const sel = document.getElementById("stay-county");
+  for (const county of COUNTIES) {
+    sel.append(el("option", { value: county }, county));
+  }
+}
+
+document.querySelector(".screen-switch").addEventListener("click", event => {
+  const btn = event.target.closest("[data-screen]");
+  if (!btn) return;
+  show(btn.dataset.screen);
+});
+document.getElementById("phone").addEventListener("click", onClick);
+document.getElementById("q").addEventListener("input", event => {
+  state.q = event.target.value.trim().toLowerCase();
+  renderDirectory();
+});
+document.getElementById("stay-form").addEventListener("submit", saveListing);
+document.getElementById("stay-form").addEventListener("change", event => {
+  if (event.target.name === "kind") updateUnitsLabel();
+});
+window.addEventListener("hashchange", () => {
+  const id = location.hash.replace("#", "");
+  if (SCREEN_IDS.includes(id) && id !== state.screen) show(id, false);
+});
+
+fillCounties();
+updateUnitsLabel();
+refresh();
+show((() => {
+  const id = location.hash.replace("#", "");
+  return SCREEN_IDS.includes(id) ? id : "directory";
+})(), false);
+</script>
+</body>
+</html>
