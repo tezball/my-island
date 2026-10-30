@@ -289,7 +289,15 @@ private fun Connection.updateStay(hostId: Long, stayId: Long, draft: StayDraft):
         ps.setBoolean(7, !passesStayReview(draft))
         ps.setLong(8, stayId)
         ps.setLong(9, hostId)
-        return ps.executeUpdate() == 1
+        val ok = ps.executeUpdate() == 1
+        if (ok) {
+            prepareStatement("delete from lot where stay_id = ?").use { del ->
+                del.setLong(1, stayId)
+                del.executeUpdate()
+            }
+            insertLots(stayId, draft.lots)
+        }
+        return ok
     }
 }
 
@@ -307,8 +315,24 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
         ps.setBoolean(8, !passesStayReview(draft))
         ps.executeQuery().use { rs ->
             rs.next()
-            return rs.getLong(1)
+            val stayId = rs.getLong(1)
+            insertLots(stayId, draft.lots)
+            return stayId
         }
+    }
+}
+
+private fun Connection.insertLots(stayId: Long, lots: List<LotDraft>) {
+    if (lots.isEmpty()) return
+    prepareStatement("insert into lot (stay_id, name, sleeps, price_eur) values (?, ?, ?, ?)").use { ps ->
+        for (lot in lots) {
+            ps.setLong(1, stayId)
+            ps.setString(2, lot.name)
+            ps.setInt(3, lot.sleeps)
+            if (lot.priceEur == null) ps.setNull(4, java.sql.Types.NUMERIC) else ps.setBigDecimal(4, java.math.BigDecimal.valueOf(lot.priceEur))
+            ps.addBatch()
+        }
+        ps.executeBatch()
     }
 }
 
@@ -386,7 +410,10 @@ private fun Connection.insertAccount(body: Signup): Account? {
     val lng: Double? = null,
     val imageBase64: String? = null,
     val website: String? = null,
+    val lots: List<LotDraft> = emptyList(),
 )
+
+@Serializable data class LotDraft(val name: String, val sleeps: Int = 2, val priceEur: Double? = null)
 
 private fun passesStayReview(draft: StayDraft): Boolean {
     val text = draft.title + " " + draft.description

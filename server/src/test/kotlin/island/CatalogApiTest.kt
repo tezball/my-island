@@ -101,10 +101,12 @@ class CatalogApiTest {
         val published = client.post("/host/stays") {
             header("Authorization", "Bearer host-001@example.com")
             contentType(ContentType.Application.Json)
-            setBody("""{"kind":"campsite","title":"Reviewed Camp","description":"A quiet pitch","county":"Kerry","lat":52.1,"lng":-9.5,"imageBase64":"$png"}""")
+            setBody("""{"kind":"campsite","title":"Reviewed Camp","description":"A quiet pitch","county":"Kerry","lat":52.1,"lng":-9.5,"imageBase64":"$png","lots":[{"name":"Harbour pitch","sleeps":4,"priceEur":28}]}""")
         }
         assertEquals(HttpStatusCode.OK, published.status)
-        assertTrue(published.bodyAsText().contains("\"hidden\":\"false\"") || client.get("/stays").bodyAsText().contains("Reviewed Camp"))
+        assertTrue(published.bodyAsText().contains("\"hidden\":\"false\""))
+        val campId = Regex("\"id\":\"(\\d+)\"").find(published.bodyAsText())!!.groupValues[1]
+        assertTrue(client.get("/page/$campId").bodyAsText().contains("Harbour pitch"))
         val down = client.post("/host/stays") {
             header("Authorization", "Bearer host-001@example.com")
             contentType(ContentType.Application.Json)
