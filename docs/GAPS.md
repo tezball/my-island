@@ -2,7 +2,7 @@
 
 Answer these before the pipeline and the app are built.
 
-1. Does “island of Ireland” include Northern Ireland, or only the Republic?
+1. Geography is locked: the island of Ireland, Republic and Northern Ireland.
 2. Is the public host still https://fishing-journals.com, or a new name and a new machine?
 3. Sign-in for a guest and a host: Google only, or Google plus email and password?
 4. Who may add a place or an experience? Admin only, or a host as well?

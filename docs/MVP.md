@@ -4,7 +4,7 @@ Web only. Phone first. A desktop browser gets the same screens, stacked for a na
 
 ## In
 
-- A public list and map of places, stays, and experiences on the island of Ireland.
+- A public list and map of places, stays, and experiences on the island of Ireland, Republic and Northern Ireland.
 - A page for each listing.
 - A signed-in person can check off a place they have been. That check-off is theirs.
 - A host can sign up, add one or more stays, and edit each stay on its own page.

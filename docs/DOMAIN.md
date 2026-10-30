@@ -15,4 +15,6 @@ The words below are the words in the screen, the API, the database, the tests, a
 
 A host does not claim an existing place. A stay is a new listing. Places and experiences are in the catalog. They are not stays.
 
+Geography is the island of Ireland: the Republic and Northern Ireland.
+
 Visit is only for a place in the MVP. Stays and experiences are not checked off.
