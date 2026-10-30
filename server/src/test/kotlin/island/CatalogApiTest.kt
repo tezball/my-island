@@ -66,6 +66,23 @@ class CatalogApiTest {
         assertEquals(HttpStatusCode.OK, created.status)
         assertFalse(client.get("/stays").bodyAsText().contains("Api Camp"))
     }
+
+    @Test
+    fun listingPageShowsLots() = testApplication {
+        pointAtSharedDatabase()
+        application { module() }
+        val stayId = SharedDatabase.dataSource.connection.use { c ->
+            c.createStatement().executeQuery(
+                "select stay.id from stay join lot on lot.stay_id = stay.id where stay.hidden = false limit 1"
+            ).use { rs ->
+                rs.next()
+                rs.getLong(1)
+            }
+        }
+        val page = client.get("/page/$stayId")
+        assertEquals(HttpStatusCode.OK, page.status)
+        assertTrue(page.bodyAsText().contains("Lot"))
+    }
 }
 
 private fun pointAtSharedDatabase() {

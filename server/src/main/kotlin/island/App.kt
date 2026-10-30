@@ -43,6 +43,12 @@ fun Application.module() {
             val row = ds.connection.use { it.listing(id) }
             if (row == null) call.respond(HttpStatusCode.NotFound) else call.respond(row)
         }
+        get("/page/{id}") {
+            val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val row = ds.connection.use { it.listing(id) }
+            if (row == null) call.respond(HttpStatusCode.NotFound)
+            else call.respondText(listingPage(row), io.ktor.http.ContentType.Text.Html)
+        }
         post("/sessions") {
             val body = call.receive<Login>()
             val account = ds.connection.use { it.login(body.email, body.password) }
@@ -114,8 +120,12 @@ private fun sha256(value: String): String {
 private fun Connection.places(): List<PlaceRow> {
     val rows = mutableListOf<PlaceRow>()
     createStatement().use { st ->
-        st.executeQuery("select id, name, county, country from place order by name").use { rs ->
-            while (rs.next()) rows += PlaceRow(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4))
+        st.executeQuery("select id, name, county, country, lat, lng from place order by name").use { rs ->
+            while (rs.next()) {
+                val lat = rs.getDouble(5).let { if (rs.wasNull()) null else it }
+                val lng = rs.getDouble(6).let { if (rs.wasNull()) null else it }
+                rows += PlaceRow(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), lat, lng)
+            }
         }
     }
     return rows
@@ -212,7 +222,7 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
     }
 }
 
-@Serializable data class PlaceRow(val id: String, val name: String, val county: String?, val country: String?)
+@Serializable data class PlaceRow(val id: String, val name: String, val county: String?, val country: String?, val lat: Double?, val lng: Double?)
 @Serializable data class ExperienceRow(val id: String, val name: String, val county: String?)
 @Serializable data class StayRow(val id: Long, val title: String, val kind: String, val county: String?, val hidden: Boolean)
 @Serializable data class LotRow(val name: String, val sleeps: Int, val priceEur: String?)
@@ -242,18 +252,58 @@ private fun phonePage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Island</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  body { font-family: Georgia, serif; margin: 0; background: #f6f3ee; color: #1c2420; }
+  header { background: #0B6E4F; color: white; padding: 16px; }
+  main { padding: 16px; max-width: 960px; margin: 0 auto; }
+  a { color: #0B6E4F; }
+  .card { background: white; border-radius: 12px; padding: 12px 16px; margin: 8px 0; }
+  #map { height: 320px; border-radius: 12px; }
+</style>
+<header>Island</header>
+<main>
+  <p>Places, stays, and experiences on the island of Ireland.</p>
+  <div id="map"></div>
+  <div id="list"></div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([53.4, -7.9], 6);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
+const list = document.getElementById('list');
+function card(href, title, meta) {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.innerHTML = '<a href="' + href + '">' + title + '</a><div>' + (meta || '') + '</div>';
+  list.appendChild(el);
+}
+fetch('/places').then(r => r.json()).then(rows => rows.forEach(p => {
+  card('/page/' + p.id, p.name, p.county || '');
+  if (p.lat != null && p.lng != null) L.marker([p.lat, p.lng]).addTo(map).bindPopup(p.name);
+}));
+fetch('/stays').then(r => r.json()).then(rows => rows.forEach(s => card('/page/' + s.id, s.title, s.kind)));
+fetch('/experiences').then(r => r.json()).then(rows => rows.forEach(e => card('/page/' + e.id, e.name, e.county || '')));
+</script>
+""".trimIndent()
+
+private fun listingPage(row: Listing): String {
+    val lots = row.lots.joinToString("") { "<li>${it.name} · sleeps ${it.sleeps}${it.priceEur?.let { p -> " · EUR $p" } ?: ""}</li>" }
+    return """
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${row.name}</title>
 <style>
   body { font-family: Georgia, serif; margin: 0; background: #f6f3ee; color: #1c2420; }
   header { background: #0B6E4F; color: white; padding: 16px; }
   main { padding: 16px; max-width: 720px; margin: 0 auto; }
   a { color: #0B6E4F; }
-  .card { background: white; border-radius: 12px; padding: 12px 16px; margin: 8px 0; }
 </style>
-<header>Island</header>
+<header><a href="/" style="color:white">${row.name}</a></header>
 <main>
-  <p>Places, stays, and experiences on the island of Ireland.</p>
-  <div class="card"><a href="/places">Places</a></div>
-  <div class="card"><a href="/stays">Stays</a></div>
-  <div class="card"><a href="/experiences">Experiences</a></div>
+  <p>${row.county ?: ""} · ${row.kind}</p>
+  <p>${row.description ?: ""}</p>
+  <ul>$lots</ul>
 </main>
 """.trimIndent()
+}
