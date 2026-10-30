@@ -114,7 +114,7 @@ fun Application.module() {
             }
             val body = call.receive<StayDraft>()
             val id = ds.connection.use { it.insertStay(account.id, body) }
-            call.respond(mapOf("id" to id.toString(), "hidden" to "true"))
+            call.respond(mapOf("id" to id.toString(), "hidden" to (!passesStayReview(body)).toString()))
         }
         post("/host/stays/{id}") {
             val account = call.account(ds) ?: return@post
@@ -130,7 +130,7 @@ fun Application.module() {
             val body = call.receive<StayDraft>()
             val updated = ds.connection.use { it.updateStay(account.id, id, body) }
             if (!updated) call.respond(HttpStatusCode.NotFound)
-            else call.respond(mapOf("id" to id.toString(), "hidden" to "true"))
+            else call.respond(mapOf("id" to id.toString(), "hidden" to (!passesStayReview(body)).toString()))
         }
         post("/admin/places") {
             val account = call.account(ds) ?: return@post
@@ -269,27 +269,33 @@ private fun Connection.markVisit(accountId: Long, placeId: String) {
 
 private fun Connection.updateStay(hostId: Long, stayId: Long, draft: StayDraft): Boolean {
     prepareStatement(
-        "update stay set title = ?, description = ?, kind = ?, county = ?, hidden = true where id = ? and host_id = ?"
+        "update stay set title = ?, description = ?, kind = ?, county = ?, lat = ?, lng = ?, hidden = ? where id = ? and host_id = ?"
     ).use { ps ->
         ps.setString(1, draft.title)
         ps.setString(2, draft.description)
         ps.setString(3, draft.kind)
         ps.setString(4, draft.county)
-        ps.setLong(5, stayId)
-        ps.setLong(6, hostId)
+        if (draft.lat == null) ps.setNull(5, java.sql.Types.DOUBLE) else ps.setDouble(5, draft.lat)
+        if (draft.lng == null) ps.setNull(6, java.sql.Types.DOUBLE) else ps.setDouble(6, draft.lng)
+        ps.setBoolean(7, !passesStayReview(draft))
+        ps.setLong(8, stayId)
+        ps.setLong(9, hostId)
         return ps.executeUpdate() == 1
     }
 }
 
 private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
     prepareStatement(
-        "insert into stay (host_id, kind, title, description, county, hidden) values (?, ?, ?, ?, ?, true) returning id"
+        "insert into stay (host_id, kind, title, description, county, lat, lng, hidden) values (?, ?, ?, ?, ?, ?, ?, ?) returning id"
     ).use { ps ->
         ps.setLong(1, hostId)
         ps.setString(2, draft.kind)
         ps.setString(3, draft.title)
         ps.setString(4, draft.description)
         ps.setString(5, draft.county)
+        if (draft.lat == null) ps.setNull(6, java.sql.Types.DOUBLE) else ps.setDouble(6, draft.lat)
+        if (draft.lng == null) ps.setNull(7, java.sql.Types.DOUBLE) else ps.setDouble(7, draft.lng)
+        ps.setBoolean(8, !passesStayReview(draft))
         ps.executeQuery().use { rs ->
             rs.next()
             return rs.getLong(1)
@@ -322,7 +328,33 @@ private fun Connection.insertAccount(body: Signup): Account? {
 }
 @Serializable data class Account(val id: Long, val email: String, val role: String)
 @Serializable data class VisitMark(val placeId: String)
-@Serializable data class StayDraft(val kind: String, val title: String, val description: String, val county: String?)
+@Serializable data class StayDraft(
+    val kind: String,
+    val title: String,
+    val description: String,
+    val county: String?,
+    val lat: Double? = null,
+    val lng: Double? = null,
+    val imageBase64: String? = null,
+)
+
+private fun passesStayReview(draft: StayDraft): Boolean {
+    val text = draft.title + " " + draft.description
+    if (text.contains('<') || text.contains("script", ignoreCase = true)) return false
+    val lat = draft.lat ?: return false
+    val lng = draft.lng ?: return false
+    if (lat !in 51.0..55.5 || lng !in -11.0..-5.0) return false
+    val raw = draft.imageBase64?.trim().orEmpty()
+    if (raw.isEmpty()) return false
+    val bytes = try {
+        java.util.Base64.getDecoder().decode(raw)
+    } catch (_: IllegalArgumentException) {
+        return false
+    }
+    val png = bytes.size > 8 && bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte()
+    val jpeg = bytes.size > 3 && bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte()
+    return png || jpeg
+}
 @Serializable data class ExperienceDraft(val name: String, val county: String?, val description: String)
 @Serializable data class PlaceDraft(val name: String, val county: String?, val lat: Double?, val lng: Double?)
 
