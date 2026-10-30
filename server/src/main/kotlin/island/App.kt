@@ -94,6 +94,18 @@ fun Application.module() {
             val id = ds.connection.use { it.insertExperience(account.id, body) }
             call.respond(mapOf("id" to id, "hidden" to "true"))
         }
+        post("/supplier/experiences/{id}") {
+            val account = call.account(ds) ?: return@post
+            if (account.role != "supplier") {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
+            val id = call.parameters["id"] ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val body = call.receive<ExperienceDraft>()
+            val updated = ds.connection.use { it.updateExperience(account.id, id, body) }
+            if (!updated) call.respond(HttpStatusCode.NotFound)
+            else call.respond(mapOf("id" to id, "hidden" to "true"))
+        }
         post("/host/stays") {
             val account = call.account(ds) ?: return@post
             if (account.role != "host") {
@@ -329,6 +341,19 @@ private fun Connection.insertPlace(draft: PlaceDraft): String {
         ps.executeUpdate()
     }
     return id
+}
+
+private fun Connection.updateExperience(supplierId: Long, id: String, draft: ExperienceDraft): Boolean {
+    prepareStatement(
+        "update experience set name = ?, county = ?, description = ?, hidden = true where id = ? and supplier_id = ?"
+    ).use { ps ->
+        ps.setString(1, draft.name)
+        ps.setString(2, draft.county)
+        ps.setString(3, draft.description)
+        ps.setString(4, id)
+        ps.setLong(5, supplierId)
+        return ps.executeUpdate() == 1
+    }
 }
 
 private fun Connection.insertExperience(supplierId: Long, draft: ExperienceDraft): String {

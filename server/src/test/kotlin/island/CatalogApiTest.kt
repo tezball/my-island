@@ -110,6 +110,26 @@ class CatalogApiTest {
         assertEquals(HttpStatusCode.OK, page.status)
         assertTrue(page.bodyAsText().contains("Lot"))
     }
+
+    @Test
+    fun supplierEditHidesTheExperience() = testApplication {
+        pointAtSharedDatabase()
+        application { module() }
+        val created = client.post("/supplier/experiences") {
+            header("Authorization", "Bearer supplier-kayak@example.com")
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"Hidden paddle","county":"Cork","description":"A short paddle"}""")
+        }
+        assertEquals(HttpStatusCode.OK, created.status)
+        val id = Regex("\"id\":\"([^\"]+)\"").find(created.bodyAsText())!!.groupValues[1]
+        val edited = client.post("/supplier/experiences/$id") {
+            header("Authorization", "Bearer supplier-kayak@example.com")
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"Hidden paddle edited","county":"Cork","description":"A short paddle"}""")
+        }
+        assertEquals(HttpStatusCode.OK, edited.status)
+        assertFalse(client.get("/experiences").bodyAsText().contains("Hidden paddle edited"))
+    }
 }
 
 private fun pointAtSharedDatabase() {
