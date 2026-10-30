@@ -77,6 +77,11 @@ class CatalogApiTest {
             setBody("""{"email":"new-host@example.com","password":"guest","role":"host"}""")
         }
         assertEquals(HttpStatusCode.Conflict, again.status)
+        val google = client.post("/sessions/google") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"idToken":"missing"}""")
+        }
+        assertEquals(HttpStatusCode.ServiceUnavailable, google.status)
         val created = client.post("/host/stays") {
             header("Authorization", "Bearer host-001@example.com")
             contentType(ContentType.Application.Json)

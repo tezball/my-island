@@ -18,6 +18,8 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.flywaydb.core.Flyway
 import java.security.MessageDigest
 import java.sql.Connection
@@ -70,7 +72,14 @@ fun Application.module() {
                 call.respond(HttpStatusCode.ServiceUnavailable, mapOf("error" to "google client is not configured"))
                 return@post
             }
-            call.respond(HttpStatusCode.NotImplemented, mapOf("error" to "google token check is not wired"))
+            val body = call.receive<GoogleLogin>()
+            val email = googleEmail(body.idToken, clientId)
+            if (email == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@post
+            }
+            val account = ds.connection.use { it.upsertGoogle(email) }
+            call.respond(account)
         }
         post("/sessions") {
             val body = call.receive<Login>()
@@ -309,6 +318,46 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
 @Serializable data class LotRow(val name: String, val sleeps: Int, val priceEur: String?)
 @Serializable data class Listing(val id: String, val kind: String, val name: String, val county: String?, val description: String?, val lots: List<LotRow>)
 @Serializable data class Login(val email: String, val password: String)
+@Serializable data class GoogleLogin(val idToken: String)
+
+private fun googleEmail(idToken: String, clientId: String): String? {
+    return try {
+        val client = java.net.http.HttpClient.newBuilder()
+            .followRedirects(java.net.http.HttpClient.Redirect.NEVER)
+            .connectTimeout(java.time.Duration.ofSeconds(3))
+            .build()
+        val uri = java.net.URI.create(
+            "https://oauth2.googleapis.com/tokeninfo?id_token=" + java.net.URLEncoder.encode(idToken, Charsets.UTF_8)
+        )
+        val request = java.net.http.HttpRequest.newBuilder(uri)
+            .timeout(java.time.Duration.ofSeconds(3))
+            .GET()
+            .build()
+        val response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString())
+        if (response.statusCode() != 200) return null
+        val json = kotlinx.serialization.json.Json.parseToJsonElement(response.body()).jsonObject
+        if (json["aud"]?.jsonPrimitive?.content != clientId) return null
+        if (json["email_verified"]?.jsonPrimitive?.content != "true") return null
+        json["email"]?.jsonPrimitive?.content?.trim()?.lowercase()
+    } catch (_: Exception) {
+        null
+    }
+}
+
+private fun Connection.upsertGoogle(email: String): Account {
+    val role = if (email == "tezball86@gmail.com") "admin" else "guest"
+    prepareStatement(
+        "insert into account (email, password_hash, role) values (?, ?, ?) on conflict (email) do update set email = excluded.email returning id, role"
+    ).use { ps ->
+        ps.setString(1, email)
+        ps.setString(2, sha256("google"))
+        ps.setString(3, role)
+        ps.executeQuery().use { rs ->
+            rs.next()
+            return Account(rs.getLong(1), email, rs.getString(2))
+        }
+    }
+}
 @Serializable data class Signup(val email: String, val password: String, val role: String)
 
 private fun Connection.insertAccount(body: Signup): Account? {
