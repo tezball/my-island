@@ -2,14 +2,18 @@
 # Jenkins runs this on the island-mvp checkout after origin/main is fast-forwarded.
 # A red test never replaces the app. A red Gatling run fails the job.
 set -eu
-cd /repo
+if [ -e /tmp/mvp-seed/.git ]; then
+  cd /tmp/mvp-seed
+else
+  cd /repo
+fi
 export GRADLE_USER_HOME="${GRADLE_USER_HOME:-/var/jenkins_home/gradle}"
 if [ ! -s ops/observe/grafana-mcp.env ]; then
   umask 077
   token=$(od -An -N24 -tx1 /dev/urandom | tr -d ' \n')
   printf 'MCP_GRAFANA_SERVER_TOKEN=%s\n' "$token" > ops/observe/grafana-mcp.env
 fi
-docker compose -f /repo/compose.yml --project-directory /repo up -d grafana-mcp
+docker compose up -d grafana-mcp
 mcp_ok=0
 j=0
 while [ "$j" -lt 30 ]; do
@@ -33,7 +37,7 @@ case "$INFO" in
     ;;
 esac
 ./gradlew :server:test --no-daemon
-GIT_COMMIT="$SHA" docker compose -f /repo/compose.yml --project-directory /repo up -d --build --force-recreate app
+GIT_COMMIT="$SHA" docker compose up -d --build --force-recreate app
 ok=0
 i=0
 while [ "$i" -lt 90 ]; do
