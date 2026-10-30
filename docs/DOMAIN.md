@@ -7,13 +7,13 @@ The words below are the words in the screen, the API, the database, the tests, a
 | Place | A point of interest. Powerscourt Waterfall, the Cliffs of Moher. |
 | Stay | A place to stay overnight. Campsite, glamping, or bed and breakfast. |
 | Experience | Something to do. Bike hire, kayak, boat trip. |
-| Host | The person who owns one or more stays. |
+| Host | The person who has many listings. |
 | Guest | A signed-in person using the site. |
 | Visit | The guest’s check-off that they have been to a place. One per guest and place. |
 | Review | The automatic check before a stay is public. |
 | Admin | The Google account `tezball86@gmail.com`. |
 
-A host does not claim an existing place. A stay is a new listing. Places and experiences are in the catalog. They are not stays.
+A host does not claim an existing place. A stay is a new listing. A host has many listings. A listing can have many lots or rooms. Show them on that listing’s page. Do not add a separate public page per lot or room. Places and experiences are in the catalog. They are not stays.
 
 Geography is the island of Ireland: the Republic and Northern Ireland.
 

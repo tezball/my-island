@@ -5,9 +5,9 @@ Web only. Phone first. A desktop browser gets the same screens, stacked for a na
 ## In
 
 - A public list and map of places, stays, and experiences on the island of Ireland, Republic and Northern Ireland.
-- A page for each listing.
+- One page per listing, and that page can list many lots or rooms.
 - A signed-in person can check off a place they have been. That check-off is theirs.
-- A host can sign up, add one or more stays, and edit each stay on its own page.
+- A host can sign up, add many listings, and edit each listing on its page.
 - Kinds of stay in the MVP: campsite, glamping, bed and breakfast.
 - An admin screen for `tezball86@gmail.com` to see listings and hosts.
 - A listing stays hidden from the public until an automatic review finishes clean. An edit hides it again until review passes.
@@ -21,7 +21,7 @@ Web only. Phone first. A desktop browser gets the same screens, stacked for a na
 - Card payments, fees, refunds, and a pay button.
 - Host approval of a booking. That is the slice after the MVP.
 - Hotels.
-- A page per pitch or per room. One page per stay.
+- A separate public page per lot or room.
 
 ## Done
 
