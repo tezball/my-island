@@ -33,6 +33,8 @@ fun main() {
 fun Application.module() {
     val ds = dataSource()
     Flyway.configure().dataSource(ds).locations("classpath:db/migration").load().migrate()
+    val commit = System.getenv("GIT_COMMIT") ?: "unknown"
+    println("island started gitCommit=$commit")
     install(ContentNegotiation) { json() }
     routing {
         get("/health") { call.respond(mapOf("ok" to "true")) }
