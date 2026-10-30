@@ -55,6 +55,16 @@ fun Application.module() {
             ds.connection.use { it.markVisit(account.id, body.placeId) }
             call.respond(HttpStatusCode.NoContent)
         }
+        post("/supplier/experiences") {
+            val account = call.account(ds) ?: return@post
+            if (account.role != "supplier") {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
+            val body = call.receive<ExperienceDraft>()
+            val id = ds.connection.use { it.insertExperience(account.id, body) }
+            call.respond(mapOf("id" to id, "hidden" to "true"))
+        }
         post("/host/stays") {
             val account = call.account(ds) ?: return@post
             if (account.role != "host") {
@@ -114,7 +124,7 @@ private fun Connection.places(): List<PlaceRow> {
 private fun Connection.experiences(): List<ExperienceRow> {
     val rows = mutableListOf<ExperienceRow>()
     createStatement().use { st ->
-        st.executeQuery("select id, name, county from experience order by name").use { rs ->
+        st.executeQuery("select id, name, county from experience where hidden = false order by name").use { rs ->
             while (rs.next()) rows += ExperienceRow(rs.getString(1), rs.getString(2), rs.getString(3))
         }
     }
@@ -211,6 +221,22 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
 @Serializable data class Account(val id: Long, val email: String, val role: String)
 @Serializable data class VisitMark(val placeId: String)
 @Serializable data class StayDraft(val kind: String, val title: String, val description: String, val county: String?)
+@Serializable data class ExperienceDraft(val name: String, val county: String?, val description: String)
+
+private fun Connection.insertExperience(supplierId: Long, draft: ExperienceDraft): String {
+    val id = "exp-" + System.nanoTime()
+    prepareStatement(
+        "insert into experience (id, name, county, description, supplier_id, hidden) values (?, ?, ?, ?, ?, true)"
+    ).use { ps ->
+        ps.setString(1, id)
+        ps.setString(2, draft.name)
+        ps.setString(3, draft.county)
+        ps.setString(4, draft.description)
+        ps.setLong(5, supplierId)
+        ps.executeUpdate()
+    }
+    return id
+}
 
 private fun phonePage(): String = """
 <!doctype html>
