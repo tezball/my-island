@@ -546,6 +546,7 @@ private fun phonePage(): String = """
 <header>Island</header>
 <main>
   <p>Places, stays, and experiences on the island of Ireland.</p>
+  <p><a href="/host">Host</a> · <a href="/admin">Admin</a></p>
   <div id="map"></div>
   <div id="list"></div>
 </main>
@@ -577,6 +578,7 @@ private fun hostPage(): String = """
 <header>Add a stay</header>
 <main>
 <input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
+<select id="kind"><option>campsite</option><option>glamping</option><option>bed and breakfast</option></select>
 <input id="title" placeholder="Title"><textarea id="description" placeholder="Description"></textarea>
 <input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
 <input id="lot" placeholder="Lot name">
@@ -588,7 +590,7 @@ document.getElementById('save').onclick = async () => {
   const password = document.getElementById('password').value;
   const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
   if (!login.ok) { document.getElementById('out').textContent = 'Sign-in failed'; return; }
-  const body = {kind:'campsite', title: document.getElementById('title').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), lots: [{name: document.getElementById('lot').value || 'Lot 1', sleeps: 2}]};
+  const body = {kind: document.getElementById('kind').value, title: document.getElementById('title').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), lots: [{name: document.getElementById('lot').value || 'Lot 1', sleeps: 2}]};
   const res = await fetch('/host/stays', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
   document.getElementById('out').textContent = await res.text();
 };
