@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 class SeederTest {
     @Test
     fun usernamesAreUniqueAcrossThreads() {
-        val seeder = Seeder(SharedDatabase.dataSource)
+        val seeder = Seeder()
         val names = Collections.synchronizedSet(mutableSetOf<String>())
         val pool = Executors.newFixedThreadPool(8)
         repeat(200) {

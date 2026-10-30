@@ -20,8 +20,8 @@ dependencies {
     implementation("org.flywaydb:flyway-database-postgresql:11.3.4")
     testImplementation(kotlin("test"))
     testImplementation("io.ktor:ktor-server-test-host:3.1.1")
-    testImplementation("org.testcontainers:postgresql:1.20.6")
-    testImplementation("org.testcontainers:junit-jupiter:1.20.6")
+    testImplementation("org.testcontainers:postgresql:1.21.4")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.4")
 }
 
 tasks.test {

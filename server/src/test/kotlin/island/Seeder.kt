@@ -3,7 +3,7 @@ package island
 import java.util.concurrent.atomic.AtomicLong
 import javax.sql.DataSource
 
-class Seeder(private val dataSource: DataSource) {
+class Seeder(private val dataSource: DataSource? = null) {
     private val next = AtomicLong(0)
 
     fun getUsername(): String {
@@ -13,7 +13,8 @@ class Seeder(private val dataSource: DataSource) {
 
     fun insertGuest(): String {
         val email = "${getUsername()}@example.com"
-        dataSource.connection.use { c ->
+        val db = dataSource ?: error("no database")
+        db.connection.use { c ->
             c.prepareStatement(
                 "insert into account (email, password_hash, role) values (?, ?, 'guest')"
             ).use { ps ->
