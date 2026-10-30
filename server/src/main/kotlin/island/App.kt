@@ -336,6 +336,7 @@ private fun Connection.insertAccount(body: Signup): Account? {
     val lat: Double? = null,
     val lng: Double? = null,
     val imageBase64: String? = null,
+    val website: String? = null,
 )
 
 private fun passesStayReview(draft: StayDraft): Boolean {
@@ -353,7 +354,26 @@ private fun passesStayReview(draft: StayDraft): Boolean {
     }
     val png = bytes.size > 8 && bytes[0] == 0x89.toByte() && bytes[1] == 0x50.toByte()
     val jpeg = bytes.size > 3 && bytes[0] == 0xFF.toByte() && bytes[1] == 0xD8.toByte()
-    return png || jpeg
+    if (!png && !jpeg) return false
+    val site = draft.website?.trim().orEmpty()
+    return site.isEmpty() || siteLoads(site)
+}
+
+private fun siteLoads(url: String): Boolean {
+    return try {
+        val client = java.net.http.HttpClient.newBuilder()
+            .followRedirects(java.net.http.HttpClient.Redirect.NEVER)
+            .connectTimeout(java.time.Duration.ofSeconds(3))
+            .build()
+        val request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(url))
+            .timeout(java.time.Duration.ofSeconds(3))
+            .GET()
+            .build()
+        val code = client.send(request, java.net.http.HttpResponse.BodyHandlers.discarding()).statusCode()
+        code in 200..299
+    } catch (_: Exception) {
+        false
+    }
 }
 @Serializable data class ExperienceDraft(val name: String, val county: String?, val description: String)
 @Serializable data class PlaceDraft(val name: String, val county: String?, val lat: Double?, val lng: Double?)

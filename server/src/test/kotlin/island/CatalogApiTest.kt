@@ -100,6 +100,13 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, published.status)
         assertTrue(published.bodyAsText().contains("\"hidden\":\"false\"") || client.get("/stays").bodyAsText().contains("Reviewed Camp"))
+        val down = client.post("/host/stays") {
+            header("Authorization", "Bearer host-001@example.com")
+            contentType(ContentType.Application.Json)
+            setBody("""{"kind":"campsite","title":"Down Site Camp","description":"A quiet pitch","county":"Kerry","lat":52.1,"lng":-9.5,"imageBase64":"$png","website":"http://127.0.0.1:1"}""")
+        }
+        assertEquals(HttpStatusCode.OK, down.status)
+        assertTrue(down.bodyAsText().contains("\"hidden\":\"true\""))
     }
 
     @Test
