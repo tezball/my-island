@@ -88,9 +88,9 @@ fun Application.module() {
 
 private fun dataSource(): DataSource {
     val config = HikariConfig()
-    config.jdbcUrl = System.getenv("JDBC_URL") ?: "jdbc:postgresql://localhost:5432/island"
-    config.username = System.getenv("JDBC_USER") ?: "island"
-    config.password = System.getenv("JDBC_PASSWORD") ?: "island"
+    config.jdbcUrl = System.getProperty("jdbc.url") ?: System.getenv("JDBC_URL") ?: "jdbc:postgresql://localhost:5432/island"
+    config.username = System.getProperty("jdbc.user") ?: System.getenv("JDBC_USER") ?: "island"
+    config.password = System.getProperty("jdbc.password") ?: System.getenv("JDBC_PASSWORD") ?: "island"
     config.maximumPoolSize = 5
     return HikariDataSource(config)
 }
