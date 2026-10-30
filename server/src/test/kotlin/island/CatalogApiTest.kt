@@ -60,6 +60,13 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, admin.status)
         assertTrue(admin.bodyAsText().contains("\"hidden\":true"))
+        val added = client.post("/admin/places") {
+            header("Authorization", "Bearer tezball86@gmail.com")
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"Admin Point","county":"Clare","lat":52.97,"lng":-9.43}""")
+        }
+        assertEquals(HttpStatusCode.OK, added.status)
+        assertTrue(client.get("/places").bodyAsText().contains("Admin Point"))
         val created = client.post("/host/stays") {
             header("Authorization", "Bearer host-001@example.com")
             contentType(ContentType.Application.Json)

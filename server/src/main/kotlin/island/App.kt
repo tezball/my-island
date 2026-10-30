@@ -87,6 +87,16 @@ fun Application.module() {
             val id = ds.connection.use { it.insertStay(account.id, body) }
             call.respond(mapOf("id" to id.toString(), "hidden" to "true"))
         }
+        post("/admin/places") {
+            val account = call.account(ds) ?: return@post
+            if (account.email != "tezball86@gmail.com") {
+                call.respond(HttpStatusCode.Forbidden)
+                return@post
+            }
+            val body = call.receive<PlaceDraft>()
+            val id = ds.connection.use { it.insertPlace(body) }
+            call.respond(mapOf("id" to id))
+        }
         get("/admin/listings") {
             val account = call.account(ds) ?: return@get
             if (account.email != "tezball86@gmail.com") {
@@ -238,6 +248,24 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
 @Serializable data class VisitMark(val placeId: String)
 @Serializable data class StayDraft(val kind: String, val title: String, val description: String, val county: String?)
 @Serializable data class ExperienceDraft(val name: String, val county: String?, val description: String)
+@Serializable data class PlaceDraft(val name: String, val county: String?, val lat: Double?, val lng: Double?)
+
+private fun Connection.insertPlace(draft: PlaceDraft): String {
+    val id = "place-" + System.nanoTime()
+    prepareStatement(
+        "insert into place (id, name, county, country, lat, lng, geom) values (?, ?, ?, 'Ireland', ?, ?, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography)"
+    ).use { ps ->
+        ps.setString(1, id)
+        ps.setString(2, draft.name)
+        ps.setString(3, draft.county)
+        if (draft.lat == null) ps.setNull(4, java.sql.Types.DOUBLE) else ps.setDouble(4, draft.lat)
+        if (draft.lng == null) ps.setNull(5, java.sql.Types.DOUBLE) else ps.setDouble(5, draft.lng)
+        ps.setDouble(6, draft.lng ?: 0.0)
+        ps.setDouble(7, draft.lat ?: 0.0)
+        ps.executeUpdate()
+    }
+    return id
+}
 
 private fun Connection.insertExperience(supplierId: Long, draft: ExperienceDraft): String {
     val id = "exp-" + System.nanoTime()
