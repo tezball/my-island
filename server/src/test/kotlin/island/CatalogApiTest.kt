@@ -149,6 +149,15 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, edited.status)
         assertFalse(client.get("/experiences").bodyAsText().contains("Hidden paddle edited"))
+        val png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+        val live = client.post("/supplier/experiences") {
+            header("Authorization", "Bearer supplier-kayak@example.com")
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"Reviewed paddle","county":"Cork","description":"A short paddle","lat":51.5,"lng":-9.3,"imageBase64":"$png"}""")
+        }
+        assertEquals(HttpStatusCode.OK, live.status)
+        assertTrue(live.bodyAsText().contains("\"hidden\":\"false\""))
+        assertTrue(client.get("/experiences").bodyAsText().contains("Reviewed paddle"))
     }
 }
 

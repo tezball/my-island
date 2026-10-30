@@ -101,7 +101,7 @@ fun Application.module() {
             }
             val body = call.receive<ExperienceDraft>()
             val id = ds.connection.use { it.insertExperience(account.id, body) }
-            call.respond(mapOf("id" to id, "hidden" to "true"))
+            call.respond(mapOf("id" to id, "hidden" to (!passesExperienceReview(body)).toString()))
         }
         post("/supplier/experiences/{id}") {
             val account = call.account(ds) ?: return@post
@@ -113,7 +113,7 @@ fun Application.module() {
             val body = call.receive<ExperienceDraft>()
             val updated = ds.connection.use { it.updateExperience(account.id, id, body) }
             if (!updated) call.respond(HttpStatusCode.NotFound)
-            else call.respond(mapOf("id" to id, "hidden" to "true"))
+            else call.respond(mapOf("id" to id, "hidden" to (!passesExperienceReview(body)).toString()))
         }
         post("/host/stays") {
             val account = call.account(ds) ?: return@post
@@ -424,7 +424,30 @@ private fun siteLoads(url: String): Boolean {
         false
     }
 }
-@Serializable data class ExperienceDraft(val name: String, val county: String?, val description: String)
+@Serializable data class ExperienceDraft(
+    val name: String,
+    val county: String?,
+    val description: String,
+    val lat: Double? = null,
+    val lng: Double? = null,
+    val imageBase64: String? = null,
+    val website: String? = null,
+)
+
+private fun passesExperienceReview(draft: ExperienceDraft): Boolean {
+    return passesStayReview(
+        StayDraft(
+            kind = "experience",
+            title = draft.name,
+            description = draft.description,
+            county = draft.county,
+            lat = draft.lat,
+            lng = draft.lng,
+            imageBase64 = draft.imageBase64,
+            website = draft.website,
+        )
+    )
+}
 @Serializable data class PlaceDraft(val name: String, val county: String?, val lat: Double?, val lng: Double?)
 
 private fun Connection.insertPlace(draft: PlaceDraft): String {
@@ -446,13 +469,16 @@ private fun Connection.insertPlace(draft: PlaceDraft): String {
 
 private fun Connection.updateExperience(supplierId: Long, id: String, draft: ExperienceDraft): Boolean {
     prepareStatement(
-        "update experience set name = ?, county = ?, description = ?, hidden = true where id = ? and supplier_id = ?"
+        "update experience set name = ?, county = ?, description = ?, lat = ?, lng = ?, hidden = ? where id = ? and supplier_id = ?"
     ).use { ps ->
         ps.setString(1, draft.name)
         ps.setString(2, draft.county)
         ps.setString(3, draft.description)
-        ps.setString(4, id)
-        ps.setLong(5, supplierId)
+        if (draft.lat == null) ps.setNull(4, java.sql.Types.DOUBLE) else ps.setDouble(4, draft.lat)
+        if (draft.lng == null) ps.setNull(5, java.sql.Types.DOUBLE) else ps.setDouble(5, draft.lng)
+        ps.setBoolean(6, !passesExperienceReview(draft))
+        ps.setString(7, id)
+        ps.setLong(8, supplierId)
         return ps.executeUpdate() == 1
     }
 }
@@ -460,13 +486,16 @@ private fun Connection.updateExperience(supplierId: Long, id: String, draft: Exp
 private fun Connection.insertExperience(supplierId: Long, draft: ExperienceDraft): String {
     val id = "exp-" + System.nanoTime()
     prepareStatement(
-        "insert into experience (id, name, county, description, supplier_id, hidden) values (?, ?, ?, ?, ?, true)"
+        "insert into experience (id, name, county, description, lat, lng, supplier_id, hidden) values (?, ?, ?, ?, ?, ?, ?, ?)"
     ).use { ps ->
         ps.setString(1, id)
         ps.setString(2, draft.name)
         ps.setString(3, draft.county)
         ps.setString(4, draft.description)
-        ps.setLong(5, supplierId)
+        if (draft.lat == null) ps.setNull(5, java.sql.Types.DOUBLE) else ps.setDouble(5, draft.lat)
+        if (draft.lng == null) ps.setNull(6, java.sql.Types.DOUBLE) else ps.setDouble(6, draft.lng)
+        ps.setLong(7, supplierId)
+        ps.setBoolean(8, !passesExperienceReview(draft))
         ps.executeUpdate()
     }
     return id
