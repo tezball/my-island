@@ -1,11 +1,11 @@
-# Open questions
+# Locked
 
-Answer these before the pipeline and the app are built.
+Terry, 2026-10-30.
 
-1. Geography is locked: the island of Ireland, Republic and Northern Ireland.
-2. Is the public host still https://fishing-journals.com, or a new name and a new machine?
-3. Sign-in for a guest and a host: Google only, or Google plus email and password?
-4. Who may add a place or an experience? Admin only, or a host as well?
-5. Is a visit check-off private to that guest, and is a public count of visits shown on the place?
-6. Experiences in the MVP: listed and browsable only, or can a host add one the same way they add a stay?
-7. The automatic review for a stay: same bar as before (plain text, real photos, website must load and be a place to stay), or a shorter bar for the first deploy?
+1. Geography is the island of Ireland, Republic and Northern Ireland.
+2. The public host is the existing mock prod, https://fishing-journals.com.
+3. A guest, a host, and a supplier sign in with email and password, and with Google. Admin is tezball86@gmail.com.
+4. An admin adds a place. A host does not.
+5. A visit check-off is private to that person. There is no public count.
+6. An experience belongs to a supplier. A supplier can add an experience, the same way a host adds a stay.
+7. Stay review keeps the previous bar: plain text, a real photo, a pin on the island, and a website if present must load and be a place to stay. A new or edited stay stays hidden until that passes.
