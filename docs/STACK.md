@@ -20,7 +20,7 @@ Gatling, Kotlin DSL, one simulation per use case: browse listings, check off a p
 
 ## Ship
 
-GitHub Actions. A commit on `main` builds, migrates, deploys, then runs Gatling. A red Gatling run fails the deploy check. Feature branches do not deploy.
+Jenkins. A commit on `main` builds, migrates, deploys, then runs Gatling. A red Gatling run fails the deploy check. Feature branches do not deploy. Do not use GitHub Actions.
 
 ## Agents
 
