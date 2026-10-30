@@ -43,6 +43,8 @@ fun Application.module() {
             call.respondText("island_up 1\n", io.ktor.http.ContentType.parse("text/plain; version=0.0.4"))
         }
         get("/") { call.respondText(phonePage(), io.ktor.http.ContentType.Text.Html) }
+        get("/host") { call.respondText(hostPage(), io.ktor.http.ContentType.Text.Html) }
+        get("/admin") { call.respondText(adminPage(), io.ktor.http.ContentType.Text.Html) }
         get("/places") { call.respond(ds.connection.use { it.places() }) }
         get("/stays") { call.respond(ds.connection.use { it.stays(publicOnly = true) }) }
         get("/experiences") { call.respond(ds.connection.use { it.experiences() }) }
@@ -565,6 +567,68 @@ fetch('/places').then(r => r.json()).then(rows => rows.forEach(p => {
 fetch('/stays').then(r => r.json()).then(rows => rows.forEach(s => card('/page/' + s.id, s.title, s.kind)));
 fetch('/experiences').then(r => r.json()).then(rows => rows.forEach(e => card('/page/' + e.id, e.name, e.county || '')));
 </script>
+""".trimIndent()
+
+private fun hostPage(): String = """
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Host</title>
+<style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,textarea,button{display:block;width:100%;margin:8px 0;padding:8px}</style>
+<header>Add a stay</header>
+<main>
+<input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
+<input id="title" placeholder="Title"><textarea id="description" placeholder="Description"></textarea>
+<input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
+<input id="lot" placeholder="Lot name">
+<button id="save" type="button">Save</button>
+<p id="out"></p>
+<script>
+document.getElementById('save').onclick = async () => {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
+  if (!login.ok) { document.getElementById('out').textContent = 'Sign-in failed'; return; }
+  const body = {kind:'campsite', title: document.getElementById('title').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), lots: [{name: document.getElementById('lot').value || 'Lot 1', sleeps: 2}]};
+  const res = await fetch('/host/stays', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
+  document.getElementById('out').textContent = await res.text();
+};
+</script>
+</main>
+""".trimIndent()
+
+private fun adminPage(): String = """
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin</title>
+<style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,button{display:block;width:100%;margin:8px 0;padding:8px}</style>
+<header>Admin</header>
+<main>
+<input id="email" value="tezball86@gmail.com"><input id="password" placeholder="Password" type="password">
+<button id="load" type="button">Show listings</button>
+<input id="name" placeholder="New place name"><input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
+<button id="add" type="button">Add a place</button>
+<pre id="out"></pre>
+<script>
+async function auth() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
+  if (!login.ok) throw new Error('Sign-in failed');
+  return email;
+}
+document.getElementById('load').onclick = async () => {
+  const email = await auth();
+  const res = await fetch('/admin/listings', {headers:{'Authorization':'Bearer '+email}});
+  document.getElementById('out').textContent = await res.text();
+};
+document.getElementById('add').onclick = async () => {
+  const email = await auth();
+  const body = {name: document.getElementById('name').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value)};
+  const res = await fetch('/admin/places', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
+  document.getElementById('out').textContent = await res.text();
+};
+</script>
+</main>
 """.trimIndent()
 
 private fun listingPage(row: Listing): String {
