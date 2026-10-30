@@ -133,7 +133,7 @@ class CatalogApiTest {
         assertTrue(page.bodyAsText().contains("Lot"))
         val placeId = Regex("\"id\":\"([^\"]+)\"").find(client.get("/places").bodyAsText())!!.groupValues[1]
         assertTrue(client.get("/page/$placeId").bodyAsText().contains("I've been"))
-        assertTrue(client.get("/host").bodyAsText().contains("bed and breakfast"))
+        assertTrue(client.get("/host").bodyAsText().contains("type=\"file\""))
         assertTrue(client.get("/").bodyAsText().contains("Host"))
         assertTrue(client.get("/admin").bodyAsText().contains("Add a place"))
         assertTrue(client.get("/supplier").bodyAsText().contains("Add an experience"))

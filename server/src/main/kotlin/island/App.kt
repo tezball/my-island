@@ -583,6 +583,7 @@ private fun hostPage(): String = """
 <input id="title" placeholder="Title"><textarea id="description" placeholder="Description"></textarea>
 <input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
 <input id="lot" placeholder="Lot name">
+<input id="photo" type="file" accept="image/png,image/jpeg">
 <button id="save" type="button">Save</button>
 <p id="out"></p>
 <script>
@@ -591,7 +592,10 @@ document.getElementById('save').onclick = async () => {
   const password = document.getElementById('password').value;
   const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
   if (!login.ok) { document.getElementById('out').textContent = 'Sign-in failed'; return; }
-  const body = {kind: document.getElementById('kind').value, title: document.getElementById('title').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), lots: [{name: document.getElementById('lot').value || 'Lot 1', sleeps: 2}]};
+  const file = document.getElementById('photo').files[0];
+  let imageBase64 = '';
+  if (file) imageBase64 = (await file.arrayBuffer().then(b => btoa(String.fromCharCode(...new Uint8Array(b)))));
+  const body = {kind: document.getElementById('kind').value, title: document.getElementById('title').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), imageBase64, lots: [{name: document.getElementById('lot').value || 'Lot 1', sleeps: 2}]};
   const res = await fetch('/host/stays', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
   document.getElementById('out').textContent = await res.text();
 };
@@ -609,6 +613,7 @@ private fun supplierPage(): String = """
 <input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
 <input id="name" placeholder="Name"><textarea id="description" placeholder="Description"></textarea>
 <input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
+<input id="photo" type="file" accept="image/png,image/jpeg">
 <button id="save" type="button">Save</button>
 <p id="out"></p>
 <script>
@@ -617,7 +622,10 @@ document.getElementById('save').onclick = async () => {
   const password = document.getElementById('password').value;
   const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password})});
   if (!login.ok) { document.getElementById('out').textContent = 'Sign-in failed'; return; }
-  const body = {name: document.getElementById('name').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value)};
+  const file = document.getElementById('photo').files[0];
+  let imageBase64 = '';
+  if (file) imageBase64 = (await file.arrayBuffer().then(b => btoa(String.fromCharCode(...new Uint8Array(b)))));
+  const body = {name: document.getElementById('name').value, description: document.getElementById('description').value, county: document.getElementById('county').value, lat: Number(document.getElementById('lat').value), lng: Number(document.getElementById('lng').value), imageBase64};
   const res = await fetch('/supplier/experiences', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+email}, body: JSON.stringify(body)});
   document.getElementById('out').textContent = await res.text();
 };
