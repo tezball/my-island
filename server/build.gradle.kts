@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     application
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 
 application {
