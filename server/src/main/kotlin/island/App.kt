@@ -643,23 +643,43 @@ private fun Connection.listing(id: String): Listing? {
     val stayId = id.toLongOrNull()
     if (stayId != null) {
         val stay = prepareStatement(
-            "select title, kind, county, description, hidden, (image is not null) from stay where id = ?"
+            "select title, kind, county, description, hidden, (image is not null), lat, lng from stay where id = ?"
         ).use { ps ->
             ps.setLong(1, stayId)
             ps.executeQuery().use { rs ->
                 if (!rs.next() || rs.getBoolean(5)) null
-                else Listing(stayId.toString(), rs.getString(2), rs.getString(1), rs.getString(3), rs.getString(4), emptyList(), rs.getBoolean(6))
+                else Listing(
+                    stayId.toString(),
+                    rs.getString(2),
+                    rs.getString(1),
+                    rs.getString(3),
+                    rs.getString(4),
+                    emptyList(),
+                    rs.getBoolean(6),
+                    lat = rs.getDouble(7).let { if (rs.wasNull()) null else it },
+                    lng = rs.getDouble(8).let { if (rs.wasNull()) null else it },
+                )
             }
         } ?: return null
         return stay.copy(lots = lotsFor(stayId))
     }
     prepareStatement(
-        "select id, name, county, description, hidden, (image is not null) from experience where id = ?"
+        "select id, name, county, description, hidden, (image is not null), lat, lng from experience where id = ?"
     ).use { ps ->
         ps.setString(1, id)
         ps.executeQuery().use { rs ->
             if (!rs.next() || rs.getBoolean(5)) return null
-            return Listing(rs.getString(1), "experience", rs.getString(2), rs.getString(3), rs.getString(4), emptyList(), rs.getBoolean(6))
+            return Listing(
+                rs.getString(1),
+                "experience",
+                rs.getString(2),
+                rs.getString(3),
+                rs.getString(4),
+                emptyList(),
+                rs.getBoolean(6),
+                lat = rs.getDouble(7).let { if (rs.wasNull()) null else it },
+                lng = rs.getDouble(8).let { if (rs.wasNull()) null else it },
+            )
         }
     }
 }
@@ -769,7 +789,8 @@ private fun Connection.updateStay(hostId: Long, stayId: Long, draft: StayDraft):
     prepareStatement(
         """
         update stay
-        set title = ?, description = ?, kind = ?, county = ?, lat = ?, lng = ?, hidden = ?, image = ?, image_type = ?, review_reason = null
+        set title = ?, description = ?, kind = ?, county = ?, lat = ?, lng = ?, hidden = ?, image = ?, image_type = ?,
+            review_reason = null, saved_by_person = ?
         where id = ? and host_id = ?
         """.trimIndent()
     ).use { ps ->
@@ -781,8 +802,9 @@ private fun Connection.updateStay(hostId: Long, stayId: Long, draft: StayDraft):
         ps.bindDouble(6, draft.lng)
         ps.setBoolean(7, !passesStayReview(draft))
         ps.bindPhoto(8, draft.imageBase64)
-        ps.setLong(10, stayId)
-        ps.setLong(11, hostId)
+        ps.setBoolean(10, savedByPerson(draft.title))
+        ps.setLong(11, stayId)
+        ps.setLong(12, hostId)
         val ok = ps.executeUpdate() == 1
         if (ok) {
             prepareStatement("delete from lot where stay_id = ?").use { del ->
@@ -798,8 +820,8 @@ private fun Connection.updateStay(hostId: Long, stayId: Long, draft: StayDraft):
 private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
     prepareStatement(
         """
-        insert into stay (host_id, kind, title, description, county, lat, lng, hidden, image, image_type)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) returning id
+        insert into stay (host_id, kind, title, description, county, lat, lng, hidden, image, image_type, saved_by_person)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) returning id
         """.trimIndent()
     ).use { ps ->
         ps.setLong(1, hostId)
@@ -811,6 +833,7 @@ private fun Connection.insertStay(hostId: Long, draft: StayDraft): Long {
         ps.bindDouble(7, draft.lng)
         ps.setBoolean(8, !passesStayReview(draft))
         ps.bindPhoto(9, draft.imageBase64)
+        ps.setBoolean(11, savedByPerson(draft.title))
         ps.executeQuery().use { rs ->
             rs.next()
             val stayId = rs.getLong(1)
@@ -924,7 +947,8 @@ private fun Connection.updateExperience(supplierId: Long, id: String, draft: Exp
     prepareStatement(
         """
         update experience
-        set name = ?, county = ?, description = ?, lat = ?, lng = ?, hidden = ?, image = ?, image_type = ?, review_reason = null
+        set name = ?, county = ?, description = ?, lat = ?, lng = ?, hidden = ?, image = ?, image_type = ?,
+            review_reason = null, saved_by_person = true
         where id = ? and supplier_id = ?
         """.trimIndent()
     ).use { ps ->
@@ -945,8 +969,8 @@ private fun Connection.insertExperience(supplierId: Long, draft: ExperienceDraft
     val id = "exp-" + System.nanoTime()
     prepareStatement(
         """
-        insert into experience (id, name, county, description, lat, lng, supplier_id, hidden, image, image_type)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        insert into experience (id, name, county, description, lat, lng, supplier_id, hidden, image, image_type, saved_by_person)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)
         """.trimIndent()
     ).use { ps ->
         ps.setString(1, id)
@@ -1041,7 +1065,10 @@ private fun Connection.nextStayCard(): ReviewCard? {
                (s.image is not null), a.email
         from stay s
         join account a on a.id = s.host_id
-        where s.hidden = true and s.review_reason is null
+        where s.hidden = true
+          and s.review_reason is null
+          and s.saved_by_person = true
+          and s.title !~ '^Load camp [0-9]+$'
         order by s.id
         limit 1
         """.trimIndent()
@@ -1073,7 +1100,9 @@ private fun Connection.nextExperienceCard(): ReviewCard? {
                (e.image is not null), a.email
         from experience e
         left join account a on a.id = e.supplier_id
-        where e.hidden = true and e.review_reason is null
+        where e.hidden = true
+          and e.review_reason is null
+          and e.saved_by_person = true
         order by e.id
         limit 1
         """.trimIndent()
@@ -1111,8 +1140,8 @@ private fun Connection.nextSupplierCard(): ReviewCard? {
                 kind = "supplier",
                 id = rs.getLong(1).toString(),
                 title = rs.getString(2),
-                subtitle = "New supplier",
-                description = "A new supplier waiting for review.",
+                subtitle = "New guide",
+                description = "A new guide waiting for review.",
                 photo = false,
             )
         }
@@ -1153,6 +1182,8 @@ data class Listing(
     val lots: List<LotRow>,
     val photo: Boolean = false,
     val imageCount: Int = 0,
+    val lat: Double? = null,
+    val lng: Double? = null,
 )
 
 @Serializable
@@ -1249,6 +1280,10 @@ data class ReviewCard(
     val photo: Boolean = false,
     val lots: List<LotRow> = emptyList(),
 )
+
+private val loadCampTitle = Regex("^Load camp \\d+$")
+
+private fun savedByPerson(title: String): Boolean = !loadCampTitle.matches(title)
 
 private fun passesStayReview(draft: StayDraft): Boolean {
     val text = draft.title + " " + draft.description

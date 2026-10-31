@@ -1,13 +1,20 @@
 #!/bin/sh
-# Jenkins runs this on the island-mvp checkout after origin/main is fast-forwarded.
+# Jenkins runs this after ops/jenkins/checkout.sh has fast-forwarded
+# /tmp/island-mvp-jenkins to origin/main. That path is the same on the host
+# and in the Jenkins container, so compose bind mounts stay host paths.
 # A red test never replaces the app. A red Gatling run fails the job.
+# Do not cd to /tmp/mvp-seed. Agents edit that tree.
 set -eu
-if [ -e /tmp/mvp-seed/.git ]; then
-  cd /tmp/mvp-seed
-else
-  cd /repo
+cd /tmp/island-mvp-jenkins
+if [ ! -d .git ]; then
+  echo "job checkout missing at /tmp/island-mvp-jenkins"
+  exit 1
 fi
 export GRADLE_USER_HOME="${GRADLE_USER_HOME:-/var/jenkins_home/gradle}"
+if [ ! -s ops/observe/grafana-mcp.env ] && [ -s /tmp/mvp-seed/ops/observe/grafana-mcp.env ]; then
+  umask 077
+  cp /tmp/mvp-seed/ops/observe/grafana-mcp.env ops/observe/grafana-mcp.env
+fi
 if [ ! -s ops/observe/grafana-mcp.env ]; then
   umask 077
   token=$(od -An -N24 -tx1 /dev/urandom | tr -d ' \n')

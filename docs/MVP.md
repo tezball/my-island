@@ -7,7 +7,7 @@ Web only. Phone first. A desktop browser gets the same screens, stacked for a na
 - A public list and map of places, stays, and experiences on the island of Ireland, Republic and Northern Ireland.
 - One page per listing, and that page can list many lots or rooms.
 - A signed-in person can check off a place they have been. That check-off is theirs.
-- A host can sign up, add many listings, and edit each listing on its page.
+- A host can sign up, add many listings, and edit each listing on its page. A guide can sign up and edit an experience on its page.
 - Kinds of stay in the MVP: campsite, glamping, bed and breakfast.
 - An admin screen for `tezball86@gmail.com` to see listings and hosts.
 - A listing stays hidden from the public until an automatic review finishes clean. An edit hides it again until review passes.

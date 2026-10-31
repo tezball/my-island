@@ -29,7 +29,7 @@ internal fun phonePage(): String = """
 <header>Island</header>
 <main>
   <p>Places, stays, and experiences on the island of Ireland.</p>
-  <p><a href="/host">Host</a> · <a href="/supplier">Supplier</a> · <a href="/admin">Admin</a></p>
+  <p><a href="/host">Host</a> · <a href="/supplier">Guide</a> · <a href="/admin">Admin</a></p>
   <div id="map-wrap">
     <div id="map"></div>
     <aside id="map-filter">
@@ -212,8 +212,14 @@ internal fun hostPage(): String = """
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Host</title>
 <style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,textarea,button{display:block;width:100%;margin:8px 0;padding:8px;box-sizing:border-box}.lot-row{border-top:1px solid #ddd;padding-top:8px}</style>
-<header>Add a stay</header>
+<header>Host</header>
 <main>
+<h2>Sign up</h2>
+<input id="signup-email" placeholder="Email" autocomplete="username">
+<input id="signup-password" placeholder="Password" type="password" autocomplete="new-password">
+<button id="signup" type="button">Sign up</button>
+<p id="signup-out"></p>
+<h2>Add a stay</h2>
 <input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
 <select id="kind"><option>campsite</option><option>glamping</option><option>bed and breakfast</option></select>
 <input id="title" placeholder="Title"><textarea id="description" placeholder="Description"></textarea>
@@ -224,6 +230,15 @@ internal fun hostPage(): String = """
 <button id="save" type="button">Save</button>
 <p id="out"></p>
 <script>
+document.getElementById('signup').onclick = async function () {
+  const body = {
+    email: document.getElementById('signup-email').value,
+    password: document.getElementById('signup-password').value,
+    role: 'host'
+  };
+  const res = await fetch('/accounts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  document.getElementById('signup-out').textContent = res.ok ? 'Host account saved. Sign in to add a stay.' : await res.text() || ('Sign-up failed (' + res.status + ')');
+};
 const lots = document.getElementById('lots');
 function addLot() {
   const row = document.createElement('div');
@@ -297,10 +312,16 @@ document.getElementById('save').onclick = async function () {
 internal fun supplierPage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Supplier</title>
+<title>Guide</title>
 <style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,textarea,button{display:block;width:100%;margin:8px 0;padding:8px}</style>
-<header>Add an experience</header>
+<header>Guide</header>
 <main>
+<h2>Sign up</h2>
+<input id="signup-email" placeholder="Email" autocomplete="username">
+<input id="signup-password" placeholder="Password" type="password" autocomplete="new-password">
+<button id="signup" type="button">Sign up</button>
+<p id="signup-out"></p>
+<h2>Add an experience</h2>
 <input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
 <input id="name" placeholder="Name"><textarea id="description" placeholder="Description"></textarea>
 <input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
@@ -308,6 +329,15 @@ internal fun supplierPage(): String = """
 <button id="save" type="button">Save</button>
 <p id="out"></p>
 <script>
+document.getElementById('signup').onclick = async function () {
+  const body = {
+    email: document.getElementById('signup-email').value,
+    password: document.getElementById('signup-password').value,
+    role: 'supplier'
+  };
+  const res = await fetch('/accounts', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  document.getElementById('signup-out').textContent = res.ok ? 'Guide account saved. Sign in to add an experience.' : await res.text() || ('Sign-up failed (' + res.status + ')');
+};
 function toBase64(buffer) {
   const bytes = new Uint8Array(buffer);
   let binary = '';
@@ -431,7 +461,7 @@ internal fun adminReviewPage(): String = """
 </style>
 <header><a href="/admin">Review</a></header>
 <main>
-  <p>Hidden stays, hidden experiences, and new suppliers. One at a time.</p>
+  <p>Stays, experiences, and guides a person just saved. One at a time.</p>
   <input id="email" value="tezball86@gmail.com" autocomplete="username">
   <input id="password" placeholder="Password" type="password" autocomplete="current-password">
   <button id="sign-in" type="button">Sign in</button>
@@ -460,6 +490,10 @@ function text(parent, value, className) {
   el.textContent = value || '';
   parent.appendChild(el);
 }
+function kindLabel(kind) {
+  if (kind === 'supplier') return 'guide';
+  return kind || '';
+}
 async function loadCard() {
   const box = document.getElementById('card');
   box.replaceChildren();
@@ -487,7 +521,7 @@ async function loadCard() {
     return;
   }
   document.getElementById('actions').hidden = false;
-  text(box, card.kind, 'kicker');
+  text(box, kindLabel(card.kind), 'kicker');
   if (card.photo) {
     const photo = await fetch('/admin/review/photo/' + card.kind + '/' + card.id, {headers: {'Authorization': 'Bearer ' + token}});
     if (photo.ok) {
@@ -567,6 +601,11 @@ internal fun listingPage(row: Listing): String {
         else -> ""
     }
     val been = if (row.kind == "place") beenScript(jsId(row.id)) else ""
+    val editor = when (row.kind) {
+        "experience" -> experienceEditor(row)
+        "campsite", "glamping", "bed and breakfast" -> stayEditor(row)
+        else -> ""
+    }
     return """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -577,6 +616,8 @@ internal fun listingPage(row: Listing): String {
   main { padding: 16px; max-width: 720px; margin: 0 auto; }
   a { color: #0B6E4F; }
   img { width: 100%; border-radius: 12px; }
+  input, textarea, select, button { display: block; width: 100%; margin: 8px 0; padding: 8px; box-sizing: border-box; }
+  .lot-row { border-top: 1px solid #ddd; padding-top: 8px; }
 </style>
 <header><a href="/" style="color:white">${esc(row.name)}</a></header>
 <main>
@@ -585,9 +626,157 @@ internal fun listingPage(row: Listing): String {
   <p>${esc(row.description)}</p>
   <ul>$lots</ul>
   $been
+  $editor
 </main>
 """.trimIndent()
 }
+
+private fun stayEditor(row: Listing): String {
+    val id = jsId(row.id)
+    if (id.isEmpty()) return ""
+    val lots = if (row.lots.isEmpty()) lotInputs("", "2", "") else row.lots.joinToString("") { lot ->
+        lotInputs(esc(lot.name), lot.sleeps.toString(), esc(lot.priceEur))
+    }
+    val kind = row.kind
+    return """
+<h2>Edit this stay</h2>
+<p>Saving runs review. The stay stays off the public list until that review passes.</p>
+<input id="edit-email" placeholder="Email" autocomplete="username">
+<input id="edit-password" placeholder="Password" type="password" autocomplete="current-password">
+<select id="edit-kind">
+  <option${if (kind == "campsite") " selected" else ""}>campsite</option>
+  <option${if (kind == "glamping") " selected" else ""}>glamping</option>
+  <option${if (kind == "bed and breakfast") " selected" else ""}>bed and breakfast</option>
+</select>
+<input id="edit-title" value="${esc(row.name)}">
+<textarea id="edit-description">${esc(row.description)}</textarea>
+<input id="edit-county" value="${esc(row.county)}">
+<input id="edit-lat" value="${num(row.lat)}" placeholder="Latitude">
+<input id="edit-lng" value="${num(row.lng)}" placeholder="Longitude">
+<div id="edit-lots">$lots</div>
+<button id="edit-add-lot" type="button">Add a lot</button>
+<input id="edit-photo" type="file" accept="image/png,image/jpeg">
+<button id="edit-save" type="button">Save this stay</button>
+<p id="edit-out"></p>
+<script>
+function addEditLot() {
+  const row = document.createElement('div');
+  row.className = 'lot-row';
+  ['Lot name', 'Sleeps', 'EUR'].forEach(function (placeholder, index) {
+    const input = document.createElement('input');
+    input.className = ['lot-name', 'lot-sleeps', 'lot-price'][index];
+    input.placeholder = placeholder;
+    if (index === 1) { input.type = 'number'; input.min = '1'; input.value = '2'; }
+    if (index === 2) { input.type = 'number'; input.min = '0'; input.step = '0.01'; }
+    row.appendChild(input);
+  });
+  document.getElementById('edit-lots').appendChild(row);
+}
+document.getElementById('edit-add-lot').onclick = function () { addEditLot(); };
+function editToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)));
+  }
+  return btoa(binary);
+}
+document.getElementById('edit-save').onclick = async function () {
+  const email = document.getElementById('edit-email').value;
+  const password = document.getElementById('edit-password').value;
+  const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email: email, password: password})});
+  if (!login.ok) { document.getElementById('edit-out').textContent = 'Sign-in failed'; return; }
+  const session = await login.json();
+  try { localStorage.setItem('islandToken', session.token); } catch (e) {}
+  const file = document.getElementById('edit-photo').files[0];
+  let imageBase64 = '';
+  if (file) imageBase64 = editToBase64(await file.arrayBuffer());
+  const lotRows = Array.from(document.querySelectorAll('#edit-lots .lot-row')).map(function (row) {
+    const price = row.querySelector('.lot-price').value;
+    return {
+      name: row.querySelector('.lot-name').value || 'Lot',
+      sleeps: Number(row.querySelector('.lot-sleeps').value) || 2,
+      priceEur: price === '' ? null : Number(price)
+    };
+  });
+  const body = {
+    kind: document.getElementById('edit-kind').value,
+    title: document.getElementById('edit-title').value,
+    description: document.getElementById('edit-description').value,
+    county: document.getElementById('edit-county').value,
+    lat: Number(document.getElementById('edit-lat').value),
+    lng: Number(document.getElementById('edit-lng').value),
+    imageBase64: imageBase64,
+    lots: lotRows
+  };
+  const res = await fetch('/host/stays/$id', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer ' + session.token}, body: JSON.stringify(body)});
+  document.getElementById('edit-out').textContent = await res.text();
+};
+</script>
+""".trimIndent()
+}
+
+private fun experienceEditor(row: Listing): String {
+    val id = jsId(row.id)
+    if (id.isEmpty()) return ""
+    return """
+<h2>Edit this experience</h2>
+<p>A guide owns this experience. Saving runs review. It stays off the public list until that review passes.</p>
+<input id="edit-email" placeholder="Email" autocomplete="username">
+<input id="edit-password" placeholder="Password" type="password" autocomplete="current-password">
+<input id="edit-name" value="${esc(row.name)}">
+<textarea id="edit-description">${esc(row.description)}</textarea>
+<input id="edit-county" value="${esc(row.county)}">
+<input id="edit-lat" value="${num(row.lat)}" placeholder="Latitude">
+<input id="edit-lng" value="${num(row.lng)}" placeholder="Longitude">
+<input id="edit-photo" type="file" accept="image/png,image/jpeg">
+<button id="edit-save" type="button">Save this experience</button>
+<p id="edit-out"></p>
+<script>
+function editToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)));
+  }
+  return btoa(binary);
+}
+document.getElementById('edit-save').onclick = async function () {
+  const email = document.getElementById('edit-email').value;
+  const password = document.getElementById('edit-password').value;
+  const login = await fetch('/sessions', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email: email, password: password})});
+  if (!login.ok) { document.getElementById('edit-out').textContent = 'Sign-in failed'; return; }
+  const session = await login.json();
+  try { localStorage.setItem('islandToken', session.token); } catch (e) {}
+  const file = document.getElementById('edit-photo').files[0];
+  let imageBase64 = '';
+  if (file) imageBase64 = editToBase64(await file.arrayBuffer());
+  const body = {
+    name: document.getElementById('edit-name').value,
+    description: document.getElementById('edit-description').value,
+    county: document.getElementById('edit-county').value,
+    lat: Number(document.getElementById('edit-lat').value),
+    lng: Number(document.getElementById('edit-lng').value),
+    imageBase64: imageBase64
+  };
+  const res = await fetch('/supplier/experiences/$id', {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer ' + session.token}, body: JSON.stringify(body)});
+  document.getElementById('edit-out').textContent = await res.text();
+};
+</script>
+""".trimIndent()
+}
+
+private fun lotInputs(name: String, sleeps: String, price: String): String = """
+<div class="lot-row">
+  <input class="lot-name" value="$name" placeholder="Lot name">
+  <input class="lot-sleeps" type="number" min="1" value="$sleeps" placeholder="Sleeps">
+  <input class="lot-price" type="number" min="0" step="0.01" value="$price" placeholder="EUR">
+</div>
+""".trimIndent()
+
+private fun num(value: Double?): String = if (value == null) "" else value.toString()
 
 private fun beenScript(id: String): String = """
 <button id="been" type="button">I've been</button>

@@ -8,6 +8,7 @@ The words below are the words in the screen, the API, the database, the tests, a
 | Stay | A place to stay overnight. Campsite, glamping, or bed and breakfast. |
 | Experience | Something to do. Bike hire, kayak, boat trip. |
 | Host | The person who has many listings. |
+| Guide | The person who owns an experience. Screens say guide. The account role, the `/supplier` routes, and `supplier_id` stay as they are. |
 | Guest | A signed-in person using the site. |
 | Visit | The guest’s check-off that they have been to a place. One per guest and place. |
 | Review | The automatic check before a stay is public. |

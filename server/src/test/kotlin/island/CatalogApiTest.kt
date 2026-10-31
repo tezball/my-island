@@ -34,6 +34,14 @@ class CatalogApiTest {
         assertFalse(stays.bodyAsText().contains("\"hidden\":true"))
         assertTrue(experiences.bodyAsText().contains("Lough Hyne"))
         assertFalse(experiences.bodyAsText().contains("Connemara coast bike"))
+        val kayakPhoto = client.get("/listings/kayak-cork/photo")
+        assertEquals(HttpStatusCode.OK, kayakPhoto.status)
+        assertTrue(kayakPhoto.headers["Content-Type"]!!.startsWith("image/png"))
+        assertEquals(0x89.toByte(), kayakPhoto.bodyAsBytes()[0])
+        assertEquals(HttpStatusCode.NotFound, client.get("/listings/bike-galway/photo").status)
+        assertEquals(HttpStatusCode.NotFound, client.get("/page/bike-galway").status)
+        assertEquals(HttpStatusCode.NotFound, client.get("/listings/boat-antrim/photo").status)
+        assertEquals(HttpStatusCode.NotFound, client.get("/page/boat-antrim").status)
     }
 
     @Test
@@ -126,9 +134,19 @@ class CatalogApiTest {
         assertTrue(campPage.contains("Harbour pitch"))
         assertTrue(campPage.contains("River pitch"))
         assertTrue(campPage.contains("/listings/$campId/photo"))
+        assertTrue(campPage.contains("/host/stays/$campId"))
+        assertTrue(campPage.contains("Save this stay"))
         val campPhoto = client.get("/listings/$campId/photo")
         assertEquals(HttpStatusCode.OK, campPhoto.status)
         assertEquals(0x89.toByte(), campPhoto.bodyAsBytes()[0])
+        val hiddenEdit = client.post("/host/stays/$campId") {
+            header("Authorization", "Bearer $host")
+            contentType(ContentType.Application.Json)
+            setBody("""{"kind":"campsite","title":"Reviewed Camp","description":"A quiet pitch","county":"Kerry","lat":52.1,"lng":-9.5,"lots":[{"name":"Harbour pitch","sleeps":4,"priceEur":28}]}""")
+        }
+        assertEquals(HttpStatusCode.OK, hiddenEdit.status, hiddenEdit.bodyAsText())
+        assertTrue(hiddenEdit.bodyAsText().contains("\"hidden\":\"true\""))
+        assertEquals(HttpStatusCode.NotFound, client.get("/page/$campId").status)
         val down = client.post("/host/stays") {
             header("Authorization", "Bearer $host")
             contentType(ContentType.Application.Json)
@@ -159,10 +177,29 @@ class CatalogApiTest {
         val hostPage = client.get("/host").bodyAsText()
         assertTrue(hostPage.contains("type=\"file\""))
         assertTrue(hostPage.contains("Add a lot"))
-        assertTrue(client.get("/").bodyAsText().contains("Host"))
+        assertTrue(hostPage.contains("Sign up"))
+        assertTrue(hostPage.contains("/accounts"))
+        assertTrue(hostPage.contains("role: 'host'"))
+        assertFalse(hostPage.contains("role: 'guest'"))
+        val home = client.get("/").bodyAsText()
+        assertTrue(home.contains("Host"))
+        assertTrue(home.contains(">Guide</a>"))
         assertTrue(client.get("/admin").bodyAsText().contains("Add a place"))
         assertTrue(client.get("/admin").bodyAsText().contains("Show hosts"))
-        assertTrue(client.get("/supplier").bodyAsText().contains("Add an experience"))
+        val guidePage = client.get("/supplier").bodyAsText()
+        assertTrue(guidePage.contains("Add an experience"))
+        assertTrue(guidePage.contains("<title>Guide</title>"))
+        assertTrue(guidePage.contains("role: 'supplier'"))
+        assertFalse(guidePage.contains("role: 'guest'"))
+        assertTrue(guidePage.contains("/accounts"))
+        val seededStay = queryInt("select id from stay where title = 'Kerry glamping 001' and hidden = false")
+        val seededStayPage = client.get("/page/$seededStay").bodyAsText()
+        assertTrue(seededStayPage.contains("/host/stays/$seededStay"))
+        assertTrue(seededStayPage.contains("Save this stay"))
+        val kayakPage = client.get("/page/kayak-cork").bodyAsText()
+        assertTrue(kayakPage.contains("/supplier/experiences/kayak-cork"))
+        assertTrue(kayakPage.contains("Save this experience"))
+        assertTrue(kayakPage.contains("A guide owns this experience"))
     }
 
     @Test
@@ -204,6 +241,18 @@ class CatalogApiTest {
         val jpegPhoto = client.get("/listings/$jpegId/photo")
         assertEquals(HttpStatusCode.OK, jpegPhoto.status)
         assertTrue(jpegPhoto.headers["Content-Type"]!!.startsWith("image/jpeg"))
+        val liveId = Regex("\"id\":\"([^\"]+)\"").find(live.bodyAsText())!!.groupValues[1]
+        val livePage = client.get("/page/$liveId").bodyAsText()
+        assertTrue(livePage.contains("/supplier/experiences/$liveId"))
+        assertTrue(livePage.contains("A guide owns this experience"))
+        val hiddenGuideEdit = client.post("/supplier/experiences/$liveId") {
+            header("Authorization", "Bearer $supplier")
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"Reviewed paddle","county":"Cork","description":"A short paddle","lat":51.5,"lng":-9.3}""")
+        }
+        assertEquals(HttpStatusCode.OK, hiddenGuideEdit.status, hiddenGuideEdit.bodyAsText())
+        assertTrue(hiddenGuideEdit.bodyAsText().contains("\"hidden\":\"true\""))
+        assertEquals(HttpStatusCode.NotFound, client.get("/page/$liveId").status)
     }
 
     @Test
@@ -236,7 +285,26 @@ class CatalogApiTest {
         application { module() }
         val stays = client.get("/stays").bodyAsText()
         assertTrue(stays.contains("Kerry glamping 001"))
-        assertFalse(stays.contains("Clare bed and breakfast 002"))
+        assertTrue(stays.contains("Clare bed and breakfast 002"))
+        assertFalse(stays.contains("Antrim glamping 004"))
+        val published = queryInt(
+            """
+            select count(*) from stay
+            where hidden = false
+              and title ~ ' [0-9]{3}${'$'}'
+              and title !~ '^Load camp [0-9]+${'$'}'
+            """.trimIndent()
+        )
+        val withheld = queryInt(
+            """
+            select count(*) from stay
+            where hidden = true
+              and title ~ ' [0-9]{3}${'$'}'
+              and title !~ '^Load camp [0-9]+${'$'}'
+            """.trimIndent()
+        )
+        assertEquals(75, published)
+        assertEquals(25, withheld)
         val bad = SharedDatabase.dataSource.connection.use { connection ->
             connection.createStatement().executeQuery(
                 """
@@ -393,7 +461,30 @@ class CatalogApiTest {
         val admin = client.signIn("tezball86@gmail.com")
         val next = client.get("/admin/review/next") { header("Authorization", "Bearer $admin") }
         assertEquals(HttpStatusCode.OK, next.status)
-        assertTrue(next.bodyAsText().contains("\"kind\":\"stay\""))
+        assertFalse(next.bodyAsText().contains("Kerry glamping"))
+        assertFalse(next.bodyAsText().contains("Load camp"))
+        assertFalse(next.bodyAsText().contains("Connemara coast bike"))
+        assertFalse(next.bodyAsText().contains("Rathlin boat crossing"))
+        assertEquals(
+            0,
+            queryInt(
+                """
+                select count(*) from stay
+                where title in ('Kerry glamping 001', 'Clare bed and breakfast 002', 'Antrim glamping 004')
+                  and hidden = true and review_reason is null and saved_by_person = true
+                """.trimIndent()
+            )
+        )
+        assertEquals(
+            0,
+            queryInt(
+                """
+                select count(*) from experience
+                where id in ('kayak-cork', 'bike-galway', 'boat-antrim')
+                  and hidden = true and review_reason is null and saved_by_person = true
+                """.trimIndent()
+            )
+        )
         val png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
         val title = "Queue Camp ${System.nanoTime()}"
         val created = client.post("/host/stays") {
@@ -444,6 +535,29 @@ class CatalogApiTest {
         assertEquals(HttpStatusCode.OK, rejected.status)
         assertFalse(client.get("/stays").bodyAsText().contains(rejectTitle))
         assertTrue(client.get("/host/stays") { header("Authorization", "Bearer $host") }.bodyAsText().contains("Not a place to stay"))
+        val loadTitle = "Load camp ${System.nanoTime()}"
+        val load = client.post("/host/stays") {
+            header("Authorization", "Bearer $host")
+            contentType(ContentType.Application.Json)
+            setBody("""{"kind":"campsite","title":"$loadTitle","description":"A pitch","county":"Kerry"}""")
+        }
+        assertEquals(HttpStatusCode.OK, load.status, load.bodyAsText())
+        val loadId = Regex("\"id\":\"(\\d+)\"").find(load.bodyAsText())!!.groupValues[1]
+        assertEquals(0, queryInt("select count(*) from stay where id = $loadId and saved_by_person = true"))
+        assertEquals(1, queryInt("select count(*) from stay where id = $loadId and hidden = true and saved_by_person = false"))
+        val personId = Regex("\"id\":\"(\\d+)\"").find(created.bodyAsText())!!.groupValues[1]
+        assertEquals(
+            1,
+            queryInt(
+                """
+                select count(*) from stay
+                where id = $personId and saved_by_person = true
+                """.trimIndent()
+            )
+        )
+        val deck = client.get("/admin/review/next") { header("Authorization", "Bearer $admin") }
+        assertFalse(deck.bodyAsText().contains(loadTitle))
+        assertFalse(deck.bodyAsText().contains("Antrim glamping 004"))
     }
 
     @Test
@@ -553,6 +667,7 @@ class CatalogApiTest {
         assertTrue(html.contains("multiple"))
         assertTrue(html.contains("Add images"))
     }
+
 }
 
 private suspend fun HttpClient.signIn(email: String, password: String = "guest"): String {
@@ -584,6 +699,15 @@ private fun accountField(email: String, column: String): String {
                 rs.next()
                 rs.getString(1)
             }
+        }
+    }
+}
+
+private fun queryInt(sql: String): Int {
+    return SharedDatabase.dataSource.connection.use { connection ->
+        connection.createStatement().executeQuery(sql).use { rs ->
+            rs.next()
+            rs.getInt(1)
         }
     }
 }
