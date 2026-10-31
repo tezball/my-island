@@ -30,11 +30,12 @@ class CatalogLoad : Simulation() {
                 .body(StringBody("""{"email":"guest@example.com","password":"guest"}"""))
                 .asJson()
                 .check(status().`is`(200))
+                .check(jsonPath("$.token").saveAs("guestToken"))
         )
         .exec(http("place id").get("/places").check(jsonPath("$[0].id").saveAs("placeId")))
         .exec(
             http("check off").post("/visits")
-                .header("Authorization", "Bearer guest@example.com")
+                .header("Authorization", "Bearer #{guestToken}")
                 .body(StringBody("""{"placeId":"#{placeId}"}"""))
                 .asJson()
                 .check(status().`is`(204))
@@ -50,17 +51,18 @@ class CatalogLoad : Simulation() {
                 .body(StringBody("""{"email":"#{hostEmail}","password":"guest"}"""))
                 .asJson()
                 .check(status().`is`(200))
+                .check(jsonPath("$.token").saveAs("hostToken"))
         )
         .exec(
             http("host stays").get("/host/stays")
-                .header("Authorization", "Bearer #{hostEmail}")
+                .header("Authorization", "Bearer #{hostToken}")
                 .check(status().`is`(200))
                 .check(jsonPath("$[?(@.title == '#{stayTitle}')].id").optional().saveAs("existingStayId"))
         )
         .doIf { session -> session.contains("existingStayId") }.then(
             exec(
                 http("host edit").post("/host/stays/#{existingStayId}")
-                    .header("Authorization", "Bearer #{hostEmail}")
+                    .header("Authorization", "Bearer #{hostToken}")
                     .body(StringBody("""{"kind":"campsite","title":"#{stayTitle}","description":"A pitch","county":"Kerry"}"""))
                     .asJson()
                     .check(status().`is`(200))
@@ -70,7 +72,7 @@ class CatalogLoad : Simulation() {
         .doIf { session -> !session.contains("existingStayId") }.then(
             exec(
                 http("host edit").post("/host/stays")
-                    .header("Authorization", "Bearer #{hostEmail}")
+                    .header("Authorization", "Bearer #{hostToken}")
                     .body(StringBody("""{"kind":"campsite","title":"#{stayTitle}","description":"A pitch","county":"Kerry"}"""))
                     .asJson()
                     .check(status().`is`(200))
@@ -87,10 +89,11 @@ class CatalogLoad : Simulation() {
                 .body(StringBody("""{"email":"tezball86@gmail.com","password":"guest"}"""))
                 .asJson()
                 .check(status().`is`(200))
+                .check(jsonPath("$.token").saveAs("adminToken"))
         )
         .exec(
             http("admin list").get("/admin/listings")
-                .header("Authorization", "Bearer tezball86@gmail.com")
+                .header("Authorization", "Bearer #{adminToken}")
                 .check(status().`is`(200))
                 .check(jsonPath("$[0].id").exists())
         )
