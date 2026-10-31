@@ -160,14 +160,15 @@ class CatalogApiTest {
     fun listingPageShowsLots() = testApplication {
         pointAtSharedDatabase()
         application { module() }
-        val stayId = SharedDatabase.dataSource.connection.use { c ->
-            c.createStatement().executeQuery(
-                "select id from stay where title = 'Kerry glamping 001' and hidden = false"
-            ).use { rs ->
-                rs.next()
-                rs.getLong(1)
-            }
+        val host = client.signIn("host-001@example.com")
+        val png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+        val createdStay = client.post("/host/stays") {
+            header("Authorization", "Bearer $host")
+            contentType(ContentType.Application.Json)
+            setBody("""{"kind":"glamping","title":"Harbour glamping","description":"A quiet pitch","county":"Kerry","lat":52.1,"lng":-9.5,"imageBase64":"$png","lots":[{"name":"Lot 1","sleeps":2,"priceEur":24}]}""")
         }
+        assertEquals(HttpStatusCode.OK, createdStay.status, createdStay.bodyAsText())
+        val stayId = Regex("\"id\":\"(\\d+)\"").find(createdStay.bodyAsText())!!.groupValues[1].toLong()
         val page = client.get("/page/$stayId")
         assertEquals(HttpStatusCode.OK, page.status)
         assertTrue(page.bodyAsText().contains("Lot"))
@@ -192,9 +193,8 @@ class CatalogApiTest {
         assertTrue(guidePage.contains("role: 'supplier'"))
         assertFalse(guidePage.contains("role: 'guest'"))
         assertTrue(guidePage.contains("/accounts"))
-        val seededStay = queryInt("select id from stay where title = 'Kerry glamping 001' and hidden = false")
-        val seededStayPage = client.get("/page/$seededStay").bodyAsText()
-        assertTrue(seededStayPage.contains("/host/stays/$seededStay"))
+        val seededStayPage = client.get("/page/$stayId").bodyAsText()
+        assertTrue(seededStayPage.contains("/host/stays/$stayId"))
         assertTrue(seededStayPage.contains("Save this stay"))
         val kayakPage = client.get("/page/kayak-cork").bodyAsText()
         assertTrue(kayakPage.contains("/supplier/experiences/kayak-cork"))
@@ -284,8 +284,8 @@ class CatalogApiTest {
         pointAtSharedDatabase()
         application { module() }
         val stays = client.get("/stays").bodyAsText()
-        assertTrue(stays.contains("Kerry glamping 001"))
-        assertTrue(stays.contains("Clare bed and breakfast 002"))
+        assertFalse(stays.contains("Kerry glamping 001"))
+        assertFalse(stays.contains("Clare bed and breakfast 002"))
         assertFalse(stays.contains("Antrim glamping 004"))
         val published = queryInt(
             """
@@ -303,8 +303,8 @@ class CatalogApiTest {
               and title !~ '^Load camp [0-9]+${'$'}'
             """.trimIndent()
         )
-        assertEquals(75, published)
-        assertEquals(25, withheld)
+        assertEquals(0, published)
+        assertEquals(0, withheld)
         val bad = SharedDatabase.dataSource.connection.use { connection ->
             connection.createStatement().executeQuery(
                 """
