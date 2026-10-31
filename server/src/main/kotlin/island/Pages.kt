@@ -4,58 +4,89 @@ internal fun phonePage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Island</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-  body { font-family: Georgia, serif; margin: 0; background: #f6f3ee; color: #1c2420; }
-  header { background: #0B6E4F; color: white; padding: 16px; }
-  main { padding: 16px; max-width: 960px; margin: 0 auto; }
-  a { color: #0B6E4F; }
-  .card { background: white; border-radius: 12px; padding: 12px 16px; margin: 8px 0; }
-  #map-wrap { position: relative; }
-  #map { height: 420px; border-radius: 12px; }
-  #map-filter {
-    position: absolute; top: 8px; right: 8px; z-index: 1000; width: 176px;
-    max-height: 300px; overflow: auto; background: #fff; border-radius: 10px;
-    padding: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.25); font-size: 12px;
-  }
-  #map-filter label { display: block; margin: 4px 0; }
-  #map-filter input[type="checkbox"] { width: auto; }
-  #map-filter .note { margin: 0 0 6px; color: #3d4a44; }
-  #map-filter input, #map-filter button { display: block; width: 100%; margin: 4px 0; }
-  .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; }
+  html, body { height: 100%; }
+  body { margin: 0; background: #F4F0E8; color: #1C2420; font-family: "Source Sans 3", sans-serif; }
+  a { color: #0B3D32; }
+  button, input { font: inherit; }
+  #app { height: 100%; display: flex; flex-direction: column; }
+  header { display: flex; gap: 8px; align-items: center; padding: 12px 12px 0; }
+  .brand { font-family: Newsreader, Georgia, serif; font-size: 28px; color: #0B3D32; margin: 0; }
+  #q { flex: 1; min-width: 0; border: 0; background: #fff; border-radius: 999px; padding: 12px 16px; }
+  #account { border: 0; background: #0B3D32; color: #F4F0E8; border-radius: 999px; padding: 12px 14px; }
+  .chips { display: flex; gap: 8px; padding: 10px 12px; overflow: auto; }
+  .chip { border: 0; background: #fff; color: #1C2420; border-radius: 999px; padding: 10px 14px; }
+  .chip.on { background: #0B3D32; color: #F4F0E8; }
+  #stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  #map-wrap { position: relative; flex: 1; min-height: 220px; }
+  #map { position: absolute; inset: 0; }
+  #sheet { background: #F4F0E8; border-radius: 18px 18px 0 0; max-height: 46vh; overflow: auto; padding: 8px 12px 16px; box-shadow: 0 -8px 24px rgba(28,36,32,.08); }
+  .sheet-handle { width: 36px; height: 4px; border-radius: 999px; background: #cfc6b8; margin: 4px auto 8px; }
+  .card { background: #fff; border-radius: 16px; padding: 14px 16px; margin: 8px 0; }
+  .card a { font-family: Newsreader, Georgia, serif; font-size: 22px; text-decoration: none; }
+  .card div { color: #5c675f; margin-top: 4px; }
+  .legend { position: absolute; top: 12px; right: 12px; z-index: 500; background: #fff; border-radius: 12px; padding: 8px 10px; margin: 0; list-style: none; font-size: 13px; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 999px; margin-right: 6px; }
   .leaflet-div-icon.pin { background: transparent; border: none; }
-  .legend { list-style: none; padding: 0; margin: 4px 0 8px; }
+  #map-filter { display: none; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 1000; background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 8px 30px rgba(0,0,0,.2); max-height: 70vh; overflow: auto; }
+  #map-filter.open { display: block; }
+  #map-filter label { display: block; margin: 8px 0; }
+  #map-filter .note { margin: 0 0 8px; color: #5c675f; }
+  #map-filter input, #map-filter button { display: block; width: 100%; margin: 6px 0; padding: 12px; border-radius: 12px; border: 1px solid #e4ddd2; box-sizing: border-box; }
+  #map-filter input[type="checkbox"] { width: auto; display: inline; }
+  #map-sign-in { background: #0B3D32; color: #F4F0E8; border: 0; }
+  @media (min-width: 900px) {
+    #stage { flex-direction: row; }
+    #sheet { order: -1; width: 420px; max-height: none; border-radius: 0; box-shadow: none; border-right: 1px solid #e4ddd2; }
+    header, .chips { padding-left: 16px; padding-right: 16px; }
+  }
 </style>
-<header>Island</header>
-<main>
-  <p>Places, stays, and experiences on the island of Ireland.</p>
-  <p><a href="/host">Host</a> · <a href="/supplier">Guide</a> · <a href="/admin">Admin</a></p>
+<div id="app">
+<header>
+  <p class="brand">Island</p>
+  <input id="q" placeholder="Search the island" aria-label="Search the island">
+  <button id="account" type="button">Account</button>
+</header>
+<div class="chips" role="tablist">
+  <button class="chip on" type="button" data-kind="all">All</button>
+  <button class="chip" type="button" data-kind="place">Places</button>
+  <button class="chip" type="button" data-kind="stay">Stays</button>
+  <button class="chip" type="button" data-kind="experience">Experiences</button>
+</div>
+<div id="stage">
   <div id="map-wrap">
     <div id="map"></div>
-    <aside id="map-filter">
-      <p>Show</p>
-      <label><input id="f-theirs" type="checkbox" checked> Your places</label>
-      <p id="note-yours" class="note">Your places: none. You are not signed in.</p>
-      <label><input id="f-others" type="checkbox" checked> Other places</label>
-      <label><input id="f-stayed" type="checkbox" checked> Places you have stayed</label>
-      <p id="note-stayed" class="note">Places you have stayed: none. You are not signed in.</p>
-      <label><input id="f-could" type="checkbox" checked> Places you could stay</label>
-      <p>Pins</p>
-      <ul class="legend">
-        <li><span class="swatch" style="background:#1B4F72"></span> Place</li>
-        <li><span class="swatch" style="background:#2E7D32"></span> Campsite</li>
-        <li><span class="swatch" style="background:#C56A12"></span> Glamping</li>
-        <li><span class="swatch" style="background:#9A3412"></span> Bed and breakfast</li>
-        <li><span class="swatch" style="background:#0F6E8C"></span> Supplier experience</li>
-      </ul>
-      <p id="sign-state">You are not signed in.</p>
-      <input id="map-email" placeholder="Email" autocomplete="username">
-      <input id="map-password" placeholder="Password" type="password" autocomplete="current-password">
-      <button id="map-sign-in" type="button">Sign in</button>
-    </aside>
+    <ul class="legend">
+      <li><span class="swatch" style="background:#1B4F72"></span> Place</li>
+      <li><span class="swatch" style="background:#2E7D32"></span> Campsite</li>
+      <li><span class="swatch" style="background:#C56A12"></span> Glamping</li>
+      <li><span class="swatch" style="background:#9A3412"></span> Bed and breakfast</li>
+      <li><span class="swatch" style="background:#0F6E8C"></span> Experience</li>
+    </ul>
   </div>
-  <div id="list"></div>
-</main>
+  <section id="sheet">
+    <div class="sheet-handle"></div>
+    <div id="list"></div>
+  </section>
+</div>
+<aside id="map-filter">
+  <p id="sign-state">You are not signed in.</p>
+  <input id="map-email" placeholder="Email" autocomplete="username">
+  <input id="map-password" placeholder="Password" type="password" autocomplete="current-password">
+  <button id="map-sign-in" type="button">Sign in</button>
+  <p><a href="/host">Host</a> · <a href="/supplier">Guide</a> · <a href="/admin">Admin</a></p>
+  <label><input id="f-theirs" type="checkbox" checked> Your places</label>
+  <p id="note-yours" class="note">Your places: none. You are not signed in.</p>
+  <label><input id="f-others" type="checkbox" checked> Other places</label>
+  <label><input id="f-stayed" type="checkbox" checked> Places you have stayed</label>
+  <p id="note-stayed" class="note">Places you have stayed: none. You are not signed in.</p>
+  <label><input id="f-could" type="checkbox" checked> Places you could stay</label>
+</aside>
+</div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const map = L.map('map').setView([53.4, -7.9], 6);
@@ -99,9 +130,21 @@ const ICONS = {
   experience: svgIcon(compassSvg, 26)
 };
 function iconFor(kind) { return ICONS[kind] || ICONS.place; }
-function card(href, title, meta) {
+let kindFilter = 'all';
+function kindOk(kind) {
+  if (kindFilter === 'all') return true;
+  if (kindFilter === 'place') return kind === 'place';
+  if (kindFilter === 'experience') return kind === 'experience';
+  return kind === 'campsite' || kind === 'glamping' || kind === 'bed and breakfast';
+}
+function queryText() {
+  const box = document.getElementById('q');
+  return box ? box.value.toLowerCase() : '';
+}
+function card(href, title, meta, kind) {
   const el = document.createElement('div');
   el.className = 'card';
+  el.dataset.kind = kind;
   const link = document.createElement('a');
   link.href = href;
   link.textContent = title;
@@ -111,8 +154,18 @@ function card(href, title, meta) {
   el.appendChild(note);
   list.appendChild(el);
 }
+function applyList() {
+  const q = queryText();
+  Array.prototype.forEach.call(list.children, function (el) {
+    const text = el.textContent.toLowerCase();
+    const show = kindOk(el.dataset.kind) && (!q || text.indexOf(q) >= 0);
+    el.style.display = show ? '' : 'none';
+  });
+  draw();
+}
 function draw() {
   layer.clearLayers();
+  const q = queryText();
   const show = {
     theirs: document.getElementById('f-theirs').checked,
     others: document.getElementById('f-others').checked,
@@ -120,6 +173,8 @@ function draw() {
     could: document.getElementById('f-could').checked
   };
   markers.forEach(function (m) {
+    if (!kindOk(m.kind)) return;
+    if (q && m.title.toLowerCase().indexOf(q) < 0) return;
     const on = (m.layers.indexOf('theirs') >= 0 && show.theirs)
       || (m.layers.indexOf('others') >= 0 && show.others)
       || (m.layers.indexOf('stayed') >= 0 && show.stayed)
@@ -185,14 +240,28 @@ async function load() {
   const stays = await (await fetch('/stays')).json();
   const experiences = await (await fetch('/experiences')).json();
   list.replaceChildren();
-  places.forEach(function (p) { card('/page/' + p.id, p.name, p.county || ''); });
-  stays.forEach(function (s) { card('/page/' + s.id, s.title, s.kind); });
-  experiences.forEach(function (e) { card('/page/' + e.id, e.name, e.county || ''); });
+  places.forEach(function (p) { card('/page/' + p.id, p.name, p.county || 'Place', 'place'); });
+  stays.forEach(function (s) { card('/page/' + s.id, s.title, s.kind, s.kind); });
+  experiences.forEach(function (e) { card('/page/' + e.id, e.name, e.county || 'Experience', 'experience'); });
+  applyList();
   rebuild(places, stays, experiences, mine.map(function (p) { return p.id; }), visits.map(function (v) { return v.placeId; }), signedIn);
 }
 ['f-theirs', 'f-others', 'f-stayed', 'f-could'].forEach(function (id) {
   document.getElementById(id).addEventListener('change', draw);
 });
+document.getElementById('q').addEventListener('input', applyList);
+document.querySelectorAll('.chip').forEach(function (chip) {
+  chip.addEventListener('click', function () {
+    kindFilter = chip.dataset.kind;
+    document.querySelectorAll('.chip').forEach(function (other) { other.classList.toggle('on', other === chip); });
+    applyList();
+  });
+});
+document.getElementById('account').addEventListener('click', function () {
+  document.getElementById('map-filter').classList.toggle('open');
+});
+window.addEventListener('resize', function () { map.invalidateSize(); });
+setTimeout(function () { map.invalidateSize(); }, 0);
 document.getElementById('map-sign-in').onclick = async function () {
   const email = document.getElementById('map-email').value;
   const password = document.getElementById('map-password').value;
