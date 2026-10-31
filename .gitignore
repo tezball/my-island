@@ -3,3 +3,5 @@ build/
 .kotlin/
 *.log
 ops/observe/grafana-mcp.env
+*.dump
+*.dump.partial
