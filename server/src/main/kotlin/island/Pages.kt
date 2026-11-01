@@ -6,91 +6,68 @@ internal fun phonePage(): String = """
 <title>Island</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,500;0,7..72,600;1,7..72,500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  html, body { height: 100%; }
-  body { margin: 0; background: #F6F3EE; color: #1C2421; font-family: "Public Sans", sans-serif; }
-  a { color: #2C4A45; }
-  button, input { font: inherit; color: inherit; }
-  #app { height: 100%; display: flex; flex-direction: column; }
-  header { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 0; }
-  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .brand { font-family: Literata, Georgia, serif; font-style: italic; font-weight: 500; font-size: 32px; color: #1C2421; margin: 0; letter-spacing: -0.02em; }
-  #q { width: 100%; box-sizing: border-box; border: 1px solid #E4DDD2; background: #EFECE5; border-radius: 12px; padding: 12px 14px; color: #1C2421; }
-  #q::placeholder { color: #596561; }
-  #account { border: 0; background: transparent; color: #596561; border-radius: 12px; padding: 8px 2px; font-weight: 500; }
-  .chips { display: flex; gap: 8px; padding: 10px 16px 12px; overflow: auto; }
-  .chip { border: 1px solid #E4DDD2; background: #fff; color: #1C2421; border-radius: 12px; padding: 8px 14px; font-weight: 500; }
-  .chip.on { background: #2C4A45; color: #F6F3EE; border-color: #2C4A45; }
-  #stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
-  #map-wrap { position: relative; flex: 1; min-height: 220px; }
-  #map { position: absolute; inset: 0; background: #E7E1D6; }
-  .leaflet-container { font-family: "Public Sans", sans-serif; }
-  .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 30px rgba(28,36,33,.08); }
-  .leaflet-popup-content a { font-family: Literata, Georgia, serif; color: #1C2421; text-decoration: none; }
-  #sheet { background: #F6F3EE; border-radius: 18px 18px 0 0; max-height: 46vh; overflow: auto; padding: 8px 12px 20px; box-shadow: 0 -8px 30px rgba(28,36,33,.06); }
-  .sheet-handle { width: 36px; height: 4px; border-radius: 999px; background: #D8D1C5; margin: 4px auto 10px; }
-  .card { background: #fff; border: 1px solid rgba(228,221,210,.95); border-radius: 12px; padding: 12px 14px; margin: 8px 0; box-shadow: 0 4px 20px -2px rgba(28,36,33,.05); }
-  .card div { color: #596561; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-  .card div::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; background: #1B4F72; vertical-align: baseline; }
-  .card[data-kind="campsite"] div::before { background: #2E7D32; }
-  .card[data-kind="glamping"] div::before { background: #C56A12; }
-  .card[data-kind="bed and breakfast"] div::before { background: #9A3412; }
-  .card[data-kind="experience"] div::before { background: #0F6E8C; }
-  .card a { display: block; margin-top: 2px; font-family: Literata, Georgia, serif; font-weight: 500; font-size: 22px; color: #1C2421; text-decoration: none; }
-  .legend { position: absolute; top: 12px; right: 12px; z-index: 500; background: rgba(255,255,255,.96); border: 1px solid rgba(228,221,210,.9); border-radius: 12px; padding: 10px 12px; margin: 0; box-shadow: 0 4px 20px -2px rgba(28,36,33,.08); }
-  .legend-label { margin: 0 0 6px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #596561; font-weight: 600; }
-  .legend ul { list-style: none; margin: 0; padding: 0; font-size: 12px; }
-  .legend li { margin: 4px 0; }
-  .swatch { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; }
-  .leaflet-div-icon.pin { background: transparent; border: none; }
-  #map-filter { display: none; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 1000; background: #fff; border: 1px solid #E4DDD2; border-radius: 12px; padding: 16px; box-shadow: 0 8px 30px rgba(28,36,33,.12); max-height: 70vh; overflow: auto; }
+  body { margin: 0; background: #FBF9F5; color: #1F3D32; font-family: "Source Sans 3", sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
+  .brand { font-family: "Playfair Display", Georgia, serif; font-size: 28px; margin: 0; }
+  .brand::after { content: ""; display: block; width: 36px; height: 2px; margin-top: 4px; background: #C8933E; }
+  #account { font-weight: 600; }
+  .hero { position: relative; height: 280px; background: #12251E; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-copy { position: absolute; left: 16px; right: 16px; bottom: 20px; color: #FBF9F5; }
+  .hero-kicker { letter-spacing: .16em; text-transform: uppercase; font-size: 11px; }
+  .hero h1 { font-family: "Playfair Display", Georgia, serif; font-size: 32px; margin: 4px 0 0; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px; }
+  .tile { background: #fff; border: 1px solid #E7E1D6; border-top: 3px solid #C8933E; border-radius: 16px; padding: 16px 8px; text-align: center; }
+  .tile strong { display: block; }
+  .tile span { color: #5c675f; font-size: 12px; }
+  section { margin: 8px 0 22px; }
+  .row-head { display: flex; justify-content: space-between; align-items: baseline; padding: 0 16px 8px; }
+  h2 { font-family: "Playfair Display", Georgia, serif; font-size: 22px; margin: 0; }
+  .scroller { display: flex; gap: 12px; overflow-x: auto; padding: 0 16px 8px; scroll-snap-type: x mandatory; }
+  .hcard { flex: 0 0 240px; scroll-snap-align: start; background: #fff; border: 1px solid #E7E1D6; border-radius: 16px; overflow: hidden; }
+  .shot { height: 132px; background: #1F3D32; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hcard p { margin: 0; padding: 12px 12px 4px; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #5c675f; }
+  .hcard h3 { margin: 0; padding: 0 12px 14px; font-family: "Playfair Display", Georgia, serif; font-size: 18px; }
+  .empty { color: #5c675f; padding: 0 16px; }
+  #map-filter { display: none; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 8px 30px rgba(31,61,50,.18); }
   #map-filter.open { display: block; }
-  #map-filter label { display: block; margin: 8px 0; }
-  #map-filter .note { margin: 0 0 8px; color: #596561; }
-  #map-filter input, #map-filter button { display: block; width: 100%; margin: 8px 0; padding: 12px 14px; border-radius: 12px; border: 1px solid #E4DDD2; box-sizing: border-box; background: #fff; }
+  #map-filter input, #map-filter button { display: block; width: 100%; margin: 8px 0; padding: 12px; border-radius: 12px; border: 1px solid #E7E1D6; box-sizing: border-box; }
   #map-filter input[type="checkbox"] { width: auto; display: inline; }
-  #map-sign-in { background: #2C4A45; color: #F6F3EE; border: 0; font-weight: 600; }
-  @media (min-width: 900px) {
-    #stage { flex-direction: row; }
-    #sheet { order: -1; width: 420px; max-height: none; border-radius: 0; box-shadow: none; border-right: 1px solid #E4DDD2; }
-    header, .chips { padding-left: 16px; padding-right: 16px; }
-  }
+  #map-sign-in { background: #1F3D32; color: #FBF9F5; border: 0; font-weight: 600; }
 </style>
-<div id="app">
 <header>
-  <div class="bar">
-    <p class="brand">Island</p>
-    <button id="account" type="button">Account</button>
-  </div>
-  <input id="q" placeholder="Search the island" aria-label="Search the island">
+  <p class="brand">Island</p>
+  <button id="account" type="button">Account</button>
 </header>
-<div class="chips" role="tablist">
-  <button class="chip on" type="button" data-kind="all">All</button>
-  <button class="chip" type="button" data-kind="place">Places</button>
-  <button class="chip" type="button" data-kind="stay">Stays</button>
-  <button class="chip" type="button" data-kind="experience">Experiences</button>
-</div>
-<div id="stage">
-  <div id="map-wrap">
-    <div id="map"></div>
-    <div class="legend">
-    <p class="legend-label">Legend</p>
-    <ul>
-      <li><span class="swatch" style="background:#1B4F72"></span> Place</li>
-      <li><span class="swatch" style="background:#2E7D32"></span> Campsite</li>
-      <li><span class="swatch" style="background:#C56A12"></span> Glamping</li>
-      <li><span class="swatch" style="background:#9A3412"></span> Bed and breakfast</li>
-      <li><span class="swatch" style="background:#0F6E8C"></span> Experience</li>
-    </ul>
-    </div>
+<a class="hero" href="/page/glendalough">
+  <img alt="Glendalough" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Glendalough_upper_lake.jpg/1280px-Glendalough_upper_lake.jpg">
+  <div class="hero-copy">
+    <div class="hero-kicker">County Wicklow</div>
+    <h1>Glendalough</h1>
   </div>
-  <section id="sheet">
-    <div class="sheet-handle"></div>
-    <div id="list"></div>
-  </section>
+</a>
+<div class="tiles">
+  <button class="tile" type="button" data-row="places-row"><strong>Place</strong><span>Landmarks</span></button>
+  <button class="tile" type="button" data-row="stays-row"><strong>Stay</strong><span>Camps and inns</span></button>
+  <button class="tile" type="button" data-row="experiences-row"><strong>Experience</strong><span>Walks and water</span></button>
 </div>
+<section id="places-row">
+  <div class="row-head"><h2>Places</h2></div>
+  <div id="places" class="scroller"></div>
+</section>
+<section id="stays-row">
+  <div class="row-head"><h2>Stays</h2></div>
+  <div id="stays" class="scroller"></div>
+</section>
+<section id="experiences-row">
+  <div class="row-head"><h2>Experiences</h2></div>
+  <div id="experiences" class="scroller"></div>
+</section>
 <aside id="map-filter">
   <p id="sign-state">You are not signed in.</p>
   <input id="map-email" placeholder="Email" autocomplete="username">
@@ -104,130 +81,66 @@ internal fun phonePage(): String = """
   <p id="note-stayed" class="note">Places you have stayed: none. You are not signed in.</p>
   <label><input id="f-could" type="checkbox" checked> Places you could stay</label>
 </aside>
-</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const map = L.map('map').setView([53.4, -7.9], 6);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
-const island = { minLat: 51, maxLat: 55.5, minLng: -11, maxLng: -5 };
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function (pos) {
-    const lat = pos.coords.latitude;
-    const lng = pos.coords.longitude;
-    if (lat >= island.minLat && lat <= island.maxLat && lng >= island.minLng && lng <= island.maxLng) {
-      map.setView([lat, lng], 12);
-    }
-  }, function () {}, { timeout: 8000, maximumAge: 60000 });
-}
-const panel = document.getElementById('map-filter');
-L.DomEvent.disableClickPropagation(panel);
-L.DomEvent.disableScrollPropagation(panel);
-const list = document.getElementById('list');
-const layer = L.layerGroup().addTo(map);
-const markers = [];
 function tokenGet() { try { return localStorage.getItem('islandToken') || ''; } catch (e) { return ''; } }
 function tokenSet(value) { try { if (value) localStorage.setItem('islandToken', value); else localStorage.removeItem('islandToken'); } catch (e) {} }
-function esc(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
-  });
-}
-function svgIcon(svg, anchorY) {
-  return L.divIcon({ className: 'pin', html: svg, iconSize: [28, 32], iconAnchor: [14, anchorY], popupAnchor: [0, -anchorY] });
-}
-const pinSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="32" viewBox="0 0 28 32"><path fill="#1B4F72" d="M14 1C7 1 2 6.2 2 13c0 8.2 12 18 12 18s12-9.8 12-18C26 6.2 21 1 14 1z"/><circle fill="#fff" cx="14" cy="12" r="4"/></svg>';
-const tentSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path fill="#2E7D32" d="M14 3 L26 24 H2 Z"/><path fill="#fff" d="M14 12 L18 24 H10 Z"/></svg>';
-const domeSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path fill="#C56A12" d="M4 20 A10 10 0 0 1 24 20 Z"/><path stroke="#fff" stroke-width="1.5" d="M14 10 V20 M8 16 H20"/></svg>';
-const houseSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path fill="#9A3412" d="M4 13 L14 4 L24 13 V25 H4 Z"/><rect fill="#fff" x="11" y="16" width="6" height="9"/></svg>';
-const compassSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><circle fill="#0F6E8C" cx="14" cy="14" r="12"/><path fill="#fff" d="M14 5 L16.5 14 L14 12.5 L11.5 14 Z"/></svg>';
-const ICONS = {
-  place: svgIcon(pinSvg, 32),
-  campsite: svgIcon(tentSvg, 26),
-  glamping: svgIcon(domeSvg, 26),
-  'bed and breakfast': svgIcon(houseSvg, 26),
-  experience: svgIcon(compassSvg, 26)
-};
-function iconFor(kind) { return ICONS[kind] || ICONS.place; }
-let kindFilter = 'all';
-function kindOk(kind) {
-  if (kindFilter === 'all') return true;
-  if (kindFilter === 'place') return kind === 'place';
-  if (kindFilter === 'experience') return kind === 'experience';
-  return kind === 'campsite' || kind === 'glamping' || kind === 'bed and breakfast';
-}
-function queryText() {
-  const box = document.getElementById('q');
-  return box ? box.value.toLowerCase() : '';
-}
-function line(kindLabel, county) {
-  return county ? kindLabel + ' · ' + county : kindLabel;
-}
-function card(href, title, meta, kind) {
-  const el = document.createElement('div');
-  el.className = 'card';
-  el.dataset.kind = kind;
-  const note = document.createElement('div');
-  note.textContent = meta || '';
+function card(parent, href, title, meta, image) {
   const link = document.createElement('a');
+  link.className = 'hcard';
   link.href = href;
-  link.textContent = title;
-  el.appendChild(note);
-  el.appendChild(link);
-  list.appendChild(el);
+  const shot = document.createElement('div');
+  shot.className = 'shot';
+  if (image) {
+    const img = document.createElement('img');
+    img.alt = '';
+    img.src = image;
+    img.onerror = function () { img.remove(); };
+    shot.appendChild(img);
+  }
+  const note = document.createElement('p');
+  note.textContent = meta || '';
+  const name = document.createElement('h3');
+  name.textContent = title;
+  link.appendChild(shot);
+  link.appendChild(note);
+  link.appendChild(name);
+  parent.appendChild(link);
+  return link;
 }
-function applyList() {
-  const q = queryText();
-  Array.prototype.forEach.call(list.children, function (el) {
-    const text = el.textContent.toLowerCase();
-    const show = kindOk(el.dataset.kind) && (!q || text.indexOf(q) >= 0);
-    el.style.display = show ? '' : 'none';
-  });
-  draw();
-}
-function draw() {
-  layer.clearLayers();
-  const q = queryText();
-  const show = {
-    theirs: document.getElementById('f-theirs').checked,
-    others: document.getElementById('f-others').checked,
-    stayed: document.getElementById('f-stayed').checked,
-    could: document.getElementById('f-could').checked
-  };
-  markers.forEach(function (m) {
-    if (!kindOk(m.kind)) return;
-    if (q && m.title.toLowerCase().indexOf(q) < 0) return;
-    const on = (m.layers.indexOf('theirs') >= 0 && show.theirs)
-      || (m.layers.indexOf('others') >= 0 && show.others)
-      || (m.layers.indexOf('stayed') >= 0 && show.stayed)
-      || (m.layers.indexOf('could') >= 0 && show.could)
-      || m.layers.indexOf('experience') >= 0;
-    if (!on) return;
-    const marker = L.marker([m.lat, m.lng], {icon: iconFor(m.kind)});
-    marker.bindPopup('<a href="' + m.href + '">' + esc(m.title) + '</a>');
-    marker.addTo(layer);
-  });
-}
-function rebuild(places, stays, experiences, mineIds, visitIds, signedIn) {
-  markers.length = 0;
+function paint(places, stays, experiences, mineIds, visitIds, signedIn) {
   const mine = {};
   mineIds.forEach(function (id) { mine[id] = true; });
   const seen = {};
   visitIds.forEach(function (id) { seen[id] = true; });
+  const placesEl = document.getElementById('places');
+  const staysEl = document.getElementById('stays');
+  const experiencesEl = document.getElementById('experiences');
+  placesEl.replaceChildren();
+  staysEl.replaceChildren();
+  experiencesEl.replaceChildren();
   places.forEach(function (p) {
-    if (p.lat == null || p.lng == null) return;
-    const layers = [];
-    if (mine[p.id]) layers.push('theirs'); else layers.push('others');
-    if (seen[p.id]) layers.push('stayed');
-    markers.push({lat: p.lat, lng: p.lng, kind: 'place', title: p.name, href: '/page/' + p.id, layers: layers});
+    const el = card(placesEl, '/page/' + p.id, p.name, p.county || 'Place', '/listings/' + p.id + '/images/0');
+    el.dataset.mine = mine[p.id] ? '1' : '0';
+    el.dataset.stayed = seen[p.id] ? '1' : '0';
   });
   stays.forEach(function (s) {
-    if (s.lat == null || s.lng == null) return;
-    markers.push({lat: s.lat, lng: s.lng, kind: s.kind, title: s.title, href: '/page/' + s.id, layers: ['could']});
+    card(staysEl, '/page/' + s.id, s.title, s.county || s.kind, '/listings/' + s.id + '/photo');
   });
+  if (!stays.length) {
+    const note = document.createElement('p');
+    note.className = 'empty';
+    note.textContent = 'No stays yet.';
+    staysEl.appendChild(note);
+  }
   experiences.forEach(function (e) {
-    if (e.lat == null || e.lng == null) return;
-    markers.push({lat: e.lat, lng: e.lng, kind: 'experience', title: e.name, href: '/page/' + e.id, layers: ['experience']});
+    card(experiencesEl, '/page/' + e.id, e.name, e.county || 'Experience', '/listings/' + e.id + '/photo');
   });
+  if (!experiences.length) {
+    const note = document.createElement('p');
+    note.className = 'empty';
+    note.textContent = 'No experiences yet.';
+    experiencesEl.appendChild(note);
+  }
   const yours = document.getElementById('note-yours');
   const stayedNote = document.getElementById('note-stayed');
   if (!signedIn) {
@@ -237,7 +150,24 @@ function rebuild(places, stays, experiences, mineIds, visitIds, signedIn) {
     yours.textContent = mineIds.length ? ('Your places: ' + mineIds.length + '.') : 'Your places: none.';
     stayedNote.textContent = visitIds.length ? ('Places you have stayed: ' + visitIds.length + '.') : 'Places you have stayed: none.';
   }
-  draw();
+  applyPlaces();
+}
+function applyPlaces() {
+  const theirs = document.getElementById('f-theirs').checked;
+  const others = document.getElementById('f-others').checked;
+  const stayed = document.getElementById('f-stayed').checked;
+  const could = document.getElementById('f-could').checked;
+  Array.prototype.forEach.call(document.getElementById('places').children, function (el) {
+    if (!el.dataset) return;
+    const mine = el.dataset.mine === '1';
+    const seen = el.dataset.stayed === '1';
+    const show = (mine && theirs) || (!mine && others) || (seen && stayed);
+    el.style.display = show ? '' : 'none';
+  });
+  Array.prototype.forEach.call(document.getElementById('stays').children, function (el) {
+    if (el.classList && el.classList.contains('empty')) return;
+    el.style.display = could ? '' : 'none';
+  });
 }
 async function load() {
   const token = tokenGet();
@@ -260,29 +190,19 @@ async function load() {
   const places = await (await fetch('/places')).json();
   const stays = await (await fetch('/stays')).json();
   const experiences = await (await fetch('/experiences')).json();
-  list.replaceChildren();
-  places.forEach(function (p) { card('/page/' + p.id, p.name, line('Place', p.county), 'place'); });
-  stays.forEach(function (s) { card('/page/' + s.id, s.title, line(s.kind, s.county), s.kind); });
-  experiences.forEach(function (e) { card('/page/' + e.id, e.name, line('Experience', e.county), 'experience'); });
-  applyList();
-  rebuild(places, stays, experiences, mine.map(function (p) { return p.id; }), visits.map(function (v) { return v.placeId; }), signedIn);
+  paint(places, stays, experiences, mine.map(function (p) { return p.id; }), visits.map(function (v) { return v.placeId; }), signedIn);
 }
 ['f-theirs', 'f-others', 'f-stayed', 'f-could'].forEach(function (id) {
-  document.getElementById(id).addEventListener('change', draw);
+  document.getElementById(id).addEventListener('change', applyPlaces);
 });
-document.getElementById('q').addEventListener('input', applyList);
-document.querySelectorAll('.chip').forEach(function (chip) {
-  chip.addEventListener('click', function () {
-    kindFilter = chip.dataset.kind;
-    document.querySelectorAll('.chip').forEach(function (other) { other.classList.toggle('on', other === chip); });
-    applyList();
+document.querySelectorAll('.tile').forEach(function (tile) {
+  tile.addEventListener('click', function () {
+    document.getElementById(tile.dataset.row).scrollIntoView({behavior: 'smooth', block: 'start'});
   });
 });
 document.getElementById('account').addEventListener('click', function () {
   document.getElementById('map-filter').classList.toggle('open');
 });
-window.addEventListener('resize', function () { map.invalidateSize(); });
-setTimeout(function () { map.invalidateSize(); }, 0);
 document.getElementById('map-sign-in').onclick = async function () {
   const email = document.getElementById('map-email').value;
   const password = document.getElementById('map-password').value;
@@ -291,6 +211,7 @@ document.getElementById('map-sign-in').onclick = async function () {
   const session = await login.json();
   tokenSet(session.token);
   document.getElementById('sign-state').textContent = session.email;
+  document.getElementById('map-filter').classList.remove('open');
   load();
 };
 load();
