@@ -6,50 +6,65 @@ internal fun phonePage(): String = """
 <title>Island</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,500;0,7..72,600;1,7..72,500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
   html, body { height: 100%; }
-  body { margin: 0; background: #F4F0E8; color: #1C2420; font-family: "Source Sans 3", sans-serif; }
-  a { color: #0B3D32; }
-  button, input { font: inherit; }
+  body { margin: 0; background: #F6F3EE; color: #1C2421; font-family: "Public Sans", sans-serif; }
+  a { color: #2C4A45; }
+  button, input { font: inherit; color: inherit; }
   #app { height: 100%; display: flex; flex-direction: column; }
-  header { display: flex; gap: 8px; align-items: center; padding: 12px 12px 0; }
-  .brand { font-family: Newsreader, Georgia, serif; font-size: 28px; color: #0B3D32; margin: 0; }
-  #q { flex: 1; min-width: 0; border: 0; background: #fff; border-radius: 999px; padding: 12px 16px; }
-  #account { border: 0; background: #0B3D32; color: #F4F0E8; border-radius: 999px; padding: 12px 14px; }
-  .chips { display: flex; gap: 8px; padding: 10px 12px; overflow: auto; }
-  .chip { border: 0; background: #fff; color: #1C2420; border-radius: 999px; padding: 10px 14px; }
-  .chip.on { background: #0B3D32; color: #F4F0E8; }
+  header { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px 0; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { font-family: Literata, Georgia, serif; font-style: italic; font-weight: 500; font-size: 32px; color: #1C2421; margin: 0; letter-spacing: -0.02em; }
+  #q { width: 100%; box-sizing: border-box; border: 1px solid #E4DDD2; background: #EFECE5; border-radius: 12px; padding: 12px 14px; color: #1C2421; }
+  #q::placeholder { color: #596561; }
+  #account { border: 0; background: transparent; color: #596561; border-radius: 12px; padding: 8px 2px; font-weight: 500; }
+  .chips { display: flex; gap: 8px; padding: 10px 16px 12px; overflow: auto; }
+  .chip { border: 1px solid #E4DDD2; background: #fff; color: #1C2421; border-radius: 12px; padding: 8px 14px; font-weight: 500; }
+  .chip.on { background: #2C4A45; color: #F6F3EE; border-color: #2C4A45; }
   #stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   #map-wrap { position: relative; flex: 1; min-height: 220px; }
-  #map { position: absolute; inset: 0; }
-  #sheet { background: #F4F0E8; border-radius: 18px 18px 0 0; max-height: 46vh; overflow: auto; padding: 8px 12px 16px; box-shadow: 0 -8px 24px rgba(28,36,32,.08); }
-  .sheet-handle { width: 36px; height: 4px; border-radius: 999px; background: #cfc6b8; margin: 4px auto 8px; }
-  .card { background: #fff; border-radius: 16px; padding: 14px 16px; margin: 8px 0; }
-  .card a { font-family: Newsreader, Georgia, serif; font-size: 22px; text-decoration: none; }
-  .card div { color: #5c675f; margin-top: 4px; }
-  .legend { position: absolute; top: 12px; right: 12px; z-index: 500; background: #fff; border-radius: 12px; padding: 8px 10px; margin: 0; list-style: none; font-size: 13px; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
-  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 999px; margin-right: 6px; }
+  #map { position: absolute; inset: 0; background: #E7E1D6; }
+  .leaflet-container { font-family: "Public Sans", sans-serif; }
+  .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 30px rgba(28,36,33,.08); }
+  .leaflet-popup-content a { font-family: Literata, Georgia, serif; color: #1C2421; text-decoration: none; }
+  #sheet { background: #F6F3EE; border-radius: 18px 18px 0 0; max-height: 46vh; overflow: auto; padding: 8px 12px 20px; box-shadow: 0 -8px 30px rgba(28,36,33,.06); }
+  .sheet-handle { width: 36px; height: 4px; border-radius: 999px; background: #D8D1C5; margin: 4px auto 10px; }
+  .card { background: #fff; border: 1px solid rgba(228,221,210,.95); border-radius: 12px; padding: 12px 14px; margin: 8px 0; box-shadow: 0 4px 20px -2px rgba(28,36,33,.05); }
+  .card div { color: #596561; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .card div::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; background: #1B4F72; vertical-align: baseline; }
+  .card[data-kind="campsite"] div::before { background: #2E7D32; }
+  .card[data-kind="glamping"] div::before { background: #C56A12; }
+  .card[data-kind="bed and breakfast"] div::before { background: #9A3412; }
+  .card[data-kind="experience"] div::before { background: #0F6E8C; }
+  .card a { display: block; margin-top: 2px; font-family: Literata, Georgia, serif; font-weight: 500; font-size: 22px; color: #1C2421; text-decoration: none; }
+  .legend { position: absolute; top: 12px; right: 12px; z-index: 500; background: rgba(255,255,255,.96); border: 1px solid rgba(228,221,210,.9); border-radius: 12px; padding: 10px 12px; margin: 0; box-shadow: 0 4px 20px -2px rgba(28,36,33,.08); }
+  .legend-label { margin: 0 0 6px; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #596561; font-weight: 600; }
+  .legend ul { list-style: none; margin: 0; padding: 0; font-size: 12px; }
+  .legend li { margin: 4px 0; }
+  .swatch { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; }
   .leaflet-div-icon.pin { background: transparent; border: none; }
-  #map-filter { display: none; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 1000; background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 8px 30px rgba(0,0,0,.2); max-height: 70vh; overflow: auto; }
+  #map-filter { display: none; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 1000; background: #fff; border: 1px solid #E4DDD2; border-radius: 12px; padding: 16px; box-shadow: 0 8px 30px rgba(28,36,33,.12); max-height: 70vh; overflow: auto; }
   #map-filter.open { display: block; }
   #map-filter label { display: block; margin: 8px 0; }
-  #map-filter .note { margin: 0 0 8px; color: #5c675f; }
-  #map-filter input, #map-filter button { display: block; width: 100%; margin: 6px 0; padding: 12px; border-radius: 12px; border: 1px solid #e4ddd2; box-sizing: border-box; }
+  #map-filter .note { margin: 0 0 8px; color: #596561; }
+  #map-filter input, #map-filter button { display: block; width: 100%; margin: 8px 0; padding: 12px 14px; border-radius: 12px; border: 1px solid #E4DDD2; box-sizing: border-box; background: #fff; }
   #map-filter input[type="checkbox"] { width: auto; display: inline; }
-  #map-sign-in { background: #0B3D32; color: #F4F0E8; border: 0; }
+  #map-sign-in { background: #2C4A45; color: #F6F3EE; border: 0; font-weight: 600; }
   @media (min-width: 900px) {
     #stage { flex-direction: row; }
-    #sheet { order: -1; width: 420px; max-height: none; border-radius: 0; box-shadow: none; border-right: 1px solid #e4ddd2; }
+    #sheet { order: -1; width: 420px; max-height: none; border-radius: 0; box-shadow: none; border-right: 1px solid #E4DDD2; }
     header, .chips { padding-left: 16px; padding-right: 16px; }
   }
 </style>
 <div id="app">
 <header>
-  <p class="brand">Island</p>
+  <div class="bar">
+    <p class="brand">Island</p>
+    <button id="account" type="button">Account</button>
+  </div>
   <input id="q" placeholder="Search the island" aria-label="Search the island">
-  <button id="account" type="button">Account</button>
 </header>
 <div class="chips" role="tablist">
   <button class="chip on" type="button" data-kind="all">All</button>
@@ -60,13 +75,16 @@ internal fun phonePage(): String = """
 <div id="stage">
   <div id="map-wrap">
     <div id="map"></div>
-    <ul class="legend">
+    <div class="legend">
+    <p class="legend-label">Legend</p>
+    <ul>
       <li><span class="swatch" style="background:#1B4F72"></span> Place</li>
       <li><span class="swatch" style="background:#2E7D32"></span> Campsite</li>
       <li><span class="swatch" style="background:#C56A12"></span> Glamping</li>
       <li><span class="swatch" style="background:#9A3412"></span> Bed and breakfast</li>
       <li><span class="swatch" style="background:#0F6E8C"></span> Experience</li>
     </ul>
+    </div>
   </div>
   <section id="sheet">
     <div class="sheet-handle"></div>
@@ -141,17 +159,20 @@ function queryText() {
   const box = document.getElementById('q');
   return box ? box.value.toLowerCase() : '';
 }
+function line(kindLabel, county) {
+  return county ? kindLabel + ' · ' + county : kindLabel;
+}
 function card(href, title, meta, kind) {
   const el = document.createElement('div');
   el.className = 'card';
   el.dataset.kind = kind;
+  const note = document.createElement('div');
+  note.textContent = meta || '';
   const link = document.createElement('a');
   link.href = href;
   link.textContent = title;
-  const note = document.createElement('div');
-  note.textContent = meta || '';
-  el.appendChild(link);
   el.appendChild(note);
+  el.appendChild(link);
   list.appendChild(el);
 }
 function applyList() {
@@ -240,9 +261,9 @@ async function load() {
   const stays = await (await fetch('/stays')).json();
   const experiences = await (await fetch('/experiences')).json();
   list.replaceChildren();
-  places.forEach(function (p) { card('/page/' + p.id, p.name, p.county || 'Place', 'place'); });
-  stays.forEach(function (s) { card('/page/' + s.id, s.title, s.kind, s.kind); });
-  experiences.forEach(function (e) { card('/page/' + e.id, e.name, e.county || 'Experience', 'experience'); });
+  places.forEach(function (p) { card('/page/' + p.id, p.name, line('Place', p.county), 'place'); });
+  stays.forEach(function (s) { card('/page/' + s.id, s.title, line(s.kind, s.county), s.kind); });
+  experiences.forEach(function (e) { card('/page/' + e.id, e.name, line('Experience', e.county), 'experience'); });
   applyList();
   rebuild(places, stays, experiences, mine.map(function (p) { return p.id; }), visits.map(function (v) { return v.placeId; }), signedIn);
 }
@@ -280,24 +301,37 @@ internal fun hostPage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Host</title>
-<style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,textarea,button{display:block;width:100%;margin:8px 0;padding:8px;box-sizing:border-box}.lot-row{border-top:1px solid #ddd;padding-top:8px}</style>
-<header>Host</header>
+${calmFonts()}
+<style>
+${calmFormCss()}
+</style>
+<header class="top">
+  <a class="home" href="/">Home</a>
+  <h1>Host</h1>
+  <p class="lede">A host owns a stay.</p>
+</header>
 <main>
+<section class="panel">
 <h2>Sign up</h2>
 <input id="signup-email" placeholder="Email" autocomplete="username">
 <input id="signup-password" placeholder="Password" type="password" autocomplete="new-password">
 <button id="signup" type="button">Sign up</button>
 <p id="signup-out"></p>
+</section>
+<section class="panel">
 <h2>Add a stay</h2>
 <input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
 <select id="kind"><option>campsite</option><option>glamping</option><option>bed and breakfast</option></select>
 <input id="title" placeholder="Title"><textarea id="description" placeholder="Description"></textarea>
-<input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
+<input id="county" placeholder="County">
+<div class="pair"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude"></div>
 <div id="lots"></div>
 <button id="add-lot" type="button">Add a lot</button>
 <input id="photo" type="file" accept="image/png,image/jpeg">
+<p class="review-note">Saving runs review. The stay stays off the public list until that review passes.</p>
 <button id="save" type="button">Save</button>
 <p id="out"></p>
+</section>
 <script>
 document.getElementById('signup').onclick = async function () {
   const body = {
@@ -382,21 +416,34 @@ internal fun supplierPage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Guide</title>
-<style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,textarea,button{display:block;width:100%;margin:8px 0;padding:8px}</style>
-<header>Guide</header>
+${calmFonts()}
+<style>
+${calmFormCss()}
+</style>
+<header class="top">
+  <a class="home" href="/">Home</a>
+  <h1>Guide</h1>
+  <p class="lede">A guide owns an experience.</p>
+</header>
 <main>
+<section class="panel">
 <h2>Sign up</h2>
 <input id="signup-email" placeholder="Email" autocomplete="username">
 <input id="signup-password" placeholder="Password" type="password" autocomplete="new-password">
 <button id="signup" type="button">Sign up</button>
 <p id="signup-out"></p>
+</section>
+<section class="panel">
 <h2>Add an experience</h2>
 <input id="email" placeholder="Email"><input id="password" placeholder="Password" type="password">
 <input id="name" placeholder="Name"><textarea id="description" placeholder="Description"></textarea>
-<input id="county" placeholder="County"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude">
+<input id="county" placeholder="County">
+<div class="pair"><input id="lat" placeholder="Latitude"><input id="lng" placeholder="Longitude"></div>
 <input id="photo" type="file" accept="image/png,image/jpeg">
+<p class="review-note">Saving runs review. It stays off the public list until that review passes.</p>
 <button id="save" type="button">Save</button>
 <p id="out"></p>
+</section>
 <script>
 document.getElementById('signup').onclick = async function () {
   const body = {
@@ -436,8 +483,14 @@ internal fun adminPage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin</title>
-<style>body{font-family:Georgia,serif;margin:0;background:#f6f3ee}header{background:#0B6E4F;color:#fff;padding:16px}main{padding:16px;max-width:720px;margin:0 auto}input,button{display:block;width:100%;margin:8px 0;padding:8px}a{color:#0B6E4F}</style>
-<header>Admin</header>
+${calmFonts()}
+<style>
+${calmFormCss()}
+</style>
+<header class="top">
+  <a class="home" href="/">Home</a>
+  <h1>Admin</h1>
+</header>
 <main>
 <p><a href="/admin/review">Review</a></p>
 <input id="email" value="tezball86@gmail.com"><input id="password" placeholder="Password" type="password">
@@ -511,24 +564,11 @@ internal fun adminReviewPage(): String = """
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Review</title>
+${calmFonts()}
 <style>
-  body { font-family: Georgia, serif; margin: 0; background: #f6f3ee; color: #1c2420; }
-  header { background: #0B6E4F; color: white; padding: 16px; }
-  header a { color: white; }
-  main { padding: 16px; max-width: 480px; margin: 0 auto; }
-  input, textarea, button { font: inherit; }
-  .card { background: white; border-radius: 20px; min-height: 240px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
-  .card img { width: 100%; max-height: 240px; object-fit: cover; border-radius: 12px; }
-  .kicker { text-transform: uppercase; letter-spacing: .06em; font-size: 12px; color: #3d4a44; }
-  .actions { display: flex; gap: 12px; margin-top: 16px; }
-  .actions button, #confirm-reject { flex: 1; min-height: 72px; font-size: 1.25rem; border: 0; border-radius: 999px; color: white; }
-  #reject, #confirm-reject { background: #9A3412; }
-  #approve { background: #0B6E4F; }
-  #reason { width: 100%; min-height: 72px; margin: 8px 0; box-sizing: border-box; }
-  #sign-in, #email, #password { display: block; width: 100%; margin: 8px 0; padding: 8px; box-sizing: border-box; }
-  #sign-in { min-height: 48px; background: #0B6E4F; color: white; border: 0; border-radius: 12px; }
+${calmFormCss()}
 </style>
-<header><a href="/admin">Review</a></header>
+<header class="top"><a href="/admin">Review</a></header>
 <main>
   <p>Stays, experiences, and guides a person just saved. One at a time.</p>
   <input id="email" value="tezball86@gmail.com" autocomplete="username">
@@ -679,21 +719,17 @@ internal fun listingPage(row: Listing): String {
 <!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(row.name)}</title>
+${calmFonts()}
 <style>
-  body { font-family: Georgia, serif; margin: 0; background: #f6f3ee; color: #1c2420; }
-  header { background: #0B6E4F; color: white; padding: 16px; }
-  main { padding: 16px; max-width: 720px; margin: 0 auto; }
-  a { color: #0B6E4F; }
-  img { width: 100%; border-radius: 12px; }
-  input, textarea, select, button { display: block; width: 100%; margin: 8px 0; padding: 8px; box-sizing: border-box; }
-  .lot-row { border-top: 1px solid #ddd; padding-top: 8px; }
+${calmFormCss()}
 </style>
-<header><a href="/" style="color:white">${esc(row.name)}</a></header>
+<header class="top"><a class="home" href="/">Home</a></header>
 <main>
-  <p>${esc(row.county)} · ${esc(row.kind)}</p>
   $photo
-  <p>${esc(row.description)}</p>
-  <ul>$lots</ul>
+  <p class="kicker">${esc(row.county)} · ${esc(row.kind)}</p>
+  <h1>${esc(row.name)}</h1>
+  <p class="dek">${esc(row.description)}</p>
+  <ul class="lots">$lots</ul>
   $been
   $editor
 </main>
@@ -708,8 +744,9 @@ private fun stayEditor(row: Listing): String {
     }
     val kind = row.kind
     return """
+<section class="panel">
 <h2>Edit this stay</h2>
-<p>Saving runs review. The stay stays off the public list until that review passes.</p>
+<p class="review-note">Saving runs review. The stay stays off the public list until that review passes.</p>
 <input id="edit-email" placeholder="Email" autocomplete="username">
 <input id="edit-password" placeholder="Password" type="password" autocomplete="current-password">
 <select id="edit-kind">
@@ -720,8 +757,10 @@ private fun stayEditor(row: Listing): String {
 <input id="edit-title" value="${esc(row.name)}">
 <textarea id="edit-description">${esc(row.description)}</textarea>
 <input id="edit-county" value="${esc(row.county)}">
+<div class="pair">
 <input id="edit-lat" value="${num(row.lat)}" placeholder="Latitude">
 <input id="edit-lng" value="${num(row.lng)}" placeholder="Longitude">
+</div>
 <div id="edit-lots">$lots</div>
 <button id="edit-add-lot" type="button">Add a lot</button>
 <input id="edit-photo" type="file" accept="image/png,image/jpeg">
@@ -783,6 +822,7 @@ document.getElementById('edit-save').onclick = async function () {
   document.getElementById('edit-out').textContent = await res.text();
 };
 </script>
+</section>
 """.trimIndent()
 }
 
@@ -790,15 +830,18 @@ private fun experienceEditor(row: Listing): String {
     val id = jsId(row.id)
     if (id.isEmpty()) return ""
     return """
+<section class="panel">
 <h2>Edit this experience</h2>
-<p>A guide owns this experience. Saving runs review. It stays off the public list until that review passes.</p>
+<p class="review-note">A guide owns this experience. Saving runs review. It stays off the public list until that review passes.</p>
 <input id="edit-email" placeholder="Email" autocomplete="username">
 <input id="edit-password" placeholder="Password" type="password" autocomplete="current-password">
 <input id="edit-name" value="${esc(row.name)}">
 <textarea id="edit-description">${esc(row.description)}</textarea>
 <input id="edit-county" value="${esc(row.county)}">
+<div class="pair">
 <input id="edit-lat" value="${num(row.lat)}" placeholder="Latitude">
 <input id="edit-lng" value="${num(row.lng)}" placeholder="Longitude">
+</div>
 <input id="edit-photo" type="file" accept="image/png,image/jpeg">
 <button id="edit-save" type="button">Save this experience</button>
 <p id="edit-out"></p>
@@ -834,8 +877,55 @@ document.getElementById('edit-save').onclick = async function () {
   document.getElementById('edit-out').textContent = await res.text();
 };
 </script>
+</section>
 """.trimIndent()
 }
+
+private fun calmFonts(): String = """
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,500;0,7..72,600;1,7..72,500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+""".trimIndent()
+
+private fun calmFormCss(): String = """
+  [hidden] { display: none !important; }
+  body { margin: 0; background: #F6F3EE; color: #1C2421; font-family: "Public Sans", sans-serif; font-size: 16px; line-height: 1.45; }
+  main { padding: 8px 16px 40px; max-width: 32rem; margin: 0 auto; }
+  a { color: #2C4A45; }
+  header.top { padding: 18px 16px 0; background: transparent; color: inherit; max-width: 32rem; margin: 0 auto; }
+  header.top h1, h1 { font-family: Literata, Georgia, serif; font-weight: 500; font-size: 2rem; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 8px; color: #1C2421; }
+  header.top a:not(.home) { font-family: Literata, Georgia, serif; font-size: 1.75rem; color: #1C2421; text-decoration: none; }
+  a.home { font-family: "Public Sans", sans-serif; font-size: 0.92rem; color: #596561; text-decoration: none; }
+  h2 { font-family: Literata, Georgia, serif; font-weight: 500; font-size: 1.35rem; margin: 0 0 8px; }
+  .lede { font-family: Literata, Georgia, serif; font-style: italic; font-size: 1.15rem; margin: 0 0 16px; }
+  .kicker { text-transform: uppercase; letter-spacing: .06em; font-size: 12px; color: #596561; font-weight: 600; margin: 0 0 4px; }
+  .dek { margin: 8px 0 16px; }
+  .review-note { color: #8C6A45; font-size: 0.92rem; }
+  .panel { background: #fff; border: 1px solid #E4DDD2; border-radius: 12px; padding: 16px; margin: 0 0 16px; box-shadow: 0 4px 20px -2px rgba(28,36,33,.05); }
+  img { width: 100%; border-radius: 12px; display: block; margin: 0 0 12px; object-fit: cover; max-height: 280px; }
+  input, textarea, select, button { font: inherit; color: inherit; }
+  input, textarea, select { display: block; width: 100%; margin: 8px 0; padding: 12px 14px; box-sizing: border-box; border: 1px solid #E4DDD2; border-radius: 12px; background: #fff; }
+  textarea { min-height: 96px; }
+  button { display: block; width: 100%; margin: 8px 0; padding: 14px 16px; border: 0; border-radius: 12px; background: #2C4A45; color: #F6F3EE; font-weight: 600; cursor: pointer; }
+  #add-lot, #edit-add-lot { background: #fff; color: #2C4A45; border: 1px solid #E4DDD2; font-weight: 500; }
+  input[type="file"] { padding: 10px; background: #F6F3EE; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pair input { margin: 8px 0; }
+  .lot-row { display: grid; grid-template-columns: 1fr 5.5rem 5.5rem; gap: 8px; margin: 8px 0; padding: 8px; background: #F6F3EE; border-radius: 12px; }
+  .lot-row input { margin: 0; }
+  ul.lots { list-style: none; padding: 0; margin: 12px 0 16px; }
+  ul.lots li { background: #fff; border: 1px solid #E4DDD2; border-radius: 12px; padding: 12px 14px; margin: 8px 0; }
+  .card { background: #fff; border: 1px solid #E4DDD2; border-radius: 12px; min-height: 240px; padding: 16px; box-shadow: 0 4px 20px -2px rgba(28,36,33,.05); }
+  .card img { max-height: 240px; }
+  .actions { display: flex; gap: 12px; margin-top: 16px; }
+  .actions button { width: auto; flex: 1; min-height: 72px; margin: 0; font-size: 1.15rem; }
+  #reject, #confirm-reject { background: #9A3412; color: #F6F3EE; }
+  #approve { background: #2C4A45; }
+  #reason { min-height: 72px; }
+  #sign-in { min-height: 48px; }
+  pre { white-space: pre-wrap; word-break: break-word; background: #fff; border: 1px solid #E4DDD2; border-radius: 12px; padding: 12px; }
+  :focus-visible { outline: 2px solid #2C4A45; outline-offset: 2px; }
+""".trimIndent()
 
 private fun lotInputs(name: String, sleeps: String, price: String): String = """
 <div class="lot-row">
