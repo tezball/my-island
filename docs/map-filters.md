@@ -7,7 +7,7 @@ The explore page keeps the Leaflet map, centered on Ireland at `[53.4, -7.9]` zo
 - Places you have stayed — private visits
 - Places you could stay — public stays
 
-Supplier experiences stay on the map. They are not one of those four boxes. A place the person has visited is drawn when either its place box or the stayed box is on.
+Experiences stay on the map. They are not one of those four boxes. A place the person has visited is drawn when either its place box or the stayed box is on.
 
 Signed out, your places and places stayed are empty. The control says: "Your places: none. You are not signed in." and "Places you have stayed: none. You are not signed in." Sign-in on the control stores the session token and reloads those two sets from `/me/places` and `/me/visits`.
 
@@ -23,7 +23,7 @@ Each pin is an inline SVG in a Leaflet div icon. The legend in the corner uses t
 | Campsite | `#2E7D32` | Triangle tent |
 | Glamping | `#C56A12` | Dome |
 | Bed and breakfast | `#9A3412` | House |
-| Supplier experience | `#0F6E8C` | Circle with a compass needle |
+| Experience | `#0F6E8C` | Circle with a compass needle |
 
 Stays use the campsite, glamping, or bed and breakfast pin. Places use the teardrop. Experiences use the circle.
 

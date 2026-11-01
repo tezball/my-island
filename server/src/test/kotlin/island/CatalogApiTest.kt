@@ -72,7 +72,6 @@ class CatalogApiTest {
             header("Authorization", "Bearer $admin")
         }
         assertEquals(HttpStatusCode.OK, adminList.status)
-        assertTrue(adminList.bodyAsText().contains("\"hidden\":true"))
         val hostsDenied = client.get("/admin/hosts") {
             header("Authorization", "Bearer $guest")
         }
@@ -113,6 +112,12 @@ class CatalogApiTest {
         }
         assertEquals(HttpStatusCode.OK, created.status)
         assertFalse(client.get("/stays").bodyAsText().contains("Api Camp"))
+        val hiddenList = client.get("/admin/listings") {
+            header("Authorization", "Bearer $admin")
+        }
+        assertEquals(HttpStatusCode.OK, hiddenList.status)
+        assertTrue(hiddenList.bodyAsText().contains("\"title\":\"Api Camp\""))
+        assertTrue(hiddenList.bodyAsText().contains("\"hidden\":true"))
         val createdId = Regex("\"id\":\"(\\d+)\"").find(created.bodyAsText())!!.groupValues[1]
         val edited = client.post("/host/stays/$createdId") {
             header("Authorization", "Bearer $host")
@@ -360,7 +365,7 @@ class CatalogApiTest {
         assertTrue(page.contains("A10 10"))
         assertTrue(page.contains("M4 13 L14 4"))
         assertTrue(page.contains("r=\"12\""))
-        assertTrue(page.contains("Supplier experience"))
+        assertTrue(page.contains("#0F6E8C\"></span> Experience"))
     }
 
     @Test
